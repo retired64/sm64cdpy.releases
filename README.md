@@ -20,7 +20,7 @@ Ve a la sección de [**Releases**](https://github.com/retired64/sm64cdpy.release
 
 ### What is this?
 
-This is a personal app I built so I could browse and organize mods for SM64 Coop Deluxe straight from my phone, without having to open a browser every time. It reads the public mod catalogue from [mods.sm64coopdx.com](https://mods.sm64coopdx.com) and presents it in a clean, fast mobile interface.
+This is a personal app I built so I could browse and organize mods for SM64 Coop Deluxe straight from my phone, without having to open a browser every time. It reads the public mod catalogue from mods sm64coopdx  and presents it in a clean, fast mobile interface.
 
 It's not official. It's not affiliated with the SM64CoopDX team or any mod creator. It's just a passion project.
 
