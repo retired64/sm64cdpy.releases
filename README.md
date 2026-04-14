@@ -62,7 +62,7 @@ Yes. The app does not collect any data, does not require an account, does not di
 
 ### ¿Qué es esto?
 
-Es una app personal que hice para poder explorar y organizar los mods de SM64 Coop Deluxe desde mi celular, sin tener que abrir el navegador cada vez. Lee el catálogo público de [mods.sm64coopdx.com](https://mods.sm64coopdx.com) y lo presenta en una interfaz móvil limpia y rápida.
+Es una app personal que hice para poder explorar y organizar los mods de SM64 Coop Deluxe desde mi celular, sin tener que abrir el navegador cada vez. Lee el catálogo público de mods sm64coopdx y lo presenta en una interfaz móvil limpia y rápida.
 
 No es oficial. No tiene ninguna relación con el equipo de SM64CoopDX ni con los creadores de mods. Es solo un proyecto personal.
 
