@@ -6,7 +6,7 @@
 
 ![Platform](https://img.shields.io/badge/Platform-Android-green)
 ![Flutter](https://img.shields.io/badge/Flutter-3.41.6-blue)
-![License](https://img.shields.io/badge/License-Personal-lightgrey)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Min SDK](https://img.shields.io/badge/Min%20Android-7.0-orange)
 
 ---
