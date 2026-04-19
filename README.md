@@ -4,6 +4,8 @@
 
 > Una app personal para Android que te permite explorar, buscar y gestionar mods de **SM64 Coop Deluxe** — no oficial, hecha con ❤️ para la comunidad.
 
+![App sm64cdpy android](assets/app.webp)
+
 ![Platform](https://img.shields.io/badge/Platform-Android-green)
 ![Flutter](https://img.shields.io/badge/Flutter-3.41.6-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
