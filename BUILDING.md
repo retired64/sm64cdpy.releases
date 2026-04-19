@@ -1,6 +1,6 @@
 # Building sm64cdpy from Source
 
-> **Language / Idioma:** [English](#-english) · [Español](#-español)
+> **Language / Idioma:** [English](https://github.com/retired64/sm64cdpy.releases/blob/main/BUILDING.md#english) · [Español](https://github.com/retired64/sm64cdpy.releases/blob/main/BUILDING.md#espa%C3%B1ol)
 
 ---
 
