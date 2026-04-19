@@ -4,7 +4,28 @@
 
 > Una app personal para Android que te permite explorar, buscar y gestionar mods de **SM64 Coop Deluxe** — no oficial, hecha con ❤️ para la comunidad.
 
+![Platform](https://img.shields.io/badge/Platform-Android-green)
+![Flutter](https://img.shields.io/badge/Flutter-3.41.6-blue)
+![License](https://img.shields.io/badge/License-Personal-lightgrey)
+![Min SDK](https://img.shields.io/badge/Min%20Android-7.0-orange)
+
 ---
+
+## Quick start
+
+```bash
+# 1. Clone the repository
+git clone --depth 1 https://github.com/retired64/sm64cdpy.releases.git
+cd sm64cdpy.releases
+
+# 2. Install dependencies
+flutter pub get
+
+# 3. Build (arm64 — recommended for most devices)
+flutter build apk --release --target-platform android-arm64
+
+# Output: build/app/outputs/flutter-apk/app-release.apk
+```
 
 ## 📥 Download / Descarga
 
@@ -79,6 +100,22 @@ No es oficial. No tiene ninguna relación con el equipo de SM64CoopDX ni con los
 - **Actualizar la base de datos** — toca *Reload database* en Ajustes para descargar la lista de mods más reciente directamente desde este repositorio. Sin necesidad de reinstalar.
 - **Tema claro y oscuro** — elige cómo se ve la app o deja que siga la configuración de tu sistema.
 - **Bilingüe** — la pantalla de Aviso Legal está disponible en inglés y español con un botón de traducción.
+
+## Inicio Rapido
+
+```bash
+# 1. Clonar el repositorio
+git clone --depth 1 https://github.com/retired64/sm64cdpy.releases.git
+cd sm64cdpy.releases
+
+# 2. Instalar dependencias
+flutter pub get
+
+# 3. Compilar (arm64 — recomendado para la mayoría de dispositivos)
+flutter build apk --release --target-platform android-arm64
+
+# Salida: build/app/outputs/flutter-apk/app-release.apk
+```
 
 ### Cómo instalar
 

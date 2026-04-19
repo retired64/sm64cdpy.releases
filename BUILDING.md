@@ -593,6 +593,37 @@ sdkmanager "build-tools;36.1.0"
 > [!NOTE]
 > Having multiple build-tools versions installed side by side is harmless. The reference environment has `28.0.3`, `30.0.3`, `35.0.0`, `36.0.0`, and `36.1.0` all installed at the same time. Flutter always selects the version declared in `android/app/build.gradle`.
 
+
+## Signing Setup
+
+Before building a release APK, you need a `key.properties` file with your signing credentials.
+
+Create the file at `android/key.properties`:
+
+```properties
+storePassword=your_store_password
+keyPassword=your_key_password
+keyAlias=your_key_alias
+storeFile=/absolute/path/to/your/keystore.jks
+```
+
+> [!CAUTION]
+> Never commit `key.properties` or your `.jks` file to version control. Make sure your `.gitignore` includes:
+> ```
+> android/key.properties
+> *.jks
+> *.keystore
+> ```
+
+> [!NOTE]
+> If you are just building for personal use and do not have a keystore yet, you can generate one with:
+> ```bash
+> keytool -genkey -v -keystore ~/your-key.jks \
+>   -keyalg RSA -keysize 2048 -validity 10000 \
+>   -alias your_alias
+> ```
+> Then point `storeFile` in `key.properties` to its absolute path.
+
 ---
 
 ---
@@ -1187,5 +1218,35 @@ sdkmanager "build-tools;36.1.0"
 > Tener múltiples versiones de build-tools instaladas en paralelo es completamente inofensivo. El entorno de referencia tiene `28.0.3`, `30.0.3`, `35.0.0`, `36.0.0` y `36.1.0` instalados al mismo tiempo. Flutter siempre selecciona la versión declarada en `android/app/build.gradle`.
 
 ---
+
+## Configuración de firma
+
+Antes de compilar un APK de release, necesitas un archivo `key.properties` con tus credenciales de firma.
+
+Crea el archivo en `android/key.properties`:
+
+```properties
+storePassword=tu_contraseña_del_store
+keyPassword=tu_contraseña_de_la_clave
+keyAlias=tu_alias
+storeFile=/ruta/absoluta/a/tu/keystore.jks
+```
+
+> [!CAUTION]
+> Nunca hagas commit de `key.properties` ni de tu archivo `.jks`. Asegúrate de que tu `.gitignore` incluya:
+> ```
+> android/key.properties
+> *.jks
+> *.keystore
+> ```
+
+> [!NOTE]
+> Si estás compilando solo para uso personal y aún no tienes un keystore, puedes generar uno con:
+> ```bash
+> keytool -genkey -v -keystore ~/tu-clave.jks \
+>   -keyalg RSA -keysize 2048 -validity 10000 \
+>   -alias tu_alias
+> ```
+> Luego apunta `storeFile` en `key.properties` a su ruta absoluta.
 
 *Made with ❤️ for the SM64 Coop Deluxe community · Not affiliated with the SM64CoopDX team*
