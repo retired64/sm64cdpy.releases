@@ -6,6 +6,18 @@
 
 ![App sm64cdpy android](assets/app.webp)
 
+<div align="center">
+
+| Inicio | Inicio (Claro) | Popular | Popular (Claro) | Menú |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="ss/inicio.webp" width="150"> | <img src="ss/inicio-modoClaro.webp" width="150"> | <img src="ss/popular.webp" width="150"> | <img src="ss/popular-modoClaro.webp" width="150"> | <img src="ss/menu.webp" width="150"> |
+
+| Mod. Detalles | Mod. Detalles (Claro) | Mod. Detalles (Claro 2) | Ajustes | Ajustes (Claro) |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="ss/mod-detalles.webp" width="150"> | <img src="ss/mod-detalles-modoClaro.webp" width="150"> | <img src="ss/mod-detalles-modoClaro2.webp" width="150"> | <img src="ss/ajustes.webp" width="150"> | <img src="ss/ajustes-modoClaro.webp" width="150"> |
+
+</div>
+
 ![Platform](https://img.shields.io/badge/Platform-Android-green)
 ![Flutter](https://img.shields.io/badge/Flutter-3.41.6-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
