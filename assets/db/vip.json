@@ -1,0 +1,19 @@
+{
+  "generated_at": "2025-01-01T00:00:00Z",
+  "vip_mods": {
+    "example-vip": {
+      "title": "Super VIP Mod",
+      "version": "2.0",
+      "recommended_version": "SM64CoopDX v1.3",
+      "author": "VIP Author",
+      "description": "An exclusive mod description.",
+      "image_url": "https://example.com/image.jpg",
+      "download_url": "https://example.com/download.zip",
+      "tags": ["exclusive", "fun"],
+      "rating": 4.8,
+      "rating_count": 42,
+      "is_featured": true,
+      "added_at": "2025-01-01"
+    }
+  }
+}

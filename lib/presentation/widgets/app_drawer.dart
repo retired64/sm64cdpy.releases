@@ -128,7 +128,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       ),
                     ),
 
-                    // Separador degradado antes de Explore
+                    // Separador degradado antes de EXCLUSIVE
                     _staggerItem(
                       index: 5,
                       ctrl: _staggerCtrl,
@@ -140,15 +140,60 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     _staggerItem(
                       index: 5,
                       ctrl: _staggerCtrl,
-                      child: const _SectionLabel('Explore'),
+                      child: const _SectionLabel('EXCLUSIVE'),
                     ),
                     _staggerItem(
                       index: 6,
                       ctrl: _staggerCtrl,
-                      child: _CategoryList(currentRoute: widget.currentRoute),
+                      child: _NavItem(
+                        icon: Icons.star_rounded,
+                        label: 'VIP Mods',
+                        route: '/vip',
+                        isActive: widget.currentRoute == '/vip',
+                      ),
                     ),
                     _staggerItem(
                       index: 7,
+                      ctrl: _staggerCtrl,
+                      child: _NavItem(
+                        icon: Icons.rocket_launch_rounded,
+                        label: 'DynOS',
+                        route: '/dynos',
+                        isActive: widget.currentRoute == '/dynos',
+                      ),
+                    ),
+                    _staggerItem(
+                      index: 8,
+                      ctrl: _staggerCtrl,
+                      child: _NavItem(
+                        icon: Icons.touch_app_rounded,
+                        label: 'Touch Controls',
+                        route: '/touch-controls',
+                        isActive: widget.currentRoute == '/touch-controls',
+                      ),
+                    ),
+
+                    // Separador degradado antes de Explore
+                    _staggerItem(
+                      index: 9,
+                      ctrl: _staggerCtrl,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+                        child: _GradientDivider(isDark: isDark),
+                      ),
+                    ),
+                    _staggerItem(
+                      index: 9,
+                      ctrl: _staggerCtrl,
+                      child: const _SectionLabel('Explore'),
+                    ),
+                    _staggerItem(
+                      index: 10,
+                      ctrl: _staggerCtrl,
+                      child: _CategoryList(currentRoute: widget.currentRoute),
+                    ),
+                    _staggerItem(
+                      index: 11,
                       ctrl: _staggerCtrl,
                       child: _SortOptions(currentRoute: widget.currentRoute),
                     ),

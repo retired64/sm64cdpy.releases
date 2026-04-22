@@ -1,0 +1,11 @@
+{
+  "generated_at": "2025-01-01T00:00:00Z",
+  "touch_controls": {
+    "example-tc": {
+      "title": "Better Touch Layout",
+      "image_url": "https://example.com/touch.jpg",
+      "download_url": "https://example.com/touch.zip",
+      "added_at": "2025-01-01"
+    }
+  }
+}

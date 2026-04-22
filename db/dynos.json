@@ -1,0 +1,17 @@
+{
+  "generated_at": "2025-01-01T00:00:00Z",
+  "dynos": {
+    "example-dynos": {
+      "title": "Custom DynOS",
+      "version": "1.5",
+      "author": "DynOS Author",
+      "description": "A DynOS description.",
+      "image_url": "https://example.com/dynos.jpg",
+      "download_url": "https://example.com/dynos.zip",
+      "tags": ["runtime", "patch"],
+      "rating": 4.2,
+      "rating_count": 18,
+      "added_at": "2025-01-01"
+    }
+  }
+}
