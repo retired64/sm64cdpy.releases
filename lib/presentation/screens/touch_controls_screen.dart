@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -190,6 +192,9 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pressCtrl;
   late final Animation<double> _scale;
+  
+  Timer? _longPressTimer;
+  bool _isLongPressing = false;
 
   @override
   void initState() {
@@ -204,21 +209,67 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
     ).animate(CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut));
   }
 
+  void _startLongPress() {
+    _longPressTimer?.cancel();
+    _isLongPressing = true;
+    
+    _longPressTimer = Timer(const Duration(seconds: 2), _completeLongPress);
+  }
+
+  void _cancelLongPress() {
+    _longPressTimer?.cancel();
+    _longPressTimer = null;
+    if (_isLongPressing) {
+      setState(() {
+        _isLongPressing = false;
+      });
+    }
+  }
+
+  void _completeLongPress() {
+    _longPressTimer?.cancel();
+    _longPressTimer = null;
+    setState(() {
+      _isLongPressing = false;
+    });
+    _toggleFavorite();
+  }
+
+  Future<void> _toggleFavorite() async {
+    await toggleTouchFavourite(ref, widget.mod.id);
+    if (!mounted) return;
+    final isNowFav = ref.read(touchFavouritesProvider).contains(widget.mod.id);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isNowFav
+              ? 'Added to favorites'
+              : 'Removed from favorites',
+        ),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _pressCtrl.dispose();
+    _longPressTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final isFav = isTouchFavourite(ref, widget.mod.id);
+    final isFav = ref.watch(touchFavouritesProvider).contains(widget.mod.id);
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
       onTapUp: (_) => _pressCtrl.reverse(),
       onTapCancel: () => _pressCtrl.reverse(),
+      onLongPressStart: (_) => _startLongPress(),
+      onLongPressEnd: (_) => _cancelLongPress(),
+      onLongPressMoveUpdate: (_) => _cancelLongPress(),
       child: ScaleTransition(
         scale: _scale,
         child: Container(
@@ -278,27 +329,24 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                             ),
                           ),
                   ),
-                  // Favourite heart
-                  GestureDetector(
-                    onTap: () => toggleTouchFavourite(ref, widget.mod.id),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Icon(
-                        isFav
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        size: 22,
-                        color: isFav
-                            ? cs.primary
-                            : Colors.white.withValues(alpha: 0.9),
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.5),
-                            blurRadius: 4,
-                            offset: const Offset(0, 1),
-                          ),
-                        ],
-                      ),
+                  // Favourite heart (indicator only)
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Icon(
+                      isFav
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      size: 22,
+                      color: isFav
+                          ? cs.primary
+                          : Colors.white.withValues(alpha: 0.9),
+                      shadows: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -345,6 +393,24 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                     ),
 
                     const SizedBox(height: 16),
+
+                    // Favorite button
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton.icon(
+                        icon: Icon(
+                          isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                          size: 16,
+                        ),
+                        label: Text(isFav ? 'Remove from Favorites' : 'Add to Favorites'),
+                        onPressed: _toggleFavorite,
+                        style: TextButton.styleFrom(
+                          foregroundColor: cs.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
 
                     // Download button
                     SizedBox(
