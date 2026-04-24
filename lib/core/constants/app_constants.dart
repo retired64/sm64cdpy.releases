@@ -13,7 +13,7 @@ class AppConstants {
   static const int titleMaxLines = 2;
 
   static const String appName = 'SM64CDPY';
-  static const String appVersion = '1.0.1';
+  static const String appVersion = '1.1.0';
 
   // ── External URLs ────────────────────────────────────────────────────────
   static const String githubReleasesUrl =

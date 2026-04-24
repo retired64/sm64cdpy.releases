@@ -359,9 +359,37 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.0.1',
+    version: '1.1.0',
     date: 'April 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'VIP Mods section — curated exclusive mods not listed on the official SM64CoopDX website.',
+          'DynOS section — model and animation packs ready to drop into your DynOS folder.',
+          'Touch Controls section — touch layout presets for on-screen controls.',
+          'Direct download support in VIP Mods, DynOS, and Touch Controls cards.',
+          'Favourites support for VIP Mods, DynOS, and Touch Controls (stored with prefixed IDs to avoid collisions).',
+          'Favourites screen now shows four tabs: Mods, VIP, DynOS, and Touch Controls.',
+          "What's new banner added to the Disclaimer screen.",
+          'Version pill (v1.1.0) displayed in the Disclaimer hero badge.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Disclaimer updated to document the new exclusive sections and their unofficial nature.',
+          'App version bumped from 1.0.1 → 1.1.0 across AppConstants and all UI references.',
+          'Favourite IDs now use section prefixes (vip_, dynos_, tc_) to avoid collisions between sections.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.0.1',
+    date: 'April 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,

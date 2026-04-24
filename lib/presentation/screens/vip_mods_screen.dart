@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -192,9 +194,15 @@ class _VipModCardState extends ConsumerState<VipModCard>
   late final AnimationController _pressCtrl;
   late final Animation<double> _scale;
   bool _isExpanded = false;
-  
+
   Timer? _longPressTimer;
   bool _isLongPressing = false;
+
+  bool _downloading = false;
+  double _progress = 0.0;
+  double _realProgress = 0.0;
+  late AnimationController _fakeCtrl;
+  late Animation<double> _fakeAnim;
 
   @override
   void initState() {
@@ -207,12 +215,24 @@ class _VipModCardState extends ConsumerState<VipModCard>
       begin: 1.0,
       end: 0.97,
     ).animate(CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut));
+
+    _fakeCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 18),
+    );
+    _fakeAnim = Tween<double>(begin: 0.0, end: 0.85).animate(
+      CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
+    )..addListener(() {
+      if (mounted && _downloading && _realProgress <= 0.0) {
+        setState(() => _progress = _fakeAnim.value);
+      }
+    });
   }
 
   void _startLongPress() {
     _longPressTimer?.cancel();
     _isLongPressing = true;
-    
+
     _longPressTimer = Timer(const Duration(seconds: 2), _completeLongPress);
   }
 
@@ -251,11 +271,100 @@ class _VipModCardState extends ConsumerState<VipModCard>
     );
   }
 
+  Future<void> _download() async {
+    if (_downloading) return;
+    HapticFeedback.mediumImpact();
+    setState(() {
+      _downloading = true;
+      _progress = 0.0;
+      _realProgress = 0.0;
+    });
+    _fakeCtrl.forward(from: 0.0);
 
+    final url = widget.mod.downloadUrl;
+    final rawName = widget.mod.title
+        .toLowerCase()
+        .replaceAll(RegExp(r"[^\w\s\-]"), '')
+        .replaceAll(RegExp(r'\s+'), '-')
+        .replaceAll(RegExp(r'-{2,}'), '-')
+        .trim();
+    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.zip';
+
+    await FileDownloader.downloadFile(
+      url: url,
+      name: filename,
+      onProgress: (name, progress) {
+        if (!mounted) return;
+        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+        if (normalized > _progress) {
+          setState(() {
+            _realProgress = normalized;
+            _progress = normalized;
+          });
+        }
+      },
+      onDownloadCompleted: (path) async {
+        if (!mounted) return;
+        _fakeCtrl.stop();
+        final completeCtrl = AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 400),
+        );
+        final completeAnim = Tween<double>(begin: _progress, end: 1.0)
+            .animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
+        completeAnim.addListener(() {
+          if (mounted) setState(() => _progress = completeAnim.value);
+        });
+        await completeCtrl.forward();
+        completeCtrl.dispose();
+        await Future.delayed(const Duration(milliseconds: 350));
+        if (!mounted) return;
+        setState(() {
+          _downloading = false;
+          _progress = 0.0;
+          _realProgress = 0.0;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
+                const SizedBox(width: 10),
+                Expanded(child: Text('Downloaded: ${path.split('/').last}')),
+              ],
+            ),
+          ),
+        );
+      },
+      onDownloadError: (error) {
+        if (!mounted) return;
+        _fakeCtrl.stop();
+        setState(() {
+          _downloading = false;
+          _progress = 0.0;
+          _realProgress = 0.0;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Row(
+              children: [
+                Icon(Icons.error_rounded, size: 18, color: Colors.white),
+                SizedBox(width: 10),
+                Text('Download failed'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
     _pressCtrl.dispose();
+    _fakeCtrl.dispose();
     _longPressTimer?.cancel();
     super.dispose();
   }
@@ -322,15 +431,15 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                   ),
                                 ),
                           )
-                        : Container(
-                            color: cs.surfaceContainerHigh,
-                            height: 180,
-                            child: Icon(
-                              Icons.extension_rounded,
-                              size: 32,
-                              color: cs.outline,
-                            ),
+                      : Container(
+                          color: cs.surfaceContainerHigh,
+                          height: 180,
+                          child: Icon(
+                            Icons.extension_rounded,
+                            size: 32,
+                            color: cs.outline,
                           ),
+                        ),
                   ),
                   // Favourite heart (indicator only)
                   Padding(
@@ -494,20 +603,44 @@ class _VipModCardState extends ConsumerState<VipModCard>
                     // Download button
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton.icon(
-                        icon: const Icon(Icons.download_rounded, size: 16),
-                        label: const Text('Download'),
-                        onPressed: () {
-                          // TODO: implement download logic
-                        },
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: _downloading ? null : _download,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: cs.primary,
                           foregroundColor: cs.onPrimary,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          disabledBackgroundColor: cs.primary,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
+                        child: _downloading
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearProgressIndicator(
+                                      value: _progress,
+                                      backgroundColor: Colors.white.withOpacity(0.3),
+                                      color: Colors.white,
+                                      minHeight: 4,
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${(_progress * 100).toStringAsFixed(1)}%',
+                                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.download_rounded, size: 18),
+                                  SizedBox(width: 8),
+                                  Text('Download', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                                ],
+                              ),
                       ),
                     ),
                   ],
