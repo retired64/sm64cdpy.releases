@@ -79,7 +79,7 @@ class _DynosBody extends StatelessWidget {
           ),
           title: Row(
             children: [
-              Text('🚀', style: const TextStyle(fontSize: 18)),
+              Text('DX', style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
               Text(
                 'DynOS',
@@ -121,7 +121,7 @@ class _DynosBody extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Runtime Patches',
+                  'Custom DynOS',
                   style: TextStyle(
                     color: cs.onSurface,
                     fontSize: 15,
@@ -192,7 +192,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
   late final AnimationController _pressCtrl;
   late final Animation<double> _scale;
   bool _isExpanded = false;
-  
+
   Timer? _longPressTimer;
   bool _isLongPressing = false;
 
@@ -212,7 +212,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
   void _startLongPress() {
     _longPressTimer?.cancel();
     _isLongPressing = true;
-    
+
     _longPressTimer = Timer(const Duration(seconds: 2), _completeLongPress);
   }
 
@@ -242,9 +242,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          isNowFav
-              ? 'Added to favorites'
-              : 'Removed from favorites',
+          isNowFav ? 'Added to favorites' : 'Removed from favorites',
         ),
         duration: const Duration(seconds: 1),
       ),
@@ -495,10 +493,14 @@ class _DynosCardState extends ConsumerState<DynosCard>
                       width: double.infinity,
                       child: TextButton.icon(
                         icon: Icon(
-                          isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                          isFav
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
                           size: 16,
                         ),
-                        label: Text(isFav ? 'Remove from Favorites' : 'Add to Favorites'),
+                        label: Text(
+                          isFav ? 'Remove from Favorites' : 'Add to Favorites',
+                        ),
                         onPressed: _toggleFavorite,
                         style: TextButton.styleFrom(
                           foregroundColor: cs.primary,

@@ -2,13 +2,13 @@
   "generated_at": "2025-01-01T00:00:00Z",
   "dynos": {
     "example-dynos": {
-      "title": "Custom DynOS",
-      "version": "1.5",
-      "author": "DynOS Author",
-      "description": "A DynOS description.",
-      "image_url": "https://example.com/dynos.jpg",
-      "download_url": "https://example.com/dynos.zip",
-      "tags": ["runtime", "patch"],
+      "title": " Super Smash Bros Brawl Models",
+      "version": "Alpha",
+      "author": "by opmox",
+      "description": "This was a mod for sm64ex but it also works for DynOS (on sm64coopdx), just copy the \"brawl models\" folder and paste in \"sm64coopdx\\dynos\\packs\\\".",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/DynOS/01-brawls.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/DynOS/01-brawls.zip",
+      "tags": ["Brawls", "DynOS", "Models", "Sm64ex"],
       "rating": 4.2,
       "rating_count": 18,
       "added_at": "2025-01-01"

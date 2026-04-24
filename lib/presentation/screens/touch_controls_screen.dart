@@ -80,8 +80,6 @@ class _TouchBody extends StatelessWidget {
           ),
           title: Row(
             children: [
-              Text('👆', style: const TextStyle(fontSize: 18)),
-              const SizedBox(width: 8),
               Text(
                 'Touch Controls',
                 style: TextStyle(
@@ -192,7 +190,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pressCtrl;
   late final Animation<double> _scale;
-  
+
   Timer? _longPressTimer;
   bool _isLongPressing = false;
 
@@ -212,7 +210,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   void _startLongPress() {
     _longPressTimer?.cancel();
     _isLongPressing = true;
-    
+
     _longPressTimer = Timer(const Duration(seconds: 2), _completeLongPress);
   }
 
@@ -242,9 +240,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          isNowFav
-              ? 'Added to favorites'
-              : 'Removed from favorites',
+          isNowFav ? 'Added to favorites' : 'Removed from favorites',
         ),
         duration: const Duration(seconds: 1),
       ),
@@ -399,10 +395,14 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                       width: double.infinity,
                       child: TextButton.icon(
                         icon: Icon(
-                          isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                          isFav
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
                           size: 16,
                         ),
-                        label: Text(isFav ? 'Remove from Favorites' : 'Add to Favorites'),
+                        label: Text(
+                          isFav ? 'Remove from Favorites' : 'Add to Favorites',
+                        ),
                         onPressed: _toggleFavorite,
                         style: TextButton.styleFrom(
                           foregroundColor: cs.primary,

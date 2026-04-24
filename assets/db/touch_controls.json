@@ -2,9 +2,9 @@
   "generated_at": "2025-01-01T00:00:00Z",
   "touch_controls": {
     "example-tc": {
-      "title": "Better Touch Layout",
-      "image_url": "https://example.com/touch.jpg",
-      "download_url": "https://example.com/touch.zip",
+      "title": "8 Bit Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/01-botones8bit.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/01-botones8bit.zip",
       "added_at": "2025-01-01"
     }
   }
