@@ -504,7 +504,7 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
     setState(() => _loading = true);
 
     // Fire all 4 fetches in parallel
-    final results = await Future.wait([
+    final results = await Future.wait(<Future<dynamic>>[
       ref.read(localDatasourceProvider).fetchRemote(),
       ref.read(vipDatasourceProvider).fetchRemote(),
       ref.read(dynosDatasourceProvider).fetchRemote(),
