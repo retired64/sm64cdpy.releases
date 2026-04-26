@@ -1,0 +1,174 @@
+{
+  "generated_at": "2026-04-25T00:00:00Z",
+  "touch_controls": {
+    "01-botones8bit": {
+      "title": "8 Bit Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/01-botones8bit.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/01-botones8bit.zip",
+      "added_at": "2025-01-01"
+    },
+    "02-roblox": {
+      "title": "Roblox Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/02-roblox.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/02-RobloxButtons.zip",
+      "added_at": "2026-04-25"
+    },
+    "03-soniccd": {
+      "title": "Sonic CD UI",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/03-sonic.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/03-sonicCD-UI.zip",
+      "added_at": "2026-04-25"
+    },
+    "04-handDrawnGamecubey": {
+      "title": "Hand Drawn Gamecubey",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/04-HandDrawnGamecubey.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/04-HandDrawnGamecubey.zip",
+      "added_at": "2026-04-25"
+    },
+    "05-kristallsGamecube": {
+      "title": "Kristalls Gamecube Touch Controls",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/05-KristallsGamecubeTouchControls.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/05-KristallsGamecubeTouchControls.zip",
+      "added_at": "2026-04-25"
+    },
+    "06-1x1buttons": {
+      "title": "1x1 Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/06-1x1buttons.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/06-1x1buttons.zip",
+      "added_at": "2026-04-25"
+    },
+    "07-vanillaStockUI": {
+      "title": "Vanilla Stock UI",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/07-VanillaStockUI.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/07-VanillaStockUI.zip",
+      "added_at": "2026-04-25"
+    },
+    "08-yestaker302pack": {
+      "title": "Yestaker302 Pack",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/08-yestaker302pack.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/08-yestaker302pack.zip",
+      "added_at": "2026-04-25"
+    },
+    "09-uuh": {
+      "title": "Uuh...",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/09-uuh....jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/09-uuh....zip",
+      "added_at": "2026-04-25"
+    },
+    "10-marioTheme": {
+      "title": "Mario Theme",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/10-MarioTheme.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/10-MarioTheme.zip",
+      "added_at": "2026-04-25"
+    },
+    "11-ppsspp": {
+      "title": "PPSSPP",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/11-ppsspp.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/11-ppsspp.zip",
+      "added_at": "2026-04-25"
+    },
+    "12-hd": {
+      "title": "HD",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/12-hd.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/12-hd.zip",
+      "added_at": "2026-04-25"
+    },
+    "13-vanillaStyled": {
+      "title": "Vanilla Styled Touch Controls v1.1",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/13-Vanilla-styledTouchControlsv1.1.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/13-Vanilla-styledTouchControlsv1.1.zip",
+      "added_at": "2026-04-25"
+    },
+    "14-xbox360buttons": {
+      "title": "Xbox 360 Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/14-Xbox360Buttons.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/14-Xbox360Buttons.zip",
+      "added_at": "2026-04-25"
+    },
+    "15-sm64excoop": {
+      "title": "SM64EX Coop Controls",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/15-sm64excoopcontrols.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/15-sm64excoopcontrols.zip",
+      "added_at": "2026-04-25"
+    },
+    "16-botonesDeAbraham27": {
+      "title": "Botones De Abraham27",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/16-BotonesDeAbraham27.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/16-BotonesDeAbraham27.zip",
+      "added_at": "2026-04-25"
+    },
+    "17-coopControlsRevamped": {
+      "title": "COOP Controls Revamped",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/17-COOPCONTROLS-REVAMPED.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/17-COOPCONTROLS-REVAMPED.zip",
+      "added_at": "2026-04-25"
+    },
+    "18-grandTheftButtons": {
+      "title": "Grand Theft Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/18-Grand_Theft_Buttons.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/18-Grand_Theft_Buttons.zip",
+      "added_at": "2026-04-25"
+    },
+    "19-joshaGibs": {
+      "title": "JoshaGibs Touch Controls v1.1",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/19-JoshaGibsTouchControls.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/19-JoshaGibsTouchControls_v1.1.zip",
+      "added_at": "2026-04-25"
+    },
+    "20-m64plusFZCoopdx": {
+      "title": "M64Plus FZ Coopdx",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/20-M64PlusFZCoopdx.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/20-M64PlusFZCoopdx.zip",
+      "added_at": "2026-04-25"
+    },
+    "21-minecraftControls": {
+      "title": "Minecraft Controls",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/21-Minecraft_Controls.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/21-Minecraft_Controls.zip",
+      "added_at": "2026-04-25"
+    },
+    "22-psButtons": {
+      "title": "PS Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/22-PS_Buttons.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/22-PS_Buttons.zip",
+      "added_at": "2026-04-25"
+    },
+    "23-pizzaTowerButtons": {
+      "title": "Pizza Tower Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/23-Pizza_Tower_Buttons.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/23-Pizza_Tower_Buttons.zip",
+      "added_at": "2026-04-25"
+    },
+    "24-robot64buttons": {
+      "title": "Robot 64 Buttons v3",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/24-Robot_64_buttons_v3.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/24-Robot_64_buttons_v3.zip",
+      "added_at": "2026-04-25"
+    },
+    "25-undertaleButtons": {
+      "title": "Undertale Buttons V1.01",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/25-Undertale_Buttons_V1.01.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/25-Undertale_Buttons_V1.01.zip",
+      "added_at": "2026-04-25"
+    },
+    "26-wonderTouchControls": {
+      "title": "Wonder Touch Controls",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/26-WonderTouchControls.png",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/26-WonderTouchControls.zip",
+      "added_at": "2026-04-25"
+    },
+    "27-maniaSwitchButtons": {
+      "title": "Mania Switch Buttons by Shadow Mario",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/27-mania_switch_buttons_by_shadow_mario.z64.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/27-mania_switch_buttons_by_shadow_mario.z64.zip",
+      "added_at": "2026-04-25"
+    },
+    "28-wiiButtons": {
+      "title": "Wii Buttons",
+      "image_url": "https://raw.githubusercontent.com/retired64/archive.sm64cdpy.mods/refs/heads/main/TouchControls/28-wii_buttons.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/TouchControls/28-wii_buttons.zip",
+      "added_at": "2026-04-25"
+    }
+  }
+}
+
