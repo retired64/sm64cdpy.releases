@@ -3,12 +3,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../presentation/screens/catalogue_screen.dart';
 import '../../presentation/screens/changelog_screen.dart';
+import '../../presentation/screens/disclaimer_screen.dart';
+import '../../presentation/screens/dynos_screen.dart';
 import '../../presentation/screens/favourites_screen.dart';
 import '../../presentation/screens/home_screen.dart';
 import '../../presentation/screens/mod_detail_screen.dart';
 import '../../presentation/screens/popular_screen.dart';
-import '../../presentation/screens/disclaimer_screen.dart';
 import '../../presentation/screens/settings_screen.dart';
+import '../../presentation/screens/touch_controls_screen.dart';
+import '../../presentation/screens/vip_mods_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -37,6 +40,18 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/disclaimer',
       pageBuilder: (_, s) => _page(const DisclaimerScreen(), s),
+    ),
+    GoRoute(
+      path: '/vip',
+      pageBuilder: (_, s) => _page(const VipModsScreen(), s),
+    ),
+    GoRoute(
+      path: '/dynos',
+      pageBuilder: (_, s) => _page(const DynosScreen(), s),
+    ),
+    GoRoute(
+      path: '/touch-controls',
+      pageBuilder: (_, s) => _page(const TouchControlsScreen(), s),
     ),
     GoRoute(
       path: '/mod/:id',

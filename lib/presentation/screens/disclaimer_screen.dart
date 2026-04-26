@@ -193,6 +193,10 @@ class _DisclaimerBody extends StatelessWidget {
         const SizedBox(height: 8),
 
         _WarningBanner(isSpanish: isSpanish, isDark: isDark),
+        const SizedBox(height: 20),
+
+        // ── v1.1.0 What's new badge ──────────────────────────────────────
+        _WhatsNewBanner(isSpanish: isSpanish, isDark: isDark),
         const SizedBox(height: 28),
 
         _SectionLabel(
@@ -212,8 +216,8 @@ class _DisclaimerBody extends StatelessWidget {
         Center(
           child: Text(
             isSpanish
-                ? 'para uso personal · No oficial'
-                : 'for personal use · Unofficial',
+                ? 'v1.1.0 · para uso personal · No oficial'
+                : 'v1.1.0 · for personal use · Unofficial',
             style: TextStyle(
               color: Theme.of(
                 context,
@@ -276,6 +280,16 @@ const _sectionsEn = [
         'any mod files.',
   ),
   _SectionData(
+    icon: Icons.auto_awesome_rounded,
+    title: 'Exclusive sections (VIP · DynOS · Touch Controls)',
+    body:
+        'Starting with v1.1.0, the app includes curated sections with '
+        'content not officially listed on the SM64CoopDX website. These '
+        'sections (VIP Mods, DynOS packs, and Touch Control layouts) are '
+        'maintained independently by the developer and are not affiliated '
+        'with any official source. All credit goes to the original creators.',
+  ),
+  _SectionData(
     icon: Icons.bug_report_rounded,
     title: 'Bugs, suggestions & requests',
     body:
@@ -314,6 +328,17 @@ const _sectionsEs = [
         'mods.sm64coopdx.com. Esta app únicamente presenta esa información '
         'de manera más accesible; no aloja, modifica ni redistribuye '
         'ningún archivo de mod.',
+  ),
+  _SectionData(
+    icon: Icons.auto_awesome_rounded,
+    title: 'Secciones exclusivas (VIP · DynOS · Touch Controls)',
+    body:
+        'A partir de la v1.1.0, la app incluye secciones curadas con '
+        'contenido que no está listado oficialmente en el sitio de SM64CoopDX. '
+        'Estas secciones (VIP Mods, packs de DynOS y layouts de Touch Controls) '
+        'son mantenidas de forma independiente por el desarrollador y no tienen '
+        'ninguna afiliación con ninguna fuente oficial. Todo el crédito '
+        'pertenece a los creadores originales.',
   ),
   _SectionData(
     icon: Icons.bug_report_rounded,
@@ -383,7 +408,114 @@ class _HeroBadge extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 8),
+        // Version pill
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerHigh,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
+          ),
+          child: Text(
+            'v1.1.0',
+            style: TextStyle(
+              color: cs.onSurfaceVariant,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
       ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// What's new banner — v1.1.0
+// ─────────────────────────────────────────────────────────────────────────────
+class _WhatsNewBanner extends StatelessWidget {
+  const _WhatsNewBanner({required this.isSpanish, required this.isDark});
+  final bool isSpanish;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    final items = isSpanish
+        ? [
+            (
+              Icons.workspace_premium_rounded,
+              'VIP Mods — contenido curado exclusivo',
+            ),
+            (Icons.animation_rounded, 'DynOS — packs de modelos y animaciones'),
+            (Icons.touch_app_rounded, 'Touch Controls — layouts táctiles'),
+            (Icons.download_rounded, 'Descarga directa en todas las secciones'),
+          ]
+        : [
+            (
+              Icons.workspace_premium_rounded,
+              'VIP Mods — curated exclusive content',
+            ),
+            (Icons.animation_rounded, 'DynOS — model & animation packs'),
+            (Icons.touch_app_rounded, 'Touch Controls — touch layout presets'),
+            (Icons.download_rounded, 'Direct download across all sections'),
+          ];
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      decoration: BoxDecoration(
+        color: cs.secondaryContainer.withValues(alpha: isDark ? 0.28 : 0.20),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: cs.secondary.withValues(alpha: isDark ? 0.30 : 0.20),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.new_releases_rounded, size: 16, color: cs.secondary),
+              const SizedBox(width: 8),
+              Text(
+                isSpanish ? 'Novedades en v1.1.0' : "What's new in v1.1.0",
+                style: TextStyle(
+                  color: cs.onSurface,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(item.$1, size: 14, color: cs.secondary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      item.$2,
+                      style: TextStyle(
+                        color: cs.onSurfaceVariant,
+                        fontSize: 12.5,
+                        height: 1.4,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -529,8 +661,6 @@ class _SectionLabel extends StatelessWidget {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Contact button — full-width Discord banner button
-// The SVG (rectangular logo with icon + "Discord" wordmark) is displayed
-// large and centred inside a blurple card. Tapping opens the Discord server.
 // ─────────────────────────────────────────────────────────────────────────────
 class _ContactButton extends StatefulWidget {
   const _ContactButton({
@@ -611,9 +741,6 @@ class _ContactButtonState extends State<_ContactButton>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── SVG libre, sin fondo, colores propios ────────────────────
-            // SizedBox da restricción finita de ancho para que SvgPicture
-            // no reciba un constraint infinito dentro del Column.
             SizedBox(
               width: double.infinity,
               child: SvgPicture.asset(
@@ -626,7 +753,6 @@ class _ContactButtonState extends State<_ContactButton>
 
             const SizedBox(height: 12),
 
-            // ── Botón azul: solo texto descriptivo + flecha ──────────────
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -784,7 +910,6 @@ class _TranslateButtonState extends State<_TranslateButton>
                     size: 18,
                   ),
                   const SizedBox(width: 8),
-                  // Label that cross-fades on toggle
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 240),
                     transitionBuilder: (child, anim) =>
