@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
 
 import '../providers/mod_providers.dart';
+import '../providers/extra_providers.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/app_drawer.dart';
 
@@ -502,32 +503,56 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
     if (_loading) return;
     setState(() => _loading = true);
 
-    final datasource = ref.read(localDatasourceProvider);
-    final result = await datasource.fetchRemote();
+    // Fire all 4 fetches in parallel
+    final results = await Future.wait([
+      ref.read(localDatasourceProvider).fetchRemote(),
+      ref.read(vipDatasourceProvider).fetchRemote(),
+      ref.read(dynosDatasourceProvider).fetchRemote(),
+      ref.read(touchControlDatasourceProvider).fetchRemote(),
+    ]);
 
     if (!mounted) return;
     setState(() => _loading = false);
 
-    if (result.success) {
-      // Refresh del provider para que toda la UI recargue con los nuevos datos
-      ref.invalidate(allModsProvider);
+    // Invalidate all 4 providers so the UI reloads with fresh data
+    ref.invalidate(allModsProvider);
+    ref.invalidate(allVipModsProvider);
+    ref.invalidate(allDynosProvider);
+    ref.invalidate(allTouchControlsProvider);
 
-      final modCount = result.modCount ?? 0;
-      final date = result.generatedAt?.isNotEmpty == true
-          ? ' · Generated ${result.generatedAt}'
+    final allOk = results.every((r) => r.success);
+    final anyOk = results.any((r) => r.success);
+
+    if (allOk) {
+      final modCount = results[0].modCount ?? 0;
+      final date = results[0].generatedAt?.isNotEmpty == true
+          ? ' · ${results[0].generatedAt}'
           : '';
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Database updated · $modCount mods$date'),
+          content: Text('All databases updated · $modCount mods$date'),
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } else if (anyOk) {
+      final failed = [
+        if (!results[0].success) 'Mods',
+        if (!results[1].success) 'VIP',
+        if (!results[2].success) 'DynOS',
+        if (!results[3].success) 'Touch Controls',
+      ].join(', ');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Partial update · Failed: $failed'),
+          backgroundColor: Theme.of(context).colorScheme.errorContainer,
           behavior: SnackBarBehavior.floating,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.errorMessage ?? 'Unknown error'),
+          content: Text(results[0].errorMessage ?? 'Unknown error'),
           backgroundColor: Theme.of(context).colorScheme.errorContainer,
           behavior: SnackBarBehavior.floating,
         ),
