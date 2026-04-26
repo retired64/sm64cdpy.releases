@@ -43,6 +43,49 @@
       "is_featured": false,
       "added_at": "2025-01-01"
     }
+    ,
+    "last-impact": {
+      "title": "Last Impact Coop",
+      "version": "v1.0.1",
+      "recommended_version": "SM64CoopDX v1.4",
+      "author": "ManIsCat2",
+      "description": "2 new bossfights (spider and virus), music added to hub 2, flood detection, collision fixes for hub 1, proper OMM compatibility, course 11 music fix, code gate in course 10, and various other bug fixes.",
+      "image_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/last_impact_coop_v1.0.1.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/last_impact_coop_v1.0.1.zip",
+      "tags": [],
+      "rating": 0,
+      "rating_count": 0,
+      "is_featured": false,
+      "added_at": "2025-01-01"
+    },
+    "peachfury": {
+      "title": "Peach's Fury",
+      "version": "v1.3",
+      "recommended_version": "SM64CoopDX v1.4",
+      "author": "ManIsCat2",
+      "description": "Added cloud powerup, camera custom SFX, all 8-bit level music, audio fade in/out, star name display on collection, all stars now completable, fixed star saving and collection sound. Peach says subscribe to Kaze after 25 stars.",
+      "image_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/peachfury.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/peachfury.zip",
+      "tags": [],
+      "rating": 0,
+      "rating_count": 0,
+      "is_featured": false,
+      "added_at": "2025-01-01"
+    },
+    "sm64land": {
+      "title": "Cat's SM64 Land",
+      "version": "v1.0",
+      "recommended_version": "SM64CoopDX v1.4",
+      "author": "ManIsCat2",
+      "description": "Port is 94% completed. Final Bowser fight not available — objective is to collect any available stars. Contributions are open.",
+      "image_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/sm64land.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/sm64land.zip",
+      "tags": [],
+      "rating": 0,
+      "rating_count": 0,
+      "is_featured": false,
+      "added_at": "2025-01-01"
+    }
   }
 }
 
