@@ -30,12 +30,14 @@ final touchControlDatasourceProvider = Provider<TouchControlDatasource>(
 
 final allVipModsProvider = FutureProvider<List<VipModEntity>>((ref) async {
   final datasource = ref.watch(vipDatasourceProvider);
+  await datasource.fetchRemote(); // always download fresh from GitHub
   final models = await datasource.getAll();
   return models.map((model) => model.toEntity()).toList();
 });
 
 final allDynosProvider = FutureProvider<List<DynosEntity>>((ref) async {
   final datasource = ref.watch(dynosDatasourceProvider);
+  await datasource.fetchRemote(); // always download fresh from GitHub
   final models = await datasource.getAll();
   return models.map((model) => model.toEntity()).toList();
 });
@@ -44,6 +46,7 @@ final allTouchControlsProvider = FutureProvider<List<TouchControlEntity>>((
   ref,
 ) async {
   final datasource = ref.watch(touchControlDatasourceProvider);
+  await datasource.fetchRemote(); // always download fresh from GitHub
   final models = await datasource.getAll();
   return models.map((model) => model.toEntity()).toList();
 });
