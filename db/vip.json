@@ -14,6 +14,35 @@
       "rating_count": 42,
       "is_featured": true,
       "added_at": "2025-01-01"
+    },
+    "b3313": {
+      "title": "B3313",
+      "version": "v0.7 Update 13.1",
+      "recommended_version": "SM64CoopDX v1.4",
+      "author": "TikalSM64 & Blocky.cmd",
+      "description": "Some extra bug fixes, general compatibility tweaks, etc. Fixes voice desync issues, Crescent Castle death door, updated star tracker texture and layout, new custom palettes, and various small tweaks.",
+      "image_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/B3313.webp",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/B3313.zip",
+      "tags": [],
+      "rating": 0,
+      "rating_count": 0,
+      "is_featured": false,
+      "added_at": "2025-01-01"
+    },
+    "mitm": {
+      "title": "MITM",
+      "version": "-",
+      "recommended_version": "SM64CoopDX v1.4",
+      "author": "ManIsCat2",
+      "description": "Pizza tower work (Warps need to be fixed) idrk how warps in MITM work some scripts errors",
+      "image_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/mitm.webp",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/mitm.zip",
+      "tags": [],
+      "rating": 0,
+      "rating_count": 0,
+      "is_featured": false,
+      "added_at": "2025-01-01"
     }
   }
 }
+
