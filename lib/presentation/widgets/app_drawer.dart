@@ -309,30 +309,7 @@ class _DrawerHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: Row(
         children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [cs.primary.withValues(alpha: 0.88), cs.primary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(11),
-              boxShadow: [
-                BoxShadow(
-                  color: cs.primary.withValues(alpha: 0.28),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.star_rounded,
-              color: Colors.white,
-              size: 22,
-            ),
-          ),
+          SvgPicture.asset('assets/icons/logo.svg', width: 48, height: 48),
           const SizedBox(width: 13),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
