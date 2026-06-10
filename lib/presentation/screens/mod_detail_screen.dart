@@ -11,6 +11,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../providers/mod_providers.dart';
+import '../widgets/app_snackbar.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -902,36 +903,11 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
     required String message,
     required bool isError,
   }) {
-    final cs = widget.cs;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: isError ? cs.errorContainer : cs.primaryContainer,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        content: Row(
-          children: [
-            Icon(
-              icon,
-              size: 18,
-              color: isError ? cs.onErrorContainer : cs.onPrimaryContainer,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                message,
-                style: TextStyle(
-                  color: isError ? cs.onErrorContainer : cs.onPrimaryContainer,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    if (isError) {
+      AppSnackbar.error(context, message: message);
+    } else {
+      AppSnackbar.success(context, message: message);
+    }
   }
 
   @override
@@ -1176,36 +1152,11 @@ class _DownloadFileRowState extends State<_DownloadFileRow>
     required String message,
     required bool isError,
   }) {
-    final cs = widget.cs;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: isError ? cs.errorContainer : cs.primaryContainer,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        content: Row(
-          children: [
-            Icon(
-              icon,
-              size: 18,
-              color: isError ? cs.onErrorContainer : cs.onPrimaryContainer,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                message,
-                style: TextStyle(
-                  color: isError ? cs.onErrorContainer : cs.onPrimaryContainer,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    if (isError) {
+      AppSnackbar.error(context, message: message);
+    } else {
+      AppSnackbar.success(context, message: message);
+    }
   }
 
   @override

@@ -11,6 +11,7 @@ import '../../core/theme/app_theme.dart';
 import '../../domain/entities/vip_mod_entity.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/app_snackbar.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -259,15 +260,10 @@ class _VipModCardState extends ConsumerState<VipModCard>
     await toggleVipFavourite(ref, widget.mod.id);
     if (!mounted) return;
     final isNowFav = ref.read(vipFavouritesProvider).contains(widget.mod.id);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          isNowFav
-              ? 'Added to favorites'
-              : 'Removed from favorites',
-        ),
-        duration: const Duration(seconds: 1),
-      ),
+    AppSnackbar.info(
+      context,
+      message: isNowFav ? 'Added to favorites' : 'Removed from favorites',
+      duration: const Duration(seconds: 1),
     );
   }
 
@@ -324,17 +320,10 @@ class _VipModCardState extends ConsumerState<VipModCard>
           _progress = 0.0;
           _realProgress = 0.0;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Row(
-              children: [
-                const Icon(Icons.check_circle_rounded, size: 18, color: Colors.white),
-                const SizedBox(width: 10),
-                Expanded(child: Text('Downloaded: ${path.split('/').last}')),
-              ],
-            ),
-          ),
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        AppSnackbar.success(
+          context,
+          message: 'Downloaded: ${path.split('/').last}',
         );
       },
       onDownloadError: (error) {
@@ -345,18 +334,8 @@ class _VipModCardState extends ConsumerState<VipModCard>
           _progress = 0.0;
           _realProgress = 0.0;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Row(
-              children: [
-                Icon(Icons.error_rounded, size: 18, color: Colors.white),
-                SizedBox(width: 10),
-                Text('Download failed'),
-              ],
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        AppSnackbar.error(context, message: 'Download failed');
       },
     );
   }

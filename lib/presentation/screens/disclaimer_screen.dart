@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/app_drawer.dart';
+import '../widgets/app_snackbar.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DisclaimerScreen
@@ -711,13 +712,7 @@ class _ContactButtonState extends State<_ContactButton>
       );
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Could not open the link'),
-            backgroundColor: Theme.of(context).colorScheme.errorContainer,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        AppSnackbar.error(context, message: 'Could not open the link');
       }
     }
   }

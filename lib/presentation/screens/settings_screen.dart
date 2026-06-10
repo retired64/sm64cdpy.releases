@@ -7,6 +7,7 @@ import '../../core/constants/app_constants.dart';
 import '../providers/mod_providers.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/app_snackbar.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -69,15 +70,7 @@ class SettingsScreen extends ConsumerWidget {
     final count = ref.read(favouritesProvider).length;
     if (count == 0) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('You have no favourites to export.'),
-          backgroundColor: Theme.of(
-            context,
-          ).colorScheme.surfaceContainerHighest,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      AppSnackbar.info(context, message: 'You have no favourites to export.');
       return;
     }
 
@@ -87,13 +80,7 @@ class SettingsScreen extends ConsumerWidget {
     if (!context.mounted) return;
 
     if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error),
-          backgroundColor: Theme.of(context).colorScheme.errorContainer,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      AppSnackbar.error(context, message: error);
     }
     // Si error == null el share sheet ya se abrió; no hace falta snackbar.
   }
@@ -113,13 +100,7 @@ class SettingsScreen extends ConsumerWidget {
     if (result.cancelled) return;
 
     if (result.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.error!),
-          backgroundColor: Theme.of(context).colorScheme.errorContainer,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      AppSnackbar.error(context, message: result.error!);
       return;
     }
 
@@ -132,16 +113,11 @@ class SettingsScreen extends ConsumerWidget {
       parts.add('${result.skippedUnknown} not found in catalogue');
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          result.added == 0
-              ? 'Nothing new to import. ${parts.join(' · ')}'
-              : 'Import complete · ${parts.join(' · ')}',
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        behavior: SnackBarBehavior.floating,
-      ),
+    AppSnackbar.success(
+      context,
+      message: result.added == 0
+          ? 'Nothing new to import. ${parts.join(' · ')}'
+          : 'Import complete · ${parts.join(' · ')}',
     );
   }
 
@@ -183,15 +159,7 @@ class SettingsScreen extends ConsumerWidget {
                 ref.read(favouritesProvider.notifier).toggle(id);
               }
               Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Favourites cleared'),
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              AppSnackbar.success(context, message: 'Favourites cleared');
             },
             child: Text(
               'Clear',
@@ -207,13 +175,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showUrlError(BuildContext context, String url) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Cannot open URL: $url'),
-        backgroundColor: Theme.of(context).colorScheme.errorContainer,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    AppSnackbar.error(context, message: 'Cannot open URL: $url');
   }
 }
 
@@ -517,20 +479,14 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
           ? ' · Generated ${result.generatedAt}'
           : '';
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Database updated · $modCount mods$date'),
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          behavior: SnackBarBehavior.floating,
-        ),
+      AppSnackbar.success(
+        context,
+        message: 'Database updated · $modCount mods$date',
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.errorMessage ?? 'Unknown error'),
-          backgroundColor: Theme.of(context).colorScheme.errorContainer,
-          behavior: SnackBarBehavior.floating,
-        ),
+      AppSnackbar.error(
+        context,
+        message: result.errorMessage ?? 'Unknown error',
       );
     }
   }
