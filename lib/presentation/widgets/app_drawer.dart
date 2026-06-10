@@ -177,7 +177,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       ctrl: _staggerCtrl,
                       child: _NavItem(
                         icon: Icons.auto_awesome_rounded,
-                        label: 'OMM Rebirth Pack',
+                        label: 'OMMR PACK',
                         route: '/omm-rebirth',
                         isActive: widget.currentRoute == '/omm-rebirth',
                       ),

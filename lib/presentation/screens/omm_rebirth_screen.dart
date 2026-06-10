@@ -82,10 +82,10 @@ class _OmmBody extends StatelessWidget {
           ),
           title: Row(
             children: [
-              Text('🌀', style: const TextStyle(fontSize: 18)),
+              Text('', style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
               Text(
-                'OMM Rebirth Pack',
+                'OMM PACK',
                 style: TextStyle(
                   color: cs.onSurface,
                   fontSize: 17,
@@ -124,7 +124,7 @@ class _OmmBody extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'OMM Rebirth Content',
+                  'OMM Rebirth Mods',
                   style: TextStyle(
                     color: cs.onSurface,
                     fontSize: 15,
@@ -221,13 +221,14 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
       vsync: this,
       duration: const Duration(seconds: 18),
     );
-    _fakeAnim = Tween<double>(begin: 0.0, end: 0.85).animate(
-      CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
-    )..addListener(() {
-      if (mounted && _downloading && _realProgress <= 0.0) {
-        setState(() => _progress = _fakeAnim.value);
-      }
-    });
+    _fakeAnim =
+        Tween<double>(begin: 0.0, end: 0.85).animate(
+          CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
+        )..addListener(() {
+          if (mounted && _downloading && _realProgress <= 0.0) {
+            setState(() => _progress = _fakeAnim.value);
+          }
+        });
   }
 
   void _startLongPress() {
@@ -291,7 +292,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
       name: filename,
       onProgress: (name, progress) {
         if (!mounted) return;
-        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(
+          0.0,
+          1.0,
+        );
         if (normalized > _progress) {
           setState(() {
             _realProgress = normalized;
@@ -306,8 +310,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
           vsync: this,
           duration: const Duration(milliseconds: 400),
         );
-        final completeAnim = Tween<double>(begin: _progress, end: 1.0)
-            .animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
+        final completeAnim = Tween<double>(
+          begin: _progress,
+          end: 1.0,
+        ).animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
         completeAnim.addListener(() {
           if (mounted) setState(() => _progress = completeAnim.value);
         });
@@ -410,15 +416,15 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                   ),
                                 ),
                           )
-                      : Container(
-                          color: cs.surfaceContainerHigh,
-                          height: 180,
-                          child: Icon(
-                            Icons.extension_rounded,
-                            size: 32,
-                            color: cs.outline,
+                        : Container(
+                            color: cs.surfaceContainerHigh,
+                            height: 180,
+                            child: Icon(
+                              Icons.extension_rounded,
+                              size: 32,
+                              color: cs.outline,
+                            ),
                           ),
-                        ),
                   ),
                   // Favourite heart (indicator only)
                   Padding(
@@ -535,10 +541,14 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                       width: double.infinity,
                       child: TextButton.icon(
                         icon: Icon(
-                          isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                          isFav
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
                           size: 16,
                         ),
-                        label: Text(isFav ? 'Remove from Favorites' : 'Add to Favorites'),
+                        label: Text(
+                          isFav ? 'Remove from Favorites' : 'Add to Favorites',
+                        ),
                         onPressed: _toggleFavorite,
                         style: TextButton.styleFrom(
                           foregroundColor: cs.primary,
@@ -558,17 +568,23 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                           backgroundColor: cs.primary,
                           foregroundColor: cs.onPrimary,
                           disabledBackgroundColor: cs.primary,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                         child: _downloading
                             ? Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     LinearProgressIndicator(
                                       value: _progress,
-                                      backgroundColor: Colors.white.withOpacity(0.3),
+                                      backgroundColor: Colors.white.withOpacity(
+                                        0.3,
+                                      ),
                                       color: Colors.white,
                                       minHeight: 4,
                                       borderRadius: BorderRadius.circular(2),
@@ -576,7 +592,11 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                     const SizedBox(height: 4),
                                     Text(
                                       '${(_progress * 100).toStringAsFixed(1)}%',
-                                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -586,7 +606,13 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                 children: [
                                   Icon(Icons.download_rounded, size: 18),
                                   SizedBox(width: 8),
-                                  Text('Download', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                                  Text(
+                                    'Download',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ],
                               ),
                       ),
