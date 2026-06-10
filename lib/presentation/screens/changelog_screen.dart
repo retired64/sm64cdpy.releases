@@ -366,6 +366,7 @@ const _kVersions = <_VersionData>[
       _ChangeGroupData(
         type: _ChangeType.added,
         items: [
+          'OTA update system — automatic update detection from GitHub Releases with in-app download, progress bar, and one-tap APK installation (Android only).',
           'OMM Rebirth Pack section — exclusive content for OMM Rebirth mods with download and favourites support.',
           'Centralised notification system — all snackbars now use a consistent floating-card design with icon + accent border (success / error / info).',
         ],
@@ -389,7 +390,7 @@ const _kVersions = <_VersionData>[
   _VersionData(
     version: '1.1.0',
     date: 'April 2026',
-    tag: 'Latest',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,

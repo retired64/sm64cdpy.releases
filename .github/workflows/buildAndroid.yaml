@@ -1,0 +1,325 @@
+name: Build & Release — Sm64CDPY
+
+# ─── Triggers ────────────────────────────────────────────────────────────────
+on:
+  workflow_dispatch:          # Lanzamiento manual desde la UI de GitHub Actions
+    inputs:
+      prerelease:
+        description: '¿Marcar como pre-release? (para pruebas)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+# ─── Permisos ─────────────────────────────────────────────────────────────────
+permissions:
+  contents: write   # Necesario para crear GitHub Releases y subir assets
+
+# ─── Job principal ────────────────────────────────────────────────────────────
+jobs:
+  build-and-release:
+    name: Build APKs y publicar release
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Historial completo (necesario para tags)
+
+      # ── 2. Java 17 ───────────────────────────────────────────────────────────
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # ── 3. Flutter ───────────────────────────────────────────────────────────
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+          cache: true          # Cachea el SDK para builds más rápidos
+
+      # ── 4. Extraer versión desde pubspec.yaml ─────────────────────────────
+      - name: Extraer versión de pubspec.yaml
+        id: version
+        run: |
+          RAW=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION=$(echo "$RAW" | cut -d'+' -f1)       # "1.2.0"
+          VERSION_CODE=$(echo "$RAW" | cut -d'+' -f2)  # "4"
+
+          echo "version=$VERSION"           >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+
+          echo "──────────────────────────────────"
+          echo "  versionName : $VERSION"
+          echo "  versionCode : $VERSION_CODE"
+          echo "──────────────────────────────────"
+
+      # ── 5. Verificar que el tag no exista ya ─────────────────────────────
+      - name: Verificar que el tag v${{ steps.version.outputs.version }} no existe
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
+            echo "ERROR: El tag $TAG ya existe en el repositorio."
+            echo "   Sube el versionCode en pubspec.yaml antes de hacer release."
+            exit 1
+          fi
+          echo "Tag $TAG disponible"
+
+      # ── 6. Keystore ───────────────────────────────────────────────────────
+      - name: Decodificar Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/keystore.jks
+
+      - name: Crear key.properties
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=keystore.jks
+          EOF
+
+      # ── 7. Dependencias ──────────────────────────────────────────────────
+      - name: Instalar dependencias
+        run: flutter pub get
+
+      # ── 8. Análisis estático ─────────────────────────────────────────────
+      - name: flutter analyze
+        run: flutter analyze --no-fatal-infos
+        continue-on-error: false
+
+      # ── 9. Build APKs split por ABI ─────────────────────────────────────
+      - name: Build APKs (arm64-v8a, armeabi-v7a, x86_64)
+        run: flutter build apk --release --split-per-abi
+
+      # ── 10. Verificar que los 3 APKs se generaron ────────────────────────
+      - name: Verificar APKs generados
+        run: |
+          APK_DIR="build/app/outputs/flutter-apk"
+          MISSING=0
+          for APK in \
+            "app-arm64-v8a-release.apk" \
+            "app-armeabi-v7a-release.apk" \
+            "app-x86_64-release.apk"
+          do
+            if [ ! -f "$APK_DIR/$APK" ]; then
+              echo "No encontrado: $APK"
+              MISSING=$((MISSING+1))
+            else
+              SIZE=$(du -h "$APK_DIR/$APK" | cut -f1)
+              echo "$APK ($SIZE)"
+            fi
+          done
+          if [ "$MISSING" -gt 0 ]; then exit 1; fi
+
+      # ── 11. Backup de APKs como artifact ─────────────────────────────────
+      # Permite descargar los APKs desde la UI de Actions aunque el release falle
+      - name: Backup APKs como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apks-v${{ steps.version.outputs.version }}
+          path: |
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            build/app/outputs/flutter-apk/app-x86_64-release.apk
+          retention-days: 7
+
+      # ── 12. Renombrar APKs al formato OTA ────────────────────────────────
+      # Formato requerido por UpdateConfig.fromGithubRelease():
+      # el nombre DEBE contener las keywords: arm64, arm32, x86_64
+      - name: Renombrar APKs con sufijo de arquitectura
+        id: apks
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          APK_DIR="build/app/outputs/flutter-apk"
+
+          ARM64_NAME="Sm64CDPYv${V}-arm64.apk"
+          ARM32_NAME="Sm64CDPYv${V}-arm32.apk"
+          X86_NAME="Sm64CDPYv${V}-x86_64.apk"
+
+          mv "$APK_DIR/app-arm64-v8a-release.apk"   "$APK_DIR/$ARM64_NAME"
+          mv "$APK_DIR/app-armeabi-v7a-release.apk"  "$APK_DIR/$ARM32_NAME"
+          mv "$APK_DIR/app-x86_64-release.apk"       "$APK_DIR/$X86_NAME"
+
+          echo "──────────────────────────────────────────"
+          echo "  arm64  → $ARM64_NAME"
+          echo "  arm32  → $ARM32_NAME"
+          echo "  x86_64 → $X86_NAME"
+          echo "──────────────────────────────────────────"
+
+          echo "arm64=$APK_DIR/$ARM64_NAME"   >> $GITHUB_OUTPUT
+          echo "arm32=$APK_DIR/$ARM32_NAME"   >> $GITHUB_OUTPUT
+          echo "x86_64=$APK_DIR/$X86_NAME"    >> $GITHUB_OUTPUT
+
+      # ── 13. Extraer changelog desde changelog_screen.dart ─────────────────
+      # Única fuente de changelogs: lib/presentation/screens/changelog_screen.dart
+      # Extrae los ítems agrupados por tipo (Added / Improved / Removed)
+      # para la versión que se está publicando
+      - name: Preparar release notes
+        id: notes
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          CHANGELOG_FILE="lib/presentation/screens/changelog_screen.dart"
+          NOTES_FILE="/tmp/release_notes.txt"
+
+          {
+            echo "## Sm64CDPY v${V}"
+            echo ""
+          } > "$NOTES_FILE"
+
+          # ── Buscar la versión en el archivo Dart ──────────────
+          START_LINE=$(grep -n "version: '$V'" "$CHANGELOG_FILE" | head -1 | cut -d: -f1)
+
+          if [ -n "$START_LINE" ]; then
+            # Buscar dónde termina este bloque (siguiente _VersionData o EOF)
+            END_OFFSET=$(tail -n +$((START_LINE + 1)) "$CHANGELOG_FILE" \
+              | grep -n "^  _VersionData(" | head -1 | cut -d: -f1)
+
+            if [ -n "$END_OFFSET" ]; then
+              END_LINE=$((START_LINE + END_OFFSET - 1))
+              SECTION=$(sed -n "${START_LINE},${END_LINE}p" "$CHANGELOG_FILE")
+            else
+              SECTION=$(tail -n +"$START_LINE" "$CHANGELOG_FILE")
+            fi
+
+            # ── Parsear ítems agrupados por _ChangeType ──────
+            echo "$SECTION" | awk '
+              BEGIN { in_items = 0; cur_type = ""; first = 1 }
+
+              /type: _ChangeType\./ {
+                if ($0 ~ /added/)    cur_type = "Added"
+                else if ($0 ~ /improved/) cur_type = "Improved"
+                else if ($0 ~ /removed/)  cur_type = "Removed"
+                first = 1
+              }
+
+              /items: \[/ { in_items = 1; next }
+
+              # Cierra el array de items (8 espacios de indent)
+              in_items && /^        \]/ { in_items = 0 }
+
+              # Captura cada ítem entre comillas simples
+              in_items && /'"'"'/ {
+                line = $0
+                sub(/^[[:space:]]*'"'"'/, "", line)
+                sub(/'"'"',?[[:space:]]*$/, "", line)
+                if (length(line) > 0) {
+                  if (first) {
+                    printf "\n### %s\n", cur_type
+                    first = 0
+                  }
+                  printf "- %s\n", line
+                }
+              }
+            ' >> "$NOTES_FILE"
+          fi
+
+          # ── Fallback si no se extrajo nada ─────────────────
+          LINE_COUNT=$(wc -l < "$NOTES_FILE")
+          if [ "$LINE_COUNT" -le 2 ]; then
+            echo "No se encontraron ítems de changelog para v${V}. Usando mensaje genérico."
+            echo "Nueva versión disponible." >> "$NOTES_FILE"
+          fi
+
+          # ── Sección de descargas (siempre presente) ────────
+          cat >> "$NOTES_FILE" << 'DOWNLOADS'
+
+          ---
+          ## Descargas
+
+          - **arm64** → dispositivos modernos 64-bit (2018+) ← recomendado
+          - **arm32** → dispositivos antiguos 32-bit
+          - **x86_64** → emuladores
+          DOWNLOADS
+
+          echo "── Contenido del release notes ──────────────"
+          cat "$NOTES_FILE"
+          echo "─────────────────────────────────────────────"
+
+      # ── 14. Calcular SHA-256 de los APKs ─────────────────────────────────
+      - name: Calcular checksums SHA-256
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          APK_DIR="build/app/outputs/flutter-apk"
+          NOTES_FILE="/tmp/release_notes.txt"
+
+          {
+            echo ""
+            echo "---"
+            echo "## Checksums SHA-256"
+            echo ""
+            echo '```'
+          } >> "$NOTES_FILE"
+
+          for APK in \
+            "Sm64CDPYv${V}-arm64.apk" \
+            "Sm64CDPYv${V}-arm32.apk" \
+            "Sm64CDPYv${V}-x86_64.apk"
+          do
+            HASH=$(sha256sum "$APK_DIR/$APK" | awk '{print $1}')
+            echo "sha256:${HASH}  $APK" >> "$NOTES_FILE"
+            echo "  $APK → $HASH"
+          done
+
+          echo '```' >> "$NOTES_FILE"
+
+      # ── 15. Publicar GitHub Release ───────────────────────────────────────
+      - name: Publicar GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: "Sm64CDPY v${{ steps.version.outputs.version }}"
+          body_path: /tmp/release_notes.txt
+          files: |
+            ${{ steps.apks.outputs.arm64 }}
+            ${{ steps.apks.outputs.arm32 }}
+            ${{ steps.apks.outputs.x86_64 }}
+          draft: false
+          prerelease: ${{ inputs.prerelease == 'true' }}
+          make_latest: ${{ inputs.prerelease == 'false' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 16. Resumen en el job summary ─────────────────────────────────────
+      - name: Resumen del release
+        if: success()
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          VC="${{ steps.version.outputs.version_code }}"
+          APK_DIR="build/app/outputs/flutter-apk"
+
+          ARM64_SIZE=$(du -h "$APK_DIR/Sm64CDPYv${V}-arm64.apk" | cut -f1)
+          ARM32_SIZE=$(du -h "$APK_DIR/Sm64CDPYv${V}-arm32.apk" | cut -f1)
+          X86_SIZE=$(du -h   "$APK_DIR/Sm64CDPYv${V}-x86_64.apk" | cut -f1)
+
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## Release publicado: Sm64CDPY v${V}
+
+          | Archivo | Arquitectura | Tamaño |
+          |---|---|---|
+          | Sm64CDPYv${V}-arm64.apk | arm64-v8a (recomendado) | ${ARM64_SIZE} |
+          | Sm64CDPYv${V}-arm32.apk | armeabi-v7a | ${ARM32_SIZE} |
+          | Sm64CDPYv${V}-x86_64.apk | x86_64 (emuladores) | ${X86_SIZE} |
+
+          - **Tag:** \`v${V}\`
+          - **versionCode:** \`${VC}\`
+          - **Pre-release:** \`${{ inputs.prerelease }}\`
+
+          https://github.com/${{ github.repository }}/releases/tag/v${V}
+          EOF
+
+      # ── 17. Limpiar keystore SIEMPRE (incluso si falla el build) ──────────
+      - name: Limpiar keystore
+        if: always()
+        run: |
+          rm -f android/app/keystore.jks
+          rm -f android/key.properties
+          echo "Keystore eliminado del runner"

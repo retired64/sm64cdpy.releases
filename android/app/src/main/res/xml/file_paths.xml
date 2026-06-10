@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cache externo para descargas temporales -->
+    <external-cache-path name="apk_cache" path="." />
+    <!-- Cache interno -->
+    <cache-path name="internal_cache" path="." />
+    <!-- Directorio donde ota_update almacena el APK descargado -->
+    <files-path name="ota_update" path="ota_update/" />
+    <!-- Archivos externos de la app -->
+    <external-files-path name="external_files" path="." />
+</paths>
