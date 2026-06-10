@@ -359,6 +359,34 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
+    version: '1.2.0',
+    date: 'June 2026',
+    tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'OMM Rebirth Pack section — exclusive content for OMM Rebirth mods with download and favourites support.',
+          'Centralised notification system — all snackbars now use a consistent floating-card design with icon + accent border (success / error / info).',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Unified 30+ SnackBars across 7 screens into a single AppSnackbar helper (no more eye-strain solid backgrounds).',
+          'Notification contrast improved — floating rounded cards with surface-based backgrounds instead of harsh container colours.',
+          'OMM Rebirth Pack listed under the EXCLUSIVE section in the navigation drawer.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.removed,
+        items: [
+          'Visual tags removed from OMM Rebirth Pack cards (irrelevant metadata for that section).',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
     version: '1.1.0',
     date: 'April 2026',
     tag: 'Latest',

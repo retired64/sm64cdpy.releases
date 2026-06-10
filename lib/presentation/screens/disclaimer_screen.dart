@@ -196,7 +196,7 @@ class _DisclaimerBody extends StatelessWidget {
         _WarningBanner(isSpanish: isSpanish, isDark: isDark),
         const SizedBox(height: 20),
 
-        // ── v1.1.0 What's new badge ──────────────────────────────────────
+        // ── v1.2.0 What's new badge ──────────────────────────────────────
         _WhatsNewBanner(isSpanish: isSpanish, isDark: isDark),
         const SizedBox(height: 28),
 
@@ -217,8 +217,8 @@ class _DisclaimerBody extends StatelessWidget {
         Center(
           child: Text(
             isSpanish
-                ? 'v1.1.0 · para uso personal · No oficial'
-                : 'v1.1.0 · for personal use · Unofficial',
+                ? 'v1.2.0 · para uso personal · No oficial'
+                : 'v1.2.0 · for personal use · Unofficial',
             style: TextStyle(
               color: Theme.of(
                 context,
@@ -284,7 +284,7 @@ const _sectionsEn = [
     icon: Icons.auto_awesome_rounded,
     title: 'Exclusive sections (VIP · DynOS · Touch Controls)',
     body:
-        'Starting with v1.1.0, the app includes curated sections with '
+        'Starting with v1.2.0, the app includes curated sections with '
         'content not officially listed on the SM64CoopDX website. These '
         'sections (VIP Mods, DynOS packs, and Touch Control layouts) are '
         'maintained independently by the developer and are not affiliated '
@@ -334,7 +334,7 @@ const _sectionsEs = [
     icon: Icons.auto_awesome_rounded,
     title: 'Secciones exclusivas (VIP · DynOS · Touch Controls)',
     body:
-        'A partir de la v1.1.0, la app incluye secciones curadas con '
+        'A partir de la v1.2.0, la app incluye secciones curadas con '
         'contenido que no está listado oficialmente en el sitio de SM64CoopDX. '
         'Estas secciones (VIP Mods, packs de DynOS y layouts de Touch Controls) '
         'son mantenidas de forma independiente por el desarrollador y no tienen '
@@ -419,7 +419,7 @@ class _HeroBadge extends StatelessWidget {
             border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
           ),
           child: Text(
-            'v1.1.0',
+            'v1.2.0',
             style: TextStyle(
               color: cs.onSurfaceVariant,
               fontSize: 11,
@@ -434,7 +434,7 @@ class _HeroBadge extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// What's new banner — v1.1.0
+// What's new banner — v1.2.0
 // ─────────────────────────────────────────────────────────────────────────────
 class _WhatsNewBanner extends StatelessWidget {
   const _WhatsNewBanner({required this.isSpanish, required this.isDark});
@@ -448,21 +448,27 @@ class _WhatsNewBanner extends StatelessWidget {
     final items = isSpanish
         ? [
             (
-              Icons.workspace_premium_rounded,
-              'VIP Mods — contenido curado exclusivo',
+              Icons.auto_awesome_rounded,
+              'OMM Rebirth Pack — mods exclusivos para OMM',
             ),
-            (Icons.animation_rounded, 'DynOS — packs de modelos y animaciones'),
-            (Icons.touch_app_rounded, 'Touch Controls — layouts táctiles'),
-            (Icons.download_rounded, 'Descarga directa en todas las secciones'),
+            (
+              Icons.notifications_rounded,
+              'Notificaciones modernizadas — diseño flotante unificado',
+            ),
+            (Icons.palette_rounded, 'Mejor contraste visual — sin fatiga ocular'),
+            (Icons.speed_rounded, 'Rendimiento optimizado y consistencia UI'),
           ]
         : [
             (
-              Icons.workspace_premium_rounded,
-              'VIP Mods — curated exclusive content',
+              Icons.auto_awesome_rounded,
+              'OMM Rebirth Pack — exclusive OMM mods',
             ),
-            (Icons.animation_rounded, 'DynOS — model & animation packs'),
-            (Icons.touch_app_rounded, 'Touch Controls — touch layout presets'),
-            (Icons.download_rounded, 'Direct download across all sections'),
+            (
+              Icons.notifications_rounded,
+              'Modernised notifications — unified floating design',
+            ),
+            (Icons.palette_rounded, 'Better visual contrast — no eye strain'),
+            (Icons.speed_rounded, 'Optimised performance & UI consistency'),
           ];
 
     return Container(
@@ -482,7 +488,7 @@ class _WhatsNewBanner extends StatelessWidget {
               Icon(Icons.new_releases_rounded, size: 16, color: cs.secondary),
               const SizedBox(width: 8),
               Text(
-                isSpanish ? 'Novedades en v1.1.0' : "What's new in v1.1.0",
+                isSpanish ? 'Novedades en v1.2.0' : "What's new in v1.2.0",
                 style: TextStyle(
                   color: cs.onSurface,
                   fontSize: 13,
