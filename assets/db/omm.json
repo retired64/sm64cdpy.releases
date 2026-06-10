@@ -1,0 +1,19 @@
+{
+  "generated_at": "2025-01-01T00:00:00Z",
+  "omm_mods": {
+    "cappy-door-break": {
+      "title": "Cappy Door Break",
+      "version": "1.0",
+      "recommended_version": "OMM Rebirth v1.0",
+      "author": "Retired64",
+      "description": "Break through doors in a fun way using Cappy! Requires OMM Rebirth Pack to function.",
+      "image_url": "https://img.youtube.com/vi/VYbMVvkDNNc/maxresdefault.jpg",
+      "download_url": "https://github.com/retired64/archive.sm64cdpy.mods/raw/refs/heads/main/Mods/cappy-door-break.zip",
+      "tags": ["retired64", "omm-rebirth", "fun", "doors"],
+      "rating": 4.8,
+      "rating_count": 42,
+      "is_featured": true,
+      "added_at": "2025-01-01"
+    }
+  }
+}

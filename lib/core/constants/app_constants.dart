@@ -5,6 +5,7 @@ class AppConstants {
   static const String vipModsAssetPath = 'assets/db/vip.json';
   static const String dynosAssetPath = 'assets/db/dynos.json';
   static const String touchControlsAssetPath = 'assets/db/touch_controls.json';
+  static const String ommRebirthAssetPath = 'assets/db/omm.json';
   static const String favoritesBoxKey = 'favorites';
   static const String settingsBoxKey = 'settings';
 
@@ -27,6 +28,8 @@ class AppConstants {
       'https://raw.githubusercontent.com/retired64/sm64cdpy.releases/main/db/dynos.json';
   static const String touchControlsRemoteUrl =
       'https://raw.githubusercontent.com/retired64/sm64cdpy.releases/main/db/touch_controls.json';
+  static const String ommRebirthRemoteUrl =
+      'https://raw.githubusercontent.com/retired64/sm64cdpy.releases/main/db/omm.json';
 
   // ── Social Links ─────────────────────────────────────────────────────────
   static const String youtubeUrl = 'https://www.youtube.com/@retired64';

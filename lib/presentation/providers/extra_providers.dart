@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/datasource/vip_mod_datasource.dart';
 import '../../data/datasource/dynos_datasource.dart';
 import '../../data/datasource/touch_control_datasource.dart';
+import '../../data/datasource/omm_rebirth_datasource.dart';
 import '../../domain/entities/vip_mod_entity.dart';
 import '../../domain/entities/dynos_entity.dart';
 import '../../domain/entities/touch_control_entity.dart';
+import '../../domain/entities/omm_rebirth_entity.dart';
 import 'mod_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -22,6 +24,10 @@ final dynosDatasourceProvider = Provider<DynosDatasource>(
 
 final touchControlDatasourceProvider = Provider<TouchControlDatasource>(
   (_) => TouchControlDatasource(),
+);
+
+final ommRebirthDatasourceProvider = Provider<OmmRebirthDatasource>(
+  (_) => OmmRebirthDatasource(),
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -51,6 +57,13 @@ final allTouchControlsProvider = FutureProvider<List<TouchControlEntity>>((
   return models.map((model) => model.toEntity()).toList();
 });
 
+final allOmmRebirthProvider = FutureProvider<List<OmmRebirthEntity>>((ref) async {
+  final datasource = ref.watch(ommRebirthDatasourceProvider);
+  await datasource.fetchRemote(); // always download fresh from GitHub
+  final models = await datasource.getAll();
+  return models.map((model) => model.toEntity()).toList();
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Favourites filtering (using existing favouritesProvider)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -59,6 +72,7 @@ final allTouchControlsProvider = FutureProvider<List<TouchControlEntity>>((
 const _kVipPrefix = 'vip_';
 const _kDynosPrefix = 'dynos_';
 const _kTouchPrefix = 'tc_';
+const _kOmmPrefix = 'omm_';
 
 /// Filtra los favoritos del box global por prefijo y devuelve los IDs sin prefijo.
 Set<String> _filterFavIdsByPrefix(Set<String> allFavIds, String prefix) {
@@ -86,6 +100,12 @@ final touchFavouritesProvider = Provider<Set<String>>((ref) {
   return _filterFavIdsByPrefix(allFavs, _kTouchPrefix);
 });
 
+/// Provider que expone los IDs de OMM Rebirth marcados como favoritos.
+final ommFavouritesProvider = Provider<Set<String>>((ref) {
+  final allFavs = ref.watch(favouritesProvider);
+  return _filterFavIdsByPrefix(allFavs, _kOmmPrefix);
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Favourite items providers (filtered lists)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -105,6 +125,16 @@ final favouriteDynosProvider = Provider<AsyncValue<List<DynosEntity>>>((ref) {
       .watch(allDynosProvider)
       .whenData((mods) => mods.where((m) => favIds.contains(m.id)).toList());
 });
+
+final favouriteOmmRebirthProvider =
+    Provider<AsyncValue<List<OmmRebirthEntity>>>((ref) {
+      final favIds = ref.watch(ommFavouritesProvider);
+      return ref
+          .watch(allOmmRebirthProvider)
+          .whenData(
+            (mods) => mods.where((m) => favIds.contains(m.id)).toList(),
+          );
+    });
 
 final favouriteTouchControlsProvider =
     Provider<AsyncValue<List<TouchControlEntity>>>((ref) {
@@ -148,6 +178,18 @@ bool isVipFavourite(WidgetRef ref, String vipModId) {
 bool isDynosFavourite(WidgetRef ref, String dynosId) {
   final notifier = ref.read(favouritesProvider.notifier);
   return notifier.isFav('$_kDynosPrefix$dynosId');
+}
+
+/// Agrega/quita un OMM Rebirth mod de favoritos (añade prefijo al ID almacenado).
+Future<void> toggleOmmFavourite(WidgetRef ref, String ommId) async {
+  final notifier = ref.read(favouritesProvider.notifier);
+  await notifier.toggle('$_kOmmPrefix$ommId');
+}
+
+/// Verifica si un OMM Rebirth mod está en favoritos.
+bool isOmmFavourite(WidgetRef ref, String ommId) {
+  final notifier = ref.read(favouritesProvider.notifier);
+  return notifier.isFav('$_kOmmPrefix$ommId');
 }
 
 /// Verifica si un Touch Control está en favoritos.

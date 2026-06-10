@@ -43,4 +43,5 @@ flutter:
     - assets/db/vip.json
     - assets/db/dynos.json
     - assets/db/touch_controls.json
+    - assets/db/omm.json
     - assets/icons/

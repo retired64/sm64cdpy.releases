@@ -12,6 +12,7 @@ import '../../presentation/screens/popular_screen.dart';
 import '../../presentation/screens/settings_screen.dart';
 import '../../presentation/screens/touch_controls_screen.dart';
 import '../../presentation/screens/vip_mods_screen.dart';
+import '../../presentation/screens/omm_rebirth_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -52,6 +53,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/touch-controls',
       pageBuilder: (_, s) => _page(const TouchControlsScreen(), s),
+    ),
+    GoRoute(
+      path: '/omm-rebirth',
+      pageBuilder: (_, s) => _page(const OmmRebirthScreen(), s),
     ),
     GoRoute(
       path: '/mod/:id',

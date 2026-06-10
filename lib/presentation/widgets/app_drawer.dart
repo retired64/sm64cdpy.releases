@@ -172,10 +172,20 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         isActive: widget.currentRoute == '/touch-controls',
                       ),
                     ),
+                    _staggerItem(
+                      index: 9,
+                      ctrl: _staggerCtrl,
+                      child: _NavItem(
+                        icon: Icons.auto_awesome_rounded,
+                        label: 'OMM Rebirth Pack',
+                        route: '/omm-rebirth',
+                        isActive: widget.currentRoute == '/omm-rebirth',
+                      ),
+                    ),
 
                     // Separador degradado antes de Explore
                     _staggerItem(
-                      index: 9,
+                      index: 10,
                       ctrl: _staggerCtrl,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
@@ -183,17 +193,17 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       ),
                     ),
                     _staggerItem(
-                      index: 9,
+                      index: 10,
                       ctrl: _staggerCtrl,
                       child: const _SectionLabel('Explore'),
                     ),
                     _staggerItem(
-                      index: 10,
+                      index: 11,
                       ctrl: _staggerCtrl,
                       child: _CategoryList(currentRoute: widget.currentRoute),
                     ),
                     _staggerItem(
-                      index: 11,
+                      index: 12,
                       ctrl: _staggerCtrl,
                       child: _SortOptions(currentRoute: widget.currentRoute),
                     ),
