@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../services/update_service.dart';
+import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
 import '../providers/theme_provider.dart';
@@ -49,6 +51,7 @@ class SettingsScreen extends ConsumerWidget {
 
           const SizedBox(height: 20),
           _SectionLabel('About'),
+          _CheckUpdateTile(),
           _SettingsTile(
             icon: Icons.info_outline_rounded,
             title: 'App version',
@@ -534,6 +537,96 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
           ),
         ),
         onTap: _loading ? null : _reload,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _CheckUpdateTile
+// Consulta la GitHub Releases API y muestra el diálogo de actualización
+// si hay una versión nueva disponible.
+// ─────────────────────────────────────────────────────────────────────────────
+class _CheckUpdateTile extends StatefulWidget {
+  const _CheckUpdateTile();
+
+  @override
+  State<_CheckUpdateTile> createState() => _CheckUpdateTileState();
+}
+
+class _CheckUpdateTileState extends State<_CheckUpdateTile> {
+  bool _loading = false;
+
+  Future<void> _check() async {
+    if (_loading) return;
+    setState(() => _loading = true);
+
+    final config = await UpdateService.checkForUpdates();
+
+    if (!mounted) return;
+    setState(() => _loading = false);
+
+    if (config != null) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => UpdateDialog(
+          config: config,
+          isForce: config.forceUpdate,
+        ),
+      );
+    } else {
+      AppSnackbar.info(
+        context,
+        message: 'You\'re up to date · v${UpdateService.currentVersion}',
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: cs.outline),
+      ),
+      child: ListTile(
+        leading: _loading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: cs.primary,
+                ),
+              )
+            : Icon(
+                Icons.system_update_rounded,
+                color: cs.onSurfaceVariant,
+                size: 20,
+              ),
+        title: Text(
+          'Check for updates',
+          style: TextStyle(
+            color: cs.onSurface,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          _loading ? 'Checking...' : 'Current: v${UpdateService.currentVersion}',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        onTap: _loading ? null : _check,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
