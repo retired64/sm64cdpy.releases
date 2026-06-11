@@ -403,7 +403,7 @@ const _kVersions = <_VersionData>[
   _VersionData(
     version: '1.2.0',
     date: 'June 2026',
-    tag: 'Latest',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,
