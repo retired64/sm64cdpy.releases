@@ -59,11 +59,12 @@ class UpdateConfig {
 
     final body = json['body'] as String? ?? '';
     final forceUpdate = body.contains('[FORCE]');
+    final cleanedChangelog = _stripMarkdown(body);
 
     return UpdateConfig(
       latestVersion: version,
       updateUrl: downloadUrl,
-      changelog: json['body'] as String?,
+      changelog: cleanedChangelog,
       apkSize: size,
       forceUpdate: forceUpdate,
     );
@@ -88,5 +89,33 @@ class UpdateConfig {
   static String _selectApkUrl(List<dynamic> assets, AbiType abi) {
     final asset = _findAsset(assets, abi);
     return asset?['browser_download_url'] as String? ?? '';
+  }
+
+  /// Limpia el changelog eliminando sintaxis Markdown de GitHub
+  /// para mostrarlo como texto plano en la app.
+  static String _stripMarkdown(String body) {
+    var text = body;
+
+    text = text.replaceAll('[FORCE]', '');
+    text = text.replaceAll(RegExp(r'```[\s\S]*?```'), '');
+    text = text.replaceAll('`', '');
+
+    text = text.replaceAll(RegExp(r'\[([^\]]+)\]\([^)]+\)'), r'$1');
+
+    text = text.replaceAll(RegExp(r'\*\*(.+?)\*\*'), r'$1');
+    text = text.replaceAll(RegExp(r'\*(.+?)\*'), r'$1');
+    text = text.replaceAll(RegExp(r'__(.+?)__'), r'$1');
+    text = text.replaceAll(RegExp(r'_(.+?)_'), r'$1');
+
+    text = text.replaceAll(RegExp(r'^#{1,6}\s+', multiLine: true), '');
+    text = text.replaceAll(RegExp(r'^[-*+]\s+', multiLine: true), '');
+
+    text = text.replaceAll(RegExp(r'^---+\s*$', multiLine: true), '');
+
+    text = text.replaceAll(RegExp(r'^>\s?', multiLine: true), '');
+
+    text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+
+    return text.trim();
   }
 }

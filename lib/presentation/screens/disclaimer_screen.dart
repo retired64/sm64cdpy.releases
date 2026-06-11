@@ -217,8 +217,8 @@ class _DisclaimerBody extends StatelessWidget {
         Center(
           child: Text(
             isSpanish
-                ? 'v1.3.0 · para uso personal · No oficial'
-                : 'v1.3.0 · for personal use · Unofficial',
+                ? 'v1.3.1 · para uso personal · No oficial'
+                : 'v1.3.1 · for personal use · Unofficial',
             style: TextStyle(
               color: Theme.of(
                 context,
@@ -284,7 +284,7 @@ const _sectionsEn = [
     icon: Icons.auto_awesome_rounded,
     title: 'Exclusive sections (VIP · DynOS · Touch Controls)',
     body:
-        'Starting with v1.3.0, the app includes curated sections with '
+        'Starting with v1.3.1, the app includes curated sections with '
         'content not officially listed on the SM64CoopDX website. These '
         'sections (VIP Mods, DynOS packs, and Touch Control layouts) are '
         'maintained independently by the developer and are not affiliated '
@@ -334,7 +334,7 @@ const _sectionsEs = [
     icon: Icons.auto_awesome_rounded,
     title: 'Secciones exclusivas (VIP · DynOS · Touch Controls)',
     body:
-        'A partir de la v1.3.0, la app incluye secciones curadas con '
+        'A partir de la v1.3.1, la app incluye secciones curadas con '
         'contenido que no está listado oficialmente en el sitio de SM64CoopDX. '
         'Estas secciones (VIP Mods, packs de DynOS y layouts de Touch Controls) '
         'son mantenidas de forma independiente por el desarrollador y no tienen '
@@ -419,7 +419,7 @@ class _HeroBadge extends StatelessWidget {
             border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
           ),
           child: Text(
-            'v1.3.0',
+            'v1.3.1',
             style: TextStyle(
               color: cs.onSurfaceVariant,
               fontSize: 11,
@@ -434,7 +434,7 @@ class _HeroBadge extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// What's new banner — v1.3.0
+// What's new banner — v1.3.1
 // ─────────────────────────────────────────────────────────────────────────────
 class _WhatsNewBanner extends StatelessWidget {
   const _WhatsNewBanner({required this.isSpanish, required this.isDark});
@@ -448,33 +448,31 @@ class _WhatsNewBanner extends StatelessWidget {
     final items = isSpanish
         ? [
             (
-              Icons.system_update_rounded,
-              'Actualizaciones OTA — detección automática y check manual',
+              Icons.settings_rounded,
+              'Actualizaciones OTA — solo manual desde Ajustes',
             ),
             (
-              Icons.devices_rounded,
-              'Detección real de ABI — arm64, arm32 y x86_64',
+              Icons.visibility_rounded,
+              'Changelog limpio — sin etiquetas Markdown visibles',
             ),
             (
-              Icons.cached_rounded,
-              'Caché de actualizaciones — máximo 1 consulta cada 6h',
+              Icons.notifications_off_rounded,
+              'Sin verificaciones automáticas al iniciar la app',
             ),
-            (Icons.rocket_launch_rounded, 'Renovación del home — más limpio y rápido'),
           ]
         : [
             (
-              Icons.system_update_rounded,
-              'OTA updates — auto detection + manual check button',
+              Icons.settings_rounded,
+              'OTA updates — manual checking only from Settings',
             ),
             (
-              Icons.devices_rounded,
-              'Real ABI detection — arm64, arm32 & x86_64',
+              Icons.visibility_rounded,
+              'Clean changelog — no visible Markdown tags',
             ),
             (
-              Icons.cached_rounded,
-              'Update cache — max 1 check every 6h',
+              Icons.notifications_off_rounded,
+              'No automatic update checks on app startup',
             ),
-            (Icons.rocket_launch_rounded, 'Home refresh — cleaner & faster'),
           ];
 
     return Container(
@@ -494,7 +492,7 @@ class _WhatsNewBanner extends StatelessWidget {
               Icon(Icons.new_releases_rounded, size: 16, color: cs.secondary),
               const SizedBox(width: 8),
               Text(
-                isSpanish ? 'Novedades en v1.3.0' : "What's new in v1.3.0",
+                isSpanish ? 'Novedades en v1.3.1' : "What's new in v1.3.1",
                 style: TextStyle(
                   color: cs.onSurface,
                   fontSize: 13,

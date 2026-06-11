@@ -8,7 +8,6 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'services/update_service.dart';
-import 'widgets/update_dialog.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,8 +47,6 @@ class SM64CoopDXApp extends ConsumerStatefulWidget {
 }
 
 class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
-  bool _updateChecked = false;
-
   @override
   void initState() {
     super.initState();
@@ -59,29 +56,6 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
     ref.listen<bool>(isDarkModeProvider, (previous, next) {
       _updateSystemUIOverlayStyle();
     });
-
-    // Verificar actualizaciones OTA después del primer frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkForUpdates();
-    });
-  }
-
-  Future<void> _checkForUpdates() async {
-    if (_updateChecked) return;
-    _updateChecked = true;
-
-    final config = await UpdateService.checkForUpdates();
-    if (config == null) return;
-    if (!mounted) return;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => UpdateDialog(
-        config: config,
-        isForce: config.forceUpdate,
-      ),
-    );
   }
 
   void _updateSystemUIOverlayStyle() {

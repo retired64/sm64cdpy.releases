@@ -363,9 +363,35 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.3.0',
+    version: '1.3.1',
     date: 'June 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.changed,
+        items: [
+          'OTA update checks are now manual-only — removed the automatic check on app startup. Users must go to Settings → About → "Check for updates" to look for new versions.',
+          'Update dialog changelog now displays as clean plain text instead of raw GitHub Markdown (headings, bold, code blocks, links and bullets are stripped).',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.removed,
+        items: [
+          'Automatic OTA update detection on app launch (the dialog will no longer pop up when opening the app).',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Markdown-stripping preserves readability of GitHub release notes while removing visual noise ([FORCE] tags, code fences, emphasis markers).',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.3.0',
+    date: 'June 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,
