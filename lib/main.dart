@@ -79,7 +79,7 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
       barrierDismissible: false,
       builder: (_) => UpdateDialog(
         config: config,
-        isForce: false,
+        isForce: config.forceUpdate,
       ),
     );
   }

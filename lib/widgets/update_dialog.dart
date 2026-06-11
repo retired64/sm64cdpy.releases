@@ -218,6 +218,15 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   maxLines: 6,
                   overflow: TextOverflow.ellipsis,
                 ),
+              ] else ...[
+                const SizedBox(height: 12),
+                Text(
+                  'Mejoras y correcciones menores.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: cs.onSurfaceVariant,
+                  ),
+                ),
               ],
               if (_downloading) ...[
                 const SizedBox(height: 16),

@@ -31,6 +31,9 @@ dependencies:
   # OTA — Descarga, verificación e instalación del APK
   ota_update: ^7.0.1
   package_info_plus: ^8.1.0
+  device_info_plus: ^12.4.0
+  shared_preferences: ^2.5.5
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
