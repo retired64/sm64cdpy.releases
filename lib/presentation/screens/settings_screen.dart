@@ -53,9 +53,9 @@ class SettingsScreen extends ConsumerWidget {
           _SectionLabel('About'),
           _CheckUpdateTile(),
           _SettingsTile(
-            icon: Icons.info_outline_rounded,
-            title: 'App version',
-            subtitle: AppConstants.appVersion,
+            icon: Icons.open_in_browser_rounded,
+            title: 'Go to releases',
+            subtitle: 'View all versions on GitHub · v${AppConstants.appVersion}',
             onTap: () => _launchUrl(context, AppConstants.githubReleasesUrl),
           ),
           _SettingsTile(
