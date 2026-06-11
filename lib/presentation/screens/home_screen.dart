@@ -44,12 +44,6 @@ class _HomeBody extends StatelessWidget {
     final topMods = ([
       ...mods,
     ]..sort((a, b) => b.downloads.compareTo(a.downloads))).take(5).toList();
-    final newestMods =
-        ([...mods]..sort(
-              (a, b) => (b.lastUpdate ?? '').compareTo(a.lastUpdate ?? ''),
-            ))
-            .take(8)
-            .toList();
     final uniqueTags = <String>{};
     for (final m in mods) {
       uniqueTags.addAll(m.tags);
@@ -100,16 +94,6 @@ class _HomeBody extends StatelessWidget {
 
         // ── Recently updated ──────────────────────────────────
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
-        SliverToBoxAdapter(
-          child: _SectionHeader(
-            title: 'Recently Updated',
-            actionLabel: 'Browse all',
-            onAction: () => context.go('/catalogue'),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-          ),
-        ),
-        const SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverToBoxAdapter(child: _RecentlyUpdated(mods: newestMods)),
 
         const SliverToBoxAdapter(child: SizedBox(height: 40)),
       ],
@@ -639,7 +623,7 @@ class _QuickAccessGrid extends StatelessWidget {
           Expanded(
             child: _QuickCard(
               icon: Icons.apps_rounded,
-              label: 'Catalogue',
+              label: 'Catalog',
               subtitle: 'All mods',
               iconColor: cs.primary,
               iconBg: cs.primaryContainer,
@@ -650,7 +634,7 @@ class _QuickAccessGrid extends StatelessWidget {
           Expanded(
             child: _QuickCard(
               icon: Icons.favorite_rounded,
-              label: 'Favourites',
+              label: 'Fav',
               subtitle: 'Your saved',
               iconColor: cs.secondary,
               iconBg: cs.secondaryContainer,
@@ -1016,158 +1000,6 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                     ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
                 padding: const EdgeInsets.all(4),
                 constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Recently updated horizontal scroll ───────────────────────────────────────
-
-class _RecentlyUpdated extends StatelessWidget {
-  const _RecentlyUpdated({required this.mods});
-
-  final List<ModEntity> mods;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 148,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        physics: const BouncingScrollPhysics(),
-        itemCount: mods.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 10),
-        itemBuilder: (context, i) => _RecentCard(mod: mods[i]),
-      ),
-    );
-  }
-}
-
-class _RecentCard extends StatefulWidget {
-  const _RecentCard({required this.mod});
-
-  final ModEntity mod;
-
-  @override
-  State<_RecentCard> createState() => _RecentCardState();
-}
-
-class _RecentCardState extends State<_RecentCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-    _scale = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return GestureDetector(
-      onTapDown: (_) => _ctrl.forward(),
-      onTapUp: (_) {
-        _ctrl.reverse();
-        context.push('/mod/${Uri.encodeComponent(widget.mod.id)}');
-      },
-      onTapCancel: () => _ctrl.reverse(),
-      child: ScaleTransition(
-        scale: _scale,
-        child: SizedBox(
-          width: 120,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image
-              Hero(
-                tag: 'mod_img_${widget.mod.id}',
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: SizedBox(
-                    width: 120,
-                    height: 100,
-                    child:
-                        widget.mod.imageUrl != null &&
-                            widget.mod.imageUrl!.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: widget.mod.imageUrl!,
-                            fit: BoxFit.cover,
-                            placeholder: (_, _) {
-                              final isDark =
-                                  Theme.of(context).brightness ==
-                                  Brightness.dark;
-                              return Shimmer.fromColors(
-                                baseColor: isDark
-                                    ? AppTheme.darkShimmerBase
-                                    : AppTheme.lightShimmerBase,
-                                highlightColor: isDark
-                                    ? AppTheme.darkShimmerHighlight
-                                    : AppTheme.lightShimmerHighlight,
-                                child: Container(color: Colors.white),
-                              );
-                            },
-                            errorWidget: (_, _, _) => Container(
-                              color: cs.surfaceContainerHigh,
-                              child: Icon(
-                                Icons.extension_rounded,
-                                size: 28,
-                                color: cs.outline,
-                              ),
-                            ),
-                          )
-                        : Container(
-                            color: cs.surfaceContainerHigh,
-                            child: Icon(
-                              Icons.extension_rounded,
-                              size: 28,
-                              color: cs.outline,
-                            ),
-                          ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 7),
-              Text(
-                widget.mod.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: cs.onSurface,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                widget.mod.author,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                ),
               ),
             ],
           ),
