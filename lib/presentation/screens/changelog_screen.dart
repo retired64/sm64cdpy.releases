@@ -307,13 +307,15 @@ enum _ChangeType {
   added,
   improved,
   fixed,
-  removed;
+  removed,
+  changed;
 
   String get label => switch (this) {
     _ChangeType.added => 'New',
     _ChangeType.improved => 'Improved',
     _ChangeType.fixed => 'Fixed',
     _ChangeType.removed => 'Removed',
+    _ChangeType.changed => 'Changed',
   };
 
   IconData get icon => switch (this) {
@@ -321,6 +323,7 @@ enum _ChangeType {
     _ChangeType.improved => Icons.auto_fix_high_rounded,
     _ChangeType.fixed => Icons.bug_report_outlined,
     _ChangeType.removed => Icons.remove_circle_outline_rounded,
+    _ChangeType.changed => Icons.swap_horiz_rounded,
   };
 
   Color get color => switch (this) {
@@ -328,6 +331,7 @@ enum _ChangeType {
     _ChangeType.improved => const Color(0xFF3B82F6),
     _ChangeType.fixed => const Color(0xFFF59E0B),
     _ChangeType.removed => const Color(0xFFEF4444),
+    _ChangeType.changed => const Color(0xFF8B5CF6),
   };
 }
 
@@ -358,6 +362,44 @@ class _ChangeGroupData {
 // Para agregar una versión nueva: inserta una entrada al PRINCIPIO de la lista.
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
+  _VersionData(
+    version: '1.3.0',
+    date: 'June 2026',
+    tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'Manual "Check for updates" button in Settings → About with inline progress indicator and update dialog.',
+          'Force-update support — releases can now include [FORCE] in the changelog body to block app usage until updated.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'OTA now detects the real device ABI at runtime (arm64 / arm32 / x86_64) via device_info_plus instead of assuming arm64-v8a.',
+          'Version comparison now handles semver suffixes (-beta, +5) gracefully and logs errors instead of silently failing.',
+          'GitHub API rate-limit (403) is now distinguished from other HTTP errors in update checks.',
+          'Update checks are cached for 6 hours via SharedPreferences to avoid unnecessary API hits.',
+          '"App version" tile renamed to "Go to releases" with open-in-browser icon.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Update dialog now shows "Mejoras y correcciones menores" when the release changelog is empty or missing.',
+          'Silent version comparison failures on malformed tags no longer swallowed — they are now logged.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.changed,
+        items: [
+          '"Catalogue" quick card renamed to "Catalog" and "Favourites" to "Fav".',
+          '"Recently Updated" horizontal scroll removed from the home screen.',
+        ],
+      ),
+    ],
+  ),
   _VersionData(
     version: '1.2.0',
     date: 'June 2026',
