@@ -1,5 +1,8 @@
 guia_json_estructura.md
 source/*
+.codewhale/
+android-permissions.md
+flutter_permission_handler_plus/
 # Miscellaneous
 *.class
 *.log

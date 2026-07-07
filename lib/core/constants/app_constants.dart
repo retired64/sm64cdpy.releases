@@ -14,7 +14,7 @@ class AppConstants {
   static const int titleMaxLines = 2;
 
   static const String appName = 'SM64CDPY';
-  static const String appVersion = '1.3.1';
+  static const String appVersion = '1.4.0';
 
   // ── External URLs ────────────────────────────────────────────────────────
   static const String githubReleasesUrl =
@@ -35,4 +35,11 @@ class AppConstants {
   static const String youtubeUrl = 'https://www.youtube.com/@retired64';
   static const String discordUrl = 'https://discord.com/invite/thuhUH2WNX';
   static const String githubUrl = 'https://github.com/retired64';
+
+  // ── Mod Installer ───────────────────────────────────────────────────────
+  /// Clave en SharedPreferences para el estado de auto-instalación.
+  static const String autoInstallModsKey = 'auto_install_mods';
+
+  /// Clave en SharedPreferences para la URI del directorio de mods seleccionado.
+  static const String modsDirectoryUriKey = 'mods_directory_uri';
 }

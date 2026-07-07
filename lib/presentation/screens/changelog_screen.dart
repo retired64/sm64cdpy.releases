@@ -363,9 +363,31 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
+    version: '1.4.0',
+    date: 'July 2026',
+    tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'Mod installer — downloaded ZIP files can now be extracted directly into the SM64CoopDX mods folder so mods are ready to play immediately.',
+          'Mods folder selection in Settings → Game Integration — uses the Storage Access Framework (SAF) file picker with persistent permissions across device reboots.',
+          'Auto-install toggle — when enabled, mods are automatically installed to the game folder after each download without confirmation.',
+          'Install progress dialog with success / error states and retry support.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.changed,
+        items: [
+          'Download complete flow now checks for a configured mods folder and offers installation (or auto-installs if the toggle is on).',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
     version: '1.3.1',
     date: 'June 2026',
-    tag: 'Latest',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.changed,

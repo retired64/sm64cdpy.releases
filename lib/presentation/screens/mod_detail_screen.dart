@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
@@ -10,6 +11,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
+import '../../services/mod_installer.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_snackbar.dart';
 
@@ -865,6 +867,8 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
             message: 'Descargado: $savedName',
             isError: false,
           );
+          if (!mounted) return;
+          _tryInstallMod(path, widget.modTitle, savedName);
         },
         onDownloadError: (error) {
           if (!mounted) return;
@@ -896,6 +900,77 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
         );
       }
     }
+  }
+
+  /// Intenta instalar el mod descargado en la carpeta del juego.
+  /// Si el auto-install está activado, instala directamente.
+  /// Si no, muestra un diálogo preguntando al usuario.
+  Future<void> _tryInstallMod(
+      String zipPath, String modTitle, String savedName) async {
+    final installer = ModInstaller();
+    final hasFolder = await installer.isDirectorySelected();
+
+    if (!hasFolder) return; // No hay carpeta configurada, nada que hacer
+
+    // Verificar si auto-install está activado
+    final prefs = await SharedPreferences.getInstance();
+    final autoInstall =
+        prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+
+    if (!mounted) return;
+
+    if (!autoInstall) {
+      // Preguntar al usuario
+      final shouldInstall = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor:
+              Theme.of(ctx).colorScheme.surfaceContainerHighest,
+          icon: Icon(Icons.folder_special_rounded,
+              color: Theme.of(ctx).colorScheme.primary, size: 28),
+          title: Text(
+            'Install to game?',
+            style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+          ),
+          content: Text(
+            'Extract "$savedName" to the SM64CoopDX mods folder?',
+            style: TextStyle(
+                color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text('Not now',
+                  style: TextStyle(
+                      color: Theme.of(ctx).colorScheme.onSurface)),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              icon: const Icon(Icons.download_rounded, size: 16),
+              label: const Text('Install'),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldInstall != true || !mounted) return;
+    }
+
+    // Mostrar progreso de instalación
+    if (!mounted) return;
+    _showInstallProgress(zipPath, modTitle);
+  }
+
+  /// Muestra un diálogo con progreso de instalación y ejecuta la extracción.
+  void _showInstallProgress(String zipPath, String modTitle) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => _InstallProgressDialog(
+        zipPath: zipPath,
+        modName: _sanitizeModTitle(modTitle),
+      ),
+    );
   }
 
   void _showSnackBar({
@@ -1012,6 +1087,7 @@ class _DownloadFileRow extends StatefulWidget {
 
 class _DownloadFileRowState extends State<_DownloadFileRow>
     with SingleTickerProviderStateMixin {
+  final _installer = ModInstaller();
   bool _downloading = false;
   double _progress = 0.0;
   double _realProgress = 0.0;
@@ -1114,6 +1190,8 @@ class _DownloadFileRowState extends State<_DownloadFileRow>
             message: 'Descargado: $savedName',
             isError: false,
           );
+          if (!mounted) return;
+          _tryInstallMod(path, widget.modTitle, savedName);
         },
         onDownloadError: (error) {
           if (!mounted) return;
@@ -1145,6 +1223,64 @@ class _DownloadFileRowState extends State<_DownloadFileRow>
         );
       }
     }
+  }
+
+  Future<void> _tryInstallMod(
+      String zipPath, String modTitle, String savedName) async {
+    final hasFolder = await _installer.isDirectorySelected();
+    if (!hasFolder || !mounted) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final autoInstall =
+        prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+
+    if (!mounted) return;
+
+    if (!autoInstall) {
+      final shouldInstall = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor:
+              Theme.of(ctx).colorScheme.surfaceContainerHighest,
+          icon: Icon(Icons.folder_special_rounded,
+              color: Theme.of(ctx).colorScheme.primary, size: 28),
+          title: Text(
+            'Install to game?',
+            style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+          ),
+          content: Text(
+            'Extract "$savedName" to the SM64CoopDX mods folder?',
+            style: TextStyle(
+                color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text('Not now',
+                  style: TextStyle(
+                      color: Theme.of(ctx).colorScheme.onSurface)),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              icon: const Icon(Icons.download_rounded, size: 16),
+              label: const Text('Install'),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldInstall != true || !mounted) return;
+    }
+
+    if (!mounted) return;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => _InstallProgressDialog(
+        zipPath: zipPath,
+        modName: _sanitizeModTitle(modTitle),
+      ),
+    );
   }
 
   void _showSnackBar({
@@ -2102,6 +2238,191 @@ class _DetailError extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ── Install progress dialog ─────────────────────────────────────────────────
+
+class _InstallProgressDialog extends StatefulWidget {
+  const _InstallProgressDialog({
+    required this.zipPath,
+    required this.modName,
+  });
+
+  final String zipPath;
+  final String modName;
+
+  @override
+  State<_InstallProgressDialog> createState() => _InstallProgressDialogState();
+}
+
+class _InstallProgressDialogState extends State<_InstallProgressDialog>
+    with SingleTickerProviderStateMixin {
+  bool _installing = true;
+  bool _success = false;
+  String _message = 'Installing mod...';
+  String? _error;
+
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulseAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+    _pulseAnim = Tween<double>(begin: 0.6, end: 1.0).animate(_pulseCtrl);
+
+    _install();
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _install() async {
+    final installer = ModInstaller();
+    final result = await installer.installMod(
+      zipPath: widget.zipPath,
+      modName: widget.modName,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _installing = false;
+      _success = result.success;
+      if (result.success) {
+        _message =
+            'Installed \u2714 ${result.fileCount} files to "${result.targetDir}"';
+      } else {
+        _error = result.errorMessage ?? 'Installation failed';
+        _message = 'Installation failed';
+      }
+    });
+
+    // Auto-cerrar tras 2.5 segundos si fue exitoso
+    if (_success) {
+      await Future.delayed(const Duration(milliseconds: 2500));
+      if (mounted) Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return AlertDialog(
+      backgroundColor: cs.surfaceContainerHighest,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_installing) ...[
+            FadeTransition(
+              opacity: _pulseAnim,
+              child: Icon(
+                Icons.hourglass_top_rounded,
+                size: 48,
+                color: cs.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Installing mod...',
+              style: TextStyle(
+                color: cs.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Extracting and copying files to the game folder',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: cs.onSurfaceVariant,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 20),
+            LinearProgressIndicator(
+              color: cs.primary,
+              backgroundColor: cs.outline.withValues(alpha: 0.2),
+            ),
+          ] else if (_success) ...[
+            Icon(Icons.check_circle_rounded, size: 48, color: cs.primary),
+            const SizedBox(height: 16),
+            Text(
+              _message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: cs.onSurface,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Ready to play',
+              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.check, size: 16),
+              label: const Text('Done'),
+            ),
+          ] else ...[
+            Icon(Icons.error_rounded, size: 48, color: cs.error),
+            const SizedBox(height: 16),
+            Text(
+              _message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: cs.onSurface,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                _error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: cs.error, fontSize: 12),
+              ),
+            ],
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Close',
+                      style: TextStyle(color: cs.onSurface)),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _installing = true;
+                      _error = null;
+                    });
+                    _install();
+                  },
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('Retry'),
+                ),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }

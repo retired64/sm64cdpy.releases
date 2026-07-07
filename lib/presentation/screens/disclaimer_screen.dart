@@ -196,7 +196,7 @@ class _DisclaimerBody extends StatelessWidget {
         _WarningBanner(isSpanish: isSpanish, isDark: isDark),
         const SizedBox(height: 20),
 
-        // ── v1.3.0 What's new badge ──────────────────────────────────────
+        // ── What's new badge ───────────────────────────────────────────
         _WhatsNewBanner(isSpanish: isSpanish, isDark: isDark),
         const SizedBox(height: 28),
 
@@ -217,8 +217,8 @@ class _DisclaimerBody extends StatelessWidget {
         Center(
           child: Text(
             isSpanish
-                ? 'v1.3.1 · para uso personal · No oficial'
-                : 'v1.3.1 · for personal use · Unofficial',
+                ? 'v1.4.0 \u00b7 para uso personal \u00b7 No oficial'
+                : 'v1.4.0 \u00b7 for personal use \u00b7 Unofficial',
             style: TextStyle(
               color: Theme.of(
                 context,
@@ -284,7 +284,7 @@ const _sectionsEn = [
     icon: Icons.auto_awesome_rounded,
     title: 'Exclusive sections (VIP · DynOS · Touch Controls)',
     body:
-        'Starting with v1.3.1, the app includes curated sections with '
+        'Starting with v1.4.0, the app includes curated sections with '
         'content not officially listed on the SM64CoopDX website. These '
         'sections (VIP Mods, DynOS packs, and Touch Control layouts) are '
         'maintained independently by the developer and are not affiliated '
@@ -334,7 +334,7 @@ const _sectionsEs = [
     icon: Icons.auto_awesome_rounded,
     title: 'Secciones exclusivas (VIP · DynOS · Touch Controls)',
     body:
-        'A partir de la v1.3.1, la app incluye secciones curadas con '
+        'A partir de la v1.4.0, la app incluye secciones curadas con '
         'contenido que no está listado oficialmente en el sitio de SM64CoopDX. '
         'Estas secciones (VIP Mods, packs de DynOS y layouts de Touch Controls) '
         'son mantenidas de forma independiente por el desarrollador y no tienen '
@@ -419,7 +419,7 @@ class _HeroBadge extends StatelessWidget {
             border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
           ),
           child: Text(
-            'v1.3.1',
+            'v1.4.0',
             style: TextStyle(
               color: cs.onSurfaceVariant,
               fontSize: 11,
@@ -434,7 +434,7 @@ class _HeroBadge extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// What's new banner — v1.3.1
+// What's new banner — v1.4.0
 // ─────────────────────────────────────────────────────────────────────────────
 class _WhatsNewBanner extends StatelessWidget {
   const _WhatsNewBanner({required this.isSpanish, required this.isDark});
@@ -448,30 +448,30 @@ class _WhatsNewBanner extends StatelessWidget {
     final items = isSpanish
         ? [
             (
-              Icons.settings_rounded,
-              'Actualizaciones OTA — solo manual desde Ajustes',
+              Icons.folder_special_rounded,
+              'Instalación directa de mods al juego — extrae y copia al directorio de mods de SM64CoopDX',
             ),
             (
-              Icons.visibility_rounded,
-              'Changelog limpio — sin etiquetas Markdown visibles',
+              Icons.touch_app_rounded,
+              'Selección de carpeta de mods desde Ajustes — un solo toque, permisos persistentes',
             ),
             (
-              Icons.notifications_off_rounded,
-              'Sin verificaciones automáticas al iniciar la app',
+              Icons.auto_mode_rounded,
+              'Auto-instalación opcional — instala automáticamente tras cada descarga',
             ),
           ]
         : [
             (
-              Icons.settings_rounded,
-              'OTA updates — manual checking only from Settings',
+              Icons.folder_special_rounded,
+              'Direct mod installation to game — extracts and copies to SM64CoopDX mods folder',
             ),
             (
-              Icons.visibility_rounded,
-              'Clean changelog — no visible Markdown tags',
+              Icons.touch_app_rounded,
+              'Mods folder selection in Settings — one tap, persistent permissions',
             ),
             (
-              Icons.notifications_off_rounded,
-              'No automatic update checks on app startup',
+              Icons.auto_mode_rounded,
+              'Optional auto-install — installs automatically after every download',
             ),
           ];
 
@@ -492,7 +492,7 @@ class _WhatsNewBanner extends StatelessWidget {
               Icon(Icons.new_releases_rounded, size: 16, color: cs.secondary),
               const SizedBox(width: 8),
               Text(
-                isSpanish ? 'Novedades en v1.3.1' : "What's new in v1.3.1",
+                isSpanish ? 'Novedades en v1.4.0' : "What's new in v1.4.0",
                 style: TextStyle(
                   color: cs.onSurface,
                   fontSize: 13,

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../services/mod_installer.dart';
 import '../../services/update_service.dart';
 import '../../widgets/update_dialog.dart';
 
@@ -44,6 +46,11 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: 'Restore from a previously exported file',
             onTap: () => _importFavourites(context, ref),
           ),
+
+          const SizedBox(height: 12),
+          _SectionLabel('Game Integration'),
+          _ModsFolderTile(),
+          _AutoInstallToggle(),
 
           const SizedBox(height: 12),
           _SectionLabel('Appearance'),
@@ -179,6 +186,237 @@ class SettingsScreen extends ConsumerWidget {
 
   void _showUrlError(BuildContext context, String url) {
     AppSnackbar.error(context, message: 'Cannot open URL: $url');
+  }
+}
+
+// ── Mods folder tile ───────────────────────────────────────────────────────
+
+class _ModsFolderTile extends ConsumerStatefulWidget {
+  const _ModsFolderTile();
+
+  @override
+  ConsumerState<_ModsFolderTile> createState() => _ModsFolderTileState();
+}
+
+class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
+  bool _loading = false;
+  bool _hasFolder = false;
+
+  final _installer = ModInstaller();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFolder();
+  }
+
+  Future<void> _checkFolder() async {
+    try {
+      final has = await _installer.isDirectorySelected();
+      if (mounted) {
+        setState(() {
+          _hasFolder = has;
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _selectFolder() async {
+    setState(() => _loading = true);
+    try {
+      final uri = await _installer.openDirectoryPicker();
+      if (!mounted) return;
+      if (uri != null) {
+        setState(() {
+          _hasFolder = true;
+        });
+        if (!mounted) return;
+        AppSnackbar.success(
+          context,
+          message: 'Mods folder selected. Mods will be installed here.',
+        );
+      }
+    } on ModInstallerException catch (e) {
+      if (mounted) {
+        AppSnackbar.error(context, message: e.message);
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _confirmClear() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Theme.of(ctx).colorScheme.surfaceContainerHighest,
+        title: Text(
+          'Clear mods folder?',
+          style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+        ),
+        content: Text(
+          'You will need to select the folder again before installing mods to the game.',
+          style: TextStyle(color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(
+              'Clear',
+              style: TextStyle(
+                color: Theme.of(ctx).colorScheme.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _installer.clearDirectorySelection();
+      if (mounted) {
+        setState(() {
+          _hasFolder = false;
+        });
+        AppSnackbar.info(context, message: 'Mods folder selection cleared.');
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: cs.outline),
+      ),
+      child: ListTile(
+        leading: Icon(
+          _hasFolder ? Icons.folder_special_rounded : Icons.folder_open_rounded,
+          color: _hasFolder ? cs.primary : cs.onSurfaceVariant,
+          size: 20,
+        ),
+        title: Text(
+          _hasFolder ? 'Mods folder' : 'Select mods folder',
+          style: TextStyle(
+            color: _hasFolder ? cs.primary : cs.onSurface,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          _hasFolder
+              ? 'Tap to change \u00b7 Long-press to clear'
+              : 'Choose where to install downloaded mods',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: _loading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: cs.primary,
+                ),
+              )
+            : Icon(Icons.chevron_right, color: cs.onSurfaceVariant, size: 20),
+        onTap: _loading ? null : _selectFolder,
+        onLongPress: _hasFolder ? () => _confirmClear() : null,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+}
+
+// ── Auto-install toggle ────────────────────────────────────────────────────
+
+class _AutoInstallToggle extends ConsumerStatefulWidget {
+  const _AutoInstallToggle();
+
+  @override
+  ConsumerState<_AutoInstallToggle> createState() => _AutoInstallToggleState();
+}
+
+class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
+  bool _autoInstall = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPref();
+  }
+
+  Future<void> _loadPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+      });
+    }
+  }
+
+  Future<void> _toggle(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(AppConstants.autoInstallModsKey, value);
+    setState(() => _autoInstall = value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: cs.outline),
+      ),
+      child: SwitchListTile(
+        secondary: Icon(
+          Icons.auto_mode_rounded,
+          color: _autoInstall ? cs.primary : cs.onSurfaceVariant,
+          size: 20,
+        ),
+        title: Text(
+          'Auto-install after download',
+          style: TextStyle(
+            color: cs.onSurface,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          _autoInstall
+              ? 'Mods will be automatically installed to the game folder'
+              : 'You will be asked after each download',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        value: _autoInstall,
+        onChanged: _toggle,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
   }
 }
 

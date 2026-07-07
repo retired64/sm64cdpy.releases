@@ -1,6 +1,6 @@
 name: sm64cdpy
 description: "A mod catalog for SM64 Coop DX — browse, favorite, and explore mods including DynOS packs, touch controls, and more."
-version: 1.3.1+6
+version: 1.4.0+7
 
 environment:
   sdk: ^3.11.0
@@ -27,6 +27,9 @@ dependencies:
   path_provider: ^2.1.0
   http: ^1.6.0
   flutter_file_downloader: ^2.1.1
+
+  # ZIP extraction for mod installation
+  archive: ^4.0.7
 
   # OTA — Descarga, verificación e instalación del APK
   ota_update: ^7.0.1
