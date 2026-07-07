@@ -363,9 +363,22 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.4.0',
+    version: '1.4.1',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Mod installer no longer creates an extra parent folder — ZIP contents are extracted directly into the selected mods directory, preserving the original mod structure so the game detects mods correctly.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.4.0',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,
