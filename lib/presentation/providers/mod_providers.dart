@@ -433,12 +433,26 @@ class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
     final info = BgInstallInfo(
       modName: event.modName,
       status: switch (event) {
-        BgInstallStarted() => BgInstallStatus.installing,
+        BgInstallStarted() => BgInstallStatus.downloading,
+        BgDownloadProgress() => BgInstallStatus.downloading,
+        BgDownloadCompleted() => BgInstallStatus.downloading,
         BgInstallProgress() => BgInstallStatus.installing,
         BgInstallCompleted() => BgInstallStatus.completed,
+        BgOperationCancelled() => BgInstallStatus.cancelled,
         BgInstallError() => BgInstallStatus.error,
       },
+      phase: switch (event) {
+        BgInstallStarted() => BgOperationPhase.downloading,
+        BgDownloadProgress() => BgOperationPhase.downloading,
+        BgDownloadCompleted() => BgOperationPhase.downloading,
+        BgInstallProgress() => BgOperationPhase.installing,
+        BgInstallCompleted() => BgOperationPhase.installing,
+        BgOperationCancelled() => null,
+        BgInstallError() => null,
+      },
       workId: event.workId,
+      downloadProgress: event is BgDownloadProgress ? event.progress :
+                        event is BgDownloadCompleted ? 100 : null,
       current: event is BgInstallProgress ? event.current : null,
       total: event is BgInstallProgress ? event.total : null,
       fileCount: event is BgInstallCompleted ? event.fileCount : null,
@@ -458,6 +472,7 @@ final bgInstallStateProvider =
 final bgActiveInstallCountProvider = Provider<int>((ref) {
   final state = ref.watch(bgInstallStateProvider);
   return state.values
-      .where((i) => i.status == BgInstallStatus.installing)
+      .where((i) => i.status == BgInstallStatus.downloading ||
+                   i.status == BgInstallStatus.installing)
       .length;
 });

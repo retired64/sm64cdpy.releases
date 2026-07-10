@@ -23,12 +23,25 @@ class ModInstallResult {
   final String? errorMessage;
 }
 
+/// Resultado combinado de la cadena download + install.
+class ModChainResult {
+  const ModChainResult({
+    required this.downloadWorkId,
+    required this.installWorkId,
+  });
+
+  final String downloadWorkId;
+  final String installWorkId;
+}
+
 /// Servicio Dart que envuelve el MethodChannel hacia ModInstallerPlugin (Android nativo).
 ///
 /// Responsabilidades:
 /// - Abrir el picker SAF para que el usuario seleccione la carpeta de mods.
 /// - Consultar si ya hay una carpeta seleccionada.
 /// - Instalar un mod (ZIP) en la carpeta seleccionada.
+/// - Descargar e instalar en cadena via WorkManager (downloadAndInstallMod).
+/// - Cancelar operaciones en curso.
 /// - Limpiar la selección.
 class ModInstaller {
   static const _channel = MethodChannel('mods.sm64cdpy/mod_installer');
@@ -99,6 +112,47 @@ class ModInstaller {
       }
     } on PlatformException catch (e) {
       return ModInstallResult.error(e.message ?? 'Native plugin error');
+    }
+  }
+
+  /// Descarga e instala en cadena via WorkManager.
+  ///
+  /// Encadena ModDownloadWorker → ModInstallWorker.
+  /// Retorna inmediatamente con los workIds.
+  /// El progreso se recibe via EventChannel (BackgroundInstallService).
+  Future<ModChainResult?> downloadAndInstallMod({
+    required String url,
+    required String modName,
+    required String fileName,
+  }) async {
+    try {
+      final result = await _channel.invokeMethod<Map>('downloadAndInstallMod', {
+        'url': url,
+        'modName': modName,
+        'fileName': fileName,
+      });
+      if (result == null) return null;
+      return ModChainResult(
+        downloadWorkId: result['downloadWorkId'] as String,
+        installWorkId: result['installWorkId'] as String,
+      );
+    } on PlatformException catch (e) {
+      throw ModInstallerException(
+        e.message ?? 'Failed to start download + install',
+      );
+    }
+  }
+
+  /// Cancela todas las operaciones WorkManager asociadas a un mod.
+  Future<bool> cancelModOperation({required String modName}) async {
+    try {
+      final result = await _channel.invokeMethod<bool>(
+        'cancelModOperation',
+        {'modName': modName},
+      );
+      return result ?? false;
+    } on PlatformException {
+      return false;
     }
   }
 

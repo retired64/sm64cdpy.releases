@@ -120,6 +120,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "getSavedDirectoryUri" -> getSavedDirectoryUri(result)
             "installMod" -> installMod(call, result)
             "installModBackground" -> installModBackground(call, result)
+            "downloadAndInstallMod" -> downloadAndInstallMod(call, result)
+            "cancelModOperation" -> cancelModOperation(call, result)
             "isDirectorySelected" -> isDirectorySelected(result)
             "clearDirectorySelection" -> clearDirectorySelection(result)
             else -> result.notImplemented()
@@ -399,6 +401,212 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         WorkManager.getInstance(act).enqueue(request)
 
         result.success(workId.toString())
+    }
+
+    /**
+     * Descarga e instalación en cadena via WorkManager.
+     *
+     * Encadena ModDownloadWorker → ModInstallWorker.
+     * El ZIP descargado se pasa como input al worker de instalación.
+     * Ambos workers muestran foreground notifications con cancel button.
+     *
+     * Retorna inmediatamente un mapa con downloadWorkId e installWorkId.
+     */
+    private fun downloadAndInstallMod(call: MethodCall, result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        val prefs = getPrefs()
+        val treeUriString = prefs.getString(KEY_TREE_URI, null)
+        if (treeUriString == null) {
+            result.error("NO_DIRECTORY", "No mods directory selected. Please select one in Settings first.", null)
+            return
+        }
+
+        val treeUri = Uri.parse(treeUriString)
+        if (!isTreeAccessible(treeUri)) {
+            prefs.edit().remove(KEY_TREE_URI).apply()
+            result.error(
+                "DIR_NOT_ACCESSIBLE",
+                "The selected directory is no longer accessible. Please select it again in Settings.",
+                null
+            )
+            return
+        }
+
+        val url = call.argument<String>("url")
+        val modName = call.argument<String>("modName")
+        val fileName = call.argument<String>("fileName")
+
+        if (url == null || modName == null || fileName == null) {
+            result.error("INVALID_ARGS", "url, modName and fileName are required", null)
+            return
+        }
+
+        val chainName = "mod_chain_$modName"
+
+        val downloadRequest = OneTimeWorkRequestBuilder<ModDownloadWorker>()
+            .setInputData(workDataOf(
+                ModDownloadWorker.KEY_URL to url,
+                ModDownloadWorker.KEY_MOD_NAME to modName,
+                ModDownloadWorker.KEY_FILE_NAME to fileName
+            ))
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .addTag("mod_dl_$modName")
+            .addTag(chainName)
+            .build()
+
+        val installRequest = OneTimeWorkRequestBuilder<ModInstallWorker>()
+            .setInputData(workDataOf(
+                ModInstallWorker.KEY_MOD_NAME to modName,
+                ModInstallWorker.KEY_TREE_URI to treeUriString
+            ))
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .addTag("mod_install_$modName")
+            .addTag(chainName)
+            .build()
+
+        val downloadId = downloadRequest.id
+        val installId = installRequest.id
+
+        val dlObserver = Observer<WorkInfo> { workInfo ->
+            if (workInfo != null) {
+                val eventData = mutableMapOf<String, Any?>(
+                    "workId" to downloadId.toString(),
+                    "modName" to modName,
+                    "phase" to "downloading",
+                    "state" to workInfo.state.name
+                )
+
+                val progress = workInfo.progress
+                eventData["progress"] = progress.getInt(ModDownloadWorker.PROGRESS, 0)
+
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    eventData["type"] = "download_completed"
+                } else if (workInfo.state == WorkInfo.State.FAILED) {
+                    eventData["type"] = "error"
+                    eventData["error"] = workInfo.outputData.getString("error")
+                        ?: "Download failed"
+                } else if (workInfo.state == WorkInfo.State.CANCELLED) {
+                    eventData["type"] = "cancelled"
+                } else if (workInfo.state == WorkInfo.State.RUNNING) {
+                    eventData["type"] = "download_progress"
+                } else {
+                    eventData["type"] = "pending"
+                }
+
+                sendEvent(eventData)
+
+                if (workInfo.state.isFinished) {
+                    val obs = workObservers.remove(downloadId)
+                    if (obs != null) {
+                        WorkManager.getInstance(act)
+                            .getWorkInfoByIdLiveData(downloadId)
+                            .removeObserver(obs)
+                    }
+                }
+            }
+        }
+
+        val instObserver = Observer<WorkInfo> { workInfo ->
+            if (workInfo != null) {
+                val eventData = mutableMapOf<String, Any?>(
+                    "workId" to installId.toString(),
+                    "modName" to modName,
+                    "phase" to "installing",
+                    "state" to workInfo.state.name
+                )
+
+                val progress = workInfo.progress
+                eventData["current"] = progress.getInt(
+                    ModInstallWorker.PROGRESS_CURRENT, 0
+                )
+                eventData["total"] = progress.getInt(
+                    ModInstallWorker.PROGRESS_TOTAL, 0
+                )
+
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    val output = workInfo.outputData
+                    eventData["type"] = "install_completed"
+                    eventData["fileCount"] = output.getInt(
+                        ModInstallWorker.OUTPUT_FILE_COUNT, 0
+                    )
+                    eventData["targetDir"] = output.getString(
+                        ModInstallWorker.OUTPUT_TARGET_DIR
+                    ) ?: modName
+                } else if (workInfo.state == WorkInfo.State.FAILED) {
+                    eventData["type"] = "error"
+                    eventData["error"] =
+                        workInfo.outputData.getString("error")
+                            ?: "Installation failed"
+                } else if (workInfo.state == WorkInfo.State.CANCELLED) {
+                    eventData["type"] = "cancelled"
+                } else if (workInfo.state == WorkInfo.State.RUNNING) {
+                    eventData["type"] = "install_progress"
+                } else {
+                    eventData["type"] = "pending"
+                }
+
+                sendEvent(eventData)
+
+                if (workInfo.state.isFinished) {
+                    val obs = workObservers.remove(installId)
+                    if (obs != null) {
+                        WorkManager.getInstance(act)
+                            .getWorkInfoByIdLiveData(installId)
+                            .removeObserver(obs)
+                    }
+                }
+            }
+        }
+
+        workObservers[downloadId] = dlObserver
+        workObservers[installId] = instObserver
+
+        WorkManager.getInstance(act)
+            .getWorkInfoByIdLiveData(downloadId)
+            .observeForever(dlObserver)
+
+        WorkManager.getInstance(act)
+            .getWorkInfoByIdLiveData(installId)
+            .observeForever(instObserver)
+
+        WorkManager.getInstance(act)
+            .beginWith(downloadRequest)
+            .then(installRequest)
+            .enqueue()
+
+        result.success(mapOf(
+            "downloadWorkId" to downloadId.toString(),
+            "installWorkId" to installId.toString()
+        ))
+    }
+
+    /**
+     * Cancela todas las operaciones asociadas a un mod por nombre.
+     */
+    private fun cancelModOperation(call: MethodCall, result: Result) {
+        val modName = call.argument<String>("modName")
+        if (modName == null) {
+            result.error("INVALID_ARGS", "modName is required", null)
+            return
+        }
+
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        val wm = WorkManager.getInstance(act)
+        wm.cancelAllWorkByTag("mod_dl_$modName")
+        wm.cancelAllWorkByTag("mod_install_$modName")
+        wm.cancelAllWorkByTag("mod_chain_$modName")
+
+        result.success(true)
     }
 
     // ── EventChannel helper ────────────────────────────────────────────────

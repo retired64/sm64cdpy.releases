@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
@@ -730,7 +729,7 @@ class _DownloadSection extends StatelessWidget {
   }
 }
 
-class _PrimaryDownloadButton extends StatefulWidget {
+class _PrimaryDownloadButton extends ConsumerStatefulWidget {
   const _PrimaryDownloadButton({
     required this.url,
     required this.modTitle,
@@ -742,26 +741,14 @@ class _PrimaryDownloadButton extends StatefulWidget {
   final ColorScheme cs;
 
   @override
-  State<_PrimaryDownloadButton> createState() => _PrimaryDownloadButtonState();
+  ConsumerState<_PrimaryDownloadButton> createState() =>
+      _PrimaryDownloadButtonState();
 }
 
-class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
+class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     with TickerProviderStateMixin {
   late AnimationController _scaleCtrl;
   late Animation<double> _scale;
-
-  // ── Fake-progress animation ──────────────────────────────────────────────────
-  // Simula avance lento hasta ~85 % mientras descarga.
-  // Cuando termina, acelera hasta 100 % y luego oculta la UI.
-  late AnimationController _fakeCtrl;
-  late Animation<double> _fakeAnim;
-
-  bool _downloading = false;
-  double _progress = 0.0; // 0.0–1.0, fuente de verdad para la barra
-
-  // Progreso real recibido del downloader (0.0–1.0).
-  // Si es > 0 la barra lo sigue directamente; si es 0 usamos el fake.
-  double _realProgress = 0.0;
 
   @override
   void initState() {
@@ -775,221 +762,91 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
       begin: 1.0,
       end: 0.96,
     ).animate(CurvedAnimation(parent: _scaleCtrl, curve: Curves.easeOut));
-
-    // Fake: avanza de 0 → 0.85 en ~18 s con curva easeOut (rápido al inicio,
-    // luego se frena para "esperar" la descarga real).
-    _fakeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 18),
-    );
-    _fakeAnim = Tween<double>(begin: 0.0, end: 0.85).animate(
-      CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
-    )..addListener(_onFakeTick);
-  }
-
-  void _onFakeTick() {
-    if (!mounted || !_downloading) return;
-    // Solo aplicamos el fake si el progreso real no ha llegado aún.
-    if (_realProgress <= 0.0) {
-      setState(() => _progress = _fakeAnim.value);
-    }
   }
 
   @override
   void dispose() {
     _scaleCtrl.dispose();
-    _fakeCtrl.dispose();
     super.dispose();
-  }
-
-  /// Completa la barra suavemente hasta 1.0 y luego cierra el estado.
-  Future<void> _finishProgress() async {
-    if (!mounted) return;
-    _fakeCtrl.stop();
-
-    // Anima de donde esté hasta 1.0 en ~400 ms
-    final completeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-    final completeAnim = Tween<double>(
-      begin: _progress,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
-    completeAnim.addListener(() {
-      if (mounted) setState(() => _progress = completeAnim.value);
-    });
-    await completeCtrl.forward();
-    completeCtrl.dispose();
-
-    // Pequeña pausa para que el usuario vea el 100 %
-    await Future.delayed(const Duration(milliseconds: 350));
-    if (mounted) {
-      setState(() {
-        _downloading = false;
-        _progress = 0.0;
-        _realProgress = 0.0;
-      });
-    }
   }
 
   Future<void> _download() async {
     HapticFeedback.mediumImpact();
-    setState(() {
-      _downloading = true;
-      _progress = 0.0;
-      _realProgress = 0.0;
-    });
 
-    // Arranca la animación fake inmediatamente
-    _fakeCtrl.forward(from: 0.0);
+    final modName = _sanitizeModTitle(widget.modTitle);
+    final filename = _inferFileName(widget.url, widget.modTitle);
 
-    try {
-      final uri = Uri.tryParse(widget.url);
-      if (uri == null) throw Exception('Invalid URL');
-
-      final filename = _inferFileName(widget.url, widget.modTitle);
-
-      await FileDownloader.downloadFile(
-        url: widget.url,
-        name: filename,
-        onProgress: (name, progress) {
-          if (!mounted) return;
-          final normalized = (progress > 1.0 ? progress / 100.0 : progress)
-              .clamp(0.0, 1.0);
-          // Solo actualizamos si el real supera el fake (nunca retrocede)
-          if (normalized > _progress) {
-            setState(() {
-              _realProgress = normalized;
-              _progress = normalized;
-            });
-          }
-        },
-        onDownloadCompleted: (path) async {
-          if (!mounted) return;
-          await _finishProgress();
-          if (!mounted) return;
-          final savedName = path.split('/').last;
-          _showSnackBar(
-            icon: Icons.check_circle_rounded,
-            message: 'Descargado: $savedName',
-            isError: false,
-          );
-          if (!mounted) return;
-          _tryInstallMod(path, widget.modTitle, savedName);
-        },
-        onDownloadError: (error) {
-          if (!mounted) return;
-          _fakeCtrl.stop();
-          setState(() {
-            _downloading = false;
-            _progress = 0.0;
-            _realProgress = 0.0;
-          });
-          _showSnackBar(
-            icon: Icons.error_rounded,
-            message: 'Error al descargar',
-            isError: true,
-          );
-        },
-      );
-    } catch (e) {
-      _fakeCtrl.stop();
-      if (mounted) {
-        setState(() {
-          _downloading = false;
-          _progress = 0.0;
-          _realProgress = 0.0;
-        });
-        _showSnackBar(
-          icon: Icons.error_rounded,
-          message: 'Error: ${e.toString()}',
-          isError: true,
-        );
-      }
-    }
-  }
-
-  Future<void> _tryInstallMod(
-      String zipPath, String modTitle, String savedName) async {
     final installer = ModInstaller();
     final hasFolder = await installer.isDirectorySelected();
 
-    if (!hasFolder) return; // No hay carpeta configurada, nada que hacer
+    if (hasFolder) {
+      final prefs = await SharedPreferences.getInstance();
+      final autoInstall =
+          prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
-    // Verificar si auto-install está activado
-    final prefs = await SharedPreferences.getInstance();
-    final autoInstall =
-        prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+      if (!mounted) return;
 
-    if (!mounted) return;
-
-    if (!autoInstall) {
-      // Preguntar al usuario
-      final shouldInstall = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          backgroundColor:
-              Theme.of(ctx).colorScheme.surfaceContainerHighest,
-          icon: Icon(Icons.folder_special_rounded,
-              color: Theme.of(ctx).colorScheme.primary, size: 28),
-          title: Text(
-            'Install to game?',
-            style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
-          ),
-          content: Text(
-            'Extract "$savedName" to the SM64CoopDX mods folder?',
-            style: TextStyle(
-                color: Theme.of(ctx).colorScheme.onSurfaceVariant),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text('Not now',
-                  style: TextStyle(
-                      color: Theme.of(ctx).colorScheme.onSurface)),
+      if (!autoInstall) {
+        final shouldInstall = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor:
+                Theme.of(ctx).colorScheme.surfaceContainerHighest,
+            icon: Icon(Icons.folder_special_rounded,
+                color: Theme.of(ctx).colorScheme.primary, size: 28),
+            title: Text(
+              'Install to game?',
+              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
             ),
-            FilledButton.icon(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              icon: const Icon(Icons.download_rounded, size: 16),
-              label: const Text('Install'),
+            content: Text(
+              'Download and extract "$filename" to the SM64CoopDX mods folder?',
+              style: TextStyle(
+                  color: Theme.of(ctx).colorScheme.onSurfaceVariant),
             ),
-          ],
-        ),
-      );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Not now',
+                    style: TextStyle(
+                        color: Theme.of(ctx).colorScheme.onSurface)),
+              ),
+              FilledButton.icon(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                icon: const Icon(Icons.download_rounded, size: 16),
+                label: const Text('Install'),
+              ),
+            ],
+          ),
+        );
 
-      if (shouldInstall != true || !mounted) return;
+        if (shouldInstall != true || !mounted) return;
+      }
     }
 
     if (!mounted) return;
 
-    final modName = _sanitizeModTitle(modTitle);
-    BackgroundInstallService.instance.startInstall(
-      zipPath: zipPath,
+    BackgroundInstallService.instance.startDownloadAndInstall(
+      url: widget.url,
       modName: modName,
+      fileName: filename,
     );
     if (!mounted) return;
     AppSnackbar.info(
       context,
-      message: 'Installing "$savedName" in background...',
+      message: 'Downloading "$filename"...',
     );
-  }
-
-  void _showSnackBar({
-    required IconData icon,
-    required String message,
-    required bool isError,
-  }) {
-    if (isError) {
-      AppSnackbar.error(context, message: message);
-    } else {
-      AppSnackbar.success(context, message: message);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final cs = widget.cs;
+    final modName = _sanitizeModTitle(widget.modTitle);
+    final info = ref.watch(bgInstallStateProvider)[modName];
+    final isActive = info != null &&
+        (info.status == BgInstallStatus.downloading ||
+         info.status == BgInstallStatus.installing);
+    final downloadProgress =
+        info?.status == BgInstallStatus.downloading ? info?.downloadProgress : null;
 
     return GestureDetector(
       onTapDown: (_) => _scaleCtrl.forward(),
@@ -1018,14 +875,16 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
             ],
           ),
           child: Center(
-            child: _downloading
+            child: isActive
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         LinearProgressIndicator(
-                          value: _progress,
+                          value: downloadProgress != null
+                              ? downloadProgress / 100.0
+                              : null,
                           backgroundColor: Colors.white.withValues(alpha: 0.3),
                           color: Colors.white,
                           minHeight: 4,
@@ -1033,7 +892,9 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '${(_progress * 100).toStringAsFixed(1)}%',
+                          info!.status == BgInstallStatus.downloading
+                              ? 'Downloading ${downloadProgress ?? 0}%'
+                              : 'Installing...',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
@@ -1070,7 +931,7 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
   }
 }
 
-class _DownloadFileRow extends StatefulWidget {
+class _DownloadFileRow extends ConsumerStatefulWidget {
   const _DownloadFileRow({
     required this.index,
     required this.url,
@@ -1084,225 +945,104 @@ class _DownloadFileRow extends StatefulWidget {
   final ColorScheme cs;
 
   @override
-  State<_DownloadFileRow> createState() => _DownloadFileRowState();
+  ConsumerState<_DownloadFileRow> createState() => _DownloadFileRowState();
 }
 
-class _DownloadFileRowState extends State<_DownloadFileRow>
+class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
     with SingleTickerProviderStateMixin {
   final _installer = ModInstaller();
-  bool _downloading = false;
-  double _progress = 0.0;
-  double _realProgress = 0.0;
-
-  late AnimationController _fakeCtrl;
-  late Animation<double> _fakeAnim;
 
   @override
   void initState() {
     super.initState();
-    _fakeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 18),
-    );
-    _fakeAnim =
-        Tween<double>(begin: 0.0, end: 0.85).animate(
-          CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
-        )..addListener(() {
-          if (mounted && _downloading && _realProgress <= 0.0) {
-            setState(() => _progress = _fakeAnim.value);
-          }
-        });
   }
 
   @override
   void dispose() {
-    _fakeCtrl.dispose();
     super.dispose();
   }
 
-  Future<void> _finishProgress() async {
-    if (!mounted) return;
-    _fakeCtrl.stop();
-    final completeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-    final completeAnim = Tween<double>(
-      begin: _progress,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
-    completeAnim.addListener(() {
-      if (mounted) setState(() => _progress = completeAnim.value);
-    });
-    await completeCtrl.forward();
-    completeCtrl.dispose();
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (mounted) {
-      setState(() {
-        _downloading = false;
-        _progress = 0.0;
-        _realProgress = 0.0;
-      });
-    }
-  }
-
   Future<void> _download() async {
-    if (_downloading) return;
-
     HapticFeedback.lightImpact();
-    setState(() {
-      _downloading = true;
-      _progress = 0.0;
-      _realProgress = 0.0;
-    });
 
-    _fakeCtrl.forward(from: 0.0);
+    final modName = _sanitizeModTitle(widget.modTitle);
+    final filename = _inferFileName(
+      widget.url,
+      widget.modTitle,
+      index: widget.index,
+    );
 
-    try {
-      final uri = Uri.tryParse(widget.url);
-      if (uri == null) throw Exception('Invalid URL');
+    final hasFolder = await _installer.isDirectorySelected();
 
-      final filename = _inferFileName(
-        widget.url,
-        widget.modTitle,
-        index: widget.index,
-      );
+    if (hasFolder) {
+      final prefs = await SharedPreferences.getInstance();
+      final autoInstall =
+          prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
-      await FileDownloader.downloadFile(
-        url: widget.url,
-        name: filename,
-        onProgress: (name, progress) {
-          if (!mounted) return;
-          final normalized = (progress > 1.0 ? progress / 100.0 : progress)
-              .clamp(0.0, 1.0);
-          if (normalized > _progress) {
-            setState(() {
-              _realProgress = normalized;
-              _progress = normalized;
-            });
-          }
-        },
-        onDownloadCompleted: (path) async {
-          if (!mounted) return;
-          await _finishProgress();
-          if (!mounted) return;
-          final savedName = path.split('/').last;
-          _showSnackBar(
-            icon: Icons.check_circle_rounded,
-            message: 'Descargado: $savedName',
-            isError: false,
-          );
-          if (!mounted) return;
-          _tryInstallMod(path, widget.modTitle, savedName);
-        },
-        onDownloadError: (error) {
-          if (!mounted) return;
-          _fakeCtrl.stop();
-          setState(() {
-            _downloading = false;
-            _progress = 0.0;
-            _realProgress = 0.0;
-          });
-          _showSnackBar(
-            icon: Icons.error_rounded,
-            message: 'Error al descargar',
-            isError: true,
-          );
-        },
-      );
-    } catch (e) {
-      _fakeCtrl.stop();
-      if (mounted) {
-        setState(() {
-          _downloading = false;
-          _progress = 0.0;
-          _realProgress = 0.0;
-        });
-        _showSnackBar(
-          icon: Icons.error_rounded,
-          message: 'Error: ${e.toString()}',
-          isError: true,
+      if (!mounted) return;
+
+      if (!autoInstall) {
+        final shouldInstall = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor:
+                Theme.of(ctx).colorScheme.surfaceContainerHighest,
+            icon: Icon(Icons.folder_special_rounded,
+                color: Theme.of(ctx).colorScheme.primary, size: 28),
+            title: Text(
+              'Install to game?',
+              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+            ),
+            content: Text(
+              'Download and extract "$filename" to the SM64CoopDX mods folder?',
+              style: TextStyle(
+                  color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Not now',
+                    style: TextStyle(
+                        color: Theme.of(ctx).colorScheme.onSurface)),
+              ),
+              FilledButton.icon(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                icon: const Icon(Icons.download_rounded, size: 16),
+                label: const Text('Install'),
+              ),
+            ],
+          ),
         );
+
+        if (shouldInstall != true || !mounted) return;
       }
     }
-  }
-
-  Future<void> _tryInstallMod(
-      String zipPath, String modTitle, String savedName) async {
-    final hasFolder = await _installer.isDirectorySelected();
-    if (!hasFolder || !mounted) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    final autoInstall =
-        prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
     if (!mounted) return;
 
-    if (!autoInstall) {
-      final shouldInstall = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          backgroundColor:
-              Theme.of(ctx).colorScheme.surfaceContainerHighest,
-          icon: Icon(Icons.folder_special_rounded,
-              color: Theme.of(ctx).colorScheme.primary, size: 28),
-          title: Text(
-            'Install to game?',
-            style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
-          ),
-          content: Text(
-            'Extract "$savedName" to the SM64CoopDX mods folder?',
-            style: TextStyle(
-                color: Theme.of(ctx).colorScheme.onSurfaceVariant),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text('Not now',
-                  style: TextStyle(
-                      color: Theme.of(ctx).colorScheme.onSurface)),
-            ),
-            FilledButton.icon(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              icon: const Icon(Icons.download_rounded, size: 16),
-              label: const Text('Install'),
-            ),
-          ],
-        ),
-      );
-
-      if (shouldInstall != true || !mounted) return;
-    }
-
-    if (!mounted) return;
-
-    final modName = _sanitizeModTitle(modTitle);
-    BackgroundInstallService.instance.startInstall(
-      zipPath: zipPath,
+    BackgroundInstallService.instance.startDownloadAndInstall(
+      url: widget.url,
       modName: modName,
+      fileName: filename,
     );
     if (!mounted) return;
     AppSnackbar.info(
       context,
-      message: 'Installing "$savedName" in background...',
+      message: 'Downloading "$filename"...',
     );
-  }
-
-  void _showSnackBar({
-    required IconData icon,
-    required String message,
-    required bool isError,
-  }) {
-    if (isError) {
-      AppSnackbar.error(context, message: message);
-    } else {
-      AppSnackbar.success(context, message: message);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final cs = widget.cs;
+    final modName = _sanitizeModTitle(widget.modTitle);
+    final info = ref.watch(bgInstallStateProvider)[modName];
+    final isActive = info != null &&
+        (info.status == BgInstallStatus.downloading ||
+         info.status == BgInstallStatus.installing);
+    final downloadProgress =
+        info?.status == BgInstallStatus.downloading ? info?.downloadProgress : null;
+
     final filename = _inferFileName(
       widget.url,
       widget.modTitle,
@@ -1350,8 +1090,10 @@ class _DownloadFileRowState extends State<_DownloadFileRow>
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      _downloading
-                          ? 'Descargando ${(_progress * 100).toStringAsFixed(0)}%'
+                      isActive
+                          ? (info?.status == BgInstallStatus.downloading
+                              ? 'Downloading ${downloadProgress ?? 0}%'
+                              : 'Installing...')
                           : 'Toca para descargar',
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
@@ -1362,7 +1104,7 @@ class _DownloadFileRowState extends State<_DownloadFileRow>
                 ),
               ),
               GestureDetector(
-                onTap: _downloading ? null : _download,
+                onTap: isActive ? null : _download,
                 child: Container(
                   width: 36,
                   height: 36,
@@ -1370,12 +1112,14 @@ class _DownloadFileRowState extends State<_DownloadFileRow>
                     color: cs.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: _downloading
+                  child: isActive
                       ? Padding(
                           padding: const EdgeInsets.all(8),
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            value: _progress,
+                            value: downloadProgress != null
+                                ? downloadProgress / 100.0
+                                : null,
                             color: cs.primary,
                           ),
                         )
@@ -1388,13 +1132,14 @@ class _DownloadFileRowState extends State<_DownloadFileRow>
               ),
             ],
           ),
-          // Barra de progreso debajo de la fila (solo visible al descargar)
-          if (_downloading) ...[
+          if (isActive) ...[
             const SizedBox(height: 10),
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
-                value: _progress,
+                value: downloadProgress != null
+                    ? downloadProgress / 100.0
+                    : null,
                 minHeight: 3,
                 backgroundColor: cs.outline.withValues(alpha: 0.2),
                 color: cs.primary,
@@ -2265,6 +2010,56 @@ class _InstallStatusBanner extends ConsumerWidget {
     if (info == null) return const SizedBox.shrink();
 
     switch (info.status) {
+      case BgInstallStatus.downloading:
+        final progress = info.downloadProgress ?? 0;
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: cs.primaryContainer.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  value: progress > 0 ? progress / 100.0 : null,
+                  color: cs.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Downloading mod...',
+                      style: TextStyle(
+                        color: cs.onSurface,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '$progress%',
+                      style: TextStyle(
+                        color: cs.onSurfaceVariant,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+
       case BgInstallStatus.installing:
         final progressText = info.total != null && info.total! > 0
             ? '${info.current ?? 0}/${info.total} files'
@@ -2396,6 +2191,33 @@ class _InstallStatusBanner extends ConsumerWidget {
                       ),
                     ],
                   ],
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case BgInstallStatus.cancelled:
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerHigh.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.cancel_rounded, size: 20, color: cs.onSurfaceVariant),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Operation cancelled',
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],

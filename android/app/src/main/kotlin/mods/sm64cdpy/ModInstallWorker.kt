@@ -7,6 +7,7 @@ import android.provider.DocumentsContract
 import androidx.core.app.NotificationCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.work.ForegroundInfo
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import androidx.work.CoroutineWorker
@@ -105,6 +106,9 @@ class ModInstallWorker(
             "Extracting $modName · $current/$total files"
         }
 
+        val cancelIntent = WorkManager.getInstance(applicationContext)
+            .createCancelPendingIntent(id)
+
         return NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.stat_sys_download)
             .setContentTitle("Installing mod")
@@ -113,6 +117,7 @@ class ModInstallWorker(
             .setProgress(total, current, indeterminate)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+            .addAction(android.R.drawable.ic_delete, "Cancel", cancelIntent)
             .build()
     }
 
