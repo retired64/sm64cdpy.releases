@@ -363,9 +363,37 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.4.1',
+    version: '1.4.2',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'Background mod installation — mods are now extracted via Android WorkManager with a foreground service notification, so you can keep browsing while installation runs.',
+          'Real-time install progress — notification shows file count (e.g. "45/120 files"), and a non-blocking inline banner appears on the mod detail screen.',
+          'Installation status survives navigation — results (success / error) are delivered via snackbar regardless of which screen you are on.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Download + install flow is now fully non-blocking — the previous install progress dialog that locked the screen has been replaced with background execution.',
+          'Foreground service notification displays even when the app is in the background so you always know when an install finishes.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Mod installation no longer freezes the UI during ZIP extraction — the entire extraction runs on a native background thread with WorkManager.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.4.1',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.fixed,
