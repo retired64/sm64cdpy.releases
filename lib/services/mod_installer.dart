@@ -110,6 +110,25 @@ class ModInstaller {
       // Silently ignore
     }
   }
+
+  /// Instalación en segundo plano via WorkManager (NO BLOQUEA la UI).
+  ///
+  /// Encola un OneTimeWorkRequest y retorna inmediatamente el workId.
+  /// El progreso se recibe via EventChannel (BackgroundInstallService).
+  Future<String?> installModBackground({
+    required String zipPath,
+    required String modName,
+  }) async {
+    try {
+      final workId = await _channel.invokeMethod<String>(
+        'installModBackground',
+        {'zipPath': zipPath, 'modName': modName},
+      );
+      return workId;
+    } on PlatformException catch (e) {
+      throw ModInstallerException(e.message ?? 'Failed to start background install');
+    }
+  }
 }
 
 /// Excepción lanzada por el ModInstaller.

@@ -7,14 +7,23 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.Observer
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.io.*
+import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -27,27 +36,53 @@ import java.util.zip.ZipInputStream
  *  3. El usuario selecciona la carpeta destino (ej: /storage/emulated/0/...)
  *  4. La URI se persiste con takePersistableUriPermission
  *  5. Futuras descargas se instalan automáticamente en esa carpeta
+ *
+ * Background install (WorkManager):
+ *  - installModBackground(): encola un OneTimeWorkRequest con ModInstallWorker
+ *  - El worker ejecuta la extracción con foreground service y notificación
+ *  - El progreso se reporta via EventChannel "mod_install_events"
  */
 class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     companion object {
         const val CHANNEL = "mods.sm64cdpy/mod_installer"
+        const val EVENT_CHANNEL = "mods.sm64cdpy/mod_install_events"
         const val PREF_NAME = "mod_installer_prefs"
         const val KEY_TREE_URI = "tree_uri"
         const val REQUEST_CODE_TREE = 9001
+        const val UNIQUE_WORK_PREFIX = "mod_install_"
     }
 
     private lateinit var channel: MethodChannel
+    private var eventChannel: EventChannel? = null
+    private var eventSink: EventChannel.EventSink? = null
     private var activity: Activity? = null
     private var pendingResult: Result? = null
+
+    private val workObservers = mutableMapOf<UUID, Observer<WorkInfo>>()
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(binding.binaryMessenger, CHANNEL)
         channel.setMethodCallHandler(this)
+
+        eventChannel = EventChannel(binding.binaryMessenger, EVENT_CHANNEL)
+        eventChannel!!.setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(args: Any?, sink: EventChannel.EventSink) {
+                eventSink = sink
+            }
+
+            override fun onCancel(args: Any?) {
+                eventSink = null
+            }
+        })
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+        eventChannel?.setStreamHandler(null)
+        eventChannel = null
+        eventSink = null
+        cleanupObservers()
     }
 
     // ── ActivityAware ───────────────────────────────────────────────────────
@@ -66,6 +101,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onDetachedFromActivity() {
         activity = null
+        cleanupObservers()
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
@@ -83,6 +119,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "openDirectoryPicker" -> openDirectoryPicker(result)
             "getSavedDirectoryUri" -> getSavedDirectoryUri(result)
             "installMod" -> installMod(call, result)
+            "installModBackground" -> installModBackground(call, result)
             "isDirectorySelected" -> isDirectorySelected(result)
             "clearDirectorySelection" -> clearDirectorySelection(result)
             else -> result.notImplemented()
@@ -111,8 +148,6 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or
                     Intent.FLAG_GRANT_PREFIX_URI_PERMISSION
                 )
-                // Sugerir ruta inicial (opcional, el sistema lo ignora si no existe)
-                // No forzamos EXTRA_INITIAL_URI para evitar errores en algunos dispositivos
             }
             act.startActivityForResult(intent, REQUEST_CODE_TREE)
         } catch (e: Exception) {
@@ -128,12 +163,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         val prefs = getPrefs()
         val uriString = prefs.getString(KEY_TREE_URI, null)
         if (uriString != null) {
-            // Verificar que la URI sigue siendo accesible
             val uri = Uri.parse(uriString)
             if (isTreeAccessible(uri)) {
                 result.success(uriString)
             } else {
-                // Ya no es accesible — limpiar
                 prefs.edit().remove(KEY_TREE_URI).apply()
                 result.success(null)
             }
@@ -176,16 +209,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     /**
      * Instala un mod: descomprime un ZIP en un subdirectorio dentro del árbol SAF.
-     *
-     * Parámetros:
-     *  - zipPath (String): ruta absoluta al archivo ZIP descargado
-     *  - modName (String): nombre del subdirectorio a crear (nombre del mod sanitizado)
-     *
-     * Retorna un mapa con:
-     *  - success (bool)
-     *  - targetDir (String): nombre del directorio creado (si success)
-     *  - fileCount (int): cantidad de archivos extraídos
-     *  - error (String): mensaje de error (si !success)
+     * (Método original — ejecución sincrónica en hilo nativo.)
      */
     private fun installMod(call: MethodCall, result: Result) {
         val act = activity
@@ -236,15 +260,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
-                // Extraer ZIP directamente en la raíz del árbol SAF.
-                // El ZIP ya contiene su propia estructura de carpetas
-                // (ej: character-select-coop/main.lua).
-                // No creamos subdirectorios adicionales para no romper la
-                // estructura que el juego espera: mods/<carpeta_del_mod>/main.lua
                 val fileCount = extractZipToDocumentFile(zipFile, treeDoc, act)
                 val topDir = detectTopLevelDir(zipFile)
                 val displayDir = topDir ?: modName
-                zipFile.delete() // Eliminar ZIP tras extracción exitosa
+                zipFile.delete()
 
                 act.runOnUiThread {
                     result.success(mapOf(
@@ -259,6 +278,143 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
             }
         }.start()
+    }
+
+    /**
+     * Instalación en segundo plano via WorkManager (NO BLOQUEA la UI).
+     *
+     * Encola un OneTimeWorkRequest con ModInstallWorker que ejecuta la extracción
+     * con foreground service + notificación. El progreso se reporta via EventChannel.
+     *
+     * Retorna inmediatamente el workId (UUID string).
+     */
+    private fun installModBackground(call: MethodCall, result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        val prefs = getPrefs()
+        val treeUriString = prefs.getString(KEY_TREE_URI, null)
+        if (treeUriString == null) {
+            result.error("NO_DIRECTORY", "No mods directory selected. Please select one in Settings first.", null)
+            return
+        }
+
+        val treeUri = Uri.parse(treeUriString)
+        if (!isTreeAccessible(treeUri)) {
+            prefs.edit().remove(KEY_TREE_URI).apply()
+            result.error(
+                "DIR_NOT_ACCESSIBLE",
+                "The selected directory is no longer accessible. Please select it again in Settings.",
+                null
+            )
+            return
+        }
+
+        val zipPath = call.argument<String>("zipPath")
+        val modName = call.argument<String>("modName")
+
+        if (zipPath == null || modName == null) {
+            result.error("INVALID_ARGS", "zipPath and modName are required", null)
+            return
+        }
+
+        val zipFile = java.io.File(zipPath)
+        if (!zipFile.exists()) {
+            result.error("FILE_NOT_FOUND", "ZIP file not found at: $zipPath", null)
+            return
+        }
+
+        val workName = UNIQUE_WORK_PREFIX + modName
+
+        val inputData = workDataOf(
+            ModInstallWorker.KEY_ZIP_PATH to zipPath,
+            ModInstallWorker.KEY_MOD_NAME to modName,
+            ModInstallWorker.KEY_TREE_URI to treeUriString
+        )
+
+        val request = OneTimeWorkRequestBuilder<ModInstallWorker>()
+            .setInputData(inputData)
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .addTag(workName)
+            .build()
+
+        val workId = request.id
+
+        val observer = Observer<WorkInfo> { workInfo ->
+            if (workInfo != null) {
+                val eventData = mutableMapOf<String, Any?>(
+                    "workId" to workId.toString(),
+                    "modName" to modName,
+                    "state" to workInfo.state.name
+                )
+
+                val progress = workInfo.progress
+                eventData["current"] = progress.getInt(
+                    ModInstallWorker.PROGRESS_CURRENT, 0
+                )
+                eventData["total"] = progress.getInt(
+                    ModInstallWorker.PROGRESS_TOTAL, 0
+                )
+
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    val output = workInfo.outputData
+                    eventData["type"] = "completed"
+                    eventData["fileCount"] = output.getInt(
+                        ModInstallWorker.OUTPUT_FILE_COUNT, 0
+                    )
+                    eventData["targetDir"] = output.getString(
+                        ModInstallWorker.OUTPUT_TARGET_DIR
+                    ) ?: modName
+                } else if (workInfo.state == WorkInfo.State.FAILED) {
+                    eventData["type"] = "error"
+                    eventData["error"] = workInfo.outputData.getString("error")
+                        ?: "Installation failed"
+                } else if (workInfo.state == WorkInfo.State.RUNNING) {
+                    eventData["type"] = "progress"
+                } else {
+                    eventData["type"] = "pending"
+                }
+
+                sendEvent(eventData)
+
+                if (workInfo.state.isFinished) {
+                    val obs = workObservers.remove(workId)
+                    if (obs != null) {
+                        WorkManager.getInstance(act)
+                            .getWorkInfoByIdLiveData(workId)
+                            .removeObserver(obs)
+                    }
+                }
+            }
+        }
+
+        workObservers[workId] = observer
+        WorkManager.getInstance(act)
+            .getWorkInfoByIdLiveData(workId)
+            .observeForever(observer)
+
+        WorkManager.getInstance(act).enqueue(request)
+
+        result.success(workId.toString())
+    }
+
+    // ── EventChannel helper ────────────────────────────────────────────────
+
+    private fun sendEvent(data: Map<String, Any?>) {
+        eventSink?.success(data)
+    }
+
+    private fun cleanupObservers() {
+        val wm = activity?.let { WorkManager.getInstance(it) } ?: return
+        for ((workId, observer) in workObservers) {
+            try {
+                wm.getWorkInfoByIdLiveData(workId).removeObserver(observer)
+            } catch (_: Exception) { }
+        }
+        workObservers.clear()
     }
 
     // ── Internals ───────────────────────────────────────────────────────────
@@ -276,22 +432,19 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         pendingResult = null
 
         if (resultCode != Activity.RESULT_OK || data?.data == null) {
-            result.success(null) // Usuario canceló
+            result.success(null)
             return
         }
 
         val treeUri = data.data!!
 
-        // Persistir permisos para reinicios del dispositivo
         try {
             val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             activity?.contentResolver?.takePersistableUriPermission(treeUri, takeFlags)
 
-            // Guardar URI
             getPrefs().edit().putString(KEY_TREE_URI, treeUri.toString()).apply()
 
-            // Obtener nombre del directorio seleccionado para mostrar en UI
             val doc = DocumentFile.fromTreeUri(activity!!, treeUri)
             val displayName = doc?.name ?: treeUri.lastPathSegment ?: "Unknown"
 
@@ -332,7 +485,6 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         continue
                     }
 
-                    // Determinar subdirectorio padre
                     val slashIdx = entryName.lastIndexOf('/')
                     val parentDir: DocumentFile
                     val fileName: String
@@ -405,10 +557,6 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     /**
      * Detecta el nombre del directorio de nivel superior en el ZIP.
-     * Si todas las entradas comparten un prefijo común de un nivel
-     * (ej: "char-select/main.lua", "char-select/actors/..." → "char-select"),
-     * devuelve ese nombre. Si no hay prefijo común (archivos sueltos en raíz),
-     * devuelve null.
      */
     private fun detectTopLevelDir(zipFile: java.io.File): String? {
         var commonPrefix: String? = null
@@ -425,10 +573,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                             if (commonPrefix == null) {
                                 commonPrefix = topDir
                             } else if (commonPrefix != topDir) {
-                                return null // Múltiples directorios de nivel superior
+                                return null
                             }
                         } else {
-                            // Hay un archivo en la raíz → no hay prefijo común
                             return null
                         }
                     }
@@ -445,13 +592,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      */
     private fun sanitizeEntryName(name: String): String {
         var sanitized = name.trim()
-        // Eliminar barras iniciales
         while (sanitized.startsWith("/")) sanitized = sanitized.substring(1)
-        // Eliminar segmentos ".."
         sanitized = sanitized.replace("../", "").replace("..\\", "")
-        // Normalizar separadores
         sanitized = sanitized.replace("\\", "/")
-        // Eliminar NUL bytes
         sanitized = sanitized.replace("\u0000", "")
         return sanitized
     }

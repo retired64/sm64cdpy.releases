@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -13,6 +14,7 @@ import '../../data/datasource/local_mod_datasource.dart';
 import '../../data/repositories/mod_repository_impl.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../../domain/repositories/mod_repository.dart';
+import '../../services/background_install_service.dart';
 
 // ── State Providers (Notifier-based replacements for StateProvider) ──────────
 
@@ -413,4 +415,49 @@ final popularTotalPagesProvider = Provider<int>((ref) {
     data: (mods) => (mods.length / pageSize).ceil(),
     orElse: () => 0,
   );
+});
+
+// ── Background install state ──────────────────────────────────────────────────
+
+class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
+  StreamSubscription? _sub;
+
+  @override
+  Map<String, BgInstallInfo> build() {
+    _sub = BackgroundInstallService.instance.events.listen(_onEvent);
+    ref.onDispose(() => _sub?.cancel());
+    return {};
+  }
+
+  void _onEvent(BgInstallEvent event) {
+    final info = BgInstallInfo(
+      modName: event.modName,
+      status: switch (event) {
+        BgInstallStarted() => BgInstallStatus.installing,
+        BgInstallProgress() => BgInstallStatus.installing,
+        BgInstallCompleted() => BgInstallStatus.completed,
+        BgInstallError() => BgInstallStatus.error,
+      },
+      workId: event.workId,
+      current: event is BgInstallProgress ? event.current : null,
+      total: event is BgInstallProgress ? event.total : null,
+      fileCount: event is BgInstallCompleted ? event.fileCount : null,
+      targetDir: event is BgInstallCompleted ? event.targetDir : null,
+      error: event is BgInstallError ? event.error : null,
+    );
+
+    state = {...state, event.modName: info};
+  }
+}
+
+final bgInstallStateProvider =
+    NotifierProvider<BgInstallStateNotifier, Map<String, BgInstallInfo>>(
+  () => BgInstallStateNotifier(),
+);
+
+final bgActiveInstallCountProvider = Provider<int>((ref) {
+  final state = ref.watch(bgInstallStateProvider);
+  return state.values
+      .where((i) => i.status == BgInstallStatus.installing)
+      .length;
 });

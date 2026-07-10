@@ -11,6 +11,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
+import '../../services/background_install_service.dart';
 import '../../services/mod_installer.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_snackbar.dart';
@@ -130,6 +131,13 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
                   onExpandChangelog: () =>
                       setState(() => _changelogExpanded = !_changelogExpanded),
                 ),
+              ),
+            ),
+
+            // ── Background install status banner ──────
+            SliverToBoxAdapter(
+              child: _InstallStatusBanner(
+                modTitle: widget.mod.title,
               ),
             ),
 
@@ -902,9 +910,6 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
     }
   }
 
-  /// Intenta instalar el mod descargado en la carpeta del juego.
-  /// Si el auto-install está activado, instala directamente.
-  /// Si no, muestra un diálogo preguntando al usuario.
   Future<void> _tryInstallMod(
       String zipPath, String modTitle, String savedName) async {
     final installer = ModInstaller();
@@ -956,20 +961,17 @@ class _PrimaryDownloadButtonState extends State<_PrimaryDownloadButton>
       if (shouldInstall != true || !mounted) return;
     }
 
-    // Mostrar progreso de instalación
     if (!mounted) return;
-    _showInstallProgress(zipPath, modTitle);
-  }
 
-  /// Muestra un diálogo con progreso de instalación y ejecuta la extracción.
-  void _showInstallProgress(String zipPath, String modTitle) {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => _InstallProgressDialog(
-        zipPath: zipPath,
-        modName: _sanitizeModTitle(modTitle),
-      ),
+    final modName = _sanitizeModTitle(modTitle);
+    BackgroundInstallService.instance.startInstall(
+      zipPath: zipPath,
+      modName: modName,
+    );
+    if (!mounted) return;
+    AppSnackbar.info(
+      context,
+      message: 'Installing "$savedName" in background...',
     );
   }
 
@@ -1273,13 +1275,16 @@ class _DownloadFileRowState extends State<_DownloadFileRow>
     }
 
     if (!mounted) return;
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => _InstallProgressDialog(
-        zipPath: zipPath,
-        modName: _sanitizeModTitle(modTitle),
-      ),
+
+    final modName = _sanitizeModTitle(modTitle);
+    BackgroundInstallService.instance.startInstall(
+      zipPath: zipPath,
+      modName: modName,
+    );
+    if (!mounted) return;
+    AppSnackbar.info(
+      context,
+      message: 'Installing "$savedName" in background...',
     );
   }
 
@@ -2243,188 +2248,163 @@ class _DetailError extends StatelessWidget {
   }
 }
 
-// ── Install progress dialog ─────────────────────────────────────────────────
+// ── Background install status banner ───────────────────────────────────────────
 
-class _InstallProgressDialog extends StatefulWidget {
-  const _InstallProgressDialog({
-    required this.zipPath,
-    required this.modName,
-  });
+class _InstallStatusBanner extends ConsumerWidget {
+  const _InstallStatusBanner({required this.modTitle});
 
-  final String zipPath;
-  final String modName;
+  final String modTitle;
 
   @override
-  State<_InstallProgressDialog> createState() => _InstallProgressDialogState();
-}
-
-class _InstallProgressDialogState extends State<_InstallProgressDialog>
-    with SingleTickerProviderStateMixin {
-  bool _installing = true;
-  bool _success = false;
-  String _message = 'Installing mod...';
-  String? _error;
-
-  late AnimationController _pulseCtrl;
-  late Animation<double> _pulseAnim;
-
-  @override
-  void initState() {
-    super.initState();
-    _pulseCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    )..repeat(reverse: true);
-    _pulseAnim = Tween<double>(begin: 0.6, end: 1.0).animate(_pulseCtrl);
-
-    _install();
-  }
-
-  @override
-  void dispose() {
-    _pulseCtrl.dispose();
-    super.dispose();
-  }
-
-  Future<void> _install() async {
-    final installer = ModInstaller();
-    final result = await installer.installMod(
-      zipPath: widget.zipPath,
-      modName: widget.modName,
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      _installing = false;
-      _success = result.success;
-      if (result.success) {
-        _message =
-            'Installed \u2714 ${result.fileCount} files to "${result.targetDir}"';
-      } else {
-        _error = result.errorMessage ?? 'Installation failed';
-        _message = 'Installation failed';
-      }
-    });
-
-    // Auto-cerrar tras 2.5 segundos si fue exitoso
-    if (_success) {
-      await Future.delayed(const Duration(milliseconds: 2500));
-      if (mounted) Navigator.of(context).pop();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
+    final modName = _sanitizeModTitle(modTitle);
+    final state = ref.watch(bgInstallStateProvider);
+    final info = state[modName];
 
-    return AlertDialog(
-      backgroundColor: cs.surfaceContainerHighest,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (_installing) ...[
-            FadeTransition(
-              opacity: _pulseAnim,
-              child: Icon(
-                Icons.hourglass_top_rounded,
-                size: 48,
-                color: cs.primary,
+    if (info == null) return const SizedBox.shrink();
+
+    switch (info.status) {
+      case BgInstallStatus.installing:
+        final progressText = info.total != null && info.total! > 0
+            ? '${info.current ?? 0}/${info.total} files'
+            : 'Extracting...';
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: cs.primaryContainer.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: cs.primary,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Installing mod...',
-              style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Extracting and copying files to the game folder',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: cs.onSurfaceVariant,
-                fontSize: 13,
-              ),
-            ),
-            const SizedBox(height: 20),
-            LinearProgressIndicator(
-              color: cs.primary,
-              backgroundColor: cs.outline.withValues(alpha: 0.2),
-            ),
-          ] else if (_success) ...[
-            Icon(Icons.check_circle_rounded, size: 48, color: cs.primary),
-            const SizedBox(height: 16),
-            Text(
-              _message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Ready to play',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
-            ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.check, size: 16),
-              label: const Text('Done'),
-            ),
-          ] else ...[
-            Icon(Icons.error_rounded, size: 48, color: cs.error),
-            const SizedBox(height: 16),
-            Text(
-              _message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            if (_error != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: cs.error, fontSize: 12),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Installing mod...',
+                      style: TextStyle(
+                        color: cs.onSurface,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      progressText,
+                      style: TextStyle(
+                        color: cs.onSurfaceVariant,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Close',
-                      style: TextStyle(color: cs.onSurface)),
+          ),
+        );
+
+      case BgInstallStatus.completed:
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: cs.primary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.check_circle_rounded, size: 20, color: cs.primary),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Installation complete',
+                      style: TextStyle(
+                        color: cs.onSurface,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${info.fileCount ?? 0} files extracted to "${info.targetDir ?? modName}"',
+                      style: TextStyle(
+                        color: cs.onSurfaceVariant,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                FilledButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      _installing = true;
-                      _error = null;
-                    });
-                    _install();
-                  },
-                  icon: const Icon(Icons.refresh, size: 16),
-                  label: const Text('Retry'),
+              ),
+            ],
+          ),
+        );
+
+      case BgInstallStatus.error:
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: cs.errorContainer.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: cs.error.withValues(alpha: 0.25)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.error_rounded, size: 20, color: cs.error),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Installation failed',
+                      style: TextStyle(
+                        color: cs.onSurface,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (info.error != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        info.error!,
+                        style: TextStyle(
+                          color: cs.error,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ],
                 ),
-              ],
-            ),
-          ],
-        ],
-      ),
-    );
+              ),
+            ],
+          ),
+        );
+
+      case BgInstallStatus.pending:
+        return const SizedBox.shrink();
+    }
   }
 }
 

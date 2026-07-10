@@ -7,6 +7,7 @@ import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/providers/theme_provider.dart';
+import 'services/background_install_service.dart';
 import 'services/update_service.dart';
 
 Future<void> main() async {
@@ -35,6 +36,9 @@ Future<void> main() async {
 
   // OTA — Obtiene versión instalada para comparar con GitHub Releases
   await UpdateService.init();
+
+  // Background install service — EventChannel listener
+  BackgroundInstallService.instance.init();
 
   runApp(const ProviderScope(child: SM64CoopDXApp()));
 }
