@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
@@ -833,62 +835,142 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
 
     final hasFolder = await installer.isDirectorySelected();
 
-    if (hasFolder) {
+    if (!hasFolder) {
       final prefs = await SharedPreferences.getInstance();
       final autoInstall =
           prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
-      if (!mounted) return;
-
-      if (!autoInstall) {
-        final shouldInstall = await showDialog<bool>(
+      if (autoInstall && mounted) {
+        final goToSettings = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor:
                 Theme.of(ctx).colorScheme.surfaceContainerHighest,
-            icon: Icon(Icons.folder_special_rounded,
+            icon: Icon(Icons.folder_open_rounded,
                 color: Theme.of(ctx).colorScheme.primary, size: 28),
             title: Text(
-              'Install to game?',
-              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+              'Mods folder not selected',
+              style:
+                  TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
             ),
             content: Text(
-              'Download and extract "$filename" to the SM64CoopDX mods folder?',
+              'You need to select a mods folder before '
+              'installing mods to the game.\n\n'
+              'Go to Settings → Game Integration to select it.',
               style: TextStyle(
                   color: Theme.of(ctx).colorScheme.onSurfaceVariant),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Not now',
+                child: Text('Cancel',
                     style: TextStyle(
                         color: Theme.of(ctx).colorScheme.onSurface)),
               ),
               FilledButton.icon(
                 onPressed: () => Navigator.of(ctx).pop(true),
-                icon: const Icon(Icons.download_rounded, size: 16),
-                label: const Text('Install'),
+                icon: const Icon(Icons.settings, size: 16),
+                label: const Text('Go to Settings'),
               ),
             ],
           ),
         );
-
-        if (shouldInstall != true || !mounted) return;
+        if (goToSettings == true && mounted) {
+          GoRouter.of(context).push('/settings');
+        }
+        return;
       }
+
+      if (!mounted) return;
+      await _downloadWithFileDownloader(widget.url, filename);
+      return;
     }
 
-    if (!mounted) return;
+    final prefs = await SharedPreferences.getInstance();
+    final autoInstall =
+        prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
-    BackgroundInstallService.instance.startDownloadAndInstall(
-      url: widget.url,
-      modName: modName,
-      fileName: filename,
-    );
-    if (!mounted) return;
-    AppSnackbar.info(
-      context,
-      message: 'Downloading "$filename"...',
-    );
+    if (autoInstall && mounted) {
+      BackgroundInstallService.instance.startDownloadAndInstall(
+        url: widget.url,
+        modName: modName,
+        fileName: filename,
+      );
+      if (!mounted) return;
+      AppSnackbar.info(
+        context,
+        message: 'Downloading "$filename"...',
+      );
+    } else if (mounted) {
+      await _downloadToModsFolder(installer, widget.url, filename);
+    }
+  }
+
+  Future<void> _downloadToModsFolder(
+      ModInstaller installer, String url, String filename) async {
+    try {
+      await FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onDownloadCompleted: (path) async {
+          if (!mounted) return;
+          final savedName = path.split('/').last;
+          await installer.copyFileToModsFolder(
+            sourcePath: path,
+            targetName: savedName,
+          );
+          if (!mounted) return;
+          AppSnackbar.success(
+            context,
+            message: 'Saved to mods folder: $savedName',
+          );
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          AppSnackbar.error(
+            context,
+            message: 'Download failed',
+          );
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackbar.error(
+        context,
+        message: 'Error: ${e.toString()}',
+      );
+    }
+  }
+
+  Future<void> _downloadWithFileDownloader(
+      String url, String filename) async {
+    try {
+      await FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onDownloadCompleted: (path) {
+          if (!mounted) return;
+          final savedName = path.split('/').last;
+          AppSnackbar.success(
+            context,
+            message: 'Downloaded: $savedName',
+          );
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          AppSnackbar.error(
+            context,
+            message: 'Download failed',
+          );
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackbar.error(
+        context,
+        message: 'Error: ${e.toString()}',
+      );
+    }
   }
 
   @override
@@ -1082,62 +1164,142 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
 
     final hasFolder = await _installer.isDirectorySelected();
 
-    if (hasFolder) {
+    if (!hasFolder) {
       final prefs = await SharedPreferences.getInstance();
       final autoInstall =
           prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
-      if (!mounted) return;
-
-      if (!autoInstall) {
-        final shouldInstall = await showDialog<bool>(
+      if (autoInstall && mounted) {
+        final goToSettings = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor:
                 Theme.of(ctx).colorScheme.surfaceContainerHighest,
-            icon: Icon(Icons.folder_special_rounded,
+            icon: Icon(Icons.folder_open_rounded,
                 color: Theme.of(ctx).colorScheme.primary, size: 28),
             title: Text(
-              'Install to game?',
-              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+              'Mods folder not selected',
+              style:
+                  TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
             ),
             content: Text(
-              'Download and extract "$filename" to the SM64CoopDX mods folder?',
+              'You need to select a mods folder before '
+              'installing mods to the game.\n\n'
+              'Go to Settings → Game Integration to select it.',
               style: TextStyle(
                   color: Theme.of(ctx).colorScheme.onSurfaceVariant),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Not now',
+                child: Text('Cancel',
                     style: TextStyle(
                         color: Theme.of(ctx).colorScheme.onSurface)),
               ),
               FilledButton.icon(
                 onPressed: () => Navigator.of(ctx).pop(true),
-                icon: const Icon(Icons.download_rounded, size: 16),
-                label: const Text('Install'),
+                icon: const Icon(Icons.settings, size: 16),
+                label: const Text('Go to Settings'),
               ),
             ],
           ),
         );
-
-        if (shouldInstall != true || !mounted) return;
+        if (goToSettings == true && mounted) {
+          GoRouter.of(context).push('/settings');
+        }
+        return;
       }
+
+      if (!mounted) return;
+      await _downloadWithFileDownloader(widget.url, filename);
+      return;
     }
 
-    if (!mounted) return;
+    final prefs = await SharedPreferences.getInstance();
+    final autoInstall =
+        prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
-    BackgroundInstallService.instance.startDownloadAndInstall(
-      url: widget.url,
-      modName: modName,
-      fileName: filename,
-    );
-    if (!mounted) return;
-    AppSnackbar.info(
-      context,
-      message: 'Downloading "$filename"...',
-    );
+    if (autoInstall && mounted) {
+      BackgroundInstallService.instance.startDownloadAndInstall(
+        url: widget.url,
+        modName: modName,
+        fileName: filename,
+      );
+      if (!mounted) return;
+      AppSnackbar.info(
+        context,
+        message: 'Downloading "$filename"...',
+      );
+    } else if (mounted) {
+      await _downloadToModsFolder(_installer, widget.url, filename);
+    }
+  }
+
+  Future<void> _downloadToModsFolder(
+      ModInstaller _installerParam, String url, String filename) async {
+    try {
+      await FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onDownloadCompleted: (path) async {
+          if (!mounted) return;
+          final savedName = path.split('/').last;
+          await _installerParam.copyFileToModsFolder(
+            sourcePath: path,
+            targetName: savedName,
+          );
+          if (!mounted) return;
+          AppSnackbar.success(
+            context,
+            message: 'Saved to mods folder: $savedName',
+          );
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          AppSnackbar.error(
+            context,
+            message: 'Download failed',
+          );
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackbar.error(
+        context,
+        message: 'Error: ${e.toString()}',
+      );
+    }
+  }
+
+  Future<void> _downloadWithFileDownloader(
+      String url, String filename) async {
+    try {
+      await FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onDownloadCompleted: (path) {
+          if (!mounted) return;
+          final savedName = path.split('/').last;
+          AppSnackbar.success(
+            context,
+            message: 'Downloaded: $savedName',
+          );
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          AppSnackbar.error(
+            context,
+            message: 'Download failed',
+          );
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackbar.error(
+        context,
+        message: 'Error: ${e.toString()}',
+      );
+    }
   }
 
   @override

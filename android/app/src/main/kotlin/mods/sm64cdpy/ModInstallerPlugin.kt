@@ -145,6 +145,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "hasNotificationPermission" -> hasNotificationPermission(result)
             "requestNotificationPermission" -> requestNotificationPermission(result)
             "shouldShowNotificationRationale" -> shouldShowNotificationRationale(result)
+            "copyFileToModsFolder" -> copyFileToModsFolder(call, result)
             else -> result.notImplemented()
         }
     }
@@ -289,6 +290,70 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
             REQUEST_CODE_NOTIFICATION_PERMISSION
         )
+    }
+
+    /**
+     * Copies a local file into the SAF mods folder tree.
+     * Used when auto-install is OFF — just place the ZIP in the mods folder
+     * without extracting it, so the user can manage it manually later.
+     */
+    private fun copyFileToModsFolder(call: MethodCall, result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        val prefs = getPrefs()
+        val treeUriString = prefs.getString(KEY_TREE_URI, null)
+        if (treeUriString == null) {
+            result.error("NO_DIRECTORY", "No mods directory selected.", null)
+            return
+        }
+
+        val treeUri = Uri.parse(treeUriString)
+        if (!isTreeAccessible(treeUri)) {
+            prefs.edit().remove(KEY_TREE_URI).apply()
+            result.error(
+                "DIR_NOT_ACCESSIBLE",
+                "The selected directory is no longer accessible.",
+                null
+            )
+            return
+        }
+
+        val sourcePath = call.argument<String>("sourcePath")
+        val targetName = call.argument<String>("targetName")
+        if (sourcePath == null || targetName == null) {
+            result.error("INVALID_ARGS", "sourcePath and targetName are required", null)
+            return
+        }
+
+        val sourceFile = java.io.File(sourcePath)
+        if (!sourceFile.exists()) {
+            result.error("FILE_NOT_FOUND", "Source file not found: $sourcePath", null)
+            return
+        }
+
+        try {
+            val treeDoc = DocumentFile.fromTreeUri(act, treeUri)
+                ?: throw java.io.IOException("Could not access the selected directory tree.")
+
+            val outputFile = treeDoc.createFile("application/zip", targetName)
+                ?: throw java.io.IOException("Failed to create file in SAF directory.")
+
+            act.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
+                sourceFile.inputStream().use { input ->
+                    input.copyTo(os)
+                }
+                os.flush()
+            }
+
+            sourceFile.delete()
+            result.success(true)
+        } catch (e: Exception) {
+            result.error("COPY_ERROR", e.message ?: "Failed to copy file to mods folder", null)
+        }
     }
 
     /**

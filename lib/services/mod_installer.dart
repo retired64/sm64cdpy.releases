@@ -156,6 +156,23 @@ class ModInstaller {
     }
   }
 
+  /// Copia un archivo local al directorio SAF de mods seleccionado.
+  /// Elimina el archivo fuente tras la copia exitosa.
+  Future<bool> copyFileToModsFolder({
+    required String sourcePath,
+    required String targetName,
+  }) async {
+    try {
+      final result = await _channel.invokeMethod<bool>(
+        'copyFileToModsFolder',
+        {'sourcePath': sourcePath, 'targetName': targetName},
+      );
+      return result ?? false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   /// Returns true if POST_NOTIFICATIONS is granted (always true on Android < 13).
   Future<bool> hasNotificationPermission() async {
     try {
