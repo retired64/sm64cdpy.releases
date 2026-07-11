@@ -7,6 +7,7 @@ import '../../presentation/screens/disclaimer_screen.dart';
 import '../../presentation/screens/dynos_screen.dart';
 import '../../presentation/screens/favourites_screen.dart';
 import '../../presentation/screens/home_screen.dart';
+import '../../presentation/screens/links_resource_screen.dart';
 import '../../presentation/screens/mod_detail_screen.dart';
 import '../../presentation/screens/popular_screen.dart';
 import '../../presentation/screens/settings_screen.dart';
@@ -37,6 +38,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/changelog',
       pageBuilder: (_, s) => _page(const ChangelogScreen(), s),
+    ),
+    GoRoute(
+      path: '/links-resource',
+      pageBuilder: (_, s) => _page(const LinksResourceScreen(), s),
     ),
     GoRoute(
       path: '/disclaimer',

@@ -36,6 +36,11 @@ class AppConstants {
   static const String discordUrl = 'https://discord.com/invite/thuhUH2WNX';
   static const String githubUrl = 'https://github.com/retired64';
 
+  // ── Links Resource ────────────────────────────────────────────────────────
+  static const String wikiUrl =
+      'https://github.com/retired64/sm64cdpy.releases/wiki';
+  static const String toolsAndAddonsUrl = 'https://mods.sm64coopdx.com';
+
   // ── Mod Installer ───────────────────────────────────────────────────────
   /// Clave en SharedPreferences para el estado de auto-instalación.
   static const String autoInstallModsKey = 'auto_install_mods';

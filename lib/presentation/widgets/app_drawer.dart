@@ -67,36 +67,32 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
       backgroundColor: cs.surface,
       elevation: 0,
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Header ──────────────────────────────────────────────────
-            _staggerItem(
-              index: 0,
-              ctrl: _staggerCtrl,
-              child: const _DrawerHeader(),
-            ),
-            _GradientDivider(isDark: isDark),
-            const SizedBox(height: 4),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Header ──────────────────────────────────────────────────
+              _staggerItem(
+                index: 0,
+                ctrl: _staggerCtrl,
+                child: const _DrawerHeader(),
+              ),
+              _GradientDivider(isDark: isDark),
+              const SizedBox(height: 4),
 
-            // ── Scroll area ──────────────────────────────────────────────
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _staggerItem(
-                      index: 1,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        icon: Icons.home_rounded,
-                        label: 'Home',
-                        route: '/',
-                        isActive: widget.currentRoute == '/',
-                      ),
-                    ),
+              // ── Navigation items ───────────────────────────────────────
+              _staggerItem(
+                index: 1,
+                ctrl: _staggerCtrl,
+                child: _NavItem(
+                  icon: Icons.home_rounded,
+                  label: 'Home',
+                  route: '/',
+                  isActive: widget.currentRoute == '/',
+                ),
+              ),
                     _staggerItem(
                       index: 2,
                       ctrl: _staggerCtrl,
@@ -207,48 +203,51 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       ctrl: _staggerCtrl,
                       child: _SortOptions(currentRoute: widget.currentRoute),
                     ),
+
+                    // ── Footer ───────────────────────────────────────────
+                    _GradientDivider(isDark: isDark),
+                    const _SocialLinks(),
+                    _GradientDivider(isDark: isDark),
+                    _NavItem(
+                      icon: Icons.link_rounded,
+                      label: 'Links Resource',
+                      route: '/links-resource',
+                      isActive: widget.currentRoute == '/links-resource',
+                    ),
+                    _NavItem(
+                      icon: Icons.info_outline_rounded,
+                      label: 'Disclaimer',
+                      route: '/disclaimer',
+                      isActive: widget.currentRoute == '/disclaimer',
+                    ),
+                    _NavItem(
+                      icon: Icons.history_rounded,
+                      label: 'Changelog',
+                      route: '/changelog',
+                      isActive: widget.currentRoute == '/changelog',
+                    ),
+                    _NavItem(
+                      icon: Icons.settings_rounded,
+                      label: 'Settings',
+                      route: '/settings',
+                      isActive: widget.currentRoute == '/settings',
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(22, 2, 0, 14),
+                      child: Text(
+                        'v1.4.2',
+                        style: TextStyle(
+                          color: cs.onSurfaceVariant,
+                          fontSize: 10,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-
-            // ── Footer ───────────────────────────────────────────────────
-            _GradientDivider(isDark: isDark),
-            const _SocialLinks(),
-            _GradientDivider(isDark: isDark),
-            _NavItem(
-              icon: Icons.info_outline_rounded,
-              label: 'Disclaimer',
-              route: '/disclaimer',
-              isActive: widget.currentRoute == '/disclaimer',
-            ),
-            _NavItem(
-              icon: Icons.history_rounded,
-              label: 'Changelog',
-              route: '/changelog',
-              isActive: widget.currentRoute == '/changelog',
-            ),
-            _NavItem(
-              icon: Icons.settings_rounded,
-              label: 'Settings',
-              route: '/settings',
-              isActive: widget.currentRoute == '/settings',
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(22, 2, 0, 14),
-              child: Text(
-                'v1.4.2',
-                style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 10,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
 
