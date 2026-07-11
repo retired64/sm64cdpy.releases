@@ -36,7 +36,7 @@ class AppConstants {
   static const String youtubeUrl = 'https://www.youtube.com/@retired64';
   static const String discordUrl = 'https://discord.com/invite/thuhUH2WNX';
   static const String discordPort = 'https://discord.gg/TJVKHS4';
-  static const String discordPortAndroid = 'https://discord.gg/ePsHjqF3Qr'
+  static const String discordPortAndroid = 'https://discord.gg/ePsHjqF3Qr';
   static const String githubUrl = 'https://github.com/retired64';
 
   // ── Links Resource ────────────────────────────────────────────────────────
