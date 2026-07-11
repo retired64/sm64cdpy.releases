@@ -962,7 +962,6 @@ class _PopularSkeleton extends StatelessWidget {
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 80, 16, 32),
-      physics: const NeverScrollableScrollPhysics(),
       children: [
         // Podium skeleton
         _Bone(height: 220, radius: 20, isDark: isDark),

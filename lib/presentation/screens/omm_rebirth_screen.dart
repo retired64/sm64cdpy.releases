@@ -358,6 +358,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isFav = ref.watch(ommFavouritesProvider).contains(widget.mod.id);
+    final cardImageHeight =
+        (MediaQuery.orientationOf(context) == Orientation.landscape)
+            ? 140.0
+            : 180.0;
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -399,16 +403,16 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                         ? CachedNetworkImage(
                             imageUrl: widget.mod.imageUrl!,
                             width: double.infinity,
-                            height: 180,
+                            height: cardImageHeight,
                             fit: BoxFit.cover,
                             placeholder: (context, loadState) => Container(
                               color: cs.surfaceContainerHigh,
-                              height: 180,
+                              height: cardImageHeight,
                             ),
                             errorWidget: (context, loadState, error) =>
                                 Container(
                                   color: cs.surfaceContainerHigh,
-                                  height: 180,
+                                  height: cardImageHeight,
                                   child: Icon(
                                     Icons.extension_rounded,
                                     size: 32,
@@ -418,7 +422,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                           )
                         : Container(
                             color: cs.surfaceContainerHigh,
-                            height: 180,
+                            height: cardImageHeight,
                             child: Icon(
                               Icons.extension_rounded,
                               size: 32,
@@ -689,7 +693,6 @@ class _OmmSkeleton extends StatelessWidget {
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 80, 16, 32),
-      physics: const NeverScrollableScrollPhysics(),
       children: [
         ...List.generate(
           3,

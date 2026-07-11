@@ -13,10 +13,15 @@ import 'services/update_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Lock to portrait
+  // Lock to portrait + landscape (phone only)
+  // Android 16+ (API 36): screenOrientation constraints are ignored
+  // on devices with smallestWidth >= 600dp (tablets, foldables).
+  // This is documented platform behavior, not a bug.
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
   ]);
 
   // Configure file downloader

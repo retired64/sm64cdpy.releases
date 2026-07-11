@@ -350,6 +350,10 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isFav = ref.watch(touchFavouritesProvider).contains(widget.mod.id);
+    final cardImageHeight =
+        (MediaQuery.orientationOf(context) == Orientation.landscape)
+            ? 140.0
+            : 180.0;
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -390,16 +394,16 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                         ? CachedNetworkImage(
                             imageUrl: widget.mod.imageUrl!,
                             width: double.infinity,
-                            height: 180,
+                            height: cardImageHeight,
                             fit: BoxFit.cover,
                             placeholder: (context, loadState) => Container(
                               color: cs.surfaceContainerHigh,
-                              height: 180,
+                              height: cardImageHeight,
                             ),
                             errorWidget: (context, loadState, error) =>
                                 Container(
                                   color: cs.surfaceContainerHigh,
-                                  height: 180,
+                                  height: cardImageHeight,
                                   child: Icon(
                                     Icons.touch_app_rounded,
                                     size: 32,
@@ -409,7 +413,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                           )
                       : Container(
                           color: cs.surfaceContainerHigh,
-                          height: 180,
+                          height: cardImageHeight,
                           child: Icon(
                             Icons.touch_app_rounded,
                             size: 32,
@@ -619,7 +623,6 @@ class _TouchSkeleton extends StatelessWidget {
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 80, 16, 32),
-      physics: const NeverScrollableScrollPhysics(),
       children: [
         ...List.generate(
           3,

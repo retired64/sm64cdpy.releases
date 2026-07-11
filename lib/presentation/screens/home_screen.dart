@@ -192,6 +192,10 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    final carouselHeight =
+        (MediaQuery.orientationOf(context) == Orientation.landscape)
+            ? 160.0
+            : 220.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -201,7 +205,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 220,
+          height: carouselHeight,
           child: PageView.builder(
             controller: _ctrl,
             itemCount: widget.mods.length,
@@ -1083,7 +1087,6 @@ class _HomeSkeleton extends StatelessWidget {
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 80, 20, 32),
-      physics: const NeverScrollableScrollPhysics(),
       children: [
         _Bone(height: 220, radius: 20, isDark: isDark),
         const SizedBox(height: 20),

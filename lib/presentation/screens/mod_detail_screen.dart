@@ -61,7 +61,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
   bool _changelogExpanded = false;
   double _scrollOffset = 0;
 
-  static const _heroHeight = 300.0;
+  double _heroHeight = 300.0;
   static const _appBarHeight = kToolbarHeight + 40;
 
   @override
@@ -96,6 +96,11 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
 
   @override
   Widget build(BuildContext context) {
+    _heroHeight = (MediaQuery.orientationOf(context) ==
+            Orientation.landscape)
+        ? (MediaQuery.sizeOf(context).height * 0.45).clamp(200.0, 280.0)
+        : 300.0;
+
     final cs = Theme.of(context).colorScheme;
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -1452,11 +1457,15 @@ class _ScreenshotGalleryState extends State<_ScreenshotGallery> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final galleryHeight = (MediaQuery.orientationOf(context) ==
+            Orientation.landscape)
+        ? 140.0
+        : 200.0;
 
     return Column(
       children: [
         SizedBox(
-          height: 200,
+          height: galleryHeight,
           child: PageView.builder(
             controller: _ctrl,
             itemCount: widget.images.length,
@@ -2103,7 +2112,8 @@ class _DetailSkeleton extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: cs.surface,
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
         children: [
           _Shimmer(height: 300, radius: 0, isDark: isDark),
           const SizedBox(height: 16),
@@ -2124,6 +2134,7 @@ class _DetailSkeleton extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }
