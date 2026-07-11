@@ -85,6 +85,12 @@ const _kAppLinks = [
 
 const _kResourceLinks = [
   _LinkData(
+    title: 'Discord Server',
+    url: AppConstants.discordPort,
+    subtitle: 'Community & support server',
+    icon: Icons.chat_rounded,
+  ),
+  _LinkData(
     title: 'Wiki & Guides',
     url: AppConstants.wikiUrl,
     subtitle: 'Installation guides & docs',

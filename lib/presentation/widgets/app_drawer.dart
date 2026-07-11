@@ -235,7 +235,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     Padding(
                       padding: const EdgeInsets.fromLTRB(22, 2, 0, 14),
                       child: Text(
-                        'v1.4.2',
+                        'v1.4.3-prerelease',
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
                           fontSize: 10,
