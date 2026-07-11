@@ -43,7 +43,7 @@ class AppConstants {
   static const String wikiUrl =
       'https://github.com/ManIsCat2/sm64coopdx/wiki';
   static const String toolsAndAddonsUrl = 'https://github.com/coop-deluxe/sm64coopdx/tree/main/docs/lua';
-  static const String maniscat2Github = 'https://github.com/ManIsCat2/sm64coopdx'
+  static const String maniscat2Github = 'https://github.com/ManIsCat2/sm64coopdx';
 
   // ── Mod Installer ───────────────────────────────────────────────────────
   /// Clave en SharedPreferences para el estado de auto-instalación.
