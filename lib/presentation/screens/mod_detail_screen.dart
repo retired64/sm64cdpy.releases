@@ -1028,7 +1028,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          info!.status == BgInstallStatus.downloading
+                          info.status == BgInstallStatus.downloading
                               ? 'Downloading ${downloadProgress ?? 0}%'
                               : 'Installing...',
                           style: const TextStyle(
@@ -1361,7 +1361,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
                     ),
                     Text(
                       isActive
-                          ? (info?.status == BgInstallStatus.downloading
+                          ? (info.status == BgInstallStatus.downloading
                               ? 'Downloading ${downloadProgress ?? 0}%'
                               : 'Installing...')
                           : 'Toca para descargar',
