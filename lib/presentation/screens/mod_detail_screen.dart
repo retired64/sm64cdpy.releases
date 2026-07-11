@@ -773,10 +773,64 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
   Future<void> _download() async {
     HapticFeedback.mediumImpact();
 
+    final installer = ModInstaller();
+    final hasPermission = await installer.hasNotificationPermission();
+
+    if (!hasPermission && mounted) {
+      final showRationale = await installer.shouldShowNotificationRationale();
+      if (showRationale) {
+        if (!mounted) return;
+        final proceed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor:
+                Theme.of(ctx).colorScheme.surfaceContainerHighest,
+            title: Text(
+              'Notifications needed',
+              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+            ),
+            content: Text(
+              'We need notification permission to show download '
+              'and installation progress, even if you leave the app.',
+              style: TextStyle(
+                  color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Not now',
+                    style: TextStyle(
+                        color: Theme.of(ctx).colorScheme.onSurface)),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Continue'),
+              ),
+            ],
+          ),
+        );
+
+        if (proceed != true || !mounted) {
+          AppSnackbar.info(
+            context,
+            message: 'You won\'t see progress outside the app. Grant permission in Settings to enable notifications.',
+          );
+        }
+      }
+
+      if (!mounted) return;
+      final granted = await installer.requestNotificationPermission();
+      if (!granted && mounted) {
+        AppSnackbar.info(
+          context,
+          message: 'Notifications not enabled. You won\'t see download progress outside the app.',
+        );
+      }
+    }
+
     final modName = _sanitizeModTitle(widget.modTitle);
     final filename = _inferFileName(widget.url, widget.modTitle);
 
-    final installer = ModInstaller();
     final hasFolder = await installer.isDirectorySelected();
 
     if (hasFolder) {
@@ -964,6 +1018,60 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
 
   Future<void> _download() async {
     HapticFeedback.lightImpact();
+
+    final hasPermission = await _installer.hasNotificationPermission();
+
+    if (!hasPermission && mounted) {
+      final showRationale = await _installer.shouldShowNotificationRationale();
+      if (showRationale) {
+        if (!mounted) return;
+        final proceed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor:
+                Theme.of(ctx).colorScheme.surfaceContainerHighest,
+            title: Text(
+              'Notifications needed',
+              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+            ),
+            content: Text(
+              'We need notification permission to show download '
+              'and installation progress, even if you leave the app.',
+              style: TextStyle(
+                  color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Not now',
+                    style: TextStyle(
+                        color: Theme.of(ctx).colorScheme.onSurface)),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Continue'),
+              ),
+            ],
+          ),
+        );
+
+        if (proceed != true || !mounted) {
+          AppSnackbar.info(
+            context,
+            message: 'You won\'t see progress outside the app. Grant permission in Settings to enable notifications.',
+          );
+        }
+      }
+
+      if (!mounted) return;
+      final granted = await _installer.requestNotificationPermission();
+      if (!granted && mounted) {
+        AppSnackbar.info(
+          context,
+          message: 'Notifications not enabled. You won\'t see download progress outside the app.',
+        );
+      }
+    }
 
     final modName = _sanitizeModTitle(widget.modTitle);
     final filename = _inferFileName(

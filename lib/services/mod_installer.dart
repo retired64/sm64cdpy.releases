@@ -156,6 +156,39 @@ class ModInstaller {
     }
   }
 
+  /// Returns true if POST_NOTIFICATIONS is granted (always true on Android < 13).
+  Future<bool> hasNotificationPermission() async {
+    try {
+      final result = await _channel.invokeMethod<bool>('hasNotificationPermission');
+      return result ?? false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  /// Returns true if a rationale dialog should be shown before requesting.
+  Future<bool> shouldShowNotificationRationale() async {
+    try {
+      final result =
+          await _channel.invokeMethod<bool>('shouldShowNotificationRationale');
+      return result ?? false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  /// Shows system permission dialog for POST_NOTIFICATIONS.
+  /// Returns true if granted, false if denied.
+  Future<bool> requestNotificationPermission() async {
+    try {
+      final result =
+          await _channel.invokeMethod<bool>('requestNotificationPermission');
+      return result ?? false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   /// Revoca los permisos y limpia la selección de carpeta de mods.
   Future<void> clearDirectorySelection() async {
     try {

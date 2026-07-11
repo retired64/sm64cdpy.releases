@@ -1,11 +1,16 @@
 package mods.sm64cdpy
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.DocumentsContract
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.Observer
 import androidx.work.ExistingWorkPolicy
@@ -50,6 +55,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val PREF_NAME = "mod_installer_prefs"
         const val KEY_TREE_URI = "tree_uri"
         const val REQUEST_CODE_TREE = 9001
+        const val REQUEST_CODE_NOTIFICATION_PERMISSION = 9002
         const val UNIQUE_WORK_PREFIX = "mod_install_"
     }
 
@@ -58,6 +64,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var eventSink: EventChannel.EventSink? = null
     private var activity: Activity? = null
     private var pendingResult: Result? = null
+    private var pendingPermissionResult: Result? = null
 
     private val workObservers = mutableMapOf<UUID, Observer<WorkInfo>>()
 
@@ -97,6 +104,17 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 false
             }
         }
+        binding.addRequestPermissionsResultListener { requestCode, _, grantResults ->
+            if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION) {
+                val result = pendingPermissionResult ?: return@addRequestPermissionsResultListener false
+                pendingPermissionResult = null
+                val granted = grantResults.isNotEmpty() &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED
+                result.success(granted)
+                return@addRequestPermissionsResultListener true
+            }
+            false
+        }
     }
 
     override fun onDetachedFromActivity() {
@@ -124,6 +142,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "cancelModOperation" -> cancelModOperation(call, result)
             "isDirectorySelected" -> isDirectorySelected(result)
             "clearDirectorySelection" -> clearDirectorySelection(result)
+            "hasNotificationPermission" -> hasNotificationPermission(result)
+            "requestNotificationPermission" -> requestNotificationPermission(result)
+            "shouldShowNotificationRationale" -> shouldShowNotificationRationale(result)
             else -> result.notImplemented()
         }
     }
@@ -207,6 +228,67 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
         prefs.edit().remove(KEY_TREE_URI).apply()
         result.success(true)
+    }
+
+    /**
+     * Checks if POST_NOTIFICATIONS permission is granted.
+     * Always returns true on Android < 13.
+     */
+    private fun hasNotificationPermission(result: Result) {
+        val act = activity
+        if (act == null) {
+            result.success(false)
+            return
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            result.success(true)
+            return
+        }
+        val granted = ContextCompat.checkSelfPermission(
+            act, Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+        result.success(granted)
+    }
+
+    /**
+     * Checks if we should show a rationale explaining why notifications are needed.
+     */
+    private fun shouldShowNotificationRationale(result: Result) {
+        val act = activity
+        if (act == null) {
+            result.success(false)
+            return
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            result.success(false)
+            return
+        }
+        val showRationale = ActivityCompat.shouldShowRequestPermissionRationale(
+            act, Manifest.permission.POST_NOTIFICATIONS
+        )
+        result.success(showRationale)
+    }
+
+    /**
+     * Requests POST_NOTIFICATIONS permission via system dialog.
+     * On Android < 13, returns true immediately (no dialog needed).
+     */
+    private fun requestNotificationPermission(result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            result.success(true)
+            return
+        }
+        pendingPermissionResult = result
+        ActivityCompat.requestPermissions(
+            act,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            REQUEST_CODE_NOTIFICATION_PERMISSION
+        )
     }
 
     /**
