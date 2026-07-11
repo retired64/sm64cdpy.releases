@@ -72,6 +72,14 @@ class ModInstallWorker(
             val topDir = detectTopLevelDir(zipFile)
             val displayDir = topDir ?: modName
 
+            if (fileCount == 0) {
+                return Result.failure(
+                    workDataOf(
+                        "error" to "No files were extracted. The downloaded file may not be a valid ZIP archive."
+                    )
+                )
+            }
+
             zipFile.delete()
 
             return Result.success(

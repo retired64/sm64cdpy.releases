@@ -2551,14 +2551,24 @@ String _inferFileName(String url, String modTitle, {int? index}) {
       return lastSegment;
     }
 
-    // 2. Query param "file" con extensión válida
+    // 2. Si el último segmento NO es "download" y tiene nombre con valor,
+    //    añadir .zip (preserva puntos, ej: "cs-triple-baka-pack.418" → ".zip")
+    if (lastSegment.isNotEmpty &&
+        lastSegment != 'download' &&
+        _validFileExtension(lastSegment).isEmpty &&
+        lastSegment.length > 2 &&
+        !RegExp(r'^\d+$').hasMatch(lastSegment)) {
+      return '$lastSegment.zip';
+    }
+
+    // 3. Query param "file" con extensión válida
     final fileParam = uri.queryParameters['file'] ?? '';
     if (_validFileExtension(fileParam).isNotEmpty) {
       return fileParam;
     }
   }
 
-  // 3. Fallback: nombre del mod sanitizado + índice opcional + .zip
+  // 4. Fallback: nombre del mod sanitizado + índice opcional + .zip
   final base = _sanitizeModTitle(modTitle);
   final safeName = base.isNotEmpty ? base : 'mod';
   final suffix = index != null && index > 1 ? '-$index' : '';
