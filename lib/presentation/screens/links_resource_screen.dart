@@ -50,19 +50,19 @@ class _LinkData {
 const _kOfficialLinks = [
   _LinkData(
     title: 'SM64CoopDX Website',
-    url: AppConstants.dataSourceUrl,
-    subtitle: 'mods.sm64coopdx.com',
+    url: AppConstants.officialweb,
+    subtitle: 'sm64coopdx.com',
     icon: Icons.public_rounded,
   ),
   _LinkData(
     title: 'Discord Server',
-    url: AppConstants.discordUrl,
-    subtitle: 'Official community server',
+    url: AppConstants.discordPortAndroid,
+    subtitle: 'Official community server Android',
     icon: Icons.chat_rounded,
   ),
   _LinkData(
     title: 'GitHub Repository',
-    url: AppConstants.githubUrl,
+    url: AppConstants.maniscat2Github,
     subtitle: 'Source code & issues',
     icon: Icons.code_rounded,
   ),
@@ -99,7 +99,7 @@ const _kResourceLinks = [
   _LinkData(
     title: 'Tools & Add-ons',
     url: AppConstants.toolsAndAddonsUrl,
-    subtitle: 'External tools & resources',
+    subtitle: 'How make mods & resources',
     icon: Icons.build_rounded,
   ),
 ];

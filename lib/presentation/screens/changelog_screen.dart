@@ -363,9 +363,30 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.4.2',
+    version: '1.4.3',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'New "Links Resource" screen — a dedicated hub gathering all useful links in one place, organised into OFFICIAL, SM64CDPY, and RESOURCES sections.',
+          'Each link is shown as a tappable card with an icon, title, and short description, opening in your browser with a single tap.',
+          'Accessible directly from the navigation drawer.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'The app now supports both portrait and landscape orientations — previously it was locked to portrait only.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.4.2',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,

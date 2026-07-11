@@ -20,6 +20,7 @@ class AppConstants {
   static const String githubReleasesUrl =
       'https://github.com/retired64/sm64cdpy.releases/releases';
   static const String dataSourceUrl = 'https://mods.sm64coopdx.com';
+  static const String officialweb = 'https://sm64coopdx.com';
 
   // ── Remote JSON URLs for extra sections ──────────────────────────────────
   static const String vipModsRemoteUrl =
@@ -35,12 +36,14 @@ class AppConstants {
   static const String youtubeUrl = 'https://www.youtube.com/@retired64';
   static const String discordUrl = 'https://discord.com/invite/thuhUH2WNX';
   static const String discordPort = 'https://discord.gg/TJVKHS4';
+  static const String discordPortAndroid = 'https://discord.gg/ePsHjqF3Qr'
   static const String githubUrl = 'https://github.com/retired64';
 
   // ── Links Resource ────────────────────────────────────────────────────────
   static const String wikiUrl =
       'https://github.com/ManIsCat2/sm64coopdx/wiki';
-  static const String toolsAndAddonsUrl = 'https://msm64coopdx.com';
+  static const String toolsAndAddonsUrl = 'https://github.com/coop-deluxe/sm64coopdx/tree/main/docs/lua';
+  static const String maniscat2Github = 'https://github.com/ManIsCat2/sm64coopdx'
 
   // ── Mod Installer ───────────────────────────────────────────────────────
   /// Clave en SharedPreferences para el estado de auto-instalación.
