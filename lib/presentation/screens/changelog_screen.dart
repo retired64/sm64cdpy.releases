@@ -370,22 +370,33 @@ const _kVersions = <_VersionData>[
       _ChangeGroupData(
         type: _ChangeType.added,
         items: [
-          'Background mod installation — mods are now extracted via Android WorkManager with a foreground service notification, so you can keep browsing while installation runs.',
-          'Real-time install progress — notification shows file count (e.g. "45/120 files"), and a non-blocking inline banner appears on the mod detail screen.',
-          'Installation status survives navigation — results (success / error) are delivered via snackbar regardless of which screen you are on.',
+          'Complete background download + install via Android WorkManager with persistent foreground notifications — download and install both show real-time progress in the notification shade even when the app is in the background.',
+          'Download progress notification with cancel button — tap "Cancel" in the notification to stop an ongoing download at any time.',
+          'Install progress notification with cancel button and file counter (e.g. "Extracting 45/120 files").',
+          'Runtime permission request for POST_NOTIFICATIONS (Android 13+), shown in-context when the user first taps Download, with a rationale dialog explaining why notifications are needed.',
+          'Guided "Go to Settings" dialog when auto-install is enabled but no mods folder has been selected yet — preventing cryptic errors.',
+          'When auto-install is OFF but a mods folder is selected, ZIP files are automatically copied to the mods folder after download (ready for manual installation).',
         ],
       ),
       _ChangeGroupData(
         type: _ChangeType.improved,
         items: [
-          'Download + install flow is now fully non-blocking — the previous install progress dialog that locked the screen has been replaced with background execution.',
-          'Foreground service notification displays even when the app is in the background so you always know when an install finishes.',
+          'Download + install flow is now fully non-blocking — the previous install progress dialog that locked the screen has been removed entirely.',
+          'Inline status banner on the mod detail screen shows live download percentage and install file count.',
+          'Real download progress replaces the fake animation — progress bar reflects actual bytes downloaded via EventChannel from native WorkManager.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.removed,
+        items: [
+          'Invasive "Install to game?" dialog after every download — replaced by the auto-install toggle in Settings as the single source of truth for installation behavior.',
         ],
       ),
       _ChangeGroupData(
         type: _ChangeType.fixed,
         items: [
           'Mod installation no longer freezes the UI during ZIP extraction — the entire extraction runs on a native background thread with WorkManager.',
+          'Downloaded ZIPs no longer remain in the system Downloads folder when a mods folder is selected — they are moved to the mods folder automatically.',
         ],
       ),
     ],

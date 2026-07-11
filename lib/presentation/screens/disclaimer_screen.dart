@@ -448,30 +448,30 @@ class _WhatsNewBanner extends StatelessWidget {
     final items = isSpanish
         ? [
             (
-              Icons.folder_special_rounded,
-              'Instalación directa de mods al juego — extrae y copia al directorio de mods de SM64CoopDX',
+              Icons.phone_android_rounded,
+              'Descarga e instalación en segundo plano — notificación persistente con progreso real y botón de cancelar',
             ),
             (
-              Icons.touch_app_rounded,
-              'Selección de carpeta de mods desde Ajustes — un solo toque, permisos persistentes',
+              Icons.notifications_active_rounded,
+              'Notificaciones de progreso aunque salgas de la app — descarga, instalación, cancelación y reintento',
             ),
             (
-              Icons.auto_mode_rounded,
-              'Auto-instalación opcional — instala automáticamente tras cada descarga',
+              Icons.folder_zip_rounded,
+              'ZIP copiado automáticamente a la carpeta de mods cuando auto-instalación está desactivada',
             ),
           ]
         : [
             (
-              Icons.folder_special_rounded,
-              'Direct mod installation to game — extracts and copies to SM64CoopDX mods folder',
+              Icons.phone_android_rounded,
+              'Background download & install — persistent notification with real progress and cancel button',
             ),
             (
-              Icons.touch_app_rounded,
-              'Mods folder selection in Settings — one tap, persistent permissions',
+              Icons.notifications_active_rounded,
+              'Progress notifications even outside the app — download, install, cancel, and retry',
             ),
             (
-              Icons.auto_mode_rounded,
-              'Optional auto-install — installs automatically after every download',
+              Icons.folder_zip_rounded,
+              'ZIP auto-copied to mods folder when auto-install is off',
             ),
           ];
 
