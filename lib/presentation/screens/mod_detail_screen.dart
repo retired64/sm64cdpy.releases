@@ -757,6 +757,9 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
   late AnimationController _scaleCtrl;
   late Animation<double> _scale;
 
+  bool _localDownloading = false;
+  double _localProgress = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -971,6 +974,10 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       );
     } catch (e) {
       if (!mounted) return;
+      setState(() {
+        _localDownloading = false;
+        _localProgress = 0.0;
+      });
       AppSnackbar.error(
         context,
         message: 'Error: ${e.toString()}',
@@ -983,11 +990,15 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     final cs = widget.cs;
     final modName = _sanitizeModTitle(widget.modTitle);
     final info = ref.watch(bgInstallStateProvider)[modName];
-    final isActive = info != null &&
-        (info.status == BgInstallStatus.downloading ||
-         info.status == BgInstallStatus.installing);
-    final downloadProgress =
-        info?.status == BgInstallStatus.downloading ? info?.downloadProgress : null;
+    final isActive = _localDownloading ||
+        (info != null &&
+            (info.status == BgInstallStatus.downloading ||
+             info.status == BgInstallStatus.installing));
+    final downloadProgress = _localDownloading
+        ? (_localProgress * 100).round()
+        : (info?.status == BgInstallStatus.downloading
+            ? info?.downloadProgress
+            : null);
 
     return GestureDetector(
       onTapDown: (_) => _scaleCtrl.forward(),
@@ -1033,9 +1044,11 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          info.status == BgInstallStatus.downloading
-                              ? 'Downloading ${downloadProgress ?? 0}%'
-                              : 'Installing...',
+                          _localDownloading
+                              ? 'Downloading ${(_localProgress * 100).toStringAsFixed(0)}%'
+                              : info?.status == BgInstallStatus.downloading
+                                  ? 'Downloading ${downloadProgress ?? 0}%'
+                                  : 'Installing...',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
@@ -1092,6 +1105,9 @@ class _DownloadFileRow extends ConsumerStatefulWidget {
 class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
     with SingleTickerProviderStateMixin {
   final _installer = ModInstaller();
+
+  bool _localDownloading = false;
+  double _localProgress = 0.0;
 
   @override
   void initState() {
@@ -1278,12 +1294,27 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
 
   Future<void> _downloadWithFileDownloader(
       String url, String filename) async {
+    if (!mounted) return;
+    setState(() {
+      _localDownloading = true;
+      _localProgress = 0.0;
+    });
     try {
       await FileDownloader.downloadFile(
         url: url,
         name: filename,
+        onProgress: (name, progress) {
+          if (!mounted) return;
+          final normalized =
+              (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          setState(() => _localProgress = normalized);
+        },
         onDownloadCompleted: (path) {
           if (!mounted) return;
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
           final savedName = path.split('/').last;
           AppSnackbar.success(
             context,
@@ -1292,6 +1323,10 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
         },
         onDownloadError: (error) {
           if (!mounted) return;
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
           AppSnackbar.error(
             context,
             message: 'Download failed',
@@ -1300,6 +1335,10 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
       );
     } catch (e) {
       if (!mounted) return;
+      setState(() {
+        _localDownloading = false;
+        _localProgress = 0.0;
+      });
       AppSnackbar.error(
         context,
         message: 'Error: ${e.toString()}',
@@ -1312,11 +1351,15 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
     final cs = widget.cs;
     final modName = _sanitizeModTitle(widget.modTitle);
     final info = ref.watch(bgInstallStateProvider)[modName];
-    final isActive = info != null &&
-        (info.status == BgInstallStatus.downloading ||
-         info.status == BgInstallStatus.installing);
-    final downloadProgress =
-        info?.status == BgInstallStatus.downloading ? info?.downloadProgress : null;
+    final isActive = _localDownloading ||
+        (info != null &&
+            (info.status == BgInstallStatus.downloading ||
+             info.status == BgInstallStatus.installing));
+    final downloadProgress = _localDownloading
+        ? (_localProgress * 100).round()
+        : (info?.status == BgInstallStatus.downloading
+            ? info?.downloadProgress
+            : null);
 
     final filename = _inferFileName(
       widget.url,
@@ -1366,9 +1409,11 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
                     ),
                     Text(
                       isActive
-                          ? (info.status == BgInstallStatus.downloading
-                              ? 'Downloading ${downloadProgress ?? 0}%'
-                              : 'Installing...')
+                          ? (_localDownloading
+                              ? 'Downloading ${(_localProgress * 100).toStringAsFixed(0)}%'
+                              : info?.status == BgInstallStatus.downloading
+                                  ? 'Downloading ${downloadProgress ?? 0}%'
+                                  : 'Installing...')
                           : 'Toca para descargar',
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
