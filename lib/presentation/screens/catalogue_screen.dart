@@ -105,8 +105,22 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
                 parent: AlwaysScrollableScrollPhysics(),
               ),
               slivers: [
-                // ── App bar (hero con franjas diagonales) ──────────
+                // ── App bar ─────────────────────────────────────
                 _CatalogueAppBar(searchCtrl: _searchCtrl, onClear: _clearSearch),
+
+                // ── Section label ─────────────────────────────────
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+                    child: Text('検索・カタログ', style: retro.body(size: 12)),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                    child: SectionKicker(retro: retro, label: 'BROWSE MODS'),
+                  ),
+                ),
 
                 // ── Filter bar ────────────────────────────────────
                 SliverPersistentHeader(
@@ -207,69 +221,50 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final filteredAsync = ref.watch(filteredModsProvider);
+    final count = filteredAsync.maybeWhen(
+      data: (mods) => mods.length,
+      orElse: () => null,
+    );
 
     return SliverAppBar(
       backgroundColor: retro.background,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
-      pinned: true,
+      floating: true,
+      snap: true,
       elevation: 0,
-      expandedHeight: 132,
       shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
       leading: Builder(
         builder: (ctx) => IconButton(
-          icon: Icon(Icons.menu_rounded, color: retro.background, size: 22),
-          style: IconButton.styleFrom(backgroundColor: Colors.black26),
+          icon: Icon(Icons.menu_rounded, color: retro.ink, size: 22),
           onPressed: () => Scaffold.of(ctx).openDrawer(),
         ),
       ),
-      flexibleSpace: FlexibleSpaceBar(
-        collapseMode: CollapseMode.pin,
-        background: Stack(
-          fit: StackFit.expand,
+      title: RichText(
+        text: TextSpan(
           children: [
-            // Banner de franjas diagonales, como la cabecera de un card
-            // de release.
-            DiagonalStripeBanner(
-              baseColor: retro.blue,
-              stripeColor: Colors.white.withValues(alpha: 0.12),
-              stripeWidth: 26,
-              gap: 22,
-            ),
-            Positioned(
-              left: 16,
-              right: 16,
-              bottom: 62,
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'MOD ',
-                      style: retro.heading(size: 22, color: Colors.white),
-                    ),
-                    TextSpan(
-                      text: 'CATALOGUE',
-                      style: retro.heading(size: 22, color: retro.background),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              left: 16,
-              bottom: 44,
-              child: Text(
-                '検索・カタログ',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.75),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+            TextSpan(text: 'MOD ', style: retro.heading(size: 18, color: retro.ink)),
+            TextSpan(
+              text: 'CATALOGUE',
+              style: retro.heading(size: 18, color: retro.accent),
             ),
           ],
         ),
       ),
+      actions: [
+        if (count != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: SkewChip(
+              retro: retro,
+              icon: Icons.extension_rounded,
+              label: '$count MODS',
+              dense: true,
+              selected: true,
+            ),
+          ),
+      ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: Padding(
