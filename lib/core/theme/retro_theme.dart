@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 
 /// Tokens de diseño del lenguaje visual "manga panel" compartido entre
@@ -151,7 +153,7 @@ class _HalftonePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..isAntiAlias = false;
 
-    canvas.drawPoints(PointMode.points, points, paint);
+    canvas.drawPoints(ui.PointMode.points, points, paint);
   }
 
   @override
