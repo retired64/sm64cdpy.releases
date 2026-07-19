@@ -37,12 +37,21 @@ class _OmmRebirthScreenState extends ConsumerState<OmmRebirthScreen> {
     final ommAsync = ref.watch(allOmmRebirthProvider);
 
     return Scaffold(
-      backgroundColor: retro.void_,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/omm-rebirth'),
-      body: ommAsync.when(
-        loading: () => const _OmmSkeleton(),
-        error: (e, _) => _OmmError(message: e.toString()),
-        data: (mods) => _OmmBody(mods: mods, scrollCtrl: _scrollCtrl),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: HalftoneBackground(
+              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
+            ),
+          ),
+          ommAsync.when(
+            loading: () => const _OmmSkeleton(),
+            error: (e, _) => _OmmError(message: e.toString()),
+            data: (mods) => _OmmBody(mods: mods, scrollCtrl: _scrollCtrl),
+          ),
+        ],
       ),
     );
   }
@@ -67,64 +76,40 @@ class _OmmBody extends StatelessWidget {
       slivers: [
         // ── App bar ───────────────────────────────────────────
         SliverAppBar(
-          backgroundColor: retro.void_,
+          backgroundColor: retro.background,
           surfaceTintColor: Colors.transparent,
           scrolledUnderElevation: 0,
           floating: true,
           snap: true,
           elevation: 0,
           shape: Border(
-            bottom: BorderSide(color: retro.line, width: 3),
+            bottom: BorderSide(color: retro.border, width: 3),
           ),
           leading: Builder(
             builder: (ctx) => IconButton(
               icon: Icon(
                 Icons.menu_rounded,
-                color: retro.gold,
+                color: retro.accent,
                 size: 22,
               ),
               onPressed: () => Scaffold.of(ctx).openDrawer(),
             ),
           ),
-          title: Row(
-            children: [
-              Container(
-                width: 10,
-                height: 10,
-                color: retro.red,
-                margin: const EdgeInsets.only(right: 4),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                'OMM PACK',
-                style: TextStyle(
-                  color: retro.gold,
-                  fontFamily: RetroTheme.fontFamily,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.2,
-                ),
-              ),
-            ],
+          title: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(text: 'OMM ', style: retro.heading(size: 16, color: retro.ink)),
+                TextSpan(text: 'PACK', style: retro.heading(size: 16, color: retro.accent)),
+              ],
+            ),
           ),
           actions: [
-            // Total count tag
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: retro.panel,
-                border: Border.all(color: retro.line, width: 2),
-              ),
-              child: Text(
-                '${mods.length} MODS',
-                style: TextStyle(
-                  color: retro.inkDim,
-                  fontFamily: RetroTheme.fontFamily,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.6,
-                ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: SkewChip(
+                retro: retro,
+                label: '${mods.length} MODS',
+                dense: true,
               ),
             ),
           ],
@@ -133,67 +118,17 @@ class _OmmBody extends StatelessWidget {
         // ── Section label ─────────────────────────────────────
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 22, 20, 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: retro.red, width: 2),
-                  ),
-                  child: Text(
-                    'STAGE',
-                    style: TextStyle(
-                      color: retro.red,
-                      fontFamily: RetroTheme.fontFamily,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      'OMM REBIRTH MODS',
-                      style: TextStyle(
-                        color: retro.ink,
-                        fontFamily: RetroTheme.fontFamily,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.8,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    if (mods.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: retro.panel,
-                          border: Border.all(color: retro.line, width: 2),
-                        ),
-                        child: Text(
-                          '${mods.length} TOTAL',
-                          style: TextStyle(
-                            color: retro.inkDim,
-                            fontFamily: RetroTheme.fontFamily,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
+            child: Text('改造・すべてのMOD', style: retro.body(size: 12)),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
+            child: SectionKicker(
+              retro: retro,
+              label: 'OMM REBIRTH MODS',
+              japanese: mods.isEmpty ? null : '${mods.length} 件',
             ),
           ),
         ),
@@ -424,9 +359,9 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
             offset: Offset(offset, offset),
             child: Container(
               decoration: BoxDecoration(
-                color: retro.panel,
-                borderRadius: RetroTheme.pixelRadius,
-                border: Border.all(color: retro.line, width: 3),
+                color: retro.surface,
+                borderRadius: RetroTheme.radius,
+                border: Border.all(color: retro.border, width: 3),
                 boxShadow: retro.hardShadow(
                   dx: 5 - offset,
                   dy: 5 - offset,
@@ -437,7 +372,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
           );
         },
         child: ClipRRect(
-          borderRadius: RetroTheme.pixelRadius,
+          borderRadius: RetroTheme.radius,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -446,7 +381,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                 Container(
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: retro.line, width: 3),
+                      bottom: BorderSide(color: retro.border, width: 3),
                     ),
                   ),
                   child: CachedNetworkImage(
@@ -455,11 +390,11 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                     height: cardImageHeight,
                     fit: BoxFit.cover,
                     placeholder: (context, loadState) => Container(
-                      color: retro.panelAlt,
+                      color: retro.surfaceAlt,
                       height: cardImageHeight,
                     ),
                     errorWidget: (context, loadState, error) => Container(
-                      color: retro.panelAlt,
+                      color: retro.surfaceAlt,
                       height: cardImageHeight,
                       alignment: Alignment.center,
                       child: Icon(
@@ -480,13 +415,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                     // Title
                     Text(
                       widget.mod.title,
-                      style: TextStyle(
-                        color: retro.ink,
-                        fontFamily: RetroTheme.fontFamily,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.3,
-                      ),
+                      style: retro.heading(size: 16.5, letterSpacing: -0.2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -512,13 +441,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                     // Description (expandable)
                     Text(
                       widget.mod.description,
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontFamily: RetroTheme.fontFamily,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        height: 1.4,
-                      ),
+                      style: retro.body(size: 13),
                       maxLines: _isExpanded ? null : 3,
                       overflow: _isExpanded
                           ? TextOverflow.visible
@@ -532,8 +455,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                           child: Text(
                             _isExpanded ? 'SHOW LESS' : 'READ MORE',
                             style: TextStyle(
-                              color: retro.gold,
-                              fontFamily: RetroTheme.fontFamily,
+                              color: retro.accent,
                               fontSize: 11,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 0.6,
@@ -553,12 +475,11 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                               ? Icons.favorite_rounded
                               : Icons.favorite_border_rounded,
                           size: 16,
-                          color: retro.gold,
+                          color: retro.accent,
                         ),
                         label: Text(
                           isFav ? 'REMOVE FROM FAVORITES' : 'ADD TO FAVORITES',
                           style: TextStyle(
-                            fontFamily: RetroTheme.fontFamily,
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.5,
@@ -566,10 +487,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                         ),
                         onPressed: _toggleFavorite,
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: retro.gold,
-                          side: BorderSide(color: retro.gold, width: 2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(3),
+                          foregroundColor: retro.accent,
+                          side: BorderSide(color: retro.accent, width: 2),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: RetroTheme.radius,
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -583,7 +504,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                       height: 50,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          border: Border.all(color: retro.line, width: 3),
+                          border: Border.all(color: retro.border, width: 3),
                           boxShadow: _downloading
                               ? []
                               : retro.hardShadow(dx: 4, dy: 4),
@@ -593,7 +514,9 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.red,
                             foregroundColor: Colors.white,
-                            disabledBackgroundColor: retro.redDark,
+                            disabledBackgroundColor: retro.red.withValues(
+                              alpha: 0.55,
+                            ),
                             elevation: 0,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero,
@@ -611,7 +534,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                         value: _progress,
                                         backgroundColor: Colors.black
                                             .withValues(alpha: 0.35),
-                                        color: retro.gold,
+                                        color: retro.accent,
                                         minHeight: 4,
                                       ),
                                       const SizedBox(height: 4),
@@ -619,7 +542,6 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                         '${(_progress * 100).toStringAsFixed(1)}%',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontFamily: RetroTheme.fontFamily,
                                           fontSize: 11,
                                           fontWeight: FontWeight.w800,
                                         ),
@@ -635,7 +557,6 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                     Text(
                                       'DOWNLOAD',
                                       style: TextStyle(
-                                        fontFamily: RetroTheme.fontFamily,
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 1,
@@ -671,13 +592,12 @@ class _RetroMeta extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: retro.gold),
+        Icon(icon, size: 13, color: retro.accent),
         const SizedBox(width: 4),
         Text(
           label,
           style: TextStyle(
             color: retro.inkDim,
-            fontFamily: RetroTheme.fontFamily,
             fontSize: 11,
             fontWeight: FontWeight.w700,
           ),
@@ -705,14 +625,14 @@ class _EmptyView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: retro.panel,
-                border: Border.all(color: retro.line, width: 3),
+                color: retro.surface,
+                border: Border.all(color: retro.border, width: 3),
                 boxShadow: retro.hardShadow(),
               ),
               child: Icon(
                 Icons.auto_awesome_rounded,
                 size: 30,
-                color: retro.gold,
+                color: retro.accent,
               ),
             ),
             const SizedBox(height: 22),
@@ -721,7 +641,6 @@ class _EmptyView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: retro.ink,
-                fontFamily: RetroTheme.fontFamily,
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 0.5,
@@ -732,7 +651,6 @@ class _EmptyView extends StatelessWidget {
               'Check back later for OMM Rebirth content.',
               style: TextStyle(
                 color: retro.inkDim,
-                fontFamily: RetroTheme.fontFamily,
                 fontSize: 12,
               ),
               textAlign: TextAlign.center,
@@ -753,7 +671,7 @@ class _OmmSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     return Container(
-      color: retro.void_,
+      color: retro.background,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 80, 16, 32),
         children: [
@@ -761,7 +679,7 @@ class _OmmSkeleton extends StatelessWidget {
             3,
             (i) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: _Bone(height: 340, radius: 3),
+              child: _Bone(height: 340),
             ),
           ),
         ],
@@ -771,23 +689,22 @@ class _OmmSkeleton extends StatelessWidget {
 }
 
 class _Bone extends StatelessWidget {
-  const _Bone({required this.height, required this.radius});
+  const _Bone({required this.height});
 
   final double height;
-  final double radius;
 
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     return Shimmer.fromColors(
-      baseColor: retro.panel,
-      highlightColor: retro.panelAlt,
+      baseColor: retro.surface,
+      highlightColor: retro.surfaceAlt,
       child: Container(
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: retro.line, width: 3),
-          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(color: retro.border, width: 3),
+          borderRadius: RetroTheme.radius,
         ),
       ),
     );
@@ -805,7 +722,7 @@ class _OmmError extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     return Container(
-      color: retro.void_,
+      color: retro.background,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -816,7 +733,7 @@ class _OmmError extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: retro.panel,
+                  color: retro.surface,
                   border: Border.all(color: retro.red, width: 3),
                   boxShadow: retro.hardShadow(),
                 ),
@@ -832,7 +749,6 @@ class _OmmError extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: retro.ink,
-                  fontFamily: RetroTheme.fontFamily,
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.4,
@@ -843,7 +759,6 @@ class _OmmError extends StatelessWidget {
                 message,
                 style: TextStyle(
                   color: retro.inkDim,
-                  fontFamily: RetroTheme.fontFamily,
                   fontSize: 12,
                 ),
                 textAlign: TextAlign.center,

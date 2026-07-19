@@ -15,85 +15,98 @@ class LinksResourceScreen extends StatelessWidget {
     final retro = RetroTheme.of(context);
 
     return Scaffold(
-      backgroundColor: retro.void_,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/links-resource'),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          SliverAppBar(
-            backgroundColor: retro.void_,
-            surfaceTintColor: Colors.transparent,
-            scrolledUnderElevation: 0,
-            floating: true,
-            snap: true,
-            elevation: 0,
-            shape: Border(bottom: BorderSide(color: retro.line, width: 3)),
-            leading: Builder(
-              builder: (ctx) => IconButton(
-                icon: Icon(Icons.menu_rounded, color: retro.gold, size: 22),
-                onPressed: () => Scaffold.of(ctx).openDrawer(),
-              ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: HalftoneBackground(
+              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
             ),
-            title: Row(
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  color: retro.gold,
-                  margin: const EdgeInsets.only(right: 4),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  'LINKS & RESOURCES',
-                  style: TextStyle(
-                    color: retro.gold,
-                    fontFamily: RetroTheme.fontFamily,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1,
+          ),
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            slivers: [
+              SliverAppBar(
+                backgroundColor: retro.background,
+                surfaceTintColor: Colors.transparent,
+                scrolledUnderElevation: 0,
+                floating: true,
+                snap: true,
+                elevation: 0,
+                shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
+                leading: Builder(
+                  builder: (ctx) => IconButton(
+                    icon: Icon(Icons.menu_rounded, color: retro.ink, size: 22),
+                    onPressed: () => Scaffold.of(ctx).openDrawer(),
                   ),
                 ),
-              ],
-            ),
-          ),
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'LINKS ',
+                        style: retro.heading(size: 18, color: retro.ink),
+                      ),
+                      TextSpan(
+                        text: '& RECURSOS',
+                        style: retro.heading(size: 18, color: retro.accent),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-          // ── Hero: explica qué es esta pantalla y cómo usarla ──────
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
-              child: _HubHero(retro: retro),
-            ),
-          ),
+              // ── Kicker: 発見 = "descubre" / リンク = "link" ──────────
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+                  child: Text(
+                    '発見・すべてのリンク',
+                    style: retro.body(size: 12, color: retro.inkDim),
+                  ),
+                ),
+              ),
 
-          _Section(
-            retro: retro,
-            badge: 'OFC',
-            accent: retro.gold,
-            title: 'OFFICIAL',
-            description: 'Canales verificados del proyecto SM64CoopDX.',
-            links: _kOfficialLinks,
-          ),
-          _Section(
-            retro: retro,
-            badge: 'APP',
-            accent: retro.red,
-            title: 'SM64CDPY',
-            description: 'Descargas y contenido de esta app.',
-            links: _kAppLinks,
-          ),
-          _Section(
-            retro: retro,
-            badge: 'RES',
-            accent: retro.purple,
-            title: 'RESOURCES',
-            description: 'Comunidad, guías e instalación paso a paso.',
-            links: _kResourceLinks,
-            isLast: true,
-          ),
+              // ── Hero: explica qué es esta pantalla y cómo usarla ──
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
+                  child: _HubHero(retro: retro),
+                ),
+              ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+              _Section(
+                retro: retro,
+                title: 'OFFICIAL',
+                japanese: '公式',
+                description: 'Canales verificados del proyecto SM64CoopDX.',
+                accent: retro.accent,
+                links: _kOfficialLinks,
+              ),
+              _Section(
+                retro: retro,
+                title: 'SM64CDPY',
+                japanese: 'アプリ',
+                description: 'Descargas y contenido de esta app.',
+                accent: retro.red,
+                links: _kAppLinks,
+              ),
+              _Section(
+                retro: retro,
+                title: 'RESOURCES',
+                japanese: '資料',
+                description: 'Comunidad, guías e instalación paso a paso.',
+                accent: retro.blue,
+                links: _kResourceLinks,
+                isLast: true,
+              ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            ],
+          ),
         ],
       ),
     );
@@ -101,9 +114,6 @@ class LinksResourceScreen extends StatelessWidget {
 }
 
 // ── Hero card ────────────────────────────────────────────────────────────────
-// Marco con esquinas tipo bracket + explica el propósito de la pantalla y
-// la interacción (tap vs. mantener presionado) para que sea evidente a
-// simple vista, sin tener que descubrirlo por accidente.
 
 class _HubHero extends StatelessWidget {
   const _HubHero({required this.retro});
@@ -111,144 +121,50 @@ class _HubHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-          decoration: BoxDecoration(
-            color: retro.panel,
-            borderRadius: RetroTheme.pixelRadius,
-            border: Border.all(color: retro.line, width: 3),
-            boxShadow: retro.hardShadow(),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+      decoration: BoxDecoration(
+        color: retro.surface,
+        border: Border.all(color: retro.border, width: 2.5),
+        boxShadow: retro.hardShadow(),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(Icons.link_rounded, size: 18, color: retro.gold),
-                  const SizedBox(width: 8),
-                  Text(
-                    'LINK HUB',
-                    style: TextStyle(
-                      color: retro.gold,
-                      fontFamily: RetroTheme.fontFamily,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.4,
-                    ),
-                  ),
-                ],
+              Icon(Icons.link_rounded, size: 18, color: retro.accent),
+              const SizedBox(width: 8),
+              Text('LINK HUB', style: retro.heading(size: 13, color: retro.accent)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Todo lo oficial, la comunidad y los recursos del proyecto, '
+            'en un solo lugar.',
+            style: retro.body(size: 14, color: retro.ink),
+          ),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              SkewChip(
+                retro: retro,
+                icon: Icons.touch_app_rounded,
+                label: 'TOCA = ABRIR',
+                dense: true,
               ),
-              const SizedBox(height: 10),
-              Text(
-                'Todo lo oficial, la comunidad y los recursos del proyecto, '
-                'en un solo lugar.',
-                style: TextStyle(
-                  color: retro.ink,
-                  fontFamily: RetroTheme.fontFamily,
-                  fontSize: 14,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 14),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _HintChip(
-                    retro: retro,
-                    icon: Icons.touch_app_rounded,
-                    label: 'TOCA = ABRIR',
-                  ),
-                  _HintChip(
-                    retro: retro,
-                    icon: Icons.copy_rounded,
-                    label: 'MANTÉN = COPIAR',
-                  ),
-                ],
+              SkewChip(
+                retro: retro,
+                icon: Icons.copy_rounded,
+                label: 'MANTÉN = COPIAR',
+                dense: true,
               ),
             ],
           ),
-        ),
-        // Corner brackets — el "marco" retro sobre el panel principal.
-        Positioned(top: -6, left: -6, child: _Corner(retro: retro, tl: true)),
-        Positioned(top: -6, right: -6, child: _Corner(retro: retro, tr: true)),
-        Positioned(
-          bottom: -6,
-          left: -6,
-          child: _Corner(retro: retro, bl: true),
-        ),
-        Positioned(
-          bottom: -6,
-          right: -6,
-          child: _Corner(retro: retro, br: true),
-        ),
-      ],
-    );
-  }
-}
-
-class _HintChip extends StatelessWidget {
-  const _HintChip({required this.retro, required this.icon, required this.label});
-  final RetroTheme retro;
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-      decoration: BoxDecoration(
-        color: retro.panelAlt,
-        border: Border.all(color: retro.line, width: 2),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: retro.inkDim),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: retro.inkDim,
-              fontFamily: RetroTheme.fontFamily,
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.5,
-            ),
-          ),
         ],
-      ),
-    );
-  }
-}
-
-class _Corner extends StatelessWidget {
-  const _Corner({
-    required this.retro,
-    this.tl = false,
-    this.tr = false,
-    this.bl = false,
-    this.br = false,
-  });
-
-  final RetroTheme retro;
-  final bool tl, tr, bl, br;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 12,
-      height: 12,
-      decoration: BoxDecoration(
-        border: Border(
-          top: (tl || tr) ? BorderSide(color: retro.gold, width: 2) : BorderSide.none,
-          bottom: (bl || br) ? BorderSide(color: retro.gold, width: 2) : BorderSide.none,
-          left: (tl || bl) ? BorderSide(color: retro.gold, width: 2) : BorderSide.none,
-          right: (tr || br) ? BorderSide(color: retro.gold, width: 2) : BorderSide.none,
-        ),
       ),
     );
   }
@@ -269,7 +185,7 @@ class _LinkData {
   final String url;
   final String subtitle;
   final IconData icon;
-  final String kind; // etiqueta corta: WEB, DISCORD, GITHUB...
+  final String kind;
 }
 
 const _kOfficialLinks = [
@@ -342,19 +258,19 @@ const _kResourceLinks = [
 class _Section extends StatelessWidget {
   const _Section({
     required this.retro,
-    required this.badge,
-    required this.accent,
     required this.title,
+    required this.japanese,
     required this.description,
+    required this.accent,
     required this.links,
     this.isLast = false,
   });
 
   final RetroTheme retro;
-  final String badge;
-  final Color accent;
   final String title;
+  final String japanese;
   final String description;
+  final Color accent;
   final List<_LinkData> links;
   final bool isLast;
 
@@ -364,58 +280,11 @@ class _Section extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16, 22, 16, isLast ? 0 : 4),
       sliver: SliverList.list(
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 26,
-                height: 26,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: accent,
-                  border: Border.all(color: retro.line, width: 2),
-                ),
-                child: Text(
-                  badge,
-                  style: TextStyle(
-                    color: retro.void_,
-                    fontFamily: RetroTheme.fontFamily,
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: retro.ink,
-                        fontFamily: RetroTheme.fontFamily,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.8,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontFamily: RetroTheme.fontFamily,
-                        fontSize: 11.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          SectionKicker(retro: retro, label: title, japanese: japanese),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, top: 4, bottom: 12),
+            child: Text(description, style: retro.body(size: 12)),
           ),
-          const SizedBox(height: 12),
           ...links.map(
             (l) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
@@ -429,8 +298,7 @@ class _Section extends StatelessWidget {
 }
 
 // ── Link card ────────────────────────────────────────────────────────────────
-// Tap = abre el enlace. Long-press = copia la URL. Feedback de presión tipo
-// botón de arcade (se hunde y pierde la sombra dura), como en OmmRebirthCard.
+// Tap = abre el enlace. Long-press = copia la URL.
 
 class _LinkCard extends StatefulWidget {
   const _LinkCard({required this.link, required this.accent});
@@ -476,10 +344,7 @@ class _LinkCardState extends State<_LinkCard>
     HapticFeedback.mediumImpact();
     await Clipboard.setData(ClipboardData(text: widget.link.url));
     if (!context.mounted) return;
-    AppSnackbar.success(
-      context,
-      message: 'Link copied',
-    );
+    AppSnackbar.success(context, message: 'Link copied');
   }
 
   @override
@@ -500,13 +365,9 @@ class _LinkCardState extends State<_LinkCard>
             offset: Offset(offset, offset),
             child: Container(
               decoration: BoxDecoration(
-                color: retro.panel,
-                borderRadius: RetroTheme.pixelRadius,
-                border: Border.all(color: retro.line, width: 2.5),
-                boxShadow: retro.hardShadow(
-                  dx: 4 - offset,
-                  dy: 4 - offset,
-                ),
+                color: retro.surface,
+                border: Border.all(color: retro.border, width: 2),
+                boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
               ),
               child: child,
             ),
@@ -516,13 +377,12 @@ class _LinkCardState extends State<_LinkCard>
           padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
           child: Row(
             children: [
-              // Icono con marco propio, tintado por categoría.
               Container(
                 width: 42,
                 height: 42,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: widget.accent.withValues(alpha: 0.16),
+                  color: widget.accent.withValues(alpha: 0.18),
                   border: Border.all(color: widget.accent, width: 2),
                 ),
                 child: Icon(widget.link.icon, size: 20, color: widget.accent),
@@ -537,12 +397,7 @@ class _LinkCardState extends State<_LinkCard>
                         Flexible(
                           child: Text(
                             widget.link.title,
-                            style: TextStyle(
-                              color: retro.ink,
-                              fontFamily: RetroTheme.fontFamily,
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w800,
-                            ),
+                            style: retro.heading(size: 14, letterSpacing: -0.1),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -558,11 +413,9 @@ class _LinkCardState extends State<_LinkCard>
                           ),
                           child: Text(
                             widget.link.kind,
-                            style: TextStyle(
+                            style: retro.heading(
+                              size: 8,
                               color: retro.inkDim,
-                              fontFamily: RetroTheme.fontFamily,
-                              fontSize: 8,
-                              fontWeight: FontWeight.w800,
                               letterSpacing: 0.3,
                             ),
                           ),
@@ -572,11 +425,7 @@ class _LinkCardState extends State<_LinkCard>
                     const SizedBox(height: 3),
                     Text(
                       widget.link.subtitle,
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontFamily: RetroTheme.fontFamily,
-                        fontSize: 11.5,
-                      ),
+                      style: retro.body(size: 11.5),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -584,11 +433,7 @@ class _LinkCardState extends State<_LinkCard>
                 ),
               ),
               const SizedBox(width: 6),
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: retro.inkDim,
-              ),
+              Icon(Icons.chevron_right_rounded, size: 20, color: retro.inkDim),
             ],
           ),
         ),
