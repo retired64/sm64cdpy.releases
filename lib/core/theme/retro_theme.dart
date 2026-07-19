@@ -129,12 +129,29 @@ class _HalftonePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
+    // Antes: un canvas.drawCircle() por punto (miles de draw calls
+    // individuales, cada uno con antialiasing). En gama baja eso se nota,
+    // sobre todo en la primera pintada al entrar a la pantalla.
+    //
+    // Ahora: todos los puntos se juntan en un solo canvas.drawPoints()
+    // — UNA sola llamada de dibujo para toda la trama — usando
+    // strokeCap.round para que cada punto siga siendo un círculo.
+    // Antialiasing apagado porque a este tamaño no se nota, pero sí pesa
+    // por punto cuando son miles.
+    final points = <Offset>[];
     for (double y = spacing / 2; y < size.height; y += spacing) {
       for (double x = spacing / 2; x < size.width; x += spacing) {
-        canvas.drawCircle(Offset(x, y), dotRadius, paint);
+        points.add(Offset(x, y));
       }
     }
+
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = dotRadius * 2
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = false;
+
+    canvas.drawPoints(PointMode.points, points, paint);
   }
 
   @override
