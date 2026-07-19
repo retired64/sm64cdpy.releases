@@ -70,9 +70,35 @@ jobs:
         run: flutter pub get
 
       # ── 7. Análisis estático ─────────────────────────────────────────────
+      # No se corta el job acá aunque falle: se captura el exit code para
+      # decidir el resultado del job DESPUÉS de subir el log completo como
+      # artifact (paso 7b). Así el log truncado en pantalla deja de ser un
+      # problema — se puede descargar entero.
       - name: flutter analyze
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
-        continue-on-error: false
+        id: analyze
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee flutter-analyze.log
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      # ── 7b. Subir el log de análisis (siempre, haya fallado o no) ─────────
+      - name: Subir log de flutter analyze
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-analyze-log
+          path: flutter-analyze.log
+          retention-days: 7
+
+      # ── 7c. Cortar el job acá si el análisis falló ────────────────────────
+      # Recién ahora se hace fallar el job (con continue-on-error arriba
+      # nunca se salta este punto sin antes haber subido el log).
+      - name: Verificar resultado de flutter analyze
+        if: steps.analyze.outputs.exit_code != '0'
+        run: |
+          echo "flutter analyze falló (exit code ${{ steps.analyze.outputs.exit_code }}). Revisá el artifact 'flutter-analyze-log' para el detalle completo."
+          exit 1
 
       # ── 8. Build APK solo arm64 ───────────────────────────────────────────
       - name: Build APK (arm64-v8a)
