@@ -7,43 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/omm_rebirth_entity.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_snackbar.dart';
-
-// ── Retro palette ────────────────────────────────────────────────────────────
-// Paleta estilo cartucho/arcade que se adapta a light/dark mode manteniendo
-// la identidad visual propia de esta pantalla.
-class _Retro {
-  _Retro(this._isDark);
-  final bool _isDark;
-
-  Color get void_ => _isDark ? const Color(0xFF0B0710) : const Color(0xFFF5F0E8);
-  Color get panel => _isDark ? const Color(0xFF161020) : const Color(0xFFFFFFFF);
-  Color get panelAlt => _isDark ? const Color(0xFF1D1628) : const Color(0xFFF0ECF8);
-  Color get line => _isDark ? const Color(0xFF000000) : const Color(0xFF2D2D3F);
-  Color get red => const Color(0xFFE6402C);
-  Color get redDark => _isDark ? const Color(0xFF8A1F14) : const Color(0xFFA01018);
-  Color get gold => const Color(0xFFF4C430);
-  Color get green => const Color(0xFF3FA564);
-  Color get purple => const Color(0xFF8B6CF0);
-  Color get ink => _isDark ? const Color(0xFFE9E2F2) : const Color(0xFF1A1A2E);
-  Color get inkDim => _isDark ? const Color(0xFF8D82A3) : const Color(0xFF5A5A7A);
-
-  static const fontFamily = 'monospace';
-
-  static const pixelRadius = BorderRadius.all(Radius.circular(3));
-
-  List<BoxShadow> hardShadow({double dx = 4, double dy = 4}) => [
-        BoxShadow(color: line, offset: Offset(dx, dy), blurRadius: 0),
-      ];
-
-  static _Retro of(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return _Retro(isDark);
-  }
-}
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -65,7 +33,7 @@ class _OmmRebirthScreenState extends ConsumerState<OmmRebirthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final retro = _Retro.of(context);
+    final retro = RetroTheme.of(context);
     final ommAsync = ref.watch(allOmmRebirthProvider);
 
     return Scaffold(
@@ -90,7 +58,7 @@ class _OmmBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = _Retro.of(context);
+    final retro = RetroTheme.of(context);
     return CustomScrollView(
       controller: scrollCtrl,
       physics: const BouncingScrollPhysics(
@@ -131,7 +99,7 @@ class _OmmBody extends StatelessWidget {
                 'OMM PACK',
                 style: TextStyle(
                   color: retro.gold,
-                  fontFamily: _Retro.fontFamily,
+                  fontFamily: RetroTheme.fontFamily,
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.2,
@@ -152,7 +120,7 @@ class _OmmBody extends StatelessWidget {
                 '${mods.length} MODS',
                 style: TextStyle(
                   color: retro.inkDim,
-                  fontFamily: _Retro.fontFamily,
+                  fontFamily: RetroTheme.fontFamily,
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.6,
@@ -181,7 +149,7 @@ class _OmmBody extends StatelessWidget {
                     'STAGE',
                     style: TextStyle(
                       color: retro.red,
-                      fontFamily: _Retro.fontFamily,
+                      fontFamily: RetroTheme.fontFamily,
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -195,7 +163,7 @@ class _OmmBody extends StatelessWidget {
                       'OMM REBIRTH MODS',
                       style: TextStyle(
                         color: retro.ink,
-                        fontFamily: _Retro.fontFamily,
+                        fontFamily: RetroTheme.fontFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.8,
@@ -216,7 +184,7 @@ class _OmmBody extends StatelessWidget {
                           '${mods.length} TOTAL',
                           style: TextStyle(
                             color: retro.inkDim,
-                            fontFamily: _Retro.fontFamily,
+                            fontFamily: RetroTheme.fontFamily,
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.5,
@@ -425,7 +393,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
 
   @override
   Widget build(BuildContext context) {
-    final retro = _Retro.of(context);
+    final retro = RetroTheme.of(context);
     final isFav = ref.watch(ommFavouritesProvider).contains(widget.mod.id);
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
@@ -457,7 +425,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
             child: Container(
               decoration: BoxDecoration(
                 color: retro.panel,
-                borderRadius: _Retro.pixelRadius,
+                borderRadius: RetroTheme.pixelRadius,
                 border: Border.all(color: retro.line, width: 3),
                 boxShadow: retro.hardShadow(
                   dx: 5 - offset,
@@ -469,7 +437,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
           );
         },
         child: ClipRRect(
-          borderRadius: _Retro.pixelRadius,
+          borderRadius: RetroTheme.pixelRadius,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -514,7 +482,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                       widget.mod.title,
                       style: TextStyle(
                         color: retro.ink,
-                        fontFamily: _Retro.fontFamily,
+                        fontFamily: RetroTheme.fontFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.3,
@@ -546,7 +514,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                       widget.mod.description,
                       style: TextStyle(
                         color: retro.inkDim,
-                        fontFamily: _Retro.fontFamily,
+                        fontFamily: RetroTheme.fontFamily,
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                         height: 1.4,
@@ -565,7 +533,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                             _isExpanded ? 'SHOW LESS' : 'READ MORE',
                             style: TextStyle(
                               color: retro.gold,
-                              fontFamily: _Retro.fontFamily,
+                              fontFamily: RetroTheme.fontFamily,
                               fontSize: 11,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 0.6,
@@ -590,7 +558,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                         label: Text(
                           isFav ? 'REMOVE FROM FAVORITES' : 'ADD TO FAVORITES',
                           style: TextStyle(
-                            fontFamily: _Retro.fontFamily,
+                            fontFamily: RetroTheme.fontFamily,
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.5,
@@ -651,7 +619,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                         '${(_progress * 100).toStringAsFixed(1)}%',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontFamily: _Retro.fontFamily,
+                                          fontFamily: RetroTheme.fontFamily,
                                           fontSize: 11,
                                           fontWeight: FontWeight.w800,
                                         ),
@@ -667,7 +635,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                     Text(
                                       'DOWNLOAD',
                                       style: TextStyle(
-                                        fontFamily: _Retro.fontFamily,
+                                        fontFamily: RetroTheme.fontFamily,
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 1,
@@ -699,7 +667,7 @@ class _RetroMeta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = _Retro.of(context);
+    final retro = RetroTheme.of(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -709,7 +677,7 @@ class _RetroMeta extends StatelessWidget {
           label,
           style: TextStyle(
             color: retro.inkDim,
-            fontFamily: _Retro.fontFamily,
+            fontFamily: RetroTheme.fontFamily,
             fontSize: 11,
             fontWeight: FontWeight.w700,
           ),
@@ -726,7 +694,7 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = _Retro.of(context);
+    final retro = RetroTheme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -753,7 +721,7 @@ class _EmptyView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: retro.ink,
-                fontFamily: _Retro.fontFamily,
+                fontFamily: RetroTheme.fontFamily,
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 0.5,
@@ -764,7 +732,7 @@ class _EmptyView extends StatelessWidget {
               'Check back later for OMM Rebirth content.',
               style: TextStyle(
                 color: retro.inkDim,
-                fontFamily: _Retro.fontFamily,
+                fontFamily: RetroTheme.fontFamily,
                 fontSize: 12,
               ),
               textAlign: TextAlign.center,
@@ -783,7 +751,7 @@ class _OmmSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = _Retro.of(context);
+    final retro = RetroTheme.of(context);
     return Container(
       color: retro.void_,
       child: ListView(
@@ -810,7 +778,7 @@ class _Bone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = _Retro.of(context);
+    final retro = RetroTheme.of(context);
     return Shimmer.fromColors(
       baseColor: retro.panel,
       highlightColor: retro.panelAlt,
@@ -835,7 +803,7 @@ class _OmmError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = _Retro.of(context);
+    final retro = RetroTheme.of(context);
     return Container(
       color: retro.void_,
       child: Center(
@@ -864,7 +832,7 @@ class _OmmError extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: retro.ink,
-                  fontFamily: _Retro.fontFamily,
+                  fontFamily: RetroTheme.fontFamily,
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.4,
@@ -875,7 +843,7 @@ class _OmmError extends StatelessWidget {
                 message,
                 style: TextStyle(
                   color: retro.inkDim,
-                  fontFamily: _Retro.fontFamily,
+                  fontFamily: RetroTheme.fontFamily,
                   fontSize: 12,
                 ),
                 textAlign: TextAlign.center,
