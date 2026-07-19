@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../core/theme/app_theme.dart';
+import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/touch_control_entity.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_drawer.dart';
@@ -34,16 +34,25 @@ class _TouchControlsScreenState extends ConsumerState<TouchControlsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final touchAsync = ref.watch(allTouchControlsProvider);
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/touch-controls'),
-      body: touchAsync.when(
-        loading: () => const _TouchSkeleton(),
-        error: (e, _) => _TouchError(message: e.toString()),
-        data: (mods) => _TouchBody(mods: mods, scrollCtrl: _scrollCtrl),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: HalftoneBackground(
+              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
+            ),
+          ),
+          touchAsync.when(
+            loading: () => const _TouchSkeleton(),
+            error: (e, _) => _TouchError(message: e.toString()),
+            data: (mods) => _TouchBody(mods: mods, scrollCtrl: _scrollCtrl),
+          ),
+        ],
       ),
     );
   }
@@ -59,7 +68,7 @@ class _TouchBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return CustomScrollView(
       controller: scrollCtrl,
@@ -69,48 +78,36 @@ class _TouchBody extends StatelessWidget {
       slivers: [
         // ── App bar ───────────────────────────────────────────
         SliverAppBar(
-          backgroundColor: cs.surface,
+          backgroundColor: retro.background,
           surfaceTintColor: Colors.transparent,
           scrolledUnderElevation: 0,
           floating: true,
           snap: true,
           elevation: 0,
+          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
           leading: Builder(
             builder: (ctx) => IconButton(
-              icon: Icon(Icons.menu_rounded, color: cs.onSurface, size: 22),
+              icon: Icon(Icons.menu_rounded, color: retro.accent, size: 22),
               onPressed: () => Scaffold.of(ctx).openDrawer(),
             ),
           ),
-          title: Row(
-            children: [
-              Text(
-                'Touch Controls',
-                style: TextStyle(
-                  color: cs.onSurface,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.1,
-                ),
-              ),
-            ],
+          title: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(text: 'TOUCH ', style: retro.heading(size: 16, color: retro.ink)),
+                TextSpan(text: 'CONTROLS', style: retro.heading(size: 16, color: retro.accent)),
+              ],
+            ),
           ),
           actions: [
-            // Total count pill
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
-              ),
-              child: Text(
-                '${mods.length} layouts',
-                style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: SkewChip(
+                retro: retro,
+                icon: Icons.touch_app_rounded,
+                label: '${mods.length} LAYOUTS',
+                dense: true,
+                selected: true,
               ),
             ),
           ],
@@ -119,39 +116,17 @@ class _TouchBody extends StatelessWidget {
         // ── Section label ─────────────────────────────────────
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-            child: Row(
-              children: [
-                Text(
-                  'Mobile Layouts',
-                  style: TextStyle(
-                    color: cs.onSurface,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.1,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                if (mods.isNotEmpty)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: cs.surfaceContainerHigh,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      '${mods.length} total',
-                      style: TextStyle(
-                        color: cs.onSurfaceVariant,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
+            child: Text('タッチ操作・レイアウト', style: retro.body(size: 12)),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
+            child: SectionKicker(
+              retro: retro,
+              label: 'MOBILE LAYOUTS',
+              japanese: mods.isEmpty ? null : '${mods.length} 件',
             ),
           ),
         ),
@@ -164,7 +139,7 @@ class _TouchBody extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList.separated(
               itemCount: mods.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final mod = mods[index];
                 return TouchControlCard(mod: mod);
@@ -192,13 +167,16 @@ class TouchControlCard extends ConsumerStatefulWidget {
 class _TouchControlCardState extends ConsumerState<TouchControlCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pressCtrl;
-  late final Animation<double> _scale;
 
   Timer? _longPressTimer;
   bool _isLongPressing = false;
 
   bool _downloading = false;
-  double _progress = 0.0;
+  // ValueNotifier en vez de double + setState(): evita reconstruir toda
+  // la card en cada tick de progreso durante la descarga.
+  final ValueNotifier<double> _progressNotifier = ValueNotifier(0.0);
+  double get _progress => _progressNotifier.value;
+  set _progress(double v) => _progressNotifier.value = v;
   double _realProgress = 0.0;
   late AnimationController _fakeCtrl;
   late Animation<double> _fakeAnim;
@@ -210,22 +188,20 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scale = Tween<double>(
-      begin: 1.0,
-      end: 0.97,
-    ).animate(CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut));
-
+    // Pixel-press: en vez de un scale suave, el "press" retro se resuelve
+    // en el build() desplazando la card estilo botón de arcade.
     _fakeCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 18),
     );
-    _fakeAnim = Tween<double>(begin: 0.0, end: 0.85).animate(
-      CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
-    )..addListener(() {
-      if (mounted && _downloading && _realProgress <= 0.0) {
-        setState(() => _progress = _fakeAnim.value);
-      }
-    });
+    _fakeAnim =
+        Tween<double>(begin: 0.0, end: 0.85).animate(
+          CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
+        )..addListener(() {
+          if (mounted && _downloading && _realProgress <= 0.0) {
+            _progress = _fakeAnim.value;
+          }
+        });
   }
 
   void _startLongPress() {
@@ -289,12 +265,13 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
       name: filename,
       onProgress: (name, progress) {
         if (!mounted) return;
-        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(
+          0.0,
+          1.0,
+        );
         if (normalized > _progress) {
-          setState(() {
-            _realProgress = normalized;
-            _progress = normalized;
-          });
+          _realProgress = normalized;
+          _progress = normalized; // solo repinta la barra, no toda la card
         }
       },
       onDownloadCompleted: (path) async {
@@ -304,10 +281,12 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
           vsync: this,
           duration: const Duration(milliseconds: 400),
         );
-        final completeAnim = Tween<double>(begin: _progress, end: 1.0)
-            .animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
+        final completeAnim = Tween<double>(
+          begin: _progress,
+          end: 1.0,
+        ).animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
         completeAnim.addListener(() {
-          if (mounted) setState(() => _progress = completeAnim.value);
+          if (mounted) _progress = completeAnim.value;
         });
         await completeCtrl.forward();
         completeCtrl.dispose();
@@ -342,18 +321,23 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   void dispose() {
     _pressCtrl.dispose();
     _fakeCtrl.dispose();
+    _progressNotifier.dispose();
     _longPressTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final isFav = ref.watch(touchFavouritesProvider).contains(widget.mod.id);
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
             ? 140.0
             : 180.0;
+
+    // Solo hay banner de imagen si el mod trae una URL real.
+    final hasImage =
+        widget.mod.imageUrl != null && widget.mod.imageUrl!.isNotEmpty;
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -362,87 +346,58 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
       onLongPressStart: (_) => _startLongPress(),
       onLongPressEnd: (_) => _cancelLongPress(),
       onLongPressMoveUpdate: (_) => _cancelLongPress(),
-      child: ScaleTransition(
-        scale: _scale,
-        child: Container(
-          decoration: BoxDecoration(
-            color: cs.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
-            boxShadow: [
-              BoxShadow(
-                color: cs.shadow.withValues(alpha: 0.03),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+      child: AnimatedBuilder(
+        animation: _pressCtrl,
+        builder: (context, child) {
+          final pressed = _pressCtrl.value;
+          final offset = 4.0 * pressed;
+          return Transform.translate(
+            offset: Offset(offset, offset),
+            child: Container(
+              decoration: BoxDecoration(
+                color: retro.surface,
+                borderRadius: RetroTheme.radius,
+                border: Border.all(color: retro.border, width: 3),
+                boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
               ),
-            ],
-          ),
+              child: child,
+            ),
+          );
+        },
+        child: ClipRRect(
+          borderRadius: RetroTheme.radius,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Image banner (16:9) ──────────────────────────────
-              Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                    child:
-                        widget.mod.imageUrl != null &&
-                            widget.mod.imageUrl!.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: widget.mod.imageUrl!,
-                            width: double.infinity,
-                            height: cardImageHeight,
-                            fit: BoxFit.cover,
-                            placeholder: (context, loadState) => Container(
-                              color: cs.surfaceContainerHigh,
-                              height: cardImageHeight,
-                            ),
-                            errorWidget: (context, loadState, error) =>
-                                Container(
-                                  color: cs.surfaceContainerHigh,
-                                  height: cardImageHeight,
-                                  child: Icon(
-                                    Icons.touch_app_rounded,
-                                    size: 32,
-                                    color: cs.outline,
-                                  ),
-                                ),
-                          )
-                      : Container(
-                          color: cs.surfaceContainerHigh,
-                          height: cardImageHeight,
-                          child: Icon(
-                            Icons.touch_app_rounded,
-                            size: 32,
-                            color: cs.outline,
-                          ),
-                        ),
-                  ),
-                  // Favourite heart (indicator only)
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Icon(
-                      isFav
-                          ? Icons.favorite_rounded
-                          : Icons.favorite_border_rounded,
-                      size: 22,
-                      color: isFav
-                          ? cs.primary
-                          : Colors.white.withValues(alpha: 0.9),
-                      shadows: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
+              // ── Image banner (solo si hay URL, sin corazón encima) ──
+              if (hasImage)
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: retro.border, width: 3),
                     ),
                   ),
-                ],
-              ),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.mod.imageUrl!,
+                    width: double.infinity,
+                    height: cardImageHeight,
+                    fit: BoxFit.cover,
+                    placeholder: (context, loadState) => Container(
+                      color: retro.surfaceAlt,
+                      height: cardImageHeight,
+                    ),
+                    errorWidget: (context, loadState, error) => Container(
+                      color: retro.surfaceAlt,
+                      height: cardImageHeight,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.touch_app_rounded,
+                        size: 30,
+                        color: retro.inkDim,
+                      ),
+                    ),
+                  ),
+                ),
 
               // ── Content ──────────────────────────────────────────
               Padding(
@@ -453,12 +408,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                     // Title
                     Text(
                       widget.mod.title,
-                      style: TextStyle(
-                        color: cs.onSurface,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
-                      ),
+                      style: retro.heading(size: 16.5, letterSpacing: -0.2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -466,89 +416,129 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
 
                     // Added date
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           Icons.calendar_month_rounded,
                           size: 13,
-                          color: cs.onSurfaceVariant,
+                          color: retro.accent,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           widget.mod.addedAt,
                           style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            color: retro.inkDim,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
                     // Favorite button
                     SizedBox(
                       width: double.infinity,
-                      child: TextButton.icon(
+                      child: OutlinedButton.icon(
                         icon: Icon(
                           isFav
                               ? Icons.favorite_rounded
                               : Icons.favorite_border_rounded,
                           size: 16,
+                          color: retro.accent,
                         ),
                         label: Text(
-                          isFav ? 'Remove from Favorites' : 'Add to Favorites',
+                          isFav ? 'REMOVE FROM FAVORITES' : 'ADD TO FAVORITES',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                         onPressed: _toggleFavorite,
-                        style: TextButton.styleFrom(
-                          foregroundColor: cs.primary,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: retro.accent,
+                          side: BorderSide(color: retro.accent, width: 2),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: RetroTheme.radius,
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    // Download button
+                    // Download button — botón de arcade sólido teal
                     SizedBox(
                       width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: _downloading ? null : _download,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: cs.primary,
-                          foregroundColor: cs.onPrimary,
-                          disabledBackgroundColor: cs.primary,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      height: 50,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: retro.border, width: 3),
+                          boxShadow: _downloading
+                              ? []
+                              : retro.hardShadow(dx: 4, dy: 4),
                         ),
-                        child: _downloading
-                            ? Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    LinearProgressIndicator(
-                                      value: _progress,
-                                      backgroundColor: Colors.white.withOpacity(0.3),
-                                      color: Colors.white,
-                                      minHeight: 4,
-                                      borderRadius: BorderRadius.circular(2),
+                        child: ElevatedButton(
+                          onPressed: _downloading ? null : _download,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: retro.accent,
+                            foregroundColor: retro.background,
+                            disabledBackgroundColor: retro.accent.withValues(
+                              alpha: 0.55,
+                            ),
+                            elevation: 0,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                          ),
+                          child: _downloading
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: ValueListenableBuilder<double>(
+                                    valueListenable: _progressNotifier,
+                                    builder: (context, progress, _) => Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        LinearProgressIndicator(
+                                          value: progress,
+                                          backgroundColor: retro.background
+                                              .withValues(alpha: 0.3),
+                                          color: retro.background,
+                                          minHeight: 4,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${(progress * 100).toStringAsFixed(1)}%',
+                                          style: TextStyle(
+                                            color: retro.background,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 4),
+                                  ),
+                                )
+                              : const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.download_rounded, size: 18),
+                                    SizedBox(width: 8),
                                     Text(
-                                      '${(_progress * 100).toStringAsFixed(1)}%',
-                                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                                      'DOWNLOAD',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 1,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              )
-                            : const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.download_rounded, size: 18),
-                                  SizedBox(width: 8),
-                                  Text('Download', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                                ],
-                              ),
+                        ),
                       ),
                     ),
                   ],
@@ -569,8 +559,7 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
+    final retro = RetroTheme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -581,28 +570,31 @@ class _EmptyView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(20),
+                color: retro.surface,
+                border: Border.all(color: retro.border, width: 3),
+                boxShadow: retro.hardShadow(),
               ),
               child: Icon(
                 Icons.touch_app_outlined,
-                size: 34,
-                color: cs.outline.withValues(alpha: 0.6),
+                size: 30,
+                color: retro.accent,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 22),
             Text(
-              'No touch layouts yet',
+              'NO TOUCH LAYOUTS YET',
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 17,
-                fontWeight: FontWeight.w800,
+                color: retro.ink,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.5,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               'Check back later for mobile control layouts.',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+              style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
             ),
           ],
@@ -619,46 +611,42 @@ class _TouchSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 80, 16, 32),
-      children: [
-        ...List.generate(
-          3,
-          (i) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: _Bone(height: 280, radius: 16, isDark: isDark),
+    final retro = RetroTheme.of(context);
+    return Container(
+      color: retro.background,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 80, 16, 32),
+        children: [
+          ...List.generate(
+            3,
+            (i) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _Bone(height: 280),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 class _Bone extends StatelessWidget {
-  const _Bone({
-    required this.height,
-    required this.radius,
-    required this.isDark,
-  });
+  const _Bone({required this.height});
 
   final double height;
-  final double radius;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Shimmer.fromColors(
-      baseColor: isDark ? AppTheme.darkShimmerBase : AppTheme.lightShimmerBase,
-      highlightColor: isDark
-          ? AppTheme.darkShimmerHighlight
-          : AppTheme.lightShimmerHighlight,
+      baseColor: retro.surface,
+      highlightColor: retro.surfaceAlt,
       child: Container(
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(color: retro.border, width: 3),
+          borderRadius: RetroTheme.radius,
         ),
       ),
     );
@@ -674,45 +662,50 @@ class _TouchError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: cs.primaryContainer,
-                borderRadius: BorderRadius.circular(18),
+    final retro = RetroTheme.of(context);
+    return Container(
+      color: retro.background,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: retro.surface,
+                  border: Border.all(color: retro.red, width: 3),
+                  boxShadow: retro.hardShadow(),
+                ),
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  size: 28,
+                  color: retro.red,
+                ),
               ),
-              child: Icon(
-                Icons.error_outline_rounded,
-                size: 30,
-                color: cs.primary,
+              const SizedBox(height: 20),
+              Text(
+                'FAILED TO LOAD TOUCH CONTROLS',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: retro.ink,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.4,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Failed to load touch controls',
-              style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+              const SizedBox(height: 10),
+              Text(
+                message,
+                style: TextStyle(color: retro.inkDim, fontSize: 12),
+                textAlign: TextAlign.center,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

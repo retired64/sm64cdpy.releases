@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/category_constants.dart';
+import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_drawer.dart';
@@ -71,7 +72,7 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final filteredAsync = ref.watch(filteredModsProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final currentSort = ref.watch(sortOrderProvider);
@@ -81,88 +82,102 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
     ref.listen(sortOrderProvider, (_, _) => _resetPage());
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/catalogue'),
-      body: RefreshIndicator(
-        color: cs.primary,
-        backgroundColor: cs.surface,
-        displacement: 80,
-        onRefresh: () async {
-          ref.read(localDatasourceProvider).invalidateCache();
-          ref.invalidate(allModsProvider);
-        },
-        child: CustomScrollView(
-          controller: _scrollCtrl,
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: HalftoneBackground(
+              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
+            ),
           ),
-          slivers: [
-            // ── App bar ───────────────────────────────────────
-            _CatalogueAppBar(searchCtrl: _searchCtrl, onClear: _clearSearch),
-
-            // ── Filter bar ────────────────────────────────────
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _FilterBarDelegate(
-                selectedCategory: selectedCategory,
-                currentSort: currentSort,
+          RefreshIndicator(
+            color: retro.background,
+            backgroundColor: retro.accent,
+            displacement: 80,
+            onRefresh: () async {
+              ref.read(localDatasourceProvider).invalidateCache();
+              ref.invalidate(allModsProvider);
+            },
+            child: CustomScrollView(
+              controller: _scrollCtrl,
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
               ),
-            ),
+              slivers: [
+                // ── App bar (hero con franjas diagonales) ──────────
+                _CatalogueAppBar(searchCtrl: _searchCtrl, onClear: _clearSearch),
 
-            // ── Results header ────────────────────────────────
-            SliverToBoxAdapter(
-              child: _ResultsHeader(filteredAsync: filteredAsync),
-            ),
-
-            // ── List ──────────────────────────────────────────
-            filteredAsync.when(
-              loading: () => _SliverSkeletonList(),
-              error: (e, _) =>
-                  SliverFillRemaining(child: _ErrorView(message: e.toString())),
-              data: (mods) => mods.isEmpty
-                  ? const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: _EmptyView(),
-                    )
-                  : _SliverModList(
-                      mods: mods,
-                      page: _page,
-                      pageSize: _pageSize,
-                    ),
-            ),
-
-            // ── Pagination bar ────────────────────────────────
-            filteredAsync.maybeWhen(
-              data: (mods) {
-                if (mods.isEmpty) {
-                  return const SliverToBoxAdapter(child: SizedBox.shrink());
-                }
-                final totalPages = (mods.length / _pageSize).ceil();
-                if (totalPages <= 1) {
-                  return const SliverToBoxAdapter(child: SizedBox.shrink());
-                }
-                return SliverToBoxAdapter(
-                  child: _PaginationBar(
-                    currentPage: _page,
-                    totalPages: totalPages,
-                    totalItems: mods.length,
-                    pageSize: _pageSize,
-                    onPageChanged: _goToPage,
+                // ── Filter bar ────────────────────────────────────
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _FilterBarDelegate(
+                    selectedCategory: selectedCategory,
+                    currentSort: currentSort,
                   ),
-                );
-              },
-              orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-            ),
+                ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          ],
-        ),
+                // ── Results header ────────────────────────────────
+                SliverToBoxAdapter(
+                  child: _ResultsHeader(filteredAsync: filteredAsync),
+                ),
+
+                // ── List ──────────────────────────────────────────
+                filteredAsync.when(
+                  loading: () => _SliverSkeletonList(),
+                  error: (e, _) => SliverFillRemaining(
+                    child: _ErrorView(message: e.toString()),
+                  ),
+                  data: (mods) => mods.isEmpty
+                      ? const SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: _EmptyView(),
+                        )
+                      : _SliverModList(
+                          mods: mods,
+                          page: _page,
+                          pageSize: _pageSize,
+                        ),
+                ),
+
+                // ── Pagination bar ────────────────────────────────
+                filteredAsync.maybeWhen(
+                  data: (mods) {
+                    if (mods.isEmpty) {
+                      return const SliverToBoxAdapter(child: SizedBox.shrink());
+                    }
+                    final totalPages = (mods.length / _pageSize).ceil();
+                    if (totalPages <= 1) {
+                      return const SliverToBoxAdapter(child: SizedBox.shrink());
+                    }
+                    return SliverToBoxAdapter(
+                      child: _PaginationBar(
+                        currentPage: _page,
+                        totalPages: totalPages,
+                        totalItems: mods.length,
+                        pageSize: _pageSize,
+                        onPageChanged: _goToPage,
+                      ),
+                    );
+                  },
+                  orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// ── App bar ───────────────────────────────────────────────────────────────────
+// ── App bar (hero) ───────────────────────────────────────────────────────────
+// Cabecera expandible: franjas diagonales de fondo (como una tarjeta de
+// release), título grande + kicker japonés, y el buscador anclado abajo.
+// Al hacer scroll se colapsa a una barra simple, igual que el resto de
+// screens de la app.
 
 class _CatalogueAppBar extends ConsumerStatefulWidget {
   const _CatalogueAppBar({required this.searchCtrl, required this.onClear});
@@ -191,28 +206,68 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return SliverAppBar(
-      backgroundColor: cs.surface,
+      backgroundColor: retro.background,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
-      floating: true,
-      snap: true,
+      pinned: true,
       elevation: 0,
+      expandedHeight: 132,
+      shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
       leading: Builder(
         builder: (ctx) => IconButton(
-          icon: Icon(Icons.menu_rounded, color: cs.onSurface, size: 22),
+          icon: Icon(Icons.menu_rounded, color: retro.background, size: 22),
+          style: IconButton.styleFrom(backgroundColor: Colors.black26),
           onPressed: () => Scaffold.of(ctx).openDrawer(),
         ),
       ),
-      title: Text(
-        'Catalogue',
-        style: TextStyle(
-          color: cs.onSurface,
-          fontSize: 17,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 0.1,
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.pin,
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Banner de franjas diagonales, como la cabecera de un card
+            // de release.
+            DiagonalStripeBanner(
+              baseColor: retro.blue,
+              stripeColor: Colors.white.withValues(alpha: 0.12),
+              stripeWidth: 26,
+              gap: 22,
+            ),
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 62,
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'MOD ',
+                      style: retro.heading(size: 22, color: Colors.white),
+                    ),
+                    TextSpan(
+                      text: 'CATALOGUE',
+                      style: retro.heading(size: 22, color: retro.background),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 16,
+              bottom: 44,
+              child: Text(
+                '検索・カタログ',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.75),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       bottom: PreferredSize(
@@ -245,35 +300,36 @@ class _SearchField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color: cs.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: focusNode.hasFocus
-              ? cs.primary.withValues(alpha: 0.6)
-              : cs.outline.withValues(alpha: 0.3),
-          width: focusNode.hasFocus ? 1.5 : 1,
-        ),
+        color: retro.surface,
+        border: Border.all(color: retro.border, width: 2.5),
+        boxShadow: focusNode.hasFocus ? [] : retro.hardShadow(dx: 3, dy: 3),
       ),
+      transform: focusNode.hasFocus
+          ? (Matrix4.identity()..translate(3.0, 3.0))
+          : Matrix4.identity(),
       child: TextField(
         controller: controller,
         focusNode: focusNode,
         onChanged: (v) {
           ref.read(searchQueryProvider.notifier).setSearchQuery(v);
         },
-        style: TextStyle(color: cs.onSurface, fontSize: 14),
+        style: TextStyle(color: retro.ink, fontSize: 14, fontWeight: FontWeight.w600),
         decoration: InputDecoration(
-          hintText: 'Search mods, authors, tags…',
+          hintText: 'SEARCH MODS, AUTHORS, TAGS…',
           hintStyle: TextStyle(
-            color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+            color: retro.inkDim,
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
           ),
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: focusNode.hasFocus ? cs.primary : cs.outline,
+            color: focusNode.hasFocus ? retro.accent : retro.inkDim,
             size: 20,
           ),
           suffixIcon: ValueListenableBuilder(
@@ -281,7 +337,7 @@ class _SearchField extends ConsumerWidget {
             builder: (_, value, _) {
               if (value.text.isEmpty) return const SizedBox.shrink();
               return IconButton(
-                icon: Icon(Icons.close_rounded, size: 17, color: cs.outline),
+                icon: Icon(Icons.close_rounded, size: 17, color: retro.inkDim),
                 onPressed: onClear,
                 splashRadius: 16,
               );
@@ -309,9 +365,9 @@ class _FilterBarDelegate extends SliverPersistentHeaderDelegate {
   final SortOrder currentSort;
 
   @override
-  double get minExtent => 52;
+  double get minExtent => 60;
   @override
-  double get maxExtent => 52;
+  double get maxExtent => 60;
 
   @override
   bool shouldRebuild(_FilterBarDelegate old) =>
@@ -324,20 +380,15 @@ class _FilterBarDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final elevated = shrinkOffset > 0;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       decoration: BoxDecoration(
-        color: cs.surface,
+        color: retro.background,
         border: elevated
-            ? Border(
-                bottom: BorderSide(
-                  color: cs.outline.withValues(alpha: 0.15),
-                  width: 1,
-                ),
-              )
+            ? Border(bottom: BorderSide(color: retro.border, width: 3))
             : null,
       ),
       child: _FilterBar(
@@ -356,26 +407,26 @@ class _FilterBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final categories = CategoryConstants.allCategories;
 
     return SizedBox(
-      height: 52,
+      height: 60,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         physics: const BouncingScrollPhysics(),
         children: [
-          // Sort pill
-          _SortPill(currentSort: currentSort),
+          // Sort chip
+          _SortChip(retro: retro, currentSort: currentSort),
           const SizedBox(width: 8),
 
           // Divider
           Container(
-            width: 1,
-            height: 28,
+            width: 3,
+            height: 26,
             margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            color: cs.outline.withValues(alpha: 0.25),
+            color: retro.border,
           ),
           const SizedBox(width: 8),
 
@@ -386,12 +437,14 @@ class _FilterBar extends ConsumerWidget {
             final color = CategoryConstants.getColorForCategory(cat);
 
             return Padding(
-              padding: const EdgeInsets.only(right: 7),
-              child: _FilterChip(
-                label: cat,
+              padding: const EdgeInsets.only(right: 8),
+              child: SkewChip(
+                retro: retro,
+                label: cat.toUpperCase(),
                 icon: icon,
-                color: color,
-                isSelected: isSelected,
+                selected: isSelected,
+                dense: true,
+                accentColor: color,
                 onTap: () {
                   final notifier = ref.read(selectedCategoryProvider.notifier);
                   notifier.setCategory(isSelected ? null : cat);
@@ -405,164 +458,94 @@ class _FilterBar extends ConsumerWidget {
   }
 }
 
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.isSelected,
-    required this.onTap,
-  });
+class _SortChip extends ConsumerWidget {
+  const _SortChip({required this.retro, required this.currentSort});
 
-  final String label;
-  final IconData icon;
-  final Color color;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? color.withValues(alpha: 0.12)
-              : cs.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected
-                ? color.withValues(alpha: 0.5)
-                : cs.outline.withValues(alpha: 0.3),
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 13,
-              color: isSelected ? color : cs.onSurfaceVariant,
-            ),
-            const SizedBox(width: 5),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? color : cs.onSurfaceVariant,
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SortPill extends ConsumerWidget {
-  const _SortPill({required this.currentSort});
-
+  final RetroTheme retro;
   final SortOrder currentSort;
 
   String get _label {
     switch (currentSort) {
       case SortOrder.ratingDesc:
-        return '⭐ Rating';
+        return 'RATING';
       case SortOrder.downloadsDesc:
-        return '⬇ Downloads';
+        return 'DOWNLOADS';
       case SortOrder.newest:
-        return '🕐 Newest';
+        return 'NEWEST';
       case SortOrder.none:
-        return 'Sort';
+        return 'SORT';
+    }
+  }
+
+  IconData get _icon {
+    switch (currentSort) {
+      case SortOrder.ratingDesc:
+        return Icons.star_rounded;
+      case SortOrder.downloadsDesc:
+        return Icons.download_rounded;
+      case SortOrder.newest:
+        return Icons.access_time_rounded;
+      case SortOrder.none:
+        return Icons.tune_rounded;
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
     final isActive = currentSort != SortOrder.none;
 
-    return GestureDetector(
-      onTap: () => _showSortSheet(context, ref, currentSort),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-        decoration: BoxDecoration(
-          color: isActive ? cs.primaryContainer : cs.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isActive
-                ? cs.primary.withValues(alpha: 0.4)
-                : cs.outline.withValues(alpha: 0.3),
-            width: isActive ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.tune_rounded,
-              size: 13,
-              color: isActive ? cs.primary : cs.onSurfaceVariant,
-            ),
-            const SizedBox(width: 5),
-            Text(
-              _label,
-              style: TextStyle(
-                color: isActive ? cs.primary : cs.onSurfaceVariant,
-                fontSize: 12,
-                fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-              ),
-            ),
-            if (isActive) ...[
-              const SizedBox(width: 5),
-              GestureDetector(
-                onTap: () => ref
-                    .read(sortOrderProvider.notifier)
-                    .setSortOrder(SortOrder.none),
-                child: Icon(Icons.close_rounded, size: 13, color: cs.primary),
-              ),
-            ],
-          ],
-        ),
-      ),
+    return SkewChip(
+      retro: retro,
+      label: _label,
+      icon: _icon,
+      selected: isActive,
+      dense: true,
+      trailing: isActive ? Icons.close_rounded : null,
+      onTap: () {
+        if (isActive) {
+          ref.read(sortOrderProvider.notifier).setSortOrder(SortOrder.none);
+        } else {
+          _showSortSheet(context, ref, currentSort);
+        }
+      },
     );
   }
 
   void _showSortSheet(BuildContext context, WidgetRef ref, SortOrder current) {
-    final cs = Theme.of(context).colorScheme;
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: cs.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      backgroundColor: retro.surface,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: retro.border, width: 3),
+        borderRadius: BorderRadius.zero,
       ),
-      builder: (_) => _SortSheet(current: current, ref: ref),
+      builder: (_) => _SortSheet(retro: retro, current: current, ref: ref),
     );
   }
 }
 
 class _SortSheet extends StatelessWidget {
-  const _SortSheet({required this.current, required this.ref});
+  const _SortSheet({required this.retro, required this.current, required this.ref});
 
+  final RetroTheme retro;
   final SortOrder current;
   final WidgetRef ref;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
     final options = [
-      (order: SortOrder.none, label: 'Default', emoji: '📋'),
-      (order: SortOrder.ratingDesc, label: 'Top Rated', emoji: '⭐'),
-      (order: SortOrder.downloadsDesc, label: 'Most Downloaded', emoji: '⬇️'),
-      (order: SortOrder.newest, label: 'Recently Updated', emoji: '🕐'),
+      (order: SortOrder.none, icon: Icons.list_rounded, label: 'Default'),
+      (order: SortOrder.ratingDesc, icon: Icons.star_rounded, label: 'Top Rated'),
+      (
+        order: SortOrder.downloadsDesc,
+        icon: Icons.download_rounded,
+        label: 'Most Downloaded',
+      ),
+      (
+        order: SortOrder.newest,
+        icon: Icons.access_time_rounded,
+        label: 'Recently Updated',
+      ),
     ];
 
     return SafeArea(
@@ -572,27 +555,12 @@ class _SortSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Handle
             Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: cs.outline.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
+              child: Container(width: 36, height: 4, color: retro.border),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Sort by',
-              style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 18),
+            Text('SORT BY', style: retro.heading(size: 16)),
+            const SizedBox(height: 14),
             ...options.map((opt) {
               final isSelected = current == opt.order;
               return GestureDetector(
@@ -607,34 +575,34 @@ class _SortSheet extends StatelessWidget {
                     vertical: 13,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? cs.primaryContainer
-                        : cs.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected
-                          ? cs.primary.withValues(alpha: 0.4)
-                          : cs.outline.withValues(alpha: 0.2),
-                    ),
+                    color: isSelected ? retro.accent : retro.surfaceAlt,
+                    border: Border.all(color: retro.border, width: 2),
                   ),
                   child: Row(
                     children: [
-                      Text(opt.emoji, style: const TextStyle(fontSize: 16)),
+                      Icon(
+                        opt.icon,
+                        size: 17,
+                        color: isSelected ? retro.background : retro.ink,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          opt.label,
+                          opt.label.toUpperCase(),
                           style: TextStyle(
-                            color: isSelected ? cs.primary : cs.onSurface,
-                            fontSize: 14,
-                            fontWeight: isSelected
-                                ? FontWeight.w700
-                                : FontWeight.w500,
+                            color: isSelected ? retro.background : retro.ink,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ),
                       if (isSelected)
-                        Icon(Icons.check_rounded, size: 18, color: cs.primary),
+                        Icon(
+                          Icons.check_rounded,
+                          size: 18,
+                          color: retro.background,
+                        ),
                     ],
                   ),
                 ),
@@ -657,28 +625,29 @@ class _ResultsHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final query = ref.watch(searchQueryProvider);
     final category = ref.watch(selectedCategoryProvider);
 
     return filteredAsync.maybeWhen(
       data: (mods) {
         final hasFilters = query.isNotEmpty || category != null;
-        if (!hasFilters) return const SizedBox(height: 4);
+        if (!hasFilters) return const SizedBox(height: 8);
 
         return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
           child: Row(
             children: [
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 child: Text(
-                  '${mods.length} result${mods.length == 1 ? '' : 's'}',
+                  '${mods.length} RESULT${mods.length == 1 ? '' : 'S'}',
                   key: ValueKey(mods.length),
                   style: TextStyle(
-                    color: cs.onSurfaceVariant,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    color: retro.inkDim,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.3,
                   ),
                 ),
               ),
@@ -693,11 +662,12 @@ class _ResultsHeader extends ConsumerWidget {
                         .setSortOrder(SortOrder.none);
                   },
                   child: Text(
-                    'Clear all',
+                    'CLEAR ALL',
                     style: TextStyle(
-                      color: cs.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
+                      color: retro.accent,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.3,
                     ),
                   ),
                 ),
@@ -705,7 +675,7 @@ class _ResultsHeader extends ConsumerWidget {
           ),
         );
       },
-      orElse: () => const SizedBox(height: 4),
+      orElse: () => const SizedBox(height: 8),
     );
   }
 }
@@ -733,7 +703,7 @@ class _SliverModList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList.separated(
         itemCount: pageMods.length,
-        separatorBuilder: (_, _) => const SizedBox(height: 6),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final mod = pageMods[index];
           return ModCard(
@@ -765,66 +735,58 @@ class _PaginationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final start = currentPage * pageSize + 1;
     final end = ((currentPage + 1) * pageSize).clamp(0, totalItems);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
+          color: retro.surface,
+          border: Border.all(color: retro.border, width: 3),
+          boxShadow: retro.hardShadow(),
         ),
         child: Row(
           children: [
-            // Prev button
             _PageButton(
               icon: Icons.arrow_back_ios_rounded,
               enabled: currentPage > 0,
               onTap: () => onPageChanged(currentPage - 1),
-              cs: cs,
+              retro: retro,
             ),
-
             const SizedBox(width: 12),
-
-            // Page indicator
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Page pills row
                   _PagePills(
                     currentPage: currentPage,
                     totalPages: totalPages,
                     onPageChanged: onPageChanged,
-                    cs: cs,
+                    retro: retro,
                   ),
-                  const SizedBox(height: 5),
-                  // Range label
+                  const SizedBox(height: 6),
                   Text(
-                    '$start–$end of $totalItems mods',
+                    '$start–$end OF $totalItems MODS',
                     style: TextStyle(
-                      color: cs.onSurfaceVariant,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
+                      color: retro.inkDim,
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.2,
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
-
             const SizedBox(width: 12),
-
-            // Next button
             _PageButton(
               icon: Icons.arrow_forward_ios_rounded,
               enabled: currentPage < totalPages - 1,
               onTap: () => onPageChanged(currentPage + 1),
-              cs: cs,
+              retro: retro,
             ),
           ],
         ),
@@ -838,20 +800,19 @@ class _PagePills extends StatelessWidget {
     required this.currentPage,
     required this.totalPages,
     required this.onPageChanged,
-    required this.cs,
+    required this.retro,
   });
 
   final int currentPage;
   final int totalPages;
   final ValueChanged<int> onPageChanged;
-  final ColorScheme cs;
+  final RetroTheme retro;
 
   /// Returns the page numbers to show as pills (max 5 visible)
   List<int?> get _visiblePages {
     if (totalPages <= 5) {
       return List.generate(totalPages, (i) => i);
     }
-    // Always show first, last, current, and neighbours
     final pages = <int?>{};
     pages.add(0);
     pages.add(totalPages - 1);
@@ -861,7 +822,6 @@ class _PagePills extends StatelessWidget {
 
     final sorted = pages.toList()..sort((a, b) => a!.compareTo(b!));
 
-    // Insert nulls for gaps
     final result = <int?>[];
     for (int i = 0; i < sorted.length; i++) {
       if (i > 0 && sorted[i]! - sorted[i - 1]! > 1) result.add(null);
@@ -879,11 +839,11 @@ class _PagePills extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child: Text(
-              '…',
+              '···',
               style: TextStyle(
-                color: cs.onSurfaceVariant,
+                color: retro.inkDim,
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
               ),
             ),
           );
@@ -897,19 +857,16 @@ class _PagePills extends StatelessWidget {
             width: isActive ? 28 : 24,
             height: 24,
             decoration: BoxDecoration(
-              color: isActive ? cs.primary : cs.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(7),
-              border: isActive
-                  ? null
-                  : Border.all(color: cs.outline.withValues(alpha: 0.3)),
+              color: isActive ? retro.accent : retro.surfaceAlt,
+              border: Border.all(color: retro.border, width: isActive ? 2 : 1.5),
             ),
             alignment: Alignment.center,
             child: Text(
               '${page + 1}',
               style: TextStyle(
-                color: isActive ? Colors.white : cs.onSurfaceVariant,
+                color: isActive ? retro.background : retro.inkDim,
                 fontSize: 11,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ),
@@ -924,13 +881,13 @@ class _PageButton extends StatelessWidget {
     required this.icon,
     required this.enabled,
     required this.onTap,
-    required this.cs,
+    required this.retro,
   });
 
   final IconData icon;
   final bool enabled;
   final VoidCallback onTap;
-  final ColorScheme cs;
+  final RetroTheme retro;
 
   @override
   Widget build(BuildContext context) {
@@ -941,20 +898,16 @@ class _PageButton extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: enabled ? cs.primaryContainer : cs.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(10),
+          color: enabled ? retro.accent : retro.surfaceAlt,
           border: Border.all(
-            color: enabled
-                ? cs.primary.withValues(alpha: 0.3)
-                : cs.outline.withValues(alpha: 0.2),
+            color: enabled ? retro.border : retro.border.withValues(alpha: 0.3),
+            width: 2,
           ),
         ),
         child: Icon(
           icon,
           size: 15,
-          color: enabled
-              ? cs.primary
-              : cs.onSurfaceVariant.withValues(alpha: 0.3),
+          color: enabled ? retro.background : retro.inkDim.withValues(alpha: 0.4),
         ),
       ),
     );
@@ -970,7 +923,7 @@ class _SliverSkeletonList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList.separated(
         itemCount: 6,
-        separatorBuilder: (_, _) => const SizedBox(height: 6),
+        separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (_, _) => const ModCardSkeleton(),
       ),
     );
@@ -984,7 +937,7 @@ class _EmptyView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final query = ref.watch(searchQueryProvider);
     final category = ref.watch(selectedCategoryProvider);
     final hasFilters = query.isNotEmpty || category != null;
@@ -999,46 +952,78 @@ class _EmptyView extends ConsumerWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(20),
+                color: retro.surface,
+                border: Border.all(color: retro.border, width: 3),
+                boxShadow: retro.hardShadow(),
               ),
               child: Icon(
                 hasFilters
                     ? Icons.search_off_rounded
                     : Icons.extension_off_rounded,
-                size: 34,
-                color: cs.outline.withValues(alpha: 0.6),
+                size: 30,
+                color: retro.accent,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 22),
             Text(
-              hasFilters ? 'No mods found' : 'Nothing here yet',
+              hasFilters ? 'NO MODS FOUND' : 'NOTHING HERE YET',
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 17,
-                fontWeight: FontWeight.w800,
+                color: retro.ink,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.5,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               hasFilters
                   ? 'Try different keywords or remove filters.'
                   : 'Check back later for new content.',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+              style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
             ),
             if (hasFilters) ...[
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.filter_alt_off_rounded, size: 16),
-                label: const Text('Clear filters'),
-                onPressed: () {
+              const SizedBox(height: 22),
+              GestureDetector(
+                onTap: () {
                   ref.read(searchQueryProvider.notifier).clear();
                   ref.read(selectedCategoryProvider.notifier).clear();
                   ref
                       .read(sortOrderProvider.notifier)
                       .setSortOrder(SortOrder.none);
                 },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: retro.accent,
+                    border: Border.all(color: retro.border, width: 2.5),
+                    boxShadow: retro.hardShadow(dx: 3, dy: 3),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.filter_alt_off_rounded,
+                        size: 15,
+                        color: retro.background,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'CLEAR FILTERS',
+                        style: TextStyle(
+                          color: retro.background,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ],
@@ -1057,7 +1042,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Center(
       child: Padding(
@@ -1069,28 +1054,31 @@ class _ErrorView extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: cs.primaryContainer,
-                borderRadius: BorderRadius.circular(18),
+                color: retro.surface,
+                border: Border.all(color: retro.red, width: 3),
+                boxShadow: retro.hardShadow(),
               ),
               child: Icon(
                 Icons.error_outline_rounded,
-                size: 30,
-                color: cs.primary,
+                size: 28,
+                color: retro.red,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
-              'Failed to load mods',
+              'FAILED TO LOAD MODS',
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+                color: retro.ink,
+                fontSize: 13,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.4,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               message,
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
+              style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
               maxLines: 4,
               overflow: TextOverflow.ellipsis,

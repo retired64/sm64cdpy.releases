@@ -284,3 +284,186 @@ class SkewChip extends StatelessWidget {
     return GestureDetector(onTap: onTap, child: chip);
   }
 }
+
+// ── Diagonal stripe banner ────────────────────────────────────────────────────
+// Fondo de franjas diagonales tipo "cabecera de repo" — usado como backdrop
+// decorativo detrás de un hero header (ver referencia: banner a rayas detrás
+// del avatar en una tarjeta de release). Una sola llamada canvas.drawPath()
+// para todas las franjas — igual de barato que el halftone.
+
+class DiagonalStripeBanner extends StatelessWidget {
+  const DiagonalStripeBanner({
+    super.key,
+    required this.baseColor,
+    required this.stripeColor,
+    this.stripeWidth = 22,
+    this.gap = 22,
+    this.angle = -0.5,
+  });
+
+  final Color baseColor;
+  final Color stripeColor;
+  final double stripeWidth;
+  final double gap;
+  final double angle;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: RepaintBoundary(
+        child: CustomPaint(
+          size: Size.infinite,
+          painter: _DiagonalStripePainter(
+            baseColor: baseColor,
+            stripeColor: stripeColor,
+            stripeWidth: stripeWidth,
+            gap: gap,
+            angle: angle,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DiagonalStripePainter extends CustomPainter {
+  _DiagonalStripePainter({
+    required this.baseColor,
+    required this.stripeColor,
+    required this.stripeWidth,
+    required this.gap,
+    required this.angle,
+  });
+
+  final Color baseColor;
+  final Color stripeColor;
+  final double stripeWidth;
+  final double gap;
+  final double angle;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, Paint()..color = baseColor);
+
+    // Todas las franjas se acumulan en un solo Path (un solo draw call)
+    // sobre un área extendida en diagonal, para no dejar huecos en las
+    // esquinas una vez rotado.
+    final diag = size.width + size.height;
+    final period = stripeWidth + gap;
+    final path = Path();
+    for (double x = -diag; x < diag; x += period) {
+      path.addRect(Rect.fromLTWH(x, -diag, stripeWidth, diag * 2));
+    }
+
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    canvas.rotate(angle);
+    canvas.translate(-size.width / 2, -size.height / 2);
+    canvas.drawPath(path, Paint()..color = stripeColor..isAntiAlias = false);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _DiagonalStripePainter oldDelegate) =>
+      oldDelegate.baseColor != baseColor ||
+      oldDelegate.stripeColor != stripeColor ||
+      oldDelegate.stripeWidth != stripeWidth ||
+      oldDelegate.gap != gap ||
+      oldDelegate.angle != angle;
+}
+
+// ── Retro tag ─────────────────────────────────────────────────────────────────
+// Etiqueta cuadrada con borde, sin interacción — para badges tipo
+// "NEW RELEASE", números de versión, o estado ("Instalado"). Variante
+// `filled` para el caso resaltado (fondo sólido) y outline para el resto.
+
+class RetroTag extends StatelessWidget {
+  const RetroTag({
+    super.key,
+    required this.retro,
+    required this.label,
+    this.icon,
+    this.color,
+    this.filled = false,
+    this.dense = true,
+  });
+
+  final RetroTheme retro;
+  final String label;
+  final IconData? icon;
+  final Color? color;
+  final bool filled;
+  final bool dense;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = color ?? retro.accent;
+    final bg = filled ? c : Colors.transparent;
+    final fg = filled ? retro.background : c;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: dense ? 8 : 11,
+        vertical: dense ? 4 : 6,
+      ),
+      decoration: BoxDecoration(color: bg, border: Border.all(color: c, width: 1.5)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: dense ? 12 : 14, color: fg),
+            const SizedBox(width: 4),
+          ],
+          Text(
+            label,
+            style: TextStyle(
+              color: fg,
+              fontSize: dense ? 10 : 11.5,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Retro meta ────────────────────────────────────────────────────────────────
+// Fila "ícono + texto" para metadata secundaria (autor, versión, fecha,
+// contador...). Antes vivía duplicada como widget privado en cada screen
+// (DynOS, VIP Mods); ahora es pública y compartida.
+
+class RetroMeta extends StatelessWidget {
+  const RetroMeta({
+    super.key,
+    required this.retro,
+    required this.icon,
+    required this.label,
+    this.color,
+  });
+
+  final RetroTheme retro;
+  final IconData icon;
+  final String label;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 13, color: color ?? retro.accent),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: retro.inkDim,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+}
