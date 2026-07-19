@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../core/theme/app_theme.dart';
+import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/vip_mod_entity.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_drawer.dart';
@@ -33,16 +33,25 @@ class _VipModsScreenState extends ConsumerState<VipModsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final vipAsync = ref.watch(allVipModsProvider);
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/vip'),
-      body: vipAsync.when(
-        loading: () => const _VipSkeleton(),
-        error: (e, _) => _VipError(message: e.toString()),
-        data: (mods) => _VipBody(mods: mods, scrollCtrl: _scrollCtrl),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: HalftoneBackground(
+              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
+            ),
+          ),
+          vipAsync.when(
+            loading: () => const _VipSkeleton(),
+            error: (e, _) => _VipError(message: e.toString()),
+            data: (mods) => _VipBody(mods: mods, scrollCtrl: _scrollCtrl),
+          ),
+        ],
       ),
     );
   }
@@ -58,7 +67,7 @@ class _VipBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return CustomScrollView(
       controller: scrollCtrl,
@@ -68,50 +77,38 @@ class _VipBody extends StatelessWidget {
       slivers: [
         // ── App bar ───────────────────────────────────────────
         SliverAppBar(
-          backgroundColor: cs.surface,
+          backgroundColor: retro.background,
           surfaceTintColor: Colors.transparent,
           scrolledUnderElevation: 0,
           floating: true,
           snap: true,
           elevation: 0,
+          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
           leading: Builder(
             builder: (ctx) => IconButton(
-              icon: Icon(Icons.menu_rounded, color: cs.onSurface, size: 22),
+              icon: Icon(Icons.menu_rounded, color: retro.amber, size: 22),
               onPressed: () => Scaffold.of(ctx).openDrawer(),
             ),
           ),
-          title: Row(
-            children: [
-              Text('👑', style: const TextStyle(fontSize: 18)),
-              const SizedBox(width: 8),
-              Text(
-                'VIP Mods',
-                style: TextStyle(
-                  color: cs.onSurface,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.1,
-                ),
-              ),
-            ],
+          title: RichText(
+            text: TextSpan(
+              children: [
+                const TextSpan(text: '👑 '),
+                TextSpan(text: 'VIP ', style: retro.heading(size: 16, color: retro.ink)),
+                TextSpan(text: 'MODS', style: retro.heading(size: 16, color: retro.amber)),
+              ],
+            ),
           ),
           actions: [
-            // Total count pill
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
-              ),
-              child: Text(
-                '${mods.length} mods',
-                style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: SkewChip(
+                retro: retro,
+                icon: Icons.workspace_premium_rounded,
+                label: '${mods.length} MODS',
+                dense: true,
+                selected: true,
+                accentColor: retro.amber,
               ),
             ),
           ],
@@ -120,39 +117,17 @@ class _VipBody extends StatelessWidget {
         // ── Section label ─────────────────────────────────────
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-            child: Row(
-              children: [
-                Text(
-                  'Exclusive Content',
-                  style: TextStyle(
-                    color: cs.onSurface,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.1,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                if (mods.isNotEmpty)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: cs.surfaceContainerHigh,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      '${mods.length} total',
-                      style: TextStyle(
-                        color: cs.onSurfaceVariant,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-              ],
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
+            child: Text('限定・プレミアムコンテンツ', style: retro.body(size: 12)),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
+            child: SectionKicker(
+              retro: retro,
+              label: 'EXCLUSIVE CONTENT',
+              japanese: mods.isEmpty ? null : '${mods.length} 件',
             ),
           ),
         ),
@@ -165,7 +140,7 @@ class _VipBody extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList.separated(
               itemCount: mods.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final mod = mods[index];
                 return VipModCard(mod: mod);
@@ -193,14 +168,19 @@ class VipModCard extends ConsumerStatefulWidget {
 class _VipModCardState extends ConsumerState<VipModCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pressCtrl;
-  late final Animation<double> _scale;
   bool _isExpanded = false;
 
   Timer? _longPressTimer;
   bool _isLongPressing = false;
 
   bool _downloading = false;
-  double _progress = 0.0;
+  // ValueNotifier en vez de double + setState(): durante la descarga el
+  // controller de progreso dispara ~60 updates/seg, y con setState() eso
+  // reconstruía toda la card. Con ValueListenableBuilder solo repinta la
+  // barra de progreso.
+  final ValueNotifier<double> _progressNotifier = ValueNotifier(0.0);
+  double get _progress => _progressNotifier.value;
+  set _progress(double v) => _progressNotifier.value = v;
   double _realProgress = 0.0;
   late AnimationController _fakeCtrl;
   late Animation<double> _fakeAnim;
@@ -212,22 +192,20 @@ class _VipModCardState extends ConsumerState<VipModCard>
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scale = Tween<double>(
-      begin: 1.0,
-      end: 0.97,
-    ).animate(CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut));
-
+    // Pixel-press: en vez de un scale suave, el "press" retro se resuelve
+    // en el build() desplazando la card estilo botón de arcade.
     _fakeCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 18),
     );
-    _fakeAnim = Tween<double>(begin: 0.0, end: 0.85).animate(
-      CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
-    )..addListener(() {
-      if (mounted && _downloading && _realProgress <= 0.0) {
-        setState(() => _progress = _fakeAnim.value);
-      }
-    });
+    _fakeAnim =
+        Tween<double>(begin: 0.0, end: 0.85).animate(
+          CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
+        )..addListener(() {
+          if (mounted && _downloading && _realProgress <= 0.0) {
+            _progress = _fakeAnim.value;
+          }
+        });
   }
 
   void _startLongPress() {
@@ -291,12 +269,13 @@ class _VipModCardState extends ConsumerState<VipModCard>
       name: filename,
       onProgress: (name, progress) {
         if (!mounted) return;
-        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(
+          0.0,
+          1.0,
+        );
         if (normalized > _progress) {
-          setState(() {
-            _realProgress = normalized;
-            _progress = normalized;
-          });
+          _realProgress = normalized;
+          _progress = normalized; // solo repinta la barra, no toda la card
         }
       },
       onDownloadCompleted: (path) async {
@@ -306,10 +285,12 @@ class _VipModCardState extends ConsumerState<VipModCard>
           vsync: this,
           duration: const Duration(milliseconds: 400),
         );
-        final completeAnim = Tween<double>(begin: _progress, end: 1.0)
-            .animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
+        final completeAnim = Tween<double>(
+          begin: _progress,
+          end: 1.0,
+        ).animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
         completeAnim.addListener(() {
-          if (mounted) setState(() => _progress = completeAnim.value);
+          if (mounted) _progress = completeAnim.value;
         });
         await completeCtrl.forward();
         completeCtrl.dispose();
@@ -344,18 +325,24 @@ class _VipModCardState extends ConsumerState<VipModCard>
   void dispose() {
     _pressCtrl.dispose();
     _fakeCtrl.dispose();
+    _progressNotifier.dispose();
     _longPressTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final isFav = ref.watch(vipFavouritesProvider).contains(widget.mod.id);
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
             ? 140.0
             : 180.0;
+
+    // Solo hay banner de imagen si el mod trae una URL real. Sin imageUrl,
+    // la sección completa se omite — nada de placeholder ni ícono suelto.
+    final hasImage =
+        widget.mod.imageUrl != null && widget.mod.imageUrl!.isNotEmpty;
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -365,87 +352,59 @@ class _VipModCardState extends ConsumerState<VipModCard>
       onLongPressStart: (_) => _startLongPress(),
       onLongPressEnd: (_) => _cancelLongPress(),
       onLongPressMoveUpdate: (_) => _cancelLongPress(),
-      child: ScaleTransition(
-        scale: _scale,
-        child: Container(
-          decoration: BoxDecoration(
-            color: cs.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
-            boxShadow: [
-              BoxShadow(
-                color: cs.shadow.withValues(alpha: 0.03),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+      child: AnimatedBuilder(
+        animation: _pressCtrl,
+        builder: (context, child) {
+          final pressed = _pressCtrl.value;
+          // Botón de arcade: se hunde 4px y pierde su sombra dura al tocar.
+          final offset = 4.0 * pressed;
+          return Transform.translate(
+            offset: Offset(offset, offset),
+            child: Container(
+              decoration: BoxDecoration(
+                color: retro.surface,
+                borderRadius: RetroTheme.radius,
+                border: Border.all(color: retro.border, width: 3),
+                boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
               ),
-            ],
-          ),
+              child: child,
+            ),
+          );
+        },
+        child: ClipRRect(
+          borderRadius: RetroTheme.radius,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Image banner (16:9) ──────────────────────────────
-              Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                    child:
-                        widget.mod.imageUrl != null &&
-                            widget.mod.imageUrl!.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: widget.mod.imageUrl!,
-                            width: double.infinity,
-                            height: cardImageHeight,
-                            fit: BoxFit.cover,
-                            placeholder: (context, loadState) => Container(
-                              color: cs.surfaceContainerHigh,
-                              height: cardImageHeight,
-                            ),
-                            errorWidget: (context, loadState, error) =>
-                                Container(
-                                  color: cs.surfaceContainerHigh,
-                                  height: cardImageHeight,
-                                  child: Icon(
-                                    Icons.extension_rounded,
-                                    size: 32,
-                                    color: cs.outline,
-                                  ),
-                                ),
-                          )
-                      : Container(
-                          color: cs.surfaceContainerHigh,
-                          height: cardImageHeight,
-                          child: Icon(
-                            Icons.extension_rounded,
-                            size: 32,
-                            color: cs.outline,
-                          ),
-                        ),
-                  ),
-                  // Favourite heart (indicator only)
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Icon(
-                      isFav
-                          ? Icons.favorite_rounded
-                          : Icons.favorite_border_rounded,
-                      size: 22,
-                      color: isFav
-                          ? cs.primary
-                          : Colors.white.withValues(alpha: 0.9),
-                      shadows: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
+              // ── Image banner (solo si hay URL, sin corazón encima) ──
+              if (hasImage)
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: retro.border, width: 3),
                     ),
                   ),
-                ],
-              ),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.mod.imageUrl!,
+                    width: double.infinity,
+                    height: cardImageHeight,
+                    fit: BoxFit.cover,
+                    placeholder: (context, loadState) => Container(
+                      color: retro.surfaceAlt,
+                      height: cardImageHeight,
+                    ),
+                    errorWidget: (context, loadState, error) => Container(
+                      color: retro.surfaceAlt,
+                      height: cardImageHeight,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.extension_rounded,
+                        size: 30,
+                        color: retro.inkDim,
+                      ),
+                    ),
+                  ),
+                ),
 
               // ── Content ──────────────────────────────────────────
               Padding(
@@ -456,92 +415,68 @@ class _VipModCardState extends ConsumerState<VipModCard>
                     // Title
                     Text(
                       widget.mod.title,
-                      style: TextStyle(
-                        color: cs.onSurface,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
-                      ),
+                      style: retro.heading(size: 16.5, letterSpacing: -0.2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
 
                     // Author + recommended version
-                    Row(
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 6,
                       children: [
-                        Icon(
-                          Icons.person_rounded,
-                          size: 13,
-                          color: cs.onSurfaceVariant,
+                        _RetroMeta(
+                          icon: Icons.person_rounded,
+                          label: widget.mod.author,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          widget.mod.author,
-                          style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          Icons.info_outline_rounded,
-                          size: 13,
-                          color: cs.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          widget.mod.recommendedVersion,
-                          style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        _RetroMeta(
+                          icon: Icons.info_outline_rounded,
+                          label: widget.mod.recommendedVersion,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
 
-                    // Tags (if any)
-                    if (widget.mod.tags.isNotEmpty)
+                    // Tags (si el mod trae alguno)
+                    if (widget.mod.tags.isNotEmpty) ...[
+                      const SizedBox(height: 10),
                       Wrap(
                         spacing: 6,
-                        runSpacing: 4,
+                        runSpacing: 6,
                         children: widget.mod.tags
                             .map(
                               (tag) => Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
+                                  horizontal: 7,
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: cs.primaryContainer,
-                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: retro.amber,
+                                    width: 1.5,
+                                  ),
                                 ),
                                 child: Text(
-                                  tag,
+                                  tag.toUpperCase(),
                                   style: TextStyle(
-                                    color: cs.primary,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
+                                    color: retro.amber,
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.4,
                                   ),
                                 ),
                               ),
                             )
                             .toList(),
                       ),
+                    ],
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
 
                     // Description (expandable)
                     Text(
                       widget.mod.description,
-                      style: TextStyle(
-                        color: cs.onSurfaceVariant,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: retro.body(size: 13),
                       maxLines: _isExpanded ? null : 3,
                       overflow: _isExpanded
                           ? TextOverflow.visible
@@ -551,79 +486,123 @@ class _VipModCardState extends ConsumerState<VipModCard>
                       GestureDetector(
                         onTap: () => setState(() => _isExpanded = !_isExpanded),
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.only(top: 6),
                           child: Text(
-                            _isExpanded ? 'Show less' : 'Read more',
+                            _isExpanded ? 'SHOW LESS' : 'READ MORE',
                             style: TextStyle(
-                              color: cs.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
+                              color: retro.amber,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.6,
                             ),
                           ),
                         ),
                       ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
                     // Favorite button
                     SizedBox(
                       width: double.infinity,
-                      child: TextButton.icon(
+                      child: OutlinedButton.icon(
                         icon: Icon(
-                          isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                          isFav
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
                           size: 16,
+                          color: retro.amber,
                         ),
-                        label: Text(isFav ? 'Remove from Favorites' : 'Add to Favorites'),
+                        label: Text(
+                          isFav ? 'REMOVE FROM FAVORITES' : 'ADD TO FAVORITES',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                         onPressed: _toggleFavorite,
-                        style: TextButton.styleFrom(
-                          foregroundColor: cs.primary,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: retro.amber,
+                          side: BorderSide(color: retro.amber, width: 2),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: RetroTheme.radius,
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    // Download button
+                    // Download button — botón de arcade sólido dorado
                     SizedBox(
                       width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: _downloading ? null : _download,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: cs.primary,
-                          foregroundColor: cs.onPrimary,
-                          disabledBackgroundColor: cs.primary,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      height: 50,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: retro.border, width: 3),
+                          boxShadow: _downloading
+                              ? []
+                              : retro.hardShadow(dx: 4, dy: 4),
                         ),
-                        child: _downloading
-                            ? Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    LinearProgressIndicator(
-                                      value: _progress,
-                                      backgroundColor: Colors.white.withOpacity(0.3),
-                                      color: Colors.white,
-                                      minHeight: 4,
-                                      borderRadius: BorderRadius.circular(2),
+                        child: ElevatedButton(
+                          onPressed: _downloading ? null : _download,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: retro.amber,
+                            foregroundColor: retro.onAmber,
+                            disabledBackgroundColor: retro.amber.withValues(
+                              alpha: 0.55,
+                            ),
+                            elevation: 0,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                          ),
+                          child: _downloading
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: ValueListenableBuilder<double>(
+                                    valueListenable: _progressNotifier,
+                                    builder: (context, progress, _) => Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        LinearProgressIndicator(
+                                          value: progress,
+                                          backgroundColor: retro.onAmber
+                                              .withValues(alpha: 0.25),
+                                          color: retro.onAmber,
+                                          minHeight: 4,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${(progress * 100).toStringAsFixed(1)}%',
+                                          style: TextStyle(
+                                            color: retro.onAmber,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 4),
+                                  ),
+                                )
+                              : const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.download_rounded, size: 18),
+                                    SizedBox(width: 8),
                                     Text(
-                                      '${(_progress * 100).toStringAsFixed(1)}%',
-                                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                                      'DOWNLOAD',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 1,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              )
-                            : const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.download_rounded, size: 18),
-                                  SizedBox(width: 8),
-                                  Text('Download', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                                ],
-                              ),
+                        ),
                       ),
                     ),
                   ],
@@ -637,6 +616,35 @@ class _VipModCardState extends ConsumerState<VipModCard>
   }
 }
 
+// ── Small retro meta tag (author / version) ────────────────────────────────────
+
+class _RetroMeta extends StatelessWidget {
+  const _RetroMeta({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 13, color: retro.amber),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: retro.inkDim,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 // ── Empty view ────────────────────────────────────────────────────────────────
 
 class _EmptyView extends StatelessWidget {
@@ -644,8 +652,7 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
+    final retro = RetroTheme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -656,28 +663,31 @@ class _EmptyView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(20),
+                color: retro.surface,
+                border: Border.all(color: retro.border, width: 3),
+                boxShadow: retro.hardShadow(),
               ),
               child: Icon(
-                Icons.star_border_rounded,
-                size: 34,
-                color: cs.outline.withValues(alpha: 0.6),
+                Icons.workspace_premium_rounded,
+                size: 30,
+                color: retro.amber,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 22),
             Text(
-              'No VIP mods yet',
+              'NO VIP MODS YET',
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 17,
-                fontWeight: FontWeight.w800,
+                color: retro.ink,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.5,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               'Check back later for exclusive content.',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+              style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
             ),
           ],
@@ -694,46 +704,42 @@ class _VipSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 80, 16, 32),
-      children: [
-        ...List.generate(
-          3,
-          (i) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: _Bone(height: 340, radius: 16, isDark: isDark),
+    final retro = RetroTheme.of(context);
+    return Container(
+      color: retro.background,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 80, 16, 32),
+        children: [
+          ...List.generate(
+            3,
+            (i) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _Bone(height: 340),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 class _Bone extends StatelessWidget {
-  const _Bone({
-    required this.height,
-    required this.radius,
-    required this.isDark,
-  });
+  const _Bone({required this.height});
 
   final double height;
-  final double radius;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Shimmer.fromColors(
-      baseColor: isDark ? AppTheme.darkShimmerBase : AppTheme.lightShimmerBase,
-      highlightColor: isDark
-          ? AppTheme.darkShimmerHighlight
-          : AppTheme.lightShimmerHighlight,
+      baseColor: retro.surface,
+      highlightColor: retro.surfaceAlt,
       child: Container(
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(color: retro.border, width: 3),
+          borderRadius: RetroTheme.radius,
         ),
       ),
     );
@@ -749,45 +755,50 @@ class _VipError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: cs.primaryContainer,
-                borderRadius: BorderRadius.circular(18),
+    final retro = RetroTheme.of(context);
+    return Container(
+      color: retro.background,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: retro.surface,
+                  border: Border.all(color: retro.red, width: 3),
+                  boxShadow: retro.hardShadow(),
+                ),
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  size: 28,
+                  color: retro.red,
+                ),
               ),
-              child: Icon(
-                Icons.error_outline_rounded,
-                size: 30,
-                color: cs.primary,
+              const SizedBox(height: 20),
+              Text(
+                'FAILED TO LOAD VIP MODS',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: retro.ink,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.4,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Failed to load VIP mods',
-              style: TextStyle(
-                color: cs.onSurface,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+              const SizedBox(height: 10),
+              Text(
+                message,
+                style: TextStyle(color: retro.inkDim, fontSize: 12),
+                textAlign: TextAlign.center,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

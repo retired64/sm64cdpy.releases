@@ -43,6 +43,10 @@ class RetroTheme {
   Color get red => const Color(0xFFE0483A);
   Color get blue => const Color(0xFF3E63E0);
   Color get amber => const Color(0xFFF2A91E);
+  // Texto sobre superficies doradas (botones/badges VIP): tinta oscura fija,
+  // independiente del modo claro/oscuro, porque el dorado siempre es claro
+  // y necesita contraste oscuro encima.
+  Color get onAmber => const Color(0xFF20232E);
 
   /// Sombra dura sin blur, desplazada — la firma visual del sistema.
   List<BoxShadow> hardShadow({double dx = 4, double dy = 4}) => [
@@ -217,6 +221,7 @@ class SkewChip extends StatelessWidget {
     this.trailing,
     this.onTap,
     this.dense = false,
+    this.accentColor,
   });
 
   final RetroTheme retro;
@@ -226,12 +231,16 @@ class SkewChip extends StatelessWidget {
   final IconData? trailing;
   final VoidCallback? onTap;
   final bool dense;
+  // Override opcional del color de acento (por defecto retro.accent).
+  // Usado, por ejemplo, por VIP Mods para chips dorados en vez de teal.
+  final Color? accentColor;
 
   static const _skew = 0.18;
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? retro.accent : retro.surface;
+    final accent = accentColor ?? retro.accent;
+    final bg = selected ? accent : retro.surface;
     final fg = selected ? retro.background : retro.ink;
 
     final chip = Transform(
