@@ -305,7 +305,7 @@ class _SearchField extends ConsumerWidget {
         boxShadow: focusNode.hasFocus ? [] : retro.hardShadow(dx: 3, dy: 3),
       ),
       transform: focusNode.hasFocus
-          ? (Matrix4.identity()..translate(3.0, 3.0))
+          ? Matrix4.translationValues(3.0, 3.0, 0.0)
           : Matrix4.identity(),
       child: TextField(
         controller: controller,

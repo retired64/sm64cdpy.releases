@@ -804,7 +804,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           ),
         );
 
-        if (proceed != true || !mounted) {
+        if (proceed != true && mounted) {
           AppSnackbar.info(
             context,
             message: 'You won\'t see progress outside the app. Grant permission in Settings to enable notifications.',
@@ -919,7 +919,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          AppSnackbar.red(
+          AppSnackbar.error(
             context,
             message: 'Download failed',
           );
@@ -927,7 +927,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       );
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.red(
+      AppSnackbar.error(
         context,
         message: 'Error: ${e.toString()}',
       );
@@ -950,7 +950,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          AppSnackbar.red(
+          AppSnackbar.error(
             context,
             message: 'Download failed',
           );
@@ -962,7 +962,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.red(
+      AppSnackbar.error(
         context,
         message: 'Error: ${e.toString()}',
       );
@@ -1080,11 +1080,6 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> _download() async {
     HapticFeedback.lightImpact();
 
@@ -1124,7 +1119,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
           ),
         );
 
-        if (proceed != true || !mounted) {
+        if (proceed != true && mounted) {
           AppSnackbar.info(
             context,
             message: 'You won\'t see progress outside the app. Grant permission in Settings to enable notifications.',
@@ -1223,7 +1218,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
   }
 
   Future<void> _downloadToModsFolder(
-      ModInstaller _installerParam, String url, String filename) async {
+      ModInstaller installer, String url, String filename) async {
     try {
       await FileDownloader.downloadFile(
         url: url,
@@ -1231,7 +1226,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          await _installerParam.copyFileToModsFolder(
+          await installer.copyFileToModsFolder(
             sourcePath: path,
             targetName: savedName,
           );
@@ -1243,7 +1238,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          AppSnackbar.red(
+          AppSnackbar.error(
             context,
             message: 'Download failed',
           );
@@ -1251,7 +1246,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
       );
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.red(
+      AppSnackbar.error(
         context,
         message: 'Error: ${e.toString()}',
       );
@@ -1293,7 +1288,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.red(
+          AppSnackbar.error(
             context,
             message: 'Download failed',
           );
@@ -1305,7 +1300,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.red(
+      AppSnackbar.error(
         context,
         message: 'Error: ${e.toString()}',
       );
