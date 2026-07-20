@@ -55,3 +55,4 @@ flutter:
     - assets/db/touch_controls.json
     - assets/db/omm.json
     - assets/icons/
+    - assets/icons/menu/

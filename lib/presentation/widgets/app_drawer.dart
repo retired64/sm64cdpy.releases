@@ -97,7 +97,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     child: _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
                         'assets/icons/menu/m64.svg',
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -112,7 +111,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     child: _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
                         'assets/icons/menu/catalog.svg',
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -127,7 +125,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     child: _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
                         'assets/icons/menu/favorites.svg',
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -142,7 +139,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     child: _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
                         'assets/icons/menu/popular.svg',
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -175,7 +171,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     child: _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
                         'assets/icons/menu/vip.svg',
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -191,7 +186,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     child: _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
                         'assets/icons/menu/dynos.svg',
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -207,7 +201,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     child: _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
                         'assets/icons/menu/controls.svg',
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -222,7 +215,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     child: _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
                         'assets/icons/menu/omm.svg',
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                         width: 19,
                         height: 19,
                       ),
@@ -268,10 +260,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                   _NavItem(
                     iconBuilder: (color) => SvgPicture.asset(
                       'assets/icons/menu/links-resource.svg',
-                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                      width: 19,
-                      height: 19,
-                    ),
+                    width: 19,
+                    height: 19,
+                  ),
                     label: 'Links Resource',
                     route: '/links-resource',
                     isActive: widget.currentRoute == '/links-resource',
@@ -279,10 +270,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                   _NavItem(
                     iconBuilder: (color) => SvgPicture.asset(
                       'assets/icons/menu/disclaimer.svg',
-                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                      width: 19,
-                      height: 19,
-                    ),
+                    width: 19,
+                    height: 19,
+                  ),
                     label: 'Disclaimer',
                     route: '/disclaimer',
                     isActive: widget.currentRoute == '/disclaimer',
@@ -290,10 +280,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                   _NavItem(
                     iconBuilder: (color) => SvgPicture.asset(
                       'assets/icons/menu/changelogs.svg',
-                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                      width: 19,
-                      height: 19,
-                    ),
+                    width: 19,
+                    height: 19,
+                  ),
                     label: 'Changelog',
                     route: '/changelog',
                     isActive: widget.currentRoute == '/changelog',
@@ -301,10 +290,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                   _NavItem(
                     iconBuilder: (color) => SvgPicture.asset(
                       'assets/icons/menu/settings.svg',
-                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                      width: 19,
-                      height: 19,
-                    ),
+                    width: 19,
+                    height: 19,
+                  ),
                     label: 'Settings',
                     route: '/settings',
                     isActive: widget.currentRoute == '/settings',
@@ -581,7 +569,11 @@ class _CategoryList extends ConsumerWidget {
             letterSpacing: 0.4,
           ),
         ),
-        leading: Icon(Icons.category, size: 19, color: retro.inkDim),
+        leading: SvgPicture.asset(
+          'assets/icons/menu/categorias.svg',
+          width: 19,
+          height: 19,
+        ),
         children: CategoryConstants.allCategories
             .map(
               (cat) => _CategoryItem(
