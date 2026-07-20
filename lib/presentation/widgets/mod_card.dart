@@ -3,141 +3,161 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../core/theme/app_theme.dart';
+import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../providers/mod_providers.dart';
 
 /// Main mod catalogue card — used in ListView.builder.
-class ModCard extends ConsumerWidget {
+class ModCard extends ConsumerStatefulWidget {
   const ModCard({super.key, required this.mod, required this.onTap});
 
   final ModEntity mod;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isFav = ref.watch(favouritesProvider).contains(mod.id);
+  ConsumerState<ModCard> createState() => _ModCardState();
+}
 
-    final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+class _ModCardState extends ConsumerState<ModCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pressCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _pressCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 90),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pressCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
 
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: cs.outline.withValues(alpha: 0.5),
-            width: 0.8,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: cs.shadow.withValues(alpha: isDark ? 0.35 : 0.07),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+      onTapDown: (_) => _pressCtrl.forward(),
+      onTapUp: (_) {
+        _pressCtrl.reverse();
+        widget.onTap();
+      },
+      onTapCancel: () => _pressCtrl.reverse(),
+      child: AnimatedBuilder(
+        animation: _pressCtrl,
+        builder: (context, child) {
+          final offset = 3.0 * _pressCtrl.value;
+          return Transform.translate(
+            offset: Offset(offset, offset),
+            child: Container(
+              decoration: BoxDecoration(
+                color: retro.surface,
+                borderRadius: RetroTheme.radius,
+                border: Border.all(color: retro.border, width: 2.5),
+                boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
+              ),
+              child: child,
             ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Thumbnail ──────────────────────────────────────
-            _Thumbnail(imageUrl: mod.imageUrl, modId: mod.id),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Thumbnail ──────────────────────────────────────
+              _Thumbnail(
+                imageUrl: widget.mod.imageUrl,
+                modId: widget.mod.id,
+                featured: widget.mod.isFeatured,
+                retro: retro,
+              ),
+              const SizedBox(width: 12),
 
-            // ── Info ───────────────────────────────────────────
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
+              // ── Info ───────────────────────────────────────────
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Title
                     Text(
-                      mod.title,
+                      widget.mod.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: cs.onSurface,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        height: 1.2,
-                      ),
+                      style: retro.heading(size: 14.5, letterSpacing: -0.1),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 5),
 
                     // Author
-                    Text(
-                      mod.author,
-                      style: TextStyle(
-                        color: cs.onSurfaceVariant,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    RetroMeta(
+                      retro: retro,
+                      icon: Icons.person_rounded,
+                      label: widget.mod.author,
                     ),
-
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 7),
 
                     // Stats row
-                    Row(
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 4,
                       children: [
-                        _StatChip(
+                        RetroMeta(
+                          retro: retro,
                           icon: Icons.star_rounded,
-                          label: mod.rating?.star ?? '—',
-                          color: cs.secondary,
+                          label: widget.mod.rating?.star ?? '—',
+                          color: retro.amber,
                         ),
-                        const SizedBox(width: 8),
-                        _StatChip(
+                        RetroMeta(
+                          retro: retro,
                           icon: Icons.download_rounded,
-                          label: mod.downloads.compact,
-                          color: cs.onSurfaceVariant,
+                          label: widget.mod.downloads.compact,
+                          color: retro.accent,
                         ),
-                        if (mod.isFeatured) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: cs.secondaryContainer,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'FEATURED',
-                              style: TextStyle(
-                                color: cs.onSecondaryContainer,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
+                        if (widget.mod.isFeatured)
+                          RetroTag(
+                            retro: retro,
+                            label: 'FEATURED',
+                            color: retro.amber,
+                            filled: true,
+                            dense: true,
                           ),
-                        ],
                       ],
                     ),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(width: 6),
 
-            // ── Fav button ─────────────────────────────────────
-            IconButton(
-              icon: Icon(
-                isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                size: 20,
-                color: isFav
-                    ? cs.primary
-                    : cs.onSurfaceVariant.withValues(alpha: 0.5),
+              // ── Fav button ─────────────────────────────────────
+              GestureDetector(
+                onTap: () => ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: retro.surfaceAlt,
+                    border: Border.all(
+                      color: isFav ? retro.red : retro.border,
+                      width: isFav ? 2 : 1.5,
+                    ),
+                  ),
+                  child: Icon(
+                    isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                    size: 16,
+                    color: isFav ? retro.red : retro.inkDim,
+                  ),
+                ),
               ),
-              onPressed: () =>
-                  ref.read(favouritesProvider.notifier).toggle(mod.id),
-              padding: const EdgeInsets.all(4),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -147,84 +167,102 @@ class ModCard extends ConsumerWidget {
 // ── Private helpers ──────────────────────────────────────────────────────────
 
 class _Thumbnail extends StatelessWidget {
-  const _Thumbnail({this.imageUrl, required this.modId});
+  const _Thumbnail({
+    this.imageUrl,
+    required this.modId,
+    required this.featured,
+    required this.retro,
+  });
 
   final String? imageUrl;
   final String modId;
+  final bool featured;
+  final RetroTheme retro;
+
+  static const _size = 78.0;
 
   @override
   Widget build(BuildContext context) {
-    const size = 75.0;
+    final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
 
-    if (imageUrl == null || imageUrl!.isEmpty) {
-      return Hero(
-        tag: 'mod_img_$modId',
-        child: _Placeholder(size: size),
-      );
-    }
-
-    return Hero(
-      tag: 'mod_img_$modId',
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: CachedNetworkImage(
-          imageUrl: imageUrl!,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => _ShimmerBox(width: size, height: size),
-          errorWidget: (context, url, error) => _Placeholder(size: size),
-        ),
-      ),
-    );
-  }
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      color: Theme.of(context).colorScheme.surfaceContainerHigh,
-      child: Icon(
-        Icons.extension_rounded,
-        color: Theme.of(context).colorScheme.outline,
-        size: 28,
-      ),
-    );
-  }
-}
-
-class _StatChip extends StatelessWidget {
-  const _StatChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
+    return Stack(
+      clipBehavior: Clip.none,
       children: [
-        Icon(icon, size: 12, color: color),
-        const SizedBox(width: 3),
-        Text(
-          label,
-          style: TextStyle(
-            color: color,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
+        Container(
+          width: _size,
+          height: _size,
+          decoration: BoxDecoration(
+            border: Border.all(color: retro.border, width: 2),
+          ),
+          child: Hero(
+            tag: 'mod_img_$modId',
+            child: hasImage
+                ? CachedNetworkImage(
+                    imageUrl: imageUrl!,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        _ShimmerBox(width: _size, height: _size),
+                    errorWidget: (context, url, error) =>
+                        _StripedPlaceholder(size: _size, retro: retro),
+                  )
+                : _StripedPlaceholder(size: _size, retro: retro),
           ),
         ),
+
+        // Badge tipo "verificado" en la esquina — solo si el mod es
+        // destacado. Nunca bloquea el centro de la miniatura.
+        if (featured)
+          Positioned(
+            right: -6,
+            bottom: -6,
+            child: RetroBadgeDot(
+              retro: retro,
+              icon: Icons.star_rounded,
+              color: retro.amber,
+              size: 20,
+            ),
+          ),
       ],
+    );
+  }
+}
+
+/// Placeholder con franjas diagonales para mods sin imagen — en vez del
+/// cuadro plano de un solo color con un ícono suelto.
+class _StripedPlaceholder extends StatelessWidget {
+  const _StripedPlaceholder({required this.size, required this.retro});
+
+  final double size;
+  final RetroTheme retro;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DiagonalStripeBanner(
+            baseColor: retro.surfaceAlt,
+            stripeColor: retro.border.withValues(alpha: 0.35),
+            stripeWidth: 8,
+            gap: 8,
+          ),
+          Center(
+            child: Container(
+              width: 28,
+              height: 28,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: retro.background,
+                border: Border.all(color: retro.border, width: 1.5),
+              ),
+              child: Icon(Icons.extension_rounded, size: 15, color: retro.inkDim),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -235,18 +273,18 @@ class ModCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final retro = RetroTheme.of(context);
     return Shimmer.fromColors(
-      baseColor: isDark ? AppTheme.darkShimmerBase : AppTheme.lightShimmerBase,
-      highlightColor: isDark
-          ? AppTheme.darkShimmerHighlight
-          : AppTheme.lightShimmerHighlight,
+      baseColor: retro.surface,
+      highlightColor: retro.surfaceAlt,
       child: Container(
-        height: 75,
-        color: Colors.transparent,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(color: retro.border, width: 2),
+        ),
         child: Row(
           children: [
-            _ShimmerBox(width: 75, height: 75),
+            _ShimmerBox(width: 78, height: 78),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -257,7 +295,7 @@ class ModCardSkeleton extends StatelessWidget {
                   const SizedBox(height: 6),
                   _ShimmerBox(width: 100, height: 12),
                   const SizedBox(height: 10),
-                  _ShimmerBox(width: 80, height: 12),
+                  _ShimmerBox(width: 120, height: 12),
                 ],
               ),
             ),
@@ -276,13 +314,6 @@ class _ShimmerBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-      ),
-    );
+    return Container(width: width, height: height, color: Colors.white);
   }
 }

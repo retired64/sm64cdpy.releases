@@ -467,3 +467,39 @@ class RetroMeta extends StatelessWidget {
     );
   }
 }
+
+// ── Retro badge dot ───────────────────────────────────────────────────────────
+// Círculo pequeño con ícono, para insignias tipo "verificado" o "destacado"
+// que se superponen en la esquina de una miniatura — inspirado en el check
+// azul junto al nombre de usuario en una tarjeta de release de GitHub.
+
+class RetroBadgeDot extends StatelessWidget {
+  const RetroBadgeDot({
+    super.key,
+    required this.retro,
+    required this.icon,
+    this.color,
+    this.size = 20,
+  });
+
+  final RetroTheme retro;
+  final IconData icon;
+  final Color? color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = color ?? retro.accent;
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: c,
+        shape: BoxShape.circle,
+        border: Border.all(color: retro.background, width: 2),
+      ),
+      child: Icon(icon, size: size * 0.58, color: retro.background),
+    );
+  }
+}

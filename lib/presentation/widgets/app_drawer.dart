@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/category_constants.dart';
+import '../../core/theme/retro_theme.dart';
 import '../../presentation/providers/mod_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -60,221 +61,227 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final retro = RetroTheme.of(context);
 
     return Drawer(
-      backgroundColor: cs.surface,
+      backgroundColor: retro.background,
       elevation: 0,
-      child: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Header ──────────────────────────────────────────────────
-              _staggerItem(
-                index: 0,
-                ctrl: _staggerCtrl,
-                child: const _DrawerHeader(),
-              ),
-              _GradientDivider(isDark: isDark),
-              const SizedBox(height: 4),
+      shape: Border(right: BorderSide(color: retro.border, width: 3)),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: HalftoneBackground(
+              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
+            ),
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Header ────────────────────────────────────────────
+                  _staggerItem(
+                    index: 0,
+                    ctrl: _staggerCtrl,
+                    child: const _DrawerHeader(),
+                  ),
+                  _RetroDivider(retro: retro),
+                  const SizedBox(height: 4),
 
-              // ── Navigation items ───────────────────────────────────────
-              _staggerItem(
-                index: 1,
-                ctrl: _staggerCtrl,
-                child: _NavItem(
-                  icon: Icons.home_rounded,
-                  label: 'Home',
-                  route: '/',
-                  isActive: widget.currentRoute == '/',
-                ),
-              ),
-                    _staggerItem(
-                      index: 2,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        icon: Icons.apps_rounded,
-                        label: 'catalog',
-                        route: '/catalogue',
-                        isActive: widget.currentRoute == '/catalogue',
-                      ),
+                  // ── Navigation items ────────────────────────────────
+                  _staggerItem(
+                    index: 1,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.home_rounded,
+                      label: 'Home',
+                      route: '/',
+                      isActive: widget.currentRoute == '/',
                     ),
-                    _staggerItem(
-                      index: 3,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        icon: Icons.favorite_rounded,
-                        label: 'Favourites',
-                        route: '/favourites',
-                        isActive: widget.currentRoute == '/favourites',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 2,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.apps_rounded,
+                      label: 'catalog',
+                      route: '/catalogue',
+                      isActive: widget.currentRoute == '/catalogue',
                     ),
-                    _staggerItem(
-                      index: 4,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        icon: Icons.local_fire_department_rounded,
-                        label: 'Popular',
-                        route: '/popular',
-                        isActive: widget.currentRoute == '/popular',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 3,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.favorite_rounded,
+                      label: 'Favourites',
+                      route: '/favourites',
+                      isActive: widget.currentRoute == '/favourites',
                     ),
+                  ),
+                  _staggerItem(
+                    index: 4,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.local_fire_department_rounded,
+                      label: 'Popular',
+                      route: '/popular',
+                      isActive: widget.currentRoute == '/popular',
+                    ),
+                  ),
 
-                    // Separador degradado antes de EXCLUSIVE
-                    _staggerItem(
-                      index: 5,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                        child: _GradientDivider(isDark: isDark),
-                      ),
+                  // Separador antes de EXCLUSIVE
+                  _staggerItem(
+                    index: 5,
+                    ctrl: _staggerCtrl,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+                      child: _RetroDivider(retro: retro),
                     ),
-                    _staggerItem(
-                      index: 5,
-                      ctrl: _staggerCtrl,
-                      child: const _SectionLabel('EXCLUSIVE'),
+                  ),
+                  _staggerItem(
+                    index: 5,
+                    ctrl: _staggerCtrl,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
+                      child: SectionKicker(retro: retro, label: 'EXCLUSIVE'),
                     ),
-                    _staggerItem(
-                      index: 6,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        icon: Icons.star_rounded,
-                        label: 'VIP Mods',
-                        route: '/vip',
-                        isActive: widget.currentRoute == '/vip',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 6,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.star_rounded,
+                      label: 'VIP Mods',
+                      route: '/vip',
+                      isActive: widget.currentRoute == '/vip',
+                      accentColor: retro.amber,
                     ),
-                    _staggerItem(
-                      index: 7,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        icon: Icons.rocket_launch_rounded,
-                        label: 'DynOS',
-                        route: '/dynos',
-                        isActive: widget.currentRoute == '/dynos',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 7,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.rocket_launch_rounded,
+                      label: 'DynOS',
+                      route: '/dynos',
+                      isActive: widget.currentRoute == '/dynos',
+                      accentColor: retro.blue,
                     ),
-                    _staggerItem(
-                      index: 8,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        icon: Icons.touch_app_rounded,
-                        label: 'Touch Controls',
-                        route: '/touch-controls',
-                        isActive: widget.currentRoute == '/touch-controls',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 8,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.touch_app_rounded,
+                      label: 'Touch Controls',
+                      route: '/touch-controls',
+                      isActive: widget.currentRoute == '/touch-controls',
                     ),
-                    _staggerItem(
-                      index: 9,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        icon: Icons.auto_awesome_rounded,
-                        label: 'OMMR PACK',
-                        route: '/omm-rebirth',
-                        isActive: widget.currentRoute == '/omm-rebirth',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 9,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.auto_awesome_rounded,
+                      label: 'OMMR PACK',
+                      route: '/omm-rebirth',
+                      isActive: widget.currentRoute == '/omm-rebirth',
+                      accentColor: retro.red,
                     ),
+                  ),
 
-                    // Separador degradado antes de Explore
-                    _staggerItem(
-                      index: 10,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                        child: _GradientDivider(isDark: isDark),
-                      ),
+                  // Separador antes de Explore
+                  _staggerItem(
+                    index: 10,
+                    ctrl: _staggerCtrl,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+                      child: _RetroDivider(retro: retro),
                     ),
-                    _staggerItem(
-                      index: 10,
-                      ctrl: _staggerCtrl,
-                      child: const _SectionLabel('Explore'),
+                  ),
+                  _staggerItem(
+                    index: 10,
+                    ctrl: _staggerCtrl,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
+                      child: SectionKicker(retro: retro, label: 'EXPLORE'),
                     ),
-                    _staggerItem(
-                      index: 11,
-                      ctrl: _staggerCtrl,
-                      child: _CategoryList(currentRoute: widget.currentRoute),
-                    ),
-                    _staggerItem(
-                      index: 12,
-                      ctrl: _staggerCtrl,
-                      child: _SortOptions(currentRoute: widget.currentRoute),
-                    ),
+                  ),
+                  _staggerItem(
+                    index: 11,
+                    ctrl: _staggerCtrl,
+                    child: _CategoryList(currentRoute: widget.currentRoute),
+                  ),
+                  _staggerItem(
+                    index: 12,
+                    ctrl: _staggerCtrl,
+                    child: _SortOptions(currentRoute: widget.currentRoute),
+                  ),
 
-                    // ── Footer ───────────────────────────────────────────
-                    _GradientDivider(isDark: isDark),
-                    const _SocialLinks(),
-                    _GradientDivider(isDark: isDark),
-                    _NavItem(
-                      icon: Icons.link_rounded,
-                      label: 'Links Resource',
-                      route: '/links-resource',
-                      isActive: widget.currentRoute == '/links-resource',
-                    ),
-                    _NavItem(
-                      icon: Icons.info_outline_rounded,
-                      label: 'Disclaimer',
-                      route: '/disclaimer',
-                      isActive: widget.currentRoute == '/disclaimer',
-                    ),
-                    _NavItem(
-                      icon: Icons.history_rounded,
-                      label: 'Changelog',
-                      route: '/changelog',
-                      isActive: widget.currentRoute == '/changelog',
-                    ),
-                    _NavItem(
-                      icon: Icons.settings_rounded,
-                      label: 'Settings',
-                      route: '/settings',
-                      isActive: widget.currentRoute == '/settings',
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(22, 2, 0, 14),
-                      child: Text(
-                        'v1.4.3',
-                        style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 10,
-                          letterSpacing: 0.8,
-                        ),
+                  // ── Footer ─────────────────────────────────────────
+                  _RetroDivider(retro: retro),
+                  const _SocialLinks(),
+                  _RetroDivider(retro: retro),
+                  _NavItem(
+                    icon: Icons.link_rounded,
+                    label: 'Links Resource',
+                    route: '/links-resource',
+                    isActive: widget.currentRoute == '/links-resource',
+                  ),
+                  _NavItem(
+                    icon: Icons.info_outline_rounded,
+                    label: 'Disclaimer',
+                    route: '/disclaimer',
+                    isActive: widget.currentRoute == '/disclaimer',
+                  ),
+                  _NavItem(
+                    icon: Icons.history_rounded,
+                    label: 'Changelog',
+                    route: '/changelog',
+                    isActive: widget.currentRoute == '/changelog',
+                  ),
+                  _NavItem(
+                    icon: Icons.settings_rounded,
+                    label: 'Settings',
+                    route: '/settings',
+                    isActive: widget.currentRoute == '/settings',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
+                    child: Text(
+                      'v1.4.3',
+                      style: TextStyle(
+                        color: retro.inkDim,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.8,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
+          ),
+        ],
+      ),
+    );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Separador con degradado horizontal — transparente › color › transparente
-// Se usa como reemplazo del Divider plano para un look más premium.
+// Separador con línea sólida — reemplaza al degradado horizontal, coherente
+// con el resto de la app (nada de bordes difusos).
 // ─────────────────────────────────────────────────────────────────────────────
-class _GradientDivider extends StatelessWidget {
-  const _GradientDivider({required this.isDark});
-  final bool isDark;
+class _RetroDivider extends StatelessWidget {
+  const _RetroDivider({required this.retro});
+  final RetroTheme retro;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final mid = isDark
-        ? cs.primary.withValues(alpha: 0.20)
-        : cs.primary.withValues(alpha: 0.12);
-
-    return Container(
-      height: 1,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.transparent, mid, mid, Colors.transparent],
-          stops: const [0.0, 0.30, 0.70, 1.0],
-        ),
-      ),
-    );
+    return Container(height: 2, color: retro.border);
   }
 }
 
@@ -313,36 +320,33 @@ class _DrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: Row(
         children: [
-          SvgPicture.asset('assets/icons/logo.svg', width: 48, height: 48),
-          const SizedBox(width: 13),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'SM64CoopDX',
-                style: TextStyle(
-                  color: cs.onSurface,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.2,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Mods catalog',
-                style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
+          Container(
+            width: 52,
+            height: 52,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: retro.surface,
+              border: Border.all(color: retro.border, width: 2.5),
+              boxShadow: retro.hardShadow(dx: 3, dy: 3),
+            ),
+            child: SvgPicture.asset('assets/icons/logo.svg', width: 32, height: 32),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('SM64', style: retro.heading(size: 16, color: retro.ink)),
+                Text('CoopDX', style: retro.heading(size: 16, color: retro.accent)),
+                const SizedBox(height: 3),
+                Text('モッド・カタログ', style: retro.body(size: 10.5)),
+              ],
+            ),
           ),
         ],
       ),
@@ -351,33 +355,10 @@ class _DrawerHeader extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section label
-// ─────────────────────────────────────────────────────────────────────────────
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.label);
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(20, 4, 0, 4),
-    child: Text(
-      label.toUpperCase(),
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-        fontSize: 9,
-        fontWeight: FontWeight.w800,
-        letterSpacing: 2.2,
-      ),
-    ),
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // NavItem
-// · ScaleTransition en press (80 ms forward / 140 ms reverse) da la
-//   sensación de "presionar" sin lag visual.
-// · La barra lateral usa un LinearGradient vertical que la hace parecer
-//   que tiene profundidad.
+// · Estado activo = relleno sólido de acento + texto sobre fondo, igual que
+//   un SkewChip seleccionado — nada de contenedores translúcidos redondeados.
+// · Barra lateral sólida (sin degradado) cuando está activo.
 // ─────────────────────────────────────────────────────────────────────────────
 class _NavItem extends StatefulWidget {
   const _NavItem({
@@ -385,12 +366,14 @@ class _NavItem extends StatefulWidget {
     required this.label,
     required this.route,
     required this.isActive,
+    this.accentColor,
   });
 
   final IconData icon;
   final String label;
   final String route;
   final bool isActive;
+  final Color? accentColor;
 
   @override
   State<_NavItem> createState() => _NavItemState();
@@ -423,10 +406,9 @@ class _NavItemState extends State<_NavItem>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final activeColor = cs.primary;
-    final restColor = cs.onSurfaceVariant;
-    final color = widget.isActive ? activeColor : restColor;
+    final retro = RetroTheme.of(context);
+    final accent = widget.accentColor ?? retro.accent;
+    final fg = widget.isActive ? retro.background : retro.inkDim;
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -444,35 +426,20 @@ class _NavItemState extends State<_NavItem>
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           decoration: BoxDecoration(
-            color: widget.isActive
-                ? cs.primaryContainer.withValues(alpha: 0.68)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
+            color: widget.isActive ? accent : Colors.transparent,
+            border: widget.isActive ? Border.all(color: retro.border, width: 2) : null,
           ),
           child: Row(
             children: [
-              // ── Barra lateral con degradado ──────────────────────────
+              // ── Barra lateral sólida ────────────────────────────
               AnimatedContainer(
                 duration: _kItemDuration,
                 curve: _kCurve,
                 width: 3,
                 height: widget.isActive ? 26 : 0,
-                decoration: BoxDecoration(
-                  gradient: widget.isActive
-                      ? LinearGradient(
-                          colors: [
-                            activeColor.withValues(alpha: 0.5),
-                            activeColor,
-                            activeColor.withValues(alpha: 0.5),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        )
-                      : null,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+                color: widget.isActive ? retro.background : Colors.transparent,
               ),
-              // ── Label + icon ─────────────────────────────────────────
+              // ── Label + icon ─────────────────────────────────────
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -486,7 +453,7 @@ class _NavItemState extends State<_NavItem>
                         child: Icon(
                           widget.icon,
                           key: ValueKey(widget.isActive),
-                          color: color,
+                          color: fg,
                           size: 19,
                         ),
                       ),
@@ -495,11 +462,11 @@ class _NavItemState extends State<_NavItem>
                         duration: _kItemDuration,
                         curve: _kCurve,
                         style: TextStyle(
-                          color: color,
-                          fontSize: 14,
+                          color: fg,
+                          fontSize: 13.5,
                           fontWeight: widget.isActive
-                              ? FontWeight.w700
-                              : FontWeight.w500,
+                              ? FontWeight.w800
+                              : FontWeight.w600,
                           letterSpacing: 0.1,
                         ),
                         child: Text(widget.label),
@@ -526,18 +493,19 @@ class _CategoryList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedCategoryProvider);
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Theme(
       data: Theme.of(context).copyWith(
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
+        dividerColor: Colors.transparent,
       ),
       child: ExpansionTile(
         tilePadding: const EdgeInsets.symmetric(horizontal: 16),
         childrenPadding: EdgeInsets.zero,
-        iconColor: cs.onSurfaceVariant,
-        collapsedIconColor: cs.onSurfaceVariant,
+        iconColor: retro.accent,
+        collapsedIconColor: retro.inkDim,
         expansionAnimationStyle: AnimationStyle(
           duration: const Duration(milliseconds: 200),
           curve: _kCurve,
@@ -545,18 +513,15 @@ class _CategoryList extends ConsumerWidget {
           reverseCurve: Curves.easeInCubic,
         ),
         title: Text(
-          'Categories',
+          'CATEGORIES',
           style: TextStyle(
-            color: cs.onSurfaceVariant,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            color: retro.ink,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.4,
           ),
         ),
-        leading: Icon(
-          Icons.category_rounded,
-          size: 20,
-          color: cs.onSurfaceVariant,
-        ),
+        leading: Icon(Icons.category_rounded, size: 19, color: retro.inkDim),
         children: CategoryConstants.allCategories
             .map(
               (cat) => _CategoryItem(
@@ -613,7 +578,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final isSelected = widget.selectedCategory == widget.category;
     final icon = CategoryConstants.getIconForCategory(widget.category);
     final catColor = CategoryConstants.getColorForCategory(widget.category);
@@ -646,39 +611,21 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected
-                ? cs.primaryContainer.withValues(alpha: 0.52)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? catColor : Colors.transparent,
+            border: isSelected ? Border.all(color: retro.border, width: 1.5) : null,
           ),
           child: Row(
             children: [
-              AnimatedContainer(
-                duration: _kItemDuration,
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? cs.primary
-                      : catColor.withValues(alpha: 0.65),
-                  shape: BoxShape.circle,
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: cs.primary.withValues(alpha: 0.35),
-                            blurRadius: 4,
-                          ),
-                        ]
-                      : null,
-                ),
+              Container(
+                width: 7,
+                height: 7,
+                color: isSelected ? retro.background : catColor,
               ),
               const SizedBox(width: 10),
               Icon(
                 icon,
                 size: 15,
-                color: isSelected
-                    ? cs.primary
-                    : catColor.withValues(alpha: 0.72),
+                color: isSelected ? retro.background : catColor,
               ),
               const SizedBox(width: 9),
               Expanded(
@@ -686,9 +633,9 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
                   duration: _kItemDuration,
                   curve: _kCurve,
                   style: TextStyle(
-                    color: isSelected ? cs.primary : cs.onSurfaceVariant,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                    fontSize: 13,
+                    color: isSelected ? retro.background : retro.inkDim,
+                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                    fontSize: 12.5,
                   ),
                   child: Text(widget.category),
                 ),
@@ -696,7 +643,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check_rounded, size: 13, color: cs.primary),
+                child: Icon(Icons.check_rounded, size: 14, color: retro.background),
               ),
             ],
           ),
@@ -723,18 +670,19 @@ class _SortOptions extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentSort = ref.watch(sortOrderProvider);
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Theme(
       data: Theme.of(context).copyWith(
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
+        dividerColor: Colors.transparent,
       ),
       child: ExpansionTile(
         tilePadding: const EdgeInsets.symmetric(horizontal: 16),
         childrenPadding: EdgeInsets.zero,
-        iconColor: cs.onSurfaceVariant,
-        collapsedIconColor: cs.onSurfaceVariant,
+        iconColor: retro.accent,
+        collapsedIconColor: retro.inkDim,
         expansionAnimationStyle: AnimationStyle(
           duration: const Duration(milliseconds: 200),
           curve: _kCurve,
@@ -742,14 +690,15 @@ class _SortOptions extends ConsumerWidget {
           reverseCurve: Curves.easeInCubic,
         ),
         title: Text(
-          'Sort by',
+          'SORT BY',
           style: TextStyle(
-            color: cs.onSurfaceVariant,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            color: retro.ink,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.4,
           ),
         ),
-        leading: Icon(Icons.sort_rounded, size: 20, color: cs.onSurfaceVariant),
+        leading: Icon(Icons.sort_rounded, size: 19, color: retro.inkDim),
         children: _items
             .map(
               (item) => _SortItem(
@@ -812,7 +761,7 @@ class _SortItemState extends ConsumerState<_SortItem>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final isSelected = widget.currentSort == widget.value;
 
     return GestureDetector(
@@ -837,10 +786,8 @@ class _SortItemState extends ConsumerState<_SortItem>
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected
-                ? cs.primaryContainer.withValues(alpha: 0.52)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? retro.accent : Colors.transparent,
+            border: isSelected ? Border.all(color: retro.border, width: 1.5) : null,
           ),
           child: Row(
             children: [
@@ -851,9 +798,9 @@ class _SortItemState extends ConsumerState<_SortItem>
                   duration: _kItemDuration,
                   curve: _kCurve,
                   style: TextStyle(
-                    color: isSelected ? cs.primary : cs.onSurfaceVariant,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                    fontSize: 13,
+                    color: isSelected ? retro.background : retro.inkDim,
+                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                    fontSize: 12.5,
                   ),
                   child: Text(widget.label),
                 ),
@@ -861,7 +808,7 @@ class _SortItemState extends ConsumerState<_SortItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check_rounded, size: 13, color: cs.primary),
+                child: Icon(Icons.check_rounded, size: 14, color: retro.background),
               ),
             ],
           ),
@@ -900,22 +847,14 @@ class _SocialLinks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'SOCIAL LINKS',
-            style: TextStyle(
-              color: cs.onSurfaceVariant,
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2.2,
-            ),
-          ),
+          SectionKicker(retro: retro, label: 'SOCIAL LINKS'),
           const SizedBox(height: 10),
           Row(
             children: _links
@@ -990,8 +929,7 @@ class _SocialButtonState extends State<_SocialButton>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final retro = RetroTheme.of(context);
 
     return Tooltip(
       message: widget.link.tooltip,
@@ -1004,27 +942,19 @@ class _SocialButtonState extends State<_SocialButton>
         },
         child: ScaleTransition(
           scale: _scale,
-          child: AnimatedContainer(
-            duration: _kItemDuration,
-            curve: _kCurve,
+          child: Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: isDark
-                  ? cs.surfaceContainerHigh.withValues(alpha: 0.70)
-                  : cs.surfaceContainerHighest.withValues(alpha: 0.60),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: cs.outline.withValues(alpha: isDark ? 0.18 : 0.25),
-                width: 0.8,
-              ),
+              color: retro.surfaceAlt,
+              border: Border.all(color: retro.border, width: 2),
             ),
             child: Center(
               child: SvgPicture.asset(
                 widget.link.asset,
                 width: 20,
                 height: 20,
-                colorFilter: isDark && widget.link.asset.contains('github')
+                colorFilter: retro.isDark && widget.link.asset.contains('github')
                     ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
                     : null,
               ),

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/theme/retro_theme.dart';
 import '../../services/mod_installer.dart';
 import '../../services/update_service.dart';
 import '../../widgets/update_dialog.dart';
@@ -18,58 +19,118 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final retro = RetroTheme.of(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/settings'),
-      appBar: AppBar(title: const Text('Settings')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: Stack(
         children: [
-          _SectionLabel('Data'),
-          _ReloadDatabaseTile(),
-          _SettingsTile(
-            icon: Icons.delete_outline_rounded,
-            title: 'Clear favourites',
-            subtitle: 'Remove all saved mods',
-            destructive: true,
-            onTap: () => _confirmClearFavourites(context, ref),
+          Positioned.fill(
+            child: HalftoneBackground(
+              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
+            ),
           ),
-          _SettingsTile(
-            icon: Icons.upload_rounded,
-            title: 'Export favourites',
-            subtitle: 'Share your saved mods',
-            onTap: () => _exportFavourites(context, ref),
-          ),
-          _SettingsTile(
-            icon: Icons.download_rounded,
-            title: 'Import favourites',
-            subtitle: 'Restore from a previously exported file',
-            onTap: () => _importFavourites(context, ref),
-          ),
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            slivers: [
+              // ── App bar ───────────────────────────────────────
+              SliverAppBar(
+                backgroundColor: retro.background,
+                surfaceTintColor: Colors.transparent,
+                scrolledUnderElevation: 0,
+                floating: true,
+                snap: true,
+                elevation: 0,
+                shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
+                leading: Builder(
+                  builder: (ctx) => IconButton(
+                    icon: Icon(Icons.menu_rounded, color: retro.ink, size: 22),
+                    onPressed: () => Scaffold.of(ctx).openDrawer(),
+                  ),
+                ),
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'APP ',
+                        style: retro.heading(size: 18, color: retro.ink),
+                      ),
+                      TextSpan(
+                        text: 'SETTINGS',
+                        style: retro.heading(size: 18, color: retro.accent),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-          const SizedBox(height: 12),
-          _SectionLabel('Game Integration'),
-          _ModsFolderTile(),
-          _AutoInstallToggle(),
+              // ── Content ───────────────────────────────────────
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                sliver: SliverList.list(
+                  children: [
+                    _RetroSectionKicker(retro: retro, label: 'DATA', japanese: 'データ'),
+                    const SizedBox(height: 10),
+                    _ReloadDatabaseTile(),
+                    _SettingsTile(
+                      icon: Icons.delete_outline_rounded,
+                      title: 'Clear favourites',
+                      subtitle: 'Remove all saved mods',
+                      destructive: true,
+                      onTap: () => _confirmClearFavourites(context, ref),
+                    ),
+                    _SettingsTile(
+                      icon: Icons.upload_rounded,
+                      title: 'Export favourites',
+                      subtitle: 'Share your saved mods',
+                      onTap: () => _exportFavourites(context, ref),
+                    ),
+                    _SettingsTile(
+                      icon: Icons.download_rounded,
+                      title: 'Import favourites',
+                      subtitle: 'Restore from a previously exported file',
+                      onTap: () => _importFavourites(context, ref),
+                    ),
 
-          const SizedBox(height: 12),
-          _SectionLabel('Appearance'),
-          _ThemeSelector(),
+                    const SizedBox(height: 20),
+                    _RetroSectionKicker(
+                      retro: retro,
+                      label: 'GAME INTEGRATION',
+                      japanese: 'ゲーム連携',
+                    ),
+                    const SizedBox(height: 10),
+                    _ModsFolderTile(),
+                    _AutoInstallToggle(),
 
-          const SizedBox(height: 20),
-          _SectionLabel('About'),
-          _CheckUpdateTile(),
-          _SettingsTile(
-            icon: Icons.open_in_browser_rounded,
-            title: 'Go to releases',
-            subtitle: 'View all versions on GitHub · v${AppConstants.appVersion}',
-            onTap: () => _launchUrl(context, AppConstants.githubReleasesUrl),
-          ),
-          _SettingsTile(
-            icon: Icons.extension_rounded,
-            title: 'Data source',
-            subtitle: 'mods.sm64coopdx.com',
-            onTap: () => _launchUrl(context, AppConstants.dataSourceUrl),
+                    const SizedBox(height: 20),
+                    _RetroSectionKicker(retro: retro, label: 'APPEARANCE', japanese: '外観'),
+                    const SizedBox(height: 10),
+                    _ThemeSelector(),
+
+                    const SizedBox(height: 20),
+                    _RetroSectionKicker(retro: retro, label: 'ABOUT', japanese: '概要'),
+                    const SizedBox(height: 10),
+                    _CheckUpdateTile(),
+                    _SettingsTile(
+                      icon: Icons.open_in_browser_rounded,
+                      title: 'Go to releases',
+                      subtitle:
+                          'View all versions on GitHub · v${AppConstants.appVersion}',
+                      onTap: () => _launchUrl(context, AppConstants.githubReleasesUrl),
+                    ),
+                    _SettingsTile(
+                      icon: Icons.extension_rounded,
+                      title: 'Data source',
+                      subtitle: 'mods.sm64coopdx.com',
+                      onTap: () => _launchUrl(context, AppConstants.dataSourceUrl),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -141,51 +202,195 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _confirmClearFavourites(BuildContext context, WidgetRef ref) {
+    final retro = RetroTheme.of(context);
     showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Theme.of(ctx).colorScheme.surfaceContainerHighest,
-        title: Text(
-          'Clear favourites?',
-          style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
-        ),
-        content: Text(
-          'This will remove all your saved mods. This action cannot be undone.',
-          style: TextStyle(color: Theme.of(ctx).colorScheme.onSurfaceVariant),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              // Toggle off all current favourites
-              final favIds = Set<String>.from(ref.read(favouritesProvider));
-              for (final id in favIds) {
-                ref.read(favouritesProvider.notifier).toggle(id);
-              }
-              Navigator.of(ctx).pop();
-              AppSnackbar.success(context, message: 'Favourites cleared');
-            },
-            child: Text(
-              'Clear',
-              style: TextStyle(
-                color: Theme.of(ctx).colorScheme.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
+      builder: (ctx) => _RetroDialog(
+        retro: retro,
+        title: 'CLEAR FAVOURITES?',
+        message:
+            'This will remove all your saved mods. This action cannot be undone.',
+        confirmLabel: 'CLEAR',
+        confirmColor: retro.red,
+        onConfirm: () {
+          // Toggle off all current favourites
+          final favIds = Set<String>.from(ref.read(favouritesProvider));
+          for (final id in favIds) {
+            ref.read(favouritesProvider.notifier).toggle(id);
+          }
+          Navigator.of(ctx).pop();
+          AppSnackbar.success(context, message: 'Favourites cleared');
+        },
       ),
     );
   }
 
   void _showUrlError(BuildContext context, String url) {
     AppSnackbar.error(context, message: 'Cannot open URL: $url');
+  }
+}
+
+// ── Retro dialog ──────────────────────────────────────────────────────────────
+// Diálogo de confirmación con borde duro y sombra desplazada, en vez del
+// AlertDialog Material redondeado por defecto.
+
+class _RetroDialog extends StatelessWidget {
+  const _RetroDialog({
+    required this.retro,
+    required this.title,
+    required this.message,
+    required this.confirmLabel,
+    required this.onConfirm,
+    this.confirmColor,
+  });
+
+  final RetroTheme retro;
+  final String title;
+  final String message;
+  final String confirmLabel;
+  final Color? confirmColor;
+  final VoidCallback onConfirm;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = confirmColor ?? retro.accent;
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: retro.surface,
+          border: Border.all(color: retro.border, width: 3),
+          boxShadow: retro.hardShadow(dx: 5, dy: 5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: retro.heading(size: 15)),
+            const SizedBox(height: 12),
+            Text(message, style: retro.body(size: 13)),
+            const SizedBox(height: 22),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    child: Text(
+                      'CANCEL',
+                      style: TextStyle(
+                        color: retro.inkDim,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                GestureDetector(
+                  onTap: onConfirm,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: accent,
+                      border: Border.all(color: retro.border, width: 2),
+                    ),
+                    child: Text(
+                      confirmLabel,
+                      style: TextStyle(
+                        color: retro.background,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Section kicker wrapper ────────────────────────────────────────────────────
+
+class _RetroSectionKicker extends StatelessWidget {
+  const _RetroSectionKicker({
+    required this.retro,
+    required this.label,
+    required this.japanese,
+  });
+
+  final RetroTheme retro;
+  final String label;
+  final String japanese;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(japanese, style: retro.body(size: 11)),
+          const SizedBox(height: 4),
+          SectionKicker(retro: retro, label: label),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Retro switch ──────────────────────────────────────────────────────────────
+// Toggle cuadrado, sin esquinas redondeadas, coherente con el resto del
+// sistema visual (nada de pills suaves tipo Material).
+
+class _RetroSwitch extends StatelessWidget {
+  const _RetroSwitch({
+    required this.retro,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final RetroTheme retro;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOut,
+        width: 46,
+        height: 26,
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: value ? retro.accent : retro.surfaceAlt,
+          border: Border.all(color: retro.border, width: 2),
+        ),
+        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          width: 16,
+          height: 16,
+          color: value ? retro.background : retro.inkDim,
+        ),
+      ),
+    );
   }
 }
 
@@ -246,37 +451,17 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
   }
 
   Future<void> _confirmClear() async {
+    final retro = RetroTheme.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Theme.of(ctx).colorScheme.surfaceContainerHighest,
-        title: Text(
-          'Clear mods folder?',
-          style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
-        ),
-        content: Text(
-          'You will need to select the folder again before installing mods to the game.',
-          style: TextStyle(color: Theme.of(ctx).colorScheme.onSurfaceVariant),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(
-              'Clear',
-              style: TextStyle(
-                color: Theme.of(ctx).colorScheme.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
+      builder: (ctx) => _RetroDialog(
+        retro: retro,
+        title: 'CLEAR MODS FOLDER?',
+        message:
+            'You will need to select the folder again before installing mods to the game.',
+        confirmLabel: 'CLEAR',
+        confirmColor: retro.red,
+        onConfirm: () => Navigator.of(ctx).pop(true),
       ),
     );
 
@@ -293,53 +478,28 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: cs.outline),
-      ),
-      child: ListTile(
-        leading: Icon(
-          _hasFolder ? Icons.folder_special_rounded : Icons.folder_open_rounded,
-          color: _hasFolder ? cs.primary : cs.onSurfaceVariant,
-          size: 20,
-        ),
-        title: Text(
-          _hasFolder ? 'Mods folder' : 'Select mods folder',
-          style: TextStyle(
-            color: _hasFolder ? cs.primary : cs.onSurface,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          _hasFolder
-              ? 'Tap to change \u00b7 Long-press to clear'
-              : 'Choose where to install downloaded mods',
-          style: TextStyle(
-            color: cs.onSurfaceVariant,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        trailing: _loading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: cs.primary,
-                ),
-              )
-            : Icon(Icons.chevron_right, color: cs.onSurfaceVariant, size: 20),
-        onTap: _loading ? null : _selectFolder,
-        onLongPress: _hasFolder ? () => _confirmClear() : null,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
+    return _RetroTileShell(
+      retro: retro,
+      onTap: _loading ? null : _selectFolder,
+      onLongPress: _hasFolder ? _confirmClear : null,
+      accentColor: _hasFolder ? retro.accent : null,
+      leading: _loading
+          ? _RetroSpinner(retro: retro)
+          : _RetroIconBox(
+              retro: retro,
+              icon: _hasFolder
+                  ? Icons.folder_special_rounded
+                  : Icons.folder_open_rounded,
+              accentColor: _hasFolder ? retro.accent : null,
+            ),
+      title: _hasFolder ? 'Mods folder' : 'Select mods folder',
+      titleColor: _hasFolder ? retro.accent : retro.ink,
+      subtitle: _hasFolder
+          ? 'Tap to change · Long-press to clear'
+          : 'Choose where to install downloaded mods',
+      trailing: Icon(Icons.chevron_right_rounded, color: retro.inkDim, size: 20),
     );
   }
 }
@@ -379,64 +539,149 @@ class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: cs.outline),
+    return _RetroTileShell(
+      retro: retro,
+      onTap: () => _toggle(!_autoInstall),
+      accentColor: _autoInstall ? retro.accent : null,
+      leading: _RetroIconBox(
+        retro: retro,
+        icon: Icons.auto_mode_rounded,
+        accentColor: _autoInstall ? retro.accent : null,
       ),
-      child: SwitchListTile(
-        secondary: Icon(
-          Icons.auto_mode_rounded,
-          color: _autoInstall ? cs.primary : cs.onSurfaceVariant,
-          size: 20,
-        ),
-        title: Text(
-          'Auto-install after download',
-          style: TextStyle(
-            color: cs.onSurface,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+      title: 'Auto-install after download',
+      subtitle: _autoInstall
+          ? 'Mods will be automatically installed to the game folder'
+          : 'You will be asked after each download',
+      trailing: _RetroSwitch(retro: retro, value: _autoInstall, onChanged: _toggle),
+    );
+  }
+}
+
+// ── Shared tile shell ─────────────────────────────────────────────────────────
+// Contenedor común para todos los tiles de settings: borde duro, sombra
+// desplazada suave, caja de ícono a la izquierda, título/subtítulo, trailing.
+
+class _RetroTileShell extends StatelessWidget {
+  const _RetroTileShell({
+    required this.retro,
+    required this.leading,
+    required this.title,
+    required this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.onLongPress,
+    this.titleColor,
+    this.accentColor,
+  });
+
+  final RetroTheme retro;
+  final Widget leading;
+  final String title;
+  final String subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final Color? titleColor;
+  final Color? accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: GestureDetector(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: retro.surface,
+            border: Border.all(
+              color: accentColor ?? retro.border,
+              width: accentColor != null ? 2.5 : 2,
+            ),
+            boxShadow: retro.hardShadow(dx: 2, dy: 2),
+          ),
+          child: Row(
+            children: [
+              leading,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: titleColor ?? retro.ink,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: retro.inkDim,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+            ],
           ),
         ),
-        subtitle: Text(
-          _autoInstall
-              ? 'Mods will be automatically installed to the game folder'
-              : 'You will be asked after each download',
-          style: TextStyle(
-            color: cs.onSurfaceVariant,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        value: _autoInstall,
-        onChanged: _toggle,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
 }
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.label);
+class _RetroIconBox extends StatelessWidget {
+  const _RetroIconBox({required this.retro, required this.icon, this.accentColor});
 
-  final String label;
+  final RetroTheme retro;
+  final IconData icon;
+  final Color? accentColor;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8, left: 4),
-      child: Text(
-        label.toUpperCase(),
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          fontSize: 10,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 1.5,
-        ),
+    final c = accentColor ?? retro.inkDim;
+    return Container(
+      width: 38,
+      height: 38,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: retro.surfaceAlt,
+        border: Border.all(color: c, width: 2),
+      ),
+      child: Icon(icon, color: c, size: 18),
+    );
+  }
+}
+
+class _RetroSpinner extends StatelessWidget {
+  const _RetroSpinner({required this.retro});
+
+  final RetroTheme retro;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 38,
+      height: 38,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: retro.surfaceAlt,
+        border: Border.all(color: retro.accent, width: 2),
+      ),
+      child: SizedBox(
+        width: 16,
+        height: 16,
+        child: CircularProgressIndicator(strokeWidth: 2, color: retro.accent),
       ),
     );
   }
@@ -459,55 +704,32 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleColor = destructive
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.onSurface;
-    final iconColor = destructive
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.onSurfaceVariant;
+    final retro = RetroTheme.of(context);
+    final accent = destructive ? retro.red : retro.accent;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Theme.of(context).colorScheme.outline),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: iconColor, size: 20),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: titleColor,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        trailing: null,
-        onTap: onTap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
+    return _RetroTileShell(
+      retro: retro,
+      onTap: onTap,
+      leading: _RetroIconBox(retro: retro, icon: icon, accentColor: accent),
+      title: title,
+      titleColor: destructive ? retro.red : retro.ink,
+      subtitle: subtitle,
+      trailing: Icon(Icons.chevron_right_rounded, color: retro.inkDim, size: 20),
     );
   }
 }
+
+// ── Theme selector ────────────────────────────────────────────────────────────
 
 class _ThemeSelector extends ConsumerWidget {
   const _ThemeSelector();
 
   static const _options = [
-    (mode: ThemeMode.light, label: 'Light', icon: Icons.wb_sunny_rounded),
-    (mode: ThemeMode.dark, label: 'Dark', icon: Icons.nightlight_round),
+    (mode: ThemeMode.light, label: 'LIGHT', icon: Icons.wb_sunny_rounded),
+    (mode: ThemeMode.dark, label: 'DARK', icon: Icons.nightlight_round),
     (
       mode: ThemeMode.system,
-      label: 'System',
+      label: 'SYSTEM',
       icon: Icons.brightness_auto_rounded,
     ),
   ];
@@ -515,50 +737,44 @@ class _ThemeSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outline.withValues(alpha: 0.5)),
+        color: retro.surface,
+        border: Border.all(color: retro.border, width: 2.5),
+        boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.palette_outlined,
-                size: 16,
-                color: cs.onSurfaceVariant,
-              ),
-              const SizedBox(width: 8),
+              Icon(Icons.palette_rounded, size: 14, color: retro.accent),
+              const SizedBox(width: 6),
               Text(
-                'Appearance',
+                'THEME MODE',
                 style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  color: retro.inkDim,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
                   letterSpacing: 0.8,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(4),
-            child: Row(
-              children: _options.map((opt) {
-                final isSelected = themeMode == opt.mode;
-                return Expanded(
+          Row(
+            children: _options.asMap().entries.map((entry) {
+              final i = entry.key;
+              final opt = entry.value;
+              final isSelected = themeMode == opt.mode;
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: i == 0 ? 0 : 8),
                   child: _ThemeOptionTile(
+                    retro: retro,
                     icon: opt.icon,
                     label: opt.label,
                     isSelected: isSelected,
@@ -566,9 +782,9 @@ class _ThemeSelector extends ConsumerWidget {
                         .read(themeModeProvider.notifier)
                         .setThemeMode(opt.mode),
                   ),
-                );
-              }).toList(),
-            ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -578,12 +794,14 @@ class _ThemeSelector extends ConsumerWidget {
 
 class _ThemeOptionTile extends StatefulWidget {
   const _ThemeOptionTile({
+    required this.retro,
     required this.icon,
     required this.label,
     required this.isSelected,
     required this.onTap,
   });
 
+  final RetroTheme retro;
   final IconData icon;
   final String label;
   final bool isSelected;
@@ -595,86 +813,65 @@ class _ThemeOptionTile extends StatefulWidget {
 
 class _ThemeOptionTileState extends State<_ThemeOptionTile>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnim;
+  late final AnimationController _pressCtrl;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _pressCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 100),
     );
-    _scaleAnim = Tween<double>(
-      begin: 1.0,
-      end: 0.94,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _pressCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = widget.retro;
+    final bg = widget.isSelected ? retro.accent : retro.surfaceAlt;
+    final fg = widget.isSelected ? retro.background : retro.inkDim;
 
     return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
+      onTapDown: (_) => _pressCtrl.forward(),
       onTapUp: (_) {
-        _controller.reverse();
+        _pressCtrl.reverse();
         widget.onTap();
       },
-      onTapCancel: () => _controller.reverse(),
-      child: ScaleTransition(
-        scale: _scaleAnim,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          decoration: BoxDecoration(
-            color: widget.isSelected ? cs.surface : Colors.transparent,
-            borderRadius: BorderRadius.circular(9),
-            boxShadow: widget.isSelected
-                ? [
-                    BoxShadow(
-                      color: cs.shadow.withValues(alpha: 0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-            border: widget.isSelected
-                ? Border.all(color: cs.outline.withValues(alpha: 0.18), width: 0.8)
-                : null,
-          ),
+      onTapCancel: () => _pressCtrl.reverse(),
+      child: AnimatedBuilder(
+        animation: _pressCtrl,
+        builder: (context, child) {
+          final offset = 2.0 * _pressCtrl.value;
+          return Transform.translate(offset: Offset(offset, offset), child: child);
+        },
+        child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: bg,
+            border: Border.all(
+              color: widget.isSelected
+                  ? retro.border
+                  : retro.border.withValues(alpha: 0.4),
+              width: widget.isSelected ? 2 : 1.5,
+            ),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: Icon(
-                  widget.icon,
-                  key: ValueKey(widget.isSelected),
-                  size: 20,
-                  color: widget.isSelected
-                      ? cs.primary
-                      : cs.onSurfaceVariant.withValues(alpha: 0.6),
-                ),
-              ),
+              Icon(widget.icon, size: 18, color: fg),
               const SizedBox(height: 5),
               Text(
                 widget.label,
                 style: TextStyle(
-                  color: widget.isSelected
-                      ? cs.onSurface
-                      : cs.onSurfaceVariant.withValues(alpha: 0.65),
-                  fontSize: 12,
-                  fontWeight: widget.isSelected
-                      ? FontWeight.w700
-                      : FontWeight.w500,
+                  color: fg,
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -734,49 +931,16 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: cs.outline),
-      ),
-      child: ListTile(
-        leading: _loading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: cs.primary,
-                ),
-              )
-            : Icon(
-                Icons.cloud_download_rounded,
-                color: cs.onSurfaceVariant,
-                size: 20,
-              ),
-        title: Text(
-          'Reload database',
-          style: TextStyle(
-            color: cs.onSurface,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          _loading ? 'Downloading...' : 'Download latest mod list',
-          style: TextStyle(
-            color: cs.onSurfaceVariant,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        onTap: _loading ? null : _reload,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
+    return _RetroTileShell(
+      retro: retro,
+      onTap: _loading ? null : _reload,
+      leading: _loading
+          ? _RetroSpinner(retro: retro)
+          : _RetroIconBox(retro: retro, icon: Icons.cloud_download_rounded),
+      title: 'Reload database',
+      subtitle: _loading ? 'Downloading...' : 'Download latest mod list',
     );
   }
 }
@@ -824,49 +988,16 @@ class _CheckUpdateTileState extends State<_CheckUpdateTile> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: cs.outline),
-      ),
-      child: ListTile(
-        leading: _loading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: cs.primary,
-                ),
-              )
-            : Icon(
-                Icons.system_update_rounded,
-                color: cs.onSurfaceVariant,
-                size: 20,
-              ),
-        title: Text(
-          'Check for updates',
-          style: TextStyle(
-            color: cs.onSurface,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          _loading ? 'Checking...' : 'Current: v${UpdateService.currentVersion}',
-          style: TextStyle(
-            color: cs.onSurfaceVariant,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        onTap: _loading ? null : _check,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
+    return _RetroTileShell(
+      retro: retro,
+      onTap: _loading ? null : _check,
+      leading: _loading
+          ? _RetroSpinner(retro: retro)
+          : _RetroIconBox(retro: retro, icon: Icons.system_update_rounded),
+      title: 'Check for updates',
+      subtitle: _loading ? 'Checking...' : 'Current: v${UpdateService.currentVersion}',
     );
   }
 }
