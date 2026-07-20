@@ -6,13 +6,21 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/category_constants.dart';
-import '../../core/theme/retro_theme.dart';
 import '../../presentation/providers/mod_providers.dart';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Timings
+// · _kDrawerClose → duración real de cierre del Drawer de Material (~240 ms)
+// · _kNavDelay    → esperamos a que el drawer cierre COMPLETAMENTE antes de
+//                   navegar. Esto elimina el "saltito": Flutter ya no tiene
+//                   que desmontar el drawer y construir la nueva ruta en el
+//                   mismo frame.
+// ─────────────────────────────────────────────────────────────────────────────
 const Duration _kItemDuration = Duration(milliseconds: 150);
-const Duration _kNavDelay = Duration(milliseconds: 260);
+const Duration _kNavDelay = Duration(milliseconds: 260); // cierre + margen
 const Curve _kCurve = Curves.easeOutCubic;
 
+/// Cierra el drawer y navega sólo cuando la animación de cierre terminó.
 void _navigateTo(BuildContext context, String route) {
   Navigator.of(context).pop();
   Future.delayed(_kNavDelay, () {
@@ -40,7 +48,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
     super.initState();
     _staggerCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 420),
+      duration: const Duration(milliseconds: 500),
     )..forward();
   }
 
@@ -52,61 +60,44 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Drawer(
-      backgroundColor: retro.background,
+      backgroundColor: cs.surface,
       elevation: 0,
-      shape: Border(right: BorderSide(color: retro.border, width: 3)),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 16),
-              child: FadeTransition(
-                opacity: _staggerCtrl.drive(
-                  CurveTween(curve: const Interval(0.0, 0.35, curve: _kCurve)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _staggerItem(
-                      index: 0,
-                      ctrl: _staggerCtrl,
-                      child: const _DrawerHeader(),
-                    ),
-                    _RetroDivider(retro: retro),
-                    const SizedBox(height: 4),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Header ──────────────────────────────────────────────────
+              _staggerItem(
+                index: 0,
+                ctrl: _staggerCtrl,
+                child: const _DrawerHeader(),
+              ),
+              _GradientDivider(isDark: isDark),
+              const SizedBox(height: 4),
 
-                    _staggerItem(
-                      index: 1,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/m64.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Home',
-                        route: '/',
-                        isActive: widget.currentRoute == '/',
-                      ),
-                    ),
+              // ── Navigation items ───────────────────────────────────────
+              _staggerItem(
+                index: 1,
+                ctrl: _staggerCtrl,
+                child: _NavItem(
+                  icon: Icons.home_rounded,
+                  label: 'Home',
+                  route: '/',
+                  isActive: widget.currentRoute == '/',
+                ),
+              ),
                     _staggerItem(
                       index: 2,
                       ctrl: _staggerCtrl,
                       child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/catalog.svg',
-                          width: 19,
-                          height: 19,
-                        ),
+                        icon: Icons.apps_rounded,
                         label: 'catalog',
                         route: '/catalogue',
                         isActive: widget.currentRoute == '/catalogue',
@@ -116,11 +107,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       index: 3,
                       ctrl: _staggerCtrl,
                       child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/favorites.svg',
-                          width: 19,
-                          height: 19,
-                        ),
+                        icon: Icons.favorite_rounded,
                         label: 'Favourites',
                         route: '/favourites',
                         isActive: widget.currentRoute == '/favourites',
@@ -130,72 +117,52 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       index: 4,
                       ctrl: _staggerCtrl,
                       child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/popular.svg',
-                          width: 19,
-                          height: 19,
-                        ),
+                        icon: Icons.local_fire_department_rounded,
                         label: 'Popular',
                         route: '/popular',
                         isActive: widget.currentRoute == '/popular',
                       ),
                     ),
 
+                    // Separador degradado antes de EXCLUSIVE
                     _staggerItem(
                       index: 5,
                       ctrl: _staggerCtrl,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                        child: _RetroDivider(retro: retro),
+                        child: _GradientDivider(isDark: isDark),
                       ),
                     ),
                     _staggerItem(
                       index: 5,
                       ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                        child: SectionKicker(retro: retro, label: 'EXCLUSIVE'),
-                      ),
+                      child: const _SectionLabel('EXCLUSIVE'),
                     ),
                     _staggerItem(
                       index: 6,
                       ctrl: _staggerCtrl,
                       child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/vip.svg',
-                          width: 19,
-                          height: 19,
-                        ),
+                        icon: Icons.star_rounded,
                         label: 'VIP Mods',
                         route: '/vip',
                         isActive: widget.currentRoute == '/vip',
-                        accentColor: retro.amber,
                       ),
                     ),
                     _staggerItem(
                       index: 7,
                       ctrl: _staggerCtrl,
                       child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/dynos.svg',
-                          width: 19,
-                          height: 19,
-                        ),
+                        icon: Icons.rocket_launch_rounded,
                         label: 'DynOS',
                         route: '/dynos',
                         isActive: widget.currentRoute == '/dynos',
-                        accentColor: retro.blue,
                       ),
                     ),
                     _staggerItem(
                       index: 8,
                       ctrl: _staggerCtrl,
                       child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/controls.svg',
-                          width: 19,
-                          height: 19,
-                        ),
+                        icon: Icons.touch_app_rounded,
                         label: 'Touch Controls',
                         route: '/touch-controls',
                         isActive: widget.currentRoute == '/touch-controls',
@@ -205,33 +172,26 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       index: 9,
                       ctrl: _staggerCtrl,
                       child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/omm.svg',
-                          width: 19,
-                          height: 19,
-                        ),
+                        icon: Icons.auto_awesome_rounded,
                         label: 'OMMR PACK',
                         route: '/omm-rebirth',
                         isActive: widget.currentRoute == '/omm-rebirth',
-                        accentColor: retro.red,
                       ),
                     ),
 
+                    // Separador degradado antes de Explore
                     _staggerItem(
                       index: 10,
                       ctrl: _staggerCtrl,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                        child: _RetroDivider(retro: retro),
+                        child: _GradientDivider(isDark: isDark),
                       ),
                     ),
                     _staggerItem(
                       index: 10,
                       ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                        child: SectionKicker(retro: retro, label: 'EXPLORE'),
-                      ),
+                      child: const _SectionLabel('Explore'),
                     ),
                     _staggerItem(
                       index: 11,
@@ -244,58 +204,41 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       child: _SortOptions(currentRoute: widget.currentRoute),
                     ),
 
-                    // ── Footer ─────────────────────────────────────────
-                    _RetroDivider(retro: retro),
+                    // ── Footer ───────────────────────────────────────────
+                    _GradientDivider(isDark: isDark),
                     const _SocialLinks(),
-                    _RetroDivider(retro: retro),
+                    _GradientDivider(isDark: isDark),
                     _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/links-resource.svg',
-                        width: 19,
-                        height: 19,
-                      ),
+                      icon: Icons.link_rounded,
                       label: 'Links Resource',
                       route: '/links-resource',
                       isActive: widget.currentRoute == '/links-resource',
                     ),
                     _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/disclaimer.svg',
-                        width: 19,
-                        height: 19,
-                      ),
+                      icon: Icons.info_outline_rounded,
                       label: 'Disclaimer',
                       route: '/disclaimer',
                       isActive: widget.currentRoute == '/disclaimer',
                     ),
                     _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/changelogs.svg',
-                        width: 19,
-                        height: 19,
-                      ),
+                      icon: Icons.history_rounded,
                       label: 'Changelog',
                       route: '/changelog',
                       isActive: widget.currentRoute == '/changelog',
                     ),
                     _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/settings.svg',
-                        width: 19,
-                        height: 19,
-                      ),
+                      icon: Icons.settings_rounded,
                       label: 'Settings',
                       route: '/settings',
                       isActive: widget.currentRoute == '/settings',
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
+                      padding: const EdgeInsets.fromLTRB(22, 2, 0, 14),
                       child: Text(
-                        'v1.4.4',
+                        'v1.4.3',
                         style: TextStyle(
-                          color: retro.inkDim,
+                          color: cs.onSurfaceVariant,
                           fontSize: 10,
-                          fontWeight: FontWeight.w700,
                           letterSpacing: 0.8,
                         ),
                       ),
@@ -304,45 +247,59 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                 ),
               ),
             ),
-          ),
-        ],
+          );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Separador con degradado horizontal — transparente › color › transparente
+// Se usa como reemplazo del Divider plano para un look más premium.
+// ─────────────────────────────────────────────────────────────────────────────
+class _GradientDivider extends StatelessWidget {
+  const _GradientDivider({required this.isDark});
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final mid = isDark
+        ? cs.primary.withValues(alpha: 0.20)
+        : cs.primary.withValues(alpha: 0.12);
+
+    return Container(
+      height: 1,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.transparent, mid, mid, Colors.transparent],
+          stops: const [0.0, 0.30, 0.70, 1.0],
+        ),
       ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _RetroDivider — línea sólida, sin gradientes.
-// ─────────────────────────────────────────────────────────────────────────────
-class _RetroDivider extends StatelessWidget {
-  const _RetroDivider({required this.retro});
-  final RetroTheme retro;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(height: 2, color: retro.border);
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Stagger helper — solo slide-up por item, sin Opacity individual.
-// Un FadeTransition global envuelve toda la Column (1 sola capa GPU).
+// Stagger helper — fade + tiny slide-up
 // ─────────────────────────────────────────────────────────────────────────────
 Widget _staggerItem({
   required int index,
   required AnimationController ctrl,
   required Widget child,
 }) {
-  final start = (index * 0.055).clamp(0.0, 0.75);
-  final end = (start + 0.42).clamp(0.0, 1.0);
-  final anim = ctrl.drive(
-    CurveTween(curve: Interval(start, end, curve: _kCurve)),
+  final start = (index * 0.055).clamp(0.0, 0.80);
+  final end = (start + 0.38).clamp(0.0, 1.0);
+  final anim = CurvedAnimation(
+    parent: ctrl,
+    curve: Interval(start, end, curve: _kCurve),
   );
   return AnimatedBuilder(
     animation: anim,
-    builder: (_, child) => Transform.translate(
-      offset: Offset(0, 10 * (1 - anim.value)),
-      child: child,
+    builder: (_, child) => Opacity(
+      opacity: anim.value,
+      child: Transform.translate(
+        offset: Offset(0, 7 * (1 - anim.value)),
+        child: child,
+      ),
     ),
     child: child,
   );
@@ -356,35 +313,36 @@ class _DrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: Row(
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: retro.surface,
-              border: Border.all(color: retro.border, width: 2.5),
-              boxShadow: retro.hardShadow(dx: 3, dy: 3),
-            ),
-            child: RepaintBoundary(
-              child: SvgPicture.asset('assets/icons/logo.svg', width: 32, height: 32),
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('SM64', style: retro.heading(size: 16, color: retro.ink)),
-                Text('CoopDX', style: retro.heading(size: 16, color: retro.accent)),
-                const SizedBox(height: 3),
-                Text('モッド・カタログ', style: retro.body(size: 10.5)),
-              ],
-            ),
+          SvgPicture.asset('assets/icons/logo.svg', width: 48, height: 48),
+          const SizedBox(width: 13),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'SM64CoopDX',
+                style: TextStyle(
+                  color: cs.onSurface,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Mods catalog',
+                style: TextStyle(
+                  color: cs.onSurfaceVariant,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -393,22 +351,46 @@ class _DrawerHeader extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NavItem — estado activo = relleno sólido de acento + texto invertido.
+// Section label
+// ─────────────────────────────────────────────────────────────────────────────
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.label);
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(20, 4, 0, 4),
+    child: Text(
+      label.toUpperCase(),
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+        fontSize: 9,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 2.2,
+      ),
+    ),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NavItem
+// · ScaleTransition en press (80 ms forward / 140 ms reverse) da la
+//   sensación de "presionar" sin lag visual.
+// · La barra lateral usa un LinearGradient vertical que la hace parecer
+//   que tiene profundidad.
 // ─────────────────────────────────────────────────────────────────────────────
 class _NavItem extends StatefulWidget {
   const _NavItem({
-    required this.iconBuilder,
+    required this.icon,
     required this.label,
     required this.route,
     required this.isActive,
-    this.accentColor,
   });
 
-  final Widget Function(Color color) iconBuilder;
+  final IconData icon;
   final String label;
   final String route;
   final bool isActive;
-  final Color? accentColor;
 
   @override
   State<_NavItem> createState() => _NavItemState();
@@ -441,9 +423,10 @@ class _NavItemState extends State<_NavItem>
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final accent = widget.accentColor ?? retro.accent;
-    final fg = widget.isActive ? retro.background : retro.inkDim;
+    final cs = Theme.of(context).colorScheme;
+    final activeColor = cs.primary;
+    final restColor = cs.onSurfaceVariant;
+    final color = widget.isActive ? activeColor : restColor;
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -461,18 +444,35 @@ class _NavItemState extends State<_NavItem>
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           decoration: BoxDecoration(
-            color: widget.isActive ? accent : Colors.transparent,
-            border: widget.isActive ? Border.all(color: retro.border, width: 2) : null,
+            color: widget.isActive
+                ? cs.primaryContainer.withValues(alpha: 0.68)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             children: [
+              // ── Barra lateral con degradado ──────────────────────────
               AnimatedContainer(
                 duration: _kItemDuration,
                 curve: _kCurve,
                 width: 3,
                 height: widget.isActive ? 26 : 0,
-                color: widget.isActive ? retro.background : Colors.transparent,
+                decoration: BoxDecoration(
+                  gradient: widget.isActive
+                      ? LinearGradient(
+                          colors: [
+                            activeColor.withValues(alpha: 0.5),
+                            activeColor,
+                            activeColor.withValues(alpha: 0.5),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        )
+                      : null,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
+              // ── Label + icon ─────────────────────────────────────────
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -481,15 +481,13 @@ class _NavItemState extends State<_NavItem>
                   ),
                   child: Row(
                     children: [
-                      SizedBox(
-                        width: 19,
-                        height: 19,
-                        // RepaintBoundary: el SVG se cachea como textura y en
-                        // el scroll del drawer solo se recompone (barato) en
-                        // vez de volver a ejecutar los draw calls vectoriales
-                        // en cada frame (caro, sobre todo en gama baja).
-                        child: RepaintBoundary(
-                          child: widget.iconBuilder(fg),
+                      AnimatedSwitcher(
+                        duration: _kItemDuration,
+                        child: Icon(
+                          widget.icon,
+                          key: ValueKey(widget.isActive),
+                          color: color,
+                          size: 19,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -497,11 +495,11 @@ class _NavItemState extends State<_NavItem>
                         duration: _kItemDuration,
                         curve: _kCurve,
                         style: TextStyle(
-                          color: fg,
-                          fontSize: 13.5,
+                          color: color,
+                          fontSize: 14,
                           fontWeight: widget.isActive
-                              ? FontWeight.w800
-                              : FontWeight.w600,
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                           letterSpacing: 0.1,
                         ),
                         child: Text(widget.label),
@@ -519,87 +517,60 @@ class _NavItemState extends State<_NavItem>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CategoryList — expandible perezoso.
-// Los _CategoryItem (c/u con su AnimationController) NO se crean hasta que
-// el usuario expande la sección. Esto evita N controladores en el frame de
-// apertura del drawer.
+// CategoryList
 // ─────────────────────────────────────────────────────────────────────────────
-class _CategoryList extends ConsumerStatefulWidget {
+class _CategoryList extends ConsumerWidget {
   const _CategoryList({required this.currentRoute});
   final String currentRoute;
 
   @override
-  ConsumerState<_CategoryList> createState() => _CategoryListState();
-}
-
-class _CategoryListState extends ConsumerState<_CategoryList> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedCategoryProvider);
-    final retro = RetroTheme.of(context);
+    final cs = Theme.of(context).colorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => _expanded = !_expanded),
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                RepaintBoundary(
-                  child: SvgPicture.asset(
-                    'assets/icons/menu/categorias.svg',
-                    width: 19,
-                    height: 19,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'CATEGORIES',
-                    style: TextStyle(
-                      color: retro.ink,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ),
-                _ExpandArrow(expanded: _expanded, retro: retro),
-              ],
-            ),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+      ),
+      child: ExpansionTile(
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+        childrenPadding: EdgeInsets.zero,
+        iconColor: cs.onSurfaceVariant,
+        collapsedIconColor: cs.onSurfaceVariant,
+        expansionAnimationStyle: AnimationStyle(
+          duration: const Duration(milliseconds: 200),
+          curve: _kCurve,
+          reverseDuration: const Duration(milliseconds: 160),
+          reverseCurve: Curves.easeInCubic,
+        ),
+        title: Text(
+          'Categories',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: _kCurve,
-          alignment: Alignment.topCenter,
-          clipBehavior: Clip.hardEdge,
-          child: _expanded
-              ? Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: CategoryConstants.allCategories
-                      .map((cat) => _CategoryItem(
-                            category: cat,
-                            selectedCategory: selectedCategory,
-                            currentRoute: widget.currentRoute,
-                          ))
-                      .toList(),
-                )
-              : const SizedBox.shrink(),
+        leading: Icon(
+          Icons.category_rounded,
+          size: 20,
+          color: cs.onSurfaceVariant,
         ),
-      ],
+        children: CategoryConstants.allCategories
+            .map(
+              (cat) => _CategoryItem(
+                category: cat,
+                selectedCategory: selectedCategory,
+                currentRoute: currentRoute,
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CategoryItem — una categoría individual tappeable.
-// ─────────────────────────────────────────────────────────────────────────────
 class _CategoryItem extends ConsumerStatefulWidget {
   const _CategoryItem({
     required this.category,
@@ -642,7 +613,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
+    final cs = Theme.of(context).colorScheme;
     final isSelected = widget.selectedCategory == widget.category;
     final icon = CategoryConstants.getIconForCategory(widget.category);
     final catColor = CategoryConstants.getColorForCategory(widget.category);
@@ -675,21 +646,39 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? catColor : Colors.transparent,
-            border: isSelected ? Border.all(color: retro.border, width: 1.5) : null,
+            color: isSelected
+                ? cs.primaryContainer.withValues(alpha: 0.52)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
-              Container(
-                width: 7,
-                height: 7,
-                color: isSelected ? retro.background : catColor,
+              AnimatedContainer(
+                duration: _kItemDuration,
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? cs.primary
+                      : catColor.withValues(alpha: 0.65),
+                  shape: BoxShape.circle,
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: cs.primary.withValues(alpha: 0.35),
+                            blurRadius: 4,
+                          ),
+                        ]
+                      : null,
+                ),
               ),
               const SizedBox(width: 10),
               Icon(
                 icon,
                 size: 15,
-                color: isSelected ? retro.background : catColor,
+                color: isSelected
+                    ? cs.primary
+                    : catColor.withValues(alpha: 0.72),
               ),
               const SizedBox(width: 9),
               Expanded(
@@ -697,9 +686,9 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
                   duration: _kItemDuration,
                   curve: _kCurve,
                   style: TextStyle(
-                    color: isSelected ? retro.background : retro.inkDim,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                    fontSize: 12.5,
+                    color: isSelected ? cs.primary : cs.onSurfaceVariant,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                    fontSize: 13,
                   ),
                   child: Text(widget.category),
                 ),
@@ -707,7 +696,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check, size: 14, color: retro.background),
+                child: Icon(Icons.check_rounded, size: 13, color: cs.primary),
               ),
             ],
           ),
@@ -718,96 +707,77 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SortOptions — expandible perezoso (mismo patrón que _CategoryList).
+// SortOptions
 // ─────────────────────────────────────────────────────────────────────────────
-class _SortOptions extends ConsumerStatefulWidget {
+class _SortOptions extends ConsumerWidget {
   const _SortOptions({required this.currentRoute});
   final String currentRoute;
 
   static const _items = [
-    (value: SortOrder.none, label: 'Default'),
-    (value: SortOrder.ratingDesc, label: 'Rating'),
-    (value: SortOrder.downloadsDesc, label: 'Downloads'),
-    (value: SortOrder.newest, label: 'Newest Update'),
+    (value: SortOrder.none, label: 'Default', emoji: '·'),
+    (value: SortOrder.ratingDesc, label: 'Rating', emoji: '⭐'),
+    (value: SortOrder.downloadsDesc, label: 'Downloads', emoji: '⬇️'),
+    (value: SortOrder.newest, label: 'Newest Update', emoji: '🕐'),
   ];
 
   @override
-  ConsumerState<_SortOptions> createState() => _SortOptionsState();
-}
-
-class _SortOptionsState extends ConsumerState<_SortOptions> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentSort = ref.watch(sortOrderProvider);
-    final retro = RetroTheme.of(context);
+    final cs = Theme.of(context).colorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => _expanded = !_expanded),
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                Icon(Icons.sort, size: 19, color: retro.inkDim),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'SORT BY',
-                    style: TextStyle(
-                      color: retro.ink,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ),
-                _ExpandArrow(expanded: _expanded, retro: retro),
-              ],
-            ),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+      ),
+      child: ExpansionTile(
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+        childrenPadding: EdgeInsets.zero,
+        iconColor: cs.onSurfaceVariant,
+        collapsedIconColor: cs.onSurfaceVariant,
+        expansionAnimationStyle: AnimationStyle(
+          duration: const Duration(milliseconds: 200),
+          curve: _kCurve,
+          reverseDuration: const Duration(milliseconds: 160),
+          reverseCurve: Curves.easeInCubic,
+        ),
+        title: Text(
+          'Sort by',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: _kCurve,
-          alignment: Alignment.topCenter,
-          clipBehavior: Clip.hardEdge,
-          child: _expanded
-              ? Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: _SortOptions._items
-                      .map((item) => _SortItem(
-                            value: item.value,
-                            label: item.label,
-                            currentSort: currentSort,
-                            currentRoute: widget.currentRoute,
-                          ))
-                      .toList(),
-                )
-              : const SizedBox.shrink(),
-        ),
-      ],
+        leading: Icon(Icons.sort_rounded, size: 20, color: cs.onSurfaceVariant),
+        children: _items
+            .map(
+              (item) => _SortItem(
+                value: item.value,
+                label: item.label,
+                emoji: item.emoji,
+                currentSort: currentSort,
+                currentRoute: currentRoute,
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SortItem — una opción de ordenamiento individual tappeable.
-// ─────────────────────────────────────────────────────────────────────────────
 class _SortItem extends ConsumerStatefulWidget {
   const _SortItem({
     required this.value,
     required this.label,
+    required this.emoji,
     required this.currentSort,
     required this.currentRoute,
   });
 
   final SortOrder value;
   final String label;
+  final String emoji;
   final SortOrder currentSort;
   final String currentRoute;
 
@@ -842,7 +812,7 @@ class _SortItemState extends ConsumerState<_SortItem>
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
+    final cs = Theme.of(context).colorScheme;
     final isSelected = widget.currentSort == widget.value;
 
     return GestureDetector(
@@ -867,19 +837,23 @@ class _SortItemState extends ConsumerState<_SortItem>
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? retro.accent : Colors.transparent,
-            border: isSelected ? Border.all(color: retro.border, width: 1.5) : null,
+            color: isSelected
+                ? cs.primaryContainer.withValues(alpha: 0.52)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
+              Text(widget.emoji, style: const TextStyle(fontSize: 14)),
+              const SizedBox(width: 10),
               Expanded(
                 child: AnimatedDefaultTextStyle(
                   duration: _kItemDuration,
                   curve: _kCurve,
                   style: TextStyle(
-                    color: isSelected ? retro.background : retro.inkDim,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                    fontSize: 12.5,
+                    color: isSelected ? cs.primary : cs.onSurfaceVariant,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                    fontSize: 13,
                   ),
                   child: Text(widget.label),
                 ),
@@ -887,7 +861,7 @@ class _SortItemState extends ConsumerState<_SortItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check, size: 14, color: retro.background),
+                child: Icon(Icons.check_rounded, size: 13, color: cs.primary),
               ),
             ],
           ),
@@ -898,30 +872,10 @@ class _SortItemState extends ConsumerState<_SortItem>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _ExpandArrow — flecha rotatoria compartida.
-// ─────────────────────────────────────────────────────────────────────────────
-class _ExpandArrow extends StatelessWidget {
-  const _ExpandArrow({required this.expanded, required this.retro});
-  final bool expanded;
-  final RetroTheme retro;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedRotation(
-      turns: expanded ? 0.5 : 0.0,
-      duration: const Duration(milliseconds: 200),
-      curve: _kCurve,
-      child: Icon(
-        Icons.expand_more,
-        size: 20,
-        color: expanded ? retro.accent : retro.inkDim,
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Social Links
+// Muestra YouTube · Discord · GitHub en fila horizontal con SVG icons.
+// Cada botón tiene su propio ScaleTransition en press y abre la URL
+// en el navegador externo vía url_launcher.
 // ─────────────────────────────────────────────────────────────────────────────
 class _SocialLinks extends StatelessWidget {
   const _SocialLinks();
@@ -946,14 +900,22 @@ class _SocialLinks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
+    final cs = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionKicker(retro: retro, label: 'SOCIAL LINKS'),
+          Text(
+            'SOCIAL LINKS',
+            style: TextStyle(
+              color: cs.onSurfaceVariant,
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 2.2,
+            ),
+          ),
           const SizedBox(height: 10),
           Row(
             children: _links
@@ -971,6 +933,7 @@ class _SocialLinks extends StatelessWidget {
   }
 }
 
+// Datos inmutables de cada red social (const-safe).
 class _SocialLinkData {
   const _SocialLinkData({
     required this.asset,
@@ -1020,12 +983,15 @@ class _SocialButtonState extends State<_SocialButton>
     final uri = Uri.parse(widget.link.url);
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {}
+    } catch (_) {
+      // Falla silenciosa — la URL no pudo abrirse
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Tooltip(
       message: widget.link.tooltip,
@@ -1038,23 +1004,29 @@ class _SocialButtonState extends State<_SocialButton>
         },
         child: ScaleTransition(
           scale: _scale,
-          child: Container(
+          child: AnimatedContainer(
+            duration: _kItemDuration,
+            curve: _kCurve,
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: retro.surfaceAlt,
-              border: Border.all(color: retro.border, width: 2),
+              color: isDark
+                  ? cs.surfaceContainerHigh.withValues(alpha: 0.70)
+                  : cs.surfaceContainerHighest.withValues(alpha: 0.60),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: cs.outline.withValues(alpha: isDark ? 0.18 : 0.25),
+                width: 0.8,
+              ),
             ),
             child: Center(
-              child: RepaintBoundary(
-                child: SvgPicture.asset(
-                  widget.link.asset,
-                  width: 20,
-                  height: 20,
-                  colorFilter: retro.isDark && widget.link.asset.contains('github')
-                      ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
-                      : null,
-                ),
+              child: SvgPicture.asset(
+                widget.link.asset,
+                width: 20,
+                height: 20,
+                colorFilter: isDark && widget.link.asset.contains('github')
+                    ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                    : null,
               ),
             ),
           ),
