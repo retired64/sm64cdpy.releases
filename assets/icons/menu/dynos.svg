@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Home"/>
+<g id="Print"/>
+<g id="Mail"/>
+<g id="Camera"/>
+<g id="Video"/>
+<g id="Film"/>
+<g id="Message"/>
+<g id="Telephone"/>
+<g id="User"/>
+<g id="File"/>
+<g id="Folder"/>
+<g id="Map"/>
+<g id="Download"/>
+<g id="Upload"/>
+<g id="Video_Recorder"/>
+<g id="Schedule"/>
+<g id="Cart"/>
+<g id="Setting"/>
+<g id="Search"/>
+<g id="Pencils"/>
+<g id="Group"/>
+<g id="Record"/>
+<g id="Headphone"/>
+<g id="Music_Player"/>
+<g id="Sound_On"/>
+<g id="Sound_Off"/>
+<g id="Lock"/>
+<g id="Lock_open"/>
+<g id="Love"/>
+<g id="Favorite"/>
+<g id="Film_1_"/>
+<g id="Music"/>
+<g id="Puzzle"/>
+<g id="Turn_Off"/>
+<g id="Book"/>
+<g id="Save"/>
+<g id="Reload"/>
+<g id="Trash"/>
+<g id="Tag"/>
+<g id="Link"/>
+<g id="Like"/>
+<g id="Bad"/>
+<g id="Gallery"/>
+<g id="Add"/>
+<g id="Close"/>
+<g id="Forward"/>
+<g id="Back"/>
+<g id="Buy"/>
+<g id="Mac"/>
+<g id="Laptop">
+<path d="M30,20h-2V8c0-1.7-1.3-3-3-3h-9H7C5.3,5,4,6.3,4,8v12H2c-0.5,0-1,0.5-1,1v3c0,1.6,1.3,3,3,3h12h12   c1.7,0,3-1.4,3-3v-3C31,20.5,30.5,20,30,20z" fill="#E92662"/>
+<path d="M25,7h-9H7C6.5,7,6,7.5,6,8v12h5c0.5,0,1,0.5,1,1s0.5,1,1,1h3h3c0.5,0,1-0.5,1-1s0.5-1,1-1h5V8   C26,7.5,25.5,7,25,7z" fill="#16BCD4"/>
+</g>
+</svg>
