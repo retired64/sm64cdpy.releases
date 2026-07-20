@@ -9,10 +9,19 @@ import '../../core/constants/category_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../presentation/providers/mod_providers.dart';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Timings
+// · _kDrawerClose → duración real de cierre del Drawer de Material (~240 ms)
+// · _kNavDelay    → esperamos a que el drawer cierre COMPLETAMENTE antes de
+//                   navegar. Esto elimina el "saltito": Flutter ya no tiene
+//                   que desmontar el drawer y construir la nueva ruta en el
+//                   mismo frame.
+// ─────────────────────────────────────────────────────────────────────────────
 const Duration _kItemDuration = Duration(milliseconds: 150);
-const Duration _kNavDelay = Duration(milliseconds: 260);
+const Duration _kNavDelay = Duration(milliseconds: 260); // cierre + margen
 const Curve _kCurve = Curves.easeOutCubic;
 
+/// Cierra el drawer y navega sólo cuando la animación de cierre terminó.
 void _navigateTo(BuildContext context, String route) {
   Navigator.of(context).pop();
   Future.delayed(_kNavDelay, () {
@@ -40,7 +49,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
     super.initState();
     _staggerCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 420),
+      duration: const Duration(milliseconds: 500),
     )..forward();
   }
 
@@ -69,239 +78,190 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.only(bottom: 16),
-              child: FadeTransition(
-                opacity: _staggerCtrl.drive(
-                  CurveTween(curve: const Interval(0.0, 0.35, curve: _kCurve)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _staggerItem(
-                      index: 0,
-                      ctrl: _staggerCtrl,
-                      child: const _DrawerHeader(),
-                    ),
-                    _RetroDivider(retro: retro),
-                    const SizedBox(height: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Header ────────────────────────────────────────────
+                  _staggerItem(
+                    index: 0,
+                    ctrl: _staggerCtrl,
+                    child: const _DrawerHeader(),
+                  ),
+                  _RetroDivider(retro: retro),
+                  const SizedBox(height: 4),
 
-                    _staggerItem(
-                      index: 1,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/m64.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Home',
-                        route: '/',
-                        isActive: widget.currentRoute == '/',
-                      ),
+                  // ── Navigation items ────────────────────────────────
+                  _staggerItem(
+                    index: 1,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.home_rounded,
+                      label: 'Home',
+                      route: '/',
+                      isActive: widget.currentRoute == '/',
                     ),
-                    _staggerItem(
-                      index: 2,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/catalog.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'catalog',
-                        route: '/catalogue',
-                        isActive: widget.currentRoute == '/catalogue',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 2,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.apps_rounded,
+                      label: 'catalog',
+                      route: '/catalogue',
+                      isActive: widget.currentRoute == '/catalogue',
                     ),
-                    _staggerItem(
-                      index: 3,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/favorites.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Favourites',
-                        route: '/favourites',
-                        isActive: widget.currentRoute == '/favourites',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 3,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.favorite_rounded,
+                      label: 'Favourites',
+                      route: '/favourites',
+                      isActive: widget.currentRoute == '/favourites',
                     ),
-                    _staggerItem(
-                      index: 4,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/popular.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Popular',
-                        route: '/popular',
-                        isActive: widget.currentRoute == '/popular',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 4,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.local_fire_department_rounded,
+                      label: 'Popular',
+                      route: '/popular',
+                      isActive: widget.currentRoute == '/popular',
                     ),
+                  ),
 
-                    _staggerItem(
-                      index: 5,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                        child: _RetroDivider(retro: retro),
-                      ),
+                  // Separador antes de EXCLUSIVE
+                  _staggerItem(
+                    index: 5,
+                    ctrl: _staggerCtrl,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+                      child: _RetroDivider(retro: retro),
                     ),
-                    _staggerItem(
-                      index: 5,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                        child: SectionKicker(retro: retro, label: 'EXCLUSIVE'),
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 5,
+                    ctrl: _staggerCtrl,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
+                      child: SectionKicker(retro: retro, label: 'EXCLUSIVE'),
                     ),
-                    _staggerItem(
-                      index: 6,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/vip.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'VIP Mods',
-                        route: '/vip',
-                        isActive: widget.currentRoute == '/vip',
-                        accentColor: retro.amber,
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 6,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.star_rounded,
+                      label: 'VIP Mods',
+                      route: '/vip',
+                      isActive: widget.currentRoute == '/vip',
+                      accentColor: retro.amber,
                     ),
-                    _staggerItem(
-                      index: 7,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/dynos.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'DynOS',
-                        route: '/dynos',
-                        isActive: widget.currentRoute == '/dynos',
-                        accentColor: retro.blue,
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 7,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.rocket_launch_rounded,
+                      label: 'DynOS',
+                      route: '/dynos',
+                      isActive: widget.currentRoute == '/dynos',
+                      accentColor: retro.blue,
                     ),
-                    _staggerItem(
-                      index: 8,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/controls.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Touch Controls',
-                        route: '/touch-controls',
-                        isActive: widget.currentRoute == '/touch-controls',
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 8,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.touch_app_rounded,
+                      label: 'Touch Controls',
+                      route: '/touch-controls',
+                      isActive: widget.currentRoute == '/touch-controls',
                     ),
-                    _staggerItem(
-                      index: 9,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/omm.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'OMMR PACK',
-                        route: '/omm-rebirth',
-                        isActive: widget.currentRoute == '/omm-rebirth',
-                        accentColor: retro.red,
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 9,
+                    ctrl: _staggerCtrl,
+                    child: _NavItem(
+                      icon: Icons.auto_awesome_rounded,
+                      label: 'OMMR PACK',
+                      route: '/omm-rebirth',
+                      isActive: widget.currentRoute == '/omm-rebirth',
+                      accentColor: retro.red,
                     ),
+                  ),
 
-                    _staggerItem(
-                      index: 10,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                        child: _RetroDivider(retro: retro),
-                      ),
+                  // Separador antes de Explore
+                  _staggerItem(
+                    index: 10,
+                    ctrl: _staggerCtrl,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+                      child: _RetroDivider(retro: retro),
                     ),
-                    _staggerItem(
-                      index: 10,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                        child: SectionKicker(retro: retro, label: 'EXPLORE'),
-                      ),
+                  ),
+                  _staggerItem(
+                    index: 10,
+                    ctrl: _staggerCtrl,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
+                      child: SectionKicker(retro: retro, label: 'EXPLORE'),
                     ),
-                    _staggerItem(
-                      index: 11,
-                      ctrl: _staggerCtrl,
-                      child: _CategoryList(currentRoute: widget.currentRoute),
-                    ),
-                    _staggerItem(
-                      index: 12,
-                      ctrl: _staggerCtrl,
-                      child: _SortOptions(currentRoute: widget.currentRoute),
-                    ),
+                  ),
+                  _staggerItem(
+                    index: 11,
+                    ctrl: _staggerCtrl,
+                    child: _CategoryList(currentRoute: widget.currentRoute),
+                  ),
+                  _staggerItem(
+                    index: 12,
+                    ctrl: _staggerCtrl,
+                    child: _SortOptions(currentRoute: widget.currentRoute),
+                  ),
 
-                    // ── Footer ─────────────────────────────────────────
-                    _RetroDivider(retro: retro),
-                    const _SocialLinks(),
-                    _RetroDivider(retro: retro),
-                    _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/links-resource.svg',
-                        width: 19,
-                        height: 19,
-                      ),
-                      label: 'Links Resource',
-                      route: '/links-resource',
-                      isActive: widget.currentRoute == '/links-resource',
-                    ),
-                    _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/disclaimer.svg',
-                        width: 19,
-                        height: 19,
-                      ),
-                      label: 'Disclaimer',
-                      route: '/disclaimer',
-                      isActive: widget.currentRoute == '/disclaimer',
-                    ),
-                    _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/changelogs.svg',
-                        width: 19,
-                        height: 19,
-                      ),
-                      label: 'Changelog',
-                      route: '/changelog',
-                      isActive: widget.currentRoute == '/changelog',
-                    ),
-                    _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/settings.svg',
-                        width: 19,
-                        height: 19,
-                      ),
-                      label: 'Settings',
-                      route: '/settings',
-                      isActive: widget.currentRoute == '/settings',
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
-                      child: Text(
-                        'v1.4.4',
-                        style: TextStyle(
-                          color: retro.inkDim,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.8,
-                        ),
+                  // ── Footer ─────────────────────────────────────────
+                  _RetroDivider(retro: retro),
+                  const _SocialLinks(),
+                  _RetroDivider(retro: retro),
+                  _NavItem(
+                    icon: Icons.link_rounded,
+                    label: 'Links Resource',
+                    route: '/links-resource',
+                    isActive: widget.currentRoute == '/links-resource',
+                  ),
+                  _NavItem(
+                    icon: Icons.info_outline_rounded,
+                    label: 'Disclaimer',
+                    route: '/disclaimer',
+                    isActive: widget.currentRoute == '/disclaimer',
+                  ),
+                  _NavItem(
+                    icon: Icons.history_rounded,
+                    label: 'Changelog',
+                    route: '/changelog',
+                    isActive: widget.currentRoute == '/changelog',
+                  ),
+                  _NavItem(
+                    icon: Icons.settings_rounded,
+                    label: 'Settings',
+                    route: '/settings',
+                    isActive: widget.currentRoute == '/settings',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
+                    child: Text(
+                      'v1.4.3',
+                      style: TextStyle(
+                        color: retro.inkDim,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.8,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -312,7 +272,8 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _RetroDivider — línea sólida, sin gradientes.
+// Separador con línea sólida — reemplaza al degradado horizontal, coherente
+// con el resto de la app (nada de bordes difusos).
 // ─────────────────────────────────────────────────────────────────────────────
 class _RetroDivider extends StatelessWidget {
   const _RetroDivider({required this.retro});
@@ -325,24 +286,27 @@ class _RetroDivider extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Stagger helper — solo slide-up por item, sin Opacity individual.
-// Un FadeTransition global envuelve toda la Column (1 sola capa GPU).
+// Stagger helper — fade + tiny slide-up
 // ─────────────────────────────────────────────────────────────────────────────
 Widget _staggerItem({
   required int index,
   required AnimationController ctrl,
   required Widget child,
 }) {
-  final start = (index * 0.055).clamp(0.0, 0.75);
-  final end = (start + 0.42).clamp(0.0, 1.0);
-  final anim = ctrl.drive(
-    CurveTween(curve: Interval(start, end, curve: _kCurve)),
+  final start = (index * 0.055).clamp(0.0, 0.80);
+  final end = (start + 0.38).clamp(0.0, 1.0);
+  final anim = CurvedAnimation(
+    parent: ctrl,
+    curve: Interval(start, end, curve: _kCurve),
   );
   return AnimatedBuilder(
     animation: anim,
-    builder: (_, child) => Transform.translate(
-      offset: Offset(0, 10 * (1 - anim.value)),
-      child: child,
+    builder: (_, child) => Opacity(
+      opacity: anim.value,
+      child: Transform.translate(
+        offset: Offset(0, 7 * (1 - anim.value)),
+        child: child,
+      ),
     ),
     child: child,
   );
@@ -391,18 +355,21 @@ class _DrawerHeader extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NavItem — estado activo = relleno sólido de acento + texto invertido.
+// NavItem
+// · Estado activo = relleno sólido de acento + texto sobre fondo, igual que
+//   un SkewChip seleccionado — nada de contenedores translúcidos redondeados.
+// · Barra lateral sólida (sin degradado) cuando está activo.
 // ─────────────────────────────────────────────────────────────────────────────
 class _NavItem extends StatefulWidget {
   const _NavItem({
-    required this.iconBuilder,
+    required this.icon,
     required this.label,
     required this.route,
     required this.isActive,
     this.accentColor,
   });
 
-  final Widget Function(Color color) iconBuilder;
+  final IconData icon;
   final String label;
   final String route;
   final bool isActive;
@@ -464,6 +431,7 @@ class _NavItemState extends State<_NavItem>
           ),
           child: Row(
             children: [
+              // ── Barra lateral sólida ────────────────────────────
               AnimatedContainer(
                 duration: _kItemDuration,
                 curve: _kCurve,
@@ -471,6 +439,7 @@ class _NavItemState extends State<_NavItem>
                 height: widget.isActive ? 26 : 0,
                 color: widget.isActive ? retro.background : Colors.transparent,
               ),
+              // ── Label + icon ─────────────────────────────────────
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -479,10 +448,14 @@ class _NavItemState extends State<_NavItem>
                   ),
                   child: Row(
                     children: [
-                      SizedBox(
-                        width: 19,
-                        height: 19,
-                        child: widget.iconBuilder(fg),
+                      AnimatedSwitcher(
+                        duration: _kItemDuration,
+                        child: Icon(
+                          widget.icon,
+                          key: ValueKey(widget.isActive),
+                          color: fg,
+                          size: 19,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       AnimatedDefaultTextStyle(
@@ -511,85 +484,58 @@ class _NavItemState extends State<_NavItem>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CategoryList — expandible perezoso.
-// Los _CategoryItem (c/u con su AnimationController) NO se crean hasta que
-// el usuario expande la sección. Esto evita N controladores en el frame de
-// apertura del drawer.
+// CategoryList
 // ─────────────────────────────────────────────────────────────────────────────
-class _CategoryList extends ConsumerStatefulWidget {
+class _CategoryList extends ConsumerWidget {
   const _CategoryList({required this.currentRoute});
   final String currentRoute;
 
   @override
-  ConsumerState<_CategoryList> createState() => _CategoryListState();
-}
-
-class _CategoryListState extends ConsumerState<_CategoryList> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final retro = RetroTheme.of(context);
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => _expanded = !_expanded),
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  'assets/icons/menu/categorias.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'CATEGORIES',
-                    style: TextStyle(
-                      color: retro.ink,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ),
-                _ExpandArrow(expanded: _expanded, retro: retro),
-              ],
-            ),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        dividerColor: Colors.transparent,
+      ),
+      child: ExpansionTile(
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+        childrenPadding: EdgeInsets.zero,
+        iconColor: retro.accent,
+        collapsedIconColor: retro.inkDim,
+        expansionAnimationStyle: AnimationStyle(
+          duration: const Duration(milliseconds: 200),
+          curve: _kCurve,
+          reverseDuration: const Duration(milliseconds: 160),
+          reverseCurve: Curves.easeInCubic,
+        ),
+        title: Text(
+          'CATEGORIES',
+          style: TextStyle(
+            color: retro.ink,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.4,
           ),
         ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: _kCurve,
-          alignment: Alignment.topCenter,
-          clipBehavior: Clip.hardEdge,
-          child: _expanded
-              ? Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: CategoryConstants.allCategories
-                      .map((cat) => _CategoryItem(
-                            category: cat,
-                            selectedCategory: selectedCategory,
-                            currentRoute: widget.currentRoute,
-                          ))
-                      .toList(),
-                )
-              : const SizedBox.shrink(),
-        ),
-      ],
+        leading: Icon(Icons.category_rounded, size: 19, color: retro.inkDim),
+        children: CategoryConstants.allCategories
+            .map(
+              (cat) => _CategoryItem(
+                category: cat,
+                selectedCategory: selectedCategory,
+                currentRoute: currentRoute,
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CategoryItem — una categoría individual tappeable.
-// ─────────────────────────────────────────────────────────────────────────────
 class _CategoryItem extends ConsumerStatefulWidget {
   const _CategoryItem({
     required this.category,
@@ -697,7 +643,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check, size: 14, color: retro.background),
+                child: Icon(Icons.check_rounded, size: 14, color: retro.background),
               ),
             ],
           ),
@@ -708,96 +654,79 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SortOptions — expandible perezoso (mismo patrón que _CategoryList).
+// SortOptions
 // ─────────────────────────────────────────────────────────────────────────────
-class _SortOptions extends ConsumerStatefulWidget {
+class _SortOptions extends ConsumerWidget {
   const _SortOptions({required this.currentRoute});
   final String currentRoute;
 
   static const _items = [
-    (value: SortOrder.none, label: 'Default'),
-    (value: SortOrder.ratingDesc, label: 'Rating'),
-    (value: SortOrder.downloadsDesc, label: 'Downloads'),
-    (value: SortOrder.newest, label: 'Newest Update'),
+    (value: SortOrder.none, label: 'Default', emoji: '·'),
+    (value: SortOrder.ratingDesc, label: 'Rating', emoji: '⭐'),
+    (value: SortOrder.downloadsDesc, label: 'Downloads', emoji: '⬇️'),
+    (value: SortOrder.newest, label: 'Newest Update', emoji: '🕐'),
   ];
 
   @override
-  ConsumerState<_SortOptions> createState() => _SortOptionsState();
-}
-
-class _SortOptionsState extends ConsumerState<_SortOptions> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentSort = ref.watch(sortOrderProvider);
     final retro = RetroTheme.of(context);
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => _expanded = !_expanded),
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                Icon(Icons.sort, size: 19, color: retro.inkDim),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'SORT BY',
-                    style: TextStyle(
-                      color: retro.ink,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ),
-                _ExpandArrow(expanded: _expanded, retro: retro),
-              ],
-            ),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        dividerColor: Colors.transparent,
+      ),
+      child: ExpansionTile(
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+        childrenPadding: EdgeInsets.zero,
+        iconColor: retro.accent,
+        collapsedIconColor: retro.inkDim,
+        expansionAnimationStyle: AnimationStyle(
+          duration: const Duration(milliseconds: 200),
+          curve: _kCurve,
+          reverseDuration: const Duration(milliseconds: 160),
+          reverseCurve: Curves.easeInCubic,
+        ),
+        title: Text(
+          'SORT BY',
+          style: TextStyle(
+            color: retro.ink,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.4,
           ),
         ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: _kCurve,
-          alignment: Alignment.topCenter,
-          clipBehavior: Clip.hardEdge,
-          child: _expanded
-              ? Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: _SortOptions._items
-                      .map((item) => _SortItem(
-                            value: item.value,
-                            label: item.label,
-                            currentSort: currentSort,
-                            currentRoute: widget.currentRoute,
-                          ))
-                      .toList(),
-                )
-              : const SizedBox.shrink(),
-        ),
-      ],
+        leading: Icon(Icons.sort_rounded, size: 19, color: retro.inkDim),
+        children: _items
+            .map(
+              (item) => _SortItem(
+                value: item.value,
+                label: item.label,
+                emoji: item.emoji,
+                currentSort: currentSort,
+                currentRoute: currentRoute,
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SortItem — una opción de ordenamiento individual tappeable.
-// ─────────────────────────────────────────────────────────────────────────────
 class _SortItem extends ConsumerStatefulWidget {
   const _SortItem({
     required this.value,
     required this.label,
+    required this.emoji,
     required this.currentSort,
     required this.currentRoute,
   });
 
   final SortOrder value;
   final String label;
+  final String emoji;
   final SortOrder currentSort;
   final String currentRoute;
 
@@ -862,6 +791,8 @@ class _SortItemState extends ConsumerState<_SortItem>
           ),
           child: Row(
             children: [
+              Text(widget.emoji, style: const TextStyle(fontSize: 14)),
+              const SizedBox(width: 10),
               Expanded(
                 child: AnimatedDefaultTextStyle(
                   duration: _kItemDuration,
@@ -877,7 +808,7 @@ class _SortItemState extends ConsumerState<_SortItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check, size: 14, color: retro.background),
+                child: Icon(Icons.check_rounded, size: 14, color: retro.background),
               ),
             ],
           ),
@@ -888,30 +819,10 @@ class _SortItemState extends ConsumerState<_SortItem>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _ExpandArrow — flecha rotatoria compartida.
-// ─────────────────────────────────────────────────────────────────────────────
-class _ExpandArrow extends StatelessWidget {
-  const _ExpandArrow({required this.expanded, required this.retro});
-  final bool expanded;
-  final RetroTheme retro;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedRotation(
-      turns: expanded ? 0.5 : 0.0,
-      duration: const Duration(milliseconds: 200),
-      curve: _kCurve,
-      child: Icon(
-        Icons.expand_more,
-        size: 20,
-        color: expanded ? retro.accent : retro.inkDim,
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Social Links
+// Muestra YouTube · Discord · GitHub en fila horizontal con SVG icons.
+// Cada botón tiene su propio ScaleTransition en press y abre la URL
+// en el navegador externo vía url_launcher.
 // ─────────────────────────────────────────────────────────────────────────────
 class _SocialLinks extends StatelessWidget {
   const _SocialLinks();
@@ -961,6 +872,7 @@ class _SocialLinks extends StatelessWidget {
   }
 }
 
+// Datos inmutables de cada red social (const-safe).
 class _SocialLinkData {
   const _SocialLinkData({
     required this.asset,
@@ -1010,7 +922,9 @@ class _SocialButtonState extends State<_SocialButton>
     final uri = Uri.parse(widget.link.url);
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {}
+    } catch (_) {
+      // Falla silenciosa — la URL no pudo abrirse
+    }
   }
 
   @override
