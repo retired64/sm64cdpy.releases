@@ -10,6 +10,7 @@ import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../../services/background_install_service.dart';
@@ -101,14 +102,14 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
         ? (MediaQuery.sizeOf(context).height * 0.45).clamp(200.0, 280.0)
         : 300.0;
 
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: retro.background,
       extendBodyBehindAppBar: true,
-      appBar: _buildAppBar(cs, isFav, isDark),
+      appBar: _buildAppBar(retro, isFav, isDark),
       body: FadeTransition(
         opacity: _fadeAnim,
         child: CustomScrollView(
@@ -154,8 +155,8 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
     );
   }
 
-  PreferredSizeWidget _buildAppBar(ColorScheme cs, bool isFav, bool isDark) {
-    final bgColor = _isAppBarSolid ? cs.surface : Colors.transparent;
+  PreferredSizeWidget _buildAppBar(RetroTheme retro, bool isFav, bool isDark) {
+    final bgColor = _isAppBarSolid ? retro.background : Colors.transparent;
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -171,7 +172,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
                   icon: Icons.arrow_back_ios_rounded,
                   onTap: () => Navigator.of(context).pop(),
                   isAppBarSolid: _isAppBarSolid,
-                  cs: cs,
+                  retro: retro,
                 ),
                 const Spacer(),
                 _GlassIconButton(
@@ -182,15 +183,15 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
                       .read(favouritesProvider.notifier)
                       .toggle(widget.mod.id),
                   isAppBarSolid: _isAppBarSolid,
-                  cs: cs,
-                  activeColor: isFav ? cs.primary : null,
+                  retro: retro,
+                  activeColor: isFav ? retro.accent : null,
                 ),
                 const SizedBox(width: 6),
                 _GlassIconButton(
                   icon: Icons.share_rounded,
                   onTap: () => _share(widget.mod),
                   isAppBarSolid: _isAppBarSolid,
-                  cs: cs,
+                  retro: retro,
                 ),
               ],
             ),
@@ -208,27 +209,27 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
   }
 }
 
-// ── Glass icon button ─────────────────────────────────────────────────────────
+// ── App bar icon button ────────────────────────────────────────────────────────
 
 class _GlassIconButton extends StatelessWidget {
   const _GlassIconButton({
     required this.icon,
     required this.onTap,
     required this.isAppBarSolid,
-    required this.cs,
+    required this.retro,
     this.activeColor,
   });
 
   final IconData icon;
   final VoidCallback onTap;
   final bool isAppBarSolid;
-  final ColorScheme cs;
+  final RetroTheme retro;
   final Color? activeColor;
 
   @override
   Widget build(BuildContext context) {
     final iconColor =
-        activeColor ?? (isAppBarSolid ? cs.onSurface : Colors.white);
+        activeColor ?? (isAppBarSolid ? retro.ink : Colors.white);
 
     return GestureDetector(
       onTap: onTap,
@@ -237,13 +238,13 @@ class _GlassIconButton extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           color: isAppBarSolid
-              ? cs.surfaceContainerHigh
-              : Colors.black.withValues(alpha: 0.32),
-          borderRadius: BorderRadius.circular(12),
+              ? retro.surfaceAlt
+              : Colors.black.withValues(alpha: 0.42),
           border: Border.all(
             color: isAppBarSolid
-                ? cs.outline.withValues(alpha: 0.3)
-                : Colors.white.withValues(alpha: 0.18),
+                ? retro.border.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.3),
+            width: 1.5,
           ),
         ),
         child: Icon(icon, size: 18, color: iconColor),
@@ -252,7 +253,9 @@ class _GlassIconButton extends StatelessWidget {
   }
 }
 
-// ── Cinematic hero ────────────────────────────────────────────────────────────
+// ── Hero: banner a rayas + avatar bordeado ──────────────────────────────────
+// Composición tipo "tarjeta de repo": DiagonalStripeBanner de fondo con el
+// avatar del mod superpuesto abajo a la izquierda, como en la referencia.
 
 class _CinematicHero extends StatelessWidget {
   const _CinematicHero({
@@ -265,114 +268,125 @@ class _CinematicHero extends StatelessWidget {
   final double heroOpacity;
   final double height;
 
+  static const _avatarSize = 84.0;
+
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
+    final hasImage = mod.imageUrl != null && mod.imageUrl!.isNotEmpty;
 
     return SizedBox(
       height: height,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Background image with parallax fade
-          Opacity(
-            opacity: heroOpacity.clamp(0.0, 1.0),
-            child: Hero(
-              tag: 'mod_img_${mod.id}',
-              child: mod.imageUrl != null && mod.imageUrl!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: mod.imageUrl!,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                      placeholder: (_, _) =>
-                          Container(color: cs.surfaceContainerHigh),
-                      errorWidget: (_, _, _) => _HeroPlaceholder(cs: cs),
-                    )
-                  : _HeroPlaceholder(cs: cs),
+      child: Opacity(
+        opacity: heroOpacity.clamp(0.0, 1.0),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            DiagonalStripeBanner(
+              baseColor: retro.accent,
+              stripeColor: retro.background.withValues(alpha: 0.18),
             ),
-          ),
 
-          // Gradient overlay — top (status bar) + bottom (content fade)
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.45),
-                  Colors.transparent,
-                  Colors.transparent,
-                  cs.surface.withValues(alpha: 0.7),
-                  cs.surface,
-                ],
-                stops: const [0.0, 0.2, 0.55, 0.85, 1.0],
+            // Scrim superior sutil — asegura contraste de los botones del
+            // app bar sin importar en qué punto de la franja caigan.
+            const Align(
+              alignment: Alignment.topCenter,
+              child: _TopScrim(),
+            ),
+
+            // Costura hacia la content card, que se superpone por debajo.
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 70,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, retro.background],
+                  ),
+                ),
               ),
             ),
-          ),
 
-          // Featured badge — top right, below app bar
-          if (mod.isFeatured)
+            // Avatar del mod
             Positioned(
-              top: kToolbarHeight + 12,
-              right: 16,
-              child: _FeaturedBadge(cs: cs),
+              left: 20,
+              bottom: 22,
+              child: Container(
+                width: _avatarSize,
+                height: _avatarSize,
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  color: retro.surfaceAlt,
+                  border: Border.all(color: retro.border, width: 3),
+                  boxShadow: retro.hardShadow(),
+                ),
+                child: hasImage
+                    ? Hero(
+                        tag: 'mod_img_${mod.id}',
+                        child: CachedNetworkImage(
+                          imageUrl: mod.imageUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (_, _) =>
+                              Container(color: retro.surfaceAlt),
+                          errorWidget: (_, _, _) => _HeroPlaceholder(retro: retro),
+                        ),
+                      )
+                    : _HeroPlaceholder(retro: retro),
+              ),
             ),
-        ],
-      ),
-    );
-  }
-}
 
-class _HeroPlaceholder extends StatelessWidget {
-  const _HeroPlaceholder({required this.cs});
-
-  final ColorScheme cs;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: cs.surfaceContainerHigh,
-      child: Center(
-        child: Icon(
-          Icons.extension_rounded,
-          size: 72,
-          color: cs.outline.withValues(alpha: 0.3),
+            // Insignia "featured" — círculo superpuesto en la esquina del avatar
+            if (mod.isFeatured)
+              Positioned(
+                left: 20 + _avatarSize - 16,
+                bottom: 22 + _avatarSize - 16,
+                child: RetroBadgeDot(retro: retro, icon: Icons.star_rounded),
+              ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _FeaturedBadge extends StatelessWidget {
-  const _FeaturedBadge({required this.cs});
-
-  final ColorScheme cs;
+class _TopScrim extends StatelessWidget {
+  const _TopScrim();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      height: kToolbarHeight + 40,
       decoration: BoxDecoration(
-        color: cs.primaryContainer.withValues(alpha: 0.88),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: cs.primary.withValues(alpha: 0.3)),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.black.withValues(alpha: 0.28),
+            Colors.transparent,
+          ],
+        ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.star_rounded, size: 12, color: cs.primary),
-          const SizedBox(width: 5),
-          Text(
-            'FEATURED',
-            style: TextStyle(
-              color: cs.primary,
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ],
+    );
+  }
+}
+
+class _HeroPlaceholder extends StatelessWidget {
+  const _HeroPlaceholder({required this.retro});
+
+  final RetroTheme retro;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: retro.surfaceAlt,
+      child: Center(
+        child: Icon(
+          Icons.extension_rounded,
+          size: 32,
+          color: retro.inkDim,
+        ),
       ),
     );
   }
@@ -397,28 +411,17 @@ class _ContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Container(
       decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        color: retro.surface,
+        border: Border(top: BorderSide(color: retro.border, width: 3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Drag handle
-          Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: 10, bottom: 20),
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: cs.outline.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
+          const SizedBox(height: 20),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -507,64 +510,45 @@ class _TitleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
+    final titleStyle = retro.heading(size: 25, letterSpacing: -0.4, height: 1.1);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          mod.title,
-          style: TextStyle(
-            color: cs.onSurface,
-            fontSize: 26,
-            fontWeight: FontWeight.w900,
-            height: 1.15,
-            letterSpacing: -0.3,
-          ),
+        // Título "estampado": una copia desplazada en el acento detrás del
+        // texto principal — el efecto de doble impresión de la referencia.
+        Stack(
+          children: [
+            Positioned(
+              left: 2.5,
+              top: 2.5,
+              child: Text(mod.title, style: titleStyle.copyWith(color: retro.accent)),
+            ),
+            Text(mod.title, style: titleStyle),
+          ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Row(
           children: [
             Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                color: cs.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(Icons.person_rounded, size: 14, color: cs.primary),
+              width: 26,
+              height: 26,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: retro.accent),
+              child: Icon(Icons.person_rounded, size: 14, color: retro.background),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 mod.author,
-                style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: retro.body(size: 14, weight: FontWeight.w700, color: retro.ink),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: 10),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: cs.outline.withValues(alpha: 0.4)),
-              ),
-              child: Text(
-                'v${mod.version}',
-                style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ),
+            RetroTag(retro: retro, label: 'v${mod.version}'),
           ],
         ),
       ],
@@ -581,14 +565,14 @@ class _StatsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cs.outline.withValues(alpha: 0.35)),
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.border.withValues(alpha: 0.35)),
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -597,32 +581,32 @@ class _StatsBar extends StatelessWidget {
               value: mod.rating?.star ?? '—',
               label: 'Rating',
               icon: Icons.star_rounded,
-              iconColor: cs.secondary,
-              cs: cs,
+              iconColor: retro.amber,
+              retro: retro,
             ),
-            _Divider(cs: cs),
+            _Divider(retro: retro),
             _StatCell(
               value: mod.downloads.compact,
               label: 'Downloads',
               icon: Icons.download_rounded,
-              iconColor: cs.primary,
-              cs: cs,
+              iconColor: retro.accent,
+              retro: retro,
             ),
-            _Divider(cs: cs),
+            _Divider(retro: retro),
             _StatCell(
               value: mod.views.compact,
               label: 'Views',
               icon: Icons.visibility_rounded,
-              iconColor: cs.onSurfaceVariant,
-              cs: cs,
+              iconColor: retro.inkDim,
+              retro: retro,
             ),
-            _Divider(cs: cs),
+            _Divider(retro: retro),
             _StatCell(
               value: mod.reviewCount.compact,
               label: 'Reviews',
               icon: Icons.rate_review_rounded,
-              iconColor: cs.onSurfaceVariant,
-              cs: cs,
+              iconColor: retro.inkDim,
+              retro: retro,
             ),
           ],
         ),
@@ -637,14 +621,14 @@ class _StatCell extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.iconColor,
-    required this.cs,
+    required this.retro,
   });
 
   final String value;
   final String label;
   final IconData icon;
   final Color iconColor;
-  final ColorScheme cs;
+  final RetroTheme retro;
 
   @override
   Widget build(BuildContext context) {
@@ -657,7 +641,7 @@ class _StatCell extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              color: cs.onSurface,
+              color: retro.ink,
               fontSize: 15,
               fontWeight: FontWeight.w800,
             ),
@@ -666,7 +650,7 @@ class _StatCell extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: cs.onSurfaceVariant,
+              color: retro.inkDim,
               fontSize: 10,
               fontWeight: FontWeight.w500,
             ),
@@ -678,16 +662,16 @@ class _StatCell extends StatelessWidget {
 }
 
 class _Divider extends StatelessWidget {
-  const _Divider({required this.cs});
+  const _Divider({required this.retro});
 
-  final ColorScheme cs;
+  final RetroTheme retro;
 
   @override
   Widget build(BuildContext context) {
     return VerticalDivider(
       width: 1,
       thickness: 1,
-      color: cs.outline.withValues(alpha: 0.3),
+      color: retro.border.withValues(alpha: 0.3),
     );
   }
 }
@@ -707,14 +691,14 @@ class _DownloadSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final displayUrls = urls.isNotEmpty ? urls : [modUrl];
 
     if (displayUrls.length == 1) {
       return _PrimaryDownloadButton(
         url: displayUrls.first,
         modTitle: modTitle,
-        cs: cs,
+        retro: retro,
       );
     }
 
@@ -728,7 +712,7 @@ class _DownloadSection extends StatelessWidget {
             index: e.key + 1,
             url: e.value,
             modTitle: modTitle,
-            cs: cs,
+            retro: retro,
           ),
         ),
       ],
@@ -740,12 +724,12 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
   const _PrimaryDownloadButton({
     required this.url,
     required this.modTitle,
-    required this.cs,
+    required this.retro,
   });
 
   final String url;
   final String modTitle;
-  final ColorScheme cs;
+  final RetroTheme retro;
 
   @override
   ConsumerState<_PrimaryDownloadButton> createState() =>
@@ -794,23 +778,23 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor:
-                Theme.of(ctx).colorScheme.surfaceContainerHighest,
+                RetroTheme.of(ctx).surfaceAlt,
             title: Text(
               'Notifications needed',
-              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+              style: TextStyle(color: RetroTheme.of(ctx).ink),
             ),
             content: Text(
               'We need notification permission to show download '
               'and installation progress, even if you leave the app.',
               style: TextStyle(
-                  color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+                  color: RetroTheme.of(ctx).inkDim),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
                 child: Text('Not now',
                     style: TextStyle(
-                        color: Theme.of(ctx).colorScheme.onSurface)),
+                        color: RetroTheme.of(ctx).ink)),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -853,27 +837,27 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor:
-                Theme.of(ctx).colorScheme.surfaceContainerHighest,
+                RetroTheme.of(ctx).surfaceAlt,
             icon: Icon(Icons.folder_open_rounded,
-                color: Theme.of(ctx).colorScheme.primary, size: 28),
+                color: RetroTheme.of(ctx).accent, size: 28),
             title: Text(
               'Mods folder not selected',
               style:
-                  TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+                  TextStyle(color: RetroTheme.of(ctx).ink),
             ),
             content: Text(
               'You need to select a mods folder before '
               'installing mods to the game.\n\n'
               'Go to Settings → Game Integration to select it.',
               style: TextStyle(
-                  color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+                  color: RetroTheme.of(ctx).inkDim),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
                 child: Text('Cancel',
                     style: TextStyle(
-                        color: Theme.of(ctx).colorScheme.onSurface)),
+                        color: RetroTheme.of(ctx).ink)),
               ),
               FilledButton.icon(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -935,7 +919,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          AppSnackbar.error(
+          AppSnackbar.red(
             context,
             message: 'Download failed',
           );
@@ -943,7 +927,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       );
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.error(
+      AppSnackbar.red(
         context,
         message: 'Error: ${e.toString()}',
       );
@@ -966,7 +950,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          AppSnackbar.error(
+          AppSnackbar.red(
             context,
             message: 'Download failed',
           );
@@ -978,7 +962,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(
+      AppSnackbar.red(
         context,
         message: 'Error: ${e.toString()}',
       );
@@ -987,7 +971,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
 
   @override
   Widget build(BuildContext context) {
-    final cs = widget.cs;
+    final retro = widget.retro;
     final modName = _sanitizeModTitle(widget.modTitle);
     final info = ref.watch(bgInstallStateProvider)[modName];
     final isActive = _localDownloading ||
@@ -1012,19 +996,9 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         child: Container(
           height: 54,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [cs.primary, cs.primary.withValues(alpha: 0.85)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: cs.primary.withValues(alpha: 0.35),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
+            color: retro.accent,
+            border: Border.all(color: retro.border, width: 3),
+            boxShadow: retro.hardShadow(),
           ),
           child: Center(
             child: isActive
@@ -1037,10 +1011,11 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                           value: downloadProgress != null
                               ? downloadProgress / 100.0
                               : null,
-                          backgroundColor: Colors.white.withValues(alpha: 0.3),
-                          color: Colors.white,
+                          backgroundColor: retro.background.withValues(
+                            alpha: 0.3,
+                          ),
+                          color: retro.background,
                           minHeight: 4,
-                          borderRadius: BorderRadius.circular(2),
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -1049,11 +1024,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                               : info?.status == BgInstallStatus.downloading
                                   ? 'Downloading ${downloadProgress ?? 0}%'
                                   : 'Installing...',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: retro.heading(size: 11, color: retro.background),
                         ),
                       ],
                     ),
@@ -1061,20 +1032,15 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.download_rounded,
-                        color: Colors.white,
+                        color: retro.background,
                         size: 20,
                       ),
                       const SizedBox(width: 10),
-                      const Text(
-                        'Download',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.3,
-                        ),
+                      Text(
+                        'DOWNLOAD',
+                        style: retro.heading(size: 15, color: retro.background),
                       ),
                     ],
                   ),
@@ -1090,13 +1056,13 @@ class _DownloadFileRow extends ConsumerStatefulWidget {
     required this.index,
     required this.url,
     required this.modTitle,
-    required this.cs,
+    required this.retro,
   });
 
   final int index;
   final String url;
   final String modTitle;
-  final ColorScheme cs;
+  final RetroTheme retro;
 
   @override
   ConsumerState<_DownloadFileRow> createState() => _DownloadFileRowState();
@@ -1132,23 +1098,23 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor:
-                Theme.of(ctx).colorScheme.surfaceContainerHighest,
+                RetroTheme.of(ctx).surfaceAlt,
             title: Text(
               'Notifications needed',
-              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+              style: TextStyle(color: RetroTheme.of(ctx).ink),
             ),
             content: Text(
               'We need notification permission to show download '
               'and installation progress, even if you leave the app.',
               style: TextStyle(
-                  color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+                  color: RetroTheme.of(ctx).inkDim),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
                 child: Text('Not now',
                     style: TextStyle(
-                        color: Theme.of(ctx).colorScheme.onSurface)),
+                        color: RetroTheme.of(ctx).ink)),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -1195,27 +1161,27 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor:
-                Theme.of(ctx).colorScheme.surfaceContainerHighest,
+                RetroTheme.of(ctx).surfaceAlt,
             icon: Icon(Icons.folder_open_rounded,
-                color: Theme.of(ctx).colorScheme.primary, size: 28),
+                color: RetroTheme.of(ctx).accent, size: 28),
             title: Text(
               'Mods folder not selected',
               style:
-                  TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
+                  TextStyle(color: RetroTheme.of(ctx).ink),
             ),
             content: Text(
               'You need to select a mods folder before '
               'installing mods to the game.\n\n'
               'Go to Settings → Game Integration to select it.',
               style: TextStyle(
-                  color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+                  color: RetroTheme.of(ctx).inkDim),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
                 child: Text('Cancel',
                     style: TextStyle(
-                        color: Theme.of(ctx).colorScheme.onSurface)),
+                        color: RetroTheme.of(ctx).ink)),
               ),
               FilledButton.icon(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -1277,7 +1243,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          AppSnackbar.error(
+          AppSnackbar.red(
             context,
             message: 'Download failed',
           );
@@ -1285,7 +1251,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
       );
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.error(
+      AppSnackbar.red(
         context,
         message: 'Error: ${e.toString()}',
       );
@@ -1327,7 +1293,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.error(
+          AppSnackbar.red(
             context,
             message: 'Download failed',
           );
@@ -1339,7 +1305,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(
+      AppSnackbar.red(
         context,
         message: 'Error: ${e.toString()}',
       );
@@ -1348,7 +1314,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
 
   @override
   Widget build(BuildContext context) {
-    final cs = widget.cs;
+    final retro = widget.retro;
     final modName = _sanitizeModTitle(widget.modTitle);
     final info = ref.watch(bgInstallStateProvider)[modName];
     final isActive = _localDownloading ||
@@ -1371,9 +1337,9 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: cs.outline.withValues(alpha: 0.4)),
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.border.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1384,13 +1350,13 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: cs.primaryContainer,
-                  borderRadius: BorderRadius.circular(10),
+                  color: retro.accent,
+                  borderRadius: RetroTheme.radius,
                 ),
                 child: Icon(
                   Icons.insert_drive_file_rounded,
                   size: 16,
-                  color: cs.primary,
+                  color: retro.background,
                 ),
               ),
               const SizedBox(width: 12),
@@ -1401,7 +1367,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
                     Text(
                       filename,
                       style: TextStyle(
-                        color: cs.onSurface,
+                        color: retro.ink,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1416,7 +1382,7 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
                                   : 'Installing...')
                           : 'Toca para descargar',
                       style: TextStyle(
-                        color: cs.onSurfaceVariant,
+                        color: retro.inkDim,
                         fontSize: 11,
                       ),
                     ),
@@ -1429,8 +1395,8 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: cs.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    color: retro.accent.withValues(alpha: 0.1),
+                    borderRadius: RetroTheme.radius,
                   ),
                   child: isActive
                       ? Padding(
@@ -1440,13 +1406,13 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
                             value: downloadProgress != null
                                 ? downloadProgress / 100.0
                                 : null,
-                            color: cs.primary,
+                            color: retro.accent,
                           ),
                         )
                       : Icon(
                           Icons.download_rounded,
                           size: 16,
-                          color: cs.primary,
+                          color: retro.accent,
                         ),
                 ),
               ),
@@ -1455,14 +1421,14 @@ class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
           if (isActive) ...[
             const SizedBox(height: 10),
             ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: RetroTheme.radius,
               child: LinearProgressIndicator(
                 value: downloadProgress != null
                     ? downloadProgress / 100.0
                     : null,
                 minHeight: 3,
-                backgroundColor: cs.outline.withValues(alpha: 0.2),
-                color: cs.primary,
+                backgroundColor: retro.border.withValues(alpha: 0.2),
+                color: retro.accent,
               ),
             ),
           ],
@@ -1501,7 +1467,7 @@ class _ScreenshotGalleryState extends State<_ScreenshotGallery> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final galleryHeight = (MediaQuery.orientationOf(context) ==
             Orientation.landscape)
         ? 140.0
@@ -1526,24 +1492,24 @@ class _ScreenshotGalleryState extends State<_ScreenshotGallery> {
                     vertical: _activeIndex == i ? 0 : 10,
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: RetroTheme.radius,
                     child: CachedNetworkImage(
                       imageUrl: widget.images[i],
                       fit: BoxFit.cover,
                       placeholder: (_, _) => Container(
-                        color: cs.surfaceContainerHigh,
+                        color: retro.surfaceAlt,
                         child: Center(
                           child: CircularProgressIndicator(
                             strokeWidth: 1.5,
-                            color: cs.outline,
+                            color: retro.border,
                           ),
                         ),
                       ),
                       errorWidget: (_, _, _) => Container(
-                        color: cs.surfaceContainerHigh,
+                        color: retro.surfaceAlt,
                         child: Icon(
                           Icons.broken_image_rounded,
-                          color: cs.outline,
+                          color: retro.border,
                         ),
                       ),
                     ),
@@ -1568,9 +1534,9 @@ class _ScreenshotGalleryState extends State<_ScreenshotGallery> {
                 height: 6,
                 decoration: BoxDecoration(
                   color: _activeIndex == i
-                      ? cs.primary
-                      : cs.outline.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(3),
+                      ? retro.accent
+                      : retro.border.withValues(alpha: 0.3),
+                  borderRadius: RetroTheme.radius,
                 ),
               ),
             ),
@@ -1659,7 +1625,7 @@ class _FullscreenGalleryState extends State<_FullscreenGallery> {
                         height: 40,
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: RetroTheme.radius,
                         ),
                         child: const Icon(
                           Icons.close_rounded,
@@ -1675,7 +1641,7 @@ class _FullscreenGalleryState extends State<_FullscreenGallery> {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: RetroTheme.radius,
                       ),
                       child: Text(
                         '${_current + 1} / ${widget.images.length}',
@@ -1706,7 +1672,7 @@ class _TagCloud extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Wrap(
       spacing: 6,
@@ -1715,14 +1681,14 @@ class _TagCloud extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
-            color: cs.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: cs.outline.withValues(alpha: 0.35)),
+            color: retro.surfaceAlt,
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.border.withValues(alpha: 0.35)),
           ),
           child: Text(
             tag,
             style: TextStyle(
-              color: cs.onSurfaceVariant,
+              color: retro.inkDim,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
@@ -1748,7 +1714,7 @@ class _ExpandableText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final isLong = text.length > AppConstants.descriptionMaxLen;
 
     return Column(
@@ -1762,7 +1728,7 @@ class _ExpandableText extends StatelessWidget {
           firstChild: Text(
             text.truncate(AppConstants.descriptionMaxLen),
             style: TextStyle(
-              color: cs.onSurfaceVariant,
+              color: retro.inkDim,
               fontSize: 14,
               height: 1.65,
             ),
@@ -1770,7 +1736,7 @@ class _ExpandableText extends StatelessWidget {
           secondChild: Text(
             text,
             style: TextStyle(
-              color: cs.onSurfaceVariant,
+              color: retro.inkDim,
               fontSize: 14,
               height: 1.65,
             ),
@@ -1786,7 +1752,7 @@ class _ExpandableText extends StatelessWidget {
                 Text(
                   expanded ? 'Show less' : 'Show more',
                   style: TextStyle(
-                    color: cs.primary,
+                    color: retro.accent,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1797,7 +1763,7 @@ class _ExpandableText extends StatelessWidget {
                       ? Icons.keyboard_arrow_up_rounded
                       : Icons.keyboard_arrow_down_rounded,
                   size: 16,
-                  color: cs.primary,
+                  color: retro.accent,
                 ),
               ],
             ),
@@ -1818,14 +1784,14 @@ class _ReleaseDates extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outline.withValues(alpha: 0.35)),
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.border.withValues(alpha: 0.35)),
       ),
       child: Row(
         children: [
@@ -1835,14 +1801,14 @@ class _ReleaseDates extends StatelessWidget {
                 icon: Icons.rocket_launch_rounded,
                 label: 'First Release',
                 date: firstRelease!,
-                cs: cs,
+                retro: retro,
               ),
             ),
           if (firstRelease != null && lastUpdate != null)
             Container(
               width: 1,
               height: 36,
-              color: cs.outline.withValues(alpha: 0.3),
+              color: retro.border.withValues(alpha: 0.3),
               margin: const EdgeInsets.symmetric(horizontal: 16),
             ),
           if (lastUpdate != null)
@@ -1851,7 +1817,7 @@ class _ReleaseDates extends StatelessWidget {
                 icon: Icons.update_rounded,
                 label: 'Last Update',
                 date: lastUpdate!,
-                cs: cs,
+                retro: retro,
               ),
             ),
         ],
@@ -1865,13 +1831,13 @@ class _DateCell extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.date,
-    required this.cs,
+    required this.retro,
   });
 
   final IconData icon;
   final String label;
   final String date;
-  final ColorScheme cs;
+  final RetroTheme retro;
 
   @override
   Widget build(BuildContext context) {
@@ -1881,10 +1847,10 @@ class _DateCell extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: cs.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(8),
+            color: retro.surfaceAlt,
+            borderRadius: RetroTheme.radius,
           ),
-          child: Icon(icon, size: 14, color: cs.onSurfaceVariant),
+          child: Icon(icon, size: 14, color: retro.inkDim),
         ),
         const SizedBox(width: 10),
         Column(
@@ -1893,7 +1859,7 @@ class _DateCell extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: cs.onSurfaceVariant,
+                color: retro.inkDim,
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
@@ -1903,7 +1869,7 @@ class _DateCell extends StatelessWidget {
             Text(
               formatDate(date) ?? date,
               style: TextStyle(
-                color: cs.onSurface,
+                color: retro.ink,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
@@ -1932,7 +1898,7 @@ class _ChangelogSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final visible = expanded ? updates : updates.take(_previewCount).toList();
     final hasMore = updates.length > _previewCount;
 
@@ -1946,13 +1912,13 @@ class _ChangelogSection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(6),
+                color: retro.surfaceAlt,
+                borderRadius: RetroTheme.radius,
               ),
               child: Text(
                 '${updates.length}',
                 style: TextStyle(
-                  color: cs.onSurfaceVariant,
+                  color: retro.inkDim,
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1971,7 +1937,7 @@ class _ChangelogSection extends StatelessWidget {
             update: u,
             index: updates.indexOf(u),
             isLast: isLast,
-            cs: cs,
+            retro: retro,
           );
         }),
 
@@ -1982,9 +1948,9 @@ class _ChangelogSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
+                color: retro.surfaceAlt,
+                borderRadius: RetroTheme.radius,
+                border: Border.all(color: retro.border.withValues(alpha: 0.3)),
               ),
               child: Center(
                 child: Row(
@@ -1995,7 +1961,7 @@ class _ChangelogSection extends StatelessWidget {
                           ? 'Collapse changelog'
                           : 'View all ${updates.length} updates',
                       style: TextStyle(
-                        color: cs.primary,
+                        color: retro.accent,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -2006,7 +1972,7 @@ class _ChangelogSection extends StatelessWidget {
                           ? Icons.keyboard_arrow_up_rounded
                           : Icons.keyboard_arrow_down_rounded,
                       size: 16,
-                      color: cs.primary,
+                      color: retro.accent,
                     ),
                   ],
                 ),
@@ -2024,13 +1990,13 @@ class _ChangelogEntry extends StatelessWidget {
     required this.update,
     required this.index,
     required this.isLast,
-    required this.cs,
+    required this.retro,
   });
 
   final ModUpdate update;
   final int index;
   final bool isLast;
-  final ColorScheme cs;
+  final RetroTheme retro;
 
   @override
   Widget build(BuildContext context) {
@@ -2045,17 +2011,17 @@ class _ChangelogEntry extends StatelessWidget {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: index == 0 ? cs.primary : cs.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(8),
+                  color: index == 0 ? retro.accent : retro.surfaceAlt,
+                  borderRadius: RetroTheme.radius,
                   border: index != 0
-                      ? Border.all(color: cs.outline.withValues(alpha: 0.3))
+                      ? Border.all(color: retro.border.withValues(alpha: 0.3))
                       : null,
                 ),
                 child: Center(
                   child: Text(
                     '${index + 1}',
                     style: TextStyle(
-                      color: index == 0 ? Colors.white : cs.onSurfaceVariant,
+                      color: index == 0 ? retro.background : retro.inkDim,
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
                     ),
@@ -2067,7 +2033,7 @@ class _ChangelogEntry extends StatelessWidget {
                   child: Container(
                     width: 1.5,
                     margin: const EdgeInsets.symmetric(vertical: 4),
-                    color: cs.outline.withValues(alpha: 0.2),
+                    color: retro.border.withValues(alpha: 0.2),
                   ),
                 ),
             ],
@@ -2086,7 +2052,7 @@ class _ChangelogEntry extends StatelessWidget {
                     Text(
                       update.title!,
                       style: TextStyle(
-                        color: cs.onSurface,
+                        color: retro.ink,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         height: 1.3,
@@ -2097,7 +2063,7 @@ class _ChangelogEntry extends StatelessWidget {
                     Text(
                       formatDate(update.date) ?? update.date!,
                       style: TextStyle(
-                        color: cs.onSurfaceVariant,
+                        color: retro.inkDim,
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -2107,7 +2073,7 @@ class _ChangelogEntry extends StatelessWidget {
                   Text(
                     update.changelog,
                     style: TextStyle(
-                      color: cs.onSurfaceVariant,
+                      color: retro.inkDim,
                       fontSize: 13,
                       height: 1.55,
                     ),
@@ -2131,12 +2097,12 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Text(
       label.toUpperCase(),
       style: TextStyle(
-        color: cs.onSurfaceVariant,
+        color: retro.inkDim,
         fontSize: 10,
         fontWeight: FontWeight.w800,
         letterSpacing: 1.5,
@@ -2153,27 +2119,27 @@ class _DetailSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: retro.background,
       body: SingleChildScrollView(
         child: Column(
         children: [
-          _Shimmer(height: 300, radius: 0, isDark: isDark),
+          _Shimmer(height: 300, isDark: isDark),
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Shimmer(height: 28, radius: 8, isDark: isDark),
+                _Shimmer(height: 28, isDark: isDark),
                 const SizedBox(height: 10),
-                _Shimmer(height: 16, width: 160, radius: 6, isDark: isDark),
+                _Shimmer(height: 16, width: 160, isDark: isDark),
                 const SizedBox(height: 20),
-                _Shimmer(height: 80, radius: 16, isDark: isDark),
+                _Shimmer(height: 80, isDark: isDark),
                 const SizedBox(height: 20),
-                _Shimmer(height: 54, radius: 16, isDark: isDark),
+                _Shimmer(height: 54, isDark: isDark),
               ],
             ),
           ),
@@ -2185,15 +2151,9 @@ class _DetailSkeleton extends StatelessWidget {
 }
 
 class _Shimmer extends StatelessWidget {
-  const _Shimmer({
-    required this.height,
-    required this.radius,
-    required this.isDark,
-    this.width,
-  });
+  const _Shimmer({required this.height, required this.isDark, this.width});
 
   final double height;
-  final double radius;
   final bool isDark;
   final double? width;
 
@@ -2207,10 +2167,7 @@ class _Shimmer extends StatelessWidget {
       child: Container(
         width: width ?? double.infinity,
         height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(radius),
-        ),
+        decoration: const BoxDecoration(color: Colors.white),
       ),
     );
   }
@@ -2223,11 +2180,11 @@ class _NotFoundView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Scaffold(
-      backgroundColor: cs.surface,
-      appBar: AppBar(backgroundColor: cs.surface),
+      backgroundColor: retro.background,
+      appBar: AppBar(backgroundColor: retro.background),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2236,20 +2193,20 @@ class _NotFoundView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: cs.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(20),
+                color: retro.surfaceAlt,
+                borderRadius: RetroTheme.radius,
               ),
               child: Icon(
                 Icons.search_off_rounded,
                 size: 36,
-                color: cs.outline,
+                color: retro.border,
               ),
             ),
             const SizedBox(height: 16),
             Text(
               'Mod not found',
               style: TextStyle(
-                color: cs.onSurface,
+                color: retro.ink,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
@@ -2257,7 +2214,7 @@ class _NotFoundView extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               'This mod may have been removed or the link is invalid.',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+              style: TextStyle(color: retro.inkDim, fontSize: 13),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -2282,23 +2239,23 @@ class _DetailError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Scaffold(
-      backgroundColor: cs.surface,
-      appBar: AppBar(backgroundColor: cs.surface),
+      backgroundColor: retro.background,
+      appBar: AppBar(backgroundColor: retro.background),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline_rounded, size: 48, color: cs.primary),
+              Icon(Icons.error_outline_rounded, size: 48, color: retro.accent),
               const SizedBox(height: 12),
               Text(
                 'Failed to load mod',
                 style: TextStyle(
-                  color: cs.onSurface,
+                  color: retro.ink,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),
@@ -2306,7 +2263,7 @@ class _DetailError extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 message,
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
+                style: TextStyle(color: retro.inkDim, fontSize: 12),
                 textAlign: TextAlign.center,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
@@ -2328,7 +2285,7 @@ class _InstallStatusBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     final modName = _sanitizeModTitle(modTitle);
     final state = ref.watch(bgInstallStateProvider);
     final info = state[modName];
@@ -2342,9 +2299,9 @@ class _InstallStatusBanner extends ConsumerWidget {
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: cs.primaryContainer.withValues(alpha: 0.6),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
+            color: retro.accent.withValues(alpha: 0.15),
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.accent.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
@@ -2354,7 +2311,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   value: progress > 0 ? progress / 100.0 : null,
-                  color: cs.primary,
+                  color: retro.accent,
                 ),
               ),
               const SizedBox(width: 12),
@@ -2365,7 +2322,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                     Text(
                       'Downloading mod...',
                       style: TextStyle(
-                        color: cs.onSurface,
+                        color: retro.ink,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -2374,7 +2331,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                     Text(
                       '$progress%',
                       style: TextStyle(
-                        color: cs.onSurfaceVariant,
+                        color: retro.inkDim,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -2394,9 +2351,9 @@ class _InstallStatusBanner extends ConsumerWidget {
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: cs.primaryContainer.withValues(alpha: 0.6),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
+            color: retro.accent.withValues(alpha: 0.15),
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.accent.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
@@ -2405,7 +2362,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                 height: 18,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: cs.primary,
+                  color: retro.accent,
                 ),
               ),
               const SizedBox(width: 12),
@@ -2416,7 +2373,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                     Text(
                       'Installing mod...',
                       style: TextStyle(
-                        color: cs.onSurface,
+                        color: retro.ink,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -2425,7 +2382,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                     Text(
                       progressText,
                       style: TextStyle(
-                        color: cs.onSurfaceVariant,
+                        color: retro.inkDim,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -2442,13 +2399,13 @@ class _InstallStatusBanner extends ConsumerWidget {
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: cs.primary.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
+            color: retro.accent.withValues(alpha: 0.08),
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.accent.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
-              Icon(Icons.check_circle_rounded, size: 20, color: cs.primary),
+              Icon(Icons.check_circle_rounded, size: 20, color: retro.accent),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -2457,7 +2414,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                     Text(
                       'Installation complete',
                       style: TextStyle(
-                        color: cs.onSurface,
+                        color: retro.ink,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -2466,7 +2423,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                     Text(
                       '${info.fileCount ?? 0} files extracted to "${info.targetDir ?? modName}"',
                       style: TextStyle(
-                        color: cs.onSurfaceVariant,
+                        color: retro.inkDim,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -2483,13 +2440,13 @@ class _InstallStatusBanner extends ConsumerWidget {
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: cs.errorContainer.withValues(alpha: 0.4),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: cs.error.withValues(alpha: 0.25)),
+            color: retro.red.withValues(alpha: 0.4),
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.red.withValues(alpha: 0.25)),
           ),
           child: Row(
             children: [
-              Icon(Icons.error_rounded, size: 20, color: cs.error),
+              Icon(Icons.error_rounded, size: 20, color: retro.red),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -2498,7 +2455,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                     Text(
                       'Installation failed',
                       style: TextStyle(
-                        color: cs.onSurface,
+                        color: retro.ink,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -2508,7 +2465,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                       Text(
                         info.error!,
                         style: TextStyle(
-                          color: cs.error,
+                          color: retro.red,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -2528,19 +2485,19 @@ class _InstallStatusBanner extends ConsumerWidget {
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: cs.surfaceContainerHigh.withValues(alpha: 0.6),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
+            color: retro.surfaceAlt.withValues(alpha: 0.6),
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.border.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
-              Icon(Icons.cancel_rounded, size: 20, color: cs.onSurfaceVariant),
+              Icon(Icons.cancel_rounded, size: 20, color: retro.inkDim),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   'Operation cancelled',
                   style: TextStyle(
-                    color: cs.onSurfaceVariant,
+                    color: retro.inkDim,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -2608,7 +2565,7 @@ String _inferFileName(String url, String modTitle, {int? index}) {
     }
 
     // 2. Si el último segmento NO es "download" y tiene nombre con valor,
-    //    añadir .zip (preserva puntos, ej: "cs-triple-baka-pack.418" → ".zip")
+    //    añadir .zip (preserva puntos, ej: "retro-triple-baka-pack.418" → ".zip")
     if (lastSegment.isNotEmpty &&
         lastSegment != 'download' &&
         _validFileExtension(lastSegment).isEmpty &&
