@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/theme/app_theme.dart';
+import '../../core/theme/retro_theme.dart';
 
 import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
@@ -37,11 +37,15 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/favourites'),
       appBar: AppBar(
-        title: const Text('Favourites'),
+        backgroundColor: retro.background,
+        surfaceTintColor: Colors.transparent,
+        title: Text('Favourites', style: retro.heading(size: 18)),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -50,14 +54,18 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
             Tab(text: 'DynOS'),
             Tab(text: 'Touch'),
           ],
-          indicatorColor: Theme.of(context).colorScheme.primary,
-          labelColor: Theme.of(context).colorScheme.primary,
-          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+          indicatorColor: retro.accent,
+          labelColor: retro.accent,
+          unselectedLabelColor: retro.inkDim,
+          indicator: UnderlineTabIndicator(
+            borderSide: BorderSide(color: retro.accent, width: 3),
+            insets: const EdgeInsets.symmetric(horizontal: 16),
+          ),
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
+        children: const [
           _ModsFavTab(),
           _VipFavTab(),
           _DynosFavTab(),
@@ -75,22 +83,14 @@ class _ModsFavTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final retro = RetroTheme.of(context);
     final favsAsync = ref.watch(favouriteModsProvider);
     return favsAsync.when(
       loading: () => Center(
-        child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        child: CircularProgressIndicator(color: retro.accent),
       ),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
-          style: TextStyle(
-            color: AppTheme.textMutedColor(
-              Theme.of(context).brightness == Brightness.dark,
-            ),
-          ),
-        ),
+        child: Text(e.toString(), style: retro.body(size: 13, color: retro.inkDim)),
       ),
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'mods');
@@ -118,22 +118,14 @@ class _VipFavTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final retro = RetroTheme.of(context);
     final favsAsync = ref.watch(favouriteVipModsProvider);
     return favsAsync.when(
       loading: () => Center(
-        child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        child: CircularProgressIndicator(color: retro.accent),
       ),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
-          style: TextStyle(
-            color: AppTheme.textMutedColor(
-              Theme.of(context).brightness == Brightness.dark,
-            ),
-          ),
-        ),
+        child: Text(e.toString(), style: retro.body(size: 13, color: retro.inkDim)),
       ),
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'VIP mods');
@@ -158,22 +150,14 @@ class _DynosFavTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final retro = RetroTheme.of(context);
     final favsAsync = ref.watch(favouriteDynosProvider);
     return favsAsync.when(
       loading: () => Center(
-        child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        child: CircularProgressIndicator(color: retro.accent),
       ),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
-          style: TextStyle(
-            color: AppTheme.textMutedColor(
-              Theme.of(context).brightness == Brightness.dark,
-            ),
-          ),
-        ),
+        child: Text(e.toString(), style: retro.body(size: 13, color: retro.inkDim)),
       ),
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'DynOS');
@@ -198,22 +182,14 @@ class _TouchFavTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final retro = RetroTheme.of(context);
     final favsAsync = ref.watch(favouriteTouchControlsProvider);
     return favsAsync.when(
       loading: () => Center(
-        child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        child: CircularProgressIndicator(color: retro.accent),
       ),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
-          style: TextStyle(
-            color: AppTheme.textMutedColor(
-              Theme.of(context).brightness == Brightness.dark,
-            ),
-          ),
-        ),
+        child: Text(e.toString(), style: retro.body(size: 13, color: retro.inkDim)),
       ),
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'Touch Controls');
@@ -239,6 +215,8 @@ class _EmptyFavourites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -247,41 +225,22 @@ class _EmptyFavourites extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(36),
+              color: retro.surfaceAlt,
+              borderRadius: RetroTheme.radius,
+              border: Border.all(color: retro.accent, width: 2),
             ),
-            child: Icon(
-              Icons.favorite_border_rounded,
-              size: 36,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            child: Icon(Icons.favorite_border, size: 36, color: retro.accent),
           ),
           const SizedBox(height: 16),
-          Text(
-            'No $type favourited yet',
-            style: TextStyle(
-              color: AppTheme.textPrimaryColor(
-                Theme.of(context).brightness == Brightness.dark,
-              ),
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          Text('No $type favourited yet', style: retro.heading(size: 18)),
           const SizedBox(height: 8),
           Text(
-            'Tap ❤️ on any $type to save it here.',
-            style: TextStyle(
-              color: AppTheme.textMutedColor(
-                Theme.of(context).brightness == Brightness.dark,
-              ),
-              fontSize: 13,
-            ),
+            'Tap \u2764\ufe0f on any $type to save it here.',
+            style: retro.body(size: 13),
           ),
           const SizedBox(height: 24),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.explore_rounded, size: 18),
-            label: const Text('Browse'),
-            onPressed: () => context.go(
+          GestureDetector(
+            onTap: () => context.go(
               type == 'mods'
                   ? '/'
                   : type == 'VIP mods'
@@ -289,6 +248,25 @@ class _EmptyFavourites extends StatelessWidget {
                       : type == 'DynOS'
                           ? '/dynos'
                           : '/touch-controls',
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+              decoration: BoxDecoration(
+                color: retro.accent,
+                borderRadius: RetroTheme.radius,
+                boxShadow: retro.hardShadow(dx: 3, dy: 3),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.explore, size: 18, color: retro.background),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Browse',
+                    style: retro.heading(size: 12, color: retro.background),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

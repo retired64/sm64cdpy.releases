@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/retro_theme.dart';
 import '../widgets/app_drawer.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -17,10 +18,16 @@ class ChangelogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/changelog'),
-      appBar: AppBar(title: const Text('Changelog')),
+      appBar: AppBar(
+        backgroundColor: retro.background,
+        surfaceTintColor: Colors.transparent,
+        title: Text('Changelog', style: retro.heading(size: 18)),
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         itemCount: _kVersions.length,
@@ -83,36 +90,24 @@ class _VersionCardState extends State<_VersionCard>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final retro = RetroTheme.of(context);
 
     return Container(
       decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
         border: Border.all(
-          color: widget.isLatest
-              ? cs.primary.withValues(alpha: isDark ? 0.40 : 0.30)
-              : cs.outline.withValues(alpha: 0.35),
-          width: widget.isLatest ? 1.2 : 0.8,
+          color: widget.isLatest ? retro.accent : retro.border,
+          width: widget.isLatest ? 3 : 2,
         ),
-        boxShadow: widget.isLatest
-            ? [
-                BoxShadow(
-                  color: cs.primary.withValues(alpha: isDark ? 0.10 : 0.06),
-                  blurRadius: 12,
-                  offset: const Offset(0, 3),
-                ),
-              ]
-            : null,
+        boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // ── Header — siempre visible, tappable ──────────────────────────
-          InkWell(
+          GestureDetector(
             onTap: _toggle,
-            borderRadius: BorderRadius.circular(14),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
               child: Row(
@@ -126,18 +121,15 @@ class _VersionCardState extends State<_VersionCard>
                           children: [
                             Text(
                               'v${widget.version.version}',
-                              style: TextStyle(
-                                color: cs.onSurface,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -0.2,
-                              ),
+                              style: retro.heading(size: 15),
                             ),
                             if (widget.version.tag != null) ...[
                               const SizedBox(width: 8),
-                              _Tag(
+                              RetroTag(
+                                retro: retro,
                                 label: widget.version.tag!,
-                                isLatest: widget.isLatest,
+                                filled: widget.isLatest,
+                                dense: true,
                               ),
                             ],
                           ],
@@ -145,11 +137,7 @@ class _VersionCardState extends State<_VersionCard>
                         const SizedBox(height: 2),
                         Text(
                           widget.version.date,
-                          style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: retro.body(size: 11),
                         ),
                       ],
                     ),
@@ -161,8 +149,8 @@ class _VersionCardState extends State<_VersionCard>
                     duration: const Duration(milliseconds: 240),
                     curve: Curves.easeOutCubic,
                     child: Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: cs.onSurfaceVariant,
+                      Icons.keyboard_arrow_down,
+                      color: retro.inkDim,
                       size: 22,
                     ),
                   ),
@@ -179,9 +167,9 @@ class _VersionCardState extends State<_VersionCard>
               children: [
                 // Divisor
                 Container(
-                  height: 0.8,
+                  height: 1.5,
                   margin: const EdgeInsets.symmetric(horizontal: 16),
-                  color: cs.outline.withValues(alpha: 0.25),
+                  color: retro.border.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 12),
 
@@ -206,7 +194,7 @@ class _ChangeGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -244,7 +232,7 @@ class _ChangeGroup extends StatelessWidget {
                       width: 4,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: cs.onSurfaceVariant.withValues(alpha: 0.45),
+                        color: retro.inkDim.withValues(alpha: 0.45),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -254,7 +242,7 @@ class _ChangeGroup extends StatelessWidget {
                     child: Text(
                       item,
                       style: TextStyle(
-                        color: cs.onSurfaceVariant,
+                        color: retro.inkDim,
                         fontSize: 13,
                         height: 1.5,
                       ),
@@ -265,36 +253,6 @@ class _ChangeGroup extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Etiqueta de versión (Latest, Beta, etc.)
-// ─────────────────────────────────────────────────────────────────────────────
-class _Tag extends StatelessWidget {
-  const _Tag({required this.label, required this.isLatest});
-  final String label;
-  final bool isLatest;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: isLatest ? cs.primaryContainer : cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isLatest ? cs.primary : cs.onSurfaceVariant,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.3,
-        ),
       ),
     );
   }

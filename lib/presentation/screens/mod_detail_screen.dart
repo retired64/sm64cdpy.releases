@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/theme/app_theme.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
@@ -2113,7 +2112,6 @@ class _DetailSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final retro = RetroTheme.of(context);
 
     return Scaffold(
@@ -2121,20 +2119,20 @@ class _DetailSkeleton extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
         children: [
-          _Shimmer(height: 300, isDark: isDark),
+          _Shimmer(height: 300),
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Shimmer(height: 28, isDark: isDark),
+                _Shimmer(height: 28),
                 const SizedBox(height: 10),
-                _Shimmer(height: 16, width: 160, isDark: isDark),
+                _Shimmer(height: 16, width: 160),
                 const SizedBox(height: 20),
-                _Shimmer(height: 80, isDark: isDark),
+                _Shimmer(height: 80),
                 const SizedBox(height: 20),
-                _Shimmer(height: 54, isDark: isDark),
+                _Shimmer(height: 54),
               ],
             ),
           ),
@@ -2146,23 +2144,21 @@ class _DetailSkeleton extends StatelessWidget {
 }
 
 class _Shimmer extends StatelessWidget {
-  const _Shimmer({required this.height, required this.isDark, this.width});
+  const _Shimmer({required this.height, this.width});
 
   final double height;
-  final bool isDark;
   final double? width;
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Shimmer.fromColors(
-      baseColor: isDark ? AppTheme.darkShimmerBase : AppTheme.lightShimmerBase,
-      highlightColor: isDark
-          ? AppTheme.darkShimmerHighlight
-          : AppTheme.lightShimmerHighlight,
+      baseColor: retro.surfaceAlt,
+      highlightColor: retro.surface,
       child: Container(
         width: width ?? double.infinity,
         height: height,
-        decoration: const BoxDecoration(color: Colors.white),
+        decoration: BoxDecoration(color: retro.surface, borderRadius: RetroTheme.radius),
       ),
     );
   }

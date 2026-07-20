@@ -1,0 +1,60 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE066"/>
+      <stop offset="50%" stop-color="#FFC400"/>
+      <stop offset="100%" stop-color="#D97A00"/>
+    </linearGradient>
+    <linearGradient id="blockInnerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3C4"/>
+      <stop offset="100%" stop-color="#FFD24D"/>
+    </linearGradient>
+    <radialGradient id="warnGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF176" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFF176" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Aura de advertencia pulsante -->
+  <circle cx="32" cy="32" r="22" fill="url(#warnGlow)">
+    <animate attributeName="r" values="17;23;17" dur="1s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.35;0.8;0.35" dur="1s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Grupo que rebota tipo bloque golpeado -->
+  <g id="bounceGroup">
+    <animateTransform
+      attributeName="transform"
+      type="translate"
+      values="0,0; 0,-5; 0,0; 0,-1.5; 0,0"
+      keyTimes="0;0.25;0.45;0.7;1"
+      dur="1.1s"
+      repeatCount="indefinite"/>
+
+    <!-- Bloque tipo "!" de Super Mario 64 -->
+    <g>
+      <rect x="14" y="14" width="36" height="36" rx="4" fill="url(#blockGrad)" stroke="#7A4A00" stroke-width="2.5"/>
+      <rect x="19" y="19" width="26" height="26" rx="2" fill="url(#blockInnerGrad)" stroke="#B87A00" stroke-width="1.5"/>
+
+      <!-- remaches en las esquinas, como bloques clasicos -->
+      <circle cx="19" cy="19" r="2" fill="#7A4A00" opacity="0.5"/>
+      <circle cx="45" cy="19" r="2" fill="#7A4A00" opacity="0.5"/>
+      <circle cx="19" cy="45" r="2" fill="#7A4A00" opacity="0.5"/>
+      <circle cx="45" cy="45" r="2" fill="#7A4A00" opacity="0.5"/>
+
+      <!-- Signo de exclamacion -->
+      <rect x="29" y="22" width="6" height="14" rx="3" fill="#7A4A00"/>
+      <circle cx="32" cy="40" r="3.4" fill="#7A4A00"/>
+    </g>
+
+    <!-- Destellos -->
+    <g fill="#FFFFFF">
+      <polygon points="50,12 50.7,14 52.7,14.7 50.7,15.4 50,17.4 49.3,15.4 47.3,14.7 49.3,14" opacity="0">
+        <animate attributeName="opacity" values="0;1;0" dur="1.1s" begin="0.15s" repeatCount="indefinite"/>
+      </polygon>
+      <polygon points="12,50 12.7,52 14.7,52.7 12.7,53.4 12,55.4 11.3,53.4 9.3,52.7 11.3,52" opacity="0">
+        <animate attributeName="opacity" values="0;1;0" dur="1.1s" begin="0.55s" repeatCount="indefinite"/>
+      </polygon>
+    </g>
+  </g>
+</svg>

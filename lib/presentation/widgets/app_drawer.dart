@@ -95,7 +95,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     index: 1,
                     ctrl: _staggerCtrl,
                     child: _NavItem(
-                      icon: Icons.home_rounded,
+                      iconBuilder: (color) => SvgPicture.asset(
+                        'assets/icons/menu/m64.svg',
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        width: 19,
+                        height: 19,
+                      ),
                       label: 'Home',
                       route: '/',
                       isActive: widget.currentRoute == '/',
@@ -105,7 +110,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     index: 2,
                     ctrl: _staggerCtrl,
                     child: _NavItem(
-                      icon: Icons.apps_rounded,
+                      iconBuilder: (color) => SvgPicture.asset(
+                        'assets/icons/menu/catalog.svg',
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        width: 19,
+                        height: 19,
+                      ),
                       label: 'catalog',
                       route: '/catalogue',
                       isActive: widget.currentRoute == '/catalogue',
@@ -115,7 +125,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     index: 3,
                     ctrl: _staggerCtrl,
                     child: _NavItem(
-                      icon: Icons.favorite_rounded,
+                      iconBuilder: (color) => SvgPicture.asset(
+                        'assets/icons/menu/favorites.svg',
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        width: 19,
+                        height: 19,
+                      ),
                       label: 'Favourites',
                       route: '/favourites',
                       isActive: widget.currentRoute == '/favourites',
@@ -125,7 +140,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     index: 4,
                     ctrl: _staggerCtrl,
                     child: _NavItem(
-                      icon: Icons.local_fire_department_rounded,
+                      iconBuilder: (color) => SvgPicture.asset(
+                        'assets/icons/menu/popular.svg',
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        width: 19,
+                        height: 19,
+                      ),
                       label: 'Popular',
                       route: '/popular',
                       isActive: widget.currentRoute == '/popular',
@@ -153,7 +173,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     index: 6,
                     ctrl: _staggerCtrl,
                     child: _NavItem(
-                      icon: Icons.star_rounded,
+                      iconBuilder: (color) => SvgPicture.asset(
+                        'assets/icons/menu/vip.svg',
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        width: 19,
+                        height: 19,
+                      ),
                       label: 'VIP Mods',
                       route: '/vip',
                       isActive: widget.currentRoute == '/vip',
@@ -164,7 +189,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     index: 7,
                     ctrl: _staggerCtrl,
                     child: _NavItem(
-                      icon: Icons.rocket_launch_rounded,
+                      iconBuilder: (color) => SvgPicture.asset(
+                        'assets/icons/menu/dynos.svg',
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        width: 19,
+                        height: 19,
+                      ),
                       label: 'DynOS',
                       route: '/dynos',
                       isActive: widget.currentRoute == '/dynos',
@@ -175,7 +205,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     index: 8,
                     ctrl: _staggerCtrl,
                     child: _NavItem(
-                      icon: Icons.touch_app_rounded,
+                      iconBuilder: (color) => SvgPicture.asset(
+                        'assets/icons/menu/controls.svg',
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        width: 19,
+                        height: 19,
+                      ),
                       label: 'Touch Controls',
                       route: '/touch-controls',
                       isActive: widget.currentRoute == '/touch-controls',
@@ -185,7 +220,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     index: 9,
                     ctrl: _staggerCtrl,
                     child: _NavItem(
-                      icon: Icons.auto_awesome_rounded,
+                      iconBuilder: (color) => SvgPicture.asset(
+                        'assets/icons/menu/omm.svg',
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        width: 19,
+                        height: 19,
+                      ),
                       label: 'OMMR PACK',
                       route: '/omm-rebirth',
                       isActive: widget.currentRoute == '/omm-rebirth',
@@ -226,25 +266,45 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                   const _SocialLinks(),
                   _RetroDivider(retro: retro),
                   _NavItem(
-                    icon: Icons.link_rounded,
+                    iconBuilder: (color) => SvgPicture.asset(
+                      'assets/icons/menu/links-resource.svg',
+                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                      width: 19,
+                      height: 19,
+                    ),
                     label: 'Links Resource',
                     route: '/links-resource',
                     isActive: widget.currentRoute == '/links-resource',
                   ),
                   _NavItem(
-                    icon: Icons.info_outline_rounded,
+                    iconBuilder: (color) => SvgPicture.asset(
+                      'assets/icons/menu/disclaimer.svg',
+                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                      width: 19,
+                      height: 19,
+                    ),
                     label: 'Disclaimer',
                     route: '/disclaimer',
                     isActive: widget.currentRoute == '/disclaimer',
                   ),
                   _NavItem(
-                    icon: Icons.history_rounded,
+                    iconBuilder: (color) => SvgPicture.asset(
+                      'assets/icons/menu/changelogs.svg',
+                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                      width: 19,
+                      height: 19,
+                    ),
                     label: 'Changelog',
                     route: '/changelog',
                     isActive: widget.currentRoute == '/changelog',
                   ),
                   _NavItem(
-                    icon: Icons.settings_rounded,
+                    iconBuilder: (color) => SvgPicture.asset(
+                      'assets/icons/menu/settings.svg',
+                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                      width: 19,
+                      height: 19,
+                    ),
                     label: 'Settings',
                     route: '/settings',
                     isActive: widget.currentRoute == '/settings',
@@ -362,14 +422,14 @@ class _DrawerHeader extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 class _NavItem extends StatefulWidget {
   const _NavItem({
-    required this.icon,
+    required this.iconBuilder,
     required this.label,
     required this.route,
     required this.isActive,
     this.accentColor,
   });
 
-  final IconData icon;
+  final Widget Function(Color color) iconBuilder;
   final String label;
   final String route;
   final bool isActive;
@@ -450,11 +510,11 @@ class _NavItemState extends State<_NavItem>
                     children: [
                       AnimatedSwitcher(
                         duration: _kItemDuration,
-                        child: Icon(
-                          widget.icon,
+                        child: SizedBox(
+                          width: 19,
+                          height: 19,
                           key: ValueKey(widget.isActive),
-                          color: fg,
-                          size: 19,
+                          child: widget.iconBuilder(fg),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -521,7 +581,7 @@ class _CategoryList extends ConsumerWidget {
             letterSpacing: 0.4,
           ),
         ),
-        leading: Icon(Icons.category_rounded, size: 19, color: retro.inkDim),
+        leading: Icon(Icons.category, size: 19, color: retro.inkDim),
         children: CategoryConstants.allCategories
             .map(
               (cat) => _CategoryItem(
@@ -643,7 +703,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check_rounded, size: 14, color: retro.background),
+                child: Icon(Icons.check, size: 14, color: retro.background),
               ),
             ],
           ),
@@ -698,7 +758,7 @@ class _SortOptions extends ConsumerWidget {
             letterSpacing: 0.4,
           ),
         ),
-        leading: Icon(Icons.sort_rounded, size: 19, color: retro.inkDim),
+        leading: Icon(Icons.sort, size: 19, color: retro.inkDim),
         children: _items
             .map(
               (item) => _SortItem(
@@ -808,7 +868,7 @@ class _SortItemState extends ConsumerState<_SortItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check_rounded, size: 14, color: retro.background),
+                child: Icon(Icons.check, size: 14, color: retro.background),
               ),
             ],
           ),

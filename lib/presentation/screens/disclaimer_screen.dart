@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/theme/retro_theme.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_snackbar.dart';
 
@@ -89,13 +90,14 @@ class _DisclaimerScreenState extends State<DisclaimerScreen>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final retro = RetroTheme.of(context);
 
     return Scaffold(
-      backgroundColor: cs.surface,
+      backgroundColor: retro.background,
       drawer: const AppDrawer(currentRoute: '/disclaimer'),
       appBar: AppBar(
+        backgroundColor: retro.background,
+        surfaceTintColor: Colors.transparent,
         title: AnimatedSwitcher(
           duration: const Duration(milliseconds: 240),
           child: Text(
@@ -120,7 +122,7 @@ class _DisclaimerScreenState extends State<DisclaimerScreen>
               }
               return Opacity(opacity: opacity.clamp(0.0, 1.0), child: child);
             },
-            child: _DisclaimerBody(isSpanish: _isSpanish, isDark: isDark),
+            child: _DisclaimerBody(isSpanish: _isSpanish),
           ),
 
           // ── Bottom gradient scrim so content fades behind the button ────
@@ -135,7 +137,7 @@ class _DisclaimerScreenState extends State<DisclaimerScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [cs.surface.withValues(alpha: 0), cs.surface],
+                    colors: [retro.background.withValues(alpha: 0), retro.background],
                   ),
                 ),
               ),
@@ -151,7 +153,6 @@ class _DisclaimerScreenState extends State<DisclaimerScreen>
               isSpanish: _isSpanish,
               pulse: _pulse,
               pulseCtrl: _pulseCtrl,
-              isDark: isDark,
               onTap: _toggleLanguage,
             ),
           ),
@@ -166,18 +167,19 @@ class _DisclaimerScreenState extends State<DisclaimerScreen>
 // wrapper, not the entire subtree on every animation tick.
 // ─────────────────────────────────────────────────────────────────────────────
 class _DisclaimerBody extends StatelessWidget {
-  const _DisclaimerBody({required this.isSpanish, required this.isDark});
+  const _DisclaimerBody({required this.isSpanish});
   final bool isSpanish;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 8),
-        _HeroBadge(isSpanish: isSpanish, isDark: isDark),
+        _HeroBadge(isSpanish: isSpanish),
         const SizedBox(height: 28),
 
         // Sections
@@ -193,11 +195,11 @@ class _DisclaimerBody extends StatelessWidget {
         ),
         const SizedBox(height: 8),
 
-        _WarningBanner(isSpanish: isSpanish, isDark: isDark),
+        _WarningBanner(isSpanish: isSpanish),
         const SizedBox(height: 20),
 
         // ── What's new badge ───────────────────────────────────────────
-        _WhatsNewBanner(isSpanish: isSpanish, isDark: isDark),
+        _WhatsNewBanner(isSpanish: isSpanish),
         const SizedBox(height: 28),
 
         _SectionLabel(
@@ -219,14 +221,7 @@ class _DisclaimerBody extends StatelessWidget {
             isSpanish
                 ? 'v1.4.2 \u00b7 para uso personal \u00b7 No oficial'
                 : 'v1.4.2 \u00b7 for personal use \u00b7 Unofficial',
-            style: TextStyle(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.50),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.2,
-            ),
+            style: retro.body(size: 11),
             textAlign: TextAlign.center,
           ),
         ),
@@ -357,75 +352,49 @@ const _sectionsEs = [
 // Hero badge
 // ─────────────────────────────────────────────────────────────────────────────
 class _HeroBadge extends StatelessWidget {
-  const _HeroBadge({required this.isSpanish, required this.isDark});
+  const _HeroBadge({required this.isSpanish});
   final bool isSpanish;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     return Column(
       children: [
         Container(
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: cs.primaryContainer,
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: [
-              BoxShadow(
-                color: cs.primary.withValues(alpha: isDark ? 0.22 : 0.13),
-                blurRadius: 20,
-                offset: const Offset(0, 7),
-              ),
-            ],
+            color: retro.surface,
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.border, width: 2.5),
+            boxShadow: retro.hardShadow(),
           ),
-          child: Icon(Icons.info_outline_rounded, size: 38, color: cs.primary),
+          child: Icon(Icons.info_outline, size: 38, color: retro.accent),
         ),
         const SizedBox(height: 16),
         Text(
           isSpanish ? 'App No Oficial' : 'Unofficial Fan-Made',
-          style: TextStyle(
-            color: cs.onSurface,
-            fontSize: 22,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -0.3,
-          ),
+          style: retro.heading(size: 22),
         ),
         const SizedBox(height: 5),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: cs.primaryContainer.withValues(alpha: 0.55),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            'SM64CoopDX Mods Manager',
-            style: TextStyle(
-              color: cs.primary,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.4,
-            ),
-          ),
+        RetroTag(
+          retro: retro,
+          label: 'SM64CoopDX Mods Manager',
+          filled: true,
+          dense: true,
         ),
         const SizedBox(height: 8),
         // Version pill
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
           decoration: BoxDecoration(
-            color: cs.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
+            color: retro.surface,
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.border, width: 1),
           ),
           child: Text(
             'v1.4.2',
-            style: TextStyle(
-              color: cs.onSurfaceVariant,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-            ),
+            style: retro.body(size: 11),
           ),
         ),
       ],
@@ -437,40 +406,39 @@ class _HeroBadge extends StatelessWidget {
 // What's new banner — v1.4.2
 // ─────────────────────────────────────────────────────────────────────────────
 class _WhatsNewBanner extends StatelessWidget {
-  const _WhatsNewBanner({required this.isSpanish, required this.isDark});
+  const _WhatsNewBanner({required this.isSpanish});
   final bool isSpanish;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     final items = isSpanish
         ? [
             (
-              Icons.phone_android_rounded,
+              Icons.phone_android,
               'Descarga e instalación en segundo plano — notificación persistente con progreso real y botón de cancelar',
             ),
             (
-              Icons.notifications_active_rounded,
+              Icons.notifications_active,
               'Notificaciones de progreso aunque salgas de la app — descarga, instalación, cancelación y reintento',
             ),
             (
-              Icons.folder_zip_rounded,
+              Icons.folder_zip,
               'ZIP copiado automáticamente a la carpeta de mods cuando auto-instalación está desactivada',
             ),
           ]
         : [
             (
-              Icons.phone_android_rounded,
+              Icons.phone_android,
               'Background download & install — persistent notification with real progress and cancel button',
             ),
             (
-              Icons.notifications_active_rounded,
+              Icons.notifications_active,
               'Progress notifications even outside the app — download, install, cancel, and retry',
             ),
             (
-              Icons.folder_zip_rounded,
+              Icons.folder_zip,
               'ZIP auto-copied to mods folder when auto-install is off',
             ),
           ];
@@ -478,23 +446,22 @@ class _WhatsNewBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
       decoration: BoxDecoration(
-        color: cs.secondaryContainer.withValues(alpha: isDark ? 0.28 : 0.20),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: cs.secondary.withValues(alpha: isDark ? 0.30 : 0.20),
-        ),
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.amber, width: 1.5),
+        boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.new_releases_rounded, size: 16, color: cs.secondary),
+              Icon(Icons.new_releases, size: 16, color: retro.amber),
               const SizedBox(width: 8),
               Text(
                 isSpanish ? 'Novedades en v1.4.2' : "What's new in v1.4.2",
                 style: TextStyle(
-                  color: cs.onSurface,
+                  color: retro.ink,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
                 ),
@@ -508,13 +475,13 @@ class _WhatsNewBanner extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(item.$1, size: 14, color: cs.secondary),
+                  Icon(item.$1, size: 14, color: retro.amber),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       item.$2,
                       style: TextStyle(
-                        color: cs.onSurfaceVariant,
+                        color: retro.inkDim,
                         fontSize: 12.5,
                         height: 1.4,
                         fontWeight: FontWeight.w500,
@@ -546,16 +513,14 @@ class _DisclaimerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
       decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: cs.outline.withValues(alpha: 0.40),
-          width: 0.8,
-        ),
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.border, width: 2),
+        boxShadow: retro.hardShadow(dx: 2, dy: 2),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -564,33 +529,20 @@ class _DisclaimerSection extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: cs.primaryContainer.withValues(alpha: 0.55),
-              borderRadius: BorderRadius.circular(10),
+              color: retro.surfaceAlt,
+              borderRadius: RetroTheme.radius,
+              border: Border.all(color: retro.accent, width: 1.5),
             ),
-            child: Icon(icon, size: 18, color: cs.primary),
+            child: Icon(icon, size: 18, color: retro.accent),
           ),
           const SizedBox(width: 13),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: cs.onSurface,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                Text(title, style: retro.heading(size: 13)),
                 const SizedBox(height: 5),
-                Text(
-                  body,
-                  style: TextStyle(
-                    color: cs.onSurfaceVariant,
-                    fontSize: 12.5,
-                    height: 1.56,
-                  ),
-                ),
+                Text(body, style: retro.body(size: 12.5, height: 1.56)),
               ],
             ),
           ),
@@ -604,26 +556,24 @@ class _DisclaimerSection extends StatelessWidget {
 // Warning banner
 // ─────────────────────────────────────────────────────────────────────────────
 class _WarningBanner extends StatelessWidget {
-  const _WarningBanner({required this.isSpanish, required this.isDark});
+  const _WarningBanner({required this.isSpanish});
   final bool isSpanish;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: cs.primaryContainer.withValues(alpha: isDark ? 0.32 : 0.22),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: cs.primary.withValues(alpha: isDark ? 0.28 : 0.18),
-        ),
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.red, width: 2),
+        boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.warning_amber_rounded, size: 20, color: cs.primary),
+          Icon(Icons.warning_amber, size: 20, color: retro.red),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -638,7 +588,7 @@ class _WarningBanner extends StatelessWidget {
                         'developer. The SM64CoopDX developers and mod creators '
                         'bear no responsibility whatsoever for this application.',
               style: TextStyle(
-                color: cs.onSurface,
+                color: retro.ink,
                 fontSize: 12,
                 height: 1.55,
                 fontWeight: FontWeight.w500,
@@ -659,15 +609,10 @@ class _SectionLabel extends StatelessWidget {
   final String label;
 
   @override
-  Widget build(BuildContext context) => Text(
-    label.toUpperCase(),
-    style: TextStyle(
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
-      fontSize: 10,
-      fontWeight: FontWeight.w800,
-      letterSpacing: 1.5,
-    ),
-  );
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    return Text(label.toUpperCase(), style: retro.heading(size: 10, color: retro.inkDim, letterSpacing: 1.5));
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -729,9 +674,8 @@ class _ContactButtonState extends State<_ContactButton>
 
   @override
   Widget build(BuildContext context) {
-    // Discord brand colours — theme-agnostic
+    final retro = RetroTheme.of(context);
     const blurple = Color(0xFF5865F2);
-    const blurpleDark = Color(0xFF4752C4);
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -761,19 +705,10 @@ class _ContactButtonState extends State<_ContactButton>
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [blurple, blurpleDark],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: blurple.withValues(alpha: 0.30),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                color: blurple,
+                borderRadius: RetroTheme.radius,
+                border: Border.all(color: retro.border, width: 2.5),
+                boxShadow: retro.hardShadow(dx: 4, dy: 4),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
@@ -797,14 +732,14 @@ class _ContactButtonState extends State<_ContactButton>
                     height: 30,
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: RetroTheme.radius,
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.22),
                         width: 0.8,
                       ),
                     ),
                     child: const Icon(
-                      Icons.arrow_forward_ios_rounded,
+                      Icons.arrow_forward_ios,
                       size: 13,
                       color: Colors.white,
                     ),
@@ -827,13 +762,11 @@ class _TranslateButton extends StatefulWidget {
     required this.isSpanish,
     required this.pulse,
     required this.pulseCtrl,
-    required this.isDark,
     required this.onTap,
   });
   final bool isSpanish;
   final Animation<double> pulse;
   final AnimationController pulseCtrl;
-  final bool isDark;
   final VoidCallback onTap;
 
   @override
@@ -867,7 +800,7 @@ class _TranslateButtonState extends State<_TranslateButton>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final retro = RetroTheme.of(context);
 
     return AnimatedBuilder(
       animation: Listenable.merge([widget.pulse, _pressCtrl]),
@@ -887,30 +820,16 @@ class _TranslateButtonState extends State<_TranslateButton>
             child: Container(
               height: 54,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    cs.primary,
-                    Color.lerp(cs.primary, cs.secondary, 0.38)!,
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: cs.primary.withValues(
-                      alpha: widget.isDark ? 0.42 : 0.30,
-                    ),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                color: retro.accent,
+                borderRadius: RetroTheme.radius,
+                border: Border.all(color: retro.border, width: 2.5),
+                boxShadow: retro.hardShadow(dx: 4, dy: 4),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
-                    Icons.translate_rounded,
+                    Icons.translate,
                     color: Colors.white,
                     size: 18,
                   ),
