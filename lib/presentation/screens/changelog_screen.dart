@@ -321,9 +321,25 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.4.3',
+    version: '1.4.4',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Complete retro redesign — all screens and widgets migrated to the new RetroTheme with navy/cream/teal palette, Lato typography, hard drop shadows, and square borders.',
+          'Custom SVG icons throughout the navigation drawer and home screen (13 hand‑crafted icons, native colours, no colour filters applied).',
+          'Drawer performance overhaul for low‑end devices: single global fade instead of 14 individual opacity layers (~14× fewer GPU compositing layers), lazy‑built category and sort option lists, and reduced stagger duration from 500 ms to 420 ms.',
+          'Sort options in the drawer now display clean text labels only (emoji decorations removed to match the retro aesthetic).',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.4.3',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,

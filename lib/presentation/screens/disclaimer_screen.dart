@@ -219,8 +219,8 @@ class _DisclaimerBody extends StatelessWidget {
         Center(
           child: Text(
             isSpanish
-                ? 'v1.4.2 \u00b7 para uso personal \u00b7 No oficial'
-                : 'v1.4.2 \u00b7 for personal use \u00b7 Unofficial',
+                ? 'v1.4.4 \u00b7 para uso personal \u00b7 No oficial'
+                : 'v1.4.4 \u00b7 for personal use \u00b7 Unofficial',
             style: retro.body(size: 11),
             textAlign: TextAlign.center,
           ),
