@@ -7,18 +7,29 @@ import 'app_drawer.dart';
 
 const _noHalftoneRoutes = {'/', '/favourites', '/changelog', '/disclaimer'};
 
-class AppShell extends ConsumerWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key, required this.currentRoute, required this.child});
 
   final String currentRoute;
   final Widget child;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final retro = RetroTheme.of(context);
-    final showHalftone = !_noHalftoneRoutes.contains(currentRoute);
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
 
-    ref.read(currentRouteProvider.notifier).set(currentRoute);
+class _AppShellState extends ConsumerState<AppShell> {
+  @override
+  void didUpdateWidget(covariant AppShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentRoute != oldWidget.currentRoute) {
+      ref.read(currentRouteProvider.notifier).set(widget.currentRoute);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final showHalftone = !_noHalftoneRoutes.contains(widget.currentRoute);
 
     return Scaffold(
       backgroundColor: retro.background,
@@ -31,10 +42,10 @@ class AppShell extends ConsumerWidget {
                     color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
                   ),
                 ),
-                child,
+                widget.child,
               ],
             )
-          : child,
+          : widget.child,
     );
   }
 }

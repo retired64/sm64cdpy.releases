@@ -100,6 +100,22 @@ final allModsProvider = FutureProvider<List<ModEntity>>((ref) async {
   return ref.watch(modRepositoryProvider).getAll();
 });
 
+// ── Home-screen built-in models ─────────────────────────────────────────────────
+
+final featuredModsProvider = Provider<AsyncValue<List<ModEntity>>>((ref) {
+  return ref.watch(allModsProvider).whenData(
+    (mods) => mods.where((m) => m.isFeatured).toList(),
+  );
+});
+
+final topModsProvider = Provider<AsyncValue<List<ModEntity>>>((ref) {
+  return ref.watch(allModsProvider).whenData(
+    (mods) => ([...mods]..sort((a, b) => b.downloads.compareTo(a.downloads)))
+        .take(5)
+        .toList(),
+  );
+});
+
 // ── Sort options ──────────────────────────────────────────────────────────────
 
 enum SortOrder { none, ratingDesc, downloadsDesc, newest }

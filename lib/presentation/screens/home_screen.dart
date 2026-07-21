@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -23,58 +22,73 @@ class HomeScreen extends ConsumerWidget {
     return allAsync.when(
       loading: () => const _HomeSkeleton(),
       error: (e, _) => _HomeError(message: e.toString()),
-      data: (mods) => _HomeBody(mods: mods),
+      data: (_) => const _HomeBody(),
     );
   }
 }
 
 // ── Body ──────────────────────────────────────────────────────────────────────
 
-class _HomeBody extends StatelessWidget {
-  const _HomeBody({required this.mods});
-
-  final List<ModEntity> mods;
+class _HomeBody extends ConsumerWidget {
+  const _HomeBody();
 
   @override
-  Widget build(BuildContext context) {
-    final featuredMods = mods.where((m) => m.isFeatured).toList();
-    final topMods = ([
-      ...mods,
-    ]..sort((a, b) => b.downloads.compareTo(a.downloads))).take(5).toList();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final featuredAsync = ref.watch(featuredModsProvider);
+    final topAsync = ref.watch(topModsProvider);
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
         // ── Custom app bar ────────────────────────────────────
-        _HomeAppBar(),
+        const _HomeAppBar(),
 
         // ── Featured carousel ─────────────────────────────────
-        if (featuredMods.isNotEmpty)
-          SliverToBoxAdapter(child: _FeaturedCarousel(mods: featuredMods)),
-
-        // ── Quick access ──────────────────────────────────────
-        const SliverToBoxAdapter(child: SizedBox(height: 28)),
         SliverToBoxAdapter(
-          child: _SectionHeader(
-            title: 'Browse',
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: RepaintBoundary(
+            child: featuredAsync.maybeWhen(
+              data: (mods) =>
+                  mods.isNotEmpty ? _FeaturedCarousel(mods: mods) : null,
+              orElse: () => null,
+            ),
           ),
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 12)),
+        if (featuredAsync.maybeWhen(
+              data: (mods) => mods.isNotEmpty,
+              orElse: () => false,
+            ))
+          const SliverToBoxAdapter(child: SizedBox(height: 14)),
+
+        // ── Quick access ──────────────────────────────────────
+        const SliverToBoxAdapter(
+          child: _SectionHeader(title: 'Browse'),
+        ),
         const SliverToBoxAdapter(child: _QuickAccessGrid()),
 
+        // ── Exclusive content ─────────────────────────────────
+        const SliverToBoxAdapter(child: SizedBox(height: 12)),
+        const SliverToBoxAdapter(
+          child: _SectionHeader(title: 'Exclusive Content'),
+        ),
+        const SliverToBoxAdapter(child: _ExclusiveSection()),
+
         // ── Top downloads ─────────────────────────────────────
-        const SliverToBoxAdapter(child: SizedBox(height: 28)),
+        const SliverToBoxAdapter(child: SizedBox(height: 12)),
         SliverToBoxAdapter(
           child: _SectionHeader(
             title: 'Top Downloads',
             actionLabel: 'See all',
             onAction: () => context.go('/popular'),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
           ),
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverToBoxAdapter(child: _TopDownloads(mods: topMods)),
+        SliverToBoxAdapter(
+          child: _TopDownloads(
+            mods: topAsync.maybeWhen(
+              data: (mods) => mods,
+              orElse: () => <ModEntity>[],
+            ),
+          ),
+        ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
         const SliverToBoxAdapter(child: SizedBox(height: 40)),
@@ -83,7 +97,7 @@ class _HomeBody extends StatelessWidget {
   }
 }
 
-// ── Custom AppBar ─────────────────────────────────────────────────────────────
+// ── Custom AppBar — sin SVG, solo texto ────────────────────────────────────────
 
 class _HomeAppBar extends StatelessWidget {
   const _HomeAppBar();
@@ -100,27 +114,7 @@ class _HomeAppBar extends StatelessWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: const DrawerMenuButton(icon: Icons.menu),
-      title: Row(
-        children: [
-          Container(
-            width: 30,
-            height: 30,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: retro.surfaceAlt,
-              borderRadius: RetroTheme.radius,
-              border: Border.all(color: retro.accent, width: 1.5),
-            ),
-            child: SvgPicture.asset(
-              'assets/icons/menu/m64.svg',
-              width: 17,
-              height: 17,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text('SM64CoopDX', style: retro.heading(size: 17)),
-        ],
-      ),
+      title: Text('SM64CoopDX', style: retro.heading(size: 17)),
       actions: [
         IconButton(
           icon: Icon(Icons.search, color: retro.inkDim, size: 22),
@@ -169,8 +163,8 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: _SectionHeader(title: 'Featured'),
         ),
         const SizedBox(height: 12),
@@ -196,7 +190,9 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
                   width: _current == i ? 20 : 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: _current == i ? retro.accent : retro.inkDim.withValues(alpha: 0.3),
+                    color: _current == i
+                        ? retro.accent
+                        : retro.inkDim.withValues(alpha: 0.3),
                     borderRadius: RetroTheme.radius,
                   ),
                 );
@@ -268,24 +264,20 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // Image with Hero
                 Hero(
                   tag: 'mod_img_${widget.mod.id}',
-                  child:
-                      widget.mod.imageUrl != null &&
+                  child: widget.mod.imageUrl != null &&
                           widget.mod.imageUrl!.isNotEmpty
                       ? CachedNetworkImage(
                           imageUrl: widget.mod.imageUrl!,
                           fit: BoxFit.cover,
                           placeholder: (_, _) =>
                               Container(color: retro.surfaceAlt),
-                          errorWidget: (_, _, _) =>
-                              _FeaturedPlaceholder(),
+                          errorWidget: (_, _, _) => _FeaturedPlaceholder(),
                         )
                       : _FeaturedPlaceholder(),
                 ),
 
-                // Bottom gradient overlay
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -304,7 +296,6 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                   ),
                 ),
 
-                // Content overlay
                 Positioned(
                   left: 16,
                   right: 16,
@@ -317,7 +308,6 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Featured badge
                             RetroTag(
                               retro: retro,
                               label: 'FEATURED',
@@ -341,11 +331,9 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(
-                                  Icons.person,
-                                  size: 11,
-                                  color: Colors.white.withValues(alpha: 0.7),
-                                ),
+                                Icon(Icons.person,
+                                    size: 11,
+                                    color: Colors.white.withValues(alpha: 0.7)),
                                 const SizedBox(width: 4),
                                 Flexible(
                                   child: Text(
@@ -353,7 +341,8 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.75),
+                                      color: Colors.white
+                                          .withValues(alpha: 0.75),
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -361,11 +350,8 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                 ),
                                 if (widget.mod.rating != null) ...[
                                   const SizedBox(width: 10),
-                                  Icon(
-                                    Icons.star,
-                                    size: 11,
-                                    color: retro.amber,
-                                  ),
+                                  Icon(Icons.star,
+                                      size: 11, color: retro.amber),
                                   const SizedBox(width: 3),
                                   Text(
                                     widget.mod.rating!.star,
@@ -382,7 +368,6 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                         ),
                       ),
 
-                      // Fav button
                       GestureDetector(
                         onTap: () => ref
                             .read(favouritesProvider.notifier)
@@ -426,47 +411,48 @@ class _FeaturedPlaceholder extends StatelessWidget {
     return Container(
       color: retro.surfaceAlt,
       child: Center(
-        child: Icon(Icons.extension, size: 48, color: retro.inkDim.withValues(alpha: 0.3)),
+        child: Icon(Icons.extension,
+            size: 48, color: retro.inkDim.withValues(alpha: 0.3)),
       ),
     );
   }
 }
 
-// ── Quick access grid ─────────────────────────────────────────────────────────
+// ── Quick access grid — migrado de SVG a Icons.* ──────────────────────────────
 
 class _QuickAccessGrid extends StatelessWidget {
   const _QuickAccessGrid();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
           Expanded(
             child: _QuickCard(
-              svgAsset: 'assets/icons/menu/catalog.svg',
+              icon: Icons.apps_rounded,
               label: 'Catalog',
               description: 'Browse, search & filter the full mod collection',
-              onTap: () => context.go('/catalogue'),
+              route: '/catalogue',
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: _QuickCard(
-              svgAsset: 'assets/icons/menu/favorites.svg',
+              icon: Icons.favorite_rounded,
               label: 'Favourites',
               description: 'Your saved mods across all sections',
-              onTap: () => context.go('/favourites'),
+              route: '/favourites',
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: _QuickCard(
-              svgAsset: 'assets/icons/menu/popular.svg',
+              icon: Icons.trending_up_rounded,
               label: 'Popular',
               description: 'Top mods ranked by total downloads',
-              onTap: () => context.go('/popular'),
+              route: '/popular',
             ),
           ),
         ],
@@ -477,16 +463,16 @@ class _QuickAccessGrid extends StatelessWidget {
 
 class _QuickCard extends StatefulWidget {
   const _QuickCard({
-    required this.svgAsset,
+    required this.icon,
     required this.label,
     required this.description,
-    required this.onTap,
+    required this.route,
   });
 
-  final String svgAsset;
+  final IconData icon;
   final String label;
   final String description;
-  final VoidCallback onTap;
+  final String route;
 
   @override
   State<_QuickCard> createState() => _QuickCardState();
@@ -524,7 +510,7 @@ class _QuickCardState extends State<_QuickCard>
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) {
         _ctrl.reverse();
-        widget.onTap();
+        context.go(widget.route);
       },
       onTapCancel: () => _ctrl.reverse(),
       child: ScaleTransition(
@@ -549,11 +535,7 @@ class _QuickCardState extends State<_QuickCard>
                   borderRadius: RetroTheme.radius,
                   border: Border.all(color: retro.border, width: 1.5),
                 ),
-                child: SvgPicture.asset(
-                  widget.svgAsset,
-                  width: 19,
-                  height: 19,
-                ),
+                child: Icon(widget.icon, size: 19, color: retro.accent),
               ),
               const SizedBox(height: 10),
               Text(widget.label, style: retro.heading(size: 13)),
@@ -572,6 +554,189 @@ class _QuickCardState extends State<_QuickCard>
   }
 }
 
+// ── Exclusive section — botones con skew tipo anime ─────────────────────────────
+
+class _ExclusiveSection extends StatelessWidget {
+  const _ExclusiveSection();
+
+  static const _items = [
+    (
+      route: '/vip',
+      label: 'VIP Mods',
+      description: 'Exclusive character & model packs',
+      icon: Icons.workspace_premium_rounded,
+      colorKey: 'amber',
+    ),
+    (
+      route: '/dynos',
+      label: 'DynOS',
+      description: 'Custom textures & model swaps',
+      icon: Icons.color_lens_rounded,
+      colorKey: 'blue',
+    ),
+    (
+      route: '/touch-controls',
+      label: 'Touch Controls',
+      description: 'Custom button & joystick layouts',
+      icon: Icons.touch_app_rounded,
+      colorKey: 'accent',
+    ),
+    (
+      route: '/omm-rebirth',
+      label: 'OMMR PACK',
+      description: 'Complete OMM Rebirth texture pack',
+      icon: Icons.folder_zip_rounded,
+      colorKey: 'red',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final colors = <String, Color>{
+      'amber': retro.amber,
+      'blue': retro.blue,
+      'accent': retro.accent,
+      'red': retro.red,
+    };
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: Column(
+        children: _items.map((item) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _ExclusiveCard(
+              retro: retro,
+              icon: item.icon,
+              label: item.label,
+              description: item.description,
+              accent: colors[item.colorKey] ?? retro.accent,
+              route: item.route,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _ExclusiveCard extends StatefulWidget {
+  const _ExclusiveCard({
+    required this.retro,
+    required this.icon,
+    required this.label,
+    required this.description,
+    required this.accent,
+    required this.route,
+  });
+
+  final RetroTheme retro;
+  final IconData icon;
+  final String label;
+  final String description;
+  final Color accent;
+  final String route;
+
+  @override
+  State<_ExclusiveCard> createState() => _ExclusiveCardState();
+}
+
+class _ExclusiveCardState extends State<_ExclusiveCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+
+  static const _skew = 0.18;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _ctrl.forward(),
+      onTapUp: (_) {
+        _ctrl.reverse();
+        context.go(widget.route);
+      },
+      onTapCancel: () => _ctrl.reverse(),
+      child: ScaleTransition(
+        scale: _scale,
+        child: Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.skewX(-_skew),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: widget.retro.surface,
+              borderRadius: RetroTheme.radius,
+              border: Border.all(color: widget.retro.border, width: 2),
+              boxShadow: widget.retro.hardShadow(dx: 3, dy: 3),
+            ),
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.skewX(_skew),
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: widget.accent.withValues(alpha: 0.18),
+                      border: Border.all(color: widget.accent, width: 2),
+                    ),
+                    child:
+                        Icon(widget.icon, size: 20, color: widget.accent),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          widget.label,
+                          style: widget.retro.heading(size: 14),
+                        ),
+                        Text(
+                          widget.description,
+                          style: widget.retro.body(size: 11.5),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right_rounded,
+                      size: 20, color: widget.retro.inkDim),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ── Top downloads ─────────────────────────────────────────────────────────────
 
 class _TopDownloads extends StatelessWidget {
@@ -582,7 +747,7 @@ class _TopDownloads extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Column(
         children: mods.asMap().entries.map((e) {
           return Padding(
@@ -662,7 +827,6 @@ class _TopModRowState extends ConsumerState<_TopModRow>
           ),
           child: Row(
             children: [
-              // Rank
               SizedBox(
                 width: 28,
                 child: isTop3
@@ -676,21 +840,21 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                     : Center(
                         child: Text(
                           '${widget.rank}',
-                          style: retro.body(size: 13, color: retro.ink, weight: FontWeight.w700),
+                          style: retro.body(
+                              size: 13,
+                              color: retro.ink,
+                              weight: FontWeight.w700),
                         ),
                       ),
               ),
               const SizedBox(width: 10),
-
-              // Thumbnail with Hero
               Hero(
                 tag: 'mod_img_${widget.mod.id}',
                 child: ClipRect(
                   child: SizedBox(
                     width: 46,
                     height: 46,
-                    child:
-                        widget.mod.imageUrl != null &&
+                    child: widget.mod.imageUrl != null &&
                             widget.mod.imageUrl!.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl: widget.mod.imageUrl!,
@@ -699,27 +863,19 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                                 Container(color: retro.surfaceAlt),
                             errorWidget: (_, _, _) => Container(
                               color: retro.surfaceAlt,
-                              child: Icon(
-                                Icons.extension,
-                                size: 18,
-                                color: retro.inkDim,
-                              ),
+                              child: Icon(Icons.extension,
+                                  size: 18, color: retro.inkDim),
                             ),
                           )
                         : Container(
                             color: retro.surfaceAlt,
-                            child: Icon(
-                              Icons.extension,
-                              size: 18,
-                              color: retro.inkDim,
-                            ),
+                            child: Icon(Icons.extension,
+                                size: 18, color: retro.inkDim),
                           ),
                   ),
                 ),
               ),
               const SizedBox(width: 12),
-
-              // Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -757,13 +913,13 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                   ],
                 ),
               ),
-
-              // Fav
               IconButton(
                 icon: Icon(
                   isFav ? Icons.favorite : Icons.favorite_border,
                   size: 17,
-                  color: isFav ? retro.red : retro.inkDim.withValues(alpha: 0.35),
+                  color: isFav
+                      ? retro.red
+                      : retro.inkDim.withValues(alpha: 0.35),
                 ),
                 onPressed: () =>
                     ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
@@ -785,7 +941,7 @@ class _SectionHeader extends StatelessWidget {
     required this.title,
     this.actionLabel,
     this.onAction,
-    this.padding = EdgeInsets.zero,
+    this.padding = const EdgeInsets.symmetric(horizontal: 20),
   });
 
   final String title;
@@ -812,7 +968,10 @@ class _SectionHeader extends StatelessWidget {
                 children: [
                   Text(
                     actionLabel!,
-                    style: retro.body(size: 12, color: retro.accent, weight: FontWeight.w700),
+                    style: retro.body(
+                        size: 12,
+                        color: retro.accent,
+                        weight: FontWeight.w700),
                   ),
                   const SizedBox(width: 2),
                   Icon(Icons.arrow_forward_ios, size: 10, color: retro.accent),
