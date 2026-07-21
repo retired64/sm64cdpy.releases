@@ -9,7 +9,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../providers/mod_providers.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -20,14 +20,10 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allAsync = ref.watch(allModsProvider);
 
-    return Scaffold(
-      backgroundColor: RetroTheme.of(context).background,
-      drawer: const AppDrawer(currentRoute: '/'),
-      body: allAsync.when(
-        loading: () => const _HomeSkeleton(),
-        error: (e, _) => _HomeError(message: e.toString()),
-        data: (mods) => _HomeBody(mods: mods),
-      ),
+    return allAsync.when(
+      loading: () => const _HomeSkeleton(),
+      error: (e, _) => _HomeError(message: e.toString()),
+      data: (mods) => _HomeBody(mods: mods),
     );
   }
 }
@@ -103,12 +99,7 @@ class _HomeAppBar extends StatelessWidget {
       snap: true,
       elevation: 0,
       scrolledUnderElevation: 0,
-      leading: Builder(
-        builder: (ctx) => IconButton(
-          icon: Icon(Icons.menu, color: retro.ink, size: 22),
-          onPressed: () => Scaffold.of(ctx).openDrawer(),
-        ),
-      ),
+      leading: const DrawerMenuButton(icon: Icons.menu),
       title: Row(
         children: [
           Container(

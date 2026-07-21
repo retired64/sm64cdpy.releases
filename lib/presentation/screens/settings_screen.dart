@@ -11,7 +11,7 @@ import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
 import '../providers/theme_provider.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -21,23 +21,13 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/settings'),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          CustomScrollView(
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            slivers: [
-              // ── App bar ───────────────────────────────────────
-              SliverAppBar(
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      slivers: [
+        // ── App bar ───────────────────────────────────────
+        SliverAppBar(
                 backgroundColor: retro.background,
                 surfaceTintColor: Colors.transparent,
                 scrolledUnderElevation: 0,
@@ -45,12 +35,7 @@ class SettingsScreen extends ConsumerWidget {
                 snap: true,
                 elevation: 0,
                 shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-                leading: Builder(
-                  builder: (ctx) => IconButton(
-                    icon: Icon(Icons.menu_rounded, color: retro.ink, size: 22),
-                    onPressed: () => Scaffold.of(ctx).openDrawer(),
-                  ),
-                ),
+                leading: const DrawerMenuButton(),
                 title: RichText(
                   text: TextSpan(
                     children: [
@@ -131,10 +116,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Future<void> _exportFavourites(BuildContext context, WidgetRef ref) async {

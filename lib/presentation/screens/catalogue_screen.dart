@@ -6,7 +6,7 @@ import '../../core/constants/category_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../providers/mod_providers.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/mod_card.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -81,26 +81,16 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
     ref.listen(selectedCategoryProvider, (_, _) => _resetPage());
     ref.listen(sortOrderProvider, (_, _) => _resetPage());
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/catalogue'),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          RefreshIndicator(
-            color: retro.background,
-            backgroundColor: retro.accent,
-            displacement: 80,
-            onRefresh: () async {
-              ref.read(localDatasourceProvider).invalidateCache();
-              ref.invalidate(allModsProvider);
-            },
-            child: CustomScrollView(
-              controller: _scrollCtrl,
+    return RefreshIndicator(
+      color: retro.background,
+      backgroundColor: retro.accent,
+      displacement: 80,
+      onRefresh: () async {
+        ref.read(localDatasourceProvider).invalidateCache();
+        ref.invalidate(allModsProvider);
+      },
+      child: CustomScrollView(
+        controller: _scrollCtrl,
               physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
               ),
@@ -180,10 +170,7 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
                 const SliverToBoxAdapter(child: SizedBox(height: 32)),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 }
 
@@ -235,12 +222,7 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
       snap: true,
       elevation: 0,
       shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-      leading: Builder(
-        builder: (ctx) => IconButton(
-          icon: Icon(Icons.menu_rounded, color: retro.ink, size: 22),
-          onPressed: () => Scaffold.of(ctx).openDrawer(),
-        ),
-      ),
+      leading: const DrawerMenuButton(),
       title: RichText(
         text: TextSpan(
           children: [

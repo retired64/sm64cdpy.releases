@@ -10,7 +10,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/dynos_entity.dart';
 import '../providers/extra_providers.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -33,26 +33,12 @@ class _DynosScreenState extends ConsumerState<DynosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
     final dynosAsync = ref.watch(allDynosProvider);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/dynos'),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          dynosAsync.when(
-            loading: () => const _DynosSkeleton(),
-            error: (e, _) => _DynosError(message: e.toString()),
-            data: (mods) => _DynosBody(mods: mods, scrollCtrl: _scrollCtrl),
-          ),
-        ],
-      ),
+    return dynosAsync.when(
+      loading: () => const _DynosSkeleton(),
+      error: (e, _) => _DynosError(message: e.toString()),
+      data: (mods) => _DynosBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
 }
@@ -84,12 +70,7 @@ class _DynosBody extends StatelessWidget {
           snap: true,
           elevation: 0,
           shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: Builder(
-            builder: (ctx) => IconButton(
-              icon: Icon(Icons.menu_rounded, color: retro.blue, size: 22),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
-          ),
+          leading: DrawerMenuButton(color: retro.blue),
           title: RichText(
             text: TextSpan(
               children: [

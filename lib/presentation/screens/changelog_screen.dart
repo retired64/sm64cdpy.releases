@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/retro_theme.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ChangelogScreen
@@ -20,24 +20,33 @@ class ChangelogScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/changelog'),
-      appBar: AppBar(
-        backgroundColor: retro.background,
-        surfaceTintColor: Colors.transparent,
-        title: Text('Changelog', style: retro.heading(size: 18)),
-      ),
-      body: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-        itemCount: _kVersions.length,
-        separatorBuilder: (_, _) => const SizedBox(height: 12),
-        itemBuilder: (context, i) {
-          final version = _kVersions[i];
-          final isLatest = i == 0;
-          return _VersionCard(version: version, isLatest: isLatest);
-        },
-      ),
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          backgroundColor: retro.background,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: const DrawerMenuButton(),
+          title: Text('Changelog', style: retro.heading(size: 18)),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, i) {
+                final version = _kVersions[i];
+                final isLatest = i == 0;
+                return Padding(
+                  padding: EdgeInsets.only(top: i > 0 ? 12 : 0),
+                  child: _VersionCard(version: version, isLatest: isLatest),
+                );
+              },
+              childCount: _kVersions.length,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

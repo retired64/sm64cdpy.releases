@@ -9,7 +9,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../providers/mod_providers.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 // El oro reutiliza retro.amber (mismo tono que VIP/featured) para que el
@@ -51,30 +51,16 @@ class _PopularScreenState extends ConsumerState<PopularScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
     final popularAsync = ref.watch(popularModsProvider);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/popular'),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          popularAsync.when(
-            loading: () => const _PopularSkeleton(),
-            error: (e, _) => _PopularError(message: e.toString()),
-            data: (mods) => _PopularBody(
-              mods: mods,
-              page: _page,
-              scrollCtrl: _scrollCtrl,
-              onPageChanged: _goToPage,
-            ),
-          ),
-        ],
+    return popularAsync.when(
+      loading: () => const _PopularSkeleton(),
+      error: (e, _) => _PopularError(message: e.toString()),
+      data: (mods) => _PopularBody(
+        mods: mods,
+        page: _page,
+        scrollCtrl: _scrollCtrl,
+        onPageChanged: _goToPage,
       ),
     );
   }
@@ -123,12 +109,7 @@ class _PopularBody extends StatelessWidget {
           snap: true,
           elevation: 0,
           shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: Builder(
-            builder: (ctx) => IconButton(
-              icon: Icon(Icons.menu_rounded, color: retro.ink, size: 22),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
-          ),
+          leading: const DrawerMenuButton(),
           title: RichText(
             text: TextSpan(
               children: [

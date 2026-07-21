@@ -11,6 +11,23 @@ import '../../domain/entities/omm_rebirth_entity.dart';
 import 'mod_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Drawer state — current route for highlighting active nav item
+// ─────────────────────────────────────────────────────────────────────────────
+
+class CurrentRouteNotifier extends Notifier<String> {
+  @override
+  String build() => '/';
+
+  void set(String route) {
+    state = route;
+  }
+}
+
+final currentRouteProvider = NotifierProvider<CurrentRouteNotifier, String>(
+  CurrentRouteNotifier.new,
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Datasource providers
 // ─────────────────────────────────────────────────────────────────────────────
 

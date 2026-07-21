@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/retro_theme.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -92,72 +92,86 @@ class _DisclaimerScreenState extends State<DisclaimerScreen>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/disclaimer'),
-      appBar: AppBar(
-        backgroundColor: retro.background,
-        surfaceTintColor: Colors.transparent,
-        title: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 240),
-          child: Text(
-            _isSpanish ? 'Aviso Legal' : 'Disclaimer',
-            key: ValueKey(_isSpanish),
-          ),
-        ),
-      ),
-      body: Stack(
-        children: [
-          // ── Scrollable body ──────────────────────────────────────────────
-          AnimatedBuilder(
-            animation: _langCtrl,
-            builder: (context, child) {
-              final double opacity;
-              if (!_langCtrl.isAnimating) {
-                opacity = 1.0;
-              } else if (_langCtrl.value <= 0.46) {
-                opacity = _fadeOut.value;
-              } else {
-                opacity = _fadeIn.value;
-              }
-              return Opacity(opacity: opacity.clamp(0.0, 1.0), child: child);
-            },
-            child: _DisclaimerBody(isSpanish: _isSpanish),
-          ),
-
-          // ── Bottom gradient scrim so content fades behind the button ────
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 100,
-            child: IgnorePointer(
+    return Stack(
+      children: [
+        Column(
+          children: [
+            SafeArea(
+              bottom: false,
               child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [retro.background.withValues(alpha: 0), retro.background],
-                  ),
+                height: 56,
+                color: retro.background,
+                padding: const EdgeInsets.only(right: 16),
+                child: Row(
+                  children: [
+                    const DrawerMenuButton(),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 240),
+                        child: Text(
+                          _isSpanish ? 'Aviso Legal' : 'Disclaimer',
+                          key: ValueKey(_isSpanish),
+                          style: retro.heading(size: 18),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: AnimatedBuilder(
+                animation: _langCtrl,
+                builder: (context, child) {
+                  final double opacity;
+                  if (!_langCtrl.isAnimating) {
+                    opacity = 1.0;
+                  } else if (_langCtrl.value <= 0.46) {
+                    opacity = _fadeOut.value;
+                  } else {
+                    opacity = _fadeIn.value;
+                  }
+                  return Opacity(
+                      opacity: opacity.clamp(0.0, 1.0), child: child);
+                },
+                child: _DisclaimerBody(isSpanish: _isSpanish),
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 100,
+          child: IgnorePointer(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    retro.background.withValues(alpha: 0),
+                    retro.background,
+                  ],
                 ),
               ),
             ),
           ),
-
-          // ── Fixed translate button ───────────────────────────────────────
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: 24,
-            child: _TranslateButton(
-              isSpanish: _isSpanish,
-              pulse: _pulse,
-              pulseCtrl: _pulseCtrl,
-              onTap: _toggleLanguage,
-            ),
+        ),
+        Positioned(
+          left: 20,
+          right: 20,
+          bottom: 24,
+          child: _TranslateButton(
+            isSpanish: _isSpanish,
+            pulse: _pulse,
+            pulseCtrl: _pulseCtrl,
+            onTap: _toggleLanguage,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

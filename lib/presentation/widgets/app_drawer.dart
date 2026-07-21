@@ -8,6 +8,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/constants/category_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../presentation/providers/mod_providers.dart';
+import '../../presentation/providers/extra_providers.dart';
 
 const Duration _kItemDuration = Duration(milliseconds: 150);
 const Duration _kNavDelay = Duration(milliseconds: 260);
@@ -24,8 +25,7 @@ void _navigateTo(BuildContext context, String route) {
 // AppDrawer
 // ─────────────────────────────────────────────────────────────────────────────
 class AppDrawer extends ConsumerStatefulWidget {
-  const AppDrawer({super.key, required this.currentRoute});
-  final String currentRoute;
+  const AppDrawer({super.key});
 
   @override
   ConsumerState<AppDrawer> createState() => _AppDrawerState();
@@ -53,6 +53,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final currentRoute = ref.watch(currentRouteProvider);
 
     return Drawer(
       backgroundColor: retro.background,
@@ -95,7 +96,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         ),
                         label: 'Home',
                         route: '/',
-                        isActive: widget.currentRoute == '/',
+                        isActive: currentRoute == '/',
                       ),
                     ),
                     _staggerItem(
@@ -109,7 +110,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         ),
                         label: 'catalog',
                         route: '/catalogue',
-                        isActive: widget.currentRoute == '/catalogue',
+                        isActive: currentRoute == '/catalogue',
                       ),
                     ),
                     _staggerItem(
@@ -123,7 +124,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         ),
                         label: 'Favourites',
                         route: '/favourites',
-                        isActive: widget.currentRoute == '/favourites',
+                        isActive: currentRoute == '/favourites',
                       ),
                     ),
                     _staggerItem(
@@ -137,7 +138,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         ),
                         label: 'Popular',
                         route: '/popular',
-                        isActive: widget.currentRoute == '/popular',
+                        isActive: currentRoute == '/popular',
                       ),
                     ),
 
@@ -168,7 +169,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         ),
                         label: 'VIP Mods',
                         route: '/vip',
-                        isActive: widget.currentRoute == '/vip',
+                        isActive: currentRoute == '/vip',
                         accentColor: retro.amber,
                       ),
                     ),
@@ -183,7 +184,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         ),
                         label: 'DynOS',
                         route: '/dynos',
-                        isActive: widget.currentRoute == '/dynos',
+                        isActive: currentRoute == '/dynos',
                         accentColor: retro.blue,
                       ),
                     ),
@@ -198,7 +199,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         ),
                         label: 'Touch Controls',
                         route: '/touch-controls',
-                        isActive: widget.currentRoute == '/touch-controls',
+                        isActive: currentRoute == '/touch-controls',
                       ),
                     ),
                     _staggerItem(
@@ -212,7 +213,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                         ),
                         label: 'OMMR PACK',
                         route: '/omm-rebirth',
-                        isActive: widget.currentRoute == '/omm-rebirth',
+                        isActive: currentRoute == '/omm-rebirth',
                         accentColor: retro.red,
                       ),
                     ),
@@ -236,12 +237,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                     _staggerItem(
                       index: 11,
                       ctrl: _staggerCtrl,
-                      child: _CategoryList(currentRoute: widget.currentRoute),
+                      child: _CategoryList(),
                     ),
                     _staggerItem(
                       index: 12,
                       ctrl: _staggerCtrl,
-                      child: _SortOptions(currentRoute: widget.currentRoute),
+                      child: _SortOptions(),
                     ),
 
                     // ── Footer ─────────────────────────────────────────
@@ -256,7 +257,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       ),
                       label: 'Links Resource',
                       route: '/links-resource',
-                      isActive: widget.currentRoute == '/links-resource',
+                      isActive: currentRoute == '/links-resource',
                     ),
                     _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
@@ -266,7 +267,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       ),
                       label: 'Disclaimer',
                       route: '/disclaimer',
-                      isActive: widget.currentRoute == '/disclaimer',
+                      isActive: currentRoute == '/disclaimer',
                     ),
                     _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
@@ -276,7 +277,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       ),
                       label: 'Changelog',
                       route: '/changelog',
-                      isActive: widget.currentRoute == '/changelog',
+                      isActive: currentRoute == '/changelog',
                     ),
                     _NavItem(
                       iconBuilder: (color) => SvgPicture.asset(
@@ -286,7 +287,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
                       ),
                       label: 'Settings',
                       route: '/settings',
-                      isActive: widget.currentRoute == '/settings',
+                      isActive: currentRoute == '/settings',
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
@@ -525,8 +526,7 @@ class _NavItemState extends State<_NavItem>
 // apertura del drawer.
 // ─────────────────────────────────────────────────────────────────────────────
 class _CategoryList extends ConsumerStatefulWidget {
-  const _CategoryList({required this.currentRoute});
-  final String currentRoute;
+  const _CategoryList();
 
   @override
   ConsumerState<_CategoryList> createState() => _CategoryListState();
@@ -586,7 +586,6 @@ class _CategoryListState extends ConsumerState<_CategoryList> {
                       .map((cat) => _CategoryItem(
                             category: cat,
                             selectedCategory: selectedCategory,
-                            currentRoute: widget.currentRoute,
                           ))
                       .toList(),
                 )
@@ -604,12 +603,10 @@ class _CategoryItem extends ConsumerStatefulWidget {
   const _CategoryItem({
     required this.category,
     required this.selectedCategory,
-    required this.currentRoute,
   });
 
   final String category;
   final String? selectedCategory;
-  final String currentRoute;
 
   @override
   ConsumerState<_CategoryItem> createState() => _CategoryItemState();
@@ -643,6 +640,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final currentRoute = ref.watch(currentRouteProvider);
     final isSelected = widget.selectedCategory == widget.category;
     final icon = CategoryConstants.getIconForCategory(widget.category);
     final catColor = CategoryConstants.getColorForCategory(widget.category);
@@ -661,7 +659,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           ref.read(currentPageProvider.notifier).setPage(0);
           ref.read(searchQueryProvider.notifier).clear();
         }
-        if (widget.currentRoute != '/catalogue') {
+        if (currentRoute != '/catalogue') {
           Future.delayed(_kNavDelay, () {
             if (context.mounted) context.go('/catalogue');
           });
@@ -721,8 +719,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
 // SortOptions — expandible perezoso (mismo patrón que _CategoryList).
 // ─────────────────────────────────────────────────────────────────────────────
 class _SortOptions extends ConsumerStatefulWidget {
-  const _SortOptions({required this.currentRoute});
-  final String currentRoute;
+  const _SortOptions();
 
   static const _items = [
     (value: SortOrder.none, label: 'Default'),
@@ -784,7 +781,6 @@ class _SortOptionsState extends ConsumerState<_SortOptions> {
                             value: item.value,
                             label: item.label,
                             currentSort: currentSort,
-                            currentRoute: widget.currentRoute,
                           ))
                       .toList(),
                 )
@@ -803,13 +799,11 @@ class _SortItem extends ConsumerStatefulWidget {
     required this.value,
     required this.label,
     required this.currentSort,
-    required this.currentRoute,
   });
 
   final SortOrder value;
   final String label;
   final SortOrder currentSort;
-  final String currentRoute;
 
   @override
   ConsumerState<_SortItem> createState() => _SortItemState();
@@ -843,6 +837,7 @@ class _SortItemState extends ConsumerState<_SortItem>
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final currentRoute = ref.watch(currentRouteProvider);
     final isSelected = widget.currentSort == widget.value;
 
     return GestureDetector(
@@ -853,7 +848,7 @@ class _SortItemState extends ConsumerState<_SortItem>
         Navigator.of(context).pop();
         ref.read(sortOrderProvider.notifier).setSortOrder(widget.value);
         ref.read(currentPageProvider.notifier).setPage(0);
-        if (widget.currentRoute != '/catalogue') {
+        if (currentRoute != '/catalogue') {
           Future.delayed(_kNavDelay, () {
             if (context.mounted) context.go('/catalogue');
           });

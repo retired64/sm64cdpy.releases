@@ -10,7 +10,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/touch_control_entity.dart';
 import '../providers/extra_providers.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -34,26 +34,12 @@ class _TouchControlsScreenState extends ConsumerState<TouchControlsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
     final touchAsync = ref.watch(allTouchControlsProvider);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/touch-controls'),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          touchAsync.when(
-            loading: () => const _TouchSkeleton(),
-            error: (e, _) => _TouchError(message: e.toString()),
-            data: (mods) => _TouchBody(mods: mods, scrollCtrl: _scrollCtrl),
-          ),
-        ],
-      ),
+    return touchAsync.when(
+      loading: () => const _TouchSkeleton(),
+      error: (e, _) => _TouchError(message: e.toString()),
+      data: (mods) => _TouchBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
 }
@@ -85,12 +71,7 @@ class _TouchBody extends StatelessWidget {
           snap: true,
           elevation: 0,
           shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: Builder(
-            builder: (ctx) => IconButton(
-              icon: Icon(Icons.menu_rounded, color: retro.accent, size: 22),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
-          ),
+          leading: DrawerMenuButton(color: retro.accent),
           title: RichText(
             text: TextSpan(
               children: [

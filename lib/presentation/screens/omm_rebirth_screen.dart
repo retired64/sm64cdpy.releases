@@ -10,7 +10,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/omm_rebirth_entity.dart';
 import '../providers/extra_providers.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -33,26 +33,12 @@ class _OmmRebirthScreenState extends ConsumerState<OmmRebirthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
     final ommAsync = ref.watch(allOmmRebirthProvider);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/omm-rebirth'),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          ommAsync.when(
-            loading: () => const _OmmSkeleton(),
-            error: (e, _) => _OmmError(message: e.toString()),
-            data: (mods) => _OmmBody(mods: mods, scrollCtrl: _scrollCtrl),
-          ),
-        ],
-      ),
+    return ommAsync.when(
+      loading: () => const _OmmSkeleton(),
+      error: (e, _) => _OmmError(message: e.toString()),
+      data: (mods) => _OmmBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
 }
@@ -85,16 +71,7 @@ class _OmmBody extends StatelessWidget {
           shape: Border(
             bottom: BorderSide(color: retro.border, width: 3),
           ),
-          leading: Builder(
-            builder: (ctx) => IconButton(
-              icon: Icon(
-                Icons.menu_rounded,
-                color: retro.accent,
-                size: 22,
-              ),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
-          ),
+          leading: DrawerMenuButton(color: retro.accent),
           title: RichText(
             text: TextSpan(
               children: [

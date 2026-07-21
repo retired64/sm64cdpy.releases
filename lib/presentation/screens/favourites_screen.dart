@@ -6,7 +6,7 @@ import '../../core/theme/retro_theme.dart';
 
 import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/mod_card.dart';
 import 'vip_mods_screen.dart';
 import 'dynos_screen.dart';
@@ -39,39 +39,45 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/favourites'),
-      appBar: AppBar(
-        backgroundColor: retro.background,
-        surfaceTintColor: Colors.transparent,
-        title: Text('Favourites', style: retro.heading(size: 18)),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Mods'),
-            Tab(text: 'VIP'),
-            Tab(text: 'DynOS'),
-            Tab(text: 'Touch'),
-          ],
-          indicatorColor: retro.accent,
-          labelColor: retro.accent,
-          unselectedLabelColor: retro.inkDim,
-          indicator: UnderlineTabIndicator(
-            borderSide: BorderSide(color: retro.accent, width: 3),
-            insets: const EdgeInsets.symmetric(horizontal: 16),
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          pinned: true,
+          backgroundColor: retro.background,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: const DrawerMenuButton(),
+          title: Text('Favourites', style: retro.heading(size: 18)),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: 'Mods'),
+              Tab(text: 'VIP'),
+              Tab(text: 'DynOS'),
+              Tab(text: 'Touch'),
+            ],
+            indicatorColor: retro.accent,
+            labelColor: retro.accent,
+            unselectedLabelColor: retro.inkDim,
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(color: retro.accent, width: 3),
+              insets: const EdgeInsets.symmetric(horizontal: 16),
+            ),
           ),
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          _ModsFavTab(),
-          _VipFavTab(),
-          _DynosFavTab(),
-          _TouchFavTab(),
-        ],
-      ),
+        SliverFillRemaining(
+          child: TabBarView(
+            controller: _tabController,
+            children: const [
+              _ModsFavTab(),
+              _VipFavTab(),
+              _DynosFavTab(),
+              _TouchFavTab(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -95,6 +101,7 @@ class _ModsFavTab extends ConsumerWidget {
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'mods');
         return ListView.separated(
+          shrinkWrap: true,
           padding: const EdgeInsets.all(16),
           itemCount: mods.length,
           separatorBuilder: (context, index) => const SizedBox(height: 8),
@@ -130,6 +137,7 @@ class _VipFavTab extends ConsumerWidget {
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'VIP mods');
         return ListView.separated(
+          shrinkWrap: true,
           padding: const EdgeInsets.all(16),
           itemCount: mods.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
@@ -162,6 +170,7 @@ class _DynosFavTab extends ConsumerWidget {
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'DynOS');
         return ListView.separated(
+          shrinkWrap: true,
           padding: const EdgeInsets.all(16),
           itemCount: mods.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
@@ -194,6 +203,7 @@ class _TouchFavTab extends ConsumerWidget {
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'Touch Controls');
         return ListView.separated(
+          shrinkWrap: true,
           padding: const EdgeInsets.all(16),
           itemCount: mods.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),

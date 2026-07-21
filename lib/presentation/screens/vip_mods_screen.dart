@@ -10,7 +10,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/vip_mod_entity.dart';
 import '../providers/extra_providers.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -33,26 +33,12 @@ class _VipModsScreenState extends ConsumerState<VipModsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
     final vipAsync = ref.watch(allVipModsProvider);
 
-    return Scaffold(
-      backgroundColor: retro.background,
-      drawer: const AppDrawer(currentRoute: '/vip'),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          vipAsync.when(
-            loading: () => const _VipSkeleton(),
-            error: (e, _) => _VipError(message: e.toString()),
-            data: (mods) => _VipBody(mods: mods, scrollCtrl: _scrollCtrl),
-          ),
-        ],
-      ),
+    return vipAsync.when(
+      loading: () => const _VipSkeleton(),
+      error: (e, _) => _VipError(message: e.toString()),
+      data: (mods) => _VipBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
 }
@@ -84,12 +70,7 @@ class _VipBody extends StatelessWidget {
           snap: true,
           elevation: 0,
           shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: Builder(
-            builder: (ctx) => IconButton(
-              icon: Icon(Icons.menu_rounded, color: retro.amber, size: 22),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
-          ),
+          leading: DrawerMenuButton(color: retro.amber),
           title: RichText(
             text: TextSpan(
               children: [

@@ -14,54 +14,63 @@ import '../../presentation/screens/settings_screen.dart';
 import '../../presentation/screens/touch_controls_screen.dart';
 import '../../presentation/screens/vip_mods_screen.dart';
 import '../../presentation/screens/omm_rebirth_screen.dart';
+import '../../presentation/widgets/app_shell.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', pageBuilder: (_, s) => _page(const HomeScreen(), s)),
-    GoRoute(
-      path: '/catalogue',
-      pageBuilder: (_, s) => _page(const CatalogueScreen(), s),
-    ),
-    GoRoute(
-      path: '/favourites',
-      pageBuilder: (_, s) => _page(const FavouritesScreen(), s),
-    ),
-    GoRoute(
-      path: '/popular',
-      pageBuilder: (_, s) => _page(const PopularScreen(), s),
-    ),
-    GoRoute(
-      path: '/settings',
-      pageBuilder: (_, s) => _page(const SettingsScreen(), s),
-    ),
-    GoRoute(
-      path: '/changelog',
-      pageBuilder: (_, s) => _page(const ChangelogScreen(), s),
-    ),
-    GoRoute(
-      path: '/links-resource',
-      pageBuilder: (_, s) => _page(const LinksResourceScreen(), s),
-    ),
-    GoRoute(
-      path: '/disclaimer',
-      pageBuilder: (_, s) => _page(const DisclaimerScreen(), s),
-    ),
-    GoRoute(
-      path: '/vip',
-      pageBuilder: (_, s) => _page(const VipModsScreen(), s),
-    ),
-    GoRoute(
-      path: '/dynos',
-      pageBuilder: (_, s) => _page(const DynosScreen(), s),
-    ),
-    GoRoute(
-      path: '/touch-controls',
-      pageBuilder: (_, s) => _page(const TouchControlsScreen(), s),
-    ),
-    GoRoute(
-      path: '/omm-rebirth',
-      pageBuilder: (_, s) => _page(const OmmRebirthScreen(), s),
+    ShellRoute(
+      builder: (context, state, child) => AppShell(
+        currentRoute: state.uri.path,
+        child: child,
+      ),
+      routes: [
+        GoRoute(path: '/', pageBuilder: (_, s) => _page(const HomeScreen(), s)),
+        GoRoute(
+          path: '/catalogue',
+          pageBuilder: (_, s) => _page(const CatalogueScreen(), s),
+        ),
+        GoRoute(
+          path: '/favourites',
+          pageBuilder: (_, s) => _page(const FavouritesScreen(), s),
+        ),
+        GoRoute(
+          path: '/popular',
+          pageBuilder: (_, s) => _page(const PopularScreen(), s),
+        ),
+        GoRoute(
+          path: '/settings',
+          pageBuilder: (_, s) => _page(const SettingsScreen(), s),
+        ),
+        GoRoute(
+          path: '/changelog',
+          pageBuilder: (_, s) => _page(const ChangelogScreen(), s),
+        ),
+        GoRoute(
+          path: '/links-resource',
+          pageBuilder: (_, s) => _page(const LinksResourceScreen(), s),
+        ),
+        GoRoute(
+          path: '/disclaimer',
+          pageBuilder: (_, s) => _page(const DisclaimerScreen(), s),
+        ),
+        GoRoute(
+          path: '/vip',
+          pageBuilder: (_, s) => _page(const VipModsScreen(), s),
+        ),
+        GoRoute(
+          path: '/dynos',
+          pageBuilder: (_, s) => _page(const DynosScreen(), s),
+        ),
+        GoRoute(
+          path: '/touch-controls',
+          pageBuilder: (_, s) => _page(const TouchControlsScreen(), s),
+        ),
+        GoRoute(
+          path: '/omm-rebirth',
+          pageBuilder: (_, s) => _page(const OmmRebirthScreen(), s),
+        ),
+      ],
     ),
     GoRoute(
       path: '/mod/:id',
@@ -75,18 +84,6 @@ final appRouter = GoRouter(
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Transición "página que aparece" — fade + micro-scale desde 0.97 → 1.0
-//
-// Por qué esto elimina el "saltito":
-//  · No hay ningún Offset / slide: la nueva pantalla no se mueve, sólo
-//    aparece. El cerebro no percibe un "salto" porque no hay desplazamiento
-//    espacial.
-//  · El micro-scale (0.97 → 1.0) da la sensación de que la pantalla
-//    "emerge" suavemente, como voltear una hoja hacia el frente.
-//  · 300 ms con easeOutCubic es suficientemente corto para sentirse rápido
-//    en gama alta, y suficientemente largo para que gama baja no vea un
-//    corte abrupto.
-//  · secondaryAnimation con fade-out (1.0 → 0.0) sobre la pantalla saliente
-//    hace la salida igual de suave.
 // ─────────────────────────────────────────────────────────────────────────────
 CustomTransitionPage<void> _page(Widget child, GoRouterState state) {
   return CustomTransitionPage<void>(
@@ -95,7 +92,6 @@ CustomTransitionPage<void> _page(Widget child, GoRouterState state) {
     transitionDuration: const Duration(milliseconds: 300),
     reverseTransitionDuration: const Duration(milliseconds: 260),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      // Entrada: fade + scale 0.97 → 1.0
       final enterFade = CurvedAnimation(
         parent: animation,
         curve: Curves.easeOutCubic,
@@ -105,7 +101,6 @@ CustomTransitionPage<void> _page(Widget child, GoRouterState state) {
         end: 1.0,
       ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
 
-      // Salida de la pantalla anterior: fade-out suave
       final exitFade = Tween<double>(begin: 1.0, end: 0.0).animate(
         CurvedAnimation(
           parent: secondaryAnimation,
