@@ -31,25 +31,7 @@ class AppDrawer extends ConsumerStatefulWidget {
   ConsumerState<AppDrawer> createState() => _AppDrawerState();
 }
 
-class _AppDrawerState extends ConsumerState<AppDrawer>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _staggerCtrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _staggerCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 420),
-    )..forward();
-  }
-
-  @override
-  void dispose() {
-    _staggerCtrl.dispose();
-    super.dispose();
-  }
-
+class _AppDrawerState extends ConsumerState<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
@@ -59,258 +41,161 @@ class _AppDrawerState extends ConsumerState<AppDrawer>
       backgroundColor: retro.background,
       elevation: 0,
       shape: Border(right: BorderSide(color: retro.border, width: 3)),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: HalftoneBackground(
-              color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
-            ),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 16),
-              child: FadeTransition(
-                opacity: _staggerCtrl.drive(
-                  CurveTween(curve: const Interval(0.0, 0.35, curve: _kCurve)),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _DrawerHeader(),
+              _RetroDivider(retro: retro),
+              const SizedBox(height: 4),
+
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/m64.svg',
+                  width: 19, height: 19,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _staggerItem(
-                      index: 0,
-                      ctrl: _staggerCtrl,
-                      child: const _DrawerHeader(),
-                    ),
-                    _RetroDivider(retro: retro),
-                    const SizedBox(height: 4),
+                label: 'Home', route: '/',
+                isActive: currentRoute == '/',
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/catalog.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'catalog', route: '/catalogue',
+                isActive: currentRoute == '/catalogue',
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/favorites.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'Favourites', route: '/favourites',
+                isActive: currentRoute == '/favourites',
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/popular.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'Popular', route: '/popular',
+                isActive: currentRoute == '/popular',
+              ),
 
-                    _staggerItem(
-                      index: 1,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/m64.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Home',
-                        route: '/',
-                        isActive: currentRoute == '/',
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 2,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/catalog.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'catalog',
-                        route: '/catalogue',
-                        isActive: currentRoute == '/catalogue',
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 3,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/favorites.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Favourites',
-                        route: '/favourites',
-                        isActive: currentRoute == '/favourites',
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 4,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/popular.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Popular',
-                        route: '/popular',
-                        isActive: currentRoute == '/popular',
-                      ),
-                    ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+                child: _RetroDivider(retro: retro),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
+                child: SectionKicker(retro: retro, label: 'EXCLUSIVE'),
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/vip.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'VIP Mods', route: '/vip',
+                isActive: currentRoute == '/vip',
+                accentColor: retro.amber,
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/dynos.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'DynOS', route: '/dynos',
+                isActive: currentRoute == '/dynos',
+                accentColor: retro.blue,
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/controls.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'Touch Controls', route: '/touch-controls',
+                isActive: currentRoute == '/touch-controls',
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/omm.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'OMMR PACK', route: '/omm-rebirth',
+                isActive: currentRoute == '/omm-rebirth',
+                accentColor: retro.red,
+              ),
 
-                    _staggerItem(
-                      index: 5,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                        child: _RetroDivider(retro: retro),
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 5,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                        child: SectionKicker(retro: retro, label: 'EXCLUSIVE'),
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 6,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/vip.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'VIP Mods',
-                        route: '/vip',
-                        isActive: currentRoute == '/vip',
-                        accentColor: retro.amber,
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 7,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/dynos.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'DynOS',
-                        route: '/dynos',
-                        isActive: currentRoute == '/dynos',
-                        accentColor: retro.blue,
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 8,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/controls.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'Touch Controls',
-                        route: '/touch-controls',
-                        isActive: currentRoute == '/touch-controls',
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 9,
-                      ctrl: _staggerCtrl,
-                      child: _NavItem(
-                        iconBuilder: (color) => SvgPicture.asset(
-                          'assets/icons/menu/omm.svg',
-                          width: 19,
-                          height: 19,
-                        ),
-                        label: 'OMMR PACK',
-                        route: '/omm-rebirth',
-                        isActive: currentRoute == '/omm-rebirth',
-                        accentColor: retro.red,
-                      ),
-                    ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+                child: _RetroDivider(retro: retro),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
+                child: SectionKicker(retro: retro, label: 'EXPLORE'),
+              ),
+              _CategoryList(),
+              _SortOptions(),
 
-                    _staggerItem(
-                      index: 10,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                        child: _RetroDivider(retro: retro),
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 10,
-                      ctrl: _staggerCtrl,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                        child: SectionKicker(retro: retro, label: 'EXPLORE'),
-                      ),
-                    ),
-                    _staggerItem(
-                      index: 11,
-                      ctrl: _staggerCtrl,
-                      child: _CategoryList(),
-                    ),
-                    _staggerItem(
-                      index: 12,
-                      ctrl: _staggerCtrl,
-                      child: _SortOptions(),
-                    ),
-
-                    // ── Footer ─────────────────────────────────────────
-                    _RetroDivider(retro: retro),
-                    const _SocialLinks(),
-                    _RetroDivider(retro: retro),
-                    _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/links-resource.svg',
-                        width: 19,
-                        height: 19,
-                      ),
-                      label: 'Links Resource',
-                      route: '/links-resource',
-                      isActive: currentRoute == '/links-resource',
-                    ),
-                    _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/disclaimer.svg',
-                        width: 19,
-                        height: 19,
-                      ),
-                      label: 'Disclaimer',
-                      route: '/disclaimer',
-                      isActive: currentRoute == '/disclaimer',
-                    ),
-                    _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/changelogs.svg',
-                        width: 19,
-                        height: 19,
-                      ),
-                      label: 'Changelog',
-                      route: '/changelog',
-                      isActive: currentRoute == '/changelog',
-                    ),
-                    _NavItem(
-                      iconBuilder: (color) => SvgPicture.asset(
-                        'assets/icons/menu/settings.svg',
-                        width: 19,
-                        height: 19,
-                      ),
-                      label: 'Settings',
-                      route: '/settings',
-                      isActive: currentRoute == '/settings',
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
-                      child: Text(
-                        'v1.4.4',
-                        style: TextStyle(
-                          color: retro.inkDim,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                    ),
-                  ],
+              // Footer
+              _RetroDivider(retro: retro),
+              const _SocialLinks(),
+              _RetroDivider(retro: retro),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/links-resource.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'Links Resource', route: '/links-resource',
+                isActive: currentRoute == '/links-resource',
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/disclaimer.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'Disclaimer', route: '/disclaimer',
+                isActive: currentRoute == '/disclaimer',
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/changelogs.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'Changelog', route: '/changelog',
+                isActive: currentRoute == '/changelog',
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/settings.svg',
+                  width: 19, height: 19,
+                ),
+                label: 'Settings', route: '/settings',
+                isActive: currentRoute == '/settings',
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
+                child: Text(
+                  'v1.4.4',
+                  style: TextStyle(
+                    color: retro.inkDim,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.8,
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // _RetroDivider — línea sólida, sin gradientes.
@@ -323,30 +208,6 @@ class _RetroDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(height: 2, color: retro.border);
   }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Stagger helper — solo slide-up por item, sin Opacity individual.
-// Un FadeTransition global envuelve toda la Column (1 sola capa GPU).
-// ─────────────────────────────────────────────────────────────────────────────
-Widget _staggerItem({
-  required int index,
-  required AnimationController ctrl,
-  required Widget child,
-}) {
-  final start = (index * 0.055).clamp(0.0, 0.75);
-  final end = (start + 0.42).clamp(0.0, 1.0);
-  final anim = ctrl.drive(
-    CurveTween(curve: Interval(start, end, curve: _kCurve)),
-  );
-  return AnimatedBuilder(
-    animation: anim,
-    builder: (_, child) => Transform.translate(
-      offset: Offset(0, 10 * (1 - anim.value)),
-      child: child,
-    ),
-    child: child,
-  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
