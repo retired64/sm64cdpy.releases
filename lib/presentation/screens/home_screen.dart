@@ -753,12 +753,14 @@ class _LaunchGameButton extends ConsumerStatefulWidget {
 }
 
 class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
+  static const bool _enabled = false;
+
   bool _checking = true;
 
   @override
   void initState() {
     super.initState();
-    _check();
+    if (_enabled) _check();
   }
 
   Future<void> _check() async {
@@ -812,6 +814,81 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+
+    if (!_enabled) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.skewX(-0.18),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: retro.surfaceAlt,
+                  border: Border.all(color: retro.border, width: 2),
+                  boxShadow: retro.hardShadow(dx: 3, dy: 3),
+                ),
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.skewX(0.18),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.play_arrow_rounded,
+                          size: 22, color: retro.inkDim),
+                      const SizedBox(width: 8),
+                      Text(
+                        'LAUNCH  GAME',
+                        style: TextStyle(
+                          color: retro.inkDim,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: -10,
+              right: -2,
+              child: Transform.rotate(
+                angle: -0.1,
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.skewX(-0.18),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: retro.amber,
+                      border: Border.all(color: retro.border, width: 1.5),
+                    ),
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.skewX(0.18),
+                      child: const Text(
+                        'SOON',
+                        style: TextStyle(
+                          color: Color(0xFF20232E),
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     if (_checking) {
       return Padding(
