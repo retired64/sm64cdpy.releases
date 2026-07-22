@@ -1115,7 +1115,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
               style: FilledButton.styleFrom(
                 backgroundColor: retro.accent,
                 foregroundColor: retro.background,
-                shape: RetroTheme.squareShape,
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                 textStyle:
                     const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
               ),

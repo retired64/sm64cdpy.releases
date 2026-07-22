@@ -941,20 +941,18 @@ class _SectionHeader extends StatelessWidget {
     required this.title,
     this.actionLabel,
     this.onAction,
-    this.padding = const EdgeInsets.symmetric(horizontal: 20),
   });
 
   final String title;
   final String? actionLabel;
   final VoidCallback? onAction;
-  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
 
     return Padding(
-      padding: padding,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
