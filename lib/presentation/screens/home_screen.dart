@@ -753,7 +753,7 @@ class _LaunchGameButton extends ConsumerStatefulWidget {
 }
 
 class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
-  static const bool _enabled = false;
+  static const bool _enabled = true;
 
   bool _checking = true;
 
