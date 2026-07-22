@@ -56,9 +56,9 @@ class _HomeBody extends ConsumerWidget {
           ),
         ),
         if (featuredAsync.maybeWhen(
-              data: (mods) => mods.isNotEmpty,
-              orElse: () => false,
-            ))
+          data: (mods) => mods.isNotEmpty,
+          orElse: () => false,
+        ))
           const SliverToBoxAdapter(child: SizedBox(height: 14)),
 
         // ── Browse carousel ─────────────────────────────────────
@@ -161,8 +161,8 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
     final retro = RetroTheme.of(context);
     final carouselHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
-            ? 160.0
-            : 220.0;
+        ? 160.0
+        : 220.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -269,7 +269,8 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
               children: [
                 Hero(
                   tag: 'mod_img_${widget.mod.id}',
-                  child: widget.mod.imageUrl != null &&
+                  child:
+                      widget.mod.imageUrl != null &&
                           widget.mod.imageUrl!.isNotEmpty
                       ? CachedNetworkImage(
                           imageUrl: widget.mod.imageUrl!,
@@ -334,9 +335,11 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(Icons.person,
-                                    size: 11,
-                                    color: Colors.white.withValues(alpha: 0.7)),
+                                Icon(
+                                  Icons.person,
+                                  size: 11,
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                ),
                                 const SizedBox(width: 4),
                                 Flexible(
                                   child: Text(
@@ -344,8 +347,9 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.75),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.75,
+                                      ),
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -353,8 +357,11 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                 ),
                                 if (widget.mod.rating != null) ...[
                                   const SizedBox(width: 10),
-                                  Icon(Icons.star,
-                                      size: 11, color: retro.amber),
+                                  Icon(
+                                    Icons.star,
+                                    size: 11,
+                                    color: retro.amber,
+                                  ),
                                   const SizedBox(width: 3),
                                   Text(
                                     widget.mod.rating!.star,
@@ -414,8 +421,11 @@ class _FeaturedPlaceholder extends StatelessWidget {
     return Container(
       color: retro.surfaceAlt,
       child: Center(
-        child: Icon(Icons.extension,
-            size: 48, color: retro.inkDim.withValues(alpha: 0.3)),
+        child: Icon(
+          Icons.extension,
+          size: 48,
+          color: retro.inkDim.withValues(alpha: 0.3),
+        ),
       ),
     );
   }
@@ -446,7 +456,7 @@ class _BrowseCarousel extends StatefulWidget {
     ),
     (
       icon: Icons.favorite_rounded,
-      label: 'Favourites',
+      label: 'Favorites',
       description: 'Your saved mods across all sections',
       route: '/favourites',
       colorKey: 'red',
@@ -634,17 +644,24 @@ class _BrowseCardState extends State<_BrowseCard>
                           color: widget.accent.withValues(alpha: 0.22),
                           border: Border.all(color: retro.border, width: 1.5),
                         ),
-                        child: widget.imageUrl != null &&
+                        child:
+                            widget.imageUrl != null &&
                                 widget.imageUrl!.isNotEmpty
                             ? CachedNetworkImage(
                                 imageUrl: widget.imageUrl!,
                                 fit: BoxFit.cover,
                                 width: 56,
                                 height: 56,
-                                placeholder: (_, _) => Icon(widget.icon,
-                                    size: 26, color: widget.accent),
-                                errorWidget: (_, _, _) => Icon(widget.icon,
-                                    size: 26, color: widget.accent),
+                                placeholder: (_, _) => Icon(
+                                  widget.icon,
+                                  size: 26,
+                                  color: widget.accent,
+                                ),
+                                errorWidget: (_, _, _) => Icon(
+                                  widget.icon,
+                                  size: 26,
+                                  color: widget.accent,
+                                ),
                               )
                             : Icon(widget.icon, size: 26, color: widget.accent),
                       ),
@@ -838,8 +855,7 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
                       color: widget.accent.withValues(alpha: 0.18),
                       border: Border.all(color: widget.accent, width: 2),
                     ),
-                    child:
-                        Icon(widget.icon, size: 20, color: widget.accent),
+                    child: Icon(widget.icon, size: 20, color: widget.accent),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -860,8 +876,11 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
                       ],
                     ),
                   ),
-                  Icon(Icons.chevron_right_rounded,
-                      size: 20, color: widget.retro.inkDim),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 20,
+                    color: widget.retro.inkDim,
+                  ),
                 ],
               ),
             ),
@@ -914,8 +933,10 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
       builder: (ctx) => AlertDialog(
         backgroundColor: retro.surface,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        title: Text('Game not installed',
-            style: retro.heading(size: 16, color: retro.red)),
+        title: Text(
+          'Game not installed',
+          style: retro.heading(size: 16, color: retro.red),
+        ),
         content: Text(
           'SM64CoopDX (com.maniscat2.sm64coopdx)\nis not installed on this device.',
           style: retro.body(size: 13),
@@ -923,17 +944,24 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child:
-                Text('Close', style: retro.body(size: 13, color: retro.inkDim)),
+            child: Text(
+              'Close',
+              style: retro.body(size: 13, color: retro.inkDim),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               context.go('/links-resource');
             },
-            child: Text('Download',
-                style: retro.body(
-                    size: 13, color: retro.accent, weight: FontWeight.w700)),
+            child: Text(
+              'Download',
+              style: retro.body(
+                size: 13,
+                color: retro.accent,
+                weight: FontWeight.w700,
+              ),
+            ),
           ),
         ],
       ),
@@ -954,7 +982,10 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
               alignment: Alignment.center,
               transform: Matrix4.skewX(-0.18),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: retro.surfaceAlt,
                   border: Border.all(color: retro.border, width: 2),
@@ -966,8 +997,11 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.play_arrow_rounded,
-                          size: 22, color: retro.inkDim),
+                      Icon(
+                        Icons.play_arrow_rounded,
+                        size: 22,
+                        color: retro.inkDim,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'LAUNCH  GAME',
@@ -992,7 +1026,10 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                   alignment: Alignment.center,
                   transform: Matrix4.skewX(-0.18),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: retro.amber,
                       border: Border.all(color: retro.border, width: 1.5),
@@ -1032,8 +1069,10 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
             child: SizedBox(
               width: 18,
               height: 18,
-              child:
-                  CircularProgressIndicator(strokeWidth: 2, color: retro.accent),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: retro.accent,
+              ),
             ),
           ),
         ),
@@ -1060,8 +1099,11 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.play_arrow_rounded,
-                      size: 22, color: Color(0xFF20232E)),
+                  Icon(
+                    Icons.play_arrow_rounded,
+                    size: 22,
+                    color: Color(0xFF20232E),
+                  ),
                   SizedBox(width: 8),
                   Text(
                     'LAUNCH  GAME',
@@ -1072,8 +1114,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                       letterSpacing: 0.5,
                     ),
                   ),
-                  Icon(Icons.arrow_forward,
-                      size: 18, color: Color(0xFF20232E)),
+                  Icon(Icons.arrow_forward, size: 18, color: Color(0xFF20232E)),
                 ],
               ),
             ),
@@ -1188,9 +1229,10 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                         child: Text(
                           '${widget.rank}',
                           style: retro.body(
-                              size: 13,
-                              color: retro.ink,
-                              weight: FontWeight.w700),
+                            size: 13,
+                            color: retro.ink,
+                            weight: FontWeight.w700,
+                          ),
                         ),
                       ),
               ),
@@ -1201,7 +1243,8 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                   child: SizedBox(
                     width: 46,
                     height: 46,
-                    child: widget.mod.imageUrl != null &&
+                    child:
+                        widget.mod.imageUrl != null &&
                             widget.mod.imageUrl!.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl: widget.mod.imageUrl!,
@@ -1210,14 +1253,20 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                                 Container(color: retro.surfaceAlt),
                             errorWidget: (_, _, _) => Container(
                               color: retro.surfaceAlt,
-                              child: Icon(Icons.extension,
-                                  size: 18, color: retro.inkDim),
+                              child: Icon(
+                                Icons.extension,
+                                size: 18,
+                                color: retro.inkDim,
+                              ),
                             ),
                           )
                         : Container(
                             color: retro.surfaceAlt,
-                            child: Icon(Icons.extension,
-                                size: 18, color: retro.inkDim),
+                            child: Icon(
+                              Icons.extension,
+                              size: 18,
+                              color: retro.inkDim,
+                            ),
                           ),
                   ),
                 ),
@@ -1284,11 +1333,7 @@ class _TopModRowState extends ConsumerState<_TopModRow>
 // ── Section header ────────────────────────────────────────────────────────────
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    this.actionLabel,
-    this.onAction,
-  });
+  const _SectionHeader({required this.title, this.actionLabel, this.onAction});
 
   final String title;
   final String? actionLabel;
@@ -1314,9 +1359,10 @@ class _SectionHeader extends StatelessWidget {
                   Text(
                     actionLabel!,
                     style: retro.body(
-                        size: 12,
-                        color: retro.accent,
-                        weight: FontWeight.w700),
+                      size: 12,
+                      color: retro.accent,
+                      weight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(width: 2),
                   Icon(Icons.arrow_forward_ios, size: 10, color: retro.accent),

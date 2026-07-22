@@ -48,7 +48,7 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: const DrawerMenuButton(),
-          title: Text('Favourites', style: retro.heading(size: 18)),
+          title: Text('Favorites', style: retro.heading(size: 18)),
           bottom: TabBar(
             controller: _tabController,
             tabs: const [
@@ -92,11 +92,13 @@ class _ModsFavTab extends ConsumerWidget {
     final retro = RetroTheme.of(context);
     final favsAsync = ref.watch(favouriteModsProvider);
     return favsAsync.when(
-      loading: () => Center(
-        child: CircularProgressIndicator(color: retro.accent),
-      ),
+      loading: () =>
+          Center(child: CircularProgressIndicator(color: retro.accent)),
       error: (e, _) => Center(
-        child: Text(e.toString(), style: retro.body(size: 13, color: retro.inkDim)),
+        child: Text(
+          e.toString(),
+          style: retro.body(size: 13, color: retro.inkDim),
+        ),
       ),
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'mods');
@@ -128,11 +130,13 @@ class _VipFavTab extends ConsumerWidget {
     final retro = RetroTheme.of(context);
     final favsAsync = ref.watch(favouriteVipModsProvider);
     return favsAsync.when(
-      loading: () => Center(
-        child: CircularProgressIndicator(color: retro.accent),
-      ),
+      loading: () =>
+          Center(child: CircularProgressIndicator(color: retro.accent)),
       error: (e, _) => Center(
-        child: Text(e.toString(), style: retro.body(size: 13, color: retro.inkDim)),
+        child: Text(
+          e.toString(),
+          style: retro.body(size: 13, color: retro.inkDim),
+        ),
       ),
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'VIP mods');
@@ -161,11 +165,13 @@ class _DynosFavTab extends ConsumerWidget {
     final retro = RetroTheme.of(context);
     final favsAsync = ref.watch(favouriteDynosProvider);
     return favsAsync.when(
-      loading: () => Center(
-        child: CircularProgressIndicator(color: retro.accent),
-      ),
+      loading: () =>
+          Center(child: CircularProgressIndicator(color: retro.accent)),
       error: (e, _) => Center(
-        child: Text(e.toString(), style: retro.body(size: 13, color: retro.inkDim)),
+        child: Text(
+          e.toString(),
+          style: retro.body(size: 13, color: retro.inkDim),
+        ),
       ),
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'DynOS');
@@ -194,11 +200,13 @@ class _TouchFavTab extends ConsumerWidget {
     final retro = RetroTheme.of(context);
     final favsAsync = ref.watch(favouriteTouchControlsProvider);
     return favsAsync.when(
-      loading: () => Center(
-        child: CircularProgressIndicator(color: retro.accent),
-      ),
+      loading: () =>
+          Center(child: CircularProgressIndicator(color: retro.accent)),
       error: (e, _) => Center(
-        child: Text(e.toString(), style: retro.body(size: 13, color: retro.inkDim)),
+        child: Text(
+          e.toString(),
+          style: retro.body(size: 13, color: retro.inkDim),
+        ),
       ),
       data: (mods) {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'Touch Controls');
@@ -254,10 +262,10 @@ class _EmptyFavourites extends StatelessWidget {
               type == 'mods'
                   ? '/'
                   : type == 'VIP mods'
-                      ? '/vip'
-                      : type == 'DynOS'
-                          ? '/dynos'
-                          : '/touch-controls',
+                  ? '/vip'
+                  : type == 'DynOS'
+                  ? '/dynos'
+                  : '/touch-controls',
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),

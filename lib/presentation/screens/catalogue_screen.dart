@@ -91,86 +91,81 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
       },
       child: CustomScrollView(
         controller: _scrollCtrl,
-              physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
-              slivers: [
-                // ── App bar ─────────────────────────────────────
-                _CatalogueAppBar(searchCtrl: _searchCtrl, onClear: _clearSearch),
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          // ── App bar ─────────────────────────────────────
+          _CatalogueAppBar(searchCtrl: _searchCtrl, onClear: _clearSearch),
 
-                // ── Section label ─────────────────────────────────
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
-                    child: Text('検索・カタログ', style: retro.body(size: 12)),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
-                    child: SectionKicker(retro: retro, label: 'BROWSE MODS'),
-                  ),
-                ),
-
-                // ── Filter bar ────────────────────────────────────
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _FilterBarDelegate(
-                    selectedCategory: selectedCategory,
-                    currentSort: currentSort,
-                  ),
-                ),
-
-                // ── Results header ────────────────────────────────
-                SliverToBoxAdapter(
-                  child: _ResultsHeader(filteredAsync: filteredAsync),
-                ),
-
-                // ── List ──────────────────────────────────────────
-                filteredAsync.when(
-                  loading: () => _SliverSkeletonList(),
-                  error: (e, _) => SliverFillRemaining(
-                    child: _ErrorView(message: e.toString()),
-                  ),
-                  data: (mods) => mods.isEmpty
-                      ? const SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: _EmptyView(),
-                        )
-                      : _SliverModList(
-                          mods: mods,
-                          page: _page,
-                          pageSize: _pageSize,
-                        ),
-                ),
-
-                // ── Pagination bar ────────────────────────────────
-                filteredAsync.maybeWhen(
-                  data: (mods) {
-                    if (mods.isEmpty) {
-                      return const SliverToBoxAdapter(child: SizedBox.shrink());
-                    }
-                    final totalPages = (mods.length / _pageSize).ceil();
-                    if (totalPages <= 1) {
-                      return const SliverToBoxAdapter(child: SizedBox.shrink());
-                    }
-                    return SliverToBoxAdapter(
-                      child: _PaginationBar(
-                        currentPage: _page,
-                        totalPages: totalPages,
-                        totalItems: mods.length,
-                        pageSize: _pageSize,
-                        onPageChanged: _goToPage,
-                      ),
-                    );
-                  },
-                  orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-                ),
-
-                const SliverToBoxAdapter(child: SizedBox(height: 32)),
-              ],
+          // ── Section label ─────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+              child: Text('検索・カタログ', style: retro.body(size: 12)),
             ),
-          );
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+              child: SectionKicker(retro: retro, label: 'BROWSE MODS'),
+            ),
+          ),
+
+          // ── Filter bar ────────────────────────────────────
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _FilterBarDelegate(
+              selectedCategory: selectedCategory,
+              currentSort: currentSort,
+            ),
+          ),
+
+          // ── Results header ────────────────────────────────
+          SliverToBoxAdapter(
+            child: _ResultsHeader(filteredAsync: filteredAsync),
+          ),
+
+          // ── List ──────────────────────────────────────────
+          filteredAsync.when(
+            loading: () => _SliverSkeletonList(),
+            error: (e, _) =>
+                SliverFillRemaining(child: _ErrorView(message: e.toString())),
+            data: (mods) => mods.isEmpty
+                ? const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _EmptyView(),
+                  )
+                : _SliverModList(mods: mods, page: _page, pageSize: _pageSize),
+          ),
+
+          // ── Pagination bar ────────────────────────────────
+          filteredAsync.maybeWhen(
+            data: (mods) {
+              if (mods.isEmpty) {
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              }
+              final totalPages = (mods.length / _pageSize).ceil();
+              if (totalPages <= 1) {
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              }
+              return SliverToBoxAdapter(
+                child: _PaginationBar(
+                  currentPage: _page,
+                  totalPages: totalPages,
+                  totalItems: mods.length,
+                  pageSize: _pageSize,
+                  onPageChanged: _goToPage,
+                ),
+              );
+            },
+            orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+          ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        ],
+      ),
+    );
   }
 }
 
@@ -226,9 +221,12 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
       title: RichText(
         text: TextSpan(
           children: [
-            TextSpan(text: 'MOD ', style: retro.heading(size: 18, color: retro.ink)),
             TextSpan(
-              text: 'CATALOGUE',
+              text: 'MOD ',
+              style: retro.heading(size: 18, color: retro.ink),
+            ),
+            TextSpan(
+              text: 'CATALOG',
               style: retro.heading(size: 18, color: retro.accent),
             ),
           ],
@@ -295,7 +293,11 @@ class _SearchField extends ConsumerWidget {
         onChanged: (v) {
           ref.read(searchQueryProvider.notifier).setSearchQuery(v);
         },
-        style: TextStyle(color: retro.ink, fontSize: 14, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: retro.ink,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
         decoration: InputDecoration(
           hintText: 'SEARCH MODS, AUTHORS, TAGS…',
           hintStyle: TextStyle(
@@ -502,7 +504,11 @@ class _SortChip extends ConsumerWidget {
 }
 
 class _SortSheet extends StatelessWidget {
-  const _SortSheet({required this.retro, required this.current, required this.ref});
+  const _SortSheet({
+    required this.retro,
+    required this.current,
+    required this.ref,
+  });
 
   final RetroTheme retro;
   final SortOrder current;
@@ -512,7 +518,11 @@ class _SortSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final options = [
       (order: SortOrder.none, icon: Icons.list_rounded, label: 'Default'),
-      (order: SortOrder.ratingDesc, icon: Icons.star_rounded, label: 'Top Rated'),
+      (
+        order: SortOrder.ratingDesc,
+        icon: Icons.star_rounded,
+        label: 'Top Rated',
+      ),
       (
         order: SortOrder.downloadsDesc,
         icon: Icons.download_rounded,
@@ -532,9 +542,7 @@ class _SortSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(width: 36, height: 4, color: retro.border),
-            ),
+            Center(child: Container(width: 36, height: 4, color: retro.border)),
             const SizedBox(height: 18),
             Text('SORT BY', style: retro.heading(size: 16)),
             const SizedBox(height: 14),
@@ -835,7 +843,10 @@ class _PagePills extends StatelessWidget {
             height: 24,
             decoration: BoxDecoration(
               color: isActive ? retro.accent : retro.surfaceAlt,
-              border: Border.all(color: retro.border, width: isActive ? 2 : 1.5),
+              border: Border.all(
+                color: retro.border,
+                width: isActive ? 2 : 1.5,
+              ),
             ),
             alignment: Alignment.center,
             child: Text(
@@ -884,7 +895,9 @@ class _PageButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 15,
-          color: enabled ? retro.background : retro.inkDim.withValues(alpha: 0.4),
+          color: enabled
+              ? retro.background
+              : retro.inkDim.withValues(alpha: 0.4),
         ),
       ),
     );
