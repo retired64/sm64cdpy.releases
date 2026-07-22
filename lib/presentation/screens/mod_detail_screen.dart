@@ -126,6 +126,13 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
               ),
             ),
 
+            // ── Background install status banner ────
+            SliverToBoxAdapter(
+              child: _InstallStatusBanner(
+                modTitle: widget.mod.title,
+              ),
+            ),
+
             // ── Content card that overlaps the hero ──────────────
             SliverToBoxAdapter(
               child: Transform.translate(
@@ -139,13 +146,6 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
                   onExpandChangelog: () =>
                       setState(() => _changelogExpanded = !_changelogExpanded),
                 ),
-              ),
-            ),
-
-            // ── Background install status banner ──────
-            SliverToBoxAdapter(
-              child: _InstallStatusBanner(
-                modTitle: widget.mod.title,
               ),
             ),
 
@@ -1310,10 +1310,21 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
 
   Future<void> _downloadToModsFolder(
       ModInstaller installer, String url, String filename) async {
+    if (!mounted) return;
+    setState(() {
+      _localDownloading = true;
+      _localProgress = 0.0;
+    });
     try {
       await FileDownloader.downloadFile(
         url: url,
         name: filename,
+        onProgress: (name, progress) {
+          if (!mounted) return;
+          final normalized =
+              (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          setState(() => _localProgress = normalized);
+        },
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
@@ -1322,48 +1333,20 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             targetName: savedName,
           );
           if (!mounted) return;
-          AppSnackbar.success(
-            context,
-            message: 'Saved to mods folder: $savedName',
-          );
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
+          AppSnackbar.success(context,
+              message: 'Saved to mods folder: $savedName');
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          AppSnackbar.error(
-            context,
-            message: 'Download failed',
-          );
-        },
-      );
-    } catch (e) {
-      if (!mounted) return;
-      AppSnackbar.error(
-        context,
-        message: 'Error: ${e.toString()}',
-      );
-    }
-  }
-
-  Future<void> _downloadWithFileDownloader(
-      String url, String filename) async {
-    try {
-      await FileDownloader.downloadFile(
-        url: url,
-        name: filename,
-        onDownloadCompleted: (path) {
-          if (!mounted) return;
-          final savedName = path.split('/').last;
-          AppSnackbar.success(
-            context,
-            message: 'Downloaded: $savedName',
-          );
-        },
-        onDownloadError: (error) {
-          if (!mounted) return;
-          AppSnackbar.error(
-            context,
-            message: 'Download failed',
-          );
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
+          AppSnackbar.error(context, message: 'Download failed');
         },
       );
     } catch (e) {
@@ -1372,10 +1355,53 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(
-        context,
-        message: 'Error: ${e.toString()}',
+      AppSnackbar.error(context, message: 'Error: ${e.toString()}');
+    }
+  }
+
+  Future<void> _downloadWithFileDownloader(
+      String url, String filename) async {
+    if (!mounted) return;
+    setState(() {
+      _localDownloading = true;
+      _localProgress = 0.0;
+    });
+    try {
+      await FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onProgress: (name, progress) {
+          if (!mounted) return;
+          final normalized =
+              (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          setState(() => _localProgress = normalized);
+        },
+        onDownloadCompleted: (path) {
+          if (!mounted) return;
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
+          final savedName = path.split('/').last;
+          AppSnackbar.success(context, message: 'Downloaded: $savedName');
+          showPostInstallDialog(context);
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
+          AppSnackbar.error(context, message: 'Download failed');
+        },
       );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _localDownloading = false;
+        _localProgress = 0.0;
+      });
+      AppSnackbar.error(context, message: 'Error: ${e.toString()}');
     }
   }
 
