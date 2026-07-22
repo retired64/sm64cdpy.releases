@@ -330,9 +330,29 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.4.4',
+    version: '1.4.5',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'Home "Browse" section redesigned as a swipeable carousel (Catalog, Favourites, Popular), matching the same card + page-dot style as the Featured carousel.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Each Browse card now has a color-coded skewed "GO TO" button for quicker at-a-glance navigation — amber for Catalog, red for Favourites, navy blue for Popular.',
+          'Skewed chip buttons now auto-pick readable text color (white or dark ink) based on the fill color brightness, fixing low-contrast text on darker accent colours.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.4.4',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.improved,

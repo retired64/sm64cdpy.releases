@@ -14,7 +14,7 @@ class AppConstants {
   static const int titleMaxLines = 2;
 
   static const String appName = 'SM64CDPY';
-  static const String appVersion = '1.4.4';
+  static const String appVersion = '1.4.5';
 
   // ── External URLs ────────────────────────────────────────────────────────
   static const String githubReleasesUrl =
@@ -40,10 +40,11 @@ class AppConstants {
   static const String githubUrl = 'https://github.com/retired64';
 
   // ── Links Resource ────────────────────────────────────────────────────────
-  static const String wikiUrl =
-      'https://github.com/ManIsCat2/sm64coopdx/wiki';
-  static const String toolsAndAddonsUrl = 'https://github.com/coop-deluxe/sm64coopdx/tree/main/docs/lua';
-  static const String maniscat2Github = 'https://github.com/ManIsCat2/sm64coopdx';
+  static const String wikiUrl = 'https://github.com/ManIsCat2/sm64coopdx/wiki';
+  static const String toolsAndAddonsUrl =
+      'https://github.com/coop-deluxe/sm64coopdx/tree/main/docs/lua';
+  static const String maniscat2Github =
+      'https://github.com/ManIsCat2/sm64coopdx';
 
   // ── Mod Installer ───────────────────────────────────────────────────────
   /// Clave en SharedPreferences para el estado de auto-instalación.
