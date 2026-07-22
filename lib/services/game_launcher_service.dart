@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 class GameLauncherService {
   GameLauncherService._();
 
-  static const _packageName = 'com.maniscat2.sm64coopdx';
   static const _channel = MethodChannel('sm64cdpy/launcher');
 
   static Future<bool> isInstalled() async {
