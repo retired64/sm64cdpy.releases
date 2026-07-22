@@ -147,7 +147,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
           ],
         ),
       ),
@@ -252,9 +252,9 @@ class _GlassIconButton extends StatelessWidget {
   }
 }
 
-// ── Hero: banner a rayas + avatar bordeado ──────────────────────────────────
-// Composición tipo "tarjeta de repo": DiagonalStripeBanner de fondo con el
-// avatar del mod superpuesto abajo a la izquierda, como en la referencia.
+// ── Hero: fondo sólido + avatar bordeado ────────────────────────────────────
+// Fondo de color sólido con el avatar del mod superpuesto abajo a la
+// izquierda.
 
 class _CinematicHero extends StatelessWidget {
   const _CinematicHero({
@@ -281,10 +281,7 @@ class _CinematicHero extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            DiagonalStripeBanner(
-              baseColor: retro.accent,
-              stripeColor: retro.background.withValues(alpha: 0.18),
-            ),
+            Container(color: retro.accent),
 
             // Scrim superior sutil — asegura contraste de los botones del
             // app bar sin importar en qué punto de la franja caigan.
@@ -438,8 +435,9 @@ class _ContentCard extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // ── Download CTA ───────────────────────────────
-                _DownloadSection(
-                  urls: mod.downloadUrls,
+                _VersionAccordion(
+                  versions: mod.versions,
+                  downloadUrls: mod.downloadUrls,
                   modUrl: mod.url,
                   modTitle: mod.title,
                 ),
@@ -547,7 +545,7 @@ class _TitleSection extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            RetroTag(retro: retro, label: 'v${mod.version}'),
+            RetroTag(retro: retro, label: 'v${mod.version.replaceFirst(RegExp(r'^v'), '')}'),
           ],
         ),
       ],
@@ -677,26 +675,41 @@ class _Divider extends StatelessWidget {
 
 // ── Download section ──────────────────────────────────────────────────────────
 
-class _DownloadSection extends StatelessWidget {
-  const _DownloadSection({
-    required this.urls,
+class _VersionAccordion extends StatefulWidget {
+  const _VersionAccordion({
+    required this.versions,
+    required this.downloadUrls,
     required this.modUrl,
     required this.modTitle,
   });
 
-  final List<String> urls;
+  final List<ModVersionEntity> versions;
+  final List<String> downloadUrls;
   final String modUrl;
   final String modTitle;
 
   @override
+  State<_VersionAccordion> createState() => _VersionAccordionState();
+}
+
+class _VersionAccordionState extends State<_VersionAccordion> {
+  int? _expandedIndex;
+
+  @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final displayUrls = urls.isNotEmpty ? urls : [modUrl];
+
+    if (widget.versions.isNotEmpty) {
+      return _buildVersionList(retro);
+    }
+
+    final displayUrls =
+        widget.downloadUrls.isNotEmpty ? widget.downloadUrls : [widget.modUrl];
 
     if (displayUrls.length == 1) {
       return _PrimaryDownloadButton(
         url: displayUrls.first,
-        modTitle: modTitle,
+        modTitle: widget.modTitle,
         retro: retro,
       );
     }
@@ -707,14 +720,409 @@ class _DownloadSection extends StatelessWidget {
         _SectionTitle(label: 'Download files (${displayUrls.length})'),
         const SizedBox(height: 10),
         ...displayUrls.asMap().entries.map(
-          (e) => _DownloadFileRow(
-            index: e.key + 1,
+          (e) => _BuildDownloadButton(
             url: e.value,
-            modTitle: modTitle,
+            modTitle: widget.modTitle,
             retro: retro,
+            label: '${e.key + 1}. ${_extractFilename(e.value)}',
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildVersionList(RetroTheme retro) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionTitle(label: 'Versions (${widget.versions.length})'),
+        const SizedBox(height: 10),
+        ...widget.versions.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final v = entry.value;
+          final isExpanded = _expandedIndex == idx;
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            decoration: BoxDecoration(
+              color: retro.surfaceAlt,
+              borderRadius: RetroTheme.radius,
+              border: Border.all(color: retro.border.withValues(alpha: 0.4)),
+            ),
+            child: Column(
+              children: [
+                InkWell(
+                  borderRadius: RetroTheme.radius,
+                  onTap: () =>
+                      setState(() => _expandedIndex = isExpanded ? null : idx),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    child: Row(
+                      children: [
+                        Icon(
+                          isExpanded
+                              ? Icons.expand_less_rounded
+                              : Icons.expand_more_rounded,
+                          size: 20,
+                          color: retro.ink,
+                        ),
+                        const SizedBox(width: 8),
+                        RetroTag(
+                          retro: retro,
+                          label: v.version.isEmpty ? 'v?' : v.version,
+                        ),
+                        const Spacer(),
+                        Text(
+                          v.releaseDate,
+                          style: retro.body(size: 11, color: retro.inkDim),
+                        ),
+                        if (v.downloads > 0) ...[
+                          const SizedBox(width: 12),
+                          Icon(Icons.download_rounded,
+                              size: 13, color: retro.accent),
+                          const SizedBox(width: 3),
+                          Text(
+                            v.downloads.toString(),
+                            style: retro.body(
+                                size: 11, weight: FontWeight.w700),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                if (isExpanded)
+                  ...v.files.map(
+                    (f) => Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+                      child: _PrimaryDownloadButton(
+                        url: f.downloadUrl,
+                        modTitle: '${widget.modTitle} — ${f.filename}',
+                        retro: retro,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  static String _extractFilename(String url) {
+    try {
+      final uri = Uri.parse(url);
+      final segs = uri.pathSegments;
+      if (segs.isNotEmpty) {
+        final last = segs.last;
+        if (last.isNotEmpty && last.contains('.')) return last;
+      }
+    } catch (_) {}
+    return url.split('/').last;
+  }
+}
+
+class _BuildDownloadButton extends ConsumerStatefulWidget {
+  const _BuildDownloadButton({
+    required this.url,
+    required this.modTitle,
+    required this.retro,
+    required this.label,
+  });
+
+  final String url;
+  final String modTitle;
+  final RetroTheme retro;
+  final String label;
+
+  @override
+  ConsumerState<_BuildDownloadButton> createState() =>
+      _BuildDownloadButtonState();
+}
+
+class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
+    with SingleTickerProviderStateMixin {
+  final _installer = ModInstaller();
+  bool _localDownloading = false;
+  double _localProgress = 0.0;
+
+  Future<void> _download() async {
+    HapticFeedback.lightImpact();
+
+    final hasPermission = await _installer.hasNotificationPermission();
+
+    if (!hasPermission && mounted) {
+      final showRationale = await _installer.shouldShowNotificationRationale();
+      if (showRationale) {
+        if (!mounted) return;
+        final proceed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
+            title: Text('Notifications needed',
+                style: TextStyle(color: RetroTheme.of(ctx).ink)),
+            content: Text(
+              'We need notification permission to show download '
+              'and installation progress, even if you leave the app.',
+              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Not now',
+                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Continue'),
+              ),
+            ],
+          ),
+        );
+        if (proceed != true && mounted) {
+          AppSnackbar.info(
+            context,
+            message:
+                'You won\'t see progress outside the app. Grant permission in Settings to enable notifications.',
+          );
+        }
+      }
+
+      if (!mounted) return;
+      final granted = await _installer.requestNotificationPermission();
+      if (!granted && mounted) {
+        AppSnackbar.info(
+          context,
+          message:
+              'Notifications not enabled. You won\'t see download progress outside the app.',
+        );
+      }
+    }
+
+    final modName = _sanitizeModTitle(widget.modTitle);
+    final filename = _inferFileName(widget.url, widget.modTitle);
+
+    final hasFolder = await _installer.isDirectorySelected();
+
+    if (!hasFolder) {
+      final prefs = await SharedPreferences.getInstance();
+      final autoInstall =
+          prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+
+      if (autoInstall && mounted) {
+        final goToSettings = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
+            icon: Icon(Icons.folder_open_rounded,
+                color: RetroTheme.of(ctx).accent, size: 28),
+            title: Text('Mods folder not selected',
+                style: TextStyle(color: RetroTheme.of(ctx).ink)),
+            content: Text(
+              'You need to select a mods folder before '
+              'installing mods to the game.\n\n'
+              'Go to Settings → Game Integration to select it.',
+              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Cancel',
+                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+              ),
+              FilledButton.icon(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                icon: const Icon(Icons.settings, size: 16),
+                label: const Text('Go to Settings'),
+              ),
+            ],
+          ),
+        );
+        if (goToSettings == true && mounted) {
+          GoRouter.of(context).push('/settings');
+        }
+        return;
+      }
+
+      if (!mounted) return;
+      await _downloadWithFileDownloader(widget.url, filename);
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final autoInstall =
+        prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+
+    if (autoInstall && mounted) {
+      BackgroundInstallService.instance.startDownloadAndInstall(
+        url: widget.url,
+        modName: modName,
+        fileName: filename,
+      );
+      if (!mounted) return;
+      AppSnackbar.info(context, message: 'Downloading "$filename"...');
+    } else if (mounted) {
+      await _downloadToModsFolder(_installer, widget.url, filename);
+    }
+  }
+
+  Future<void> _downloadToModsFolder(
+      ModInstaller installer, String url, String filename) async {
+    try {
+      await FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onDownloadCompleted: (path) async {
+          if (!mounted) return;
+          final savedName = path.split('/').last;
+          await installer.copyFileToModsFolder(
+            sourcePath: path,
+            targetName: savedName,
+          );
+          if (!mounted) return;
+          AppSnackbar.success(
+              context, message: 'Saved to mods folder: $savedName');
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          AppSnackbar.error(context, message: 'Download failed');
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackbar.error(context, message: 'Error: ${e.toString()}');
+    }
+  }
+
+  Future<void> _downloadWithFileDownloader(
+      String url, String filename) async {
+    if (!mounted) return;
+    setState(() {
+      _localDownloading = true;
+      _localProgress = 0.0;
+    });
+    try {
+      await FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onProgress: (name, progress) {
+          if (!mounted) return;
+          final normalized =
+              (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          setState(() => _localProgress = normalized);
+        },
+        onDownloadCompleted: (path) {
+          if (!mounted) return;
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
+          final savedName = path.split('/').last;
+          AppSnackbar.success(context, message: 'Downloaded: $savedName');
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
+          AppSnackbar.error(context, message: 'Download failed');
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _localDownloading = false;
+        _localProgress = 0.0;
+      });
+      AppSnackbar.error(context, message: 'Error: ${e.toString()}');
+    }
+  }
+
+  String _sanitizeModTitle(String raw) =>
+      raw.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
+
+  String _inferFileName(String url, String modTitle) {
+    try {
+      final uri = Uri.parse(url);
+      final path = uri.path;
+      if (path.contains('/download')) {
+        final segs = uri.pathSegments;
+        if (segs.length >= 2) {
+          return '${modTitle.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')}_${segs[segs.length - 1]}.zip';
+        }
+      }
+      final last = path.split('/').last;
+      if (last.isNotEmpty && last.contains('.')) return last;
+      return '${modTitle.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')}.zip';
+    } catch (_) {
+      return '${modTitle.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')}.zip';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.border.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: _localDownloading
+                      ? CircularProgressIndicator(
+                          value: _localProgress,
+                          strokeWidth: 2.5,
+                          color: retro.accent,
+                          backgroundColor: retro.border,
+                        )
+                      : Icon(Icons.insert_drive_file_rounded,
+                          size: 28, color: retro.accent),
+                ),
+                const SizedBox(height: 6),
+                Flexible(
+                  child: Text(
+                    widget.label,
+                    style: retro.body(size: 11.5, color: retro.inkDim),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            height: 34,
+            child: FilledButton.icon(
+              onPressed: _download,
+              icon: const Icon(Icons.download_rounded, size: 14),
+              label: const Text('Download'),
+              style: FilledButton.styleFrom(
+                backgroundColor: retro.accent,
+                foregroundColor: retro.background,
+                shape: RetroTheme.squareShape,
+                textStyle:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1050,387 +1458,6 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
   }
 }
 
-class _DownloadFileRow extends ConsumerStatefulWidget {
-  const _DownloadFileRow({
-    required this.index,
-    required this.url,
-    required this.modTitle,
-    required this.retro,
-  });
-
-  final int index;
-  final String url;
-  final String modTitle;
-  final RetroTheme retro;
-
-  @override
-  ConsumerState<_DownloadFileRow> createState() => _DownloadFileRowState();
-}
-
-class _DownloadFileRowState extends ConsumerState<_DownloadFileRow>
-    with SingleTickerProviderStateMixin {
-  final _installer = ModInstaller();
-
-  bool _localDownloading = false;
-  double _localProgress = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<void> _download() async {
-    HapticFeedback.lightImpact();
-
-    final hasPermission = await _installer.hasNotificationPermission();
-
-    if (!hasPermission && mounted) {
-      final showRationale = await _installer.shouldShowNotificationRationale();
-      if (showRationale) {
-        if (!mounted) return;
-        final proceed = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            backgroundColor:
-                RetroTheme.of(ctx).surfaceAlt,
-            title: Text(
-              'Notifications needed',
-              style: TextStyle(color: RetroTheme.of(ctx).ink),
-            ),
-            content: Text(
-              'We need notification permission to show download '
-              'and installation progress, even if you leave the app.',
-              style: TextStyle(
-                  color: RetroTheme.of(ctx).inkDim),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Not now',
-                    style: TextStyle(
-                        color: RetroTheme.of(ctx).ink)),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Continue'),
-              ),
-            ],
-          ),
-        );
-
-        if (proceed != true && mounted) {
-          AppSnackbar.info(
-            context,
-            message: 'You won\'t see progress outside the app. Grant permission in Settings to enable notifications.',
-          );
-        }
-      }
-
-      if (!mounted) return;
-      final granted = await _installer.requestNotificationPermission();
-      if (!granted && mounted) {
-        AppSnackbar.info(
-          context,
-          message: 'Notifications not enabled. You won\'t see download progress outside the app.',
-        );
-      }
-    }
-
-    final modName = _sanitizeModTitle(widget.modTitle);
-    final filename = _inferFileName(
-      widget.url,
-      widget.modTitle,
-      index: widget.index,
-    );
-
-    final hasFolder = await _installer.isDirectorySelected();
-
-    if (!hasFolder) {
-      final prefs = await SharedPreferences.getInstance();
-      final autoInstall =
-          prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
-
-      if (autoInstall && mounted) {
-        final goToSettings = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            backgroundColor:
-                RetroTheme.of(ctx).surfaceAlt,
-            icon: Icon(Icons.folder_open_rounded,
-                color: RetroTheme.of(ctx).accent, size: 28),
-            title: Text(
-              'Mods folder not selected',
-              style:
-                  TextStyle(color: RetroTheme.of(ctx).ink),
-            ),
-            content: Text(
-              'You need to select a mods folder before '
-              'installing mods to the game.\n\n'
-              'Go to Settings → Game Integration to select it.',
-              style: TextStyle(
-                  color: RetroTheme.of(ctx).inkDim),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Cancel',
-                    style: TextStyle(
-                        color: RetroTheme.of(ctx).ink)),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                icon: const Icon(Icons.settings, size: 16),
-                label: const Text('Go to Settings'),
-              ),
-            ],
-          ),
-        );
-        if (goToSettings == true && mounted) {
-          GoRouter.of(context).push('/settings');
-        }
-        return;
-      }
-
-      if (!mounted) return;
-      await _downloadWithFileDownloader(widget.url, filename);
-      return;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    final autoInstall =
-        prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
-
-    if (autoInstall && mounted) {
-      BackgroundInstallService.instance.startDownloadAndInstall(
-        url: widget.url,
-        modName: modName,
-        fileName: filename,
-      );
-      if (!mounted) return;
-      AppSnackbar.info(
-        context,
-        message: 'Downloading "$filename"...',
-      );
-    } else if (mounted) {
-      await _downloadToModsFolder(_installer, widget.url, filename);
-    }
-  }
-
-  Future<void> _downloadToModsFolder(
-      ModInstaller installer, String url, String filename) async {
-    try {
-      await FileDownloader.downloadFile(
-        url: url,
-        name: filename,
-        onDownloadCompleted: (path) async {
-          if (!mounted) return;
-          final savedName = path.split('/').last;
-          await installer.copyFileToModsFolder(
-            sourcePath: path,
-            targetName: savedName,
-          );
-          if (!mounted) return;
-          AppSnackbar.success(
-            context,
-            message: 'Saved to mods folder: $savedName',
-          );
-        },
-        onDownloadError: (error) {
-          if (!mounted) return;
-          AppSnackbar.error(
-            context,
-            message: 'Download failed',
-          );
-        },
-      );
-    } catch (e) {
-      if (!mounted) return;
-      AppSnackbar.error(
-        context,
-        message: 'Error: ${e.toString()}',
-      );
-    }
-  }
-
-  Future<void> _downloadWithFileDownloader(
-      String url, String filename) async {
-    if (!mounted) return;
-    setState(() {
-      _localDownloading = true;
-      _localProgress = 0.0;
-    });
-    try {
-      await FileDownloader.downloadFile(
-        url: url,
-        name: filename,
-        onProgress: (name, progress) {
-          if (!mounted) return;
-          final normalized =
-              (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
-          setState(() => _localProgress = normalized);
-        },
-        onDownloadCompleted: (path) {
-          if (!mounted) return;
-          setState(() {
-            _localDownloading = false;
-            _localProgress = 0.0;
-          });
-          final savedName = path.split('/').last;
-          AppSnackbar.success(
-            context,
-            message: 'Downloaded: $savedName',
-          );
-        },
-        onDownloadError: (error) {
-          if (!mounted) return;
-          setState(() {
-            _localDownloading = false;
-            _localProgress = 0.0;
-          });
-          AppSnackbar.error(
-            context,
-            message: 'Download failed',
-          );
-        },
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _localDownloading = false;
-        _localProgress = 0.0;
-      });
-      AppSnackbar.error(
-        context,
-        message: 'Error: ${e.toString()}',
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = widget.retro;
-    final modName = _sanitizeModTitle(widget.modTitle);
-    final info = ref.watch(bgInstallStateProvider)[modName];
-    final isActive = _localDownloading ||
-        (info != null &&
-            (info.status == BgInstallStatus.downloading ||
-             info.status == BgInstallStatus.installing));
-    final downloadProgress = _localDownloading
-        ? (_localProgress * 100).round()
-        : (info?.status == BgInstallStatus.downloading
-            ? info?.downloadProgress
-            : null);
-
-    final filename = _inferFileName(
-      widget.url,
-      widget.modTitle,
-      index: widget.index,
-    );
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        borderRadius: RetroTheme.radius,
-        border: Border.all(color: retro.border.withValues(alpha: 0.4)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: retro.accent,
-                  borderRadius: RetroTheme.radius,
-                ),
-                child: Icon(
-                  Icons.insert_drive_file_rounded,
-                  size: 16,
-                  color: retro.background,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      filename,
-                      style: TextStyle(
-                        color: retro.ink,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      isActive
-                          ? (_localDownloading
-                              ? 'Downloading ${(_localProgress * 100).toStringAsFixed(0)}%'
-                              : info?.status == BgInstallStatus.downloading
-                                  ? 'Downloading ${downloadProgress ?? 0}%'
-                                  : 'Installing...')
-                          : 'Toca para descargar',
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: isActive ? null : _download,
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: retro.accent.withValues(alpha: 0.1),
-                    borderRadius: RetroTheme.radius,
-                  ),
-                  child: isActive
-                      ? Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            value: downloadProgress != null
-                                ? downloadProgress / 100.0
-                                : null,
-                            color: retro.accent,
-                          ),
-                        )
-                      : Icon(
-                          Icons.download_rounded,
-                          size: 16,
-                          color: retro.accent,
-                        ),
-                ),
-              ),
-            ],
-          ),
-          if (isActive) ...[
-            const SizedBox(height: 10),
-            ClipRRect(
-              borderRadius: RetroTheme.radius,
-              child: LinearProgressIndicator(
-                value: downloadProgress != null
-                    ? downloadProgress / 100.0
-                    : null,
-                minHeight: 3,
-                backgroundColor: retro.border.withValues(alpha: 0.2),
-                color: retro.accent,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
 
 // ── Screenshot gallery ────────────────────────────────────────────────────────
 

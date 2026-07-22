@@ -22,6 +22,7 @@ class ModEntity {
     required this.downloadUrls,
     required this.updates,
     required this.extractedAt,
+    this.versions = const [],
   });
 
   final String   id;
@@ -45,6 +46,7 @@ class ModEntity {
   final List<String>      downloadUrls;
   final List<ModUpdate>   updates;
   final String   extractedAt;
+  final List<ModVersionEntity> versions;
 
   @override
   bool operator ==(Object other) => other is ModEntity && other.id == id;
@@ -63,4 +65,28 @@ class ModUpdate {
   final String? title;
   final String? date;
   final String  changelog;
+}
+
+class ModVersionEntity {
+  const ModVersionEntity({
+    required this.version,
+    required this.releaseDate,
+    required this.downloads,
+    required this.files,
+  });
+
+  final String version;
+  final String releaseDate;
+  final int downloads;
+  final List<ModFileEntity> files;
+}
+
+class ModFileEntity {
+  const ModFileEntity({
+    required this.filename,
+    required this.downloadUrl,
+  });
+
+  final String filename;
+  final String downloadUrl;
 }

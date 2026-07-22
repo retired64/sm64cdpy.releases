@@ -24,6 +24,7 @@ class ModModel {
     required this.downloadUrls,
     required this.updates,
     required this.extractedAt,
+    this.versions = const [],
   });
 
   final String   id;
@@ -47,6 +48,7 @@ class ModModel {
   final List<String>         downloadUrls;
   final List<ModUpdateModel> updates;
   final String   extractedAt;
+  final List<ModVersionModel> versions;
 
   factory ModModel.fromJson(String id, Map<String, dynamic> json) {
     return ModModel(
@@ -75,6 +77,7 @@ class ModModel {
       downloadUrls:      _extractDownloadUrls(json),
       updates:           _updates(json['updates']),
       extractedAt:       json['extracted_at'] as String? ?? '',
+      versions:          _extractVersions(json['versions']),
     );
   }
 
@@ -117,6 +120,30 @@ class ModModel {
     return [];
   }
 
+  static List<ModVersionModel> _extractVersions(dynamic value) {
+    if (value is! List) return [];
+    return value
+        .whereType<Map<String, dynamic>>()
+        .map((v) => ModVersionModel(
+              version: v['version'] as String? ?? '',
+              releaseDate: v['release_date'] as String? ?? '',
+              downloads: (v['downloads'] as num?)?.toInt() ?? 0,
+              files: _extractFiles(v['files']),
+            ))
+        .toList();
+  }
+
+  static List<ModFileModel> _extractFiles(dynamic value) {
+    if (value is! List) return [];
+    return value
+        .whereType<Map<String, dynamic>>()
+        .map((f) => ModFileModel(
+              filename: f['filename'] as String? ?? '',
+              downloadUrl: f['download_url'] as String? ?? '',
+            ))
+        .toList();
+  }
+
   ModEntity toEntity() => ModEntity(
         id:                id,
         url:               url,
@@ -139,6 +166,7 @@ class ModModel {
         downloadUrls:      downloadUrls,
         updates:           updates.map((u) => u.toEntity()).toList(),
         extractedAt:       extractedAt,
+        versions:          versions.map((v) => v.toEntity()).toList(),
       );
 }
 
@@ -157,4 +185,40 @@ class ModUpdateModel {
       );
 
   ModUpdate toEntity() => ModUpdate(title: title, date: date, changelog: changelog);
+}
+
+class ModVersionModel {
+  const ModVersionModel({
+    required this.version,
+    required this.releaseDate,
+    required this.downloads,
+    required this.files,
+  });
+
+  final String version;
+  final String releaseDate;
+  final int downloads;
+  final List<ModFileModel> files;
+
+  ModVersionEntity toEntity() => ModVersionEntity(
+        version: version,
+        releaseDate: releaseDate,
+        downloads: downloads,
+        files: files.map((f) => f.toEntity()).toList(),
+      );
+}
+
+class ModFileModel {
+  const ModFileModel({
+    required this.filename,
+    required this.downloadUrl,
+  });
+
+  final String filename;
+  final String downloadUrl;
+
+  ModFileEntity toEntity() => ModFileEntity(
+        filename: filename,
+        downloadUrl: downloadUrl,
+      );
 }
