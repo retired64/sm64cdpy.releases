@@ -7,7 +7,9 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
+import '../../services/game_launcher_service.dart';
 import '../providers/mod_providers.dart';
+import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -64,6 +66,10 @@ class _HomeBody extends ConsumerWidget {
           child: _SectionHeader(title: 'Browse'),
         ),
         const SliverToBoxAdapter(child: _QuickAccessGrid()),
+
+        // ── Launch game ─────────────────────────────────────
+        const SliverToBoxAdapter(child: SizedBox(height: 12)),
+        const SliverToBoxAdapter(child: _LaunchGameButton()),
 
         // ── Exclusive content ─────────────────────────────────
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
@@ -727,6 +733,141 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
                   ),
                   Icon(Icons.chevron_right_rounded,
                       size: 20, color: widget.retro.inkDim),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Launch game button ────────────────────────────────────────────────────────
+
+class _LaunchGameButton extends ConsumerStatefulWidget {
+  const _LaunchGameButton();
+
+  @override
+  ConsumerState<_LaunchGameButton> createState() => _LaunchGameButtonState();
+}
+
+class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
+  bool _checking = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _check();
+  }
+
+  Future<void> _check() async {
+    final installed = await GameLauncherService.isInstalled();
+    if (!mounted) return;
+    ref.read(gameInstalledProvider.notifier).setInstalled(installed);
+    setState(() => _checking = false);
+  }
+
+  Future<void> _launch() async {
+    final launched = await GameLauncherService.launch();
+    if (!mounted) return;
+    if (!launched) {
+      _showNotInstalledDialog();
+    }
+  }
+
+  void _showNotInstalledDialog() {
+    final retro = RetroTheme.of(context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: retro.surface,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        title: Text('Game not installed',
+            style: retro.heading(size: 16, color: retro.red)),
+        content: Text(
+          'SM64CoopDX (com.maniscat2.sm64coopdx)\nis not installed on this device.',
+          style: retro.body(size: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child:
+                Text('Close', style: retro.body(size: 13, color: retro.inkDim)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.go('/links-resource');
+            },
+            child: Text('Download',
+                style: retro.body(
+                    size: 13, color: retro.accent, weight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+
+    if (_checking) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: Container(
+          height: 54,
+          decoration: BoxDecoration(
+            color: retro.surface,
+            border: Border.all(color: retro.border, width: 2),
+          ),
+          child: Center(
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child:
+                  CircularProgressIndicator(strokeWidth: 2, color: retro.accent),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      child: GestureDetector(
+        onTap: _launch,
+        child: Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.skewX(-0.18),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: retro.accent,
+              border: Border.all(color: retro.border, width: 2),
+              boxShadow: retro.hardShadow(dx: 3, dy: 3),
+            ),
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.skewX(0.18),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.play_arrow_rounded,
+                      size: 22, color: Color(0xFF20232E)),
+                  SizedBox(width: 8),
+                  Text(
+                    'LAUNCH  GAME',
+                    style: TextStyle(
+                      color: Color(0xFF20232E),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward,
+                      size: 18, color: Color(0xFF20232E)),
                 ],
               ),
             ),

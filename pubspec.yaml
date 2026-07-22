@@ -28,6 +28,9 @@ dependencies:
   http: ^1.6.0
   flutter_file_downloader: ^2.1.1
 
+  # Launch SM64CoopDX game from the mod manager
+  android_intent_plus: ^6.0.0
+
   # ZIP extraction for mod installation
   archive: ^4.0.7
 

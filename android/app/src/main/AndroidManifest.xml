@@ -76,5 +76,7 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
          </intent>
+        <!-- SM64CoopDX — launch game from mod manager -->
+        <package android:name="com.maniscat2.sm64coopdx" />
     </queries>
 </manifest>
