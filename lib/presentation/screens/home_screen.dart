@@ -61,11 +61,8 @@ class _HomeBody extends ConsumerWidget {
             ))
           const SliverToBoxAdapter(child: SizedBox(height: 14)),
 
-        // ── Quick access ──────────────────────────────────────
-        const SliverToBoxAdapter(
-          child: _SectionHeader(title: 'Browse'),
-        ),
-        const SliverToBoxAdapter(child: _QuickAccessGrid()),
+        // ── Browse carousel ─────────────────────────────────────
+        const SliverToBoxAdapter(child: _BrowseCarousel()),
 
         // ── Launch game ─────────────────────────────────────
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
@@ -424,67 +421,158 @@ class _FeaturedPlaceholder extends StatelessWidget {
   }
 }
 
-// ── Quick access grid — migrado de SVG a Icons.* ──────────────────────────────
+// ── Browse carousel — estilo tarjeta OPENCLAW: imagen, título, descripción
+// y botón inclinado "GO TO" en la esquina inferior derecha. Misma mecánica
+// de swipe + dots que el carrusel de Featured. ─────────────────────────────
 
-class _QuickAccessGrid extends StatelessWidget {
-  const _QuickAccessGrid();
+class _BrowseCarousel extends StatefulWidget {
+  const _BrowseCarousel();
+
+  // NOTA de implementación / imágenes:
+  // Por ahora `imageUrl` queda en null para las 3 categorías y la tarjeta
+  // cae automáticamente al ícono (mismo patrón de fallback que
+  // _FeaturedCard / _TopDownloads con CachedNetworkImage). El día que haya
+  // arte propio para cada sección basta con poner la URL aquí (o un asset
+  // local vía Image.asset si prefieres bundlear las 3 imágenes en vez de
+  // cargarlas por red) — no hace falta tocar _BrowseCard.
+  static const _items = [
+    (
+      icon: Icons.apps_rounded,
+      label: 'Catalog',
+      description: 'Browse, search & filter the full mod collection',
+      route: '/catalogue',
+      colorKey: 'amber',
+      imageUrl: null,
+    ),
+    (
+      icon: Icons.favorite_rounded,
+      label: 'Favourites',
+      description: 'Your saved mods across all sections',
+      route: '/favourites',
+      colorKey: 'red',
+      imageUrl: null,
+    ),
+    (
+      icon: Icons.trending_up_rounded,
+      label: 'Popular',
+      description: 'Top mods ranked by total downloads',
+      route: '/popular',
+      colorKey: 'blue',
+      imageUrl: null,
+    ),
+  ];
+
+  @override
+  State<_BrowseCarousel> createState() => _BrowseCarouselState();
+}
+
+class _BrowseCarouselState extends State<_BrowseCarousel> {
+  late final PageController _ctrl;
+  int _current = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = PageController(viewportFraction: 0.86);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, 0),
-      child: Row(
-        children: [
-          Expanded(
-            child: _QuickCard(
-              icon: Icons.apps_rounded,
-              label: 'Catalog',
-              description: 'Browse, search & filter the full mod collection',
-              route: '/catalogue',
-            ),
+    final retro = RetroTheme.of(context);
+    final colors = <String, Color>{
+      'amber': retro.amber,
+      'red': retro.red,
+      'blue': retro.blue,
+    };
+    final items = _BrowseCarousel._items;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: _SectionHeader(title: 'Browse'),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 178,
+          child: PageView.builder(
+            controller: _ctrl,
+            itemCount: items.length,
+            onPageChanged: (i) => setState(() => _current = i),
+            itemBuilder: (context, i) {
+              final item = items[i];
+              return _BrowseCard(
+                retro: retro,
+                icon: item.icon,
+                label: item.label,
+                description: item.description,
+                route: item.route,
+                imageUrl: item.imageUrl,
+                accent: colors[item.colorKey] ?? retro.accent,
+              );
+            },
           ),
-          SizedBox(width: 10),
-          Expanded(
-            child: _QuickCard(
-              icon: Icons.favorite_rounded,
-              label: 'Favourites',
-              description: 'Your saved mods across all sections',
-              route: '/favourites',
-            ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: _QuickCard(
-              icon: Icons.trending_up_rounded,
-              label: 'Popular',
-              description: 'Top mods ranked by total downloads',
-              route: '/popular',
+        ),
+        if (items.length > 1) ...[
+          const SizedBox(height: 12),
+          Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(items.length, (i) {
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: _current == i ? 20 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: _current == i
+                        ? retro.accent
+                        : retro.inkDim.withValues(alpha: 0.3),
+                    borderRadius: RetroTheme.radius,
+                  ),
+                );
+              }),
             ),
           ),
         ],
-      ),
+      ],
     );
   }
 }
 
-class _QuickCard extends StatefulWidget {
-  const _QuickCard({
+class _BrowseCard extends StatefulWidget {
+  const _BrowseCard({
+    required this.retro,
     required this.icon,
     required this.label,
     required this.description,
     required this.route,
+    required this.accent,
+    this.imageUrl,
   });
 
+  final RetroTheme retro;
   final IconData icon;
   final String label;
   final String description;
   final String route;
+  final Color accent;
+  // Cuando haya arte real por categoría, esto trae la miniatura por red;
+  // mientras sea null, la tarjeta usa el ícono como placeholder permanente.
+  final String? imageUrl;
 
   @override
-  State<_QuickCard> createState() => _QuickCardState();
+  State<_BrowseCard> createState() => _BrowseCardState();
 }
 
-class _QuickCardState extends State<_QuickCard>
+class _BrowseCardState extends State<_BrowseCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<double> _scale;
@@ -498,7 +586,7 @@ class _QuickCardState extends State<_QuickCard>
     );
     _scale = Tween<double>(
       begin: 1.0,
-      end: 0.94,
+      end: 0.97,
     ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
   }
 
@@ -510,49 +598,90 @@ class _QuickCardState extends State<_QuickCard>
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
+    final retro = widget.retro;
 
-    return GestureDetector(
-      onTapDown: (_) => _ctrl.forward(),
-      onTapUp: (_) {
-        _ctrl.reverse();
-        context.go(widget.route);
-      },
-      onTapCancel: () => _ctrl.reverse(),
-      child: ScaleTransition(
-        scale: _scale,
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
-          decoration: BoxDecoration(
-            color: retro.surface,
-            borderRadius: RetroTheme.radius,
-            border: Border.all(color: retro.border, width: 2),
-            boxShadow: retro.hardShadow(dx: 3, dy: 3),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 38,
-                height: 38,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: retro.surface,
-                  borderRadius: RetroTheme.radius,
-                  border: Border.all(color: retro.border, width: 1.5),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: GestureDetector(
+        onTapDown: (_) => _ctrl.forward(),
+        onTapUp: (_) {
+          _ctrl.reverse();
+          context.go(widget.route);
+        },
+        onTapCancel: () => _ctrl.reverse(),
+        child: ScaleTransition(
+          scale: _scale,
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: retro.surface,
+              borderRadius: RetroTheme.radius,
+              border: Border.all(color: retro.border, width: 2),
+              boxShadow: retro.hardShadow(dx: 3, dy: 3),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRect(
+                      child: Container(
+                        width: 56,
+                        height: 56,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: widget.accent.withValues(alpha: 0.22),
+                          border: Border.all(color: retro.border, width: 1.5),
+                        ),
+                        child: widget.imageUrl != null &&
+                                widget.imageUrl!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: widget.imageUrl!,
+                                fit: BoxFit.cover,
+                                width: 56,
+                                height: 56,
+                                placeholder: (_, _) => Icon(widget.icon,
+                                    size: 26, color: widget.accent),
+                                errorWidget: (_, _, _) => Icon(widget.icon,
+                                    size: 26, color: widget.accent),
+                              )
+                            : Icon(widget.icon, size: 26, color: widget.accent),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          widget.label,
+                          style: retro.heading(size: 16),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: Icon(widget.icon, size: 19, color: retro.accent),
-              ),
-              const SizedBox(height: 10),
-              Text(widget.label, style: retro.heading(size: 13)),
-              const SizedBox(height: 2),
-              Text(
-                widget.description,
-                style: retro.body(size: 10, height: 1.25),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                const SizedBox(height: 10),
+                Text(
+                  widget.description,
+                  style: retro.body(size: 12, height: 1.3),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const Spacer(),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: SkewChip(
+                    retro: retro,
+                    label: 'GO TO',
+                    selected: true,
+                    dense: true,
+                    accentColor: widget.accent,
+                    trailing: Icons.arrow_forward_rounded,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

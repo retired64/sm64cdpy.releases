@@ -241,7 +241,16 @@ class SkewChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final accent = accentColor ?? retro.accent;
     final bg = selected ? accent : retro.surface;
-    final fg = selected ? retro.background : retro.ink;
+    // Cuando se rellena con un accentColor custom (p.ej. botones "GO TO" por
+    // categoría: amarillo/rojo/azul marino), el contraste correcto depende
+    // de qué tan clara u oscura sea ESA tarjeta de color puntual, no del
+    // tema global — un azul marino oscuro necesita texto blanco, no la
+    // tinta oscura por defecto que usaríamos sobre el teal claro.
+    final fg = selected
+        ? (ThemeData.estimateBrightnessForColor(accent) == Brightness.dark
+              ? Colors.white
+              : retro.background)
+        : retro.ink;
 
     final chip = Transform(
       alignment: Alignment.center,
