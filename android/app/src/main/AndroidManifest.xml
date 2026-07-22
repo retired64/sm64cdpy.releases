@@ -78,5 +78,9 @@
          </intent>
         <!-- SM64CoopDX — launch game from mod manager -->
         <package android:name="com.maniscat2.sm64coopdx" />
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
     </queries>
 </manifest>
