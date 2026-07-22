@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ import '../../services/background_install_service.dart';
 import '../../services/mod_installer.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/post_install_dialog.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -1020,6 +1022,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           });
           final savedName = path.split('/').last;
           AppSnackbar.success(context, message: 'Downloaded: $savedName');
+          showPostInstallDialog(context);
         },
         onDownloadError: (error) {
           if (!mounted) return;
@@ -2606,11 +2609,3 @@ String _inferFileName(String url, String modTitle, {int? index}) {
   return '$safeName$suffix.zip';
 }
 
-extension _FirstWhereOrNull<E> on List<E> {
-  E? firstWhereOrNull(bool Function(E) test) {
-    for (final e in this) {
-      if (test(e)) return e;
-    }
-    return null;
-  }
-}

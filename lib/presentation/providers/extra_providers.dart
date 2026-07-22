@@ -28,6 +28,23 @@ final currentRouteProvider = NotifierProvider<CurrentRouteNotifier, String>(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Game launch state
+// ─────────────────────────────────────────────────────────────────────────────
+
+class GameInstalledNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void setInstalled(bool value) {
+    state = value;
+  }
+}
+
+final gameInstalledProvider = NotifierProvider<GameInstalledNotifier, bool>(
+  GameInstalledNotifier.new,
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Datasource providers
 // ─────────────────────────────────────────────────────────────────────────────
 
