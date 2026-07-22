@@ -179,7 +179,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
                 child: Text(
-                  'v1.4.4',
+                  'v${AppConstants.appVersion}',
                   style: TextStyle(
                     color: retro.inkDim,
                     fontSize: 10,
