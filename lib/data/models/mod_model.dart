@@ -51,24 +51,28 @@ class ModModel {
   factory ModModel.fromJson(String id, Map<String, dynamic> json) {
     return ModModel(
       id:                id,
-      url:               json['url'] as String? ?? '',
-      title:             json['title'] as String? ?? 'N/A',
+      url:               json['url'] as String? ?? json['mod_page_url'] as String? ?? '',
+      title:             json['title'] as String? ?? json['name'] as String? ?? 'N/A',
       version:           json['version'] as String? ?? 'N/A',
       author:            json['author'] as String? ?? 'N/A',
       description:       json['description'] as String? ?? '',
       tags:              _strings(json['tags']),
-      isFeatured:        json['is_featured'] == true || json['is_featured'] == 1,
-      imageUrl:          json['image_url'] as String?,
+      isFeatured:        json['is_featured'] == true || json['is_featured'] == 1 ||
+                         json['featured'] == true || json['featured'] == 1,
+      imageUrl:          json['image_url'] as String? ?? json['icon_url'] as String?,
       descriptionImages: _strings(json['description_images']),
       downloads:         (json['downloads'] as num?)?.toInt() ?? 0,
       views:             (json['views'] as num?)?.toInt() ?? 0,
-      rating:            (json['rating'] as num?)?.toDouble(),
+      rating:            (json['rating'] as num?)?.toDouble() ??
+                         (json['rating_value'] as num?)?.toDouble(),
       ratingCount:       (json['rating_count'] as num?)?.toInt() ?? 0,
-      reviewCount:       (json['review_count'] as num?)?.toInt() ?? 0,
-      updateCount:       (json['update_count'] as num?)?.toInt() ?? 0,
+      reviewCount:       (json['review_count'] as num?)?.toInt() ??
+                         (json['reviews_count'] as num?)?.toInt() ?? 0,
+      updateCount:       (json['update_count'] as num?)?.toInt() ??
+                         (json['updates_count'] as num?)?.toInt() ?? 0,
       firstRelease:      json['first_release'] as String?,
       lastUpdate:        json['last_update'] as String?,
-      downloadUrls:      _strings(json['download_urls']),
+      downloadUrls:      _extractDownloadUrls(json),
       updates:           _updates(json['updates']),
       extractedAt:       json['extracted_at'] as String? ?? '',
     );
@@ -77,6 +81,28 @@ class ModModel {
   static List<String> _strings(dynamic value) {
     if (value == null) return [];
     if (value is List) return value.map((e) => e.toString()).toList();
+    return [];
+  }
+
+  static List<String> _extractDownloadUrls(Map<String, dynamic> json) {
+    if (json['download_urls'] != null) return _strings(json['download_urls']);
+    final versions = json['versions'];
+    if (versions is List) {
+      final urls = <String>{};
+      for (final v in versions) {
+        if (v is Map<String, dynamic>) {
+          final files = v['files'];
+          if (files is List) {
+            for (final f in files) {
+              if (f is Map<String, dynamic> && f['download_url'] != null) {
+                urls.add(f['download_url'].toString());
+              }
+            }
+          }
+        }
+      }
+      return urls.toList();
+    }
     return [];
   }
 

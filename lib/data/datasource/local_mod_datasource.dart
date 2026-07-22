@@ -81,8 +81,13 @@ class LocalModDatasource {
         return const FetchResult.error('Invalid database format received.');
       }
 
-      final modCount = (decoded['mods'] as Map<String, dynamic>).length;
-      final generatedAt = decoded['generated_at'] as String? ?? '';
+      final modsData = decoded['mods'];
+      final modCount =
+          modsData is List ? modsData.length : (modsData as Map<String, dynamic>).length;
+      final generatedAtRaw = decoded['generated_at'];
+      final generatedAt = generatedAtRaw is int
+          ? DateTime.fromMillisecondsSinceEpoch(generatedAtRaw * 1000).toUtc().toIso8601String()
+          : generatedAtRaw as String? ?? '';
 
       // Persistir en disco
       final file = await _localFile();
@@ -111,12 +116,21 @@ class LocalModDatasource {
 
   List<ModModel> _parse(String raw) {
     final data = json.decode(raw) as Map<String, dynamic>;
-    final modsMap = data['mods'] as Map<String, dynamic>? ?? {};
-    return modsMap.entries.map((e) {
-      final map = e.value as Map<String, dynamic>;
-      final id = map['id'] as String? ?? e.key;
-      return ModModel.fromJson(id, map);
-    }).toList();
+    final modsData = data['mods'];
+    if (modsData is List) {
+      return modsData.map((m) {
+        final map = m as Map<String, dynamic>;
+        final id = (map['id'] ?? map['slug'] ?? '').toString();
+        return ModModel.fromJson(id, map);
+      }).toList();
+    } else {
+      final modsMap = modsData as Map<String, dynamic>? ?? {};
+      return modsMap.entries.map((e) {
+        final map = e.value as Map<String, dynamic>;
+        final id = map['id'] as String? ?? e.key;
+        return ModModel.fromJson(id, map);
+      }).toList();
+    }
   }
 
   void invalidateCache() => _cache = null;
