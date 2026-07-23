@@ -288,7 +288,65 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ── 16. Resumen en el job summary ─────────────────────────────────────
+      # ── 16. Notificar la nueva release en Discord ─────────────────────────
+      # Requiere el secreto DISCORD_WEBHOOK_URL (webhook creado en el canal destino)
+      - name: Notificar release en Discord
+        if: success() && inputs.prerelease == 'false'
+        env:
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_ROLE_ID: "1192345233183211590"
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          REPO="${{ github.repository }}"
+          TAG="v${V}"
+
+          ARM64_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPYv${V}-arm64.apk"
+          ARM32_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPYv${V}-arm32.apk"
+          X86_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPYv${V}-x86_64.apk"
+
+          # Reaprovecha el bloque de changelog ya generado (solo la parte de novedades,
+          # sin la sección "Descargas" ni "Checksums" que ya redactamos abajo aparte)
+          CHANGELOG=$(awk '/^## Sm64CDPY/{flag=1; next} /^---$/{exit} flag' /tmp/release_notes.txt | sed '/^[[:space:]]*$/d')
+
+          # Límite de seguridad: Discord corta mensajes a 2000 caracteres
+          CHANGELOG=$(echo "$CHANGELOG" | cut -c1-900)
+
+          MESSAGE=$(cat << MSG
+## 🐒 Sm64CDPY v${V}
+
+<@&${DISCORD_ROLE_ID}>
+
+${CHANGELOG}
+
+### 📦 ¿Qué versión instalar?
+- **arm64** → dispositivos modernos de 64-bit (2018+). **Recomendado** para la mayoría.
+- **arm32** → dispositivos antiguos de 32-bit.
+- **x86_64** → emuladores (BlueStacks, etc).
+
+### ⬇️ Descargas
+- [Sm64CDPYv${V}-arm64.apk](${ARM64_URL})
+- [Sm64CDPYv${V}-arm32.apk](${ARM32_URL})
+- [Sm64CDPYv${V}-x86_64.apk](${X86_URL})
+MSG
+          )
+
+          PAYLOAD=$(jq -n \
+            --arg content "$MESSAGE" \
+            '{content: $content, allowed_mentions: {parse: ["roles"]}}')
+
+          HTTP_STATUS=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD")
+
+          echo "Discord respondió con status $HTTP_STATUS"
+          cat /tmp/discord_response.txt
+
+          if [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "::warning::No se pudo enviar la notificación a Discord (status $HTTP_STATUS)"
+          fi
+
+      # ── 17. Resumen en el job summary ─────────────────────────────────────
       - name: Resumen del release
         if: success()
         run: |
@@ -316,7 +374,7 @@ jobs:
           https://github.com/${{ github.repository }}/releases/tag/v${V}
           EOF
 
-      # ── 17. Limpiar keystore SIEMPRE (incluso si falla el build) ──────────
+      # ── 18. Limpiar keystore SIEMPRE (incluso si falla el build) ──────────
       - name: Limpiar keystore
         if: always()
         run: |
