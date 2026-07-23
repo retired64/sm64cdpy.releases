@@ -312,22 +312,22 @@ jobs:
           CHANGELOG=$(echo "$CHANGELOG" | cut -c1-900)
 
           MESSAGE=$(cat << MSG
-## 🐒 Sm64CDPY v${V}
+          ## 🐒 Sm64CDPY v${V}
 
-<@&${DISCORD_ROLE_ID}>
+          <@&${DISCORD_ROLE_ID}>
 
-${CHANGELOG}
+          ${CHANGELOG}
 
-### ¿Qué versión instalar?
-- **arm64** → dispositivos modernos de 64-bit. **Recomendado** para la mayoría.
-- **arm32** → dispositivos antiguos de 32-bit.
-- **x86_64** → emuladores (BlueStacks, etc).
+          ### ¿Qué versión instalar?
+          - **arm64** → dispositivos modernos de 64-bit. **Recomendado** para la mayoría.
+          - **arm32** → dispositivos antiguos de 32-bit.
+          - **x86_64** → emuladores (BlueStacks, etc).
 
-### Descargas
-- [Sm64CDPYv${V}-arm64.apk](${ARM64_URL})
-- [Sm64CDPYv${V}-arm32.apk](${ARM32_URL})
-- [Sm64CDPYv${V}-x86_64.apk](${X86_URL})
-MSG
+          ### Descargas
+          - [Sm64CDPYv${V}-arm64.apk](${ARM64_URL})
+          - [Sm64CDPYv${V}-arm32.apk](${ARM32_URL})
+          - [Sm64CDPYv${V}-x86_64.apk](${X86_URL})
+          MSG
           )
 
           PAYLOAD=$(jq -n \
