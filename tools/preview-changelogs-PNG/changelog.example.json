@@ -1,0 +1,21 @@
+{
+  "app_name": "SM64CoopDX",
+  "version": "1.4.5",
+  "tag": "Latest",
+  "date": "July 2026",
+  "groups": [
+    {
+      "type": "added",
+      "items": [
+        "Home \"Browse\" section redesigned as a swipeable carousel, matching the Featured carousel style."
+      ]
+    },
+    {
+      "type": "improved",
+      "items": [
+        "Each Browse card now has a color-coded skewed \"GO TO\" button for quicker navigation.",
+        "Skewed chip buttons now auto-pick readable text color based on fill brightness."
+      ]
+    }
+  ]
+}
