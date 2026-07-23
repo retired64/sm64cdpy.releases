@@ -312,7 +312,7 @@ jobs:
           CHANGELOG=$(echo "$CHANGELOG" | cut -c1-900)
 
           MESSAGE=$(cat << MSG
-          ## 🐒 Sm64CDPY v${V}
+          ## Sm64CDPY Android v${V}
 
           <@&${DISCORD_ROLE_ID}>
 
