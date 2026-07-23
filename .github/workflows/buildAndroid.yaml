@@ -318,12 +318,12 @@ jobs:
 
 ${CHANGELOG}
 
-### 📦 ¿Qué versión instalar?
-- **arm64** → dispositivos modernos de 64-bit (2018+). **Recomendado** para la mayoría.
+### ¿Qué versión instalar?
+- **arm64** → dispositivos modernos de 64-bit. **Recomendado** para la mayoría.
 - **arm32** → dispositivos antiguos de 32-bit.
 - **x86_64** → emuladores (BlueStacks, etc).
 
-### ⬇️ Descargas
+### Descargas
 - [Sm64CDPYv${V}-arm64.apk](${ARM64_URL})
 - [Sm64CDPYv${V}-arm32.apk](${ARM32_URL})
 - [Sm64CDPYv${V}-x86_64.apk](${X86_URL})
