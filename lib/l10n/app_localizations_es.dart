@@ -1106,6 +1106,35 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get settingsDynosFolder => 'Carpeta DynOS';
+
+  @override
+  String get settingsSelectDynosFolder => 'Seleccionar carpeta DynOS';
+
+  @override
+  String get settingsDynosFolderHint =>
+      'Toca para cambiar · Mantén para limpiar';
+
+  @override
+  String get settingsDynosFolderDesc =>
+      'Elige dónde instalar los packs de DynOS y Touch Controls';
+
+  @override
+  String get settingsDynosFolderSelected =>
+      'Carpeta DynOS seleccionada. Los packs se instalarán aquí.';
+
+  @override
+  String get settingsClearDynosFolderTitle => '¿LIMPIAR CARPETA DYNOS?';
+
+  @override
+  String get settingsClearDynosFolderBody =>
+      'Deberás seleccionar la carpeta de nuevo antes de instalar packs de DynOS o Touch Controls.';
+
+  @override
+  String get settingsDynosFolderCleared =>
+      'Selección de carpeta DynOS eliminada.';
+
+  @override
   String get settingsLanguageMode => 'IDIOMA';
 
   @override
@@ -2221,6 +2250,35 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
     );
     return '$_temp0';
   }
+
+  @override
+  String get settingsDynosFolder => 'Carpeta DynOS';
+
+  @override
+  String get settingsSelectDynosFolder => 'Seleccionar carpeta DynOS';
+
+  @override
+  String get settingsDynosFolderHint =>
+      'Toca para cambiar · Mantén para limpiar';
+
+  @override
+  String get settingsDynosFolderDesc =>
+      'Elige dónde instalar los packs de DynOS y Touch Controls';
+
+  @override
+  String get settingsDynosFolderSelected =>
+      'Carpeta DynOS seleccionada. Los packs se instalarán aquí.';
+
+  @override
+  String get settingsClearDynosFolderTitle => '¿LIMPIAR CARPETA DYNOS?';
+
+  @override
+  String get settingsClearDynosFolderBody =>
+      'Deberás seleccionar la carpeta de nuevo antes de instalar packs de DynOS o Touch Controls.';
+
+  @override
+  String get settingsDynosFolderCleared =>
+      'Selección de carpeta DynOS eliminada.';
 
   @override
   String get settingsLanguageMode => 'IDIOMA';

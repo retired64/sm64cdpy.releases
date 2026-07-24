@@ -5,10 +5,14 @@ import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/touch_control_entity.dart';
+import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
@@ -151,14 +155,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   bool _isLongPressing = false;
 
   bool _downloading = false;
-  // ValueNotifier en vez de double + setState(): evita reconstruir toda
-  // la card en cada tick de progreso durante la descarga.
-  final ValueNotifier<double> _progressNotifier = ValueNotifier(0.0);
-  double get _progress => _progressNotifier.value;
-  set _progress(double v) => _progressNotifier.value = v;
-  double _realProgress = 0.0;
-  late AnimationController _fakeCtrl;
-  late Animation<double> _fakeAnim;
+  double _progress = 0.0;
 
   @override
   void initState() {
@@ -167,20 +164,6 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    // Pixel-press: en vez de un scale suave, el "press" retro se resuelve
-    // en el build() desplazando la card estilo botón de arcade.
-    _fakeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 18),
-    );
-    _fakeAnim =
-        Tween<double>(begin: 0.0, end: 0.85).animate(
-          CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
-        )..addListener(() {
-          if (mounted && _downloading && _realProgress <= 0.0) {
-            _progress = _fakeAnim.value;
-          }
-        });
   }
 
   void _startLongPress() {
@@ -223,12 +206,50 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   Future<void> _download() async {
     if (_downloading) return;
     HapticFeedback.mediumImpact();
+
+    final installer = ModInstaller();
+
+    final hasFolder = await installer.isDynosDirectorySelected();
+
+    if (!hasFolder) {
+      final prefs = await SharedPreferences.getInstance();
+      final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+      if (autoInstall && mounted) {
+        final l10n = AppLocalizations.of(context);
+        final goToSettings = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
+            icon: Icon(Icons.folder_open_rounded, color: RetroTheme.of(ctx).accent, size: 28),
+            title: Text(l10n.detailModsFolderNotSelected,
+                style: TextStyle(color: RetroTheme.of(ctx).ink)),
+            content: Text(l10n.detailModsFolderBody,
+                style: TextStyle(color: RetroTheme.of(ctx).inkDim)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text(l10n.detailCancel,
+                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+              ),
+              FilledButton.icon(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                icon: const Icon(Icons.settings, size: 16),
+                label: Text(l10n.detailGoToSettings),
+              ),
+            ],
+          ),
+        );
+        if (goToSettings == true && mounted) {
+          GoRouter.of(context).push('/settings');
+        }
+        return;
+      }
+    }
+
     setState(() {
       _downloading = true;
       _progress = 0.0;
-      _realProgress = 0.0;
     });
-    _fakeCtrl.forward(from: 0.0);
 
     final url = widget.mod.downloadUrl;
     final rawName = widget.mod.title
@@ -239,68 +260,40 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
         .trim();
     final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.zip';
 
-    await FileDownloader.downloadFile(
-      url: url,
-      name: filename,
-      onProgress: (name, progress) {
-        if (!mounted) return;
-        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(
-          0.0,
-          1.0,
-        );
-        if (normalized > _progress) {
-          _realProgress = normalized;
-          _progress = normalized; // solo repinta la barra, no toda la card
-        }
-      },
-      onDownloadCompleted: (path) async {
-        if (!mounted) return;
-        _fakeCtrl.stop();
-        final completeCtrl = AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 400),
-        );
-        final completeAnim = Tween<double>(
-          begin: _progress,
-          end: 1.0,
-        ).animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
-        completeAnim.addListener(() {
-          if (mounted) _progress = completeAnim.value;
-        });
-        await completeCtrl.forward();
-        completeCtrl.dispose();
-        await Future.delayed(const Duration(milliseconds: 350));
-        if (!mounted) return;
-        setState(() {
-          _downloading = false;
-          _progress = 0.0;
-          _realProgress = 0.0;
-        });
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        AppSnackbar.success(
-          context,
-          message: AppLocalizations.of(context).sharedDownloaded(path.split('/').last),
-        );
-      },
-      onDownloadError: (error) {
-        if (!mounted) return;
-        _fakeCtrl.stop();
-        setState(() {
-          _downloading = false;
-          _progress = 0.0;
-          _realProgress = 0.0;
-        });
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        AppSnackbar.error(context, message: AppLocalizations.of(context).sharedDownloadFailed);
-      },
-    );
+    try {
+      await FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onProgress: (name, progress) {
+          if (!mounted) return;
+          final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          setState(() => _progress = normalized);
+        },
+        onDownloadCompleted: (path) async {
+          if (!mounted) return;
+          final savedName = path.split('/').last;
+          await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+          if (!mounted) return;
+          setState(() { _downloading = false; _progress = 0.0; });
+          AppSnackbar.success(context,
+              message: AppLocalizations.of(context).detailSavedToModsFolder(savedName));
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          setState(() { _downloading = false; _progress = 0.0; });
+          AppSnackbar.error(context, message: AppLocalizations.of(context).detailDownloadFailed);
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() { _downloading = false; _progress = 0.0; });
+      AppSnackbar.error(context, message: AppLocalizations.of(context).detailError(e.toString()));
+    }
   }
 
   @override
   void dispose() {
     _pressCtrl.dispose();
-    _fakeCtrl.dispose();
-    _progressNotifier.dispose();
     _longPressTimer?.cancel();
     super.dispose();
   }
@@ -478,29 +471,26 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                   ),
-                                  child: ValueListenableBuilder<double>(
-                                    valueListenable: _progressNotifier,
-                                    builder: (context, progress, _) => Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        LinearProgressIndicator(
-                                          value: progress,
-                                          backgroundColor: retro.background
-                                              .withValues(alpha: 0.3),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      LinearProgressIndicator(
+                                        value: _progress,
+                                        backgroundColor: retro.background
+                                            .withValues(alpha: 0.3),
+                                        color: retro.background,
+                                        minHeight: 4,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${(_progress * 100).toStringAsFixed(1)}%',
+                                        style: TextStyle(
                                           color: retro.background,
-                                          minHeight: 4,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w800,
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          '${(progress * 100).toStringAsFixed(1)}%',
-                                          style: TextStyle(
-                                            color: retro.background,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 )
                               : Row(

@@ -1408,6 +1408,38 @@
     }
   },
 
+  "settingsDynosFolder": "DynOS folder",
+  "@settingsDynosFolder": {
+    "description": "Settings tile label for the DynOS folder picker"
+  },
+  "settingsSelectDynosFolder": "Select DynOS folder",
+  "@settingsSelectDynosFolder": {
+    "description": "Prompt text to select the DynOS packs directory"
+  },
+  "settingsDynosFolderHint": "Tap to change \u00b7 Long-press to clear",
+  "@settingsDynosFolderHint": {
+    "description": "Hint text explaining how to change or clear the DynOS folder"
+  },
+  "settingsDynosFolderDesc": "Choose where to install DynOS and Touch Controls packs",
+  "@settingsDynosFolderDesc": {
+    "description": "Description subtitle on the DynOS folder settings tile"
+  },
+  "settingsDynosFolderSelected": "DynOS folder selected. Packs will be installed here.",
+  "@settingsDynosFolderSelected": {
+    "description": "Snackbar message shown after selecting the DynOS folder"
+  },
+  "settingsClearDynosFolderTitle": "CLEAR DYNOS FOLDER?",
+  "@settingsClearDynosFolderTitle": {
+    "description": "Confirmation dialog title before clearing the DynOS folder selection"
+  },
+  "settingsClearDynosFolderBody": "You will need to select the folder again before installing DynOS or Touch Control packs.",
+  "@settingsClearDynosFolderBody": {
+    "description": "Confirmation dialog body before clearing the DynOS folder selection"
+  },
+  "settingsDynosFolderCleared": "DynOS folder selection cleared.",
+  "@settingsDynosFolderCleared": {
+    "description": "Snackbar message shown after the DynOS folder selection is cleared"
+  },
   "settingsLanguageMode": "LANGUAGE",
   "@settingsLanguageMode": {
     "description": "Settings tile label for the language selector"

@@ -2010,6 +2010,54 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{{count} MOD} other{{count} MODS}}'**
   String sharedModCount(int count);
 
+  /// Settings tile label for the DynOS folder picker
+  ///
+  /// In en, this message translates to:
+  /// **'DynOS folder'**
+  String get settingsDynosFolder;
+
+  /// Prompt text to select the DynOS packs directory
+  ///
+  /// In en, this message translates to:
+  /// **'Select DynOS folder'**
+  String get settingsSelectDynosFolder;
+
+  /// Hint text explaining how to change or clear the DynOS folder
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change · Long-press to clear'**
+  String get settingsDynosFolderHint;
+
+  /// Description subtitle on the DynOS folder settings tile
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where to install DynOS and Touch Controls packs'**
+  String get settingsDynosFolderDesc;
+
+  /// Snackbar message shown after selecting the DynOS folder
+  ///
+  /// In en, this message translates to:
+  /// **'DynOS folder selected. Packs will be installed here.'**
+  String get settingsDynosFolderSelected;
+
+  /// Confirmation dialog title before clearing the DynOS folder selection
+  ///
+  /// In en, this message translates to:
+  /// **'CLEAR DYNOS FOLDER?'**
+  String get settingsClearDynosFolderTitle;
+
+  /// Confirmation dialog body before clearing the DynOS folder selection
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to select the folder again before installing DynOS or Touch Control packs.'**
+  String get settingsClearDynosFolderBody;
+
+  /// Snackbar message shown after the DynOS folder selection is cleared
+  ///
+  /// In en, this message translates to:
+  /// **'DynOS folder selection cleared.'**
+  String get settingsDynosFolderCleared;
+
   /// Settings tile label for the language selector
   ///
   /// In en, this message translates to:

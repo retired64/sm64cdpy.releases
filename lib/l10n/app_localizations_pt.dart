@@ -1098,6 +1098,34 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get settingsDynosFolder => 'Pasta DynOS';
+
+  @override
+  String get settingsSelectDynosFolder => 'Selecionar pasta DynOS';
+
+  @override
+  String get settingsDynosFolderHint =>
+      'Toque para alterar · Segure para limpar';
+
+  @override
+  String get settingsDynosFolderDesc =>
+      'Escolha onde instalar os pacotes DynOS e Touch Controls';
+
+  @override
+  String get settingsDynosFolderSelected =>
+      'Pasta DynOS selecionada. Os pacotes serão instalados aqui.';
+
+  @override
+  String get settingsClearDynosFolderTitle => 'LIMPAR PASTA DYNOS?';
+
+  @override
+  String get settingsClearDynosFolderBody =>
+      'Você precisará selecionar a pasta novamente antes de instalar pacotes DynOS ou Touch Controls.';
+
+  @override
+  String get settingsDynosFolderCleared => 'Seleção da pasta DynOS removida.';
+
+  @override
   String get settingsLanguageMode => 'IDIOMA';
 
   @override
@@ -2205,6 +2233,34 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
     );
     return '$_temp0';
   }
+
+  @override
+  String get settingsDynosFolder => 'Pasta DynOS';
+
+  @override
+  String get settingsSelectDynosFolder => 'Selecionar pasta DynOS';
+
+  @override
+  String get settingsDynosFolderHint =>
+      'Toque para alterar · Segure para limpar';
+
+  @override
+  String get settingsDynosFolderDesc =>
+      'Escolha onde instalar os pacotes DynOS e Touch Controls';
+
+  @override
+  String get settingsDynosFolderSelected =>
+      'Pasta DynOS selecionada. Os pacotes serão instalados aqui.';
+
+  @override
+  String get settingsClearDynosFolderTitle => 'LIMPAR PASTA DYNOS?';
+
+  @override
+  String get settingsClearDynosFolderBody =>
+      'Você precisará selecionar a pasta novamente antes de instalar pacotes DynOS ou Touch Controls.';
+
+  @override
+  String get settingsDynosFolderCleared => 'Seleção da pasta DynOS removida.';
 
   @override
   String get settingsLanguageMode => 'IDIOMA';

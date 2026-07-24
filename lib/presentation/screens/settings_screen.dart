@@ -80,6 +80,8 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 10),
                     _ModsFolderTile(),
+                    _RetroGap(height: 6),
+                    _DynosFolderTile(),
                     _AutoInstallToggle(),
 
                     const SizedBox(height: 20),
@@ -481,6 +483,118 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
       subtitle: _hasFolder
           ? l10n.settingsModsFolderHint
           : l10n.settingsModsFolderDesc,
+      trailing: Icon(Icons.chevron_right_rounded, color: retro.inkDim, size: 20),
+    );
+  }
+}
+
+// ── DynOS folder tile ────────────────────────────────────────────────────────
+
+class _DynosFolderTile extends ConsumerStatefulWidget {
+  const _DynosFolderTile();
+
+  @override
+  ConsumerState<_DynosFolderTile> createState() => _DynosFolderTileState();
+}
+
+class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
+  bool _loading = false;
+  bool _hasFolder = false;
+
+  final _installer = ModInstaller();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFolder();
+  }
+
+  Future<void> _checkFolder() async {
+    try {
+      final has = await _installer.isDynosDirectorySelected();
+      if (mounted) {
+        setState(() {
+          _hasFolder = has;
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _selectFolder() async {
+    setState(() => _loading = true);
+    try {
+      final uri = await _installer.openDynosPicker();
+      if (!mounted) return;
+      if (uri != null) {
+        setState(() {
+          _hasFolder = true;
+        });
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context);
+        AppSnackbar.success(
+          context,
+          message: l10n.settingsDynosFolderSelected,
+        );
+      }
+    } on ModInstallerException catch (e) {
+      if (mounted) {
+        AppSnackbar.error(context, message: e.message);
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _confirmClear() async {
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => _RetroDialog(
+        retro: retro,
+        title: l10n.settingsClearDynosFolderTitle,
+        message: l10n.settingsClearDynosFolderBody,
+        confirmLabel: l10n.settingsClearButton,
+        confirmColor: retro.red,
+        onConfirm: () => Navigator.of(ctx).pop(true),
+      ),
+    );
+
+    if (confirmed == true) {
+      await _installer.clearDynosSelection();
+      if (mounted) {
+        setState(() {
+          _hasFolder = false;
+        });
+        AppSnackbar.info(context, message: l10n.settingsDynosFolderCleared);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return _RetroTileShell(
+      retro: retro,
+      onTap: _loading ? null : _selectFolder,
+      onLongPress: _hasFolder ? _confirmClear : null,
+      accentColor: _hasFolder ? retro.blue : null,
+      leading: _loading
+          ? _RetroSpinner(retro: retro)
+          : _RetroIconBox(
+              retro: retro,
+              icon: _hasFolder
+                  ? Icons.auto_awesome_rounded
+                  : Icons.auto_awesome_outlined,
+              accentColor: _hasFolder ? retro.blue : null,
+            ),
+      title: _hasFolder ? l10n.settingsDynosFolder : l10n.settingsSelectDynosFolder,
+      titleColor: _hasFolder ? retro.blue : retro.ink,
+      subtitle: _hasFolder
+          ? l10n.settingsDynosFolderHint
+          : l10n.settingsDynosFolderDesc,
       trailing: Icon(Icons.chevron_right_rounded, color: retro.inkDim, size: 20),
     );
   }
@@ -1153,4 +1267,13 @@ class _CheckUpdateTileState extends State<_CheckUpdateTile> {
       subtitle: _loading ? l10n.settingsChecking : 'Current: v${UpdateService.currentVersion}',
     );
   }
+}
+
+// ── Shared helpers ──────────────────────────────────────────────────────────
+
+class _RetroGap extends StatelessWidget {
+  const _RetroGap({required this.height});
+  final double height;
+  @override
+  Widget build(BuildContext context) => SizedBox(height: height);
 }

@@ -206,6 +206,63 @@ class ModInstaller {
     }
   }
 
+  /// Abre el explorador de archivos del sistema para que el usuario
+  /// seleccione la carpeta de dynos. Retorna la URI si se seleccionó,
+  /// null si el usuario canceló.
+  Future<String?> openDynosPicker() async {
+    try {
+      final uri = await _channel.invokeMethod<String>('openDynosPicker');
+      return uri;
+    } on PlatformException catch (e) {
+      throw ModInstallerException(e.message ?? 'Failed to open dynos directory picker');
+    }
+  }
+
+  /// Consulta si hay una carpeta de dynos seleccionada y accesible.
+  Future<bool> isDynosDirectorySelected() async {
+    try {
+      final result = await _channel.invokeMethod<bool>('isDynosDirectorySelected');
+      return result ?? false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  /// Obtiene la URI de dynos guardada (si existe y es accesible), o null.
+  Future<String?> getSavedDynosUri() async {
+    try {
+      return await _channel.invokeMethod<String>('getSavedDynosUri');
+    } on PlatformException {
+      return null;
+    }
+  }
+
+  /// Copia un archivo local al directorio SAF de dynos seleccionado.
+  /// Elimina el archivo fuente tras la copia exitosa.
+  Future<bool> copyFileToDynosFolder({
+    required String sourcePath,
+    required String targetName,
+  }) async {
+    try {
+      final result = await _channel.invokeMethod<bool>(
+        'copyFileToDynosFolder',
+        {'sourcePath': sourcePath, 'targetName': targetName},
+      );
+      return result ?? false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  /// Revoca los permisos y limpia la selección de carpeta de dynos.
+  Future<void> clearDynosSelection() async {
+    try {
+      await _channel.invokeMethod('clearDynosSelection');
+    } on PlatformException {
+      // Silently ignore
+    }
+  }
+
   /// Revoca los permisos y limpia la selección de carpeta de mods.
   Future<void> clearDirectorySelection() async {
     try {

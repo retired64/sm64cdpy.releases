@@ -53,4 +53,7 @@ class AppConstants {
 
   /// Clave en SharedPreferences para la URI del directorio de mods seleccionado.
   static const String modsDirectoryUriKey = 'mods_directory_uri';
+
+  /// Clave en SharedPreferences para la URI del directorio dynos seleccionado.
+  static const String dynosDirectoryUriKey = 'dynos_directory_uri';
 }

@@ -54,7 +54,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val EVENT_CHANNEL = "mods.sm64cdpy/mod_install_events"
         const val PREF_NAME = "mod_installer_prefs"
         const val KEY_TREE_URI = "tree_uri"
+        const val KEY_DYNOS_TREE_URI = "dynos_tree_uri"
         const val REQUEST_CODE_TREE = 9001
+        const val REQUEST_CODE_DYNOS_TREE = 9003
         const val REQUEST_CODE_NOTIFICATION_PERMISSION = 9002
         const val UNIQUE_WORK_PREFIX = "mod_install_"
     }
@@ -99,6 +101,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         binding.addActivityResultListener { requestCode, resultCode, data ->
             if (requestCode == REQUEST_CODE_TREE) {
                 handleTreeResult(resultCode, data)
+                true
+            } else if (requestCode == REQUEST_CODE_DYNOS_TREE) {
+                handleDynosTreeResult(resultCode, data)
                 true
             } else {
                 false
@@ -146,6 +151,11 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "requestNotificationPermission" -> requestNotificationPermission(result)
             "shouldShowNotificationRationale" -> shouldShowNotificationRationale(result)
             "copyFileToModsFolder" -> copyFileToModsFolder(call, result)
+            "openDynosPicker" -> openDynosPicker(result)
+            "getSavedDynosUri" -> getSavedDynosUri(result)
+            "isDynosDirectorySelected" -> isDynosDirectorySelected(result)
+            "copyFileToDynosFolder" -> copyFileToDynosFolder(call, result)
+            "clearDynosSelection" -> clearDynosSelection(result)
             else -> result.notImplemented()
         }
     }
@@ -754,6 +764,172 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         wm.cancelAllWorkByTag("mod_chain_$modName")
 
         result.success(true)
+    }
+
+    // ── Métodos DynOS ───────────────────────────────────────────────────────
+
+    /**
+     * Abre el picker de directorios del sistema para la carpeta de dynos.
+     */
+    private fun openDynosPicker(result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        pendingResult = result
+
+        try {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+                addFlags(
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or
+                    Intent.FLAG_GRANT_PREFIX_URI_PERMISSION
+                )
+            }
+            act.startActivityForResult(intent, REQUEST_CODE_DYNOS_TREE)
+        } catch (e: Exception) {
+            pendingResult = null
+            result.error("PICKER_ERROR", "Failed to open DynOS directory picker: ${e.message}", null)
+        }
+    }
+
+    /**
+     * Devuelve la URI del directorio dynos guardado, o null.
+     */
+    private fun getSavedDynosUri(result: Result) {
+        val prefs = getPrefs()
+        val uriString = prefs.getString(KEY_DYNOS_TREE_URI, null)
+        if (uriString != null) {
+            val uri = Uri.parse(uriString)
+            if (isTreeAccessible(uri)) {
+                result.success(uriString)
+            } else {
+                prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+                result.success(null)
+            }
+        } else {
+            result.success(null)
+        }
+    }
+
+    /**
+     * Verifica si ya hay un directorio dynos seleccionado.
+     */
+    private fun isDynosDirectorySelected(result: Result) {
+        val prefs = getPrefs()
+        val uriString = prefs.getString(KEY_DYNOS_TREE_URI, null)
+        if (uriString != null) {
+            val uri = Uri.parse(uriString)
+            result.success(isTreeAccessible(uri))
+        } else {
+            result.success(false)
+        }
+    }
+
+    /**
+     * Copia un archivo local al directorio SAF de dynos.
+     */
+    private fun copyFileToDynosFolder(call: MethodCall, result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        val prefs = getPrefs()
+        val treeUriString = prefs.getString(KEY_DYNOS_TREE_URI, null)
+        if (treeUriString == null) {
+            result.error("NO_DIRECTORY", "No DynOS directory selected.", null)
+            return
+        }
+
+        val treeUri = Uri.parse(treeUriString)
+        if (!isTreeAccessible(treeUri)) {
+            prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+            result.error("DIR_NOT_ACCESSIBLE", "The selected DynOS directory is no longer accessible.", null)
+            return
+        }
+
+        val sourcePath = call.argument<String>("sourcePath")
+        val targetName = call.argument<String>("targetName")
+        if (sourcePath == null || targetName == null) {
+            result.error("INVALID_ARGS", "sourcePath and targetName are required", null)
+            return
+        }
+
+        val sourceFile = java.io.File(sourcePath)
+        if (!sourceFile.exists()) {
+            result.error("FILE_NOT_FOUND", "Source file not found: $sourcePath", null)
+            return
+        }
+
+        try {
+            val treeDoc = DocumentFile.fromTreeUri(act, treeUri)
+                ?: throw java.io.IOException("Could not access the selected DynOS directory tree.")
+
+            val outputFile = treeDoc.createFile("application/zip", targetName)
+                ?: throw java.io.IOException("Failed to create file in DynOS SAF directory.")
+
+            act.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
+                sourceFile.inputStream().use { input ->
+                    input.copyTo(os)
+                }
+                os.flush()
+            }
+
+            sourceFile.delete()
+            result.success(true)
+        } catch (e: Exception) {
+            result.error("COPY_ERROR", e.message ?: "Failed to copy file to DynOS folder", null)
+        }
+    }
+
+    /**
+     * Limpia la selección de directorio dynos (revoca permisos).
+     */
+    private fun clearDynosSelection(result: Result) {
+        val prefs = getPrefs()
+        val uriString = prefs.getString(KEY_DYNOS_TREE_URI, null)
+        if (uriString != null) {
+            try {
+                val uri = Uri.parse(uriString)
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                activity?.contentResolver?.releasePersistableUriPermission(uri, flags)
+            } catch (_: Exception) { }
+        }
+        prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+        result.success(true)
+    }
+
+    /**
+     * Procesa el resultado del picker de directorios dynos.
+     */
+    private fun handleDynosTreeResult(resultCode: Int, data: Intent?) {
+        val result = pendingResult ?: return
+        pendingResult = null
+
+        if (resultCode != Activity.RESULT_OK || data?.data == null) {
+            result.success(null)
+            return
+        }
+
+        val treeUri = data.data!!
+
+        try {
+            val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            activity?.contentResolver?.takePersistableUriPermission(treeUri, takeFlags)
+
+            getPrefs().edit().putString(KEY_DYNOS_TREE_URI, treeUri.toString()).apply()
+
+            result.success(treeUri.toString())
+        } catch (e: Exception) {
+            result.error("PERSIST_ERROR", "Failed to persist DynOS directory permission: ${e.message}", null)
+        }
     }
 
     // ── EventChannel helper ────────────────────────────────────────────────

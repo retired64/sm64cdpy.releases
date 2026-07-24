@@ -1094,6 +1094,33 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsDynosFolder => 'DynOS folder';
+
+  @override
+  String get settingsSelectDynosFolder => 'Select DynOS folder';
+
+  @override
+  String get settingsDynosFolderHint => 'Tap to change · Long-press to clear';
+
+  @override
+  String get settingsDynosFolderDesc =>
+      'Choose where to install DynOS and Touch Controls packs';
+
+  @override
+  String get settingsDynosFolderSelected =>
+      'DynOS folder selected. Packs will be installed here.';
+
+  @override
+  String get settingsClearDynosFolderTitle => 'CLEAR DYNOS FOLDER?';
+
+  @override
+  String get settingsClearDynosFolderBody =>
+      'You will need to select the folder again before installing DynOS or Touch Control packs.';
+
+  @override
+  String get settingsDynosFolderCleared => 'DynOS folder selection cleared.';
+
+  @override
   String get settingsLanguageMode => 'LANGUAGE';
 
   @override

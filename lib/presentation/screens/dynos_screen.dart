@@ -13,6 +13,10 @@ import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../../l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/constants/app_constants.dart';
+import '../../services/mod_installer.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -152,14 +156,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
   bool _isLongPressing = false;
 
   bool _downloading = false;
-  // ValueNotifier en vez de double + setState(): evita reconstruir toda
-  // la card en cada tick de progreso durante la descarga.
-  final ValueNotifier<double> _progressNotifier = ValueNotifier(0.0);
-  double get _progress => _progressNotifier.value;
-  set _progress(double v) => _progressNotifier.value = v;
-  double _realProgress = 0.0;
-  late AnimationController _fakeCtrl;
-  late Animation<double> _fakeAnim;
+  double _progress = 0.0;
 
   @override
   void initState() {
@@ -168,20 +165,6 @@ class _DynosCardState extends ConsumerState<DynosCard>
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    // Pixel-press: en vez de un scale suave, el "press" retro se resuelve
-    // en el build() desplazando la card estilo botón de arcade.
-    _fakeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 18),
-    );
-    _fakeAnim =
-        Tween<double>(begin: 0.0, end: 0.85).animate(
-          CurvedAnimation(parent: _fakeCtrl, curve: Curves.easeOut),
-        )..addListener(() {
-          if (mounted && _downloading && _realProgress <= 0.0) {
-            _progress = _fakeAnim.value;
-          }
-        });
   }
 
   void _startLongPress() {
@@ -224,12 +207,45 @@ class _DynosCardState extends ConsumerState<DynosCard>
   Future<void> _download() async {
     if (_downloading) return;
     HapticFeedback.mediumImpact();
-    setState(() {
-      _downloading = true;
-      _progress = 0.0;
-      _realProgress = 0.0;
-    });
-    _fakeCtrl.forward(from: 0.0);
+
+    final installer = ModInstaller();
+
+    final hasPermission = await installer.hasNotificationPermission();
+    if (!hasPermission && mounted) {
+      final showRationale = await installer.shouldShowNotificationRationale();
+      if (showRationale) {
+        if (!mounted) return;
+        final proceed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
+            title: Text(AppLocalizations.of(context).detailNotificationsNeeded,
+                style: TextStyle(color: RetroTheme.of(ctx).ink)),
+            content: Text(AppLocalizations.of(context).detailNotificationsBody,
+                style: TextStyle(color: RetroTheme.of(ctx).inkDim)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text(AppLocalizations.of(context).detailNotNow,
+                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Text(AppLocalizations.of(context).detailContinue),
+              ),
+            ],
+          ),
+        );
+        if (proceed != true && mounted) {
+          AppSnackbar.info(context, message: AppLocalizations.of(context).detailNotificationsSkipped);
+        }
+      }
+      if (!mounted) return;
+      final granted = await installer.requestNotificationPermission();
+      if (!granted && mounted) {
+        AppSnackbar.info(context, message: AppLocalizations.of(context).detailNotificationsDisabled);
+      }
+    }
 
     final url = widget.mod.downloadUrl;
     final rawName = widget.mod.title
@@ -240,68 +256,95 @@ class _DynosCardState extends ConsumerState<DynosCard>
         .trim();
     final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.zip';
 
-    await FileDownloader.downloadFile(
-      url: url,
-      name: filename,
-      onProgress: (name, progress) {
-        if (!mounted) return;
-        final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(
-          0.0,
-          1.0,
+    final hasDynosFolder = await installer.isDynosDirectorySelected();
+
+    if (!hasDynosFolder) {
+      final prefs = await SharedPreferences.getInstance();
+      final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+      if (autoInstall && mounted) {
+        final goToSettings = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
+            icon: Icon(Icons.folder_open_rounded, color: RetroTheme.of(ctx).accent, size: 28),
+            title: Text(AppLocalizations.of(context).detailModsFolderNotSelected,
+                style: TextStyle(color: RetroTheme.of(ctx).ink)),
+            content: Text('You need to select a DynOS folder before installing DynOS packs.\n\nGo to Settings → Game Integration to select it.',
+                style: TextStyle(color: RetroTheme.of(ctx).inkDim)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text(AppLocalizations.of(context).detailCancel,
+                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+              ),
+              FilledButton.icon(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                icon: const Icon(Icons.settings, size: 16),
+                label: Text(AppLocalizations.of(context).detailGoToSettings),
+              ),
+            ],
+          ),
         );
-        if (normalized > _progress) {
-          _realProgress = normalized;
-          _progress = normalized; // solo repinta la barra, no toda la card
+        if (goToSettings == true && mounted) {
+          GoRouter.of(context).push('/settings');
         }
-      },
-      onDownloadCompleted: (path) async {
-        if (!mounted) return;
-        _fakeCtrl.stop();
-        final completeCtrl = AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 400),
-        );
-        final completeAnim = Tween<double>(
-          begin: _progress,
-          end: 1.0,
-        ).animate(CurvedAnimation(parent: completeCtrl, curve: Curves.easeOut));
-        completeAnim.addListener(() {
-          if (mounted) _progress = completeAnim.value;
-        });
-        await completeCtrl.forward();
-        completeCtrl.dispose();
-        await Future.delayed(const Duration(milliseconds: 350));
-        if (!mounted) return;
-        setState(() {
-          _downloading = false;
-          _progress = 0.0;
-          _realProgress = 0.0;
-        });
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        AppSnackbar.success(
-          context,
-          message: AppLocalizations.of(context).sharedDownloaded(path.split('/').last),
-        );
-      },
-      onDownloadError: (error) {
-        if (!mounted) return;
-        _fakeCtrl.stop();
-        setState(() {
-          _downloading = false;
-          _progress = 0.0;
-          _realProgress = 0.0;
-        });
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        AppSnackbar.error(context, message: AppLocalizations.of(context).sharedDownloadFailed);
-      },
-    );
+        return;
+      }
+      if (!mounted) return;
+      await _downloadSimple(url, filename, installer);
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+
+    if (autoInstall && mounted) {
+      // Auto-install to dynos folder — download only, no background install for dynos yet
+      if (!mounted) return;
+      await _downloadSimple(url, filename, installer);
+    } else if (mounted) {
+      await _downloadSimple(url, filename, installer);
+    }
+  }
+
+  Future<void> _downloadSimple(String url, String filename, ModInstaller installer) async {
+    if (!mounted) return;
+    setState(() { _downloading = true; _progress = 0.0; });
+    try {
+      await FileDownloader.downloadFile(
+        url: url, name: filename,
+        onProgress: (name, progress) {
+          if (!mounted) return;
+          final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          setState(() => _progress = normalized);
+        },
+        onDownloadCompleted: (path) async {
+          if (!mounted) return;
+          final savedName = path.split('/').last;
+          if (await installer.isDynosDirectorySelected()) {
+            await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+          }
+          if (!mounted) return;
+          setState(() { _downloading = false; _progress = 0.0; });
+          AppSnackbar.success(context,
+              message: AppLocalizations.of(context).detailSavedToModsFolder(savedName));
+        },
+        onDownloadError: (error) {
+          if (!mounted) return;
+          setState(() { _downloading = false; _progress = 0.0; });
+          AppSnackbar.error(context, message: AppLocalizations.of(context).detailDownloadFailed);
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() { _downloading = false; _progress = 0.0; });
+      AppSnackbar.error(context, message: AppLocalizations.of(context).detailError(e.toString()));
+    }
   }
 
   @override
   void dispose() {
     _pressCtrl.dispose();
-    _fakeCtrl.dispose();
-    _progressNotifier.dispose();
     _longPressTimer?.cancel();
     super.dispose();
   }
@@ -555,48 +598,28 @@ class _DynosCardState extends ConsumerState<DynosCard>
                             ),
                           ),
                           child: _downloading
-                              ? Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                  child: ValueListenableBuilder<double>(
-                                    valueListenable: _progressNotifier,
-                                    builder: (context, progress, _) => Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        LinearProgressIndicator(
-                                          value: progress,
-                                          backgroundColor: Colors.black
-                                              .withValues(alpha: 0.35),
-                                          color: Colors.white,
-                                          minHeight: 4,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          '${(progress * 100).toStringAsFixed(1)}%',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ],
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LinearProgressIndicator(
+                                      value: _progress,
+                                      backgroundColor: retro.inkOnAccent.withValues(alpha: 0.25),
+                                      color: retro.inkOnAccent,
+                                      minHeight: 4,
                                     ),
-                                  ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${(_progress * 100).toStringAsFixed(0)}%',
+                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: retro.inkOnAccent),
+                                    ),
+                                  ],
                                 )
                               : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.download_rounded, size: 18),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      l10n.sharedDownload,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
+                                    Icon(Icons.download_rounded, color: retro.inkOnAccent, size: 20),
+                                    const SizedBox(width: 10),
+                                    Text(l10n.sharedDownload, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: retro.inkOnAccent)),
                                   ],
                                 ),
                         ),
