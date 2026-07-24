@@ -920,20 +920,28 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
     if (autoInstall && mounted) {
-      BackgroundInstallService.instance.startDownloadAndInstall(
+      final chain = await BackgroundInstallService.instance.startDownloadAndInstall(
         url: widget.url,
         modName: modName,
         fileName: filename,
       );
       if (!mounted) return;
-      AppSnackbar.info(context, message: _l10n!.detailDownloading(filename));
+      if (chain != null) {
+        AppSnackbar.info(context, message: _l10n!.detailDownloading(filename));
+      } else {
+        // Fallback: el encolado de WorkManager falló silenciosamente
+        // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
+        await _downloadToModsFolder(_installer, widget.url, filename,
+            extract: true, modName: modName);
+      }
     } else if (mounted) {
       await _downloadToModsFolder(_installer, widget.url, filename);
     }
   }
 
   Future<void> _downloadToModsFolder(
-      ModInstaller installer, String url, String filename) async {
+      ModInstaller installer, String url, String filename,
+      {bool extract = false, String? modName}) async {
     try {
       await FileDownloader.downloadFile(
         url: url,
@@ -941,10 +949,17 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          await installer.copyFileToModsFolder(
-            sourcePath: path,
-            targetName: savedName,
-          );
+          if (extract) {
+            await installer.installMod(
+              zipPath: path,
+              modName: modName ?? savedName,
+            );
+          } else {
+            await installer.copyFileToModsFolder(
+              sourcePath: path,
+              targetName: savedName,
+            );
+          }
           if (!mounted) return;
           AppSnackbar.success(
               context, message: _l10n!.detailSavedToModsFolder(savedName));
@@ -1255,23 +1270,31 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
     if (autoInstall && mounted) {
-      BackgroundInstallService.instance.startDownloadAndInstall(
+      final chain = await BackgroundInstallService.instance.startDownloadAndInstall(
         url: widget.url,
         modName: modName,
         fileName: filename,
       );
       if (!mounted) return;
-      AppSnackbar.info(
-        context,
-        message: _l10n!.detailDownloading(filename),
-      );
+      if (chain != null) {
+        AppSnackbar.info(
+          context,
+          message: _l10n!.detailDownloading(filename),
+        );
+      } else {
+        // Fallback: el encolado de WorkManager falló silenciosamente
+        // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
+        await _downloadToModsFolder(installer, widget.url, filename,
+            extract: true, modName: modName);
+      }
     } else if (mounted) {
       await _downloadToModsFolder(installer, widget.url, filename);
     }
   }
 
   Future<void> _downloadToModsFolder(
-      ModInstaller installer, String url, String filename) async {
+      ModInstaller installer, String url, String filename,
+      {bool extract = false, String? modName}) async {
     if (!mounted) return;
     setState(() {
       _localDownloading = true;
@@ -1290,10 +1313,17 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          await installer.copyFileToModsFolder(
-            sourcePath: path,
-            targetName: savedName,
-          );
+          if (extract) {
+            await installer.installMod(
+              zipPath: path,
+              modName: modName ?? savedName,
+            );
+          } else {
+            await installer.copyFileToModsFolder(
+              sourcePath: path,
+              targetName: savedName,
+            );
+          }
           if (!mounted) return;
           setState(() {
             _localDownloading = false;
