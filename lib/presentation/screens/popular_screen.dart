@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
+import '../../l10n/app_localizations.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
 
@@ -78,6 +79,7 @@ class _PopularBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
     final totalPages = (mods.length / _kPageSize).ceil();
     final safePage = page.clamp(0, totalPages - 1);
@@ -109,7 +111,7 @@ class _PopularBody extends StatelessWidget {
             text: TextSpan(
               children: [
                 const TextSpan(text: '🔥 '),
-                TextSpan(text: 'POPULAR', style: retro.heading(size: 16)),
+                TextSpan(text: l10n.popularTitle, style: retro.heading(size: 16)),
               ],
             ),
           ),
@@ -119,7 +121,7 @@ class _PopularBody extends StatelessWidget {
               child: SkewChip(
                 retro: retro,
                 icon: Icons.local_fire_department_rounded,
-                label: '${mods.length} MODS',
+                label: l10n.popularModCount(mods.length),
                 dense: true,
                 selected: true,
               ),
@@ -142,14 +144,14 @@ class _PopularBody extends StatelessWidget {
                 Expanded(
                   child: SectionKicker(
                     retro: retro,
-                    label: showPodium ? 'MORE RANKINGS' : 'RANKINGS',
+                    label: showPodium ? l10n.popularMoreRankings : l10n.popularRankings,
                     japanese: '人気ランキング',
                   ),
                 ),
                 const SizedBox(width: 10),
                 RetroTag(
                   retro: retro,
-                  label: 'PG ${safePage + 1}/$totalPages',
+                  label: l10n.popularPage(safePage + 1, totalPages),
                   dense: true,
                 ),
               ],
@@ -206,6 +208,7 @@ class _Podium extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
 
     return Padding(
@@ -220,7 +223,7 @@ class _Podium extends StatelessWidget {
         child: Column(
           children: [
             // Label
-            SectionKicker(retro: retro, label: 'TOP 3', japanese: '殿堂'),
+            SectionKicker(retro: retro, label: l10n.popularTop3, japanese: '殿堂'),
             const SizedBox(height: 18),
 
             // Podium columns: silver | gold | bronze
@@ -478,6 +481,7 @@ class _RankedRowState extends ConsumerState<_RankedRow>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
     final isTop3 = widget.rank <= 3;
@@ -590,7 +594,7 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                         if (widget.mod.isFeatured)
                           RetroTag(
                             retro: retro,
-                            label: 'FEATURED',
+                            label: l10n.badgeFeatured,
                             color: retro.amber,
                             filled: true,
                             dense: true,
@@ -642,6 +646,7 @@ class _PaginationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
     final start = currentPage * pageSize + 1;
     final end = ((currentPage + 1) * pageSize).clamp(0, totalItems);
@@ -650,9 +655,8 @@ class _PaginationBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 22, 16, 0),
       child: Column(
         children: [
-          // Range label
           Text(
-            'MOSTRANDO $start–$end DE $totalItems',
+            l10n.cataloguePaginationRange(start, end, totalItems),
             style: TextStyle(
               color: retro.inkDim,
               fontSize: 10.5,
@@ -867,6 +871,7 @@ class _PopularError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
     return Container(
       color: retro.background,
@@ -889,7 +894,7 @@ class _PopularError extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'FAILED TO LOAD',
+                l10n.popularFailedToLoad,
                 style: retro.heading(size: 14),
                 textAlign: TextAlign.center,
               ),

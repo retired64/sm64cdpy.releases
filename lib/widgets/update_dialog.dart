@@ -7,6 +7,7 @@ import 'package:ota_update/ota_update.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/theme/retro_theme.dart';
+import '../l10n/app_localizations.dart';
 import '../services/update_config.dart';
 
 class UpdateDialog extends StatefulWidget {
@@ -28,6 +29,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   bool _downloading = false;
   double _progress = 0;
   String? _error;
+  late final AppLocalizations _l10n;
 
   bool get _canOtaUpdate =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
@@ -71,44 +73,41 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
                 case OtaStatus.ALREADY_RUNNING_ERROR:
                   setState(() {
-                    _error =
-                        'Ya hay una descarga en curso. Espera o reinicia la app.';
+                    _error = _l10n.updateAlreadyDownloading;
                     _downloading = false;
                   });
 
                 case OtaStatus.PERMISSION_NOT_GRANTED_ERROR:
                   setState(() {
-                    _error =
-                        'Permiso de instalación denegado.\n'
-                        'Ve a Ajustes → Apps → esta app → Instalar apps desconocidas.';
+                    _error = _l10n.updatePermissionDenied;
                     _downloading = false;
                   });
 
                 case OtaStatus.INTERNAL_ERROR:
                   setState(() {
-                    _error =
-                        'Error interno: ${event.value ?? "desconocido"}';
+                    _error = _l10n.updateInternalError(
+                      event.value ?? 'unknown',
+                    );
                     _downloading = false;
                   });
 
                 case OtaStatus.DOWNLOAD_ERROR:
                   setState(() {
-                    _error =
-                        'Error de descarga. Verifica tu conexión.';
+                    _error = _l10n.updateDownloadError;
                     _downloading = false;
                   });
 
                 case OtaStatus.CHECKSUM_ERROR:
                   setState(() {
-                    _error =
-                        'El archivo descargado está corrupto. Intenta de nuevo.';
+                    _error = _l10n.updateChecksumError;
                     _downloading = false;
                   });
 
                 case OtaStatus.INSTALLATION_ERROR:
                   setState(() {
-                    _error =
-                        'Error al instalar: ${event.value ?? "desconocido"}';
+                    _error = _l10n.updateInstallError(
+                      event.value ?? 'unknown',
+                    );
                     _downloading = false;
                   });
 
@@ -117,7 +116,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             onError: (dynamic e) {
               if (!mounted) return;
               setState(() {
-                _error = 'Error inesperado: $e';
+                _error = _l10n.updateUnexpectedError(e.toString());
                 _downloading = false;
               });
             },
@@ -125,7 +124,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
           );
     } catch (e) {
       setState(() {
-        _error = 'No se pudo iniciar la actualización: $e';
+        _error = _l10n.updateCantStart(e.toString());
         _downloading = false;
       });
     }
@@ -151,6 +150,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    _l10n = AppLocalizations.of(context);
 
     return PopScope(
       canPop: !widget.isForce && !_downloading,
@@ -182,8 +182,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     Flexible(
                       child: Text(
                         widget.isForce
-                            ? 'ACTUALIZACION REQUERIDA'
-                            : 'NUEVA VERSION DISPONIBLE',
+                            ? _l10n.updateRequired
+                            : _l10n.updateAvailable,
                         style: retro.heading(size: 16),
                       ),
                     ),
@@ -196,20 +196,23 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Version ${widget.config.latestVersion}',
+                      _l10n.updateVersion(widget.config.latestVersion),
                       style: retro.heading(size: 14),
                     ),
                     if (widget.config.apkSize != null) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'Tamano: ${(widget.config.apkSize! / 1024 / 1024).toStringAsFixed(1)} MB',
+                        _l10n.updateSize(
+                          (widget.config.apkSize! / 1024 / 1024)
+                              .toStringAsFixed(1),
+                        ),
                         style: retro.body(size: 12),
                       ),
                     ],
                     if (widget.config.changelog != null &&
                         widget.config.changelog!.isNotEmpty) ...[
                       const SizedBox(height: 14),
-                      Text('Novedades:', style: retro.heading(size: 13)),
+                      Text(_l10n.updateWhatIsNew, style: retro.heading(size: 13)),
                       const SizedBox(height: 4),
                       Text(
                         widget.config.changelog!,
@@ -220,7 +223,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     ] else ...[
                       const SizedBox(height: 14),
                       Text(
-                        'Mejoras y correcciones menores.',
+                        _l10n.updateGenericDescription,
                         style: retro.body(size: 13),
                       ),
                     ],
@@ -234,7 +237,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Descargando... ${_progress.toStringAsFixed(0)}%',
+                        _l10n.updateDownloading(
+                          _progress.toStringAsFixed(0),
+                        ),
                         style: retro.body(size: 12),
                       ),
                     ],
@@ -278,19 +283,19 @@ class _UpdateDialogState extends State<UpdateDialog> {
                       _RetroTextButton(
                         retro: retro,
                         icon: Icons.open_in_browser,
-                        label: 'ABRIR EN NAVEGADOR',
+                        label: _l10n.updateButtonOpenBrowser,
                         onTap: _openInBrowser,
                       ),
                     if (!widget.isForce && !_downloading)
                       _RetroTextButton(
                         retro: retro,
-                        label: 'MAS TARDE',
+                        label: _l10n.updateButtonLater,
                         onTap: () => Navigator.of(context).pop(),
                       ),
                     if (widget.isForce && !_downloading)
                       _RetroTextButton(
                         retro: retro,
-                        label: 'SALIR',
+                        label: _l10n.updateButtonExit,
                         onTap: () => SystemNavigator.pop(),
                       ),
                     if (!_downloading || _error != null)
@@ -298,8 +303,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         retro: retro,
                         icon: Icons.download,
                         label: _canOtaUpdate
-                            ? 'ACTUALIZAR AHORA'
-                            : 'IR A DESCARGAS',
+                            ? _l10n.updateButtonUpdateNow
+                            : _l10n.updateButtonGoToDownloads,
                         onTap: _error != null
                             ? _startOtaUpdate
                             : _onUpdatePressed,

@@ -59,19 +59,19 @@ class MainActivity : FlutterActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val installChannel = NotificationChannel(
                 ModInstallWorker.CHANNEL_ID,
-                "Mod Installation",
+                getString(R.string.channel_mod_installation),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Shows progress while installing mods"
+                description = getString(R.string.channel_mod_installation_desc)
                 setShowBadge(false)
             }
 
             val downloadChannel = NotificationChannel(
                 ModDownloadWorker.DOWNLOAD_CHANNEL_ID,
-                "Mod Downloads",
+                getString(R.string.channel_mod_download),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Shows progress while downloading mods"
+                description = getString(R.string.channel_mod_download_desc)
                 setShowBadge(false)
             }
 

@@ -100,3 +100,58 @@ final themeModeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(
 final isDarkModeProvider = Provider<bool>((ref) {
   return ref.watch(themeModeProvider.notifier).isDarkMode;
 });
+
+/// Provider for managing app locale (system/forced) with persistence.
+///
+/// State is a language tag string or null. When null, the app follows
+/// the device's system locale. When non-null, the locale is forced
+/// to the specified language tag (e.g. 'es_419', 'pt_BR', 'en_US').
+class LocaleNotifier extends Notifier<String?> {
+  @override
+  String? build() {
+    Future.microtask(() => _loadSavedLocale());
+    return null;
+  }
+
+  late final Box<String> _box;
+
+  Future<void> _loadSavedLocale() async {
+    try {
+      _box = await Hive.openBox<String>(AppConstants.settingsBoxKey);
+      final saved = _box.get('locale', defaultValue: 'system');
+
+      if (saved == 'system') {
+        state = null;
+      } else if (['en_US', 'es_419', 'pt_BR'].contains(saved)) {
+        state = saved;
+      } else {
+        state = null;
+      }
+    } catch (e) {
+      state = null;
+    }
+  }
+
+  Future<void> setLocale(String? tag) async {
+    state = tag;
+
+    try {
+      await _box.put('locale', tag ?? 'system');
+    } catch (e) {
+      debugPrint('Failed to save locale preference: $e');
+    }
+  }
+
+  Locale? get locale => state != null ? localeFromTag(state!) : null;
+
+  static Locale? localeFromTag(String tag) {
+    final parts = tag.split('_');
+    if (parts.length == 2) {
+      return Locale(parts[0], parts[1]);
+    }
+    return Locale(tag);
+  }
+}
+
+final localeNotifierProvider =
+    NotifierProvider<LocaleNotifier, String?>(() => LocaleNotifier());

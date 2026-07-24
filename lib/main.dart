@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
+import 'l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/retro_theme.dart';
 import 'presentation/providers/theme_provider.dart';
@@ -85,10 +86,16 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
+    final localeTag = ref.watch(localeNotifierProvider);
+    final locale =
+        localeTag != null ? LocaleNotifier.localeFromTag(localeTag) : null;
 
     return MaterialApp.router(
       title: 'SM64CoopDX Mods',
       debugShowCheckedModeBanner: false,
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: RetroTheme.materialTheme(false),
       darkTheme: RetroTheme.materialTheme(true),
       themeMode: themeMode,

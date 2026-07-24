@@ -21,11 +21,14 @@ extension NullableDoubleExt on double? {
   String get star => this == null ? '—' : this!.toStringAsFixed(1);
 }
 
-String? formatDate(String? iso) {
+String? formatDate(String? iso, {String? locale}) {
   if (iso == null) return null;
   try {
     final dt = DateTime.parse(iso);
-    return DateFormat('MMM d, yyyy').format(dt.toLocal());
+    final fmt = locale != null
+        ? DateFormat('MMM d, yyyy', locale)
+        : DateFormat('MMM d, yyyy');
+    return fmt.format(dt.toLocal());
   } catch (_) {
     return iso;
   }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="channel_mod_installation">Instalación de mods</string>
+  <string name="channel_mod_installation_desc">Muestra el progreso al instalar mods</string>
+  <string name="channel_mod_download">Descargas de mods</string>
+  <string name="channel_mod_download_desc">Muestra el progreso al descargar mods</string>
+  <string name="notification_downloading_mod">Descargando mod</string>
+  <string name="notification_downloading_progress">%1$s · %2$d%%</string>
+  <string name="notification_preparing_download">Preparando descarga…</string>
+  <string name="notification_cancel">Cancelar</string>
+  <string name="notification_preparing">Preparando…</string>
+  <string name="notification_extracting">Extrayendo %1$s…</string>
+  <string name="notification_extracting_progress">Extrayendo %1$s · %2$d/%3$d archivos</string>
+  <string name="notification_installing_mod">Instalando mod</string>
+</resources>

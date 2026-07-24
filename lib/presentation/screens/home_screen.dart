@@ -11,6 +11,7 @@ import '../../services/game_launcher_service.dart';
 import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
+import '../../l10n/app_localizations.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -36,6 +37,7 @@ class _HomeBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final featuredAsync = ref.watch(featuredModsProvider);
     final topAsync = ref.watch(topModsProvider);
 
@@ -70,8 +72,8 @@ class _HomeBody extends ConsumerWidget {
 
         // ── Exclusive content ─────────────────────────────────
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
-        const SliverToBoxAdapter(
-          child: _SectionHeader(title: 'Exclusive Content'),
+        SliverToBoxAdapter(
+          child: _SectionHeader(title: l10n.homeExclusiveContent),
         ),
         const SliverToBoxAdapter(child: _ExclusiveSection()),
 
@@ -79,8 +81,8 @@ class _HomeBody extends ConsumerWidget {
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
         SliverToBoxAdapter(
           child: _SectionHeader(
-            title: 'Top Downloads',
-            actionLabel: 'See all',
+            title: l10n.homeTopDownloads,
+            actionLabel: l10n.homeSeeAll,
             onAction: () => context.go('/popular'),
           ),
         ),
@@ -159,6 +161,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final carouselHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
         ? 160.0
@@ -166,9 +169,9 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: _SectionHeader(title: 'Featured'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: _SectionHeader(title: l10n.homeFeatured),
         ),
         const SizedBox(height: 12),
         SizedBox(
@@ -245,6 +248,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
 
     return AnimatedContainer(
@@ -314,7 +318,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                           children: [
                             RetroTag(
                               retro: retro,
-                              label: 'FEATURED',
+                              label: l10n.badgeFeatured,
                               icon: Icons.star,
                               filled: true,
                               dense: true,
@@ -438,40 +442,6 @@ class _FeaturedPlaceholder extends StatelessWidget {
 class _BrowseCarousel extends StatefulWidget {
   const _BrowseCarousel();
 
-  // NOTA de implementación / imágenes:
-  // Por ahora `imageUrl` queda en null para las 3 categorías y la tarjeta
-  // cae automáticamente al ícono (mismo patrón de fallback que
-  // _FeaturedCard / _TopDownloads con CachedNetworkImage). El día que haya
-  // arte propio para cada sección basta con poner la URL aquí (o un asset
-  // local vía Image.asset si prefieres bundlear las 3 imágenes en vez de
-  // cargarlas por red) — no hace falta tocar _BrowseCard.
-  static const _items = [
-    (
-      icon: Icons.apps_rounded,
-      label: 'Catalog',
-      description: 'Browse, search & filter the full mod collection',
-      route: '/catalogue',
-      colorKey: 'amber',
-      imageUrl: null,
-    ),
-    (
-      icon: Icons.favorite_rounded,
-      label: 'Favorites',
-      description: 'Your saved mods across all sections',
-      route: '/favourites',
-      colorKey: 'red',
-      imageUrl: null,
-    ),
-    (
-      icon: Icons.trending_up_rounded,
-      label: 'Popular',
-      description: 'Top mods ranked by total downloads',
-      route: '/popular',
-      colorKey: 'blue',
-      imageUrl: null,
-    ),
-  ];
-
   @override
   State<_BrowseCarousel> createState() => _BrowseCarouselState();
 }
@@ -495,19 +465,52 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final colors = <String, Color>{
       'amber': retro.amber,
       'red': retro.red,
       'blue': retro.blue,
     };
-    final items = _BrowseCarousel._items;
+    final items = <({
+      String label,
+      String description,
+      String route,
+      String colorKey,
+      IconData icon,
+      String? imageUrl,
+    })>[
+      (
+        icon: Icons.apps_rounded,
+        label: l10n.homeCatalog,
+        description: l10n.homeCatalogDesc,
+        route: '/catalogue',
+        colorKey: 'amber',
+        imageUrl: null,
+      ),
+      (
+        icon: Icons.favorite_rounded,
+        label: l10n.homeFavorites,
+        description: l10n.homeFavoritesDesc,
+        route: '/favourites',
+        colorKey: 'red',
+        imageUrl: null,
+      ),
+      (
+        icon: Icons.trending_up_rounded,
+        label: l10n.homePopular,
+        description: l10n.homePopularDesc,
+        route: '/popular',
+        colorKey: 'blue',
+        imageUrl: null,
+      ),
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: _SectionHeader(title: 'Browse'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: _SectionHeader(title: l10n.homeBrowse),
         ),
         const SizedBox(height: 12),
         SizedBox(
@@ -609,6 +612,7 @@ class _BrowseCardState extends State<_BrowseCard>
   @override
   Widget build(BuildContext context) {
     final retro = widget.retro;
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -690,7 +694,7 @@ class _BrowseCardState extends State<_BrowseCard>
                   alignment: Alignment.bottomRight,
                   child: SkewChip(
                     retro: retro,
-                    label: 'GO TO',
+                    label: l10n.homeGoTo,
                     selected: true,
                     dense: true,
                     accentColor: widget.accent,
@@ -711,51 +715,57 @@ class _BrowseCardState extends State<_BrowseCard>
 class _ExclusiveSection extends StatelessWidget {
   const _ExclusiveSection();
 
-  static const _items = [
-    (
-      route: '/vip',
-      label: 'VIP Mods',
-      description: 'Exclusive character & model packs',
-      icon: Icons.workspace_premium_rounded,
-      colorKey: 'amber',
-    ),
-    (
-      route: '/dynos',
-      label: 'DynOS',
-      description: 'Custom textures & model swaps',
-      icon: Icons.color_lens_rounded,
-      colorKey: 'blue',
-    ),
-    (
-      route: '/touch-controls',
-      label: 'Touch Controls',
-      description: 'Custom button & joystick layouts',
-      icon: Icons.touch_app_rounded,
-      colorKey: 'accent',
-    ),
-    (
-      route: '/omm-rebirth',
-      label: 'OMMR PACK',
-      description: 'Complete OMM Rebirth texture pack',
-      icon: Icons.folder_zip_rounded,
-      colorKey: 'red',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final colors = <String, Color>{
       'amber': retro.amber,
       'blue': retro.blue,
       'accent': retro.accent,
       'red': retro.red,
     };
+    final items = <({
+      String label,
+      String description,
+      String route,
+      String colorKey,
+      IconData icon,
+    })>[
+      (
+        route: '/vip',
+        label: l10n.homeVipMods,
+        description: l10n.homeVipModsDesc,
+        icon: Icons.workspace_premium_rounded,
+        colorKey: 'amber',
+      ),
+      (
+        route: '/dynos',
+        label: l10n.homeDynos,
+        description: l10n.homeDynosDesc,
+        icon: Icons.color_lens_rounded,
+        colorKey: 'blue',
+      ),
+      (
+        route: '/touch-controls',
+        label: l10n.homeTouchControls,
+        description: l10n.homeTouchControlsDesc,
+        icon: Icons.touch_app_rounded,
+        colorKey: 'accent',
+      ),
+      (
+        route: '/omm-rebirth',
+        label: l10n.homeOmmrPack,
+        description: l10n.homeOmmrPackDesc,
+        icon: Icons.folder_zip_rounded,
+        colorKey: 'red',
+      ),
+    ];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Column(
-        children: _items.map((item) {
+        children: items.map((item) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: _ExclusiveCard(
@@ -928,24 +938,25 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
 
   void _showNotInstalledDialog() {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: retro.surface,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         title: Text(
-          'Game not installed',
+          l10n.homeGameNotInstalled,
           style: retro.heading(size: 16, color: retro.red),
         ),
         content: Text(
-          'SM64CoopDX (com.maniscat2.sm64coopdx)\nis not installed on this device.',
+          l10n.homeGameNotInstalledBody,
           style: retro.body(size: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'Close',
+              l10n.homeClose,
               style: retro.body(size: 13, color: retro.inkDim),
             ),
           ),
@@ -955,7 +966,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
               context.go('/links-resource');
             },
             child: Text(
-              'Download',
+              l10n.homeDownload,
               style: retro.body(
                 size: 13,
                 color: retro.accent,
@@ -971,6 +982,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     if (!_enabled) {
       return Padding(
@@ -1004,7 +1016,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'LAUNCH  GAME',
+                        l10n.homeLaunchGame,
                         style: TextStyle(
                           color: retro.inkDim,
                           fontSize: 14,
@@ -1038,7 +1050,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                       alignment: Alignment.center,
                       transform: Matrix4.skewX(0.18),
                       child: Text(
-                        'SOON',
+                        l10n.homeSoon,
                         style: TextStyle(
                           color: retro.onAmber,
                           fontSize: 9,
@@ -1450,6 +1462,7 @@ class _HomeError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Center(
       child: Padding(
@@ -1469,7 +1482,7 @@ class _HomeError extends StatelessWidget {
               child: Icon(Icons.error_outline, size: 32, color: retro.red),
             ),
             const SizedBox(height: 16),
-            Text('Failed to load mods', style: retro.heading(size: 16)),
+            Text(l10n.homeFailedToLoad, style: retro.heading(size: 16)),
             const SizedBox(height: 6),
             Text(
               message,

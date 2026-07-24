@@ -12,6 +12,7 @@ import '../../domain/entities/touch_control_entity.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
+import '../../l10n/app_localizations.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -55,6 +56,7 @@ class _TouchBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return CustomScrollView(
       controller: scrollCtrl,
@@ -72,13 +74,9 @@ class _TouchBody extends StatelessWidget {
           elevation: 0,
           shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
           leading: DrawerMenuButton(color: retro.accent),
-          title: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(text: 'TOUCH ', style: retro.heading(size: 16, color: retro.ink)),
-                TextSpan(text: 'CONTROLS', style: retro.heading(size: 16, color: retro.accent)),
-              ],
-            ),
+          title: Text(
+            l10n.touchTitle,
+            style: retro.heading(size: 16, color: retro.accent),
           ),
           actions: [
             Padding(
@@ -86,7 +84,7 @@ class _TouchBody extends StatelessWidget {
               child: SkewChip(
                 retro: retro,
                 icon: Icons.touch_app_rounded,
-                label: '${mods.length} LAYOUTS',
+                label: l10n.touchModCount(mods.length),
                 dense: true,
                 selected: true,
               ),
@@ -106,7 +104,7 @@ class _TouchBody extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
             child: SectionKicker(
               retro: retro,
-              label: 'MOBILE LAYOUTS',
+              label: l10n.touchSectionHeader,
               japanese: mods.isEmpty ? null : '${mods.length} 件',
             ),
           ),
@@ -217,7 +215,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
     final isNowFav = ref.read(touchFavouritesProvider).contains(widget.mod.id);
     AppSnackbar.info(
       context,
-      message: isNowFav ? 'Added to favorites' : 'Removed from favorites',
+      message: isNowFav ? AppLocalizations.of(context).sharedAddedToFavorites : AppLocalizations.of(context).sharedRemovedFromFavorites,
       duration: const Duration(seconds: 1),
     );
   }
@@ -281,7 +279,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         AppSnackbar.success(
           context,
-          message: 'Downloaded: ${path.split('/').last}',
+          message: AppLocalizations.of(context).sharedDownloaded(path.split('/').last),
         );
       },
       onDownloadError: (error) {
@@ -293,7 +291,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
           _realProgress = 0.0;
         });
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        AppSnackbar.error(context, message: 'Download failed');
+        AppSnackbar.error(context, message: AppLocalizations.of(context).sharedDownloadFailed);
       },
     );
   }
@@ -310,6 +308,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(touchFavouritesProvider).contains(widget.mod.id);
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
@@ -430,7 +429,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                           color: retro.accent,
                         ),
                         label: Text(
-                          isFav ? 'REMOVE FROM FAVORITES' : 'ADD TO FAVORITES',
+                          isFav ? l10n.sharedRemoveFromFavorites : l10n.sharedAddToFavorites,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
@@ -504,13 +503,13 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                                     ),
                                   ),
                                 )
-                              : const Row(
+                              : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(Icons.download_rounded, size: 18),
                                     SizedBox(width: 8),
                                     Text(
-                                      'DOWNLOAD',
+                                      l10n.sharedDownload,
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900,
@@ -541,6 +540,7 @@ class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -563,7 +563,7 @@ class _EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: 22),
             Text(
-              'NO TOUCH LAYOUTS YET',
+              l10n.touchEmpty,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: retro.ink,
@@ -574,7 +574,7 @@ class _EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Check back later for mobile control layouts.',
+              l10n.touchEmptyHint,
               style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
             ),
@@ -644,6 +644,7 @@ class _TouchError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Container(
       color: retro.background,
       child: Center(
@@ -668,7 +669,7 @@ class _TouchError extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'FAILED TO LOAD TOUCH CONTROLS',
+                l10n.touchFailedToLoad,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: retro.ink,

@@ -4,14 +4,81 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
 class LinksResourceScreen extends StatelessWidget {
   const LinksResourceScreen({super.key});
 
+  List<_LinkData> _buildOfficialLinks(AppLocalizations l10n) => [
+        _LinkData(
+          title: l10n.linksWebsite,
+          url: AppConstants.officialweb,
+          subtitle: l10n.linksWebsiteUrl,
+          icon: Icons.public_rounded,
+          kind: l10n.linksKindWeb,
+        ),
+        _LinkData(
+          title: l10n.linksDiscordServer,
+          url: AppConstants.discordPortAndroid,
+          subtitle: l10n.linksDiscordOfficial,
+          icon: Icons.chat_rounded,
+          kind: l10n.linksKindDiscord,
+        ),
+        _LinkData(
+          title: l10n.linksGithubRepo,
+          url: AppConstants.maniscat2Github,
+          subtitle: l10n.linksGithubDesc,
+          icon: Icons.code_rounded,
+          kind: l10n.linksKindGithub,
+        ),
+      ];
+
+  List<_LinkData> _buildAppLinks(AppLocalizations l10n) => [
+        _LinkData(
+          title: l10n.linksGithubReleases,
+          url: AppConstants.githubReleasesUrl,
+          subtitle: l10n.linksGithubReleasesDesc,
+          icon: Icons.system_update_rounded,
+          kind: l10n.linksKindDownload,
+        ),
+        _LinkData(
+          title: l10n.linksYoutubeChannel,
+          url: AppConstants.youtubeUrl,
+          subtitle: l10n.linksYoutubeHandle,
+          icon: Icons.play_circle_rounded,
+          kind: l10n.linksKindYoutube,
+        ),
+      ];
+
+  List<_LinkData> _buildResourceLinks(AppLocalizations l10n) => [
+        _LinkData(
+          title: l10n.linksDiscordServer,
+          url: AppConstants.discordPort,
+          subtitle: l10n.linksDiscordCommunity,
+          icon: Icons.chat_rounded,
+          kind: l10n.linksKindDiscord,
+        ),
+        _LinkData(
+          title: l10n.linksWiki,
+          url: AppConstants.wikiUrl,
+          subtitle: l10n.linksWikiDesc,
+          icon: Icons.menu_book_rounded,
+          kind: l10n.linksKindWiki,
+        ),
+        _LinkData(
+          title: l10n.linksTools,
+          url: AppConstants.toolsAndAddonsUrl,
+          subtitle: l10n.linksToolsDesc,
+          icon: Icons.build_rounded,
+          kind: l10n.linksKindTools,
+        ),
+      ];
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
 
     return CustomScrollView(
@@ -20,86 +87,87 @@ class LinksResourceScreen extends StatelessWidget {
       ),
       slivers: [
         SliverAppBar(
-                backgroundColor: retro.background,
-                surfaceTintColor: Colors.transparent,
-                scrolledUnderElevation: 0,
-                floating: true,
-                snap: true,
-                elevation: 0,
-                shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-                leading: const DrawerMenuButton(),
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'LINKS ',
-                        style: retro.heading(size: 18, color: retro.ink),
-                      ),
-                      TextSpan(
-                        text: '& RECURSOS',
-                        style: retro.heading(size: 18, color: retro.accent),
-                      ),
-                    ],
-                  ),
+          backgroundColor: retro.background,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          floating: true,
+          snap: true,
+          elevation: 0,
+          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
+          leading: const DrawerMenuButton(),
+          title: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: l10n.linksTitle,
+                  style: retro.heading(size: 18, color: retro.ink),
                 ),
-              ),
-
-              // ── Kicker: 発見 = "descubre" / リンク = "link" ──────────
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
-                  child: Text(
-                    '発見・すべてのリンク',
-                    style: retro.body(size: 12, color: retro.inkDim),
-                  ),
+                TextSpan(
+                  text: l10n.linksSubtitle,
+                  style: retro.heading(size: 18, color: retro.accent),
                 ),
-              ),
+              ],
+            ),
+          ),
+        ),
 
-              // ── Hero: explica qué es esta pantalla y cómo usarla ──
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
-                  child: _HubHero(retro: retro),
-                ),
-              ),
+        // ── Kicker: 発見 = "descubre" / リンク = "link" ──────────
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+            child: Text(
+              '発見・すべてのリンク',
+              style: retro.body(size: 12, color: retro.inkDim),
+            ),
+          ),
+        ),
 
-              _Section(
-                retro: retro,
-                title: 'OFFICIAL',
-                japanese: '公式',
-                description: 'Canales verificados del proyecto SM64CoopDX.',
-                accent: retro.accent,
-                links: _kOfficialLinks,
-              ),
-              _Section(
-                retro: retro,
-                title: 'SM64CDPY',
-                japanese: 'アプリ',
-                description: 'Descargas y contenido de esta app.',
-                accent: retro.red,
-                links: _kAppLinks,
-              ),
-              _Section(
-                retro: retro,
-                title: 'RESOURCES',
-                japanese: '資料',
-                description: 'Comunidad, guías e instalación paso a paso.',
-                accent: retro.blue,
-                links: _kResourceLinks,
-                isLast: true,
-              ),
+        // ── Hero: explica qué es esta pantalla y cómo usarla ──
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
+            child: _HubHero(retro: retro, l10n: l10n),
+          ),
+        ),
 
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
-            ],
-          );
+        _Section(
+          retro: retro,
+          title: l10n.linksOfficiaSection,
+          japanese: '公式',
+          description: l10n.linksOfficialDesc,
+          accent: retro.accent,
+          links: _buildOfficialLinks(l10n),
+        ),
+        _Section(
+          retro: retro,
+          title: l10n.linksSm64cdpySection,
+          japanese: 'アプリ',
+          description: l10n.linksSm64cdpyDesc,
+          accent: retro.red,
+          links: _buildAppLinks(l10n),
+        ),
+        _Section(
+          retro: retro,
+          title: l10n.linksResourcesSection,
+          japanese: '資料',
+          description: l10n.linksResourcesDesc,
+          accent: retro.blue,
+          links: _buildResourceLinks(l10n),
+          isLast: true,
+        ),
+
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+      ],
+    );
   }
 }
 
 // ── Hero card ────────────────────────────────────────────────────────────────
 
 class _HubHero extends StatelessWidget {
-  const _HubHero({required this.retro});
+  const _HubHero({required this.retro, required this.l10n});
   final RetroTheme retro;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
@@ -118,13 +186,13 @@ class _HubHero extends StatelessWidget {
             children: [
               Icon(Icons.link_rounded, size: 18, color: retro.accent),
               const SizedBox(width: 8),
-              Text('LINK HUB', style: retro.heading(size: 13, color: retro.accent)),
+              Text(l10n.linksHeroTitle,
+                  style: retro.heading(size: 13, color: retro.accent)),
             ],
           ),
           const SizedBox(height: 10),
           Text(
-            'Todo lo oficial, la comunidad y los recursos del proyecto, '
-            'en un solo lugar.',
+            l10n.linksHeroDesc,
             style: retro.body(size: 14, color: retro.ink),
           ),
           const SizedBox(height: 14),
@@ -135,13 +203,13 @@ class _HubHero extends StatelessWidget {
               SkewChip(
                 retro: retro,
                 icon: Icons.touch_app_rounded,
-                label: 'TOCA = ABRIR',
+                label: l10n.linksChipTap,
                 dense: true,
               ),
               SkewChip(
                 retro: retro,
                 icon: Icons.copy_rounded,
-                label: 'MANTÉN = COPIAR',
+                label: l10n.linksChipHold,
                 dense: true,
               ),
             ],
@@ -169,71 +237,6 @@ class _LinkData {
   final IconData icon;
   final String kind;
 }
-
-const _kOfficialLinks = [
-  _LinkData(
-    title: 'SM64CoopDX Website',
-    url: AppConstants.officialweb,
-    subtitle: 'sm64coopdx.com',
-    icon: Icons.public_rounded,
-    kind: 'WEB',
-  ),
-  _LinkData(
-    title: 'Discord Server',
-    url: AppConstants.discordPortAndroid,
-    subtitle: 'Official community server · Android',
-    icon: Icons.chat_rounded,
-    kind: 'DISCORD',
-  ),
-  _LinkData(
-    title: 'GitHub Repository',
-    url: AppConstants.maniscat2Github,
-    subtitle: 'Source code & issues',
-    icon: Icons.code_rounded,
-    kind: 'GITHUB',
-  ),
-];
-
-const _kAppLinks = [
-  _LinkData(
-    title: 'GitHub Releases',
-    url: AppConstants.githubReleasesUrl,
-    subtitle: 'Download latest APK',
-    icon: Icons.system_update_rounded,
-    kind: 'DOWNLOAD',
-  ),
-  _LinkData(
-    title: 'YouTube Channel',
-    url: AppConstants.youtubeUrl,
-    subtitle: '@retired64',
-    icon: Icons.play_circle_rounded,
-    kind: 'YOUTUBE',
-  ),
-];
-
-const _kResourceLinks = [
-  _LinkData(
-    title: 'Discord Server',
-    url: AppConstants.discordPort,
-    subtitle: 'Community & support server',
-    icon: Icons.chat_rounded,
-    kind: 'DISCORD',
-  ),
-  _LinkData(
-    title: 'Wiki & Guides',
-    url: AppConstants.wikiUrl,
-    subtitle: 'Installation guides & docs',
-    icon: Icons.menu_book_rounded,
-    kind: 'WIKI',
-  ),
-  _LinkData(
-    title: 'Tools & Add-ons',
-    url: AppConstants.toolsAndAddonsUrl,
-    subtitle: 'How to make mods & resources',
-    icon: Icons.build_rounded,
-    kind: 'TOOLS',
-  ),
-];
 
 // ── Section ──────────────────────────────────────────────────────────────────
 
@@ -318,7 +321,8 @@ class _LinkCardState extends State<_LinkCard>
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
       if (!context.mounted) return;
-      AppSnackbar.error(context, message: 'Could not open link');
+      final l10n = AppLocalizations.of(context);
+      AppSnackbar.error(context, message: l10n.linksCouldNotOpen);
     }
   }
 
@@ -326,7 +330,8 @@ class _LinkCardState extends State<_LinkCard>
     HapticFeedback.mediumImpact();
     await Clipboard.setData(ClipboardData(text: widget.link.url));
     if (!context.mounted) return;
-    AppSnackbar.success(context, message: 'Link copied');
+    final l10n = AppLocalizations.of(context);
+    AppSnackbar.success(context, message: l10n.linksCopied);
   }
 
   @override

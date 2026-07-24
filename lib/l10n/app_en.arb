@@ -1,0 +1,1431 @@
+{
+  "hello": "Hello",
+  "@hello": {
+    "description": "Test key — remove before production"
+  },
+
+  "navHome": "Home",
+  "@navHome": {
+    "description": "Drawer navigation label for the home screen"
+  },
+  "navCatalog": "Catalog",
+  "@navCatalog": {
+    "description": "Drawer navigation label for the catalogue screen"
+  },
+  "navFavourites": "Favourites",
+  "@navFavourites": {
+    "description": "Drawer navigation label for the favourites screen"
+  },
+  "navPopular": "Popular",
+  "@navPopular": {
+    "description": "Drawer navigation label for the popular screen"
+  },
+  "navVIPMods": "VIP Mods",
+  "@navVIPMods": {
+    "description": "Drawer navigation label for the VIP mods screen"
+  },
+  "navDynOS": "DynOS",
+  "@navDynOS": {
+    "description": "Drawer navigation label for the DynOS screen"
+  },
+  "navTouchControls": "Touch Controls",
+  "@navTouchControls": {
+    "description": "Drawer navigation label for the touch controls screen"
+  },
+  "navOmmRebirth": "OMMR PACK",
+  "@navOmmRebirth": {
+    "description": "Drawer navigation label for the OMM Rebirth screen"
+  },
+  "navLinksResource": "Links Resource",
+  "@navLinksResource": {
+    "description": "Drawer navigation label for the links & resources screen"
+  },
+  "navDisclaimer": "Disclaimer",
+  "@navDisclaimer": {
+    "description": "Drawer navigation label for the disclaimer screen"
+  },
+  "navChangelog": "Changelog",
+  "@navChangelog": {
+    "description": "Drawer navigation label for the changelog screen"
+  },
+  "navSettings": "Settings",
+  "@navSettings": {
+    "description": "Drawer navigation label for the settings screen"
+  },
+
+  "sectionExclusive": "EXCLUSIVE",
+  "@sectionExclusive": {
+    "description": "Section header in the drawer for exclusive content items"
+  },
+  "sectionExplore": "EXPLORE",
+  "@sectionExplore": {
+    "description": "Section header in the drawer for category browsing"
+  },
+  "sectionCategories": "CATEGORIES",
+  "@sectionCategories": {
+    "description": "Expandable section header in the drawer for category filters"
+  },
+  "sectionSortBy": "SORT BY",
+  "@sectionSortBy": {
+    "description": "Expandable section header in the drawer for sort options"
+  },
+  "sectionSocialLinks": "SOCIAL LINKS",
+  "@sectionSocialLinks": {
+    "description": "Section header in the drawer for social media links"
+  },
+
+  "sortDefault": "Default",
+  "@sortDefault": {
+    "description": "Sort option label: default / relevance"
+  },
+  "sortRating": "Rating",
+  "@sortRating": {
+    "description": "Sort option label: sort by rating"
+  },
+  "sortDownloads": "Downloads",
+  "@sortDownloads": {
+    "description": "Sort option label: sort by download count"
+  },
+  "sortNewest": "Newest Update",
+  "@sortNewest": {
+    "description": "Sort option label: sort by most recently updated"
+  },
+
+  "socialYouTube": "YouTube",
+  "@socialYouTube": {
+    "description": "Tooltip for the YouTube social link button"
+  },
+  "socialDiscord": "Discord",
+  "@socialDiscord": {
+    "description": "Tooltip for the Discord social link button"
+  },
+  "socialGitHub": "GitHub",
+  "@socialGitHub": {
+    "description": "Tooltip for the GitHub social link button"
+  },
+
+  "categoryCharacters": "Characters",
+  "@categoryCharacters": {
+    "description": "Category name: character mods and player models"
+  },
+  "categoryGameModes": "Game Modes",
+  "@categoryGameModes": {
+    "description": "Category name: custom game modes and multiplayer modes"
+  },
+  "categoryROMHacks": "ROM Hacks & Levels",
+  "@categoryROMHacks": {
+    "description": "Category name: custom levels, ROM hacks, and worlds"
+  },
+  "categoryGameplay": "Gameplay & Mechanics",
+  "@categoryGameplay": {
+    "description": "Category name: gameplay tweaks, mechanics, and abilities"
+  },
+  "categoryVisual": "Visual & Models",
+  "@categoryVisual": {
+    "description": "Category name: visual mods, textures, models, and HUD"
+  },
+  "categoryAudio": "Audio & Voice",
+  "@categoryAudio": {
+    "description": "Category name: music, sound effects, and voice packs"
+  },
+  "categoryUtilities": "Utilities & Tools",
+  "@categoryUtilities": {
+    "description": "Category name: utility and tool mods for server/admin"
+  },
+  "categoryMisc": "Misc & Fun",
+  "@categoryMisc": {
+    "description": "Category name: miscellaneous, fun, memes, and joke mods"
+  },
+
+  "badgeFeatured": "FEATURED",
+  "@badgeFeatured": {
+    "description": "Badge label shown on featured mod cards"
+  },
+
+  "updateRequired": "UPDATE REQUIRED",
+  "@updateRequired": {
+    "description": "Dialog title when a forced update is required"
+  },
+  "updateAvailable": "NEW VERSION AVAILABLE",
+  "@updateAvailable": {
+    "description": "Dialog title when a new version is available"
+  },
+  "updateVersion": "Version {version}",
+  "@updateVersion": {
+    "description": "Shows the available version number in the update dialog",
+    "placeholders": {
+      "version": {"type": "String", "example": "1.5.0"}
+    }
+  },
+  "updateSize": "Size: {size} MB",
+  "@updateSize": {
+    "description": "Shows the APK file size in the update dialog",
+    "placeholders": {
+      "size": {"type": "String", "example": "24.3"}
+    }
+  },
+  "updateWhatIsNew": "What's new:",
+  "@updateWhatIsNew": {
+    "description": "Label before the changelog text in the update dialog"
+  },
+  "updateGenericDescription": "Minor improvements and bug fixes.",
+  "@updateGenericDescription": {
+    "description": "Fallback text shown when no changelog is available in the update dialog"
+  },
+  "updateDownloading": "Downloading... {pct}%",
+  "@updateDownloading": {
+    "description": "Progress text shown while downloading the update",
+    "placeholders": {
+      "pct": {"type": "String", "example": "45"}
+    }
+  },
+  "updateAlreadyDownloading": "A download is already in progress. Wait or restart the app.",
+  "@updateAlreadyDownloading": {
+    "description": "Error shown when OTA update is already running"
+  },
+  "updatePermissionDenied": "Install permission denied.\nGo to Settings → Apps → this app → Install unknown apps.",
+  "@updatePermissionDenied": {
+    "description": "Error shown when the user denied install permission"
+  },
+  "updateInternalError": "Internal error: {detail}",
+  "@updateInternalError": {
+    "description": "Error shown for internal OTA errors",
+    "placeholders": {
+      "detail": {"type": "String", "example": "unknown"}
+    }
+  },
+  "updateDownloadError": "Download error. Check your connection.",
+  "@updateDownloadError": {
+    "description": "Error shown when the download fails due to network issues"
+  },
+  "updateChecksumError": "The downloaded file is corrupt. Please try again.",
+  "@updateChecksumError": {
+    "description": "Error shown when the APK checksum verification fails"
+  },
+  "updateInstallError": "Install error: {detail}",
+  "@updateInstallError": {
+    "description": "Error shown when APK installation fails",
+    "placeholders": {
+      "detail": {"type": "String", "example": "unknown"}
+    }
+  },
+  "updateUnexpectedError": "Unexpected error: {detail}",
+  "@updateUnexpectedError": {
+    "description": "Generic error shown for unexpected OTA failures",
+    "placeholders": {
+      "detail": {"type": "String", "example": "unknown"}
+    }
+  },
+  "updateCantStart": "Could not start the update: {detail}",
+  "@updateCantStart": {
+    "description": "Error shown when the OTA update process cannot be initiated",
+    "placeholders": {
+      "detail": {"type": "String", "example": "unknown"}
+    }
+  },
+  "updateButtonOpenBrowser": "OPEN IN BROWSER",
+  "@updateButtonOpenBrowser": {
+    "description": "Button label to open the release page in the browser"
+  },
+  "updateButtonLater": "LATER",
+  "@updateButtonLater": {
+    "description": "Button label to dismiss the optional update dialog"
+  },
+  "updateButtonExit": "EXIT",
+  "@updateButtonExit": {
+    "description": "Button label to close the app (forced update)"
+  },
+  "updateButtonUpdateNow": "UPDATE NOW",
+  "@updateButtonUpdateNow": {
+    "description": "Button label to start the OTA update download"
+  },
+  "updateButtonGoToDownloads": "GO TO DOWNLOADS",
+  "@updateButtonGoToDownloads": {
+    "description": "Button label to go to the GitHub releases page (non-Android)"
+  },
+
+  "postInstallTitle": "Mod installed",
+  "@postInstallTitle": {
+    "description": "Title of the post-install dialog shown after a mod is installed"
+  },
+  "postInstallGameRunning": "If the game was already running, close it completely (not just minimize) and reopen it so the new files are loaded correctly.",
+  "@postInstallGameRunning": {
+    "description": "Post-install instruction when the game is detected as installed"
+  },
+  "postInstallNoRoot": "No force-stop or root needed — just close the game normally and reopen it.",
+  "@postInstallNoRoot": {
+    "description": "Clarification that the user does not need special permissions"
+  },
+  "postInstallFilesCopied": "Files have been copied to the mods folder.",
+  "@postInstallFilesCopied": {
+    "description": "Message shown when game is not installed, just files were copied"
+  },
+  "postInstallClose": "Close",
+  "@postInstallClose": {
+    "description": "Button label to dismiss the post-install dialog"
+  },
+  "postInstallLaunchGame": "LAUNCH GAME",
+  "@postInstallLaunchGame": {
+    "description": "Button label to launch the game after installing a mod"
+  },
+
+  "homeExclusiveContent": "Exclusive Content",
+  "@homeExclusiveContent": {
+    "description": "Home screen section title for exclusive content"
+  },
+  "homeTopDownloads": "Top Downloads",
+  "@homeTopDownloads": {
+    "description": "Home screen section title for top downloads"
+  },
+  "homeSeeAll": "See all",
+  "@homeSeeAll": {
+    "description": "Home screen link to see all items in a section"
+  },
+  "homeFeatured": "Featured",
+  "@homeFeatured": {
+    "description": "Home screen section title for featured mods"
+  },
+  "homeCatalog": "Catalog",
+  "@homeCatalog": {
+    "description": "Home screen quick-link tile for the full catalog"
+  },
+  "homeCatalogDesc": "Browse, search & filter the full mod collection",
+  "@homeCatalogDesc": {
+    "description": "Home screen description for the catalog quick-link tile"
+  },
+  "homeFavorites": "Favorites",
+  "@homeFavorites": {
+    "description": "Home screen quick-link tile for favourites"
+  },
+  "homeFavoritesDesc": "Your saved mods across all sections",
+  "@homeFavoritesDesc": {
+    "description": "Home screen description for the favourites quick-link tile"
+  },
+  "homePopular": "Popular",
+  "@homePopular": {
+    "description": "Home screen quick-link tile for popular rankings"
+  },
+  "homePopularDesc": "Top mods ranked by total downloads",
+  "@homePopularDesc": {
+    "description": "Home screen description for the popular quick-link tile"
+  },
+  "homeBrowse": "Browse",
+  "@homeBrowse": {
+    "description": "Home screen button label to browse content"
+  },
+  "homeGoTo": "GO TO",
+  "@homeGoTo": {
+    "description": "Home screen button label to navigate to a section"
+  },
+  "homeVipMods": "VIP Mods",
+  "@homeVipMods": {
+    "description": "Home screen quick-link tile for VIP mods"
+  },
+  "homeVipModsDesc": "Exclusive character & model packs",
+  "@homeVipModsDesc": {
+    "description": "Home screen description for the VIP mods quick-link tile"
+  },
+  "homeDynos": "DynOS",
+  "@homeDynos": {
+    "description": "Home screen quick-link tile for DynOS"
+  },
+  "homeDynosDesc": "Custom textures & model swaps",
+  "@homeDynosDesc": {
+    "description": "Home screen description for the DynOS quick-link tile"
+  },
+  "homeTouchControls": "Touch Controls",
+  "@homeTouchControls": {
+    "description": "Home screen quick-link tile for touch controls"
+  },
+  "homeTouchControlsDesc": "Custom button & joystick layouts",
+  "@homeTouchControlsDesc": {
+    "description": "Home screen description for the touch controls quick-link tile"
+  },
+  "homeOmmrPack": "OMMR PACK",
+  "@homeOmmrPack": {
+    "description": "Home screen quick-link tile for the OMM Rebirth texture pack"
+  },
+  "homeOmmrPackDesc": "Complete OMM Rebirth texture pack",
+  "@homeOmmrPackDesc": {
+    "description": "Home screen description for the OMM Rebirth quick-link tile"
+  },
+  "homeGameNotInstalled": "Game not installed",
+  "@homeGameNotInstalled": {
+    "description": "Home screen title for the game-not-installed dialog"
+  },
+  "homeGameNotInstalledBody": "SM64CoopDX (com.maniscat2.sm64coopdx)\nis not installed on this device.",
+  "@homeGameNotInstalledBody": {
+    "description": "Home screen body text for the game-not-installed dialog"
+  },
+  "homeClose": "Close",
+  "@homeClose": {
+    "description": "Home screen button label to close a dialog"
+  },
+  "homeDownload": "Download",
+  "@homeDownload": {
+    "description": "Home screen button label to download the game"
+  },
+  "homeLaunchGame": "LAUNCH  GAME",
+  "@homeLaunchGame": {
+    "description": "Home screen button label to launch the game"
+  },
+  "homeSoon": "SOON",
+  "@homeSoon": {
+    "description": "Home screen badge label indicating a section is coming soon"
+  },
+  "homeFailedToLoad": "Failed to load mods",
+  "@homeFailedToLoad": {
+    "description": "Home screen error message when mods cannot be loaded"
+  },
+  "homeRetry": "Retry",
+  "@homeRetry": {
+    "description": "Home screen button label to retry a failed action"
+  },
+
+  "catalogueTitle": "BROWSE MODS",
+  "@catalogueTitle": {
+    "description": "Catalogue screen title"
+  },
+  "catalogueModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
+  "@catalogueModCount": {
+    "description": "Catalogue screen count of total mods",
+    "placeholders": {
+      "count": {"type": "int", "example": "120"}
+    }
+  },
+  "catalogueResultCount": "{count, plural, =1{{count} RESULT} other{{count} RESULT}}",
+  "@catalogueResultCount": {
+    "description": "Catalogue screen count of search/filter results",
+    "placeholders": {
+      "count": {"type": "int", "example": "42"}
+    }
+  },
+  "catalogueSearchHint": "SEARCH MODS, AUTHORS, TAGS…",
+  "@catalogueSearchHint": {
+    "description": "Catalogue screen placeholder text for the search field"
+  },
+  "catalogueSortDefault": "Default",
+  "@catalogueSortDefault": {
+    "description": "Catalogue screen sort option: default ordering"
+  },
+  "catalogueSortTopRated": "Top Rated",
+  "@catalogueSortTopRated": {
+    "description": "Catalogue screen sort option: top rated first"
+  },
+  "catalogueSortMostDownloaded": "Most Downloaded",
+  "@catalogueSortMostDownloaded": {
+    "description": "Catalogue screen sort option: most downloaded first"
+  },
+  "catalogueSortRecentlyUpdated": "Recently Updated",
+  "@catalogueSortRecentlyUpdated": {
+    "description": "Catalogue screen sort option: recently updated first"
+  },
+  "catalogueClearAll": "CLEAR ALL",
+  "@catalogueClearAll": {
+    "description": "Catalogue screen button to clear all active filters"
+  },
+  "cataloguePaginationRange": "{start}–{end} OF {total} MODS",
+  "@cataloguePaginationRange": {
+    "description": "Catalogue screen pagination label showing current range of total mods",
+    "placeholders": {
+      "start": {"type": "int", "example": "1"},
+      "end": {"type": "int", "example": "20"},
+      "total": {"type": "int", "example": "100"}
+    }
+  },
+  "catalogueNoModsFound": "NO MODS FOUND",
+  "@catalogueNoModsFound": {
+    "description": "Catalogue screen empty state title when search yields no results"
+  },
+  "catalogueNothingHere": "NOTHING HERE YET",
+  "@catalogueNothingHere": {
+    "description": "Catalogue screen empty state title when no content exists"
+  },
+  "catalogueEmptyHint1": "Try different keywords or remove filters.",
+  "@catalogueEmptyHint1": {
+    "description": "Catalogue screen empty state hint — first suggestion"
+  },
+  "catalogueEmptyHint2": "Check back later for new content.",
+  "@catalogueEmptyHint2": {
+    "description": "Catalogue screen empty state hint — second suggestion"
+  },
+  "catalogueClearFilters": "CLEAR FILTERS",
+  "@catalogueClearFilters": {
+    "description": "Catalogue screen button to remove active filters"
+  },
+  "catalogueFailedToLoad": "FAILED TO LOAD MODS",
+  "@catalogueFailedToLoad": {
+    "description": "Catalogue screen error message when mods cannot be loaded"
+  },
+  "catalogueRating": "RATING",
+  "@catalogueRating": {
+    "description": "Catalogue screen sort chip label: rating order"
+  },
+  "catalogueDownloads": "DOWNLOADS",
+  "@catalogueDownloads": {
+    "description": "Catalogue screen sort chip label: download count order"
+  },
+  "catalogueNewest": "NEWEST",
+  "@catalogueNewest": {
+    "description": "Catalogue screen sort chip label: newest first"
+  },
+  "catalogueSort": "SORT",
+  "@catalogueSort": {
+    "description": "Catalogue screen sort chip label: generic sort action"
+  },
+  "catalogueEllipsis": "···",
+  "@catalogueEllipsis": {
+    "description": "Catalogue screen pagination ellipsis indicator"
+  },
+
+  "popularTitle": "POPULAR",
+  "@popularTitle": {
+    "description": "Popular screen title"
+  },
+  "popularModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
+  "@popularModCount": {
+    "description": "Popular screen count of total ranked mods",
+    "placeholders": {
+      "count": {"type": "int", "example": "100"}
+    }
+  },
+  "popularMoreRankings": "MORE RANKINGS",
+  "@popularMoreRankings": {
+    "description": "Popular screen button label to view more rankings"
+  },
+  "popularRankings": "RANKINGS",
+  "@popularRankings": {
+    "description": "Popular screen section header for rankings list"
+  },
+  "popularPage": "PG {page}/{total}",
+  "@popularPage": {
+    "description": "Popular screen page indicator",
+    "placeholders": {
+      "page": {"type": "int", "example": "1"},
+      "total": {"type": "int", "example": "5"}
+    }
+  },
+  "popularTop3": "TOP 3",
+  "@popularTop3": {
+    "description": "Popular screen section header for the top 3 mods"
+  },
+  "popularRank": "#{rank}",
+  "@popularRank": {
+    "description": "Popular screen rank number prefix",
+    "placeholders": {
+      "rank": {"type": "int", "example": "1"}
+    }
+  },
+  "popularFailedToLoad": "FAILED TO LOAD",
+  "@popularFailedToLoad": {
+    "description": "Popular screen error message when rankings cannot be loaded"
+  },
+
+  "favouritesTitle": "Favorites",
+  "@favouritesTitle": {
+    "description": "Favourites screen title"
+  },
+  "favTabMods": "Mods",
+  "@favTabMods": {
+    "description": "Favourites screen tab label for mods"
+  },
+  "favTabVip": "VIP",
+  "@favTabVip": {
+    "description": "Favourites screen tab label for VIP mods"
+  },
+  "favTabDynos": "DynOS",
+  "@favTabDynos": {
+    "description": "Favourites screen tab label for DynOS"
+  },
+  "favTabTouch": "Touch",
+  "@favTabTouch": {
+    "description": "Favourites screen tab label for touch controls"
+  },
+  "favEmptyMods": "No mods favourited yet",
+  "@favEmptyMods": {
+    "description": "Favourites screen empty state for mods tab"
+  },
+  "favEmptyVip": "No VIP mods favourited yet",
+  "@favEmptyVip": {
+    "description": "Favourites screen empty state for VIP tab"
+  },
+  "favEmptyDynos": "No DynOS favourited yet",
+  "@favEmptyDynos": {
+    "description": "Favourites screen empty state for DynOS tab"
+  },
+  "favEmptyTouch": "No Touch Controls favourited yet",
+  "@favEmptyTouch": {
+    "description": "Favourites screen empty state for touch controls tab"
+  },
+  "favEmptyHint": "Tap ♥ on any {type} to save it here.",
+  "@favEmptyHint": {
+    "description": "Favourites screen empty state hint explaining how to add items",
+    "placeholders": {
+      "type": {"type": "String", "example": "mod"}
+    }
+  },
+  "favBrowse": "Browse",
+  "@favBrowse": {
+    "description": "Favourites screen button label to browse content when empty"
+  },
+
+  "sharedAddedToFavorites": "Added to favorites",
+  "@sharedAddedToFavorites": {
+    "description": "Snackbar message shown when a mod is added to favourites"
+  },
+  "sharedRemovedFromFavorites": "Removed from favorites",
+  "@sharedRemovedFromFavorites": {
+    "description": "Snackbar message shown when a mod is removed from favourites"
+  },
+  "sharedDownloaded": "Downloaded: {name}",
+  "@sharedDownloaded": {
+    "description": "Snackbar message shown when a mod download completes",
+    "placeholders": {
+      "name": {"type": "String", "example": "Character Pack"}
+    }
+  },
+  "sharedDownloadFailed": "Download failed",
+  "@sharedDownloadFailed": {
+    "description": "Snackbar message shown when a mod download fails"
+  },
+  "sharedAddToFavorites": "ADD TO FAVORITES",
+  "@sharedAddToFavorites": {
+    "description": "Shared button label to add an item to favourites"
+  },
+  "sharedRemoveFromFavorites": "REMOVE FROM FAVORITES",
+  "@sharedRemoveFromFavorites": {
+    "description": "Shared button label to remove an item from favourites"
+  },
+  "sharedDownload": "DOWNLOAD",
+  "@sharedDownload": {
+    "description": "Shared button label to download a mod"
+  },
+  "sharedReadMore": "READ MORE",
+  "@sharedReadMore": {
+    "description": "Shared button label to expand text"
+  },
+  "sharedShowLess": "SHOW LESS",
+  "@sharedShowLess": {
+    "description": "Shared button label to collapse text"
+  },
+
+  "vipTitle": "VIP MODS",
+  "@vipTitle": {
+    "description": "VIP mods screen title"
+  },
+  "vipEmpty": "NO VIP MODS YET",
+  "@vipEmpty": {
+    "description": "VIP mods screen empty state title"
+  },
+  "vipEmptyHint": "Check back later for exclusive content.",
+  "@vipEmptyHint": {
+    "description": "VIP mods screen empty state hint"
+  },
+  "vipFailedToLoad": "FAILED TO LOAD VIP MODS",
+  "@vipFailedToLoad": {
+    "description": "VIP mods screen error message when content cannot be loaded"
+  },
+
+  "dynosTitle": "DYNOS",
+  "@dynosTitle": {
+    "description": "DynOS screen title"
+  },
+  "dynosEmpty": "NO DYNOS YET",
+  "@dynosEmpty": {
+    "description": "DynOS screen empty state title"
+  },
+  "dynosEmptyHint": "Check back later for runtime patches.",
+  "@dynosEmptyHint": {
+    "description": "DynOS screen empty state hint"
+  },
+  "dynosFailedToLoad": "FAILED TO LOAD DYNOS",
+  "@dynosFailedToLoad": {
+    "description": "DynOS screen error message when content cannot be loaded"
+  },
+
+  "touchTitle": "TOUCH CONTROLS",
+  "@touchTitle": {
+    "description": "Touch controls screen title"
+  },
+  "touchModCount": "{count, plural, =1{{count} LAYOUT} other{{count} LAYOUTS}}",
+  "@touchModCount": {
+    "description": "Touch controls screen count of available layouts",
+    "placeholders": {
+      "count": {"type": "int", "example": "12"}
+    }
+  },
+  "touchEmpty": "NO TOUCH LAYOUTS YET",
+  "@touchEmpty": {
+    "description": "Touch controls screen empty state title"
+  },
+  "touchEmptyHint": "Check back later for mobile control layouts.",
+  "@touchEmptyHint": {
+    "description": "Touch controls screen empty state hint"
+  },
+  "touchFailedToLoad": "FAILED TO LOAD TOUCH CONTROLS",
+  "@touchFailedToLoad": {
+    "description": "Touch controls screen error message when content cannot be loaded"
+  },
+
+  "ommTitle": "OMM REBIRTH",
+  "@ommTitle": {
+    "description": "OMM Rebirth screen title"
+  },
+  "ommEmpty": "NO OMM REBIRTH MODS YET",
+  "@ommEmpty": {
+    "description": "OMM Rebirth screen empty state title"
+  },
+  "ommEmptyHint": "Check back later for OMM Rebirth content.",
+  "@ommEmptyHint": {
+    "description": "OMM Rebirth screen empty state hint"
+  },
+  "ommFailedToLoad": "FAILED TO LOAD OMM REBIRTH MODS",
+  "@ommFailedToLoad": {
+    "description": "OMM Rebirth screen error message when content cannot be loaded"
+  },
+
+  "detailDownload": "Download",
+  "@detailDownload": {
+    "description": "Detail screen section title for the download area"
+  },
+  "detailDownloadButton": "DOWNLOAD",
+  "@detailDownloadButton": {
+    "description": "Detail screen button label to start download"
+  },
+  "detailModNotFound": "Mod not found",
+  "@detailModNotFound": {
+    "description": "Detail screen error title when a mod cannot be found"
+  },
+  "detailModNotFoundBody": "This mod may have been removed or the link is invalid.",
+  "@detailModNotFoundBody": {
+    "description": "Detail screen error body when a mod cannot be found"
+  },
+  "detailGoBack": "Go back",
+  "@detailGoBack": {
+    "description": "Detail screen button label to navigate back"
+  },
+  "detailFailedToLoad": "Failed to load mod",
+  "@detailFailedToLoad": {
+    "description": "Detail screen error message when mod details cannot be loaded"
+  },
+  "detailRetry": "Retry",
+  "@detailRetry": {
+    "description": "Detail screen button label to retry loading"
+  },
+  "detailNotificationsNeeded": "Notifications needed",
+  "@detailNotificationsNeeded": {
+    "description": "Detail screen dialog title for notification permission request"
+  },
+  "detailNotificationsBody": "We need notification permission to show download and installation progress, even if you leave the app.",
+  "@detailNotificationsBody": {
+    "description": "Detail screen dialog body for notification permission request"
+  },
+  "detailNotNow": "Not now",
+  "@detailNotNow": {
+    "description": "Detail screen dialog button to skip notification permission"
+  },
+  "detailContinue": "Continue",
+  "@detailContinue": {
+    "description": "Detail screen dialog button to proceed with notification permission"
+  },
+  "detailNotificationsSkipped": "You won't see progress outside the app. Grant permission in Settings to enable notifications.",
+  "@detailNotificationsSkipped": {
+    "description": "Detail screen message when notification permission is skipped"
+  },
+  "detailModsFolderNotSelected": "Mods folder not selected",
+  "@detailModsFolderNotSelected": {
+    "description": "Detail screen dialog title when no mods folder is selected"
+  },
+  "detailModsFolderBody": "You need to select a mods folder before installing mods to the game.\n\nGo to Settings → Game Integration to select it.",
+  "@detailModsFolderBody": {
+    "description": "Detail screen dialog body when no mods folder is selected"
+  },
+  "detailCancel": "Cancel",
+  "@detailCancel": {
+    "description": "Detail screen dialog button to cancel an action"
+  },
+  "detailGoToSettings": "Go to Settings",
+  "@detailGoToSettings": {
+    "description": "Detail screen button label to navigate to settings"
+  },
+  "detailDownloading": "Downloading \"{filename}\"...",
+  "@detailDownloading": {
+    "description": "Detail screen message showing current download file name",
+    "placeholders": {
+      "filename": {"type": "String", "example": "character-pack.zip"}
+    }
+  },
+  "detailSavedToModsFolder": "Saved to mods folder: {name}",
+  "@detailSavedToModsFolder": {
+    "description": "Detail screen message when a mod is saved to the mods folder",
+    "placeholders": {
+      "name": {"type": "String", "example": "Character Pack"}
+    }
+  },
+  "detailDownloadFailed": "Download failed",
+  "@detailDownloadFailed": {
+    "description": "Detail screen error message when a download fails"
+  },
+  "detailError": "Error: {detail}",
+  "@detailError": {
+    "description": "Detail screen generic error message with detail",
+    "placeholders": {
+      "detail": {"type": "String", "example": "Network error"}
+    }
+  },
+  "detailDownloaded": "Downloaded: {name}",
+  "@detailDownloaded": {
+    "description": "Detail screen message when a download completes",
+    "placeholders": {
+      "name": {"type": "String", "example": "Character Pack"}
+    }
+  },
+  "detailDownloadingBanner": "Downloading mod...",
+  "@detailDownloadingBanner": {
+    "description": "Detail screen banner text shown during download"
+  },
+  "detailFilesProgress": "{current}/{total} files",
+  "@detailFilesProgress": {
+    "description": "Detail screen progress indicator for file extraction",
+    "placeholders": {
+      "current": {"type": "int", "example": "5"},
+      "total": {"type": "int", "example": "12"}
+    }
+  },
+  "detailExtracting": "Extracting...",
+  "@detailExtracting": {
+    "description": "Detail screen message shown during archive extraction"
+  },
+  "detailInstallingMod": "Installing mod...",
+  "@detailInstallingMod": {
+    "description": "Detail screen message shown during mod installation"
+  },
+  "detailInstallComplete": "Installation complete",
+  "@detailInstallComplete": {
+    "description": "Detail screen message when installation finishes"
+  },
+  "detailInstallFilesExtracted": "{count} files extracted to \"{dir}\"",
+  "@detailInstallFilesExtracted": {
+    "description": "Detail screen message showing extraction results",
+    "placeholders": {
+      "count": {"type": "int", "example": "15"},
+      "dir": {"type": "String", "example": "mods/character-pack"}
+    }
+  },
+  "detailInstallFailed": "Installation failed",
+  "@detailInstallFailed": {
+    "description": "Detail screen error message when installation fails"
+  },
+  "detailOperationCancelled": "Operation cancelled",
+  "@detailOperationCancelled": {
+    "description": "Detail screen message when an operation is cancelled"
+  },
+  "detailDownloadingPct": "Downloading {pct}%",
+  "@detailDownloadingPct": {
+    "description": "Detail screen progress percentage during download",
+    "placeholders": {
+      "pct": {"type": "String", "example": "67"}
+    }
+  },
+  "detailInstalling": "Installing...",
+  "@detailInstalling": {
+    "description": "Detail screen message during installation step"
+  },
+  "detailScreenshots": "Screenshots",
+  "@detailScreenshots": {
+    "description": "Detail screen section title for screenshots gallery"
+  },
+  "detailTags": "Tags",
+  "@detailTags": {
+    "description": "Detail screen section title for tags"
+  },
+  "detailAbout": "About",
+  "@detailAbout": {
+    "description": "Detail screen section title for about/description"
+  },
+  "detailRating": "Rating",
+  "@detailRating": {
+    "description": "Detail screen label for mod rating"
+  },
+  "detailDownloads": "Downloads",
+  "@detailDownloads": {
+    "description": "Detail screen label for download count"
+  },
+  "detailViews": "Views",
+  "@detailViews": {
+    "description": "Detail screen label for view count"
+  },
+  "detailReviews": "Reviews",
+  "@detailReviews": {
+    "description": "Detail screen label for review count"
+  },
+  "detailDownloadFiles": "Download files ({count})",
+  "@detailDownloadFiles": {
+    "description": "Detail screen section title for downloadable files with count",
+    "placeholders": {
+      "count": {"type": "int", "example": "3"}
+    }
+  },
+  "detailVersions": "Versions ({count})",
+  "@detailVersions": {
+    "description": "Detail screen section title for version history with count",
+    "placeholders": {
+      "count": {"type": "int", "example": "5"}
+    }
+  },
+  "detailVersionFallback": "v?",
+  "@detailVersionFallback": {
+    "description": "Detail screen fallback label when version is unknown"
+  },
+  "detailFirstRelease": "First Release",
+  "@detailFirstRelease": {
+    "description": "Detail screen label for initial release date"
+  },
+  "detailLastUpdate": "Last Update",
+  "@detailLastUpdate": {
+    "description": "Detail screen label for last update date"
+  },
+  "detailChangelog": "Changelog",
+  "@detailChangelog": {
+    "description": "Detail screen section title for changelog"
+  },
+  "detailCollapseChangelog": "Collapse changelog",
+  "@detailCollapseChangelog": {
+    "description": "Detail screen button label to collapse changelog section"
+  },
+  "detailViewAllUpdates": "View all {count} updates",
+  "@detailViewAllUpdates": {
+    "description": "Detail screen button label to view all version updates",
+    "placeholders": {
+      "count": {"type": "int", "example": "10"}
+    }
+  },
+  "detailShowLess": "Show less",
+  "@detailShowLess": {
+    "description": "Detail screen button label to collapse expanded content"
+  },
+  "detailShowMore": "Show more",
+  "@detailShowMore": {
+    "description": "Detail screen button label to expand truncated content"
+  },
+  "detailNotificationsDisabled": "Notifications not enabled. You won't see download progress outside the app.",
+  "@detailNotificationsDisabled": {
+    "description": "Detail screen message when notifications are not enabled"
+  },
+
+  "settingsTitle": "SETTINGS",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "settingsData": "DATA",
+  "@settingsData": {
+    "description": "Settings screen section header for data management"
+  },
+  "settingsClearFavourites": "Clear favourites",
+  "@settingsClearFavourites": {
+    "description": "Settings screen label for clearing all favourites"
+  },
+  "settingsClearFavouritesDesc": "Remove all saved mods",
+  "@settingsClearFavouritesDesc": {
+    "description": "Settings screen description for clearing favourites"
+  },
+  "settingsExportFavourites": "Export favourites",
+  "@settingsExportFavourites": {
+    "description": "Settings screen label for exporting favourites"
+  },
+  "settingsExportFavouritesDesc": "Share your saved mods",
+  "@settingsExportFavouritesDesc": {
+    "description": "Settings screen description for exporting favourites"
+  },
+  "settingsImportFavourites": "Import favourites",
+  "@settingsImportFavourites": {
+    "description": "Settings screen label for importing favourites"
+  },
+  "settingsImportFavouritesDesc": "Restore from a previously exported file",
+  "@settingsImportFavouritesDesc": {
+    "description": "Settings screen description for importing favourites"
+  },
+  "settingsGameIntegration": "GAME INTEGRATION",
+  "@settingsGameIntegration": {
+    "description": "Settings screen section header for game integration"
+  },
+  "settingsAppearance": "APPEARANCE",
+  "@settingsAppearance": {
+    "description": "Settings screen section header for appearance"
+  },
+  "settingsAbout": "ABOUT",
+  "@settingsAbout": {
+    "description": "Settings screen section header for about info"
+  },
+  "settingsGoToReleases": "Go to releases",
+  "@settingsGoToReleases": {
+    "description": "Settings screen link label to view GitHub releases"
+  },
+  "settingsViewAllVersions": "View all versions on GitHub · v{version}",
+  "@settingsViewAllVersions": {
+    "description": "Settings screen link label showing current version with GitHub link",
+    "placeholders": {
+      "version": {"type": "String", "example": "2.6.0"}
+    }
+  },
+  "settingsDataSource": "Data source",
+  "@settingsDataSource": {
+    "description": "Settings screen label for the mod database source"
+  },
+  "settingsNoFavouritesToExport": "You have no favourites to export.",
+  "@settingsNoFavouritesToExport": {
+    "description": "Settings screen message when there are no favourites to export"
+  },
+  "settingsImportAdded": "{count} added",
+  "@settingsImportAdded": {
+    "description": "Settings screen import result: number of items added",
+    "placeholders": {
+      "count": {"type": "int", "example": "5"}
+    }
+  },
+  "settingsImportAlreadySaved": "{count} already saved",
+  "@settingsImportAlreadySaved": {
+    "description": "Settings screen import result: number of items already saved",
+    "placeholders": {
+      "count": {"type": "int", "example": "3"}
+    }
+  },
+  "settingsImportNotFound": "{count} not found in catalogue",
+  "@settingsImportNotFound": {
+    "description": "Settings screen import result: number of items not found",
+    "placeholders": {
+      "count": {"type": "int", "example": "2"}
+    }
+  },
+  "settingsImportNothingNew": "Nothing new to import.",
+  "@settingsImportNothingNew": {
+    "description": "Settings screen message when import has no new items"
+  },
+  "settingsImportComplete": "Import complete",
+  "@settingsImportComplete": {
+    "description": "Settings screen dialog title when import finishes"
+  },
+  "settingsClearFavouritesTitle": "CLEAR FAVOURITES?",
+  "@settingsClearFavouritesTitle": {
+    "description": "Settings screen confirmation dialog title for clearing favourites"
+  },
+  "settingsClearFavouritesBody": "This will remove all your saved mods. This action cannot be undone.",
+  "@settingsClearFavouritesBody": {
+    "description": "Settings screen confirmation dialog body for clearing favourites"
+  },
+  "settingsClearButton": "CLEAR",
+  "@settingsClearButton": {
+    "description": "Settings screen button label to confirm clearing"
+  },
+  "settingsFavouritesCleared": "Favourites cleared",
+  "@settingsFavouritesCleared": {
+    "description": "Settings screen message when favourites are cleared"
+  },
+  "settingsCannotOpenUrl": "Cannot open URL: {url}",
+  "@settingsCannotOpenUrl": {
+    "description": "Settings screen error message when a URL cannot be opened",
+    "placeholders": {
+      "url": {"type": "String", "example": "https://example.com"}
+    }
+  },
+  "settingsCancel": "CANCEL",
+  "@settingsCancel": {
+    "description": "Settings screen button label to cancel an action"
+  },
+  "settingsModsFolderSelected": "Mods folder selected. Mods will be installed here.",
+  "@settingsModsFolderSelected": {
+    "description": "Settings screen message when mods folder is selected"
+  },
+  "settingsClearModsFolderTitle": "CLEAR MODS FOLDER?",
+  "@settingsClearModsFolderTitle": {
+    "description": "Settings screen confirmation dialog title for clearing mods folder"
+  },
+  "settingsClearModsFolderBody": "You will need to select the folder again before installing mods to the game.",
+  "@settingsClearModsFolderBody": {
+    "description": "Settings screen confirmation dialog body for clearing mods folder"
+  },
+  "settingsModsFolderCleared": "Mods folder selection cleared.",
+  "@settingsModsFolderCleared": {
+    "description": "Settings screen message when mods folder selection is cleared"
+  },
+  "settingsModsFolder": "Mods folder",
+  "@settingsModsFolder": {
+    "description": "Settings screen label for the mods folder setting"
+  },
+  "settingsSelectModsFolder": "Select mods folder",
+  "@settingsSelectModsFolder": {
+    "description": "Settings screen button label to select a mods folder"
+  },
+  "settingsModsFolderHint": "Tap to change · Long-press to clear",
+  "@settingsModsFolderHint": {
+    "description": "Settings screen hint text for mods folder interaction"
+  },
+  "settingsModsFolderDesc": "Choose where to install downloaded mods",
+  "@settingsModsFolderDesc": {
+    "description": "Settings screen description for the mods folder setting"
+  },
+  "settingsAutoInstall": "Auto-install after download",
+  "@settingsAutoInstall": {
+    "description": "Settings screen label for auto-install toggle"
+  },
+  "settingsAutoInstallOn": "Mods will be automatically installed to the game folder",
+  "@settingsAutoInstallOn": {
+    "description": "Settings screen message when auto-install is on"
+  },
+  "settingsAutoInstallOff": "You will be asked after each download",
+  "@settingsAutoInstallOff": {
+    "description": "Settings screen message when auto-install is off"
+  },
+  "settingsThemeMode": "THEME MODE",
+  "@settingsThemeMode": {
+    "description": "Settings screen section header for theme mode selection"
+  },
+  "settingsDatabaseUpdated": "Database updated · {count} mods{date}",
+  "@settingsDatabaseUpdated": {
+    "description": "Settings screen message when the mod database is updated",
+    "placeholders": {
+      "count": {"type": "int", "example": "250"},
+      "date": {"type": "String", "example": " on 12 Jun 2026"}
+    }
+  },
+  "settingsUnknownError": "Unknown error",
+  "@settingsUnknownError": {
+    "description": "Settings screen message for unknown errors"
+  },
+  "settingsReloadDatabase": "Reload database",
+  "@settingsReloadDatabase": {
+    "description": "Settings screen button label to reload the mod database"
+  },
+  "settingsDownloading": "Downloading...",
+  "@settingsDownloading": {
+    "description": "Settings screen progress message while downloading database"
+  },
+  "settingsDownloadLatest": "Download latest mod list",
+  "@settingsDownloadLatest": {
+    "description": "Settings screen button label to download the latest mod list"
+  },
+  "settingsUpToDate": "You're up to date · v{version}",
+  "@settingsUpToDate": {
+    "description": "Settings screen message when database is current",
+    "placeholders": {
+      "version": {"type": "String", "example": "2.6.0"}
+    }
+  },
+  "settingsCheckForUpdates": "Check for updates",
+  "@settingsCheckForUpdates": {
+    "description": "Settings screen button label to check for database updates"
+  },
+  "settingsChecking": "Checking...",
+  "@settingsChecking": {
+    "description": "Settings screen message while checking for updates"
+  },
+
+  "changelogTitle": "Changelog",
+  "@changelogTitle": {
+    "description": "Changelog screen title"
+  },
+  "changelogNew": "New",
+  "@changelogNew": {
+    "description": "Changelog screen section header for new features"
+  },
+  "changelogImproved": "Improved",
+  "@changelogImproved": {
+    "description": "Changelog screen section header for improvements"
+  },
+  "changelogFixed": "Fixed",
+  "@changelogFixed": {
+    "description": "Changelog screen section header for bug fixes"
+  },
+  "changelogRemoved": "Removed",
+  "@changelogRemoved": {
+    "description": "Changelog screen section header for removed items"
+  },
+  "changelogChanged": "Changed",
+  "@changelogChanged": {
+    "description": "Changelog screen section header for changes"
+  },
+  "changelogLatest": "Latest",
+  "@changelogLatest": {
+    "description": "Changelog screen badge label for the latest release"
+  },
+
+  "generalSettings": "Settings",
+  "@generalSettings": {
+    "description": "Generic settings label used in navigation and headers"
+  },
+  "generalRetry": "Retry",
+  "@generalRetry": {
+    "description": "Generic retry button label"
+  },
+
+  "linksTitle": "LINKS ",
+  "@linksTitle": {
+    "description": "Links screen title part 1 — uppercase section label"
+  },
+  "linksSubtitle": "& RECURSOS",
+  "@linksSubtitle": {
+    "description": "Links screen title part 2 — descriptive subtitle"
+  },
+  "linksOfficiaSection": "OFFICIAL",
+  "@linksOfficiaSection": {
+    "description": "Links screen section header for official project channels"
+  },
+  "linksOfficialDesc": "Canales verificados del proyecto SM64CoopDX.",
+  "@linksOfficialDesc": {
+    "description": "Links screen description for verified project channels"
+  },
+  "linksSm64cdpySection": "SM64CDPY",
+  "@linksSm64cdpySection": {
+    "description": "Links screen section header for app downloads and content"
+  },
+  "linksSm64cdpyDesc": "Descargas y contenido de esta app.",
+  "@linksSm64cdpyDesc": {
+    "description": "Links screen description for app content"
+  },
+  "linksResourcesSection": "RESOURCES",
+  "@linksResourcesSection": {
+    "description": "Links screen section header for community and guides"
+  },
+  "linksResourcesDesc": "Comunidad, guías e instalación paso a paso.",
+  "@linksResourcesDesc": {
+    "description": "Links screen description for community resources"
+  },
+  "linksHeroTitle": "LINK HUB",
+  "@linksHeroTitle": {
+    "description": "Links screen hero card title"
+  },
+  "linksHeroDesc": "Todo lo oficial, la comunidad y los recursos del proyecto, en un solo lugar.",
+  "@linksHeroDesc": {
+    "description": "Links screen hero card description text"
+  },
+  "linksChipTap": "TOCA = ABRIR",
+  "@linksChipTap": {
+    "description": "Links screen hint chip — tap to open link"
+  },
+  "linksChipHold": "MANTÉN = COPIAR",
+  "@linksChipHold": {
+    "description": "Links screen hint chip — hold to copy link"
+  },
+  "linksWebsite": "SM64CoopDX Website",
+  "@linksWebsite": {
+    "description": "Link item title for the project website"
+  },
+  "linksWebsiteUrl": "sm64coopdx.com",
+  "@linksWebsiteUrl": {
+    "description": "Link item subtitle showing the website URL"
+  },
+  "linksKindWeb": "WEB",
+  "@linksKindWeb": {
+    "description": "Link kind badge label for web links"
+  },
+  "linksDiscordServer": "Discord Server",
+  "@linksDiscordServer": {
+    "description": "Link item title for Discord server"
+  },
+  "linksDiscordOfficial": "Official community server · Android",
+  "@linksDiscordOfficial": {
+    "description": "Link item subtitle for the official Discord server"
+  },
+  "linksKindDiscord": "DISCORD",
+  "@linksKindDiscord": {
+    "description": "Link kind badge label for Discord links"
+  },
+  "linksGithubRepo": "GitHub Repository",
+  "@linksGithubRepo": {
+    "description": "Link item title for GitHub repository"
+  },
+  "linksGithubDesc": "Source code & issues",
+  "@linksGithubDesc": {
+    "description": "Link item subtitle for GitHub repository"
+  },
+  "linksKindGithub": "GITHUB",
+  "@linksKindGithub": {
+    "description": "Link kind badge label for GitHub links"
+  },
+  "linksGithubReleases": "GitHub Releases",
+  "@linksGithubReleases": {
+    "description": "Link item title for GitHub releases page"
+  },
+  "linksGithubReleasesDesc": "Download latest APK",
+  "@linksGithubReleasesDesc": {
+    "description": "Link item subtitle for GitHub releases"
+  },
+  "linksKindDownload": "DOWNLOAD",
+  "@linksKindDownload": {
+    "description": "Link kind badge label for download links"
+  },
+  "linksYoutubeChannel": "YouTube Channel",
+  "@linksYoutubeChannel": {
+    "description": "Link item title for YouTube channel"
+  },
+  "linksYoutubeHandle": "@retired64",
+  "@linksYoutubeHandle": {
+    "description": "Link item subtitle showing the YouTube handle"
+  },
+  "linksKindYoutube": "YOUTUBE",
+  "@linksKindYoutube": {
+    "description": "Link kind badge label for YouTube links"
+  },
+  "linksDiscordCommunity": "Community & support server",
+  "@linksDiscordCommunity": {
+    "description": "Link item subtitle for the community Discord server"
+  },
+  "linksWiki": "Wiki & Guides",
+  "@linksWiki": {
+    "description": "Link item title for wiki and guides"
+  },
+  "linksWikiDesc": "Installation guides & docs",
+  "@linksWikiDesc": {
+    "description": "Link item subtitle for wiki and guides"
+  },
+  "linksKindWiki": "WIKI",
+  "@linksKindWiki": {
+    "description": "Link kind badge label for wiki links"
+  },
+  "linksTools": "Tools & Add-ons",
+  "@linksTools": {
+    "description": "Link item title for tools and add-ons"
+  },
+  "linksToolsDesc": "How to make mods & resources",
+  "@linksToolsDesc": {
+    "description": "Link item subtitle for tools and add-ons"
+  },
+  "linksKindTools": "TOOLS",
+  "@linksKindTools": {
+    "description": "Link kind badge label for tools links"
+  },
+  "linksCouldNotOpen": "Could not open link",
+  "@linksCouldNotOpen": {
+    "description": "Snackbar error message when a URL fails to open"
+  },
+  "linksCopied": "Link copied",
+  "@linksCopied": {
+    "description": "Snackbar message when a link is copied to clipboard"
+  },
+
+  "disclaimerTitle": "Disclaimer",
+  "@disclaimerTitle": {
+    "description": "Disclaimer screen title"
+  },
+  "disclaimerDeveloperContact": "Developer contact",
+  "@disclaimerDeveloperContact": {
+    "description": "Disclaimer screen section header for developer contact"
+  },
+  "disclaimerDiscordReach": "Reach me on my Discord server",
+  "@disclaimerDiscordReach": {
+    "description": "Disclaimer screen text inviting users to reach out on Discord"
+  },
+  "disclaimerDiscord": "Discord",
+  "@disclaimerDiscord": {
+    "description": "Disclaimer screen label for the Discord link"
+  },
+  "disclaimerFooter": "v{version} · for personal use · Unofficial",
+  "@disclaimerFooter": {
+    "description": "Disclaimer screen footer text showing app version",
+    "placeholders": {
+      "version": {"type": "String", "example": "2.6.0"}
+    }
+  },
+  "disclaimerUnofficialBanner": "Unofficial Fan-Made",
+  "@disclaimerUnofficialBanner": {
+    "description": "Disclaimer screen banner text marking the app as unofficial"
+  },
+  "disclaimerAppSubtitle": "SM64CoopDX Mods Manager",
+  "@disclaimerAppSubtitle": {
+    "description": "Disclaimer screen app subtitle"
+  },
+  "disclaimerWarningBody": "This app is a personal project. Any issues related to it (functionality, bugs, etc.) are the sole responsibility of the developer. The SM64CoopDX developers and mod creators bear no responsibility whatsoever for this application.",
+  "@disclaimerWarningBody": {
+    "description": "Disclaimer screen warning banner body text"
+  },
+  "disclaimerCouldNotOpenLink": "Could not open the link",
+  "@disclaimerCouldNotOpenLink": {
+    "description": "Disclaimer screen error message when a link cannot be opened"
+  },
+  "disclaimerSectionPersonalPurpose": "Personal purpose",
+  "@disclaimerSectionPersonalPurpose": {
+    "description": "Disclaimer screen section header for personal purpose"
+  },
+  "disclaimerBodyPersonalPurpose": "This application was independently developed as a personal project. Its sole purpose is to give me faster access, organization, and download management for mods I use for my own entertainment. It is not an application supported by the SM64CoopDX team or an official service of any kind.",
+  "@disclaimerBodyPersonalPurpose": {
+    "description": "Disclaimer screen body text for the personal purpose section"
+  },
+  "disclaimerSectionNoAffiliation": "No official affiliation",
+  "@disclaimerSectionNoAffiliation": {
+    "description": "Disclaimer screen section header for no official affiliation"
+  },
+  "disclaimerBodyNoAffiliation": "This project is not associated with, endorsed by, or approved by the developers of SM64CoopDX, Super Mario 64, Nintendo, or any of the mod creators listed. All names, images, and content displayed belong to their respective authors.",
+  "@disclaimerBodyNoAffiliation": {
+    "description": "Disclaimer screen body text for the no affiliation section"
+  },
+  "disclaimerSectionDataSource": "Data source",
+  "@disclaimerSectionDataSource": {
+    "description": "Disclaimer screen section header for data source"
+  },
+  "disclaimerBodyDataSource": "Mod information comes from the public catalog at mods.sm64coopdx.com. This app only presents that information in a more accessible way; it does not host, modify, or redistribute any mod files.",
+  "@disclaimerBodyDataSource": {
+    "description": "Disclaimer screen body text for the data source section"
+  },
+  "disclaimerSectionExclusive": "Exclusive sections (VIP · DynOS · Touch Controls)",
+  "@disclaimerSectionExclusive": {
+    "description": "Disclaimer screen section header for exclusive sections"
+  },
+  "disclaimerBodyExclusive": "Starting with v{version}, the app includes curated sections with content not officially listed on the SM64CoopDX website. These sections (VIP Mods, DynOS packs, and Touch Control layouts) are maintained independently by the developer and are not affiliated with any official source. All credit goes to the original creators.",
+  "@disclaimerBodyExclusive": {
+    "description": "Disclaimer screen body text for the exclusive sections"
+  },
+  "disclaimerSectionBugs": "Bugs, suggestions & requests",
+  "@disclaimerSectionBugs": {
+    "description": "Disclaimer screen section header for bugs and suggestions"
+  },
+  "disclaimerBodyBugs": "If you find an issue with this app, have a suggestion, or want to request something, contact me directly through my social media. Please do not contact the official SM64CoopDX developers or mod creators about anything related to this application.",
+  "@disclaimerBodyBugs": {
+    "description": "Disclaimer screen body text for the bugs and suggestions section"
+  },
+
+  "vipSectionHeader": "EXCLUSIVE CONTENT",
+  "@vipSectionHeader": {
+    "description": "Section header for the VIP mods list"
+  },
+  "dynosSectionHeader": "CUSTOM DYNOS",
+  "@dynosSectionHeader": {
+    "description": "Section header for the DynOS list"
+  },
+  "touchSectionHeader": "MOBILE LAYOUTS",
+  "@touchSectionHeader": {
+    "description": "Section header for the touch controls list"
+  },
+  "ommSectionHeader": "OMM REBIRTH MODS",
+  "@ommSectionHeader": {
+    "description": "Section header for the OMM Rebirth mods list"
+  },
+
+  "sharedModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
+  "@sharedModCount": {
+    "description": "Shared label showing the count of mods",
+    "placeholders": {
+      "count": {"type": "int", "example": "120"}
+    }
+  },
+
+  "settingsLanguageMode": "LANGUAGE",
+  "@settingsLanguageMode": {
+    "description": "Settings tile label for the language selector"
+  },
+  "languageFollowSystem": "Follow system",
+  "@languageFollowSystem": {
+    "description": "Language option to follow the device's system language"
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Language name for English (endonym)"
+  },
+  "languageSpanish": "Español",
+  "@languageSpanish": {
+    "description": "Language name for Spanish (endonym)"
+  },
+  "languagePortuguese": "Português",
+  "@languagePortuguese": {
+    "description": "Language name for Brazilian Portuguese (endonym)"
+  }
+}

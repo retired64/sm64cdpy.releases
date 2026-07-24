@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme/retro_theme.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
@@ -37,6 +38,7 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
 
     return CustomScrollView(
@@ -48,14 +50,14 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: const DrawerMenuButton(),
-          title: Text('Favorites', style: retro.heading(size: 18)),
+          title: Text(l10n.favouritesTitle, style: retro.heading(size: 18)),
           bottom: TabBar(
             controller: _tabController,
-            tabs: const [
-              Tab(text: 'Mods'),
-              Tab(text: 'VIP'),
-              Tab(text: 'DynOS'),
-              Tab(text: 'Touch'),
+            tabs: [
+              Tab(text: l10n.favTabMods),
+              Tab(text: l10n.favTabVip),
+              Tab(text: l10n.favTabDynos),
+              Tab(text: l10n.favTabTouch),
             ],
             indicatorColor: retro.accent,
             labelColor: retro.accent,
@@ -233,7 +235,18 @@ class _EmptyFavourites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
+
+    String emptyTitle() {
+      switch (type) {
+        case 'mods': return l10n.favEmptyMods;
+        case 'VIP mods': return l10n.favEmptyVip;
+        case 'DynOS': return l10n.favEmptyDynos;
+        case 'Touch Controls': return l10n.favEmptyTouch;
+        default: return 'No $type favourited yet';
+      }
+    }
 
     return Center(
       child: Column(
@@ -250,10 +263,10 @@ class _EmptyFavourites extends StatelessWidget {
             child: Icon(Icons.favorite_border, size: 36, color: retro.accent),
           ),
           const SizedBox(height: 16),
-          Text('No $type favourited yet', style: retro.heading(size: 18)),
+          Text(emptyTitle(), style: retro.heading(size: 18)),
           const SizedBox(height: 8),
           Text(
-            'Tap \u2764\ufe0f on any $type to save it here.',
+            l10n.favEmptyHint(type),
             style: retro.body(size: 13),
           ),
           const SizedBox(height: 24),
@@ -280,7 +293,7 @@ class _EmptyFavourites extends StatelessWidget {
                   Icon(Icons.explore, size: 18, color: retro.background),
                   const SizedBox(width: 8),
                   Text(
-                    'Browse',
+                    l10n.favBrowse,
                     style: retro.heading(size: 12, color: retro.background),
                   ),
                 ],

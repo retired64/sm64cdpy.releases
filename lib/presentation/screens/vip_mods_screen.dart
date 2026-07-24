@@ -12,6 +12,7 @@ import '../../domain/entities/vip_mod_entity.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
+import '../../l10n/app_localizations.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -54,6 +55,7 @@ class _VipBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return CustomScrollView(
       controller: scrollCtrl,
@@ -71,14 +73,9 @@ class _VipBody extends StatelessWidget {
           elevation: 0,
           shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
           leading: DrawerMenuButton(color: retro.amber),
-          title: RichText(
-            text: TextSpan(
-              children: [
-                const TextSpan(text: '👑 '),
-                TextSpan(text: 'VIP ', style: retro.heading(size: 16, color: retro.ink)),
-                TextSpan(text: 'MODS', style: retro.heading(size: 16, color: retro.amber)),
-              ],
-            ),
+          title: Text(
+            l10n.vipTitle,
+            style: retro.heading(size: 16, color: retro.amber),
           ),
           actions: [
             Padding(
@@ -86,7 +83,7 @@ class _VipBody extends StatelessWidget {
               child: SkewChip(
                 retro: retro,
                 icon: Icons.workspace_premium_rounded,
-                label: '${mods.length} MODS',
+                label: l10n.sharedModCount(mods.length),
                 dense: true,
                 selected: true,
                 accentColor: retro.amber,
@@ -107,7 +104,7 @@ class _VipBody extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
             child: SectionKicker(
               retro: retro,
-              label: 'EXCLUSIVE CONTENT',
+              label: l10n.vipSectionHeader,
               japanese: mods.isEmpty ? null : '${mods.length} 件',
             ),
           ),
@@ -221,7 +218,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
     final isNowFav = ref.read(vipFavouritesProvider).contains(widget.mod.id);
     AppSnackbar.info(
       context,
-      message: isNowFav ? 'Added to favorites' : 'Removed from favorites',
+      message: isNowFav ? AppLocalizations.of(context).sharedAddedToFavorites : AppLocalizations.of(context).sharedRemovedFromFavorites,
       duration: const Duration(seconds: 1),
     );
   }
@@ -285,7 +282,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         AppSnackbar.success(
           context,
-          message: 'Downloaded: ${path.split('/').last}',
+          message: AppLocalizations.of(context).sharedDownloaded(path.split('/').last),
         );
       },
       onDownloadError: (error) {
@@ -297,7 +294,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
           _realProgress = 0.0;
         });
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        AppSnackbar.error(context, message: 'Download failed');
+        AppSnackbar.error(context, message: AppLocalizations.of(context).sharedDownloadFailed);
       },
     );
   }
@@ -314,6 +311,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(vipFavouritesProvider).contains(widget.mod.id);
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
@@ -469,7 +467,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
                         child: Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(
-                            _isExpanded ? 'SHOW LESS' : 'READ MORE',
+                            _isExpanded ? l10n.sharedShowLess : l10n.sharedReadMore,
                             style: TextStyle(
                               color: retro.amber,
                               fontSize: 11,
@@ -494,7 +492,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
                           color: retro.amber,
                         ),
                         label: Text(
-                          isFav ? 'REMOVE FROM FAVORITES' : 'ADD TO FAVORITES',
+                          isFav ? l10n.sharedRemoveFromFavorites : l10n.sharedAddToFavorites,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
@@ -568,13 +566,13 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                     ),
                                   ),
                                 )
-                              : const Row(
+                              : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(Icons.download_rounded, size: 18),
                                     SizedBox(width: 8),
                                     Text(
-                                      'DOWNLOAD',
+                                      l10n.sharedDownload,
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900,
@@ -634,6 +632,7 @@ class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -656,7 +655,7 @@ class _EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: 22),
             Text(
-              'NO VIP MODS YET',
+              l10n.vipEmpty,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: retro.ink,
@@ -667,7 +666,7 @@ class _EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Check back later for exclusive content.',
+              l10n.vipEmptyHint,
               style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
             ),
@@ -737,6 +736,7 @@ class _VipError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Container(
       color: retro.background,
       child: Center(
@@ -761,7 +761,7 @@ class _VipError extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'FAILED TO LOAD VIP MODS',
+                l10n.vipFailedToLoad,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: retro.ink,

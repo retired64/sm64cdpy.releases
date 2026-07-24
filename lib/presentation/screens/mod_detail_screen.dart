@@ -12,6 +12,7 @@ import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../../services/background_install_service.dart';
 import '../../services/mod_installer.dart';
@@ -410,6 +411,7 @@ class _ContentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -448,7 +450,7 @@ class _ContentCard extends StatelessWidget {
 
                 // ── Screenshot gallery ─────────────────────────
                 if (mod.descriptionImages.isNotEmpty) ...[
-                  _SectionTitle(label: 'Screenshots'),
+                  _SectionTitle(label: l10n.detailScreenshots),
                   const SizedBox(height: 12),
                   _ScreenshotGallery(images: mod.descriptionImages),
                   const SizedBox(height: 28),
@@ -456,7 +458,7 @@ class _ContentCard extends StatelessWidget {
 
                 // ── Tags ───────────────────────────────────────
                 if (mod.tags.isNotEmpty) ...[
-                  _SectionTitle(label: 'Tags'),
+                  _SectionTitle(label: l10n.detailTags),
                   const SizedBox(height: 10),
                   _TagCloud(tags: mod.tags),
                   const SizedBox(height: 28),
@@ -464,7 +466,7 @@ class _ContentCard extends StatelessWidget {
 
                 // ── About ──────────────────────────────────────
                 if (mod.description.isNotEmpty) ...[
-                  _SectionTitle(label: 'About'),
+                  _SectionTitle(label: l10n.detailAbout),
                   const SizedBox(height: 10),
                   _ExpandableText(
                     text: mod.description,
@@ -565,6 +567,7 @@ class _StatsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
@@ -578,7 +581,7 @@ class _StatsBar extends StatelessWidget {
           children: [
             _StatCell(
               value: mod.rating?.star ?? '—',
-              label: 'Rating',
+              label: l10n.detailRating,
               icon: Icons.star_rounded,
               iconColor: retro.amber,
               retro: retro,
@@ -586,7 +589,7 @@ class _StatsBar extends StatelessWidget {
             _Divider(retro: retro),
             _StatCell(
               value: mod.downloads.compact,
-              label: 'Downloads',
+              label: l10n.detailDownloads,
               icon: Icons.download_rounded,
               iconColor: retro.accent,
               retro: retro,
@@ -594,7 +597,7 @@ class _StatsBar extends StatelessWidget {
             _Divider(retro: retro),
             _StatCell(
               value: mod.views.compact,
-              label: 'Views',
+              label: l10n.detailViews,
               icon: Icons.visibility_rounded,
               iconColor: retro.inkDim,
               retro: retro,
@@ -602,7 +605,7 @@ class _StatsBar extends StatelessWidget {
             _Divider(retro: retro),
             _StatCell(
               value: mod.reviewCount.compact,
-              label: 'Reviews',
+              label: l10n.detailReviews,
               icon: Icons.rate_review_rounded,
               iconColor: retro.inkDim,
               retro: retro,
@@ -696,10 +699,12 @@ class _VersionAccordion extends StatefulWidget {
 
 class _VersionAccordionState extends State<_VersionAccordion> {
   int? _expandedIndex;
+  AppLocalizations? _l10n;
 
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    _l10n = AppLocalizations.of(context);
 
     if (widget.versions.isNotEmpty) {
       return _buildVersionList(retro);
@@ -719,7 +724,7 @@ class _VersionAccordionState extends State<_VersionAccordion> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionTitle(label: 'Download files (${displayUrls.length})'),
+        _SectionTitle(label: _l10n!.detailDownloadFiles(displayUrls.length)),
         const SizedBox(height: 10),
         ...displayUrls.asMap().entries.map(
           (e) => _BuildDownloadButton(
@@ -737,7 +742,7 @@ class _VersionAccordionState extends State<_VersionAccordion> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionTitle(label: 'Versions (${widget.versions.length})'),
+        _SectionTitle(label: _l10n!.detailVersions(widget.versions.length)),
         const SizedBox(height: 10),
         ...widget.versions.asMap().entries.map((entry) {
           final idx = entry.key;
@@ -771,7 +776,7 @@ class _VersionAccordionState extends State<_VersionAccordion> {
                         const SizedBox(width: 8),
                         RetroTag(
                           retro: retro,
-                          label: v.version.isEmpty ? 'v?' : v.version,
+                          label: v.version.isEmpty ? _l10n!.detailVersionFallback : v.version,
                         ),
                         const Spacer(),
                         Text(
@@ -848,6 +853,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
   final _installer = ModInstaller();
   bool _localDownloading = false;
   double _localProgress = 0.0;
+  AppLocalizations? _l10n;
 
   Future<void> _download() async {
     HapticFeedback.lightImpact();
@@ -862,22 +868,21 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            title: Text('Notifications needed',
+            title: Text(_l10n!.detailNotificationsNeeded,
                 style: TextStyle(color: RetroTheme.of(ctx).ink)),
             content: Text(
-              'We need notification permission to show download '
-              'and installation progress, even if you leave the app.',
+              _l10n!.detailNotificationsBody,
               style: TextStyle(color: RetroTheme.of(ctx).inkDim),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Not now',
+                child: Text(_l10n!.detailNotNow,
                     style: TextStyle(color: RetroTheme.of(ctx).ink)),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Continue'),
+                child: Text(_l10n!.detailContinue),
               ),
             ],
           ),
@@ -885,8 +890,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         if (proceed != true && mounted) {
           AppSnackbar.info(
             context,
-            message:
-                'You won\'t see progress outside the app. Grant permission in Settings to enable notifications.',
+            message: _l10n!.detailNotificationsSkipped,
           );
         }
       }
@@ -896,8 +900,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
       if (!granted && mounted) {
         AppSnackbar.info(
           context,
-          message:
-              'Notifications not enabled. You won\'t see download progress outside the app.',
+          message: _l10n!.detailNotificationsDisabled,
         );
       }
     }
@@ -919,24 +922,22 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             backgroundColor: RetroTheme.of(ctx).surfaceAlt,
             icon: Icon(Icons.folder_open_rounded,
                 color: RetroTheme.of(ctx).accent, size: 28),
-            title: Text('Mods folder not selected',
+            title: Text(_l10n!.detailModsFolderNotSelected,
                 style: TextStyle(color: RetroTheme.of(ctx).ink)),
             content: Text(
-              'You need to select a mods folder before '
-              'installing mods to the game.\n\n'
-              'Go to Settings → Game Integration to select it.',
+              _l10n!.detailModsFolderBody,
               style: TextStyle(color: RetroTheme.of(ctx).inkDim),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Cancel',
+                child: Text(_l10n!.detailCancel,
                     style: TextStyle(color: RetroTheme.of(ctx).ink)),
               ),
               FilledButton.icon(
                 onPressed: () => Navigator.of(ctx).pop(true),
                 icon: const Icon(Icons.settings, size: 16),
-                label: const Text('Go to Settings'),
+                label: Text(_l10n!.detailGoToSettings),
               ),
             ],
           ),
@@ -963,7 +964,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         fileName: filename,
       );
       if (!mounted) return;
-      AppSnackbar.info(context, message: 'Downloading "$filename"...');
+      AppSnackbar.info(context, message: _l10n!.detailDownloading(filename));
     } else if (mounted) {
       await _downloadToModsFolder(_installer, widget.url, filename);
     }
@@ -984,16 +985,16 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           );
           if (!mounted) return;
           AppSnackbar.success(
-              context, message: 'Saved to mods folder: $savedName');
+              context, message: _l10n!.detailSavedToModsFolder(savedName));
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          AppSnackbar.error(context, message: 'Download failed');
+          AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
         },
       );
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.error(context, message: 'Error: ${e.toString()}');
+      AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
     }
   }
 
@@ -1021,7 +1022,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             _localProgress = 0.0;
           });
           final savedName = path.split('/').last;
-          AppSnackbar.success(context, message: 'Downloaded: $savedName');
+          AppSnackbar.success(context, message: _l10n!.detailDownloaded(savedName));
           showPostInstallDialog(context);
         },
         onDownloadError: (error) {
@@ -1030,7 +1031,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.error(context, message: 'Download failed');
+          AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
         },
       );
     } catch (e) {
@@ -1039,7 +1040,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(context, message: 'Error: ${e.toString()}');
+      AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
     }
   }
 
@@ -1067,6 +1068,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    _l10n = AppLocalizations.of(context);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
@@ -1114,7 +1116,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             child: FilledButton.icon(
               onPressed: _download,
               icon: const Icon(Icons.download_rounded, size: 14),
-              label: const Text('Download'),
+              label: Text(_l10n!.detailDownload),
               style: FilledButton.styleFrom(
                 backgroundColor: retro.accent,
                 foregroundColor: retro.background,
@@ -1153,6 +1155,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
 
   bool _localDownloading = false;
   double _localProgress = 0.0;
+  AppLocalizations? _l10n;
 
   @override
   void initState() {
@@ -1190,25 +1193,24 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             backgroundColor:
                 RetroTheme.of(ctx).surfaceAlt,
             title: Text(
-              'Notifications needed',
+              _l10n!.detailNotificationsNeeded,
               style: TextStyle(color: RetroTheme.of(ctx).ink),
             ),
             content: Text(
-              'We need notification permission to show download '
-              'and installation progress, even if you leave the app.',
+              _l10n!.detailNotificationsBody,
               style: TextStyle(
                   color: RetroTheme.of(ctx).inkDim),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Not now',
+                child: Text(_l10n!.detailNotNow,
                     style: TextStyle(
                         color: RetroTheme.of(ctx).ink)),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Continue'),
+                child: Text(_l10n!.detailContinue),
               ),
             ],
           ),
@@ -1217,7 +1219,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         if (proceed != true && mounted) {
           AppSnackbar.info(
             context,
-            message: 'You won\'t see progress outside the app. Grant permission in Settings to enable notifications.',
+            message: _l10n!.detailNotificationsSkipped,
           );
         }
       }
@@ -1227,7 +1229,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       if (!granted && mounted) {
         AppSnackbar.info(
           context,
-          message: 'Notifications not enabled. You won\'t see download progress outside the app.',
+          message: _l10n!.detailNotificationsDisabled,
         );
       }
     }
@@ -1251,28 +1253,26 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             icon: Icon(Icons.folder_open_rounded,
                 color: RetroTheme.of(ctx).accent, size: 28),
             title: Text(
-              'Mods folder not selected',
+              _l10n!.detailModsFolderNotSelected,
               style:
                   TextStyle(color: RetroTheme.of(ctx).ink),
             ),
             content: Text(
-              'You need to select a mods folder before '
-              'installing mods to the game.\n\n'
-              'Go to Settings → Game Integration to select it.',
+              _l10n!.detailModsFolderBody,
               style: TextStyle(
                   color: RetroTheme.of(ctx).inkDim),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Cancel',
+                child: Text(_l10n!.detailCancel,
                     style: TextStyle(
                         color: RetroTheme.of(ctx).ink)),
               ),
               FilledButton.icon(
                 onPressed: () => Navigator.of(ctx).pop(true),
                 icon: const Icon(Icons.settings, size: 16),
-                label: const Text('Go to Settings'),
+                label: Text(_l10n!.detailGoToSettings),
               ),
             ],
           ),
@@ -1301,7 +1301,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       if (!mounted) return;
       AppSnackbar.info(
         context,
-        message: 'Downloading "$filename"...',
+        message: _l10n!.detailDownloading(filename),
       );
     } else if (mounted) {
       await _downloadToModsFolder(installer, widget.url, filename);
@@ -1338,7 +1338,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             _localProgress = 0.0;
           });
           AppSnackbar.success(context,
-              message: 'Saved to mods folder: $savedName');
+              message: _l10n!.detailSavedToModsFolder(savedName));
         },
         onDownloadError: (error) {
           if (!mounted) return;
@@ -1346,7 +1346,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.error(context, message: 'Download failed');
+          AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
         },
       );
     } catch (e) {
@@ -1355,7 +1355,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(context, message: 'Error: ${e.toString()}');
+      AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
     }
   }
 
@@ -1383,7 +1383,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             _localProgress = 0.0;
           });
           final savedName = path.split('/').last;
-          AppSnackbar.success(context, message: 'Downloaded: $savedName');
+          AppSnackbar.success(context, message: _l10n!.detailDownloaded(savedName));
           showPostInstallDialog(context);
         },
         onDownloadError: (error) {
@@ -1392,7 +1392,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.error(context, message: 'Download failed');
+          AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
         },
       );
     } catch (e) {
@@ -1401,13 +1401,14 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(context, message: 'Error: ${e.toString()}');
+      AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final retro = widget.retro;
+    _l10n = AppLocalizations.of(context);
     final modName = _sanitizeModTitle(widget.modTitle);
     final info = ref.watch(bgInstallStateProvider)[modName];
     final isActive = _localDownloading ||
@@ -1456,10 +1457,10 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                         const SizedBox(height: 6),
                         Text(
                           _localDownloading
-                              ? 'Downloading ${(_localProgress * 100).toStringAsFixed(0)}%'
+                              ? _l10n!.detailDownloadingPct((_localProgress * 100).toStringAsFixed(0))
                               : info?.status == BgInstallStatus.downloading
-                                  ? 'Downloading ${downloadProgress ?? 0}%'
-                                  : 'Installing...',
+                                  ? _l10n!.detailDownloadingPct('${downloadProgress ?? 0}')
+                                  : _l10n!.detailInstalling,
                           style: retro.heading(size: 11, color: retro.background),
                         ),
                       ],
@@ -1475,7 +1476,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'DOWNLOAD',
+                        _l10n!.detailDownloadButton,
                         style: retro.heading(size: 15, color: retro.background),
                       ),
                     ],
@@ -1765,6 +1766,7 @@ class _ExpandableText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isLong = text.length > AppConstants.descriptionMaxLen;
 
     return Column(
@@ -1800,7 +1802,7 @@ class _ExpandableText extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  expanded ? 'Show less' : 'Show more',
+                  expanded ? l10n.detailShowLess : l10n.detailShowMore,
                   style: TextStyle(
                     color: retro.accent,
                     fontSize: 13,
@@ -1835,6 +1837,7 @@ class _ReleaseDates extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1849,7 +1852,7 @@ class _ReleaseDates extends StatelessWidget {
             Expanded(
               child: _DateCell(
                 icon: Icons.rocket_launch_rounded,
-                label: 'First Release',
+                label: l10n.detailFirstRelease,
                 date: firstRelease!,
                 retro: retro,
               ),
@@ -1865,7 +1868,7 @@ class _ReleaseDates extends StatelessWidget {
             Expanded(
               child: _DateCell(
                 icon: Icons.update_rounded,
-                label: 'Last Update',
+                label: l10n.detailLastUpdate,
                 date: lastUpdate!,
                 retro: retro,
               ),
@@ -1891,6 +1894,7 @@ class _DateCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Container(
@@ -1917,7 +1921,7 @@ class _DateCell extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              formatDate(date) ?? date,
+              formatDate(date, locale: l10n.localeName) ?? date,
               style: TextStyle(
                 color: retro.ink,
                 fontSize: 13,
@@ -1949,6 +1953,7 @@ class _ChangelogSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final visible = expanded ? updates : updates.take(_previewCount).toList();
     final hasMore = updates.length > _previewCount;
 
@@ -1958,7 +1963,7 @@ class _ChangelogSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _SectionTitle(label: 'Changelog'),
+            _SectionTitle(label: l10n.detailChangelog),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
@@ -2008,8 +2013,8 @@ class _ChangelogSection extends StatelessWidget {
                   children: [
                     Text(
                       expanded
-                          ? 'Collapse changelog'
-                          : 'View all ${updates.length} updates',
+                          ? l10n.detailCollapseChangelog
+                          : l10n.detailViewAllUpdates(updates.length),
                       style: TextStyle(
                         color: retro.accent,
                         fontSize: 13,
@@ -2050,6 +2055,7 @@ class _ChangelogEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2111,7 +2117,7 @@ class _ChangelogEntry extends StatelessWidget {
                   if (update.date != null) ...[
                     const SizedBox(height: 3),
                     Text(
-                      formatDate(update.date) ?? update.date!,
+                      formatDate(update.date, locale: l10n.localeName) ?? update.date!,
                       style: TextStyle(
                         color: retro.inkDim,
                         fontSize: 11,
@@ -2228,6 +2234,7 @@ class _NotFoundView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: retro.background,
@@ -2251,7 +2258,7 @@ class _NotFoundView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Mod not found',
+              l10n.detailModNotFound,
               style: TextStyle(
                 color: retro.ink,
                 fontSize: 18,
@@ -2260,14 +2267,14 @@ class _NotFoundView extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'This mod may have been removed or the link is invalid.',
+              l10n.detailModNotFoundBody,
               style: TextStyle(color: retro.inkDim, fontSize: 13),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               icon: const Icon(Icons.arrow_back_rounded, size: 16),
-              label: const Text('Go back'),
+              label: Text(l10n.detailGoBack),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -2287,6 +2294,7 @@ class _DetailError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: retro.background,
@@ -2300,7 +2308,7 @@ class _DetailError extends StatelessWidget {
               Icon(Icons.error_outline_rounded, size: 48, color: retro.accent),
               const SizedBox(height: 12),
               Text(
-                'Failed to load mod',
+                l10n.detailFailedToLoad,
                 style: TextStyle(
                   color: retro.ink,
                   fontSize: 16,
@@ -2333,6 +2341,7 @@ class _InstallStatusBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final modName = _sanitizeModTitle(modTitle);
     final state = ref.watch(bgInstallStateProvider);
     final info = state[modName];
@@ -2367,7 +2376,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Downloading mod...',
+                      l10n.detailDownloadingBanner,
                       style: TextStyle(
                         color: retro.ink,
                         fontSize: 13,
@@ -2392,8 +2401,8 @@ class _InstallStatusBanner extends ConsumerWidget {
 
       case BgInstallStatus.installing:
         final progressText = info.total != null && info.total! > 0
-            ? '${info.current ?? 0}/${info.total} files'
-            : 'Extracting...';
+            ? l10n.detailFilesProgress(info.current ?? 0, info.total!)
+            : l10n.detailExtracting;
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -2418,7 +2427,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Installing mod...',
+                      l10n.detailInstallingMod,
                       style: TextStyle(
                         color: retro.ink,
                         fontSize: 13,
@@ -2459,7 +2468,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Installation complete',
+                      l10n.detailInstallComplete,
                       style: TextStyle(
                         color: retro.ink,
                         fontSize: 13,
@@ -2468,7 +2477,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${info.fileCount ?? 0} files extracted to "${info.targetDir ?? modName}"',
+                      l10n.detailInstallFilesExtracted(info.fileCount ?? 0, info.targetDir ?? modName),
                       style: TextStyle(
                         color: retro.inkDim,
                         fontSize: 12,
@@ -2500,7 +2509,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Installation failed',
+                      l10n.detailInstallFailed,
                       style: TextStyle(
                         color: retro.ink,
                         fontSize: 13,
@@ -2542,7 +2551,7 @@ class _InstallStatusBanner extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Operation cancelled',
+                  l10n.detailOperationCancelled,
                   style: TextStyle(
                     color: retro.inkDim,
                     fontSize: 13,

@@ -96,9 +96,10 @@ class ModInstallWorker(
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
+        val ctx = applicationContext
         return ForegroundInfo(
             NOTIFICATION_ID,
-            buildNotification("Preparing...", 0, 0, true)
+            buildNotification(ctx.getString(R.string.notification_preparing), 0, 0, true)
         )
     }
 
@@ -108,10 +109,11 @@ class ModInstallWorker(
         total: Int,
         indeterminate: Boolean
     ): Notification {
+        val ctx = applicationContext
         val contentText = if (indeterminate) {
-            "Extracting $modName..."
+            ctx.getString(R.string.notification_extracting, modName)
         } else {
-            "Extracting $modName · $current/$total files"
+            ctx.getString(R.string.notification_extracting_progress, modName, current, total)
         }
 
         val cancelIntent = WorkManager.getInstance(applicationContext)
@@ -119,13 +121,13 @@ class ModInstallWorker(
 
         return NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.stat_sys_download)
-            .setContentTitle("Installing mod")
+            .setContentTitle(ctx.getString(R.string.notification_installing_mod))
             .setContentText(contentText)
             .setOngoing(true)
             .setProgress(total, current, indeterminate)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-            .addAction(android.R.drawable.ic_delete, "Cancel", cancelIntent)
+            .addAction(android.R.drawable.ic_delete, ctx.getString(R.string.notification_cancel), cancelIntent)
             .build()
     }
 

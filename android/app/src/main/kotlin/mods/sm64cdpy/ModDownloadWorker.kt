@@ -153,13 +153,14 @@ class ModDownloadWorker(
         progressPct: Int?,
         indeterminate: Boolean?
     ): Notification {
-        val title = "Downloading mod"
+        val ctx = applicationContext
+        val title = ctx.getString(R.string.notification_downloading_mod)
         val text = if (modName != null && progressPct != null) {
-            "$modName · $progressPct%"
+            ctx.getString(R.string.notification_downloading_progress, modName, progressPct)
         } else if (modName != null) {
             modName
         } else {
-            "Preparing download..."
+            ctx.getString(R.string.notification_preparing_download)
         }
 
         val isIndeterminate = indeterminate ?: (progressPct == null)
@@ -175,7 +176,7 @@ class ModDownloadWorker(
             .setProgress(100, progressPct ?: 0, isIndeterminate)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-            .addAction(android.R.drawable.ic_delete, "Cancel", cancelIntent)
+            .addAction(android.R.drawable.ic_delete, ctx.getString(R.string.notification_cancel), cancelIntent)
             .build()
     }
 }
