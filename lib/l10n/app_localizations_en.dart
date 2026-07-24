@@ -903,33 +903,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get linksOfficialDesc =>
-      'Canales verificados del proyecto SM64CoopDX.';
+      'Verified channels from the SM64CoopDX project.';
 
   @override
   String get linksSm64cdpySection => 'SM64CDPY';
 
   @override
-  String get linksSm64cdpyDesc => 'Descargas y contenido de esta app.';
+  String get linksSm64cdpyDesc => 'Downloads and content from this app.';
 
   @override
   String get linksResourcesSection => 'RESOURCES';
 
   @override
   String get linksResourcesDesc =>
-      'Comunidad, guías e instalación paso a paso.';
+      'Community, guides, and step-by-step installation.';
 
   @override
   String get linksHeroTitle => 'LINK HUB';
 
   @override
   String get linksHeroDesc =>
-      'Todo lo oficial, la comunidad y los recursos del proyecto, en un solo lugar.';
+      'Everything official, the community, and project resources in one place.';
 
   @override
-  String get linksChipTap => 'TOCA = ABRIR';
+  String get linksChipTap => 'TAP = OPEN';
 
   @override
-  String get linksChipHold => 'MANTÉN = COPIAR';
+  String get linksChipHold => 'HOLD = COPY';
 
   @override
   String get linksWebsite => 'SM64CoopDX Website';

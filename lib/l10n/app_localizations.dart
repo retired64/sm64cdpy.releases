@@ -1671,7 +1671,7 @@ abstract class AppLocalizations {
   /// Links screen description for verified project channels
   ///
   /// In en, this message translates to:
-  /// **'Canales verificados del proyecto SM64CoopDX.'**
+  /// **'Verified channels from the SM64CoopDX project.'**
   String get linksOfficialDesc;
 
   /// Links screen section header for app downloads and content
@@ -1683,7 +1683,7 @@ abstract class AppLocalizations {
   /// Links screen description for app content
   ///
   /// In en, this message translates to:
-  /// **'Descargas y contenido de esta app.'**
+  /// **'Downloads and content from this app.'**
   String get linksSm64cdpyDesc;
 
   /// Links screen section header for community and guides
@@ -1695,7 +1695,7 @@ abstract class AppLocalizations {
   /// Links screen description for community resources
   ///
   /// In en, this message translates to:
-  /// **'Comunidad, guías e instalación paso a paso.'**
+  /// **'Community, guides, and step-by-step installation.'**
   String get linksResourcesDesc;
 
   /// Links screen hero card title
@@ -1707,19 +1707,19 @@ abstract class AppLocalizations {
   /// Links screen hero card description text
   ///
   /// In en, this message translates to:
-  /// **'Todo lo oficial, la comunidad y los recursos del proyecto, en un solo lugar.'**
+  /// **'Everything official, the community, and project resources in one place.'**
   String get linksHeroDesc;
 
   /// Links screen hint chip — tap to open link
   ///
   /// In en, this message translates to:
-  /// **'TOCA = ABRIR'**
+  /// **'TAP = OPEN'**
   String get linksChipTap;
 
   /// Links screen hint chip — hold to copy link
   ///
   /// In en, this message translates to:
-  /// **'MANTÉN = COPIAR'**
+  /// **'HOLD = COPY'**
   String get linksChipHold;
 
   /// Link item title for the project website

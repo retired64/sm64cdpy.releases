@@ -1170,7 +1170,7 @@
   "@linksOfficiaSection": {
     "description": "Links screen section header for official project channels"
   },
-  "linksOfficialDesc": "Canales verificados del proyecto SM64CoopDX.",
+  "linksOfficialDesc": "Verified channels from the SM64CoopDX project.",
   "@linksOfficialDesc": {
     "description": "Links screen description for verified project channels"
   },
@@ -1178,7 +1178,7 @@
   "@linksSm64cdpySection": {
     "description": "Links screen section header for app downloads and content"
   },
-  "linksSm64cdpyDesc": "Descargas y contenido de esta app.",
+  "linksSm64cdpyDesc": "Downloads and content from this app.",
   "@linksSm64cdpyDesc": {
     "description": "Links screen description for app content"
   },
@@ -1186,7 +1186,7 @@
   "@linksResourcesSection": {
     "description": "Links screen section header for community and guides"
   },
-  "linksResourcesDesc": "Comunidad, guías e instalación paso a paso.",
+  "linksResourcesDesc": "Community, guides, and step-by-step installation.",
   "@linksResourcesDesc": {
     "description": "Links screen description for community resources"
   },
@@ -1194,15 +1194,15 @@
   "@linksHeroTitle": {
     "description": "Links screen hero card title"
   },
-  "linksHeroDesc": "Todo lo oficial, la comunidad y los recursos del proyecto, en un solo lugar.",
+  "linksHeroDesc": "Everything official, the community, and project resources in one place.",
   "@linksHeroDesc": {
     "description": "Links screen hero card description text"
   },
-  "linksChipTap": "TOCA = ABRIR",
+  "linksChipTap": "TAP = OPEN",
   "@linksChipTap": {
     "description": "Links screen hint chip — tap to open link"
   },
-  "linksChipHold": "MANTÉN = COPIAR",
+  "linksChipHold": "HOLD = COPY",
   "@linksChipHold": {
     "description": "Links screen hint chip — hold to copy link"
   },

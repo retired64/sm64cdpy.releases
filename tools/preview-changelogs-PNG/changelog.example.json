@@ -1,20 +1,40 @@
 {
   "app_name": "SM64CoopDX",
-  "version": "1.4.5",
-  "tag": "Latest",
-  "date": "July 2026",
+  "version": "1.5.0",
+  "tag": "Novedades",
+  "date": "Julio 2026",
   "groups": [
     {
       "type": "added",
       "items": [
-        "Home \"Browse\" section redesigned as a swipeable carousel, matching the Featured carousel style."
+        "Ahora la app habla 3 idiomas: Ingles, Espanol y Portugues.",
+        "Nuevo boton en Ajustes para cambiar de idioma con banderas.",
+        "Las notificaciones del sistema tambien estan traducidas."
       ]
     },
     {
       "type": "improved",
       "items": [
-        "Each Browse card now has a color-coded skewed \"GO TO\" button for quicker navigation.",
-        "Skewed chip buttons now auto-pick readable text color based on fill brightness."
+        "La pantalla de Aviso Legal ahora usa el mismo sistema de idiomas, ya no tiene un boton aparte para traducir.",
+        "Las fechas ahora aparecen en tu idioma, no solo en ingles.",
+        "Las palabras como '1 MODS' ahora dicen '1 MOD' cuando es solo uno.",
+        "Los colores de medallas (oro, plata, bronce) ahora son iguales en toda la app.",
+        "Los textos sobre botones de colores ahora siempre se leen bien."
+      ]
+    },
+    {
+      "type": "fixed",
+      "items": [
+        "La pantalla Popular mostraba el contador en espanol aunque tuvieras la app en ingles. Ya esta corregido.",
+        "La pantalla de Links y Recursos mostraba texto en espanol en vez de ingles. Corregido.",
+        "Textos repetidos en la pantalla de detalles del mod ahora comparten traduccion, mas ordenado."
+      ]
+    },
+    {
+      "type": "removed",
+      "items": [
+        "Se elimino el tema viejo de la app (AppTheme), ahora todo usa el diseno retro.",
+        "Se quito una libreria que ya no se usaba (google_fonts)."
       ]
     }
   ]
