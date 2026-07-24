@@ -1037,10 +1037,10 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                     child: Transform(
                       alignment: Alignment.center,
                       transform: Matrix4.skewX(0.18),
-                      child: const Text(
+                      child: Text(
                         'SOON',
                         style: TextStyle(
-                          color: Color(0xFF20232E),
+                          color: retro.onAmber,
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.8,
@@ -1096,25 +1096,25 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
             child: Transform(
               alignment: Alignment.center,
               transform: Matrix4.skewX(0.18),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.play_arrow_rounded,
                     size: 22,
-                    color: Color(0xFF20232E),
+                    color: retro.inkOnAccent,
                   ),
                   SizedBox(width: 8),
                   Text(
                     'LAUNCH  GAME',
                     style: TextStyle(
-                      color: Color(0xFF20232E),
+                      color: retro.inkOnAccent,
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 0.5,
                     ),
                   ),
-                  Icon(Icons.arrow_forward, size: 18, color: Color(0xFF20232E)),
+                  Icon(Icons.arrow_forward, size: 18, color: retro.inkOnAccent),
                 ],
               ),
             ),
@@ -1182,10 +1182,10 @@ class _TopModRowState extends ConsumerState<_TopModRow>
     super.dispose();
   }
 
-  Color _rankColor(int r) {
-    if (r == 1) return const Color(0xFFFFD700);
-    if (r == 2) return const Color(0xFFC0C0C0);
-    if (r == 3) return const Color(0xFFCD7F32);
+  Color _rankColor(RetroTheme retro, int r) {
+    if (r == 1) return retro.medalGold;
+    if (r == 2) return retro.medalSilver;
+    if (r == 3) return retro.medalBronze;
     return Colors.transparent;
   }
 
@@ -1194,7 +1194,7 @@ class _TopModRowState extends ConsumerState<_TopModRow>
     final retro = RetroTheme.of(context);
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
     final isTop3 = widget.rank <= 3;
-    final rankColor = _rankColor(widget.rank);
+    final rankColor = _rankColor(retro, widget.rank);
 
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),

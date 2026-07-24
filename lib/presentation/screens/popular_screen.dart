@@ -12,11 +12,6 @@ import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-// El oro reutiliza retro.amber (mismo tono que VIP/featured) para que el
-// podio no introduzca un cuarto acento suelto. Plata y bronce sí son
-// colores propios de esta pantalla — no hay equivalente en el theme.
-const _kSilver = Color(0xFFB9C0CE);
-const _kBronze = Color(0xFFC97C42);
 const _kPageSize = 15;
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -237,7 +232,7 @@ class _Podium extends StatelessWidget {
                   child: _PodiumColumn(
                     mod: silver,
                     rank: 2,
-                    color: _kSilver,
+                    color: retro.medalSilver,
                     baseHeight: 34,
                   ),
                 ),
@@ -247,7 +242,7 @@ class _Podium extends StatelessWidget {
                   child: _PodiumColumn(
                     mod: gold,
                     rank: 1,
-                    color: retro.amber,
+                    color: retro.medalGold,
                     baseHeight: 50,
                   ),
                 ),
@@ -257,7 +252,7 @@ class _Podium extends StatelessWidget {
                   child: _PodiumColumn(
                     mod: bronze,
                     rank: 3,
-                    color: _kBronze,
+                    color: retro.medalBronze,
                     baseHeight: 24,
                   ),
                 ),
@@ -475,9 +470,9 @@ class _RankedRowState extends ConsumerState<_RankedRow>
   }
 
   Color? _rankColor(RetroTheme retro) {
-    if (widget.rank == 1) return retro.amber;
-    if (widget.rank == 2) return _kSilver;
-    if (widget.rank == 3) return _kBronze;
+    if (widget.rank == 1) return retro.medalGold;
+    if (widget.rank == 2) return retro.medalSilver;
+    if (widget.rank == 3) return retro.medalBronze;
     return null;
   }
 

@@ -590,7 +590,6 @@ class _ContactButtonState extends State<_ContactButton>
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    const blurple = Color(0xFF5865F2);
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -620,7 +619,7 @@ class _ContactButtonState extends State<_ContactButton>
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: blurple,
+                color: retro.discordBrand,
                 borderRadius: RetroTheme.radius,
                 border: Border.all(color: retro.border, width: 2.5),
                 boxShadow: retro.hardShadow(dx: 4, dy: 4),

@@ -213,12 +213,12 @@ class _ChangeGroup extends StatelessWidget {
           // Tipo de cambio
           Row(
             children: [
-              Icon(group.type.icon, size: 13, color: group.type.color),
+              Icon(group.type.icon, size: 13, color: group.type.color(retro)),
               const SizedBox(width: 5),
               Text(
                 group.type.label.toUpperCase(),
                 style: TextStyle(
-                  color: group.type.color,
+                  color: group.type.color(retro),
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.2,
@@ -293,12 +293,12 @@ enum _ChangeType {
     _ChangeType.changed => Icons.swap_horiz_rounded,
   };
 
-  Color get color => switch (this) {
-    _ChangeType.added => const Color(0xFF22C55E),
-    _ChangeType.improved => const Color(0xFF3B82F6),
-    _ChangeType.fixed => const Color(0xFFF59E0B),
-    _ChangeType.removed => const Color(0xFFEF4444),
-    _ChangeType.changed => const Color(0xFF8B5CF6),
+  Color color(RetroTheme retro) => switch (this) {
+    _ChangeType.added => retro.changelogAdded,
+    _ChangeType.improved => retro.changelogImproved,
+    _ChangeType.fixed => retro.changelogFixed,
+    _ChangeType.removed => retro.changelogRemoved,
+    _ChangeType.changed => retro.changelogChanged,
   };
 }
 

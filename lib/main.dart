@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 import 'core/router/app_router.dart';
-import 'core/theme/app_theme.dart';
+import 'core/theme/retro_theme.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'services/background_install_service.dart';
 import 'services/update_service.dart';
@@ -74,7 +74,7 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-        systemNavigationBarColor: AppTheme.backgroundColor(isDark),
+        systemNavigationBarColor: RetroTheme(isDark).background,
         systemNavigationBarIconBrightness: isDark
             ? Brightness.light
             : Brightness.dark,
@@ -89,8 +89,8 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
     return MaterialApp.router(
       title: 'SM64CoopDX Mods',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: RetroTheme.materialTheme(false),
+      darkTheme: RetroTheme.materialTheme(true),
       themeMode: themeMode,
       routerConfig: appRouter,
     );

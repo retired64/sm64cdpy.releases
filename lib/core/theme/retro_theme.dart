@@ -48,6 +48,25 @@ class RetroTheme {
   // y necesita contraste oscuro encima.
   Color get onAmber => const Color(0xFF20232E);
 
+  // Texto/íconos sobre superficies de acento claro (teal) rellenas — misma
+  // lógica que onAmber: tinta oscura fija para contraste garantizado.
+  Color get inkOnAccent => const Color(0xFF20232E);
+
+  // Colores de medalla (podio / ranking) — paleta clásica olímpica.
+  Color get medalGold => const Color(0xFFFFD700);
+  Color get medalSilver => const Color(0xFFC0C0C0);
+  Color get medalBronze => const Color(0xFFCD7F32);
+
+  // Colores semánticos para tipos de cambio en changelog.
+  Color get changelogAdded => const Color(0xFF22C55E);
+  Color get changelogImproved => const Color(0xFF3B82F6);
+  Color get changelogFixed => const Color(0xFFF59E0B);
+  Color get changelogRemoved => const Color(0xFFEF4444);
+  Color get changelogChanged => const Color(0xFF8B5CF6);
+
+  // Discord brand color (blurple).
+  Color get discordBrand => const Color(0xFF5865F2);
+
   /// Sombra dura sin blur, desplazada — la firma visual del sistema.
   List<BoxShadow> hardShadow({double dx = 4, double dy = 4}) => [
     BoxShadow(color: shadowColor, offset: Offset(dx, dy), blurRadius: 0),
@@ -87,6 +106,29 @@ class RetroTheme {
     fontWeight: weight,
     height: height,
   );
+
+  /// ThemeData mínimo para MaterialApp — solo lo indispensable para que
+  /// los widgets nativos (Scaffold, Drawer, BottomNav, SnackBar, etc.)
+  /// tengan un baseline coherente. El estilo visual real lo provee
+  /// RetroTheme directamente.
+  static ThemeData materialTheme(bool isDark) {
+    final r = RetroTheme(isDark);
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme(
+        brightness: isDark ? Brightness.dark : Brightness.light,
+        primary: r.accent,
+        onPrimary: r.inkOnAccent,
+        secondary: r.amber,
+        onSecondary: r.onAmber,
+        surface: r.surface,
+        onSurface: r.ink,
+        error: r.red,
+        onError: Colors.white,
+      ),
+      scaffoldBackgroundColor: r.background,
+    );
+  }
 }
 
 // ── Halftone background ────────────────────────────────────────────────────

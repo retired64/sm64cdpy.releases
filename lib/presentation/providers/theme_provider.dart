@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/theme/app_theme.dart';
 
 /// Provider for managing theme mode (light/dark/system) with persistence
 class ThemeNotifier extends Notifier<ThemeMode> {
@@ -100,10 +99,4 @@ final themeModeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(
 /// Provider that provides whether dark mode is active
 final isDarkModeProvider = Provider<bool>((ref) {
   return ref.watch(themeModeProvider.notifier).isDarkMode;
-});
-
-/// Convenience provider for getting the current ThemeData based on theme mode
-final themeDataProvider = Provider<ThemeData>((ref) {
-  final isDark = ref.watch(isDarkModeProvider);
-  return isDark ? AppTheme.darkTheme : AppTheme.lightTheme;
 });
