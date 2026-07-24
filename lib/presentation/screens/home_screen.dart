@@ -1118,7 +1118,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    'LAUNCH  GAME',
+                    l10n.homeLaunchGame,
                     style: TextStyle(
                       color: retro.inkOnAccent,
                       fontSize: 14,

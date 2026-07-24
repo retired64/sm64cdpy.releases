@@ -235,7 +235,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeFavoritesDesc => 'Tus mods guardados de todas las secciones';
 
   @override
-  String get homePopular => 'Popular';
+  String get homePopular => 'Populares';
 
   @override
   String get homePopularDesc => 'Mejores mods por total de descargas';
