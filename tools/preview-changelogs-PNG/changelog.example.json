@@ -1,13 +1,26 @@
 {
   "app_name": "SM64CoopDX",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "tag": "Novedades",
   "date": "Julio 2026",
   "groups": [
     {
       "type": "improved",
       "items": [
-        "Nuevo icono de la aplicacion — idea de Retired64, adaptacion por □●AGS4●□."
+        "El avatar del mod ahora esta mas arriba en la pantalla de detalles, sin espacio vacio arriba.",
+        "La descripcion del mod ahora se corta limpiamente a 3 lineas sin partir palabras a la mitad."
+      ]
+    },
+    {
+      "type": "removed",
+      "items": [
+        "Eliminada la sombra oscura que habia encima del avatar, no hacia falta."
+      ]
+    },
+    {
+      "type": "fixed",
+      "items": [
+        "El boton ABRIR JUEGO ahora si cambia de idioma. Antes se quedaba en ingles."
       ]
     }
   ]

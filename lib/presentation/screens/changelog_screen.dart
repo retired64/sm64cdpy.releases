@@ -336,9 +336,35 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.5.1',
+    version: '1.6.0',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Mod detail hero height reduced from 300px to 180px — avatar now sits near the top, removing wasted empty space and putting content front and center.',
+          'Description text now uses 3-line clamping (maxLines: 3 + TextOverflow.ellipsis) instead of character-based truncation — no more mid-word cuts, cleaner and more readable.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.removed,
+        items: [
+          'Dark gradient scrim (black-to-transparent) above the mod detail avatar eliminated — the glass app bar buttons already have sufficient contrast against the teal hero background without it.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          '"LAUNCH GAME" button on the home screen was still hardcoded in English and ignored the selected language — now correctly uses the i18n system (shows "ABRIR JUEGO" / "ABRIR JOGO").',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.5.1',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.improved,
