@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/category_constants.dart';
 import '../../core/theme/retro_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
@@ -73,6 +74,7 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final filteredAsync = ref.watch(filteredModsProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final currentSort = ref.watch(sortOrderProvider);
@@ -108,7 +110,7 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
-              child: SectionKicker(retro: retro, label: 'BROWSE MODS'),
+              child: SectionKicker(retro: retro, label: l10n.catalogueTitle),
             ),
           ),
 
@@ -203,6 +205,7 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final filteredAsync = ref.watch(filteredModsProvider);
     final count = filteredAsync.maybeWhen(
       data: (mods) => mods.length,
@@ -239,7 +242,7 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
             child: SkewChip(
               retro: retro,
               icon: Icons.extension_rounded,
-              label: '$count MODS',
+              label: l10n.catalogueModCount(count),
               dense: true,
               selected: true,
             ),
@@ -276,6 +279,7 @@ class _SearchField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -299,7 +303,7 @@ class _SearchField extends ConsumerWidget {
           fontWeight: FontWeight.w600,
         ),
         decoration: InputDecoration(
-          hintText: 'SEARCH MODS, AUTHORS, TAGS…',
+          hintText: l10n.catalogueSearchHint,
           hintStyle: TextStyle(
             color: retro.inkDim,
             fontSize: 12.5,
@@ -443,16 +447,16 @@ class _SortChip extends ConsumerWidget {
   final RetroTheme retro;
   final SortOrder currentSort;
 
-  String get _label {
+  String _label(AppLocalizations l10n) {
     switch (currentSort) {
       case SortOrder.ratingDesc:
-        return 'RATING';
+        return l10n.catalogueRating;
       case SortOrder.downloadsDesc:
-        return 'DOWNLOADS';
+        return l10n.catalogueDownloads;
       case SortOrder.newest:
-        return 'NEWEST';
+        return l10n.catalogueNewest;
       case SortOrder.none:
-        return 'SORT';
+        return l10n.catalogueSort;
     }
   }
 
@@ -471,11 +475,12 @@ class _SortChip extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final isActive = currentSort != SortOrder.none;
 
     return SkewChip(
       retro: retro,
-      label: _label,
+      label: _label(l10n),
       icon: _icon,
       selected: isActive,
       dense: true,
@@ -516,22 +521,23 @@ class _SortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final options = [
-      (order: SortOrder.none, icon: Icons.list_rounded, label: 'Default'),
+      (order: SortOrder.none, icon: Icons.list_rounded, label: l10n.catalogueSortDefault),
       (
         order: SortOrder.ratingDesc,
         icon: Icons.star_rounded,
-        label: 'Top Rated',
+        label: l10n.catalogueSortTopRated,
       ),
       (
         order: SortOrder.downloadsDesc,
         icon: Icons.download_rounded,
-        label: 'Most Downloaded',
+        label: l10n.catalogueSortMostDownloaded,
       ),
       (
         order: SortOrder.newest,
         icon: Icons.access_time_rounded,
-        label: 'Recently Updated',
+        label: l10n.catalogueSortRecentlyUpdated,
       ),
     ];
 
@@ -544,7 +550,7 @@ class _SortSheet extends StatelessWidget {
           children: [
             Center(child: Container(width: 36, height: 4, color: retro.border)),
             const SizedBox(height: 18),
-            Text('SORT BY', style: retro.heading(size: 16)),
+            Text(l10n.sectionSortBy, style: retro.heading(size: 16)),
             const SizedBox(height: 14),
             ...options.map((opt) {
               final isSelected = current == opt.order;
@@ -611,6 +617,7 @@ class _ResultsHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final query = ref.watch(searchQueryProvider);
     final category = ref.watch(selectedCategoryProvider);
 
@@ -626,7 +633,7 @@ class _ResultsHeader extends ConsumerWidget {
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 child: Text(
-                  '${mods.length} RESULT${mods.length == 1 ? '' : 'S'}',
+                  l10n.catalogueResultCount(mods.length),
                   key: ValueKey(mods.length),
                   style: TextStyle(
                     color: retro.inkDim,
@@ -647,7 +654,7 @@ class _ResultsHeader extends ConsumerWidget {
                         .setSortOrder(SortOrder.none);
                   },
                   child: Text(
-                    'CLEAR ALL',
+                    l10n.catalogueClearAll,
                     style: TextStyle(
                       color: retro.accent,
                       fontSize: 11.5,
@@ -721,6 +728,7 @@ class _PaginationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final start = currentPage * pageSize + 1;
     final end = ((currentPage + 1) * pageSize).clamp(0, totalItems);
 
@@ -754,7 +762,7 @@ class _PaginationBar extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '$start–$end OF $totalItems MODS',
+                    l10n.cataloguePaginationRange(start, end, totalItems),
                     style: TextStyle(
                       color: retro.inkDim,
                       fontSize: 10.5,
@@ -817,6 +825,7 @@ class _PagePills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: _visiblePages.map((page) {
@@ -824,7 +833,7 @@ class _PagePills extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child: Text(
-              '···',
+              l10n.catalogueEllipsis,
               style: TextStyle(
                 color: retro.inkDim,
                 fontSize: 12,
@@ -928,6 +937,7 @@ class _EmptyView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final query = ref.watch(searchQueryProvider);
     final category = ref.watch(selectedCategoryProvider);
     final hasFilters = query.isNotEmpty || category != null;
@@ -956,7 +966,7 @@ class _EmptyView extends ConsumerWidget {
             ),
             const SizedBox(height: 22),
             Text(
-              hasFilters ? 'NO MODS FOUND' : 'NOTHING HERE YET',
+              hasFilters ? l10n.catalogueNoModsFound : l10n.catalogueNothingHere,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: retro.ink,
@@ -968,8 +978,8 @@ class _EmptyView extends ConsumerWidget {
             const SizedBox(height: 8),
             Text(
               hasFilters
-                  ? 'Try different keywords or remove filters.'
-                  : 'Check back later for new content.',
+? l10n.catalogueEmptyHint1
+                    : l10n.catalogueEmptyHint2,
               style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
             ),
@@ -1003,7 +1013,7 @@ class _EmptyView extends ConsumerWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'CLEAR FILTERS',
+                        l10n.catalogueClearFilters,
                         style: TextStyle(
                           color: retro.background,
                           fontSize: 11.5,
@@ -1033,6 +1043,7 @@ class _ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Center(
       child: Padding(
@@ -1056,7 +1067,7 @@ class _ErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'FAILED TO LOAD MODS',
+              l10n.catalogueFailedToLoad,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: retro.ink,

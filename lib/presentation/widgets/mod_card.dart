@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../domain/entities/mod_entity.dart';
+import '../../l10n/app_localizations.dart';
 import '../providers/mod_providers.dart';
 
 /// Main mod catalogue card — used in ListView.builder.
@@ -123,7 +124,7 @@ class _ModCardState extends ConsumerState<ModCard>
                         if (widget.mod.isFeatured)
                           RetroTag(
                             retro: retro,
-                            label: 'FEATURED',
+                            label: AppLocalizations.of(context).badgeFeatured,
                             color: retro.amber,
                             filled: true,
                             dense: true,

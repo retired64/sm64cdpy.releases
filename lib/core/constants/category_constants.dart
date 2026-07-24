@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+
 class CategoryConstants {
   CategoryConstants._();
 
@@ -309,7 +311,24 @@ class CategoryConstants {
       }
     }
 
-    return null; // No category found
+    return null;
+  }
+
+  /// Translate a category key (English internal name) to the display
+  /// string for the current locale.
+  static String displayName(BuildContext context, String categoryKey) {
+    final l10n = AppLocalizations.of(context);
+    return switch (categoryKey) {
+      'Characters' => l10n.categoryCharacters,
+      'Game Modes' => l10n.categoryGameModes,
+      'ROM Hacks & Levels' => l10n.categoryROMHacks,
+      'Gameplay & Mechanics' => l10n.categoryGameplay,
+      'Visual & Models' => l10n.categoryVisual,
+      'Audio & Voice' => l10n.categoryAudio,
+      'Utilities & Tools' => l10n.categoryUtilities,
+      'Misc & Fun' => l10n.categoryMisc,
+      _ => categoryKey,
+    };
   }
 
   /// Get all available categories

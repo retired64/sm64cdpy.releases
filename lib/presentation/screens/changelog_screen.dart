@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/retro_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../widgets/app_shell.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -18,6 +19,7 @@ class ChangelogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
 
     return CustomScrollView(
@@ -28,7 +30,7 @@ class ChangelogScreen extends StatelessWidget {
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: const DrawerMenuButton(),
-          title: Text('Changelog', style: retro.heading(size: 18)),
+          title: Text(l10n.changelogTitle, style: retro.heading(size: 18)),
         ),
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
@@ -99,7 +101,10 @@ class _VersionCardState extends State<_VersionCard>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
+
+    final tagLabel = widget.version.tag == 'Latest' ? l10n.changelogLatest : widget.version.tag;
 
     return Container(
       decoration: BoxDecoration(
@@ -136,7 +141,7 @@ class _VersionCardState extends State<_VersionCard>
                               const SizedBox(width: 8),
                               RetroTag(
                                 retro: retro,
-                                label: widget.version.tag!,
+                                label: tagLabel!,
                                 filled: widget.isLatest,
                                 dense: true,
                               ),
@@ -203,6 +208,7 @@ class _ChangeGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
 
     return Padding(
@@ -216,7 +222,7 @@ class _ChangeGroup extends StatelessWidget {
               Icon(group.type.icon, size: 13, color: group.type.color(retro)),
               const SizedBox(width: 5),
               Text(
-                group.type.label.toUpperCase(),
+                group.type.label(l10n).toUpperCase(),
                 style: TextStyle(
                   color: group.type.color(retro),
                   fontSize: 10,
@@ -277,12 +283,12 @@ enum _ChangeType {
   removed,
   changed;
 
-  String get label => switch (this) {
-    _ChangeType.added => 'New',
-    _ChangeType.improved => 'Improved',
-    _ChangeType.fixed => 'Fixed',
-    _ChangeType.removed => 'Removed',
-    _ChangeType.changed => 'Changed',
+  String label(AppLocalizations l10n) => switch (this) {
+    _ChangeType.added => l10n.changelogNew,
+    _ChangeType.improved => l10n.changelogImproved,
+    _ChangeType.fixed => l10n.changelogFixed,
+    _ChangeType.removed => l10n.changelogRemoved,
+    _ChangeType.changed => l10n.changelogChanged,
   };
 
   IconData get icon => switch (this) {

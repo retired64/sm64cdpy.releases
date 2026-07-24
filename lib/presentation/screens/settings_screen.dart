@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../services/mod_installer.dart';
 import '../../services/update_service.dart';
@@ -20,6 +21,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
@@ -36,19 +38,9 @@ class SettingsScreen extends ConsumerWidget {
                 elevation: 0,
                 shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
                 leading: const DrawerMenuButton(),
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'APP ',
-                        style: retro.heading(size: 18, color: retro.ink),
-                      ),
-                      TextSpan(
-                        text: 'SETTINGS',
-                        style: retro.heading(size: 18, color: retro.accent),
-                      ),
-                    ],
-                  ),
+                title: Text(
+                  l10n.settingsTitle,
+                  style: retro.heading(size: 18, color: retro.accent),
                 ),
               ),
 
@@ -57,33 +49,33 @@ class SettingsScreen extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                 sliver: SliverList.list(
                   children: [
-                    _RetroSectionKicker(retro: retro, label: 'DATA', japanese: 'データ'),
+                    _RetroSectionKicker(retro: retro, label: l10n.settingsData, japanese: 'データ'),
                     const SizedBox(height: 10),
                     _ReloadDatabaseTile(),
                     _SettingsTile(
                       icon: Icons.delete_outline_rounded,
-                      title: 'Clear favourites',
-                      subtitle: 'Remove all saved mods',
+                      title: l10n.settingsClearFavourites,
+                      subtitle: l10n.settingsClearFavouritesDesc,
                       destructive: true,
                       onTap: () => _confirmClearFavourites(context, ref),
                     ),
                     _SettingsTile(
                       icon: Icons.upload_rounded,
-                      title: 'Export favourites',
-                      subtitle: 'Share your saved mods',
+                      title: l10n.settingsExportFavourites,
+                      subtitle: l10n.settingsExportFavouritesDesc,
                       onTap: () => _exportFavourites(context, ref),
                     ),
                     _SettingsTile(
                       icon: Icons.download_rounded,
-                      title: 'Import favourites',
-                      subtitle: 'Restore from a previously exported file',
+                      title: l10n.settingsImportFavourites,
+                      subtitle: l10n.settingsImportFavouritesDesc,
                       onTap: () => _importFavourites(context, ref),
                     ),
 
                     const SizedBox(height: 20),
                     _RetroSectionKicker(
                       retro: retro,
-                      label: 'GAME INTEGRATION',
+                      label: l10n.settingsGameIntegration,
                       japanese: 'ゲーム連携',
                     ),
                     const SizedBox(height: 10),
@@ -91,24 +83,26 @@ class SettingsScreen extends ConsumerWidget {
                     _AutoInstallToggle(),
 
                     const SizedBox(height: 20),
-                    _RetroSectionKicker(retro: retro, label: 'APPEARANCE', japanese: '外観'),
+                    _RetroSectionKicker(retro: retro, label: l10n.settingsAppearance, japanese: '外観'),
                     const SizedBox(height: 10),
                     _ThemeSelector(),
+                    const SizedBox(height: 12),
+                    _LocaleSelector(),
 
                     const SizedBox(height: 20),
-                    _RetroSectionKicker(retro: retro, label: 'ABOUT', japanese: '概要'),
+                    _RetroSectionKicker(retro: retro, label: l10n.settingsAbout, japanese: '概要'),
                     const SizedBox(height: 10),
                     _CheckUpdateTile(),
                     _SettingsTile(
                       icon: Icons.open_in_browser_rounded,
-                      title: 'Go to releases',
+                      title: l10n.settingsGoToReleases,
                       subtitle:
-                          'View all versions on GitHub · v${AppConstants.appVersion}',
+                          l10n.settingsViewAllVersions(AppConstants.appVersion),
                       onTap: () => _launchUrl(context, AppConstants.githubReleasesUrl),
                     ),
                     _SettingsTile(
                       icon: Icons.extension_rounded,
-                      title: 'Data source',
+                      title: l10n.settingsDataSource,
                       subtitle: 'mods.sm64coopdx.com',
                       onTap: () => _launchUrl(context, AppConstants.dataSourceUrl),
                     ),
@@ -120,10 +114,11 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _exportFavourites(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
     final count = ref.read(favouritesProvider).length;
     if (count == 0) {
       if (!context.mounted) return;
-      AppSnackbar.info(context, message: 'You have no favourites to export.');
+      AppSnackbar.info(context, message: l10n.settingsNoFavouritesToExport);
       return;
     }
 
@@ -139,6 +134,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _importFavourites(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
     final allModsAsync = ref.read(allModsProvider);
     final knownIds = allModsAsync.maybeWhen(
       data: (mods) => mods.map((m) => m.id).toSet(),
@@ -158,19 +154,19 @@ class SettingsScreen extends ConsumerWidget {
     }
 
     final parts = <String>[];
-    if (result.added > 0) parts.add('${result.added} added');
+    if (result.added > 0) parts.add(l10n.settingsImportAdded(result.added));
     if (result.skippedDuplicate > 0) {
-      parts.add('${result.skippedDuplicate} already saved');
+      parts.add(l10n.settingsImportAlreadySaved(result.skippedDuplicate));
     }
     if (result.skippedUnknown > 0) {
-      parts.add('${result.skippedUnknown} not found in catalogue');
+      parts.add(l10n.settingsImportNotFound(result.skippedUnknown));
     }
 
     AppSnackbar.success(
       context,
       message: result.added == 0
-          ? 'Nothing new to import. ${parts.join(' · ')}'
-          : 'Import complete · ${parts.join(' · ')}',
+          ? '${l10n.settingsImportNothingNew}  ${parts.join(' · ')}'
+          : '${l10n.settingsImportComplete} · ${parts.join(' · ')}',
     );
   }
 
@@ -185,14 +181,14 @@ class SettingsScreen extends ConsumerWidget {
 
   void _confirmClearFavourites(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (ctx) => _RetroDialog(
         retro: retro,
-        title: 'CLEAR FAVOURITES?',
-        message:
-            'This will remove all your saved mods. This action cannot be undone.',
-        confirmLabel: 'CLEAR',
+        title: l10n.settingsClearFavouritesTitle,
+        message: l10n.settingsClearFavouritesBody,
+        confirmLabel: l10n.settingsClearButton,
         confirmColor: retro.red,
         onConfirm: () {
           // Toggle off all current favourites
@@ -201,14 +197,15 @@ class SettingsScreen extends ConsumerWidget {
             ref.read(favouritesProvider.notifier).toggle(id);
           }
           Navigator.of(ctx).pop();
-          AppSnackbar.success(context, message: 'Favourites cleared');
+          AppSnackbar.success(context, message: l10n.settingsFavouritesCleared);
         },
       ),
     );
   }
 
   void _showUrlError(BuildContext context, String url) {
-    AppSnackbar.error(context, message: 'Cannot open URL: $url');
+    final l10n = AppLocalizations.of(context);
+    AppSnackbar.error(context, message: l10n.settingsCannotOpenUrl(url));
   }
 }
 
@@ -235,6 +232,7 @@ class _RetroDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final accent = confirmColor ?? retro.accent;
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -265,7 +263,7 @@ class _RetroDialog extends StatelessWidget {
                       vertical: 10,
                     ),
                     child: Text(
-                      'CANCEL',
+                      l10n.settingsCancel,
                       style: TextStyle(
                         color: retro.inkDim,
                         fontSize: 12,
@@ -418,9 +416,10 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
           _hasFolder = true;
         });
         if (!mounted) return;
+        final l10n = AppLocalizations.of(context);
         AppSnackbar.success(
           context,
-          message: 'Mods folder selected. Mods will be installed here.',
+          message: l10n.settingsModsFolderSelected,
         );
       }
     } on ModInstallerException catch (e) {
@@ -434,14 +433,14 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
 
   Future<void> _confirmClear() async {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => _RetroDialog(
         retro: retro,
-        title: 'CLEAR MODS FOLDER?',
-        message:
-            'You will need to select the folder again before installing mods to the game.',
-        confirmLabel: 'CLEAR',
+        title: l10n.settingsClearModsFolderTitle,
+        message: l10n.settingsClearModsFolderBody,
+        confirmLabel: l10n.settingsClearButton,
         confirmColor: retro.red,
         onConfirm: () => Navigator.of(ctx).pop(true),
       ),
@@ -453,7 +452,7 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
         setState(() {
           _hasFolder = false;
         });
-        AppSnackbar.info(context, message: 'Mods folder selection cleared.');
+        AppSnackbar.info(context, message: l10n.settingsModsFolderCleared);
       }
     }
   }
@@ -461,6 +460,7 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return _RetroTileShell(
       retro: retro,
@@ -476,11 +476,11 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
                   : Icons.folder_open_rounded,
               accentColor: _hasFolder ? retro.accent : null,
             ),
-      title: _hasFolder ? 'Mods folder' : 'Select mods folder',
+      title: _hasFolder ? l10n.settingsModsFolder : l10n.settingsSelectModsFolder,
       titleColor: _hasFolder ? retro.accent : retro.ink,
       subtitle: _hasFolder
-          ? 'Tap to change · Long-press to clear'
-          : 'Choose where to install downloaded mods',
+          ? l10n.settingsModsFolderHint
+          : l10n.settingsModsFolderDesc,
       trailing: Icon(Icons.chevron_right_rounded, color: retro.inkDim, size: 20),
     );
   }
@@ -522,6 +522,7 @@ class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return _RetroTileShell(
       retro: retro,
@@ -532,10 +533,10 @@ class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
         icon: Icons.auto_mode_rounded,
         accentColor: _autoInstall ? retro.accent : null,
       ),
-      title: 'Auto-install after download',
+      title: l10n.settingsAutoInstall,
       subtitle: _autoInstall
-          ? 'Mods will be automatically installed to the game folder'
-          : 'You will be asked after each download',
+          ? l10n.settingsAutoInstallOn
+          : l10n.settingsAutoInstallOff,
       trailing: _RetroSwitch(retro: retro, value: _autoInstall, onChanged: _toggle),
     );
   }
@@ -707,11 +708,11 @@ class _ThemeSelector extends ConsumerWidget {
   const _ThemeSelector();
 
   static const _options = [
-    (mode: ThemeMode.light, label: 'LIGHT', icon: Icons.wb_sunny_rounded),
-    (mode: ThemeMode.dark, label: 'DARK', icon: Icons.nightlight_round),
+    (mode: ThemeMode.light, label: 'Light', icon: Icons.wb_sunny_rounded),
+    (mode: ThemeMode.dark, label: 'Dark', icon: Icons.nightlight_round),
     (
       mode: ThemeMode.system,
-      label: 'SYSTEM',
+      label: 'System',
       icon: Icons.brightness_auto_rounded,
     ),
   ];
@@ -720,6 +721,7 @@ class _ThemeSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -736,7 +738,7 @@ class _ThemeSelector extends ConsumerWidget {
               Icon(Icons.palette_rounded, size: 14, color: retro.accent),
               const SizedBox(width: 6),
               Text(
-                'THEME MODE',
+                l10n.settingsThemeMode,
                 style: TextStyle(
                   color: retro.inkDim,
                   fontSize: 11,
@@ -771,6 +773,80 @@ class _ThemeSelector extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+// ── Language selector ─────────────────────────────────────────────────────────
+
+class _LocaleSelector extends ConsumerWidget {
+  const _LocaleSelector();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final localeTag = ref.watch(localeNotifierProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: retro.surface,
+        border: Border.all(color: retro.border, width: 2.5),
+        boxShadow: retro.hardShadow(dx: 3, dy: 3),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.translate_rounded, size: 14, color: retro.accent),
+              const SizedBox(width: 6),
+              Text(
+                l10n.settingsLanguageMode,
+                style: TextStyle(
+                  color: retro.inkDim,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: _localeOptions(l10n).asMap().entries.map((entry) {
+              final i = entry.key;
+              final opt = entry.value;
+              final isSelected = localeTag == opt.tag;
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: i == 0 ? 0 : 8),
+                  child: _ThemeOptionTile(
+                    retro: retro,
+                    icon: opt.icon,
+                    label: opt.label,
+                    isSelected: isSelected,
+                    onTap: () => ref
+                        .read(localeNotifierProvider.notifier)
+                        .setLocale(opt.tag),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<({String? tag, String label, IconData icon})> _localeOptions(
+      AppLocalizations l10n) {
+    return [
+      (tag: null, label: l10n.languageFollowSystem, icon: Icons.language_rounded),
+      (tag: 'en_US', label: l10n.languageEnglish, icon: Icons.flag_rounded),
+      (tag: 'es_419', label: l10n.languageSpanish, icon: Icons.flag_rounded),
+      (tag: 'pt_BR', label: l10n.languagePortuguese, icon: Icons.flag_rounded),
+    ];
   }
 }
 
@@ -891,7 +967,6 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
     setState(() => _loading = false);
 
     if (result.success) {
-      // Refresh del provider para que toda la UI recargue con los nuevos datos
       ref.invalidate(allModsProvider);
 
       final modCount = result.modCount ?? 0;
@@ -899,14 +974,16 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
           ? ' · Generated ${result.generatedAt}'
           : '';
 
+      final l10n = AppLocalizations.of(context);
       AppSnackbar.success(
         context,
-        message: 'Database updated · $modCount mods$date',
+        message: l10n.settingsDatabaseUpdated(modCount, date),
       );
     } else {
+      final l10n = AppLocalizations.of(context);
       AppSnackbar.error(
         context,
-        message: result.errorMessage ?? 'Unknown error',
+        message: result.errorMessage ?? l10n.settingsUnknownError,
       );
     }
   }
@@ -914,6 +991,7 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return _RetroTileShell(
       retro: retro,
@@ -921,8 +999,8 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
       leading: _loading
           ? _RetroSpinner(retro: retro)
           : _RetroIconBox(retro: retro, icon: Icons.cloud_download_rounded),
-      title: 'Reload database',
-      subtitle: _loading ? 'Downloading...' : 'Download latest mod list',
+      title: l10n.settingsReloadDatabase,
+      subtitle: _loading ? l10n.settingsDownloading : l10n.settingsDownloadLatest,
     );
   }
 }
@@ -961,9 +1039,10 @@ class _CheckUpdateTileState extends State<_CheckUpdateTile> {
         ),
       );
     } else {
+      final l10n = AppLocalizations.of(context);
       AppSnackbar.info(
         context,
-        message: 'You\'re up to date · v${UpdateService.currentVersion}',
+        message: l10n.settingsUpToDate(UpdateService.currentVersion),
       );
     }
   }
@@ -971,6 +1050,7 @@ class _CheckUpdateTileState extends State<_CheckUpdateTile> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return _RetroTileShell(
       retro: retro,
@@ -978,8 +1058,8 @@ class _CheckUpdateTileState extends State<_CheckUpdateTile> {
       leading: _loading
           ? _RetroSpinner(retro: retro)
           : _RetroIconBox(retro: retro, icon: Icons.system_update_rounded),
-      title: 'Check for updates',
-      subtitle: _loading ? 'Checking...' : 'Current: v${UpdateService.currentVersion}',
+      title: l10n.settingsCheckForUpdates,
+      subtitle: _loading ? l10n.settingsChecking : 'Current: v${UpdateService.currentVersion}',
     );
   }
 }

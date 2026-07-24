@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/category_constants.dart';
 import '../../core/theme/retro_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../presentation/providers/mod_providers.dart';
 import '../../presentation/providers/extra_providers.dart';
 
@@ -35,6 +36,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final currentRoute = ref.watch(currentRouteProvider);
 
     return Drawer(
@@ -57,7 +59,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/m64.svg',
                   width: 19, height: 19,
                 ),
-                label: 'Home', route: '/',
+                label: l10n.navHome, route: '/',
                 isActive: currentRoute == '/',
               ),
               _NavItem(
@@ -65,7 +67,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/catalog.svg',
                   width: 19, height: 19,
                 ),
-                label: 'catalog', route: '/catalogue',
+                label: l10n.navCatalog, route: '/catalogue',
                 isActive: currentRoute == '/catalogue',
               ),
               _NavItem(
@@ -73,7 +75,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/favorites.svg',
                   width: 19, height: 19,
                 ),
-                label: 'Favourites', route: '/favourites',
+                label: l10n.navFavourites, route: '/favourites',
                 isActive: currentRoute == '/favourites',
               ),
               _NavItem(
@@ -81,7 +83,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/popular.svg',
                   width: 19, height: 19,
                 ),
-                label: 'Popular', route: '/popular',
+                label: l10n.navPopular, route: '/popular',
                 isActive: currentRoute == '/popular',
               ),
 
@@ -91,14 +93,14 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                child: SectionKicker(retro: retro, label: 'EXCLUSIVE'),
+                child: SectionKicker(retro: retro, label: l10n.sectionExclusive),
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/vip.svg',
                   width: 19, height: 19,
                 ),
-                label: 'VIP Mods', route: '/vip',
+                label: l10n.navVIPMods, route: '/vip',
                 isActive: currentRoute == '/vip',
                 accentColor: retro.amber,
               ),
@@ -107,7 +109,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/dynos.svg',
                   width: 19, height: 19,
                 ),
-                label: 'DynOS', route: '/dynos',
+                label: l10n.navDynOS, route: '/dynos',
                 isActive: currentRoute == '/dynos',
                 accentColor: retro.blue,
               ),
@@ -116,7 +118,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/controls.svg',
                   width: 19, height: 19,
                 ),
-                label: 'Touch Controls', route: '/touch-controls',
+                label: l10n.navTouchControls, route: '/touch-controls',
                 isActive: currentRoute == '/touch-controls',
               ),
               _NavItem(
@@ -124,7 +126,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/omm.svg',
                   width: 19, height: 19,
                 ),
-                label: 'OMMR PACK', route: '/omm-rebirth',
+                label: l10n.navOmmRebirth, route: '/omm-rebirth',
                 isActive: currentRoute == '/omm-rebirth',
                 accentColor: retro.red,
               ),
@@ -135,7 +137,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                child: SectionKicker(retro: retro, label: 'EXPLORE'),
+                child: SectionKicker(retro: retro, label: l10n.sectionExplore),
               ),
               _CategoryList(),
               _SortOptions(),
@@ -149,7 +151,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/links-resource.svg',
                   width: 19, height: 19,
                 ),
-                label: 'Links Resource', route: '/links-resource',
+                label: l10n.navLinksResource, route: '/links-resource',
                 isActive: currentRoute == '/links-resource',
               ),
               _NavItem(
@@ -157,7 +159,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/disclaimer.svg',
                   width: 19, height: 19,
                 ),
-                label: 'Disclaimer', route: '/disclaimer',
+                label: l10n.navDisclaimer, route: '/disclaimer',
                 isActive: currentRoute == '/disclaimer',
               ),
               _NavItem(
@@ -165,7 +167,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/changelogs.svg',
                   width: 19, height: 19,
                 ),
-                label: 'Changelog', route: '/changelog',
+                label: l10n.navChangelog, route: '/changelog',
                 isActive: currentRoute == '/changelog',
               ),
               _NavItem(
@@ -173,7 +175,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   'assets/icons/menu/settings.svg',
                   width: 19, height: 19,
                 ),
-                label: 'Settings', route: '/settings',
+                label: l10n.navSettings, route: '/settings',
                 isActive: currentRoute == '/settings',
               ),
               Padding(
@@ -400,6 +402,7 @@ class _CategoryListState extends ConsumerState<_CategoryList> {
   Widget build(BuildContext context) {
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -421,7 +424,7 @@ class _CategoryListState extends ConsumerState<_CategoryList> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'CATEGORIES',
+                    l10n.sectionCategories,
                     style: TextStyle(
                       color: retro.ink,
                       fontSize: 13,
@@ -560,7 +563,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     fontSize: 12.5,
                   ),
-                  child: Text(widget.category),
+                  child: Text(CategoryConstants.displayName(context, widget.category)),
                 ),
               ),
               AnimatedOpacity(
@@ -582,13 +585,6 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
 class _SortOptions extends ConsumerStatefulWidget {
   const _SortOptions();
 
-  static const _items = [
-    (value: SortOrder.none, label: 'Default'),
-    (value: SortOrder.ratingDesc, label: 'Rating'),
-    (value: SortOrder.downloadsDesc, label: 'Downloads'),
-    (value: SortOrder.newest, label: 'Newest Update'),
-  ];
-
   @override
   ConsumerState<_SortOptions> createState() => _SortOptionsState();
 }
@@ -600,6 +596,14 @@ class _SortOptionsState extends ConsumerState<_SortOptions> {
   Widget build(BuildContext context) {
     final currentSort = ref.watch(sortOrderProvider);
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    final sortItems = [
+      (value: SortOrder.none, label: l10n.sortDefault),
+      (value: SortOrder.ratingDesc, label: l10n.sortRating),
+      (value: SortOrder.downloadsDesc, label: l10n.sortDownloads),
+      (value: SortOrder.newest, label: l10n.sortNewest),
+    ];
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -615,7 +619,7 @@ class _SortOptionsState extends ConsumerState<_SortOptions> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'SORT BY',
+                    l10n.sectionSortBy,
                     style: TextStyle(
                       color: retro.ink,
                       fontSize: 13,
@@ -637,7 +641,7 @@ class _SortOptionsState extends ConsumerState<_SortOptions> {
           child: _expanded
               ? Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: _SortOptions._items
+                  children: sortItems
                       .map((item) => _SortItem(
                             value: item.value,
                             label: item.label,
@@ -782,37 +786,38 @@ class _ExpandArrow extends StatelessWidget {
 class _SocialLinks extends StatelessWidget {
   const _SocialLinks();
 
-  static const _links = [
-    _SocialLinkData(
-      asset: 'assets/icons/youtube.svg',
-      url: AppConstants.youtubeUrl,
-      tooltip: 'YouTube',
-    ),
-    _SocialLinkData(
-      asset: 'assets/icons/discord.svg',
-      url: AppConstants.discordUrl,
-      tooltip: 'Discord',
-    ),
-    _SocialLinkData(
-      asset: 'assets/icons/github.svg',
-      url: AppConstants.githubUrl,
-      tooltip: 'GitHub',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    final links = [
+      _SocialLinkData(
+        asset: 'assets/icons/youtube.svg',
+        url: AppConstants.youtubeUrl,
+        tooltip: l10n.socialYouTube,
+      ),
+      _SocialLinkData(
+        asset: 'assets/icons/discord.svg',
+        url: AppConstants.discordUrl,
+        tooltip: l10n.socialDiscord,
+      ),
+      _SocialLinkData(
+        asset: 'assets/icons/github.svg',
+        url: AppConstants.githubUrl,
+        tooltip: l10n.socialGitHub,
+      ),
+    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionKicker(retro: retro, label: 'SOCIAL LINKS'),
+          SectionKicker(retro: retro, label: l10n.sectionSocialLinks),
           const SizedBox(height: 10),
           Row(
-            children: _links
+            children: links
                 .map(
                   (link) => Padding(
                     padding: const EdgeInsets.only(right: 8),
