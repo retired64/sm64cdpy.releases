@@ -11,6 +11,7 @@ class AppConstants {
 
   static const int pageSize = 6;
   static const int descriptionMaxLen = 200;
+  static const int descriptionMaxLines = 3;
   static const int titleMaxLines = 2;
 
   static const String appName = 'SM64CDPY';

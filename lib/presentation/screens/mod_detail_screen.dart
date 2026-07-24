@@ -64,7 +64,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
   bool _changelogExpanded = false;
   double _scrollOffset = 0;
 
-  double _heroHeight = 300.0;
+  double _heroHeight = 180.0;
   static const _appBarHeight = kToolbarHeight + 40;
 
   @override
@@ -101,8 +101,8 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
   Widget build(BuildContext context) {
     _heroHeight = (MediaQuery.orientationOf(context) ==
             Orientation.landscape)
-        ? (MediaQuery.sizeOf(context).height * 0.45).clamp(200.0, 280.0)
-        : 300.0;
+        ? (MediaQuery.sizeOf(context).height * 0.28).clamp(140.0, 180.0)
+        : 180.0;
 
     final retro = RetroTheme.of(context);
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
@@ -286,13 +286,6 @@ class _CinematicHero extends StatelessWidget {
           children: [
             Container(color: retro.accent),
 
-            // Scrim superior sutil — asegura contraste de los botones del
-            // app bar sin importar en qué punto de la franja caigan.
-            const Align(
-              alignment: Alignment.topCenter,
-              child: _TopScrim(),
-            ),
-
             // Costura hacia la content card, que se superpone por debajo.
             Align(
               alignment: Alignment.bottomCenter,
@@ -343,27 +336,6 @@ class _CinematicHero extends StatelessWidget {
                 bottom: 22 + _avatarSize - 16,
                 child: RetroBadgeDot(retro: retro, icon: Icons.star_rounded),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TopScrim extends StatelessWidget {
-  const _TopScrim();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: kToolbarHeight + 40,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.black.withValues(alpha: 0.28),
-            Colors.transparent,
           ],
         ),
       ),
@@ -1769,6 +1741,12 @@ class _ExpandableText extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final isLong = text.length > AppConstants.descriptionMaxLen;
 
+    final baseStyle = TextStyle(
+      color: retro.inkDim,
+      fontSize: 14,
+      height: 1.65,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1778,20 +1756,14 @@ class _ExpandableText extends StatelessWidget {
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           firstChild: Text(
-            text.truncate(AppConstants.descriptionMaxLen),
-            style: TextStyle(
-              color: retro.inkDim,
-              fontSize: 14,
-              height: 1.65,
-            ),
+            text,
+            maxLines: AppConstants.descriptionMaxLines,
+            overflow: TextOverflow.ellipsis,
+            style: baseStyle,
           ),
           secondChild: Text(
             text,
-            style: TextStyle(
-              color: retro.inkDim,
-              fontSize: 14,
-              height: 1.65,
-            ),
+            style: baseStyle,
           ),
         ),
         if (isLong) ...[
