@@ -254,7 +254,9 @@ class _DynosCardState extends ConsumerState<DynosCard>
         .replaceAll(RegExp(r'\s+'), '-')
         .replaceAll(RegExp(r'-{2,}'), '-')
         .trim();
-    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.zip';
+    final urlExt = url.split('.').last.split('?').first.toLowerCase();
+    final ext = (urlExt == 'lua' || urlExt == 'zip') ? urlExt : 'zip';
+    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.$ext';
 
     final hasDynosFolder = await installer.isDynosDirectorySelected();
 
@@ -291,7 +293,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
         return;
       }
       if (!mounted) return;
-      await _downloadSimple(url, filename, installer);
+      await _downloadSimple(url, filename, installer, rawName);
       return;
     }
 
@@ -301,13 +303,13 @@ class _DynosCardState extends ConsumerState<DynosCard>
     if (autoInstall && mounted) {
       // Auto-install to dynos folder — download only, no background install for dynos yet
       if (!mounted) return;
-      await _downloadSimple(url, filename, installer);
+      await _downloadSimple(url, filename, installer, rawName);
     } else if (mounted) {
-      await _downloadSimple(url, filename, installer);
+      await _downloadSimple(url, filename, installer, rawName);
     }
   }
 
-  Future<void> _downloadSimple(String url, String filename, ModInstaller installer) async {
+  Future<void> _downloadSimple(String url, String filename, ModInstaller installer, String rawName) async {
     if (!mounted) return;
     setState(() { _downloading = true; _progress = 0.0; });
     try {
@@ -322,7 +324,11 @@ class _DynosCardState extends ConsumerState<DynosCard>
           if (!mounted) return;
           final savedName = path.split('/').last;
           if (await installer.isDynosDirectorySelected()) {
-            await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+            if (savedName.toLowerCase().endsWith('.zip')) {
+              await installer.installModToDynosFolder(zipPath: path, modName: rawName);
+            } else {
+              await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+            }
           }
           if (!mounted) return;
           setState(() { _downloading = false; _progress = 0.0; });

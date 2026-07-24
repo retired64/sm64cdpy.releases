@@ -142,6 +142,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "openDirectoryPicker" -> openDirectoryPicker(result)
             "getSavedDirectoryUri" -> getSavedDirectoryUri(result)
             "installMod" -> installMod(call, result)
+            "installModToDynosFolder" -> installModToDynosFolder(call, result)
             "installModBackground" -> installModBackground(call, result)
             "downloadAndInstallMod" -> downloadAndInstallMod(call, result)
             "cancelModOperation" -> cancelModOperation(call, result)
@@ -415,6 +416,80 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (treeDoc == null) {
                     act.runOnUiThread {
                         result.error("TREE_ERROR", "Could not access the selected directory tree.", null)
+                    }
+                    return@Thread
+                }
+
+                val fileCount = extractZipToDocumentFile(zipFile, treeDoc, act)
+                val topDir = detectTopLevelDir(zipFile)
+                val displayDir = topDir ?: modName
+                zipFile.delete()
+
+                act.runOnUiThread {
+                    result.success(mapOf(
+                        "success" to true,
+                        "targetDir" to displayDir,
+                        "fileCount" to fileCount
+                    ))
+                }
+            } catch (e: Exception) {
+                act.runOnUiThread {
+                    result.error("INSTALL_ERROR", e.message ?: "Unknown error during installation", null)
+                }
+            }
+        }.start()
+    }
+
+    /**
+     * Instala un mod (extrae el ZIP) directamente en la carpeta DynOS
+     * seleccionada por el usuario. Clon de installMod() pero leyendo
+     * KEY_DYNOS_TREE_URI en vez de KEY_TREE_URI.
+     */
+    private fun installModToDynosFolder(call: MethodCall, result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        val prefs = getPrefs()
+        val treeUriString = prefs.getString(KEY_DYNOS_TREE_URI, null)
+        if (treeUriString == null) {
+            result.error("NO_DIRECTORY", "No DynOS directory selected. Please select one in Settings first.", null)
+            return
+        }
+
+        val treeUri = Uri.parse(treeUriString)
+        if (!isTreeAccessible(treeUri)) {
+            prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+            result.error(
+                "DIR_NOT_ACCESSIBLE",
+                "The selected DynOS directory is no longer accessible. Please select it again in Settings.",
+                null
+            )
+            return
+        }
+
+        val zipPath = call.argument<String>("zipPath")
+        val modName = call.argument<String>("modName")
+
+        if (zipPath == null || modName == null) {
+            result.error("INVALID_ARGS", "zipPath and modName are required", null)
+            return
+        }
+
+        val zipFile = java.io.File(zipPath)
+        if (!zipFile.exists()) {
+            result.error("FILE_NOT_FOUND", "ZIP file not found at: $zipPath", null)
+            return
+        }
+
+        Thread {
+            try {
+                val treeDoc = DocumentFile.fromTreeUri(act, treeUri)
+                if (treeDoc == null) {
+                    act.runOnUiThread {
+                        result.error("TREE_ERROR", "Could not access the selected DynOS directory tree.", null)
                     }
                     return@Thread
                 }

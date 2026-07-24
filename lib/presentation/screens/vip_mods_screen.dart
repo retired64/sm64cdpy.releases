@@ -258,7 +258,9 @@ class _VipModCardState extends ConsumerState<VipModCard>
         .replaceAll(RegExp(r'\s+'), '-')
         .replaceAll(RegExp(r'-{2,}'), '-')
         .trim();
-    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.zip';
+    final urlExt = url.split('.').last.split('?').first.toLowerCase();
+    final ext = (urlExt == 'lua' || urlExt == 'zip') ? urlExt : 'zip';
+    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.$ext';
 
     final hasFolder = await installer.isDirectorySelected();
 
@@ -304,18 +306,30 @@ class _VipModCardState extends ConsumerState<VipModCard>
     final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
     if (autoInstall && mounted) {
-      BackgroundInstallService.instance.startDownloadAndInstall(
+      final chain = await BackgroundInstallService.instance.startDownloadAndInstall(
         url: url, modName: rawName, fileName: filename,
       );
       if (!mounted) return;
-      AppSnackbar.info(context,
-          message: AppLocalizations.of(context).detailDownloading(filename));
+      if (chain != null) {
+        AppSnackbar.info(context,
+            message: AppLocalizations.of(context).detailDownloading(filename));
+      } else {
+        // Fallback: el encolado de WorkManager falló silenciosamente
+        // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
+        await _downloadSimple(url, filename, installer, extract: true, modName: rawName);
+      }
     } else if (mounted) {
       await _downloadSimple(url, filename, installer);
     }
   }
 
-  Future<void> _downloadSimple(String url, String filename, ModInstaller installer) async {
+  Future<void> _downloadSimple(
+    String url,
+    String filename,
+    ModInstaller installer, {
+    bool extract = false,
+    String? modName,
+  }) async {
     if (!mounted) return;
     setState(() { _downloading = true; _progress = 0.0; });
     try {
@@ -329,7 +343,11 @@ class _VipModCardState extends ConsumerState<VipModCard>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
+          if (extract) {
+            await installer.installMod(zipPath: path, modName: modName ?? savedName);
+          } else {
+            await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
+          }
           if (!mounted) return;
           setState(() { _downloading = false; _progress = 0.0; });
           AppSnackbar.success(context,

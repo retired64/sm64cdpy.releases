@@ -12,6 +12,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/omm_rebirth_entity.dart';
+import '../../services/background_install_service.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
@@ -248,11 +249,6 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
       }
     }
 
-    setState(() {
-      _downloading = true;
-      _progress = 0.0;
-    });
-
     final url = widget.mod.downloadUrl;
     final rawName = widget.mod.title
         .toLowerCase()
@@ -260,8 +256,48 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
         .replaceAll(RegExp(r'\s+'), '-')
         .replaceAll(RegExp(r'-{2,}'), '-')
         .trim();
-    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.zip';
+    final urlExt = url.split('.').last.split('?').first.toLowerCase();
+    final ext = (urlExt == 'lua' || urlExt == 'zip') ? urlExt : 'zip';
+    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.$ext';
 
+    // Los mods DynOS (cappy-bros-dynos) no pasan por el WorkManager de
+    // BackgroundInstallService: van directo a la carpeta DynOS.
+    if (isDynosMod) {
+      await _downloadSimple(url, filename, installer, isDynosMod: true, rawName: rawName);
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+
+    if (autoInstall && hasFolder && mounted) {
+      final chain = await BackgroundInstallService.instance.startDownloadAndInstall(
+        url: url, modName: rawName, fileName: filename,
+      );
+      if (!mounted) return;
+      if (chain != null) {
+        AppSnackbar.info(context,
+            message: AppLocalizations.of(context).detailDownloading(filename));
+      } else {
+        // Fallback: el encolado de WorkManager falló silenciosamente
+        // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
+        await _downloadSimple(url, filename, installer, extract: true, rawName: rawName);
+      }
+    } else if (mounted) {
+      await _downloadSimple(url, filename, installer, rawName: rawName);
+    }
+  }
+
+  Future<void> _downloadSimple(
+    String url,
+    String filename,
+    ModInstaller installer, {
+    bool extract = false,
+    bool isDynosMod = false,
+    required String rawName,
+  }) async {
+    if (!mounted) return;
+    setState(() { _downloading = true; _progress = 0.0; });
     try {
       await FileDownloader.downloadFile(
         url: url,
@@ -275,7 +311,15 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
           if (!mounted) return;
           final savedName = path.split('/').last;
           if (isDynosMod) {
-            await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+            if (await installer.isDynosDirectorySelected()) {
+              if (savedName.toLowerCase().endsWith('.zip')) {
+                await installer.installModToDynosFolder(zipPath: path, modName: rawName);
+              } else {
+                await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+              }
+            }
+          } else if (extract) {
+            await installer.installMod(zipPath: path, modName: rawName);
           } else {
             await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
           }

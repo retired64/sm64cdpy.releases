@@ -258,7 +258,9 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
         .replaceAll(RegExp(r'\s+'), '-')
         .replaceAll(RegExp(r'-{2,}'), '-')
         .trim();
-    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.zip';
+    final urlExt = url.split('.').last.split('?').first.toLowerCase();
+    final ext = (urlExt == 'lua' || urlExt == 'zip') ? urlExt : 'zip';
+    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.$ext';
 
     try {
       await FileDownloader.downloadFile(
@@ -272,7 +274,13 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+          if (await installer.isDynosDirectorySelected()) {
+            if (savedName.toLowerCase().endsWith('.zip')) {
+              await installer.installModToDynosFolder(zipPath: path, modName: rawName);
+            } else {
+              await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+            }
+          }
           if (!mounted) return;
           setState(() { _downloading = false; _progress = 0.0; });
           AppSnackbar.success(context,

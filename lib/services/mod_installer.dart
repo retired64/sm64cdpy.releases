@@ -254,6 +254,45 @@ class ModInstaller {
     }
   }
 
+  /// Instala un mod en la carpeta DynOS: extrae el ZIP en [zipPath] dentro
+  /// de la carpeta DynOS seleccionada, bajo un subdirectorio con nombre
+  /// [modName].
+  ///
+  /// [zipPath] debe ser una ruta absoluta al archivo ZIP.
+  /// [modName] es el nombre sanitizado del mod (se usará como nombre de carpeta).
+  ///
+  /// Esta operación se ejecuta en un hilo nativo (no bloquea UI).
+  /// El ZIP se elimina del filesystem tras la extracción exitosa.
+  Future<ModInstallResult> installModToDynosFolder({
+    required String zipPath,
+    required String modName,
+  }) async {
+    try {
+      final result = await _channel.invokeMethod<Map>('installModToDynosFolder', {
+        'zipPath': zipPath,
+        'modName': modName,
+      });
+
+      if (result == null) {
+        return ModInstallResult.error('No result from native plugin');
+      }
+
+      final success = result['success'] as bool? ?? false;
+      if (success) {
+        return ModInstallResult.ok(
+          targetDir: result['targetDir'] as String? ?? modName,
+          fileCount: result['fileCount'] as int? ?? 0,
+        );
+      } else {
+        return ModInstallResult.error(
+          result['error'] as String? ?? 'Unknown installation error',
+        );
+      }
+    } on PlatformException catch (e) {
+      return ModInstallResult.error(e.message ?? 'Native plugin error');
+    }
+  }
+
   /// Revoca los permisos y limpia la selección de carpeta de dynos.
   Future<void> clearDynosSelection() async {
     try {
