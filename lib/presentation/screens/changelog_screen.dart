@@ -345,6 +345,10 @@ const _kVersions = <_VersionData>[
         items: [
           'Mod detail hero height reduced from 300px to 180px — avatar now sits near the top, removing wasted empty space and putting content front and center.',
           'Description text now uses 3-line clamping (maxLines: 3 + TextOverflow.ellipsis) instead of character-based truncation — no more mid-word cuts, cleaner and more readable.',
+          'Mod detail title cleaned up — removed the teal "stamp" shadow effect behind the title text. Title now uses softWrap for clean word wrapping on long mod names.',
+          'Download buttons in exclusive sections (VIP, DynOS, Touch Controls, OMM Rebirth) now use the full download flow: notification permission check, folder selection, real progress bar, and auto-copy to the target folder.',
+          'New DynOS folder selector in Settings → Game Integration — DynOS and Touch Controls packs now install to a separate dynos/packs/ folder instead of the mods folder.',
+          'OMM Rebirth "cappy-bros-dynos" now installs to the DynOS folder automatically (the only OMM entry that is a DynOS pack, not a mod).',
         ],
       ),
       _ChangeGroupData(

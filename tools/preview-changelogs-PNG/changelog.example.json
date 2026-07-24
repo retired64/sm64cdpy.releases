@@ -7,8 +7,12 @@
     {
       "type": "improved",
       "items": [
-        "El avatar del mod ahora esta mas arriba en la pantalla de detalles, sin espacio vacio arriba.",
-        "La descripcion del mod ahora se corta limpiamente a 3 lineas sin partir palabras a la mitad."
+        "El avatar del mod ahora esta mas arriba en la pantalla de detalles, sin espacio vacio.",
+        "La descripcion del mod ahora se corta limpiamente a 3 lineas sin partir palabras.",
+        "El titulo del mod ahora es texto limpio sin sombra de color, y las palabras largas saltan de linea correctamente.",
+        "Los botones de descarga en VIP, DynOS, Touch Controls y OMM Rebirth ahora usan el sistema completo: permisos, carpeta destino, barra de progreso real y copia automatica.",
+        "Nueva opcion 'Carpeta DynOS' en Ajustes para instalar packs de DynOS y Touch Controls en dynos/packs/.",
+        "El mod 'cappy-bros-dynos' de OMM Rebirth ahora se instala directo en la carpeta DynOS."
       ]
     },
     {

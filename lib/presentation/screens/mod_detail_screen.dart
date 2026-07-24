@@ -489,18 +489,8 @@ class _TitleSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Título "estampado": una copia desplazada en el acento detrás del
-        // texto principal — el efecto de doble impresión de la referencia.
-        Stack(
-          children: [
-            Positioned(
-              left: 2.5,
-              top: 2.5,
-              child: Text(mod.title, style: titleStyle.copyWith(color: retro.accent)),
-            ),
-            Text(mod.title, style: titleStyle),
-          ],
-        ),
+        // Título limpio, sin efecto estampado.
+        Text(mod.title, style: titleStyle, softWrap: true),
         const SizedBox(height: 10),
         Row(
           children: [
