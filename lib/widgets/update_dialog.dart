@@ -29,7 +29,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   bool _downloading = false;
   double _progress = 0;
   String? _error;
-  late final AppLocalizations _l10n;
+  late AppLocalizations _l10n;
 
   bool get _canOtaUpdate =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
@@ -61,27 +61,32 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     _progress =
                         double.tryParse(event.value ?? '0') ?? 0;
                   });
+                  break;
 
                 case OtaStatus.INSTALLING:
                   break;
 
                 case OtaStatus.INSTALLATION_DONE:
                   setState(() => _downloading = false);
+                  break;
 
                 case OtaStatus.CANCELED:
                   setState(() => _downloading = false);
+                  break;
 
                 case OtaStatus.ALREADY_RUNNING_ERROR:
                   setState(() {
                     _error = _l10n.updateAlreadyDownloading;
                     _downloading = false;
                   });
+                  break;
 
                 case OtaStatus.PERMISSION_NOT_GRANTED_ERROR:
                   setState(() {
                     _error = _l10n.updatePermissionDenied;
                     _downloading = false;
                   });
+                  break;
 
                 case OtaStatus.INTERNAL_ERROR:
                   setState(() {
@@ -90,18 +95,21 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     );
                     _downloading = false;
                   });
+                  break;
 
                 case OtaStatus.DOWNLOAD_ERROR:
                   setState(() {
                     _error = _l10n.updateDownloadError;
                     _downloading = false;
                   });
+                  break;
 
                 case OtaStatus.CHECKSUM_ERROR:
                   setState(() {
                     _error = _l10n.updateChecksumError;
                     _downloading = false;
                   });
+                  break;
 
                 case OtaStatus.INSTALLATION_ERROR:
                   setState(() {
@@ -110,6 +118,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     );
                     _downloading = false;
                   });
+                  break;
 
               }
             },
