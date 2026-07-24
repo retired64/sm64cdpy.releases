@@ -301,7 +301,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String catalogueModCount(int count) {
-    return '$count MODS';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count MODS',
+      one: '$count MOD',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -377,7 +383,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String popularModCount(int count) {
-    return '$count MODS';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count MODS',
+      one: '$count MOD',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -495,7 +507,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String touchModCount(int count) {
-    return '$count LAYOUTS';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count LAYOUTS',
+      one: '$count LAYOUT',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1070,7 +1088,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String sharedModCount(int count) {
-    return '$count MODS';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count MODS',
+      one: '$count MOD',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1386,7 +1410,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String catalogueModCount(int count) {
-    return '$count MODS';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count MODS',
+      one: '$count MOD',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1462,7 +1492,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String popularModCount(int count) {
-    return '$count MODS';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count MODS',
+      one: '$count MOD',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1580,7 +1616,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String touchModCount(int count) {
-    return '$count LAYOUTS';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count LAYOUTS',
+      one: '$count LAYOUT',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2155,7 +2197,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String sharedModCount(int count) {
-    return '$count MODS';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count MODS',
+      one: '$count MOD',
+    );
+    return '$_temp0';
   }
 
   @override

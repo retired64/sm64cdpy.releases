@@ -386,7 +386,7 @@
   "@catalogueTitle": {
     "description": "Catalogue screen title"
   },
-  "catalogueModCount": "{count} MODS",
+  "catalogueModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
   "@catalogueModCount": {
     "description": "Catalogue screen count of total mods",
     "placeholders": {
@@ -482,7 +482,7 @@
   "@popularTitle": {
     "description": "Popular screen title"
   },
-  "popularModCount": "{count} MODS",
+  "popularModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
   "@popularModCount": {
     "description": "Popular screen count of total ranked mods",
     "placeholders": {
@@ -647,7 +647,7 @@
   "@touchTitle": {
     "description": "Touch controls screen title"
   },
-  "touchModCount": "{count} LAYOUTS",
+  "touchModCount": "{count, plural, =1{{count} LAYOUT} other{{count} LAYOUTS}}",
   "@touchModCount": {
     "description": "Touch controls screen count of available layouts",
     "placeholders": {
@@ -1400,7 +1400,7 @@
     "description": "Section header for the OMM Rebirth mods list"
   },
 
-  "sharedModCount": "{count} MODS",
+  "sharedModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
   "@sharedModCount": {
     "description": "Shared label showing the count of mods",
     "placeholders": {

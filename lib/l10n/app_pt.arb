@@ -100,7 +100,7 @@
   "homeRetry": "Tentar novamente",
 
   "catalogueTitle": "NAVEGAR MODS",
-  "catalogueModCount": "{count} MODS",
+  "catalogueModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
   "catalogueResultCount": "{count, plural, =1{{count} RESULTADO} other{{count} RESULTADOS}}",
   "catalogueSearchHint": "BUSCAR MODS, AUTORES, TAGS…",
   "catalogueSortDefault": "Padrão",
@@ -122,7 +122,7 @@
   "catalogueEllipsis": "···",
 
   "popularTitle": "POPULARES",
-  "popularModCount": "{count} MODS",
+  "popularModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
   "popularMoreRankings": "MAIS RANKINGS",
   "popularRankings": "RANKINGS",
   "popularPage": "PG {page}/{total}",
@@ -163,7 +163,7 @@
   "dynosFailedToLoad": "FALHA AO CARREGAR DYNOS",
 
   "touchTitle": "CONTROLES DE TOQUE",
-  "touchModCount": "{count} LAYOUTS",
+  "touchModCount": "{count, plural, =1{{count} LAYOUT} other{{count} LAYOUTS}}",
   "touchEmpty": "NENHUM LAYOUT DE TOQUE AINDA",
   "touchEmptyHint": "Volte mais tarde para layouts de controle mobile.",
   "touchFailedToLoad": "FALHA AO CARREGAR CONTROLES DE TOQUE",
@@ -341,7 +341,7 @@
   "dynosSectionHeader": "DYNOS PERSONALIZADOS",
   "touchSectionHeader": "LAYOUTS MÓVEIS",
   "ommSectionHeader": "MODS OMM REBIRTH",
-  "sharedModCount": "{count} MODS",
+  "sharedModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
 
   "settingsLanguageMode": "IDIOMA",
   "languageFollowSystem": "Seguir sistema",

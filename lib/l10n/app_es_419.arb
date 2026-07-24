@@ -100,7 +100,7 @@
   "homeRetry": "Reintentar",
 
   "catalogueTitle": "EXPLORAR MODS",
-  "catalogueModCount": "{count} MODS",
+  "catalogueModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
   "catalogueResultCount": "{count, plural, =1{{count} RESULTADO} other{{count} RESULTADOS}}",
   "catalogueSearchHint": "BUSCAR MODS, AUTORES, ETIQUETAS…",
   "catalogueSortDefault": "Predeterminado",
@@ -122,7 +122,7 @@
   "catalogueEllipsis": "···",
 
   "popularTitle": "POPULAR",
-  "popularModCount": "{count} MODS",
+  "popularModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
   "popularMoreRankings": "MÁS RANKINGS",
   "popularRankings": "RANKINGS",
   "popularPage": "PG {page}/{total}",
@@ -163,7 +163,7 @@
   "dynosFailedToLoad": "ERROR AL CARGAR DYNOS",
 
   "touchTitle": "CONTROLES TÁCTILES",
-  "touchModCount": "{count} DISEÑOS",
+  "touchModCount": "{count, plural, =1{{count} DISEÑO} other{{count} DISEÑOS}}",
   "touchEmpty": "AÚN NO HAY DISEÑOS TÁCTILES",
   "touchEmptyHint": "Vuelve más tarde para ver diseños de controles móviles.",
   "touchFailedToLoad": "ERROR AL CARGAR CONTROLES TÁCTILES",
@@ -341,7 +341,7 @@
   "dynosSectionHeader": "DYNOS PERSONALIZADOS",
   "touchSectionHeader": "LAYOUTS MÓVILES",
   "ommSectionHeader": "MODS OMM REBIRTH",
-  "sharedModCount": "{count} MODS",
+  "sharedModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
 
   "settingsLanguageMode": "IDIOMA",
   "languageFollowSystem": "Seguir sistema",

@@ -639,7 +639,7 @@ abstract class AppLocalizations {
   /// Catalogue screen count of total mods
   ///
   /// In en, this message translates to:
-  /// **'{count} MODS'**
+  /// **'{count, plural, =1{{count} MOD} other{{count} MODS}}'**
   String catalogueModCount(int count);
 
   /// Catalogue screen count of search/filter results
@@ -765,7 +765,7 @@ abstract class AppLocalizations {
   /// Popular screen count of total ranked mods
   ///
   /// In en, this message translates to:
-  /// **'{count} MODS'**
+  /// **'{count, plural, =1{{count} MOD} other{{count} MODS}}'**
   String popularModCount(int count);
 
   /// Popular screen button label to view more rankings
@@ -981,7 +981,7 @@ abstract class AppLocalizations {
   /// Touch controls screen count of available layouts
   ///
   /// In en, this message translates to:
-  /// **'{count} LAYOUTS'**
+  /// **'{count, plural, =1{{count} LAYOUT} other{{count} LAYOUTS}}'**
   String touchModCount(int count);
 
   /// Touch controls screen empty state title
@@ -2007,7 +2007,7 @@ abstract class AppLocalizations {
   /// Shared label showing the count of mods
   ///
   /// In en, this message translates to:
-  /// **'{count} MODS'**
+  /// **'{count, plural, =1{{count} MOD} other{{count} MODS}}'**
   String sharedModCount(int count);
 
   /// Settings tile label for the language selector

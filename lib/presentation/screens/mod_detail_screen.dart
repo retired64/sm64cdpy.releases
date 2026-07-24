@@ -1894,6 +1894,7 @@ class _DateCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Container(
@@ -1920,7 +1921,7 @@ class _DateCell extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              formatDate(date) ?? date,
+              formatDate(date, locale: l10n.localeName) ?? date,
               style: TextStyle(
                 color: retro.ink,
                 fontSize: 13,
@@ -2054,6 +2055,7 @@ class _ChangelogEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2115,7 +2117,7 @@ class _ChangelogEntry extends StatelessWidget {
                   if (update.date != null) ...[
                     const SizedBox(height: 3),
                     Text(
-                      formatDate(update.date) ?? update.date!,
+                      formatDate(update.date, locale: l10n.localeName) ?? update.date!,
                       style: TextStyle(
                         color: retro.inkDim,
                         fontSize: 11,
