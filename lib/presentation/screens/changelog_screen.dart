@@ -336,9 +336,50 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.4.5',
+    version: '1.5.0',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'Multi-language support — English (US), Spanish (Latin America), and Brazilian Portuguese. All screens, widgets, dialogs, and settings translated via flutter_localizations + ARB (299 keys).',
+          'Language selector in Settings → Appearance, with expandable dropdown and country flags (follow system / EN / ES / PT).',
+          'Android notification channel names and foreground service messages localized (values, values-es, values-pt-rBR).',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Disclaimer screen: legacy hardcoded bilingual EN/ES toggle replaced by the standard i18n system. Original legal text preserved clause-for-clause in all three languages.',
+          'Date formatting now follows the active locale (formatDate accepts optional locale parameter).',
+          'Count labels (X MODS / X LAYOUTS) now use proper ICU pluralization (1 MOD / X MODS).',
+          'Dark text on accent backgrounds (LAUNCH GAME button, SOON badge) now centralized as inkOnAccent token in RetroTheme.',
+          'Medal colors (gold/silver/bronze) unified between home and popular screens as RetroTheme tokens (medalGold, medalSilver, medalBronze).',
+          'Changelog type labels (New, Improved, Fixed, Removed, Changed) and category display names extracted to ARB for translation.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Pagination label in Popular screen was hardcoded in Spanish (MOSTRANDO\u2026) — unified with the catalogue pagination key.',
+          'Links & Resources screen descriptions were hardcoded in Spanish in the English translation template — fixed to English.',
+          'Duplicate notification-permission and mods-folder dialog strings in mod_detail_screen now share a single ARB key instead of duplicated entries.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.removed,
+        items: [
+          'AppTheme class (~345 lines) eliminated — RetroTheme is now the sole design source for the entire app.',
+          'google_fonts dependency removed (no longer used after AppTheme deletion).',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.4.5',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,
