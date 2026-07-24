@@ -778,11 +778,34 @@ class _ThemeSelector extends ConsumerWidget {
 
 // ── Language selector ─────────────────────────────────────────────────────────
 
-class _LocaleSelector extends ConsumerWidget {
+class _LocaleSelector extends ConsumerStatefulWidget {
   const _LocaleSelector();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_LocaleSelector> createState() => _LocaleSelectorState();
+}
+
+class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
+  bool _expanded = false;
+
+  String _flag(String? tag) => switch (tag) {
+        null => '🌐',
+        'en_US' => '🇺🇸',
+        'es_419' => '🇲🇽',
+        'pt_BR' => '🇧🇷',
+        _ => '🌐',
+      };
+
+  String _currentLabel(AppLocalizations l10n, String? tag) => switch (tag) {
+        null => l10n.languageFollowSystem,
+        'en_US' => l10n.languageEnglish,
+        'es_419' => l10n.languageSpanish,
+        'pt_BR' => l10n.languagePortuguese,
+        _ => l10n.languageFollowSystem,
+      };
+
+  @override
+  Widget build(BuildContext context) {
     final localeTag = ref.watch(localeNotifierProvider);
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
@@ -797,55 +820,123 @@ class _LocaleSelector extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.translate_rounded, size: 14, color: retro.accent),
-              const SizedBox(width: 6),
-              Text(
-                l10n.settingsLanguageMode,
-                style: TextStyle(
-                  color: retro.inkDim,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: _localeOptions(l10n).asMap().entries.map((entry) {
-              final i = entry.key;
-              final opt = entry.value;
-              final isSelected = localeTag == opt.tag;
-              return Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(left: i == 0 ? 0 : 8),
-                  child: _ThemeOptionTile(
-                    retro: retro,
-                    icon: opt.icon,
-                    label: opt.label,
-                    isSelected: isSelected,
-                    onTap: () => ref
-                        .read(localeNotifierProvider.notifier)
-                        .setLocale(opt.tag),
+          GestureDetector(
+            onTap: () => setState(() => _expanded = !_expanded),
+            behavior: HitTestBehavior.opaque,
+            child: Row(
+              children: [
+                Icon(Icons.translate_rounded, size: 14, color: retro.accent),
+                const SizedBox(width: 6),
+                Text(
+                  l10n.settingsLanguageMode,
+                  style: TextStyle(
+                    color: retro.inkDim,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.8,
                   ),
                 ),
-              );
-            }).toList(),
+                const Spacer(),
+                Text(_flag(localeTag), style: const TextStyle(fontSize: 15)),
+                const SizedBox(width: 6),
+                Text(
+                  _currentLabel(l10n, localeTag),
+                  style: TextStyle(
+                    color: retro.ink,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                AnimatedRotation(
+                  turns: _expanded ? 0.5 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOutCubic,
+                  child: Icon(
+                    Icons.expand_more,
+                    size: 20,
+                    color: _expanded ? retro.accent : retro.inkDim,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.hardEdge,
+            child: _expanded
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _options(l10n).map((opt) {
+                        final isSelected = localeTag == opt.tag;
+                        return GestureDetector(
+                          onTap: () {
+                            ref
+                                .read(localeNotifierProvider.notifier)
+                                .setLocale(opt.tag);
+                            setState(() => _expanded = false);
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color:
+                                  isSelected ? retro.accent : retro.surfaceAlt,
+                              border: Border.all(
+                                color: isSelected
+                                    ? retro.border
+                                    : retro.border.withValues(alpha: 0.4),
+                                width: isSelected ? 2 : 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(opt.flag,
+                                    style: const TextStyle(fontSize: 16)),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    opt.label,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? retro.background
+                                          : retro.ink,
+                                      fontSize: 13,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w800
+                                          : FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                if (isSelected)
+                                  Icon(Icons.check,
+                                      size: 16, color: retro.background),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  )
+                : const SizedBox.shrink(),
           ),
         ],
       ),
     );
   }
 
-  List<({String? tag, String label, IconData icon})> _localeOptions(
+  List<({String? tag, String label, String flag})> _options(
       AppLocalizations l10n) {
     return [
-      (tag: null, label: l10n.languageFollowSystem, icon: Icons.language_rounded),
-      (tag: 'en_US', label: l10n.languageEnglish, icon: Icons.flag_rounded),
-      (tag: 'es_419', label: l10n.languageSpanish, icon: Icons.flag_rounded),
-      (tag: 'pt_BR', label: l10n.languagePortuguese, icon: Icons.flag_rounded),
+      (tag: null, label: l10n.languageFollowSystem, flag: '🌐'),
+      (tag: 'en_US', label: l10n.languageEnglish, flag: '🇺🇸'),
+      (tag: 'es_419', label: l10n.languageSpanish, flag: '🇲🇽'),
+      (tag: 'pt_BR', label: l10n.languagePortuguese, flag: '🇧🇷'),
     ];
   }
 }
