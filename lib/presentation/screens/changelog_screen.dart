@@ -336,9 +336,22 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.5.0',
+    version: '1.5.1',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'New app icon — concept by Retired64, adapted by □●AGS4●□.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.5.0',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,
