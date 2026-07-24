@@ -346,6 +346,12 @@ const _kVersions = <_VersionData>[
           'New app icon — concept by Retired64, adapted by □●AGS4●□.',
         ],
       ),
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Update dialog crashed with a full-screen error the moment "Update now" was tapped, due to a localization field being reassigned on every rebuild.',
+        ],
+      ),
     ],
   ),
   _VersionData(

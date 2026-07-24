@@ -308,8 +308,38 @@ jobs:
           # sin la sección "Descargas" ni "Checksums" que ya redactamos abajo aparte)
           CHANGELOG=$(awk '/^## Sm64CDPY/{flag=1; next} /^---$/{exit} flag' /tmp/release_notes.txt | sed '/^[[:space:]]*$/d')
 
-          # Límite de seguridad: Discord corta mensajes a 2000 caracteres
-          CHANGELOG=$(echo "$CHANGELOG" | cut -c1-900)
+          # ── Armar el esqueleto del mensaje SIN el changelog, para saber
+          # cuántos caracteres nos quedan realmente disponibles para él ──
+          SKELETON=$(cat << MSG
+          ## Sm64CDPY Android v${V}
+
+          <@&${DISCORD_ROLE_ID}>
+
+
+
+          ### ¿Qué versión instalar?
+          - **arm64** → dispositivos modernos de 64-bit. **Recomendado** para la mayoría.
+          - **arm32** → dispositivos antiguos de 32-bit.
+          - **x86_64** → emuladores (BlueStacks, etc).
+
+          ### Descargas
+          - [Sm64CDPYv${V}-arm64.apk](${ARM64_URL})
+          - [Sm64CDPYv${V}-arm32.apk](${ARM32_URL})
+          - [Sm64CDPYv${V}-x86_64.apk](${X86_URL})
+          MSG
+          )
+
+          # Límite real de Discord: 2000. Dejamos margen de seguridad de 50.
+          MAX_TOTAL=1950
+          SKELETON_LEN=${#SKELETON}
+          BUDGET=$((MAX_TOTAL - SKELETON_LEN))
+          if [ "$BUDGET" -lt 0 ]; then BUDGET=0; fi
+
+          if [ "${#CHANGELOG}" -gt "$BUDGET" ]; then
+            CHANGELOG=$(echo "$CHANGELOG" | cut -c1-"$BUDGET")
+            CHANGELOG="${CHANGELOG}
+          … (ver changelog completo en el release)"
+          fi
 
           MESSAGE=$(cat << MSG
           ## Sm64CDPY Android v${V}
@@ -329,6 +359,13 @@ jobs:
           - [Sm64CDPYv${V}-x86_64.apk](${X86_URL})
           MSG
           )
+
+          # Cinturón y tirantes: si por lo que sea igual se pasó de 2000, cortamos el total
+          if [ "${#MESSAGE}" -gt 2000 ]; then
+            MESSAGE=$(echo "$MESSAGE" | cut -c1-1997)"..."
+          fi
+
+          echo "Largo final del mensaje: ${#MESSAGE} caracteres"
 
           PAYLOAD=$(jq -n \
             --arg content "$MESSAGE" \
