@@ -58,6 +58,37 @@ class ModInstallWorker(
         }
 
         try {
+            // El archivo descargado no siempre es un ZIP (ej. mods sueltos en .lua).
+            // Si no es ZIP, lo copiamos directo a la raíz de la carpeta seleccionada
+            // en vez de intentar "extraerlo" con ZipInputStream (que fallaría en
+            // silencio: 0 entradas encontradas, sin excepción).
+            if (!isZipFile(zipFile)) {
+                setForeground(
+                    ForegroundInfo(
+                        NOTIFICATION_ID,
+                        buildNotification(modName, 0, 0, true)
+                    )
+                )
+
+                val copied = copyFileDirect(zipFile, treeDoc)
+                if (!copied) {
+                    return Result.failure(
+                        workDataOf(
+                            "error" to "Could not copy file to the selected directory."
+                        )
+                    )
+                }
+
+                zipFile.delete()
+
+                return Result.success(
+                    workDataOf(
+                        OUTPUT_FILE_COUNT to 1,
+                        OUTPUT_TARGET_DIR to ""
+                    )
+                )
+            }
+
             val totalEntries = countZipEntries(zipFile)
             val indeterminate = totalEntries <= 0
 
@@ -216,6 +247,48 @@ class ModInstallWorker(
         }
 
         return fileCount
+    }
+
+    /**
+     * Determina si el archivo descargado es realmente un ZIP en base a su
+     * extensión. No basta con confiar en que "vino del instalador de mods":
+     * el mismo Worker recibe tanto ZIPs como archivos sueltos (ej. .lua).
+     */
+    private fun isZipFile(file: File): Boolean {
+        return file.extension.equals("zip", ignoreCase = true)
+    }
+
+    /**
+     * Copia un archivo suelto (no-ZIP, ej. .lua) directo a la raíz del árbol
+     * SAF seleccionado, sin intentar extraerlo. Preserva el nombre original
+     * del archivo (que ya trae la extensión correcta, ver ModDownloadWorker /
+     * capa Dart que arma el fileName).
+     */
+    private fun copyFileDirect(sourceFile: File, targetDir: DocumentFile): Boolean {
+        return try {
+            val mimeType = guessMimeType(sourceFile.name)
+            val outputFile = targetDir.createFile(mimeType, sourceFile.name)
+                ?: return false
+
+            applicationContext.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
+                FileInputStream(sourceFile).use { input ->
+                    input.copyTo(os)
+                }
+                os.flush()
+            } ?: return false
+
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    private fun guessMimeType(fileName: String): String {
+        return when (fileName.substringAfterLast('.', "").lowercase()) {
+            "lua" -> "text/x-lua"
+            "zip" -> "application/zip"
+            else -> "application/octet-stream"
+        }
     }
 
     @Throws(IOException::class)
