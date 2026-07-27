@@ -336,9 +336,37 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.6.0',
+    version: '1.6.1',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Standalone .lua mods from the catalogue now download and copy correctly to the mods folder — no more silently failing because the file was wrongly treated as a ZIP.',
+          'Native SAF file creation changed from hardcoded "application/zip" to generic "application/octet-stream" MIME type so .lua files (and any non-ZIP) can be created in the selected folder.',
+          'All download callbacks now check the operation result before showing success — false "Saved to folder" messages when the copy failed are gone.',
+          'Filename inference no longer forces .zip extension on /download URLs — the server\'s Content-Disposition header now determines the real filename.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'Download success messages now show the content type in context — "Saved to DynOS folder", "Saved to Touch Controls folder", etc., instead of the generic "mods folder" for everything.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.changed,
+        items: [
+          'Removed 4 unused dependencies (cupertino_icons, lucide_icons_flutter, android_intent_plus, archive) — smaller APK, faster build.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.6.0',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.improved,
