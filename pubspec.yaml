@@ -12,7 +12,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  cupertino_icons: ^1.0.8
   flutter_riverpod: ^3.3.1
   riverpod: ^3.2.1
   riverpod_annotation: ^4.0.2
@@ -23,18 +22,11 @@ dependencies:
   url_launcher: ^6.3.0
   intl: ^0.20.2
   flutter_svg: ^2.0.10+1
-  lucide_icons_flutter: ^3.1.12
   share_plus: ^12.0.2
   file_picker: ^11.0.2
   path_provider: ^2.1.0
   http: ^1.6.0
   flutter_file_downloader: ^2.1.1
-
-  # Launch SM64CoopDX game from the mod manager
-  android_intent_plus: ^6.0.0
-
-  # ZIP extraction for mod installation
-  archive: ^4.0.7
 
   # OTA — Descarga, verificación e instalación del APK
   ota_update: ^7.0.1
