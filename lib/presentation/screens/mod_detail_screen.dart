@@ -766,7 +766,8 @@ class _VersionAccordionState extends State<_VersionAccordion> {
                       padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
                       child: _PrimaryDownloadButton(
                         url: f.downloadUrl,
-                        modTitle: '${widget.modTitle} — ${f.filename}',
+                        modTitle: widget.modTitle,
+                        filename: f.filename,
                         retro: retro,
                       ),
                     ),
@@ -1126,11 +1127,13 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
     required this.url,
     required this.modTitle,
     required this.retro,
+    this.filename,
   });
 
   final String url;
   final String modTitle;
   final RetroTheme retro;
+  final String? filename;
 
   @override
   ConsumerState<_PrimaryDownloadButton> createState() =>
@@ -1224,7 +1227,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     }
 
     final modName = _sanitizeModTitle(widget.modTitle);
-    final filename = _inferFileName(widget.url, widget.modTitle);
+    final filename = widget.filename ?? _inferFileName(widget.url, widget.modTitle);
 
     final hasFolder = await installer.isDirectorySelected();
 
@@ -2651,10 +2654,13 @@ String _inferFileName(String url, String modTitle, {int? index}) {
     }
   }
 
-  // 4. Fallback: nombre del mod sanitizado + índice opcional + .zip
+  // 4. Fallback: nombre del mod sanitizado sin extensión forzada.
+  //    La extensión real la determina el servidor via Content-Disposition.
+  //    El callback onDownloadCompleted chequea el savedName real para decidir
+  //    si extraer (zip) o copiar directo (lua, etc).
   final base = _sanitizeModTitle(modTitle);
   final safeName = base.isNotEmpty ? base : 'mod';
   final suffix = index != null && index > 1 ? '-$index' : '';
-  return '$safeName$suffix.zip';
+  return '$safeName$suffix';
 }
 
