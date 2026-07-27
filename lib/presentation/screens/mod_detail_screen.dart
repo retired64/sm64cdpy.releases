@@ -127,13 +127,6 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
               ),
             ),
 
-            // ── Background install status banner ────
-            SliverToBoxAdapter(
-              child: _InstallStatusBanner(
-                modTitle: widget.mod.title,
-              ),
-            ),
-
             // ── Content card that overlaps the hero ──────────────
             SliverToBoxAdapter(
               child: Transform.translate(
@@ -1437,70 +1430,99 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         : (info?.status == BgInstallStatus.downloading
             ? info?.downloadProgress
             : null);
+    final isInstalling =
+        info != null && info.status == BgInstallStatus.installing;
 
-    return GestureDetector(
-      onTapDown: (_) => _scaleCtrl.forward(),
-      onTapUp: (_) {
-        _scaleCtrl.reverse();
-        _download();
-      },
-      onTapCancel: () => _scaleCtrl.reverse(),
-      child: ScaleTransition(
-        scale: _scale,
-        child: Container(
-          height: 54,
-          decoration: BoxDecoration(
-            color: retro.accent,
-            border: Border.all(color: retro.border, width: 3),
-            boxShadow: retro.hardShadow(),
-          ),
-          child: Center(
-            child: isActive
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        LinearProgressIndicator(
-                          value: downloadProgress != null
-                              ? downloadProgress / 100.0
-                              : null,
-                          backgroundColor: retro.background.withValues(
-                            alpha: 0.3,
-                          ),
-                          color: retro.background,
-                          minHeight: 4,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          _localDownloading
-                              ? _l10n!.detailDownloadingPct((_localProgress * 100).toStringAsFixed(0))
-                              : info?.status == BgInstallStatus.downloading
-                                  ? _l10n!.detailDownloadingPct('${downloadProgress ?? 0}')
-                                  : _l10n!.detailInstalling,
-                          style: retro.heading(size: 11, color: retro.background),
-                        ),
-                      ],
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTapDown: (_) => _scaleCtrl.forward(),
+          onTapUp: (_) {
+            _scaleCtrl.reverse();
+            _download();
+          },
+          onTapCancel: () => _scaleCtrl.reverse(),
+          child: ScaleTransition(
+            scale: _scale,
+            child: Container(
+              height: 54,
+              decoration: BoxDecoration(
+                color: isActive
+                    ? retro.accent.withValues(alpha: 0.12)
+                    : retro.accent.withValues(alpha: 0.12),
+                border: Border.all(color: retro.accent, width: 2),
+                borderRadius: RetroTheme.radius,
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isActive
+                          ? Icons.downloading_rounded
+                          : Icons.download_rounded,
+                      color: retro.accent,
+                      size: 20,
                     ),
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.download_rounded,
-                        color: retro.background,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        _l10n!.detailDownloadButton,
-                        style: retro.heading(size: 15, color: retro.background),
-                      ),
-                    ],
-                  ),
+                    const SizedBox(width: 10),
+                    Text(
+                      isActive
+                          ? _localDownloading
+                              ? _l10n!.detailDownloadingPct(
+                                  (_localProgress * 100).toStringAsFixed(0))
+                              : _l10n!.detailDownloadingPct(
+                                  '${downloadProgress ?? 0}')
+                          : _l10n!.detailDownloadButton,
+                      style: retro.heading(size: 15, color: retro.accent),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
-      ),
+        if (isActive) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: retro.accent.withValues(alpha: 0.08),
+              borderRadius: RetroTheme.radius,
+              border: Border.all(color: retro.accent.withValues(alpha: 0.15)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LinearProgressIndicator(
+                  value: isInstalling
+                      ? null
+                      : downloadProgress != null
+                          ? downloadProgress / 100.0
+                          : null,
+                  backgroundColor:
+                      retro.accent.withValues(alpha: 0.15),
+                  color: retro.accent,
+                  minHeight: 4,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  isInstalling
+                      ? info.total != null && info.total! > 0
+                          ? _l10n!.detailFilesProgress(
+                              info.current ?? 0, info.total!)
+                          : _l10n!.detailExtracting
+                      : _l10n!.detailDownloadingBannerType('mod'),
+                  style: retro.body(
+                      size: 12,
+                      weight: FontWeight.w600,
+                      color: retro.inkDim),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -2345,244 +2367,6 @@ class _DetailError extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-// ── Background install status banner ───────────────────────────────────────────
-
-class _InstallStatusBanner extends ConsumerWidget {
-  const _InstallStatusBanner({required this.modTitle});
-
-  final String modTitle;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-    final modName = _sanitizeModTitle(modTitle);
-    final state = ref.watch(bgInstallStateProvider);
-    final info = state[modName];
-
-    if (info == null) return const SizedBox.shrink();
-
-    switch (info.status) {
-      case BgInstallStatus.downloading:
-        final progress = info.downloadProgress ?? 0;
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: retro.accent.withValues(alpha: 0.15),
-            borderRadius: RetroTheme.radius,
-            border: Border.all(color: retro.accent.withValues(alpha: 0.2)),
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  value: progress > 0 ? progress / 100.0 : null,
-                  color: retro.accent,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.detailDownloadingBannerType('mod'),
-                      style: TextStyle(
-                        color: retro.ink,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '$progress%',
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-
-      case BgInstallStatus.installing:
-        final progressText = info.total != null && info.total! > 0
-            ? l10n.detailFilesProgress(info.current ?? 0, info.total!)
-            : l10n.detailExtracting;
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: retro.accent.withValues(alpha: 0.15),
-            borderRadius: RetroTheme.radius,
-            border: Border.all(color: retro.accent.withValues(alpha: 0.2)),
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: retro.accent,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.detailInstallingMod,
-                      style: TextStyle(
-                        color: retro.ink,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      progressText,
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-
-      case BgInstallStatus.completed:
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: retro.accent.withValues(alpha: 0.08),
-            borderRadius: RetroTheme.radius,
-            border: Border.all(color: retro.accent.withValues(alpha: 0.2)),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.check_circle_rounded, size: 20, color: retro.accent),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.detailInstallComplete,
-                      style: TextStyle(
-                        color: retro.ink,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      l10n.detailInstallFilesExtracted(info.fileCount ?? 0, info.targetDir ?? modName),
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-
-      case BgInstallStatus.error:
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: retro.red.withValues(alpha: 0.4),
-            borderRadius: RetroTheme.radius,
-            border: Border.all(color: retro.red.withValues(alpha: 0.25)),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.error_rounded, size: 20, color: retro.red),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.detailInstallFailed,
-                      style: TextStyle(
-                        color: retro.ink,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (info.error != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        info.error!,
-                        style: TextStyle(
-                          color: retro.red,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-
-      case BgInstallStatus.cancelled:
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: retro.surfaceAlt.withValues(alpha: 0.6),
-            borderRadius: RetroTheme.radius,
-            border: Border.all(color: retro.border.withValues(alpha: 0.3)),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.cancel_rounded, size: 20, color: retro.inkDim),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  l10n.detailOperationCancelled,
-                  style: TextStyle(
-                    color: retro.inkDim,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-
-      case BgInstallStatus.pending:
-        return const SizedBox.shrink();
-    }
   }
 }
 
