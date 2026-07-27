@@ -888,6 +888,12 @@ abstract class AppLocalizations {
   /// **'Downloaded: {name}'**
   String sharedDownloaded(String name);
 
+  /// Snackbar message shown when a content download completes, with content type
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded {type}: {name}'**
+  String sharedDownloadedType(String type, String name);
+
   /// Snackbar message shown when a mod download fails
   ///
   /// In en, this message translates to:
@@ -1134,6 +1140,12 @@ abstract class AppLocalizations {
   /// **'Saved to mods folder: {name}'**
   String detailSavedToModsFolder(String name);
 
+  /// Detail screen message when content is saved to a specific folder type
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to {type} folder: {name}'**
+  String detailSavedToFolder(String type, String name);
+
   /// Detail screen error message when a download fails
   ///
   /// In en, this message translates to:
@@ -1152,11 +1164,23 @@ abstract class AppLocalizations {
   /// **'Downloaded: {name}'**
   String detailDownloaded(String name);
 
+  /// Detail screen message when a download completes, with content type
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded {type}: {name}'**
+  String detailDownloadedType(String type, String name);
+
   /// Detail screen banner text shown during download
   ///
   /// In en, this message translates to:
   /// **'Downloading mod...'**
   String get detailDownloadingBanner;
+
+  /// Detail screen banner text shown during download, with content type
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading {type}...'**
+  String detailDownloadingBannerType(String type);
 
   /// Detail screen progress indicator for file extraction
   ///

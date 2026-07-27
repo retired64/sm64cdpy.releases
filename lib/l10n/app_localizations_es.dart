@@ -463,6 +463,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String sharedDownloadedType(String type, String name) {
+    return 'Descargado $type: $name';
+  }
+
+  @override
   String get sharedDownloadFailed => 'Descarga fallida';
 
   @override
@@ -605,6 +610,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String detailSavedToFolder(String type, String name) {
+    return 'Guardado en carpeta $type: $name';
+  }
+
+  @override
   String get detailDownloadFailed => 'Descarga fallida';
 
   @override
@@ -618,7 +628,17 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String detailDownloadedType(String type, String name) {
+    return 'Descargado $type: $name';
+  }
+
+  @override
   String get detailDownloadingBanner => 'Descargando mod...';
+
+  @override
+  String detailDownloadingBannerType(String type) {
+    return 'Descargando $type...';
+  }
 
   @override
   String detailFilesProgress(int current, int total) {
@@ -1609,6 +1629,11 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   }
 
   @override
+  String sharedDownloadedType(String type, String name) {
+    return 'Descargado $type: $name';
+  }
+
+  @override
   String get sharedDownloadFailed => 'Descarga fallida';
 
   @override
@@ -1751,6 +1776,11 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   }
 
   @override
+  String detailSavedToFolder(String type, String name) {
+    return 'Guardado en carpeta $type: $name';
+  }
+
+  @override
   String get detailDownloadFailed => 'Descarga fallida';
 
   @override
@@ -1764,7 +1794,17 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   }
 
   @override
+  String detailDownloadedType(String type, String name) {
+    return 'Descargado $type: $name';
+  }
+
+  @override
   String get detailDownloadingBanner => 'Descargando mod...';
+
+  @override
+  String detailDownloadingBannerType(String type) {
+    return 'Descargando $type...';
+  }
 
   @override
   String detailFilesProgress(int current, int total) {

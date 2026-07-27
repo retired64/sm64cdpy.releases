@@ -351,7 +351,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
           if (!mounted) return;
           setState(() { _downloading = false; _progress = 0.0; });
           AppSnackbar.success(context,
-              message: AppLocalizations.of(context).detailSavedToModsFolder(savedName));
+              message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navVIPMods));
         },
         onDownloadError: (error) {
           if (!mounted) return;

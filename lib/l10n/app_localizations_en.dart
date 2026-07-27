@@ -458,6 +458,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String sharedDownloadedType(String type, String name) {
+    return 'Downloaded $type: $name';
+  }
+
+  @override
   String get sharedDownloadFailed => 'Download failed';
 
   @override
@@ -597,6 +602,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String detailSavedToFolder(String type, String name) {
+    return 'Saved to $type folder: $name';
+  }
+
+  @override
   String get detailDownloadFailed => 'Download failed';
 
   @override
@@ -610,7 +620,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String detailDownloadedType(String type, String name) {
+    return 'Downloaded $type: $name';
+  }
+
+  @override
   String get detailDownloadingBanner => 'Downloading mod...';
+
+  @override
+  String detailDownloadingBannerType(String type) {
+    return 'Downloading $type...';
+  }
 
   @override
   String detailFilesProgress(int current, int total) {

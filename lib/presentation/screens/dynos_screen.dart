@@ -333,7 +333,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
           if (!mounted) return;
           setState(() { _downloading = false; _progress = 0.0; });
           AppSnackbar.success(context,
-              message: AppLocalizations.of(context).detailSavedToModsFolder(savedName));
+              message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navDynOS));
         },
         onDownloadError: (error) {
           if (!mounted) return;

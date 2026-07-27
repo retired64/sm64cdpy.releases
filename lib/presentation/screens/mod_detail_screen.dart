@@ -977,7 +977,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             _localProgress = 0.0;
           });
           AppSnackbar.success(
-              context, message: _l10n!.detailSavedToModsFolder(savedName));
+              context, message: _l10n!.detailSavedToFolder(savedName, 'mod'));
         },
         onDownloadError: (error) {
           if (!mounted) return;
@@ -1022,7 +1022,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             _localProgress = 0.0;
           });
           final savedName = path.split('/').last;
-          AppSnackbar.success(context, message: _l10n!.detailDownloaded(savedName));
+          AppSnackbar.success(context, message: _l10n!.detailDownloadedType(savedName, 'mod'));
           showPostInstallDialog(context);
         },
         onDownloadError: (error) {
@@ -1332,7 +1332,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             _localProgress = 0.0;
           });
           AppSnackbar.success(context,
-              message: _l10n!.detailSavedToModsFolder(savedName));
+              message: _l10n!.detailSavedToFolder(savedName, 'mod'));
         },
         onDownloadError: (error) {
           if (!mounted) return;
@@ -1377,7 +1377,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             _localProgress = 0.0;
           });
           final savedName = path.split('/').last;
-          AppSnackbar.success(context, message: _l10n!.detailDownloaded(savedName));
+          AppSnackbar.success(context, message: _l10n!.detailDownloadedType(savedName, 'mod'));
           showPostInstallDialog(context);
         },
         onDownloadError: (error) {
@@ -2370,7 +2370,7 @@ class _InstallStatusBanner extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.detailDownloadingBanner,
+                      l10n.detailDownloadingBannerType('mod'),
                       style: TextStyle(
                         color: retro.ink,
                         fontSize: 13,

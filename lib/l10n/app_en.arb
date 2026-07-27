@@ -584,6 +584,14 @@
       "name": {"type": "String", "example": "Character Pack"}
     }
   },
+  "sharedDownloadedType": "Downloaded {type}: {name}",
+  "@sharedDownloadedType": {
+    "description": "Snackbar message shown when a content download completes, with content type",
+    "placeholders": {
+      "type": {"type": "String", "example": "DynOS"},
+      "name": {"type": "String", "example": "Character Pack"}
+    }
+  },
   "sharedDownloadFailed": "Download failed",
   "@sharedDownloadFailed": {
     "description": "Snackbar message shown when a mod download fails"
@@ -762,6 +770,14 @@
       "name": {"type": "String", "example": "Character Pack"}
     }
   },
+  "detailSavedToFolder": "Saved to {type} folder: {name}",
+  "@detailSavedToFolder": {
+    "description": "Detail screen message when content is saved to a specific folder type",
+    "placeholders": {
+      "type": {"type": "String", "example": "DynOS"},
+      "name": {"type": "String", "example": "Character Pack"}
+    }
+  },
   "detailDownloadFailed": "Download failed",
   "@detailDownloadFailed": {
     "description": "Detail screen error message when a download fails"
@@ -780,9 +796,24 @@
       "name": {"type": "String", "example": "Character Pack"}
     }
   },
+  "detailDownloadedType": "Downloaded {type}: {name}",
+  "@detailDownloadedType": {
+    "description": "Detail screen message when a download completes, with content type",
+    "placeholders": {
+      "type": {"type": "String", "example": "DynOS"},
+      "name": {"type": "String", "example": "Character Pack"}
+    }
+  },
   "detailDownloadingBanner": "Downloading mod...",
   "@detailDownloadingBanner": {
     "description": "Detail screen banner text shown during download"
+  },
+  "detailDownloadingBannerType": "Downloading {type}...",
+  "@detailDownloadingBannerType": {
+    "description": "Detail screen banner text shown during download, with content type",
+    "placeholders": {
+      "type": {"type": "String", "example": "DynOS"}
+    }
   },
   "detailFilesProgress": "{current}/{total} files",
   "@detailFilesProgress": {

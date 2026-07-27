@@ -461,6 +461,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String sharedDownloadedType(String type, String name) {
+    return 'Baixado $type: $name';
+  }
+
+  @override
   String get sharedDownloadFailed => 'Falha no download';
 
   @override
@@ -601,6 +606,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String detailSavedToFolder(String type, String name) {
+    return 'Salvo na pasta $type: $name';
+  }
+
+  @override
   String get detailDownloadFailed => 'Falha no download';
 
   @override
@@ -614,7 +624,17 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String detailDownloadedType(String type, String name) {
+    return 'Baixado $type: $name';
+  }
+
+  @override
   String get detailDownloadingBanner => 'Baixando mod...';
+
+  @override
+  String detailDownloadingBannerType(String type) {
+    return 'Baixando $type...';
+  }
 
   @override
   String detailFilesProgress(int current, int total) {
@@ -1598,6 +1618,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
+  String sharedDownloadedType(String type, String name) {
+    return 'Baixado $type: $name';
+  }
+
+  @override
   String get sharedDownloadFailed => 'Falha no download';
 
   @override
@@ -1738,6 +1763,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
+  String detailSavedToFolder(String type, String name) {
+    return 'Salvo na pasta $type: $name';
+  }
+
+  @override
   String get detailDownloadFailed => 'Falha no download';
 
   @override
@@ -1751,7 +1781,17 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
+  String detailDownloadedType(String type, String name) {
+    return 'Baixado $type: $name';
+  }
+
+  @override
   String get detailDownloadingBanner => 'Baixando mod...';
+
+  @override
+  String detailDownloadingBannerType(String type) {
+    return 'Baixando $type...';
+  }
 
   @override
   String detailFilesProgress(int current, int total) {
