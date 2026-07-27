@@ -323,17 +323,27 @@ class _DynosCardState extends ConsumerState<DynosCard>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          if (await installer.isDynosDirectorySelected()) {
-            if (savedName.toLowerCase().endsWith('.zip')) {
-              await installer.installModToDynosFolder(zipPath: path, modName: rawName);
-            } else {
-              await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+          bool copyOk = true;
+          try {
+            if (await installer.isDynosDirectorySelected()) {
+              if (savedName.toLowerCase().endsWith('.zip')) {
+                final result = await installer.installModToDynosFolder(zipPath: path, modName: rawName);
+                copyOk = result.success;
+              } else {
+                copyOk = await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+              }
             }
+          } catch (_) {
+            copyOk = false;
           }
           if (!mounted) return;
           setState(() { _downloading = false; _progress = 0.0; });
-          AppSnackbar.success(context,
-              message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navDynOS));
+          if (copyOk) {
+            AppSnackbar.success(context,
+                message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navDynOS));
+          } else {
+            AppSnackbar.error(context, message: AppLocalizations.of(context).detailDownloadFailed);
+          }
         },
         onDownloadError: (error) {
           if (!mounted) return;

@@ -350,7 +350,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val treeDoc = DocumentFile.fromTreeUri(act, treeUri)
                 ?: throw java.io.IOException("Could not access the selected directory tree.")
 
-            val outputFile = treeDoc.createFile("application/zip", targetName)
+            val outputFile = treeDoc.createFile("application/octet-stream", targetName)
                 ?: throw java.io.IOException("Failed to create file in SAF directory.")
 
             act.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
@@ -945,7 +945,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val treeDoc = DocumentFile.fromTreeUri(act, treeUri)
                 ?: throw java.io.IOException("Could not access the selected DynOS directory tree.")
 
-            val outputFile = treeDoc.createFile("application/zip", targetName)
+            val outputFile = treeDoc.createFile("application/octet-stream", targetName)
                 ?: throw java.io.IOException("Failed to create file in DynOS SAF directory.")
 
             act.contentResolver.openOutputStream(outputFile.uri)?.use { os ->

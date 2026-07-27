@@ -343,15 +343,25 @@ class _VipModCardState extends ConsumerState<VipModCard>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          if (extract) {
-            await installer.installMod(zipPath: path, modName: modName ?? savedName);
-          } else {
-            await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
+          bool copyOk = true;
+          try {
+            if (extract) {
+              final result = await installer.installMod(zipPath: path, modName: modName ?? savedName);
+              copyOk = result.success;
+            } else {
+              copyOk = await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
+            }
+          } catch (_) {
+            copyOk = false;
           }
           if (!mounted) return;
           setState(() { _downloading = false; _progress = 0.0; });
-          AppSnackbar.success(context,
-              message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navVIPMods));
+          if (copyOk) {
+            AppSnackbar.success(context,
+                message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navVIPMods));
+          } else {
+            AppSnackbar.error(context, message: AppLocalizations.of(context).detailDownloadFailed);
+          }
         },
         onDownloadError: (error) {
           if (!mounted) return;
