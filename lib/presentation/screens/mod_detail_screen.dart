@@ -942,14 +942,25 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
   Future<void> _downloadToModsFolder(
       ModInstaller installer, String url, String filename,
       {bool extract = false, String? modName}) async {
+    if (!mounted) return;
+    setState(() {
+      _localDownloading = true;
+      _localProgress = 0.0;
+    });
     try {
       await FileDownloader.downloadFile(
         url: url,
         name: filename,
+        onProgress: (name, progress) {
+          if (!mounted) return;
+          final normalized =
+              (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          setState(() => _localProgress = normalized);
+        },
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          if (extract) {
+          if (extract && savedName.toLowerCase().endsWith('.zip')) {
             await installer.installMod(
               zipPath: path,
               modName: modName ?? savedName,
@@ -961,16 +972,28 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             );
           }
           if (!mounted) return;
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
           AppSnackbar.success(
               context, message: _l10n!.detailSavedToModsFolder(savedName));
         },
         onDownloadError: (error) {
           if (!mounted) return;
+          setState(() {
+            _localDownloading = false;
+            _localProgress = 0.0;
+          });
           AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
         },
       );
     } catch (e) {
       if (!mounted) return;
+      setState(() {
+        _localDownloading = false;
+        _localProgress = 0.0;
+      });
       AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
     }
   }
@@ -1018,27 +1041,6 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         _localProgress = 0.0;
       });
       AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
-    }
-  }
-
-  String _sanitizeModTitle(String raw) =>
-      raw.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
-
-  String _inferFileName(String url, String modTitle) {
-    try {
-      final uri = Uri.parse(url);
-      final path = uri.path;
-      if (path.contains('/download')) {
-        final segs = uri.pathSegments;
-        if (segs.length >= 2) {
-          return '${modTitle.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')}_${segs[segs.length - 1]}.zip';
-        }
-      }
-      final last = path.split('/').last;
-      if (last.isNotEmpty && last.contains('.')) return last;
-      return '${modTitle.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')}.zip';
-    } catch (_) {
-      return '${modTitle.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')}.zip';
     }
   }
 
@@ -1313,7 +1315,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          if (extract) {
+          if (extract && savedName.toLowerCase().endsWith('.zip')) {
             await installer.installMod(
               zipPath: path,
               modName: modName ?? savedName,
