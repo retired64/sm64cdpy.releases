@@ -15,6 +15,7 @@ import '../../core/utils/extensions.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../../services/background_install_service.dart';
+import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_snackbar.dart';
@@ -861,8 +862,12 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
       }
     }
 
-    final modName = _sanitizeModTitle(widget.modTitle);
-    final filename = _inferFileName(widget.url, widget.modTitle);
+    final modName = sanitizeModTitle(widget.modTitle);
+    final filename =
+        await DownloadUrlResolver.instance.resolveDownloadFilename(
+      widget.url,
+      widget.modTitle,
+    );
 
     final hasFolder = await _installer.isDirectorySelected();
 
@@ -1219,8 +1224,12 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       }
     }
 
-    final modName = _sanitizeModTitle(widget.modTitle);
-    final filename = widget.filename ?? _inferFileName(widget.url, widget.modTitle);
+    final modName = sanitizeModTitle(widget.modTitle);
+    final filename = widget.filename ??
+        await DownloadUrlResolver.instance.resolveDownloadFilename(
+          widget.url,
+          widget.modTitle,
+        );
 
     final hasFolder = await installer.isDirectorySelected();
 
@@ -1419,7 +1428,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
   Widget build(BuildContext context) {
     final retro = widget.retro;
     _l10n = AppLocalizations.of(context);
-    final modName = _sanitizeModTitle(widget.modTitle);
+    final modName = sanitizeModTitle(widget.modTitle);
     final info = ref.watch(bgInstallStateProvider)[modName];
     final isActive = _localDownloading ||
         (info != null &&
@@ -2368,84 +2377,5 @@ class _DetailError extends StatelessWidget {
       ),
     );
   }
-}
-
-// ── Filename inference helpers ────────────────────────────────────────────────
-//
-// Estrategia en capas para obtener un nombre de archivo útil a partir de la
-// URL de descarga. Necesario porque algunos mods usan redirecciones del tipo
-// /mods/xxx/download?file=123 cuyo último segmento de path es literalmente
-// "download", sin extensión.
-//
-//  1. La URL ya termina en un segmento con extensión válida → usarlo directo.
-//  2. El query param "file" contiene un nombre con extensión válida → usarlo.
-//  3. Fallback: nombre del mod sanitizado + ".zip".
-//     (El servidor puede corregirlo vía Content-Disposition si la extensión
-//      real fuera distinta, pero .zip cubre la gran mayoría de los mods.)
-
-const _kValidExtensions = {'.zip', '.lua', '.rar', '.7z'};
-
-/// Devuelve la extensión si pertenece a [_kValidExtensions], o '' si no.
-String _validFileExtension(String name) {
-  final dot = name.lastIndexOf('.');
-  if (dot < 0 || dot == name.length - 1) return '';
-  final ext = name.substring(dot).toLowerCase();
-  return _kValidExtensions.contains(ext) ? ext : '';
-}
-
-/// Convierte el título del mod en un nombre de archivo seguro para el SO.
-/// Ejemplo: "Super Mario 64: Remix!" → "super-mario-64-remix"
-String _sanitizeModTitle(String title) {
-  return title
-      .toLowerCase()
-      .replaceAll(RegExp(r"[^\w\s\-]"), '')
-      .replaceAll(RegExp(r'\s+'), '-')
-      .replaceAll(RegExp(r'-{2,}'), '-')
-      .replaceAll(RegExp(r'^-|-$'), '')
-      .trim();
-}
-
-/// Infiere el nombre de archivo para la descarga a partir de [url] y [modTitle].
-/// [index] se usa como sufijo cuando hay múltiples archivos del mismo mod.
-String _inferFileName(String url, String modTitle, {int? index}) {
-  final uri = Uri.tryParse(url);
-
-  if (uri != null) {
-    // 1. Último segmento del path con extensión válida.
-    //    Se filtran segmentos vacíos (trailing slash) para que
-    //    ".../cs-triple-baka-pack.418/" no produzca lastSegment=="".
-    final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
-    final lastSegment = segments.isNotEmpty ? segments.last : '';
-    if (lastSegment.isNotEmpty &&
-        lastSegment != 'download' &&
-        _validFileExtension(lastSegment).isNotEmpty) {
-      return lastSegment;
-    }
-
-    // 2. Si el último segmento NO es "download" y tiene nombre con valor,
-    //    añadir .zip (preserva puntos, ej: "retro-triple-baka-pack.418" → ".zip")
-    if (lastSegment.isNotEmpty &&
-        lastSegment != 'download' &&
-        _validFileExtension(lastSegment).isEmpty &&
-        lastSegment.length > 2 &&
-        !RegExp(r'^\d+$').hasMatch(lastSegment)) {
-      return '$lastSegment.zip';
-    }
-
-    // 3. Query param "file" con extensión válida
-    final fileParam = uri.queryParameters['file'] ?? '';
-    if (_validFileExtension(fileParam).isNotEmpty) {
-      return fileParam;
-    }
-  }
-
-  // 4. Fallback: nombre del mod sanitizado sin extensión forzada.
-  //    La extensión real la determina el servidor via Content-Disposition.
-  //    El callback onDownloadCompleted chequea el savedName real para decidir
-  //    si extraer (zip) o copiar directo (lua, etc).
-  final base = _sanitizeModTitle(modTitle);
-  final safeName = base.isNotEmpty ? base : 'mod';
-  final suffix = index != null && index > 1 ? '-$index' : '';
-  return '$safeName$suffix';
 }
 
