@@ -104,11 +104,23 @@ jobs:
       - name: Build APK (arm64-v8a)
         run: flutter build apk --release --target-platform=android-arm64 --split-per-abi
 
+      # ── 8.5. Renombrar APK con short commit SHA ──────────────────────────
+      - name: Renombrar APK con short commit SHA
+        id: apk
+        run: |
+          APK_DIR="build/app/outputs/flutter-apk"
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          APK_NAME="cdpy-${SHORT_SHA}.apk"
+          mv "$APK_DIR/app-arm64-v8a-release.apk" "$APK_DIR/$APK_NAME"
+          echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "Renamed → $APK_NAME"
+
       # ── 9. Verificar que el APK se generó ────────────────────────────────
       - name: Verificar APK generado
         run: |
           APK_DIR="build/app/outputs/flutter-apk"
-          APK="app-arm64-v8a-release.apk"
+          APK="${{ steps.apk.outputs.apk_name }}"
           if [ ! -f "$APK_DIR/$APK" ]; then
             echo "No encontrado: $APK"
             exit 1
@@ -116,12 +128,12 @@ jobs:
           SIZE=$(du -h "$APK_DIR/$APK" | cut -f1)
           echo "$APK ($SIZE)"
 
-      # ── 10. Subir APK como artifact (sin release, sin tag) ────────────────
+      # ── 10. Subir APK como artifact ──────────────────────────────────────
       - name: Subir APK como artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Sm64CDPYv${{ steps.version.outputs.version }}-arm64-TESTING
-          path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          name: cdpy-${{ steps.apk.outputs.short_sha }}-TESTING
+          path: build/app/outputs/flutter-apk/${{ steps.apk.outputs.apk_name }}
           retention-days: 7
 
       # ── 11. Limpiar keystore SIEMPRE ───────────────────────────────────────
