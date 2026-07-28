@@ -959,35 +959,37 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          bool copyOk = true;
+          String? copyError;
           try {
             if (extract && savedName.toLowerCase().endsWith('.zip')) {
               final result = await installer.installMod(
                 zipPath: path,
                 modName: modName ?? savedName,
               );
-              copyOk = result.success;
+              if (!result.success) {
+                copyError = result.errorMessage ?? _l10n!.detailInstallFailed;
+              }
             } else {
-              copyOk = await installer.copyFileToModsFolder(
+              await installer.copyFileToModsFolder(
                 sourcePath: path,
                 targetName: savedName,
               );
             }
-          } catch (_) {
-            copyOk = false;
+          } catch (e) {
+            copyError = e.toString();
           }
           if (!mounted) return;
           setState(() {
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          if (copyOk) {
+          if (copyError != null) {
+            AppSnackbar.errorWithCopy(context,
+                message: copyError,
+                copyText: copyError);
+          } else {
             AppSnackbar.success(
                 context, message: _l10n!.detailSavedToFolder(savedName, 'mod'));
-          } else {
-            AppSnackbar.errorWithCopy(context,
-                message: _l10n!.detailInstallFailed,
-                copyText: _l10n!.detailInstallFailed);
           }
         },
         onDownloadError: (error) {
@@ -1338,35 +1340,37 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final savedName = path.split('/').last;
-          bool copyOk = true;
+          String? copyError;
           try {
             if (extract && savedName.toLowerCase().endsWith('.zip')) {
               final result = await installer.installMod(
                 zipPath: path,
                 modName: modName ?? savedName,
               );
-              copyOk = result.success;
+              if (!result.success) {
+                copyError = result.errorMessage ?? _l10n!.detailInstallFailed;
+              }
             } else {
-              copyOk = await installer.copyFileToModsFolder(
+              await installer.copyFileToModsFolder(
                 sourcePath: path,
                 targetName: savedName,
               );
             }
-          } catch (_) {
-            copyOk = false;
+          } catch (e) {
+            copyError = e.toString();
           }
           if (!mounted) return;
           setState(() {
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          if (copyOk) {
+          if (copyError != null) {
+            AppSnackbar.errorWithCopy(context,
+                message: copyError,
+                copyText: copyError);
+          } else {
             AppSnackbar.success(context,
                 message: _l10n!.detailSavedToFolder(savedName, 'mod'));
-          } else {
-            AppSnackbar.errorWithCopy(context,
-                message: _l10n!.detailInstallFailed,
-                copyText: _l10n!.detailInstallFailed);
           }
         },
         onDownloadError: (error) {

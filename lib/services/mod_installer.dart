@@ -158,18 +158,17 @@ class ModInstaller {
 
   /// Copia un archivo local al directorio SAF de mods seleccionado.
   /// Elimina el archivo fuente tras la copia exitosa.
-  Future<bool> copyFileToModsFolder({
+  /// Tira [ModInstallerException] si la copia falla.
+  Future<void> copyFileToModsFolder({
     required String sourcePath,
     required String targetName,
   }) async {
-    try {
-      final result = await _channel.invokeMethod<bool>(
-        'copyFileToModsFolder',
-        {'sourcePath': sourcePath, 'targetName': targetName},
-      );
-      return result ?? false;
-    } on PlatformException {
-      return false;
+    final result = await _channel.invokeMethod<bool>(
+      'copyFileToModsFolder',
+      {'sourcePath': sourcePath, 'targetName': targetName},
+    );
+    if (result != true) {
+      throw const ModInstallerException('Failed to copy file to mods folder');
     }
   }
 
@@ -239,18 +238,16 @@ class ModInstaller {
 
   /// Copia un archivo local al directorio SAF de dynos seleccionado.
   /// Elimina el archivo fuente tras la copia exitosa.
-  Future<bool> copyFileToDynosFolder({
+  Future<void> copyFileToDynosFolder({
     required String sourcePath,
     required String targetName,
   }) async {
-    try {
-      final result = await _channel.invokeMethod<bool>(
-        'copyFileToDynosFolder',
-        {'sourcePath': sourcePath, 'targetName': targetName},
-      );
-      return result ?? false;
-    } on PlatformException {
-      return false;
+    final result = await _channel.invokeMethod<bool>(
+      'copyFileToDynosFolder',
+      {'sourcePath': sourcePath, 'targetName': targetName},
+    );
+    if (result != true) {
+      throw const ModInstallerException('Failed to copy file to DynOS folder');
     }
   }
 
