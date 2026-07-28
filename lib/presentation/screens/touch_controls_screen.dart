@@ -293,19 +293,25 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
             AppSnackbar.success(context,
                 message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navTouchControls));
           } else {
-            AppSnackbar.error(context, message: AppLocalizations.of(context).detailDownloadFailed);
+            AppSnackbar.errorWithCopy(context,
+                message: AppLocalizations.of(context).detailInstallFailed,
+                copyText: AppLocalizations.of(context).detailInstallFailed);
           }
         },
         onDownloadError: (error) {
           if (!mounted) return;
           setState(() { _downloading = false; _progress = 0.0; });
-          AppSnackbar.error(context, message: AppLocalizations.of(context).detailDownloadFailed);
+          AppSnackbar.errorWithCopy(context,
+              message: AppLocalizations.of(context).detailError(error),
+              copyText: error);
         },
       );
     } catch (e) {
       if (!mounted) return;
       setState(() { _downloading = false; _progress = 0.0; });
-      AppSnackbar.error(context, message: AppLocalizations.of(context).detailError(e.toString()));
+      AppSnackbar.errorWithCopy(context,
+          message: AppLocalizations.of(context).detailError(e.toString()),
+          copyText: e.toString());
     }
   }
 

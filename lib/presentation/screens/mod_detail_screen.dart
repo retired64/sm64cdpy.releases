@@ -985,7 +985,9 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             AppSnackbar.success(
                 context, message: _l10n!.detailSavedToFolder(savedName, 'mod'));
           } else {
-            AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
+            AppSnackbar.errorWithCopy(context,
+                message: _l10n!.detailInstallFailed,
+                copyText: _l10n!.detailInstallFailed);
           }
         },
         onDownloadError: (error) {
@@ -994,7 +996,8 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
+          AppSnackbar.errorWithCopy(context,
+              message: _l10n!.detailError(error), copyText: error);
         },
       );
     } catch (e) {
@@ -1003,7 +1006,9 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
+      AppSnackbar.errorWithCopy(context,
+          message: _l10n!.detailError(e.toString()),
+          copyText: e.toString());
     }
   }
 
@@ -1040,7 +1045,8 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
+          AppSnackbar.errorWithCopy(context,
+              message: _l10n!.detailError(error), copyText: error);
         },
       );
     } catch (e) {
@@ -1049,7 +1055,9 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
+      AppSnackbar.errorWithCopy(context,
+          message: _l10n!.detailError(e.toString()),
+          copyText: e.toString());
     }
   }
 
@@ -1356,7 +1364,9 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             AppSnackbar.success(context,
                 message: _l10n!.detailSavedToFolder(savedName, 'mod'));
           } else {
-            AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
+            AppSnackbar.errorWithCopy(context,
+                message: _l10n!.detailInstallFailed,
+                copyText: _l10n!.detailInstallFailed);
           }
         },
         onDownloadError: (error) {
@@ -1365,7 +1375,8 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
+          AppSnackbar.errorWithCopy(context,
+              message: _l10n!.detailError(error), copyText: error);
         },
       );
     } catch (e) {
@@ -1374,7 +1385,9 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
+      AppSnackbar.errorWithCopy(context,
+          message: _l10n!.detailError(e.toString()),
+          copyText: e.toString());
     }
   }
 
@@ -1411,7 +1424,8 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             _localDownloading = false;
             _localProgress = 0.0;
           });
-          AppSnackbar.error(context, message: _l10n!.detailDownloadFailed);
+          AppSnackbar.errorWithCopy(context,
+              message: _l10n!.detailError(error), copyText: error);
         },
       );
     } catch (e) {
@@ -1420,7 +1434,9 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         _localDownloading = false;
         _localProgress = 0.0;
       });
-      AppSnackbar.error(context, message: _l10n!.detailError(e.toString()));
+      AppSnackbar.errorWithCopy(context,
+          message: _l10n!.detailError(e.toString()),
+          copyText: e.toString());
     }
   }
 

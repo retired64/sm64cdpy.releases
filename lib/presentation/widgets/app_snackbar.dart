@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/theme/retro_theme.dart';
 
@@ -48,6 +49,37 @@ class AppSnackbar {
     );
   }
 
+  static void errorWithCopy(
+    BuildContext context, {
+    required String message,
+    required String copyText,
+    Duration duration = const Duration(seconds: 5),
+    IconData icon = Icons.error_rounded,
+  }) {
+    _show(
+      context,
+      accentOf: (retro) => retro.red,
+      icon: icon,
+      message: message,
+      duration: duration,
+      action: SnackBarAction(
+        label: 'COPY',
+        textColor: RetroTheme.of(context).red,
+        onPressed: () {
+          Clipboard.setData(ClipboardData(text: copyText));
+          ScaffoldMessenger.of(context).clearSnackBars();
+          _show(
+            context,
+            accentOf: (retro) => retro.accent,
+            icon: Icons.check_rounded,
+            message: 'Copied to clipboard',
+            duration: const Duration(seconds: 1),
+          );
+        },
+      ),
+    );
+  }
+
   static void info(
     BuildContext context, {
     required String message,
@@ -71,6 +103,7 @@ class AppSnackbar {
     required IconData icon,
     required String message,
     required Duration duration,
+    SnackBarAction? action,
   }) {
     final retro = RetroTheme.of(context);
     final accent = accentOf(retro);
@@ -86,6 +119,7 @@ class AppSnackbar {
         elevation: 0,
         backgroundColor: Colors.transparent,
         padding: EdgeInsets.zero,
+        action: action,
         margin: const EdgeInsets.fromLTRB(14, 0, 14, 16),
         content: _BouncyToast(
           child: Container(
