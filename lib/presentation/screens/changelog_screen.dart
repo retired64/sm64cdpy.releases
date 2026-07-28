@@ -336,9 +336,39 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.6.1',
+    version: '1.6.2',
     date: 'July 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Mods with special characters in Content-Disposition filenames (brackets, spaces, emojis, parentheses, Unicode) now install correctly — the filename is sanitized before being passed to SAF, preventing silent copy failures.',
+          'Download error snackbar now shows the REAL native error message + COPY button — no more generic "Installation failed" that hides the actual cause.',
+          'Broken download URLs in the mod database (page URLs without /download suffix) are now auto-corrected at parse time so they work without manual intervention.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'New DownloadUrlResolver service with HEAD request pre-flight — determines the real filename from the server\'s Content-Disposition header before downloading, so .lua mods and mods with generic /download URLs get the correct filename.',
+          'GitHub blob viewer URLs (/blob/branch/path) are now auto-converted to raw.githubusercontent.com for direct download.',
+          'Mod detail download button redesigned — transparent accent style with progress panel below the button, showing file extraction counts during installation. The duplicate install status banner was removed.',
+          'CI now produces APKs named with the short commit SHA (cdpy-abc1234.apk) so you can identify which build is which.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.changed,
+        items: [
+          'Download error handling rewritten across all 5 screens — copy/install operations throw on failure instead of silently returning false, so the error message always reaches the user.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.6.1',
+    date: 'July 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.fixed,
