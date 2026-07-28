@@ -2411,10 +2411,11 @@ String _inferFileName(String url, String modTitle, {int? index}) {
   final uri = Uri.tryParse(url);
 
   if (uri != null) {
-    // 1. Último segmento del path con extensión válida
-    final lastSegment = uri.pathSegments.isNotEmpty
-        ? uri.pathSegments.last
-        : '';
+    // 1. Último segmento del path con extensión válida.
+    //    Se filtran segmentos vacíos (trailing slash) para que
+    //    ".../cs-triple-baka-pack.418/" no produzca lastSegment=="".
+    final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
+    final lastSegment = segments.isNotEmpty ? segments.last : '';
     if (lastSegment.isNotEmpty &&
         lastSegment != 'download' &&
         _validFileExtension(lastSegment).isNotEmpty) {

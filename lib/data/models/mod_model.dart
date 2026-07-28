@@ -88,7 +88,7 @@ class ModModel {
   }
 
   static List<String> _extractDownloadUrls(Map<String, dynamic> json) {
-    if (json['download_urls'] != null) return _strings(json['download_urls']);
+    if (json['download_urls'] != null) return _fixDownloadUrls(_strings(json['download_urls']));
     final versions = json['versions'];
     if (versions is List) {
       final urls = <String>{};
@@ -104,9 +104,18 @@ class ModModel {
           }
         }
       }
-      return urls.toList();
+      return _fixDownloadUrls(urls.toList());
     }
     return [];
+  }
+
+  static List<String> _fixDownloadUrls(List<String> urls) {
+    return urls.map((url) {
+      if (url.endsWith('/') && !url.contains('/download')) {
+        return '${url}download';
+      }
+      return url;
+    }).toList();
   }
 
   static List<ModUpdateModel> _updates(dynamic value) {
