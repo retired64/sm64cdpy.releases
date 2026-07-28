@@ -92,21 +92,35 @@ String? _parseContentDisposition(String header) {
 }
 
 /// Sanitiza un nombre de archivo obtenido del servidor.
-/// Previene path traversal y elimina caracteres no imprimibles.
+/// Previene path traversal, elimina caracteres no imprimibles,
+/// y limpia el nombre base con [sanitizeModTitle] preservando la extensión.
+///
+/// Ejemplo: "[CS] Triple Baka Pack.zip" → "cs-triple-baka-pack.zip"
 String? _sanitizeRawFilename(String? raw) {
   if (raw == null || raw.isEmpty) return null;
-  final name = raw
+  String name = raw
       .replaceAll('\x00', '')
       .replaceAll(RegExp(r'[\x00-\x1f\x7f]'), '')
       .trim();
   if (name.isEmpty || name == '.' || name == '..') return null;
   if (name.contains('/') || name.contains('\\')) {
     final parts = name.replaceAll('\\', '/').split('/');
-    final last = parts.lastWhere((p) => p.isNotEmpty, orElse: () => '');
-    if (last.isEmpty || last == '.' || last == '..') return null;
-    return last;
+    name = parts.lastWhere((p) => p.isNotEmpty, orElse: () => '');
+    if (name.isEmpty || name == '.' || name == '..') return null;
   }
-  return name;
+
+  final dot = name.lastIndexOf('.');
+  if (dot > 0) {
+    final base = name.substring(0, dot);
+    final ext = name.substring(dot);
+    final clean = sanitizeModTitle(base);
+    name = clean.isNotEmpty ? '$clean$ext' : 'mod$ext';
+  } else {
+    final clean = sanitizeModTitle(name);
+    name = clean.isNotEmpty ? clean : 'mod';
+  }
+
+  return name.isNotEmpty ? name : null;
 }
 
 class DownloadUrlResolver {
