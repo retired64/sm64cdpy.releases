@@ -886,6 +886,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsChecking => 'Checking...';
 
   @override
+  String get settingsOverlayPermission => 'Overlay permission';
+
+  @override
+  String get settingsOverlayPermissionDesc =>
+      'Required to show the bubble over the game';
+
+  @override
+  String get settingsOverlayGranted => 'Overlay permission granted';
+
+  @override
+  String get settingsOverlayGrantedDesc =>
+      'Tap to change · The bubble can now appear over other apps';
+
+  @override
+  String get settingsOverlayRunning => 'Floating bubble active';
+
+  @override
+  String get settingsOverlayStoppedDesc =>
+      'Tap to show the bubble over the game';
+
+  @override
   String get changelogTitle => 'Changelog';
 
   @override

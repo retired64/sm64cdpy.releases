@@ -322,13 +322,14 @@ class _DynosCardState extends ConsumerState<DynosCard>
         },
         onDownloadCompleted: (path) async {
           if (!mounted) return;
+          final l10n = AppLocalizations.of(context);
           final savedName = path.split('/').last;
           String? copyError;
           try {
             if (await installer.isDynosDirectorySelected()) {
               if (savedName.toLowerCase().endsWith('.zip')) {
                 final result = await installer.installModToDynosFolder(zipPath: path, modName: rawName);
-                if (!result.success) copyError = result.errorMessage ?? AppLocalizations.of(context).detailInstallFailed;
+                if (!result.success) copyError = result.errorMessage ?? l10n.detailInstallFailed;
               } else {
                 await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
               }

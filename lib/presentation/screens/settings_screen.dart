@@ -83,6 +83,7 @@ class SettingsScreen extends ConsumerWidget {
                     _RetroGap(height: 6),
                     _DynosFolderTile(),
                     _AutoInstallToggle(),
+                    _OverlayPermissionTile(),
 
                     const SizedBox(height: 20),
                     _RetroSectionKicker(retro: retro, label: l10n.settingsAppearance, japanese: '外観'),
@@ -1276,4 +1277,105 @@ class _RetroGap extends StatelessWidget {
   final double height;
   @override
   Widget build(BuildContext context) => SizedBox(height: height);
+}
+
+// ── Overlay permission tile ─────────────────────────────────────────────────
+
+class _OverlayPermissionTile extends ConsumerStatefulWidget {
+  const _OverlayPermissionTile();
+
+  @override
+  ConsumerState<_OverlayPermissionTile> createState() =>
+      _OverlayPermissionTileState();
+}
+
+class _OverlayPermissionTileState extends ConsumerState<_OverlayPermissionTile> {
+  bool _loading = false;
+  bool _granted = false;
+  bool _running = false;
+  bool _toggling = false;
+
+  final _installer = ModInstaller();
+
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
+    try {
+      final granted = await _installer.hasOverlayPermission();
+      final running = granted ? await _installer.isOverlayRunning() : false;
+      if (mounted) setState(() { _granted = granted; _running = running; });
+    } catch (_) {}
+  }
+
+  Future<void> _requestPermission() async {
+    setState(() => _loading = true);
+    try {
+      await _installer.requestOverlayPermission();
+    } catch (_) {}
+    if (mounted) setState(() => _loading = false);
+    await _refresh();
+  }
+
+  Future<void> _toggleService() async {
+    if (_toggling) return;
+    setState(() => _toggling = true);
+    final ok = _running
+        ? await _installer.stopOverlayService()
+        : await _installer.startOverlayService();
+    if (ok) {
+      await _refresh();
+    }
+    if (mounted) setState(() => _toggling = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    if (!_granted) {
+      return _RetroTileShell(
+        retro: retro,
+        onTap: _loading ? null : _requestPermission,
+        accentColor: retro.red,
+        leading: _loading
+            ? _RetroSpinner(retro: retro)
+            : _RetroIconBox(
+                retro: retro,
+                icon: Icons.picture_in_picture_rounded,
+                accentColor: retro.red,
+              ),
+        title: l10n.settingsOverlayPermission,
+        subtitle: l10n.settingsOverlayPermissionDesc,
+      );
+    }
+
+    return _RetroTileShell(
+      retro: retro,
+      onTap: _toggling ? null : _toggleService,
+      accentColor: _running ? retro.accent : null,
+      leading: _toggling
+          ? _RetroSpinner(retro: retro)
+          : _RetroIconBox(
+              retro: retro,
+              icon: _running
+                  ? Icons.picture_in_picture_alt_rounded
+                  : Icons.picture_in_picture_rounded,
+              accentColor: _running ? retro.accent : null,
+            ),
+      title: _running ? l10n.settingsOverlayRunning : l10n.settingsOverlayGranted,
+      subtitle: _running ? l10n.settingsOverlayGrantedDesc : l10n.settingsOverlayStoppedDesc,
+      trailing: _toggling
+          ? null
+          : _RetroSwitch(
+              retro: retro,
+              value: _running,
+              onChanged: (_) => _toggleService(),
+            ),
+    );
+  }
 }

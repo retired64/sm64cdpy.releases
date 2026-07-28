@@ -27,6 +27,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import mods.sm64cdpy.overlay.OverlayPermission
+import mods.sm64cdpy.overlay.OverlayService
 import java.io.*
 import java.util.UUID
 import java.util.zip.ZipEntry
@@ -63,7 +65,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private lateinit var channel: MethodChannel
     private var eventChannel: EventChannel? = null
-    private var eventSink: EventChannel.EventSink? = null
+    private val eventSinks = mutableListOf<EventChannel.EventSink>()
     private var activity: Activity? = null
     private var pendingResult: Result? = null
     private var pendingPermissionResult: Result? = null
@@ -77,11 +79,12 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         eventChannel = EventChannel(binding.binaryMessenger, EVENT_CHANNEL)
         eventChannel!!.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(args: Any?, sink: EventChannel.EventSink) {
-                eventSink = sink
+                eventSinks.add(sink)
             }
 
             override fun onCancel(args: Any?) {
-                eventSink = null
+                // onCancel does not provide the sink — dead sinks are
+                // pruned during sendEvent() when they throw on success()
             }
         })
     }
@@ -90,7 +93,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         channel.setMethodCallHandler(null)
         eventChannel?.setStreamHandler(null)
         eventChannel = null
-        eventSink = null
+        eventSinks.clear()
         cleanupObservers()
     }
 
@@ -157,6 +160,11 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "isDynosDirectorySelected" -> isDynosDirectorySelected(result)
             "copyFileToDynosFolder" -> copyFileToDynosFolder(call, result)
             "clearDynosSelection" -> clearDynosSelection(result)
+            "hasOverlayPermission" -> hasOverlayPermission(result)
+            "requestOverlayPermission" -> requestOverlayPermission(result)
+            "startOverlayService" -> startOverlayService(result)
+            "stopOverlayService" -> stopOverlayService(result)
+            "isOverlayRunning" -> isOverlayRunning(result)
             else -> result.notImplemented()
         }
     }
@@ -301,6 +309,64 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
             REQUEST_CODE_NOTIFICATION_PERMISSION
         )
+    }
+
+    private fun hasOverlayPermission(result: Result) {
+        val ctx: Context = activity ?: return result.success(false)
+        result.success(OverlayPermission.canDrawOverlays(ctx))
+    }
+
+    private fun requestOverlayPermission(result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+        OverlayPermission.requestOverlayPermission(act)
+        result.success(true)
+    }
+
+    private fun startOverlayService(result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            !OverlayPermission.canDrawOverlays(act)) {
+            result.error("NO_PERMISSION", "Overlay permission not granted", null)
+            return
+        }
+
+        val intent = Intent(act, OverlayService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            act.startForegroundService(intent)
+        } else {
+            act.startService(intent)
+        }
+        result.success(true)
+    }
+
+    private fun stopOverlayService(result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        val intent = Intent(act, OverlayService::class.java)
+        act.stopService(intent)
+        result.success(true)
+    }
+
+    private fun isOverlayRunning(result: Result) {
+        val act = activity
+        if (act == null) {
+            result.success(false)
+            return
+        }
+        result.success(OverlayService.isRunning(act))
     }
 
     /**
@@ -1010,7 +1076,15 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     // ── EventChannel helper ────────────────────────────────────────────────
 
     private fun sendEvent(data: Map<String, Any?>) {
-        eventSink?.success(data)
+        val dead = mutableListOf<EventChannel.EventSink>()
+        for (sink in eventSinks) {
+            try {
+                sink.success(data)
+            } catch (_: Exception) {
+                dead.add(sink)
+            }
+        }
+        eventSinks.removeAll(dead)
     }
 
     private fun cleanupObservers() {

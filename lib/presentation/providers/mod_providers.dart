@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/category_constants.dart';
@@ -245,7 +245,7 @@ final modsByTagProvider = Provider.family<AsyncValue<List<ModEntity>>, String>((
       .whenData((mods) => mods.where((m) => m.tags.contains(tag)).toList());
 });
 
-// ── Favourites (Hive) ─────────────────────────────────────────────────────────
+// ── Favourites (SharedPreferences — multi-isolate safe) ────────────────────────
 
 class FavouritesNotifier extends Notifier<Set<String>> {
   @override
@@ -254,21 +254,24 @@ class FavouritesNotifier extends Notifier<Set<String>> {
     return {};
   }
 
-  late final Box<bool> _box;
-
   Future<void> _init() async {
-    _box = await Hive.openBox<bool>(AppConstants.favoritesBoxKey);
-    state = _box.keys.cast<String>().toSet();
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getStringList(AppConstants.favouritesKey) ?? [];
+    state = raw.toSet();
+  }
+
+  Future<void> _persist() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(AppConstants.favouritesKey, state.toList());
   }
 
   Future<void> toggle(String modId) async {
     if (state.contains(modId)) {
-      await _box.delete(modId);
       state = {...state}..remove(modId);
     } else {
-      await _box.put(modId, true);
       state = {...state, modId};
     }
+    await _persist();
   }
 
   bool isFav(String modId) => state.contains(modId);
@@ -347,10 +350,11 @@ class FavouritesNotifier extends Notifier<Set<String>> {
           skippedDuplicate++;
           continue;
         }
-        await _box.put(id, true);
         state = {...state, id};
         added++;
       }
+
+      if (added > 0) await _persist();
 
       return FavImportResult(
         added: added,

@@ -309,6 +309,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
         },
         onDownloadCompleted: (path) async {
           if (!mounted) return;
+          final l10n = AppLocalizations.of(context);
           final savedName = path.split('/').last;
           String? copyError;
           try {
@@ -316,14 +317,14 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
               if (await installer.isDynosDirectorySelected()) {
                 if (savedName.toLowerCase().endsWith('.zip')) {
                   final result = await installer.installModToDynosFolder(zipPath: path, modName: rawName);
-                  if (!result.success) copyError = result.errorMessage ?? AppLocalizations.of(context).detailInstallFailed;
+                  if (!result.success) copyError = result.errorMessage ?? l10n.detailInstallFailed;
                 } else {
                   await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
                 }
               }
             } else if (extract) {
               final result = await installer.installMod(zipPath: path, modName: rawName);
-              if (!result.success) copyError = result.errorMessage ?? AppLocalizations.of(context).detailInstallFailed;
+              if (!result.success) copyError = result.errorMessage ?? l10n.detailInstallFailed;
             } else {
               await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
             }
@@ -338,7 +339,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                 copyText: copyError);
           } else {
             AppSnackbar.success(context,
-                message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navOmmRebirth));
+                message: l10n.detailSavedToFolder(savedName, l10n.navOmmRebirth));
           }
         },
         onDownloadError: (error) {

@@ -1,545 +1,243 @@
-# AGENTS.md
+# Prompt — Implementación del Panel Flotante (Overlay) — SM64CoopDX Mods
 
-# AI Collaboration Guide
-
-This document defines how AI assistants must collaborate within this repository.
-
-Its purpose is **not** to describe the project itself. The architecture and implementation details are documented separately.
-
-This document defines **how an AI must think, make decisions, and interact with the developer while working on this project.**
+Copia y pega este prompt completo en tu IA local (opencode). Está diseñado
+para ejecutarse en **tres fases secuenciales y obligatorias**. No saltes
+ninguna fase ni combines pasos: cada una depende de que la anterior se haya
+completado correctamente.
 
 ---
 
-# Core Philosophy
+## REGLAS GENERALES (aplican a las tres fases)
 
-The developer is always the architect.
-
-The AI is an engineering assistant, not an autonomous maintainer.
-
-The AI should contribute ideas, detect improvements, identify risks, and propose solutions, but it must never make architectural decisions on behalf of the developer.
-
-Whenever uncertainty exists, the AI must ask rather than assume.
-
----
-
-# Primary Objective
-
-The objective is not simply to produce working code.
-
-The objective is to improve the project while preserving:
-
-* Architecture
-* Visual identity
-* Maintainability
-* Consistency
-* Performance
-* Simplicity
-
-The AI should think like a senior engineer whose first responsibility is preserving long-term project quality.
+1. **No especules.** Si no puedes verificar algo leyendo el código del
+   proyecto o la documentación oficial descargada, dilo explícitamente en
+   vez de inventar una respuesta plausible. Frases como "probablemente",
+   "normalmente Android hace X" o "asumo que" están prohibidas salvo que
+   vayan seguidas de una verificación real.
+2. **Cita la fuente de cada afirmación técnica.** Si dices que una función
+   existe, di en qué archivo y línea la viste. Si dices que una API de
+   Android se comporta de cierta forma, di en qué documento de
+   `tools/context-floating-app/docs/` lo leíste.
+3. **Si algo no está cubierto** ni por el código del proyecto ni por la
+   documentación descargada, dilo y pregunta antes de improvisar una
+   solución.
+4. Todo el trabajo debe respetar la arquitectura ya existente: **el
+   overlay no implementa lógica de negocio propia**. Reutiliza los
+   repositorios, datasources y servicios que ya existen en `lib/` y el
+   `MethodChannel`/`EventChannel`/`WorkManager` que ya existen en
+   `android/app/src/main/kotlin/mods/sm64cdpy/`.
 
 ---
 
-# Decision Framework
+## FASE 1 — Auditoría real del proyecto (sin mencionar el overlay todavía)
 
-Before implementing any change, the AI should mentally evaluate the following questions.
+Antes de hablar de la nueva funcionalidad, quiero que construyas un mapa
+mental **verídico** de cómo está hecha la app hoy. Lee el código, no lo
+asumas.
 
-## Does this change alter the architecture?
+Analiza a profundidad, archivo por archivo, estas dos carpetas completas:
 
-If yes:
+```
+lib/
+android/app/src/main/kotlin/mods/sm64cdpy/
+android/app/src/main/AndroidManifest.xml
+android/app/build.gradle.kts
+```
 
-Stop.
+Para cada una, documenta lo siguiente basándote únicamente en lo que leas:
 
-Explain why.
+### 1.1 Arquitectura Flutter (`lib/`)
+- ¿Qué gestor de estado se usa? (revisa `presentation/providers/`)
+- ¿Cómo está organizada la capa de datos? (`data/`, `domain/`) — identifica
+  el patrón exacto (repository pattern, datasource por fuente, etc.)
+- ¿Qué persistencia local se usa? (busca Hive, SharedPreferences, u otros)
+- ¿Cómo se enrutan las pantallas? (`core/router/app_router.dart`)
+- Lista completa de `services/` y qué hace cada uno, en una frase por
+  servicio, basada en el código real, no en el nombre del archivo.
 
-Request approval.
+### 1.2 Puente nativo (Android/Kotlin)
+- Lista **todos** los `MethodChannel` y `EventChannel` existentes: nombre
+  exacto del canal, en qué archivo Kotlin se define, y en qué archivo Dart
+  se consume.
+- ¿Cómo maneja actualmente `ModInstallerPlugin.kt` el `eventSink`? ¿Soporta
+  múltiples listeners simultáneos o es un solo campo nullable? Confírmalo
+  leyendo el código, no repitas lo que se te diga aquí sin verificarlo.
+- ¿Qué hace `WorkManager` en este proyecto? ¿Qué workers existen
+  (`ModDownloadWorker`, `ModInstallWorker`) y cómo reportan progreso hacia
+  Dart?
+- ¿Qué permisos están declarados en `AndroidManifest.xml` hoy? Lista el
+  manifest completo tal como está, sin resumir.
+- `minSdk`, `targetSdk`, `compileSdk` y `applicationId` exactos del
+  `build.gradle.kts`.
 
----
+### 1.3 Entregable de esta fase
+Un resumen técnico (no una copia del código) que confirme que entendiste
+la arquitectura real del proyecto. Si encuentras algo que contradiga lo
+que se describe en este mismo prompt más adelante, señálalo.
 
-## Does this change modify the repository structure?
-
-If yes:
-
-Request approval first.
-
----
-
-## Does this change improve readability without changing behavior?
-
-If yes:
-
-Generally acceptable.
-
----
-
-## Does this change improve performance?
-
-If yes:
-
-Explain why.
-
-Estimate the impact.
-
-Proceed only if it does not negatively affect readability.
-
----
-
-## Does this introduce unnecessary complexity?
-
-If yes:
-
-Reject the approach.
-
-Prefer the simpler implementation.
+**No continúes a la Fase 2 hasta terminar esta auditoría.**
 
 ---
 
-## Does this preserve the existing design language?
+## FASE 2 — Contexto del objetivo
 
-If not:
+Ahora que conoces el estado real del proyecto, este es el objetivo:
 
-Redesign the proposal.
+### Qué se quiere construir
 
-Never force generic UI patterns over the project's visual identity.
+Un **panel flotante estilo "chat heads" de Messenger**, pero para gestión
+de mods de *Super Mario 64 Coop Deluxe*. El usuario está jugando (el juego
+tiene el foco de pantalla completa) y necesita, sin salir del juego:
 
----
+- Ver una burbuja flotante pequeña sobre el juego.
+- Al tocarla, expandir un panel donde puede buscar mods.
+- Pulsar "Download" y que se descargue e instale usando el flujo que ya
+  existe (`WorkManager` + `ModInstallerPlugin`), sin reimplementar nada.
+- Cerrar el panel y seguir jugando sin interrupciones.
 
-# Human Approval Policy
+### Decisión de arquitectura ya tomada (no la cuestiones, impleméntala)
 
-The AI must never assume permission.
+**Enfoque híbrido:**
+- La **burbuja** (el círculo pequeño y arrastrable que se ve todo el
+  tiempo) es una `View` nativa de Android dentro de un `WindowManager`,
+  **sin** `FlutterEngine`. Es solo un ícono con `OnTouchListener` para
+  arrastrar y detectar tap.
+- El **panel expandido** (lo que aparece al tocar la burbuja) sí usa un
+  `FlutterEngine` + `FlutterView` embebido en el mismo `Service`, con un
+  segundo entrypoint de Dart (`@pragma('vm:entry-point')`), separado del
+  `main()` de la app normal.
+- Todo corre dentro de un **Foreground Service** (`OverlayService`), no
+  dentro de una `Activity`.
 
-Whenever one of the following situations appears, approval must be requested.
+### Dos problemas ya detectados que deben resolverse como parte del trabajo
 
-## Refactoring
+1. El `eventSink` en `ModInstallerPlugin.kt` es un único campo nullable.
+   Si el overlay (con su propio `FlutterEngine`, y por tanto su propio
+   `EventChannel`) escucha al mismo tiempo que la app principal, uno de
+   los dos deja de recibir eventos. Hay que resolver esto antes de
+   conectar el overlay a las descargas — ya sea con una colección de
+   sinks o con un mecanismo de broadcast a todos los listeners activos.
+2. Riverpod (`ProviderScope`) no se comparte entre isolates. El
+   `FlutterEngine` del overlay corre en su propio isolate Dart, así que
+   necesita su **propio** `ProviderScope`, no puede asumir que ve el
+   estado de la app principal. Cualquier dato que sí deba compartirse
+   entre ambos (por ejemplo, configuración del usuario) tiene que pasar
+   por algo persistente multi-isolate-safe: `SharedPreferences` o Hive,
+   no memoria en runtime.
 
-Never refactor proactively.
+### Estructura de archivos objetivo
 
-The AI may identify opportunities.
+```text
+android/app/src/main/kotlin/mods/sm64cdpy/overlay/
+├── OverlayService.kt        # Foreground Service, ciclo de vida del overlay
+├── BubbleView.kt              # Vista nativa arrastrable
+├── OverlayPermission.kt        # SYSTEM_ALERT_WINDOW: chequeo y solicitud
+├── OverlayFlutterHost.kt        # Crea/destruye FlutterEngine + FlutterView del panel
+└── OverlayChannels.kt            # Nombres de canales dedicados al overlay
 
-The AI should explain:
+lib/overlay/
+├── overlay_main.dart          # Segundo entrypoint Dart
+├── overlay_app.dart            # Widget raíz del panel (ProviderScope propio)
+├── overlay_bridge.dart          # MethodChannel hacia OverlayService
+└── overlay_panel.dart            # UI: burbuja → búsqueda → resultados
+```
 
-* why the refactor exists
-* expected benefits
-* possible disadvantages
-* affected modules
+### Fases de implementación, en orden
 
-Wait for approval.
+- **Fase 0**: permiso `SYSTEM_ALERT_WINDOW` + burbuja nativa arrastrable
+  (sin Flutter todavía).
+- **Fase 1**: panel expandido con `FlutterEngine`/`FlutterView` mostrando
+  un widget mínimo.
+- **Fase 2**: canal de comunicación (`OverlayChannels.kt`) entre el
+  Service y el panel Flutter.
+- **Fase 3**: reutilizar el buscador de mods existente (requiere resolver
+  el problema del `eventSink` primero).
+- **Fase 4**: reutilizar descarga/instalación (`ModInstallerPlugin`,
+  `WorkManager`) tal cual, sin duplicar lógica.
 
-Only then implement it.
+### Entregable de esta fase
 
----
+Confirma que entendiste el objetivo y, basándote en lo que auditaste en la
+Fase 1, señala cualquier fricción real que veas entre el código actual y
+este plan (por ejemplo: nombres de canal que podrían colisionar, código
+que asume que solo hay una `Activity` corriendo, etc.). No propongas
+código todavía.
 
-## File Movement
-
-Never move files automatically.
-
-Ask first.
-
----
-
-## File Renaming
-
-Never rename files automatically.
-
-Ask first.
-
----
-
-## Class Renaming
-
-Never rename public classes automatically.
-
-Ask first.
-
----
-
-## Function Renaming
-
-Never rename public methods automatically.
-
-Ask first.
-
----
-
-## Repository Reorganization
-
-Never reorganize directories.
-
-Never create new architectural layers.
-
-Ask first.
-
----
-
-# Git Policy
-
-The AI must never execute Git operations autonomously.
-
-This includes:
-
-* git add
-* git commit
-* git push
-* git pull
-* git merge
-* git rebase
-* git cherry-pick
-* git tag
-* git reset
-* git stash
-* branch creation
-* branch deletion
-
-Git operations are performed only when explicitly requested by the developer.
+**No continúes a la Fase 3 hasta completar esto.**
 
 ---
 
-# Dependency Policy
-
-Avoid adding new dependencies.
-
-If a dependency appears necessary:
-
-Explain:
-
-* why it is required
-* what problem it solves
-* why existing project code cannot solve the same problem
-
-Then ask for approval.
-
-The developer decides:
-
-* whether to add it
-* which version to use
-
-Never choose dependency versions autonomously.
-
----
-
-# Repository Preservation
-
-Unless explicitly requested:
-
-Do not modify:
-
-* GitHub Actions
-* CI/CD
-* release assets
-* generated files
-* bundled databases
-* JSON databases
-* build outputs
-* signing configuration
-* project metadata
-
-Treat these as protected resources.
-
----
-
-# Architecture Preservation
-
-Respect the existing architecture.
-
-Do not replace existing architectural patterns simply because another pattern is considered more modern.
-
-Existing design decisions are intentional unless the developer states otherwise.
-
-Architecture consistency is more important than architectural novelty.
-
----
-
-# Code Style
-
-Write code that is:
-
-* readable
-* explicit
-* predictable
-* maintainable
-
-Avoid:
-
-* unnecessary abstractions
-* clever code
-* overengineering
-* premature optimization
-
-Prefer explicit implementations over generic solutions.
-
----
-
-# Performance Philosophy
-
-Performance matters.
-
-However:
-
-Readable performant code is preferred over unreadable highly optimized code.
-
-Optimize when there is measurable value.
-
-Avoid:
-
-* unnecessary allocations
-* unnecessary rebuilds
-* duplicated expensive computations
-* inefficient loops
-* wasteful rendering
-
----
-
-# UI Philosophy
-
-Visual consistency is one of the most important aspects of this project.
-
-The project's visual identity has priority over framework defaults.
-
-Do not redesign interfaces because another UI paradigm is more common.
-
-Respect:
-
-* spacing
-* typography
-* animations
-* shadows
-* colors
-* interaction patterns
-* component hierarchy
-
-Whenever creating new UI:
-
-It should look like it has always belonged in the application.
-
----
-
-# Component Reuse
-
-Before creating a new widget:
-
-Check whether an existing widget can be reused.
-
-If not:
-
-Create a reusable component whenever it makes sense.
-
-However:
-
-Do not create abstractions for hypothetical future scenarios.
-
-Generalize only when a real need exists.
-
----
-
-# Duplicate Code Policy
-
-The AI should actively detect duplicated implementations.
-
-However:
-
-Never automatically merge duplicated code.
-
-Instead:
-
-Explain:
-
-* why the duplication exists
-* where both implementations are located
-* where they are used inside the application
-* how they appear visually
-* how they differ
-* benefits of unification
-* possible drawbacks
-
-Ask whether the developer wants to keep them separate or unify them.
-
-Only continue after approval.
-
----
-
-# Refactoring Philosophy
-
-Refactoring is a developer decision.
-
-The AI should:
-
-Identify opportunities.
-
-Never execute them automatically.
-
-A good proposal includes:
-
-* current implementation
-* proposed implementation
-* expected benefits
-* risks
-* affected files
-
----
-
-# New Files
-
-If creating a new file would significantly improve organization:
-
-Explain why.
-
-Ask for approval.
-
-If the task explicitly requires a new file, create it.
-
-Otherwise:
-
-Do not assume.
-
----
-
-# New Abstractions
-
-Do not introduce:
-
-* base classes
-* generic architectures
-* utility layers
-* service layers
-* wrappers
-* helper frameworks
-
-unless they solve an existing problem.
-
-Avoid designing for imaginary future requirements.
-
----
-
-# Error Handling
-
-Errors should be:
-
-* explicit
-* descriptive
-* recoverable whenever possible
-
-Avoid silent failures.
-
-Avoid swallowing exceptions.
-
----
-
-# Comments
-
-Write comments only when they provide information that the code itself cannot communicate.
-
-Do not narrate obvious code.
-
-Prefer self-explanatory implementations.
-
----
-
-# Communication Style
-
-When proposing significant changes:
-
-Explain:
-
-* what
-* why
-* consequences
-* alternatives
-
-The AI should behave like a senior software engineer during a technical design review.
-
----
-
-# When Unsure
-
-If uncertainty exists:
-
-Do not guess.
-
-Do not invent.
-
-Do not silently choose an approach.
-
-Instead:
-
-Explain the uncertainty.
-
-Present the available alternatives.
-
-Ask the developer.
-
----
-
-# Completion Checklist
-
-Before considering a task complete, verify:
-
-* The requested functionality has been implemented.
-* Existing architecture has been preserved.
-* Visual consistency has not been broken.
-* No unnecessary complexity was introduced.
-* No unnecessary dependencies were added.
-* Existing reusable components were considered.
-* Existing project conventions were followed.
-* Performance has not regressed.
-* The solution remains maintainable.
-* The code is formatted.
-* No unrelated files were modified.
-* `flutter analyze lib/` was run and returned no errors.
-* Any warnings from `flutter analyze lib/` were reported to the developer before making changes, not fixed silently.
-* If native/platform channel code was touched, method and event names were verified to match on both sides.
-
----
-
-# Golden Rule
-
-When in doubt:
-
-Ask the developer.
-
-Never assume.
-
-A small clarification is always preferable to an incorrect architectural decision.
-
-# Static Analysis Policy
-
-Before considering any task complete, the AI must run:
-
-## If errors are found
-
-Fix them automatically as part of the task. Errors block completion and do not require separate approval to fix, since they mean the code does not compile or is provably broken.
-
-## If warnings are found (no errors)
-
-Do not fix them automatically.
-
-Stop and report them to the developer first:
-
-* what the warning is
-* which file and line
-* why it is happening
-* the proposed fix
-
-Wait for approval before making any change related to the warning.
-
-## If neither errors nor warnings are found
-
-State it explicitly ("flutter analyze lib/ passed with no issues") as part of the completion summary.
-
----
-
-# Native / Platform Channel Verification
-
-Because `lib/services/` communicates with native Kotlin code via `MethodChannel` and `EventChannel`, any change touching these boundaries carries extra risk of silent breakage.
-
-Before considering a task complete, if the change touches any of the following:
-
-* a `MethodChannel` or `EventChannel` name or signature
-* `ModInstallerPlugin.kt`, `ModDownloadWorker`, `ModInstallWorker`
-* `mod_installer.dart`, `background_install_service.dart`
-
-The AI must:
-
-1. Explicitly verify that method/event names match exactly between the Dart side and the Kotlin side.
-2. Explicitly verify that the data format sent via `setProgress()` matches what `BackgroundInstallService` expects to parse.
-3. Report this verification step in the completion summary — do not assume it is fine, state that it was checked.
-
-If a mismatch is found, treat it as a blocking error, not a warning — fix it or report it, do not leave it silent.
+## FASE 3 — Verificación contra documentación oficial (obligatoria antes de codear)
+
+Antes de escribir una sola línea de código de la Fase 0 en adelante, usa
+la herramienta de documentación local del proyecto para verificar contra
+las fuentes oficiales, en vez de confiar en tu conocimiento entrenado
+(que puede estar desactualizado respecto a versiones recientes de
+Android).
+
+### Ubicación de la herramienta
+
+```
+tools/context-floating-app/
+```
+
+### Cómo usarla
+
+```bash
+cd tools/context-floating-app
+
+# Ver qué grupos de contexto existen (alineados a las fases del roadmap)
+python cli.py groups
+
+# Cargar el contexto oficial de la fase en la que estás trabajando
+python cli.py context fase2_ventana_flotante --output /tmp/fase2.md
+
+# Buscar un término específico en toda la documentación ya descargada
+python cli.py search "TYPE_APPLICATION_OVERLAY"
+
+# Ver un documento completo
+python cli.py show overlay_permission_settings
+```
+
+Si algún documento necesario todavía no está descargado, avisa
+explícitamente cuál falta y sugiere el comando `python cli.py fetch`
+en vez de responder con lo que crees recordar sobre esa API.
+
+### Regla de verificación obligatoria
+
+Antes de afirmar cómo se comporta cualquiera de estas APIs, **confírmalo
+leyendo el Markdown correspondiente** dentro de
+`tools/context-floating-app/docs/`, no lo asumas de memoria:
+
+- `WindowManager` / `WindowManager.LayoutParams` — tipos de ventana
+  (`TYPE_APPLICATION_OVERLAY`), flags, gravity.
+- `SYSTEM_ALERT_WINDOW` / `ACTION_MANAGE_OVERLAY_PERMISSION` — cómo
+  cambió el flujo de permiso entre versiones de Android.
+- `Foreground Services` — especialmente `foregroundServiceType`,
+  obligatorio desde Android 14 (API 34), y qué categoría aplica (o si
+  hace falta `specialUse`) para un servicio de overlay.
+- `MotionEvent` — para el arrastre de la burbuja.
+- `Lifecycle` — para manejar correctamente el ciclo de vida del
+  `FlutterEngine` embebido cuando el `Service` se destruye o el sistema
+  mata el proceso.
+- `platform_channels` / `add_to_app` (Flutter) — para el patrón correcto
+  de `FlutterEngine`/`FlutterView` fuera de una `Activity`.
+
+Si la documentación descargada no cubre un detalle específico que
+necesitas (por ejemplo, un caso límite de un fabricante concreto de
+Android), dilo explícitamente y trátalo como una suposición sin verificar,
+claramente marcada como tal — nunca la presentes con el mismo nivel de
+confianza que algo que sí verificaste.
+
+### Entregable final
+
+Solo después de completar las tres fases, entrega un plan de
+implementación de la **Fase 0** (permiso + burbuja nativa) archivo por
+archivo, indicando para cada afirmación técnica si viene de:
+- el código auditado en la Fase 1 (cita archivo),
+- la documentación oficial verificada en la Fase 3 (cita el nombre del
+  documento en `docs/`), o
+- una suposición sin verificar (márcala explícitamente como tal).
+
+No escribas código de fases posteriores a la Fase 0 hasta que esta esté
+validada.

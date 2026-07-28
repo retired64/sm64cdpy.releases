@@ -1,0 +1,34 @@
+{
+  "fase1_fundamentos": [
+    "android/fundamentals",
+    "android/activities",
+    "android/services",
+    "android/broadcasts"
+  ],
+  "fase2_ventana_flotante": [
+    "android/windowmanager",
+    "android/layoutparams",
+    "android/overlay_permission",
+    "android/motionevent"
+  ],
+  "fase3_foreground_service": [
+    "android/foreground_services",
+    "android/lifecycle"
+  ],
+  "fase4_flutter_bridge": [
+    "flutter/platform_channels",
+    "flutter/add_to_app"
+  ],
+  "fase5_optimizacion": [
+    "android/lifecycle",
+    "android/performance"
+  ],
+  "overlay": [
+    "android/windowmanager",
+    "android/layoutparams",
+    "android/overlay_permission",
+    "android/foreground_services",
+    "flutter/platform_channels",
+    "flutter/add_to_app"
+  ]
+}

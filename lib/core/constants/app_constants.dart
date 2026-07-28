@@ -51,6 +51,9 @@ class AppConstants {
   /// Clave en SharedPreferences para el estado de auto-instalación.
   static const String autoInstallModsKey = 'auto_install_mods';
 
+  /// Clave en SharedPreferences para el set de IDs de mods favoritos (JSON).
+  static const String favouritesKey = 'favourites';
+
   /// Clave en SharedPreferences para la URI del directorio de mods seleccionado.
   static const String modsDirectoryUriKey = 'mods_directory_uri';
 

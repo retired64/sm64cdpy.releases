@@ -1,0 +1,64 @@
+# config.yaml
+# Define aquí qué páginas de documentación oficial quieres mantener
+# sincronizadas localmente. Si agregas otra doc en el futuro, solo
+# añade una entrada nueva: no hay que tocar el código de la CLI.
+#
+# Formato:
+#   categoria:
+#     nombre_corto: URL
+
+android:
+  overlay_permission_settings:
+    https://developer.android.com/reference/android/provider/Settings#ACTION_MANAGE_OVERLAY_PERMISSION
+  gravity:
+    https://developer.android.com/reference/android/view/Gravity
+  pixelformat:
+    https://developer.android.com/reference/android/graphics/PixelFormat
+  fundamentals:
+    https://developer.android.com/guide/components/fundamentals
+
+  activities:
+    https://developer.android.com/guide/components/activities/intro-activities
+
+  services:
+    https://developer.android.com/guide/components/services
+
+  broadcasts:
+    https://developer.android.com/guide/components/broadcasts
+
+  windowmanager:
+    https://developer.android.com/reference/android/view/WindowManager
+
+  layoutparams:
+    https://developer.android.com/reference/android/view/WindowManager.LayoutParams
+
+  overlay_permission:
+    https://developer.android.com/reference/android/Manifest.permission#SYSTEM_ALERT_WINDOW
+
+  motionevent:
+    https://developer.android.com/reference/android/view/MotionEvent
+
+  foreground_services:
+    https://developer.android.com/develop/background-work/services/fgs
+
+  foreground_service_types:
+    https://developer.android.com/develop/background-work/services/fgs/service-types
+
+  foreground_service_declare:
+    https://developer.android.com/develop/background-work/services/fgs/declare
+
+  lifecycle:
+    https://developer.android.com/topic/libraries/architecture/lifecycle
+
+  performance:
+    https://developer.android.com/topic/performance
+
+flutter:
+  add_to_app:
+    https://docs.flutter.dev/add-to-app
+
+  add_to_app_android:
+    https://docs.flutter.dev/add-to-app/android/add-flutter-screen
+
+  platform_channels:
+    https://docs.flutter.dev/platform-integration/platform-channels

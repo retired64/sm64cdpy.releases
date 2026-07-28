@@ -342,12 +342,13 @@ class _VipModCardState extends ConsumerState<VipModCard>
         },
         onDownloadCompleted: (path) async {
           if (!mounted) return;
+          final l10n = AppLocalizations.of(context);
           final savedName = path.split('/').last;
           String? copyError;
           try {
             if (extract) {
               final result = await installer.installMod(zipPath: path, modName: modName ?? savedName);
-              if (!result.success) copyError = result.errorMessage ?? AppLocalizations.of(context).detailInstallFailed;
+              if (!result.success) copyError = result.errorMessage ?? l10n.detailInstallFailed;
             } else {
               await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
             }
@@ -362,7 +363,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
                 copyText: copyError);
           } else {
             AppSnackbar.success(context,
-                message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navVIPMods));
+                message: l10n.detailSavedToFolder(savedName, l10n.navVIPMods));
           }
         },
         onDownloadError: (error) {

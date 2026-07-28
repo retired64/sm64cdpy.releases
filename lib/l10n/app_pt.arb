@@ -282,6 +282,13 @@
   "settingsCheckForUpdates": "Verificar atualizações",
   "settingsChecking": "Verificando...",
 
+  "settingsOverlayPermission": "Permissão de sobreposição",
+  "settingsOverlayPermissionDesc": "Necessária para mostrar o balão sobre o jogo",
+  "settingsOverlayGranted": "Permissão de sobreposição concedida",
+  "settingsOverlayGrantedDesc": "Toque para alterar · O balão pode aparecer sobre outros apps",
+  "settingsOverlayRunning": "Balão flutuante ativo",
+  "settingsOverlayStoppedDesc": "Toque para mostrar o balão sobre o jogo",
+
   "changelogTitle": "Registro de Mudanças",
   "changelogNew": "Novo",
   "changelogImproved": "Melhorado",

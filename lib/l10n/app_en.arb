@@ -1151,6 +1151,13 @@
     "description": "Settings screen message while checking for updates"
   },
 
+  "settingsOverlayPermission": "Overlay permission",
+  "settingsOverlayPermissionDesc": "Required to show the bubble over the game",
+  "settingsOverlayGranted": "Overlay permission granted",
+  "settingsOverlayGrantedDesc": "Tap to change · The bubble can now appear over other apps",
+  "settingsOverlayRunning": "Floating bubble active",
+  "settingsOverlayStoppedDesc": "Tap to show the bubble over the game",
+
   "changelogTitle": "Changelog",
   "@changelogTitle": {
     "description": "Changelog screen title"
