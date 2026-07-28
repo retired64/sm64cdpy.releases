@@ -897,27 +897,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsChecking => 'Verificando...';
 
   @override
-  String get settingsOverlayPermission => 'Permiso de superposición';
-
-  @override
-  String get settingsOverlayPermissionDesc =>
-      'Necesario para mostrar la burbuja sobre el juego';
-
-  @override
-  String get settingsOverlayGranted => 'Permiso de superposición concedido';
-
-  @override
-  String get settingsOverlayGrantedDesc =>
-      'Toca para cambiar · La burbuja puede aparecer sobre otras apps';
-
-  @override
-  String get settingsOverlayRunning => 'Burbuja flotante activa';
-
-  @override
-  String get settingsOverlayStoppedDesc =>
-      'Toca para mostrar la burbuja sobre el juego';
-
-  @override
   String get changelogTitle => 'Registro de Cambios';
 
   @override
@@ -2082,27 +2061,6 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get settingsChecking => 'Verificando...';
-
-  @override
-  String get settingsOverlayPermission => 'Permiso de superposición';
-
-  @override
-  String get settingsOverlayPermissionDesc =>
-      'Necesario para mostrar la burbuja sobre el juego';
-
-  @override
-  String get settingsOverlayGranted => 'Permiso de superposición concedido';
-
-  @override
-  String get settingsOverlayGrantedDesc =>
-      'Toca para cambiar · La burbuja puede aparecer sobre otras apps';
-
-  @override
-  String get settingsOverlayRunning => 'Burbuja flotante activa';
-
-  @override
-  String get settingsOverlayStoppedDesc =>
-      'Toca para mostrar la burbuja sobre el juego';
 
   @override
   String get changelogTitle => 'Registro de Cambios';

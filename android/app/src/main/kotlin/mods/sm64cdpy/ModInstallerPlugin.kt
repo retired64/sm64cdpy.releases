@@ -27,8 +27,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import mods.sm64cdpy.overlay.OverlayPermission
-import mods.sm64cdpy.overlay.OverlayService
 import java.io.*
 import java.util.UUID
 import java.util.zip.ZipEntry
@@ -160,11 +158,6 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "isDynosDirectorySelected" -> isDynosDirectorySelected(result)
             "copyFileToDynosFolder" -> copyFileToDynosFolder(call, result)
             "clearDynosSelection" -> clearDynosSelection(result)
-            "hasOverlayPermission" -> hasOverlayPermission(result)
-            "requestOverlayPermission" -> requestOverlayPermission(result)
-            "startOverlayService" -> startOverlayService(result)
-            "stopOverlayService" -> stopOverlayService(result)
-            "isOverlayRunning" -> isOverlayRunning(result)
             else -> result.notImplemented()
         }
     }
@@ -309,64 +302,6 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
             REQUEST_CODE_NOTIFICATION_PERMISSION
         )
-    }
-
-    private fun hasOverlayPermission(result: Result) {
-        val ctx: Context = activity ?: return result.success(false)
-        result.success(OverlayPermission.canDrawOverlays(ctx))
-    }
-
-    private fun requestOverlayPermission(result: Result) {
-        val act = activity
-        if (act == null) {
-            result.error("NO_ACTIVITY", "Activity not available", null)
-            return
-        }
-        OverlayPermission.requestOverlayPermission(act)
-        result.success(true)
-    }
-
-    private fun startOverlayService(result: Result) {
-        val act = activity
-        if (act == null) {
-            result.error("NO_ACTIVITY", "Activity not available", null)
-            return
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-            !OverlayPermission.canDrawOverlays(act)) {
-            result.error("NO_PERMISSION", "Overlay permission not granted", null)
-            return
-        }
-
-        val intent = Intent(act, OverlayService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            act.startForegroundService(intent)
-        } else {
-            act.startService(intent)
-        }
-        result.success(true)
-    }
-
-    private fun stopOverlayService(result: Result) {
-        val act = activity
-        if (act == null) {
-            result.error("NO_ACTIVITY", "Activity not available", null)
-            return
-        }
-
-        val intent = Intent(act, OverlayService::class.java)
-        act.stopService(intent)
-        result.success(true)
-    }
-
-    private fun isOverlayRunning(result: Result) {
-        val act = activity
-        if (act == null) {
-            result.success(false)
-            return
-        }
-        result.success(OverlayService.isRunning(act))
     }
 
     /**

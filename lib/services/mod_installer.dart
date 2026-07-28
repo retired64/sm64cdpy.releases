@@ -205,56 +205,6 @@ class ModInstaller {
     }
   }
 
-  /// Returns true if SYSTEM_ALERT_WINDOW (overlay) permission is granted.
-  Future<bool> hasOverlayPermission() async {
-    try {
-      final result = await _channel.invokeMethod<bool>('hasOverlayPermission');
-      return result ?? false;
-    } on PlatformException {
-      return false;
-    }
-  }
-
-  /// Opens the system settings screen for overlay permission.
-  Future<void> requestOverlayPermission() async {
-    try {
-      await _channel.invokeMethod('requestOverlayPermission');
-    } on PlatformException {
-      // Silently ignore - user may have navigated away
-    }
-  }
-
-  /// Starts the overlay service (floating bubble).
-  /// Requires SYSTEM_ALERT_WINDOW permission to be granted first.
-  Future<bool> startOverlayService() async {
-    try {
-      final result = await _channel.invokeMethod<bool>('startOverlayService');
-      return result ?? false;
-    } on PlatformException {
-      return false;
-    }
-  }
-
-  /// Stops the overlay service and removes the floating bubble.
-  Future<bool> stopOverlayService() async {
-    try {
-      final result = await _channel.invokeMethod<bool>('stopOverlayService');
-      return result ?? false;
-    } on PlatformException {
-      return false;
-    }
-  }
-
-  /// Returns true if the overlay service is currently running.
-  Future<bool> isOverlayRunning() async {
-    try {
-      final result = await _channel.invokeMethod<bool>('isOverlayRunning');
-      return result ?? false;
-    } on PlatformException {
-      return false;
-    }
-  }
-
   /// Abre el explorador de archivos del sistema para que el usuario
   /// seleccione la carpeta de dynos. Retorna la URI si se seleccionó,
   /// null si el usuario canceló.

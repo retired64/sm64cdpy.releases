@@ -282,12 +282,6 @@
   "settingsCheckForUpdates": "Buscar actualizaciones",
   "settingsChecking": "Verificando...",
 
-  "settingsOverlayPermission": "Permiso de superposición",
-  "settingsOverlayPermissionDesc": "Necesario para mostrar la burbuja sobre el juego",
-  "settingsOverlayGranted": "Permiso de superposición concedido",
-  "settingsOverlayGrantedDesc": "Toca para cambiar · La burbuja puede aparecer sobre otras apps",
-  "settingsOverlayRunning": "Burbuja flotante activa",
-  "settingsOverlayStoppedDesc": "Toca para mostrar la burbuja sobre el juego",
 
   "changelogTitle": "Registro de Cambios",
   "changelogNew": "Nuevo",

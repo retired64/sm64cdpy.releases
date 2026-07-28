@@ -201,6 +201,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  floaty_chatheads:
+    dependency: "direct main"
+    description:
+      name: floaty_chatheads
+      sha256: dac3433bd300886b881fa04fe0cc4e79e50286a3cd639dc91600d2a15ae6b18e
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  floaty_chatheads_android:
+    dependency: transitive
+    description:
+      name: floaty_chatheads_android
+      sha256: "6526083f111c44cf5b75aa68a79c9e0fc3d4646b7a58e5de224e31ad341a1cdc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  floaty_chatheads_ios:
+    dependency: transitive
+    description:
+      name: floaty_chatheads_ios
+      sha256: "8d1999909950eb278bb33005303ee7707ac6f671931de7f52a22f1fe1313f7be"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  floaty_chatheads_platform_interface:
+    dependency: transitive
+    description:
+      name: floaty_chatheads_platform_interface
+      sha256: "48e39091a90ebfff8280af07e87cf7c0e199304513acee8610d5da39468be752"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   flutter:
     dependency: "direct main"
     description: flutter

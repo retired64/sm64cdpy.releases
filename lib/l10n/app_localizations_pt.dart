@@ -891,27 +891,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsChecking => 'Verificando...';
 
   @override
-  String get settingsOverlayPermission => 'Permissão de sobreposição';
-
-  @override
-  String get settingsOverlayPermissionDesc =>
-      'Necessária para mostrar o balão sobre o jogo';
-
-  @override
-  String get settingsOverlayGranted => 'Permissão de sobreposição concedida';
-
-  @override
-  String get settingsOverlayGrantedDesc =>
-      'Toque para alterar · O balão pode aparecer sobre outros apps';
-
-  @override
-  String get settingsOverlayRunning => 'Balão flutuante ativo';
-
-  @override
-  String get settingsOverlayStoppedDesc =>
-      'Toque para mostrar o balão sobre o jogo';
-
-  @override
   String get changelogTitle => 'Registro de Mudanças';
 
   @override
@@ -2067,27 +2046,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsChecking => 'Verificando...';
-
-  @override
-  String get settingsOverlayPermission => 'Permissão de sobreposição';
-
-  @override
-  String get settingsOverlayPermissionDesc =>
-      'Necessária para mostrar o balão sobre o jogo';
-
-  @override
-  String get settingsOverlayGranted => 'Permissão de sobreposição concedida';
-
-  @override
-  String get settingsOverlayGrantedDesc =>
-      'Toque para alterar · O balão pode aparecer sobre outros apps';
-
-  @override
-  String get settingsOverlayRunning => 'Balão flutuante ativo';
-
-  @override
-  String get settingsOverlayStoppedDesc =>
-      'Toque para mostrar o balão sobre o jogo';
 
   @override
   String get changelogTitle => 'Registro de Mudanças';

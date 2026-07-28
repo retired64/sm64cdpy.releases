@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
+import 'package:floaty_chatheads/floaty_chatheads.dart';
 
+import 'overlay/overlay_panel.dart';
 import 'l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/retro_theme.dart';
@@ -61,11 +63,6 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
   void initState() {
     super.initState();
     _updateSystemUIOverlayStyle();
-
-    // Listen to theme changes and update system UI
-    ref.listen<bool>(isDarkModeProvider, (previous, next) {
-      _updateSystemUIOverlayStyle();
-    });
   }
 
   void _updateSystemUIOverlayStyle() {
@@ -85,6 +82,10 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<bool>(isDarkModeProvider, (previous, next) {
+      _updateSystemUIOverlayStyle();
+    });
+
     final themeMode = ref.watch(themeModeProvider);
     final localeTag = ref.watch(localeNotifierProvider);
     final locale =
@@ -103,3 +104,6 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
     );
   }
 }
+
+@pragma('vm:entry-point')
+void overlayMain() => FloatyOverlayApp.run(const OverlayPanel());

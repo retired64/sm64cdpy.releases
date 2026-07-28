@@ -1620,42 +1620,6 @@ abstract class AppLocalizations {
   /// **'Checking...'**
   String get settingsChecking;
 
-  /// No description provided for @settingsOverlayPermission.
-  ///
-  /// In en, this message translates to:
-  /// **'Overlay permission'**
-  String get settingsOverlayPermission;
-
-  /// No description provided for @settingsOverlayPermissionDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Required to show the bubble over the game'**
-  String get settingsOverlayPermissionDesc;
-
-  /// No description provided for @settingsOverlayGranted.
-  ///
-  /// In en, this message translates to:
-  /// **'Overlay permission granted'**
-  String get settingsOverlayGranted;
-
-  /// No description provided for @settingsOverlayGrantedDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap to change · The bubble can now appear over other apps'**
-  String get settingsOverlayGrantedDesc;
-
-  /// No description provided for @settingsOverlayRunning.
-  ///
-  /// In en, this message translates to:
-  /// **'Floating bubble active'**
-  String get settingsOverlayRunning;
-
-  /// No description provided for @settingsOverlayStoppedDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap to show the bubble over the game'**
-  String get settingsOverlayStoppedDesc;
-
   /// Changelog screen title
   ///
   /// In en, this message translates to:

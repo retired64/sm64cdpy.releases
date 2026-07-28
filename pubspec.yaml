@@ -35,6 +35,9 @@ dependencies:
   shared_preferences: ^2.5.5
   collection: ^1.18.0
 
+  # Floating overlay — burbuja + panel sobre el juego
+  floaty_chatheads: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -22,7 +22,9 @@ class _AppShellState extends ConsumerState<AppShell> {
   void didUpdateWidget(covariant AppShell oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.currentRoute != oldWidget.currentRoute) {
-      ref.read(currentRouteProvider.notifier).set(widget.currentRoute);
+      Future.microtask(() {
+        ref.read(currentRouteProvider.notifier).set(widget.currentRoute);
+      });
     }
   }
 

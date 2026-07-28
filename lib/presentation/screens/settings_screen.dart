@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -83,7 +86,7 @@ class SettingsScreen extends ConsumerWidget {
                     _RetroGap(height: 6),
                     _DynosFolderTile(),
                     _AutoInstallToggle(),
-                    _OverlayPermissionTile(),
+                    _OverlayToggle(),
 
                     const SizedBox(height: 20),
                     _RetroSectionKicker(retro: retro, label: l10n.settingsAppearance, japanese: '外観'),
@@ -1279,102 +1282,90 @@ class _RetroGap extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox(height: height);
 }
 
-// ── Overlay permission tile ─────────────────────────────────────────────────
+// ── Overlay toggle ──────────────────────────────────────────────────────────
 
-class _OverlayPermissionTile extends ConsumerStatefulWidget {
-  const _OverlayPermissionTile();
+class _OverlayToggle extends ConsumerStatefulWidget {
+  const _OverlayToggle();
 
   @override
-  ConsumerState<_OverlayPermissionTile> createState() =>
-      _OverlayPermissionTileState();
+  ConsumerState<_OverlayToggle> createState() => _OverlayToggleState();
 }
 
-class _OverlayPermissionTileState extends ConsumerState<_OverlayPermissionTile> {
+class _OverlayToggleState extends ConsumerState<_OverlayToggle> {
+  bool _active = false;
   bool _loading = false;
-  bool _granted = false;
-  bool _running = false;
-  bool _toggling = false;
-
-  final _installer = ModInstaller();
+  StreamSubscription<String>? _closeSub;
 
   @override
   void initState() {
     super.initState();
-    _refresh();
+    _check();
+    _closeSub = FloatyChatheads.onClosed.listen((_) {
+      if (mounted) setState(() => _active = false);
+    });
   }
 
-  Future<void> _refresh() async {
-    try {
-      final granted = await _installer.hasOverlayPermission();
-      final running = granted ? await _installer.isOverlayRunning() : false;
-      if (mounted) setState(() { _granted = granted; _running = running; });
-    } catch (_) {}
+  @override
+  void dispose() {
+    _closeSub?.cancel();
+    super.dispose();
   }
 
-  Future<void> _requestPermission() async {
+  Future<void> _check() async {
+    final active = await FloatyChatheads.isActive();
+    if (mounted) setState(() => _active = active);
+  }
+
+  Future<void> _toggle() async {
+    if (_loading) return;
     setState(() => _loading = true);
     try {
-      await _installer.requestOverlayPermission();
+      if (_active) {
+        await FloatyChatheads.closeChatHead();
+      } else {
+        final granted = await FloatyChatheads.requestPermission();
+        if (!granted) {
+          if (mounted) setState(() => _loading = false);
+          return;
+        }
+        await FloatyChatheads.showChatHead(
+          entryPoint: 'overlayMain',
+          sizePreset: ContentSizePreset.card,
+          persistOnAppClose: true,
+        );
+      }
+      await _check();
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
-    await _refresh();
-  }
-
-  Future<void> _toggleService() async {
-    if (_toggling) return;
-    setState(() => _toggling = true);
-    final ok = _running
-        ? await _installer.stopOverlayService()
-        : await _installer.startOverlayService();
-    if (ok) {
-      await _refresh();
-    }
-    if (mounted) setState(() => _toggling = false);
   }
 
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    if (!_granted) {
-      return _RetroTileShell(
-        retro: retro,
-        onTap: _loading ? null : _requestPermission,
-        accentColor: retro.red,
-        leading: _loading
-            ? _RetroSpinner(retro: retro)
-            : _RetroIconBox(
-                retro: retro,
-                icon: Icons.picture_in_picture_rounded,
-                accentColor: retro.red,
-              ),
-        title: l10n.settingsOverlayPermission,
-        subtitle: l10n.settingsOverlayPermissionDesc,
-      );
-    }
 
     return _RetroTileShell(
       retro: retro,
-      onTap: _toggling ? null : _toggleService,
-      accentColor: _running ? retro.accent : null,
-      leading: _toggling
+      onTap: _loading ? null : _toggle,
+      accentColor: _active ? retro.accent : null,
+      leading: _loading
           ? _RetroSpinner(retro: retro)
           : _RetroIconBox(
               retro: retro,
-              icon: _running
+              icon: _active
                   ? Icons.picture_in_picture_alt_rounded
                   : Icons.picture_in_picture_rounded,
-              accentColor: _running ? retro.accent : null,
+              accentColor: _active ? retro.accent : null,
             ),
-      title: _running ? l10n.settingsOverlayRunning : l10n.settingsOverlayGranted,
-      subtitle: _running ? l10n.settingsOverlayGrantedDesc : l10n.settingsOverlayStoppedDesc,
-      trailing: _toggling
+      title: _active ? 'Chathead active' : 'Floating overlay',
+      subtitle: _active
+          ? 'Tap to hide the bubble'
+          : 'Tap to show the bubble over the game',
+      trailing: _loading
           ? null
           : _RetroSwitch(
               retro: retro,
-              value: _running,
-              onChanged: (_) => _toggleService(),
+              value: _active,
+              onChanged: (_) => _toggle(),
             ),
     );
   }
