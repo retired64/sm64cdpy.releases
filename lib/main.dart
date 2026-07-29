@@ -106,32 +106,6 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
 }
 
 @pragma('vm:entry-point')
-void overlayMain() {
-  WidgetsFlutterBinding.ensureInitialized();
-  FloatyOverlay.setUp();
-  runApp(
-    const ProviderScope(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: _KeyboardSafe(child: OverlayPanel()),
-      ),
-    ),
+void overlayMain() => FloatyOverlayApp.run(
+    const ProviderScope(child: OverlayPanel()),
   );
-}
-
-/// Prevents the system keyboard from pushing overlay content off-screen.
-/// In a floating window, viewInsets should not affect layout.
-class _KeyboardSafe extends StatelessWidget {
-  const _KeyboardSafe({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        viewInsets: EdgeInsets.zero,
-      ),
-      child: child,
-    );
-  }
-}
