@@ -782,7 +782,9 @@ class _VersionAccordionState extends State<_VersionAccordion> {
         final last = segs.last;
         if (last.isNotEmpty && last.contains('.')) return last;
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('_extractFilename: $e');
+    }
     return url.split('/').last;
   }
 }

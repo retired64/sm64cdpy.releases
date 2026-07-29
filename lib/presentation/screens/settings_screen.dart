@@ -303,8 +303,8 @@ class _RetroDialog extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ],
+                    ),
+                  ],
         ),
       ),
     );
@@ -392,6 +392,7 @@ class _ModsFolderTile extends ConsumerStatefulWidget {
 class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
   bool _loading = false;
   bool _hasFolder = false;
+  String? _folderUri;
 
   final _installer = ModInstaller();
 
@@ -403,13 +404,17 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
 
   Future<void> _checkFolder() async {
     try {
+      final uri = await _installer.getSavedDirectoryUri();
       final has = await _installer.isDirectorySelected();
       if (mounted) {
         setState(() {
           _hasFolder = has;
+          _folderUri = uri;
         });
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('_ModsFolderTile._checkFolder: $e');
+    }
   }
 
   Future<void> _selectFolder() async {
@@ -420,6 +425,7 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
       if (uri != null) {
         setState(() {
           _hasFolder = true;
+          _folderUri = uri;
         });
         if (!mounted) return;
         final l10n = AppLocalizations.of(context);
@@ -457,6 +463,7 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
       if (mounted) {
         setState(() {
           _hasFolder = false;
+          _folderUri = null;
         });
         AppSnackbar.info(context, message: l10n.settingsModsFolderCleared);
       }
@@ -487,6 +494,7 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
       subtitle: _hasFolder
           ? l10n.settingsModsFolderHint
           : l10n.settingsModsFolderDesc,
+      pathHint: _folderUri != null ? _displayPath(_folderUri!) : null,
       trailing: Icon(Icons.chevron_right_rounded, color: retro.inkDim, size: 20),
     );
   }
@@ -504,6 +512,7 @@ class _DynosFolderTile extends ConsumerStatefulWidget {
 class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
   bool _loading = false;
   bool _hasFolder = false;
+  String? _folderUri;
 
   final _installer = ModInstaller();
 
@@ -515,13 +524,17 @@ class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
 
   Future<void> _checkFolder() async {
     try {
+      final uri = await _installer.getSavedDynosUri();
       final has = await _installer.isDynosDirectorySelected();
       if (mounted) {
         setState(() {
           _hasFolder = has;
+          _folderUri = uri;
         });
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('_DynosFolderTile._checkFolder: $e');
+    }
   }
 
   Future<void> _selectFolder() async {
@@ -532,6 +545,7 @@ class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
       if (uri != null) {
         setState(() {
           _hasFolder = true;
+          _folderUri = uri;
         });
         if (!mounted) return;
         final l10n = AppLocalizations.of(context);
@@ -569,6 +583,7 @@ class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
       if (mounted) {
         setState(() {
           _hasFolder = false;
+          _folderUri = null;
         });
         AppSnackbar.info(context, message: l10n.settingsDynosFolderCleared);
       }
@@ -599,6 +614,7 @@ class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
       subtitle: _hasFolder
           ? l10n.settingsDynosFolderHint
           : l10n.settingsDynosFolderDesc,
+      pathHint: _folderUri != null ? _displayPath(_folderUri!) : null,
       trailing: Icon(Icons.chevron_right_rounded, color: retro.inkDim, size: 20),
     );
   }
@@ -664,6 +680,13 @@ class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
 // Contenedor común para todos los tiles de settings: borde duro, sombra
 // desplazada suave, caja de ícono a la izquierda, título/subtítulo, trailing.
 
+String _displayPath(String uri) {
+  final parts = uri.split('/tree/');
+  if (parts.length < 2) return uri;
+  final decoded = Uri.decodeComponent(parts.last);
+  return decoded.replaceFirst('primary:', '/');
+}
+
 class _RetroTileShell extends StatelessWidget {
   const _RetroTileShell({
     required this.retro,
@@ -675,6 +698,7 @@ class _RetroTileShell extends StatelessWidget {
     this.onLongPress,
     this.titleColor,
     this.accentColor,
+    this.pathHint,
   });
 
   final RetroTheme retro;
@@ -686,6 +710,7 @@ class _RetroTileShell extends StatelessWidget {
   final VoidCallback? onLongPress;
   final Color? titleColor;
   final Color? accentColor;
+  final String? pathHint;
 
   @override
   Widget build(BuildContext context) {
@@ -729,6 +754,17 @@ class _RetroTileShell extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                    if (pathHint != null) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        pathHint!,
+                        style: TextStyle(
+                          color: retro.inkDim,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

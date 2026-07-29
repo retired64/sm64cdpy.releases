@@ -880,14 +880,13 @@ class _SocialButtonState extends State<_SocialButton>
 
   Future<void> _launch() async {
     final uri = Uri.parse(widget.link.url);
+    final messenger = ScaffoldMessenger.of(context);
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open link')),
-        );
-      }
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Could not open link')),
+      );
     }
   }
 
