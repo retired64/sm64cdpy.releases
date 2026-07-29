@@ -6,6 +6,7 @@ import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:floaty_chatheads/floaty_chatheads.dart';
 
 import 'overlay/overlay_panel.dart';
+import 'overlay/overlay_bridge.dart';
 import 'l10n/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/retro_theme.dart';
@@ -47,6 +48,9 @@ Future<void> main() async {
 
   // Background install service — EventChannel listener
   BackgroundInstallService.instance.init();
+
+  // Overlay ↔ app download bridge
+  OverlayBridge.init();
 
   runApp(const ProviderScope(child: SM64CoopDXApp()));
 }

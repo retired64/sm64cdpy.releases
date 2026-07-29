@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/entities/mod_entity.dart';
@@ -22,20 +23,86 @@ class OverlayPanel extends ConsumerStatefulWidget {
 class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   StreamSubscription<Object?>? _sub;
   late final TextEditingController _searchController;
+  final Map<String, String> _modStatus = {};
+  final Map<String, int> _modProgress = {};
 
   @override
   void initState() {
     super.initState();
-    // Created ONCE and kept alive for the lifetime of this State,
-    // so the cursor/selection stays consistent across rebuilds.
     _searchController = TextEditingController(
       text: ref.read(searchQueryProvider),
     );
-    _sub = FloatyOverlay.onData.listen((data) {
-      if (data is Map && data['type'] == 'db_reloaded') {
-        ref.invalidate(allModsProvider);
+    _sub = FloatyOverlay.onData.listen(_onOverlayData);
+  }
+
+  void _onOverlayData(Object? data) {
+    if (data is! Map) return;
+    final type = data['type'] as String?;
+    if (type == 'db_reloaded') {
+      ref.invalidate(allModsProvider);
+    } else if (type == 'install_progress') {
+      final modTitle = data['modTitle'] as String?;
+      final rawStatus = data['status'] as String?;
+      final progress = data['progress'] as int?;
+      if (modTitle == null || rawStatus == null || !mounted) return;
+
+      final mapped = _mapStatus(rawStatus);
+      setState(() {
+        _modStatus[modTitle] = mapped;
+        if (progress != null) _modProgress[modTitle] = progress;
+      });
+
+      if (mapped == 'cancelled') {
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted && _modStatus[modTitle] == 'cancelled') {
+            setState(() {
+              _modStatus.remove(modTitle);
+              _modProgress.remove(modTitle);
+            });
+          }
+        });
       }
-    });
+    } else if (type == 'install_error') {
+      final modTitle = data['modTitle'] as String?;
+      final error = data['error'] as String?;
+      if (modTitle == null || !mounted) return;
+      setState(() {
+        _modStatus.remove(modTitle);
+        _modProgress.remove(modTitle);
+      });
+      final message = switch (error) {
+        'no_folder' => 'Select a mods folder first (Settings)',
+        'auto_install_off' => 'Enable auto-install first (Settings)',
+        _ => 'Download failed',
+      };
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message, style: const TextStyle(fontSize: 11)),
+          duration: const Duration(seconds: 3),
+          backgroundColor: _surface,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(8),
+        ),
+      );
+    }
+  }
+
+  String _mapStatus(String raw) {
+    switch (raw) {
+      case 'BgDownloadProgress':
+        return 'downloading';
+      case 'BgInstallProgress':
+        return 'installing';
+      case 'completed':
+      case 'BgInstallCompleted':
+        return 'done';
+      case 'BgOperationCancelled':
+        return 'cancelled';
+      default:
+        if (raw.contains('Progress')) return 'downloading';
+        if (raw.contains('Completed')) return 'done';
+        return raw;
+    }
   }
 
   @override
@@ -51,10 +118,6 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
     final currentPage = ref.watch(currentPageProvider);
     final totalPages = ref.watch(totalPagesProvider);
 
-    // Only push provider -> controller when the change came from
-    // OUTSIDE this field (e.g. search cleared elsewhere). If it already
-    // matches what the user is typing, we leave the controller alone
-    // so we never fight the user's cursor.
     ref.listen<String>(searchQueryProvider, (previous, next) {
       if (next != _searchController.text) {
         _searchController.value = _searchController.value.copyWith(
@@ -75,28 +138,25 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
             children: [
               // Page indicator
               if (totalPages > 1)
-                _PageIndicator(
+                _PageIndicatorCompact(
                   current: currentPage + 1,
                   total: totalPages,
                   onPrev: currentPage > 0
-                      ? () =>
-                          ref.read(currentPageProvider.notifier).setPage(
-                                currentPage - 1,
-                              )
+                      ? () => ref
+                          .read(currentPageProvider.notifier)
+                          .setPage(currentPage - 1)
                       : null,
                   onNext: currentPage < totalPages - 1
-                      ? () =>
-                          ref.read(currentPageProvider.notifier).setPage(
-                                currentPage + 1,
-                              )
+                      ? () => ref
+                          .read(currentPageProvider.notifier)
+                          .setPage(currentPage + 1)
                       : null,
                 ),
               if (totalPages > 1) const SizedBox(height: 6),
               // Mods list
               Expanded(
                 child: modsAsync.when(
-                  loading: () =>
-                      const Center(child: _Spinner()),
+                  loading: () => const Center(child: _Spinner()),
                   error: (err, _) => Center(
                     child: Text('Error',
                         style: TextStyle(color: Colors.redAccent, fontSize: 12)),
@@ -114,7 +174,11 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
                     }
                     return ListView.builder(
                       itemCount: mods.length,
-                      itemBuilder: (context, i) => _ModTile(mod: mods[i]),
+                      itemBuilder: (context, i) => _ModTile(
+                        mod: mods[i],
+                        status: _modStatus[mods[i].title],
+                        progress: _modProgress[mods[i].title],
+                      ),
                     );
                   },
                 ),
@@ -145,10 +209,8 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
                     hintStyle: TextStyle(color: Colors.white24, fontSize: 11),
                     filled: true,
                     fillColor: Colors.transparent,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 8,
-                    ),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     border: InputBorder.none,
                     prefixIcon:
                         Icon(Icons.search, color: Colors.white24, size: 18),
@@ -163,10 +225,10 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   }
 }
 
-// ── Page indicator ─────────────────────────────────────────────────────────
+// ── Page indicator (compact) ───────────────────────────────────────────────
 
-class _PageIndicator extends StatelessWidget {
-  const _PageIndicator({
+class _PageIndicatorCompact extends StatelessWidget {
+  const _PageIndicatorCompact({
     required this.current,
     required this.total,
     this.onPrev,
@@ -183,14 +245,19 @@ class _PageIndicator extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _ArrowButton(icon: Icons.chevron_left, enabled: onPrev != null, onTap: onPrev),
-        const SizedBox(width: 10),
-        Text(
-          '$current / $total',
-          style: const TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(width: 10),
-        _ArrowButton(icon: Icons.chevron_right, enabled: onNext != null, onTap: onNext),
+        _ArrowButton(
+            icon: Icons.chevron_left,
+            enabled: onPrev != null,
+            onTap: onPrev),
+        const SizedBox(width: 6),
+        Text('$current/$total',
+            style: const TextStyle(
+                color: Colors.white30, fontSize: 10, fontWeight: FontWeight.w700)),
+        const SizedBox(width: 6),
+        _ArrowButton(
+            icon: Icons.chevron_right,
+            enabled: onNext != null,
+            onTap: onNext),
       ],
     );
   }
@@ -207,17 +274,15 @@ class _ArrowButton extends StatelessWidget {
     return GestureDetector(
       onTap: enabled ? onTap : null,
       child: Container(
-        width: 24,
-        height: 24,
+        width: 20,
+        height: 20,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          border: Border.all(
-            color: enabled ? _border : Colors.white10,
-          ),
+          border: Border.all(color: enabled ? _border : Colors.white10),
           color: enabled ? _surface : Colors.transparent,
         ),
-        child: Icon(icon, size: 16,
-            color: enabled ? _accent : Colors.white10),
+        child:
+            Icon(icon, size: 14, color: enabled ? _accent : Colors.white10),
       ),
     );
   }
@@ -225,12 +290,41 @@ class _ArrowButton extends StatelessWidget {
 
 // ── Mod tile ───────────────────────────────────────────────────────────────
 
-class _ModTile extends ConsumerWidget {
-  const _ModTile({required this.mod});
+class _ModTile extends ConsumerStatefulWidget {
+  const _ModTile({
+    required this.mod,
+    this.status,
+    this.progress,
+  });
+
   final ModEntity mod;
+  final String? status;
+  final int? progress;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ModTile> createState() => _ModTileState();
+}
+
+class _ModTileState extends ConsumerState<_ModTile> {
+  void _onDownloadTap() {
+    if (widget.mod.downloadUrls.isEmpty) return;
+    HapticFeedback.lightImpact();
+    FloatyOverlay.shareData({
+      'type': 'download_mod',
+      'url': widget.mod.downloadUrls.first,
+      'modTitle': widget.mod.title,
+    });
+  }
+
+  bool get _isDone => widget.status == 'done';
+  bool get _isDownloading => widget.status == 'downloading';
+  bool get _isInstalling => widget.status == 'installing';
+  bool get _isActive => _isDownloading || _isInstalling;
+  bool get _hasSingleUrl => widget.mod.downloadUrls.length == 1;
+  bool get _isCancelled => widget.status == 'cancelled';
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -244,24 +338,88 @@ class _ModTile extends ConsumerWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
-                  mod.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: _titleRow(),
               ),
               const SizedBox(width: 6),
-              Icon(Icons.download, size: 14,
-                  color: _accent.withValues(alpha: 0.5)),
+              if (_isDone)
+                const Icon(Icons.check_circle, size: 16, color: _accent)
+              else if (!_hasSingleUrl)
+                const Icon(Icons.list_alt, size: 16,
+                    color: Colors.white24)
+              else if (_isCancelled)
+                GestureDetector(
+                  onTap: _onDownloadTap,
+                  child: Icon(Icons.refresh, size: 16,
+                      color: _accent.withValues(alpha: 0.6)),
+                )
+              else if (!_isActive)
+                GestureDetector(
+                  onTap: _onDownloadTap,
+                  child: Container(
+                    width: 26,
+                    height: 26,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: _accent.withValues(alpha: 0.15),
+                      border: Border.all(
+                          color: _accent.withValues(alpha: 0.5)),
+                    ),
+                    child: const Icon(Icons.download,
+                        size: 14, color: _accent),
+                  ),
+                )
+              else
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    value: _isDownloading && widget.progress != null
+                        ? widget.progress! / 100.0
+                        : null,
+                    color: _accent,
+                    backgroundColor: _accent.withValues(alpha: 0.15),
+                  ),
+                ),
             ],
           ),
+          if (_isActive) ...[
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(0),
+              child: LinearProgressIndicator(
+                value: _isDownloading && widget.progress != null
+                    ? widget.progress! / 100.0
+                    : null,
+                backgroundColor: _accent.withValues(alpha: 0.1),
+                color: _accent,
+                minHeight: 3,
+              ),
+            ),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _titleRow() {
+    final label = _isDownloading && widget.progress != null
+        ? '${widget.mod.title}  ${widget.progress}%'
+        : _isInstalling
+            ? '${widget.mod.title}  Installing...'
+            : _isDone
+                ? widget.mod.title
+                : widget.mod.title;
+
+    return Text(
+      label,
+      style: TextStyle(
+        color: _isDone ? _accent : Colors.white,
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
