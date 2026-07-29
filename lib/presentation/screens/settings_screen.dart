@@ -1177,6 +1177,7 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
 
     if (result.success) {
       ref.invalidate(allModsProvider);
+      FloatyChatheads.shareData({'type': 'db_reloaded'});
 
       final modCount = result.modCount ?? 0;
       final date = result.generatedAt?.isNotEmpty == true
@@ -1330,7 +1331,8 @@ class _OverlayToggleState extends ConsumerState<_OverlayToggle> {
         }
         await FloatyChatheads.showChatHead(
           entryPoint: 'overlayMain',
-          sizePreset: ContentSizePreset.card,
+          contentWidth: 260,
+          contentHeight: 340,
           persistOnAppClose: true,
         );
       }
