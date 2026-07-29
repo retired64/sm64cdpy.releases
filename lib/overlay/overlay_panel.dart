@@ -25,6 +25,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   late final TextEditingController _searchController;
   final Map<String, String> _modStatus = {};
   final Map<String, int> _modProgress = {};
+  final Map<String, Timer> _pendingTimers = {};
+
+  static const _bridgeTimeout = Duration(seconds: 4);
 
   @override
   void initState() {
@@ -33,6 +36,47 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
       text: ref.read(searchQueryProvider),
     );
     _sub = FloatyOverlay.onData.listen(_onOverlayData);
+  }
+
+  /// Sends the download request and starts a "did anyone answer?" timer.
+  /// The main app's engine (and with it OverlayBridge's listener) can be
+  /// killed by Android when the app is swiped from recents — the overlay
+  /// keeps running on its own, so the message would otherwise vanish with
+  /// no feedback at all.
+  void _startDownload(ModEntity mod) {
+    if (mod.downloadUrls.isEmpty) return;
+    HapticFeedback.lightImpact();
+    final title = mod.title;
+
+    setState(() => _modStatus[title] = 'connecting');
+
+    FloatyOverlay.shareData({
+      'type': 'download_mod',
+      'url': mod.downloadUrls.first,
+      'modTitle': title,
+    });
+
+    _pendingTimers[title]?.cancel();
+    _pendingTimers[title] = Timer(_bridgeTimeout, () {
+      if (!mounted) return;
+      // Still 'connecting' after the timeout → nobody on the other end
+      // ever answered (main engine most likely dead).
+      if (_modStatus[title] == 'connecting') {
+        setState(() => _modStatus.remove(title));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No response — open the main app once, then try again',
+              style: TextStyle(fontSize: 11),
+            ),
+            duration: Duration(seconds: 3),
+            backgroundColor: _surface,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(8),
+          ),
+        );
+      }
+    });
   }
 
   void _onOverlayData(Object? data) {
@@ -45,6 +89,8 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
       final rawStatus = data['status'] as String?;
       final progress = data['progress'] as int?;
       if (modTitle == null || rawStatus == null || !mounted) return;
+
+      _pendingTimers.remove(modTitle)?.cancel();
 
       final mapped = _mapStatus(rawStatus);
       setState(() {
@@ -66,6 +112,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
       final modTitle = data['modTitle'] as String?;
       final error = data['error'] as String?;
       if (modTitle == null || !mounted) return;
+      _pendingTimers.remove(modTitle)?.cancel();
       setState(() {
         _modStatus.remove(modTitle);
         _modProgress.remove(modTitle);
@@ -108,6 +155,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   @override
   void dispose() {
     _sub?.cancel();
+    for (final timer in _pendingTimers.values) {
+      timer.cancel();
+    }
     _searchController.dispose();
     super.dispose();
   }
@@ -178,6 +228,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
                         mod: mods[i],
                         status: _modStatus[mods[i].title],
                         progress: _modProgress[mods[i].title],
+                        onDownload: () => _startDownload(mods[i]),
                       ),
                     );
                   },
@@ -293,11 +344,13 @@ class _ArrowButton extends StatelessWidget {
 class _ModTile extends ConsumerStatefulWidget {
   const _ModTile({
     required this.mod,
+    required this.onDownload,
     this.status,
     this.progress,
   });
 
   final ModEntity mod;
+  final VoidCallback onDownload;
   final String? status;
   final int? progress;
 
@@ -306,20 +359,11 @@ class _ModTile extends ConsumerStatefulWidget {
 }
 
 class _ModTileState extends ConsumerState<_ModTile> {
-  void _onDownloadTap() {
-    if (widget.mod.downloadUrls.isEmpty) return;
-    HapticFeedback.lightImpact();
-    FloatyOverlay.shareData({
-      'type': 'download_mod',
-      'url': widget.mod.downloadUrls.first,
-      'modTitle': widget.mod.title,
-    });
-  }
-
   bool get _isDone => widget.status == 'done';
+  bool get _isConnecting => widget.status == 'connecting';
   bool get _isDownloading => widget.status == 'downloading';
   bool get _isInstalling => widget.status == 'installing';
-  bool get _isActive => _isDownloading || _isInstalling;
+  bool get _isActive => _isConnecting || _isDownloading || _isInstalling;
   bool get _hasSingleUrl => widget.mod.downloadUrls.length == 1;
   bool get _isCancelled => widget.status == 'cancelled';
 
@@ -348,13 +392,13 @@ class _ModTileState extends ConsumerState<_ModTile> {
                     color: Colors.white24)
               else if (_isCancelled)
                 GestureDetector(
-                  onTap: _onDownloadTap,
+                  onTap: widget.onDownload,
                   child: Icon(Icons.refresh, size: 16,
                       color: _accent.withValues(alpha: 0.6)),
                 )
               else if (!_isActive)
                 GestureDetector(
-                  onTap: _onDownloadTap,
+                  onTap: widget.onDownload,
                   child: Container(
                     width: 26,
                     height: 26,
@@ -407,8 +451,8 @@ class _ModTileState extends ConsumerState<_ModTile> {
         ? '${widget.mod.title}  ${widget.progress}%'
         : _isInstalling
             ? '${widget.mod.title}  Installing...'
-            : _isDone
-                ? widget.mod.title
+            : _isConnecting
+                ? '${widget.mod.title}  Connecting...'
                 : widget.mod.title;
 
     return Text(
