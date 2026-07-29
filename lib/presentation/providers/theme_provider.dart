@@ -8,31 +8,14 @@ import '../../core/constants/app_constants.dart';
 class ThemeNotifier extends Notifier<ThemeMode> {
   @override
   ThemeMode build() {
-    Future.microtask(() => _loadSavedTheme());
-    return ThemeMode.system;
-  }
+    final box = Hive.box<String>(AppConstants.settingsBoxKey);
+    final savedTheme = box.get('theme_mode', defaultValue: 'system');
 
-  late final Box<String> _box;
-
-  /// Load saved theme from Hive storage
-  Future<void> _loadSavedTheme() async {
-    try {
-      _box = await Hive.openBox<String>(AppConstants.settingsBoxKey);
-      final savedTheme = _box.get('theme_mode', defaultValue: 'system');
-
-      switch (savedTheme) {
-        case 'light':
-          state = ThemeMode.light;
-        case 'dark':
-          state = ThemeMode.dark;
-        case 'system':
-        default:
-          state = ThemeMode.system;
-      }
-    } catch (e) {
-      // If Hive fails, use system theme as default
-      state = ThemeMode.system;
-    }
+    return switch (savedTheme) {
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.system,
+    };
   }
 
   /// Change theme mode and persist to storage
@@ -40,7 +23,8 @@ class ThemeNotifier extends Notifier<ThemeMode> {
     state = mode;
 
     try {
-      await _box.put('theme_mode', _themeModeToString(mode));
+      await Hive.box<String>(AppConstants.settingsBoxKey)
+          .put('theme_mode', _themeModeToString(mode));
     } catch (e) {
       // Silently fail if storage is unavailable
       debugPrint('Failed to save theme preference: $e');
@@ -109,34 +93,20 @@ final isDarkModeProvider = Provider<bool>((ref) {
 class LocaleNotifier extends Notifier<String?> {
   @override
   String? build() {
-    Future.microtask(() => _loadSavedLocale());
+    final box = Hive.box<String>(AppConstants.settingsBoxKey);
+    final saved = box.get('locale', defaultValue: 'system');
+
+    if (saved == 'system') return null;
+    if (['en_US', 'es_419', 'pt_BR'].contains(saved)) return saved;
     return null;
-  }
-
-  late final Box<String> _box;
-
-  Future<void> _loadSavedLocale() async {
-    try {
-      _box = await Hive.openBox<String>(AppConstants.settingsBoxKey);
-      final saved = _box.get('locale', defaultValue: 'system');
-
-      if (saved == 'system') {
-        state = null;
-      } else if (['en_US', 'es_419', 'pt_BR'].contains(saved)) {
-        state = saved;
-      } else {
-        state = null;
-      }
-    } catch (e) {
-      state = null;
-    }
   }
 
   Future<void> setLocale(String? tag) async {
     state = tag;
 
     try {
-      await _box.put('locale', tag ?? 'system');
+      await Hive.box<String>(AppConstants.settingsBoxKey)
+          .put('locale', tag ?? 'system');
     } catch (e) {
       debugPrint('Failed to save locale preference: $e');
     }

@@ -79,30 +79,32 @@ class ModDownloadWorker(
 
         try {
             val url = URL(urlStr)
-            connection = url.openConnection() as HttpURLConnection
-            connection.instanceFollowRedirects = true
-            connection.connectTimeout = 15000
-            connection.readTimeout = 30000
-            connection.setRequestProperty("Accept-Encoding", "identity")
-            connection.connect()
+            var httpConn = url.openConnection() as HttpURLConnection
+            httpConn.instanceFollowRedirects = false
+            httpConn.connectTimeout = 15000
+            httpConn.readTimeout = 30000
+            httpConn.setRequestProperty("Accept-Encoding", "identity")
 
-            if (connection.responseCode in 300..399) {
-                val redirectUrl = connection.getHeaderField("Location")
-                connection.disconnect()
-                if (redirectUrl != null) {
-                    connection = URL(redirectUrl).openConnection() as HttpURLConnection
-                    connection.instanceFollowRedirects = false
-                    connection.connectTimeout = 15000
-                    connection.readTimeout = 30000
-                    connection.connect()
-                }
+            var redirectsLeft = 5
+            while (redirectsLeft > 0 && httpConn.responseCode in 300..399) {
+                val redirectUrl = httpConn.getHeaderField("Location")
+                httpConn.disconnect()
+                if (redirectUrl == null) break
+                httpConn = URL(redirectUrl).openConnection() as HttpURLConnection
+                httpConn.instanceFollowRedirects = false
+                httpConn.connectTimeout = 15000
+                httpConn.readTimeout = 30000
+                httpConn.setRequestProperty("Accept-Encoding", "identity")
+                httpConn.connect()
+                redirectsLeft--
             }
+            connection = httpConn
 
-            val contentLength = connection.contentLength
+            val contentLength = httpConn.contentLength
             val total = if (contentLength > 0) contentLength else -1
             var downloaded = 0L
 
-            inputStream = BufferedInputStream(connection.inputStream)
+            inputStream = BufferedInputStream(httpConn.inputStream)
             outputStream = FileOutputStream(outputFile)
 
             val buffer = ByteArray(8192)

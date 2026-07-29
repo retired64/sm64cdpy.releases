@@ -374,11 +374,9 @@ class ModInstallWorker(
     }
 
     private fun sanitizeEntryName(name: String): String {
-        var sanitized = name.trim()
+        var sanitized = name.trim().replace("\\", "/").replace("\u0000", "")
         while (sanitized.startsWith("/")) sanitized = sanitized.substring(1)
-        sanitized = sanitized.replace("../", "").replace("..\\", "")
-        sanitized = sanitized.replace("\\", "/")
-        sanitized = sanitized.replace("\u0000", "")
-        return sanitized
+        val parts = sanitized.split("/").filter { it.isNotEmpty() && it != "." && it != ".." }
+        return parts.joinToString("/")
     }
 }

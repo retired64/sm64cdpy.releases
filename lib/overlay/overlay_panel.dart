@@ -4,7 +4,9 @@ import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/constants/app_constants.dart';
 import '../domain/entities/mod_entity.dart';
 import '../presentation/providers/mod_providers.dart';
 
@@ -26,6 +28,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   final Map<String, String> _modStatus = {};
   final Map<String, int> _modProgress = {};
   final Map<String, Timer> _pendingTimers = {};
+  bool _autoInstall = false;
 
   static const _bridgeTimeout = Duration(seconds: 4);
 
@@ -36,6 +39,21 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
       text: ref.read(searchQueryProvider),
     );
     _sub = FloatyOverlay.onData.listen(_onOverlayData);
+    FloatyOverlay.shareData({'type': 'panel_opened'});
+    _loadAutoInstall();
+  }
+
+  Future<void> _loadAutoInstall() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() => _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false);
+    }
+  }
+
+  Future<void> _toggleAutoInstall(bool value) async {
+    setState(() => _autoInstall = value);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(AppConstants.autoInstallModsKey, value);
   }
 
   /// Sends the download request and starts a "did anyone answer?" timer.
@@ -186,6 +204,31 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
           padding: const EdgeInsets.all(8),
           child: Column(
             children: [
+              // Auto-install toggle
+              GestureDetector(
+                onTap: () => _toggleAutoInstall(!_autoInstall),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _autoInstall ? Icons.toggle_on : Icons.toggle_off,
+                      size: 18,
+                      color: _autoInstall ? _accent : _border,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'AUTO\nINSTALL',
+                      style: TextStyle(
+                        color: _autoInstall ? _accent : Colors.white24,
+                        fontSize: 7,
+                        fontWeight: FontWeight.w700,
+                        height: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (totalPages > 1) const SizedBox(height: 6),
               // Page indicator
               if (totalPages > 1)
                 _PageIndicatorCompact(

@@ -6,7 +6,6 @@ class AppConstants {
   static const String dynosAssetPath = 'assets/db/dynos.json';
   static const String touchControlsAssetPath = 'assets/db/touch_controls.json';
   static const String ommRebirthAssetPath = 'assets/db/omm.json';
-  static const String favoritesBoxKey = 'favorites';
   static const String settingsBoxKey = 'settings';
 
   static const int pageSize = 6;
@@ -15,11 +14,12 @@ class AppConstants {
   static const int titleMaxLines = 2;
 
   static const String appName = 'SM64CDPY';
-  static const String appVersion = '1.6.2';
 
   // ── External URLs ────────────────────────────────────────────────────────
   static const String githubReleasesUrl =
       'https://github.com/retired64/sm64cdpy.releases/releases';
+  static const String githubReleasesLatestUrl =
+      'https://github.com/retired64/sm64cdpy.releases/releases/latest';
   static const String dataSourceUrl = 'https://mods.sm64coopdx.com';
   static const String officialweb = 'https://sm64coopdx.com';
 

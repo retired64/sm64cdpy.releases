@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/update_service.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
@@ -73,7 +73,7 @@ class _DisclaimerBody extends StatelessWidget {
       _SectionData(
         icon: Icons.auto_awesome_rounded,
         title: l10n.disclaimerSectionExclusive,
-        body: l10n.disclaimerBodyExclusive(AppConstants.appVersion),
+        body: l10n.disclaimerBodyExclusive(UpdateService.currentVersion),
       ),
       _SectionData(
         icon: Icons.bug_report_rounded,
@@ -114,7 +114,7 @@ class _DisclaimerBody extends StatelessWidget {
         const SizedBox(height: 28),
         Center(
           child: Text(
-            l10n.disclaimerFooter(AppConstants.appVersion),
+            l10n.disclaimerFooter(UpdateService.currentVersion),
             style: retro.body(size: 11),
             textAlign: TextAlign.center,
           ),
@@ -176,7 +176,7 @@ class _HeroBadge extends StatelessWidget {
             border: Border.all(color: retro.border, width: 1),
           ),
           child: Text(
-            'v${AppConstants.appVersion}',
+            'v${UpdateService.currentVersion}',
             style: retro.body(size: 11),
           ),
         ),

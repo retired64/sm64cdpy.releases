@@ -106,24 +106,16 @@ class BackgroundInstallService {
 
   final _infoMap = <String, BgInstallInfo>{};
 
-  StreamSubscription? _eventSub;
   bool _initialized = false;
 
   void init() {
     if (_initialized) return;
     _initialized = true;
 
-    _eventSub = _eventChannel.receiveBroadcastStream().listen(
+    _eventChannel.receiveBroadcastStream().listen(
       _onNativeEvent,
       onError: (e) => debugPrint('BgInstall event error: $e'),
     );
-  }
-
-  void dispose() {
-    _eventSub?.cancel();
-    _controller.close();
-    _infoMap.clear();
-    _initialized = false;
   }
 
   BgInstallInfo? getInfo(String modName) => _infoMap[modName];

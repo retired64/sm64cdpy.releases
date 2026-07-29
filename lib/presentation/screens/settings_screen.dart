@@ -103,7 +103,7 @@ class SettingsScreen extends ConsumerWidget {
                       icon: Icons.open_in_browser_rounded,
                       title: l10n.settingsGoToReleases,
                       subtitle:
-                          l10n.settingsViewAllVersions(AppConstants.appVersion),
+                          l10n.settingsViewAllVersions(UpdateService.currentVersion),
                       onTap: () => _launchUrl(context, AppConstants.githubReleasesUrl),
                     ),
                     _SettingsTile(
@@ -1337,7 +1337,16 @@ class _OverlayToggleState extends ConsumerState<_OverlayToggle> {
         );
       }
       await _check();
-    } catch (_) {}
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to start overlay. Check permissions.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
     if (mounted) setState(() => _loading = false);
   }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'overlay/overlay_panel.dart';
 import 'overlay/overlay_bridge.dart';
 import 'l10n/app_localizations.dart';
+import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/retro_theme.dart';
 import 'presentation/providers/theme_provider.dart';
@@ -29,7 +31,7 @@ Future<void> main() async {
   ]);
 
   // Configure file downloader
-  FileDownloader.setLogEnabled(true); // Enable logs for debugging
+  FileDownloader.setLogEnabled(kDebugMode); // Enable logs for debugging
   FileDownloader.setMaximumParallelDownloads(3); // Limit concurrent downloads
 
   // Transparent status bar (will be set dynamically based on theme)
@@ -38,6 +40,7 @@ Future<void> main() async {
   // Hive (favourites persistence)
   try {
     await Hive.initFlutter();
+    await Hive.openBox<String>(AppConstants.settingsBoxKey);
   } catch (e) {
     debugPrint('Hive initialization failed: $e');
     // Continue without Hive (favourites won't persist)

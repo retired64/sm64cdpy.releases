@@ -48,7 +48,7 @@ String _inferFileName(String url, String modTitle, {int? index}) {
   final base = sanitizeModTitle(modTitle);
   final safeName = base.isNotEmpty ? base : 'mod';
   final suffix = index != null && index > 1 ? '-$index' : '';
-  return '$safeName$suffix';
+  return '$safeName$suffix.zip';
 }
 
 /// Detecta URLs de GitHub blob viewer y las convierte a raw para descarga

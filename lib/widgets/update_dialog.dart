@@ -7,6 +7,7 @@ import 'package:ota_update/ota_update.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/theme/retro_theme.dart';
+import '../core/constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
 import '../services/update_config.dart';
 
@@ -140,9 +141,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   }
 
   Future<void> _openInBrowser() async {
-    final uri = Uri.parse(
-      'https://github.com/retired64/sm64cdpy.releases/releases/latest',
-    );
+    final uri = Uri.parse(AppConstants.githubReleasesLatestUrl);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }

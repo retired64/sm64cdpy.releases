@@ -65,7 +65,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var eventChannel: EventChannel? = null
     private val eventSinks = mutableListOf<EventChannel.EventSink>()
     private var activity: Activity? = null
-    private var pendingResult: Result? = null
+    private var pendingModPickerResult: Result? = null
+    private var pendingDynosPickerResult: Result? = null
     private var pendingPermissionResult: Result? = null
 
     private val workObservers = mutableMapOf<UUID, Observer<WorkInfo>>()
@@ -124,8 +125,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onDetachedFromActivity() {
-        activity = null
         cleanupObservers()
+        activity = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
@@ -174,7 +175,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             return
         }
 
-        pendingResult = result
+        pendingModPickerResult = result
 
         try {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
@@ -187,7 +188,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
             act.startActivityForResult(intent, REQUEST_CODE_TREE)
         } catch (e: Exception) {
-            pendingResult = null
+            pendingModPickerResult = null
             result.error("PICKER_ERROR", "Failed to open directory picker: ${e.message}", null)
         }
     }
@@ -854,7 +855,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             return
         }
 
-        pendingResult = result
+        pendingDynosPickerResult = result
 
         try {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
@@ -867,7 +868,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
             act.startActivityForResult(intent, REQUEST_CODE_DYNOS_TREE)
         } catch (e: Exception) {
-            pendingResult = null
+            pendingDynosPickerResult = null
             result.error("PICKER_ERROR", "Failed to open DynOS directory picker: ${e.message}", null)
         }
     }
@@ -985,8 +986,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * Procesa el resultado del picker de directorios dynos.
      */
     private fun handleDynosTreeResult(resultCode: Int, data: Intent?) {
-        val result = pendingResult ?: return
-        pendingResult = null
+        val result = pendingDynosPickerResult ?: return
+        pendingDynosPickerResult = null
 
         if (resultCode != Activity.RESULT_OK || data?.data == null) {
             result.success(null)
@@ -1043,8 +1044,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * Procesa el resultado del picker de directorios.
      */
     private fun handleTreeResult(resultCode: Int, data: Intent?) {
-        val result = pendingResult ?: return
-        pendingResult = null
+        val result = pendingModPickerResult ?: return
+        pendingModPickerResult = null
 
         if (resultCode != Activity.RESULT_OK || data?.data == null) {
             result.success(null)
@@ -1206,11 +1207,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * Sanitiza el nombre de una entrada ZIP para evitar path traversal.
      */
     private fun sanitizeEntryName(name: String): String {
-        var sanitized = name.trim()
+        var sanitized = name.trim().replace("\\", "/").replace("\u0000", "")
         while (sanitized.startsWith("/")) sanitized = sanitized.substring(1)
-        sanitized = sanitized.replace("../", "").replace("..\\", "")
-        sanitized = sanitized.replace("\\", "/")
-        sanitized = sanitized.replace("\u0000", "")
-        return sanitized
+        val parts = sanitized.split("/").filter { it.isNotEmpty() && it != "." && it != ".." }
+        return parts.joinToString("/")
     }
 }

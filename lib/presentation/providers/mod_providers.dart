@@ -327,7 +327,7 @@ class FavouritesNotifier extends Notifier<Set<String>> {
         return const FavImportResult(error: 'Could not read file.');
       }
 
-      final raw = String.fromCharCodes(bytes);
+      final raw = utf8.decode(bytes);
       final decoded = jsonDecode(raw) as Map<String, dynamic>;
 
       // Validación básica del formato

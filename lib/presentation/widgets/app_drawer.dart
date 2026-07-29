@@ -10,6 +10,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../presentation/providers/mod_providers.dart';
 import '../../presentation/providers/extra_providers.dart';
+import '../../services/update_service.dart';
 
 const Duration _kItemDuration = Duration(milliseconds: 150);
 const Duration _kNavDelay = Duration(milliseconds: 260);
@@ -181,7 +182,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
                 child: Text(
-                  'v${AppConstants.appVersion}',
+                  'v${UpdateService.currentVersion}',
                   style: TextStyle(
                     color: retro.inkDim,
                     fontSize: 10,
@@ -881,7 +882,13 @@ class _SocialButtonState extends State<_SocialButton>
     final uri = Uri.parse(widget.link.url);
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {}
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open link')),
+        );
+      }
+    }
   }
 
   @override

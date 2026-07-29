@@ -29,6 +29,9 @@ class OverlayBridge {
       case 'download_mod':
         await _handleDownload(data);
         break;
+      case 'panel_opened':
+        _sendActiveInstalls();
+        break;
     }
   }
 
@@ -79,6 +82,25 @@ class OverlayBridge {
 
   // ── Events FROM native → forwarded to overlay ──────────────────────────
 
+  static void _sendActiveInstalls() {
+    for (final info in BackgroundInstallService.instance.activeInstalls) {
+      final modTitle = _titleByModName[info.modName] ?? info.modName;
+      final payload = <String, dynamic>{
+        'type': 'install_progress',
+        'modTitle': modTitle,
+        'status': info.status == BgInstallStatus.downloading
+            ? 'BgDownloadProgress'
+            : 'BgInstallProgress',
+      };
+      if (info.downloadProgress != null) {
+        payload['progress'] = info.downloadProgress;
+      } else if (info.current != null && info.total != null && info.total! > 0) {
+        payload['progress'] = ((info.current! / info.total!) * 100).round();
+      }
+      FloatyChatheads.shareData(payload);
+    }
+  }
+
   static void _forwardEventToOverlay(BgInstallEvent event) {
     final modTitle = _titleByModName[event.modName] ?? event.modName;
 
@@ -97,14 +119,17 @@ class OverlayBridge {
         payload['phase'] = 'installing';
         break;
       case BgInstallCompleted(fileCount: final f, targetDir: final d):
+        _titleByModName.remove(event.modName);
         payload['status'] = 'completed';
         payload['fileCount'] = f;
         payload['targetDir'] = d;
         break;
       case BgOperationCancelled():
+        _titleByModName.remove(event.modName);
         payload['status'] = 'cancelled';
         break;
       case BgInstallError(error: final e):
+        _titleByModName.remove(event.modName);
         payload['type'] = 'install_error';
         payload['error'] = e;
         break;
