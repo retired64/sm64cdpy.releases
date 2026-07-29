@@ -7,8 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/app_constants.dart';
-import '../domain/entities/mod_entity.dart';
-import '../presentation/providers/mod_providers.dart';
+import 'overlay_sections.dart';
 
 const _bg = Color(0xFF262A38);
 const _surface = Color(0xFF2B2F3E);
@@ -24,20 +23,18 @@ class OverlayPanel extends ConsumerStatefulWidget {
 
 class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   StreamSubscription<Object?>? _sub;
-  late final TextEditingController _searchController;
   final Map<String, String> _modStatus = {};
   final Map<String, int> _modProgress = {};
   final Map<String, Timer> _pendingTimers = {};
   bool _autoInstall = false;
+
+  final _searchCtrl = TextEditingController();
 
   static const _bridgeTimeout = Duration(seconds: 4);
 
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController(
-      text: ref.read(searchQueryProvider),
-    );
     _sub = FloatyOverlay.onData.listen(_onOverlayData);
     FloatyOverlay.shareData({'type': 'panel_opened'});
     _loadAutoInstall();
@@ -46,7 +43,8 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   Future<void> _loadAutoInstall() async {
     final prefs = await SharedPreferences.getInstance();
     if (mounted) {
-      setState(() => _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false);
+      setState(() =>
+          _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false);
     }
   }
 
@@ -56,12 +54,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
     await prefs.setBool(AppConstants.autoInstallModsKey, value);
   }
 
-  /// Sends the download request and starts a "did anyone answer?" timer.
-  /// The main app's engine (and with it OverlayBridge's listener) can be
-  /// killed by Android when the app is swiped from recents — the overlay
-  /// keeps running on its own, so the message would otherwise vanish with
-  /// no feedback at all.
-  void _startDownload(ModEntity mod) {
+  void _startDownload(OverlayModItem mod) {
     if (mod.downloadUrls.isEmpty) return;
     HapticFeedback.lightImpact();
     final title = mod.title;
@@ -72,13 +65,12 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
       'type': 'download_mod',
       'url': mod.downloadUrls.first,
       'modTitle': title,
+      'section': mod.section.name,
     });
 
     _pendingTimers[title]?.cancel();
     _pendingTimers[title] = Timer(_bridgeTimeout, () {
       if (!mounted) return;
-      // Still 'connecting' after the timeout → nobody on the other end
-      // ever answered (main engine most likely dead).
       if (_modStatus[title] == 'connecting') {
         setState(() => _modStatus.remove(title));
         ScaffoldMessenger.of(context).showSnackBar(
@@ -101,7 +93,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
     if (data is! Map) return;
     final type = data['type'] as String?;
     if (type == 'db_reloaded') {
-      ref.invalidate(allModsProvider);
+      ref.invalidate(overlayAllItems);
     } else if (type == 'install_progress') {
       final modTitle = data['modTitle'] as String?;
       final rawStatus = data['status'] as String?;
@@ -136,7 +128,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
         _modProgress.remove(modTitle);
       });
       final message = switch (error) {
-        'no_folder' => 'Select a mods folder first (Settings)',
+        'no_folder' => 'Select a folder first (Settings)',
         'auto_install_off' => 'Enable auto-install first (Settings)',
         _ => 'Download failed',
       };
@@ -176,92 +168,72 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
     for (final timer in _pendingTimers.values) {
       timer.cancel();
     }
-    _searchController.dispose();
+    _searchCtrl.dispose();
     super.dispose();
+  }
+
+  void _switchSection(OverlaySection s) {
+    if (s == ref.read(overlaySectionProvider)) return;
+    ref.read(overlaySectionProvider.notifier).select(s);
+    _searchCtrl.clear();
+    ref.read(searchProviderFor(s).notifier).set('');
+    ref.read(pageProviderFor(s).notifier).reset();
+  }
+
+  void _onSearchChanged(String v) {
+    final section = ref.read(overlaySectionProvider);
+    ref.read(searchProviderFor(section).notifier).set(v);
+    ref.read(pageProviderFor(section).notifier).reset();
   }
 
   @override
   Widget build(BuildContext context) {
-    final modsAsync = ref.watch(paginatedModsProvider);
-    final currentPage = ref.watch(currentPageProvider);
-    final totalPages = ref.watch(totalPagesProvider);
-
-    ref.listen<String>(searchQueryProvider, (previous, next) {
-      if (next != _searchController.text) {
-        _searchController.value = _searchController.value.copyWith(
-          text: next,
-          selection: TextSelection.collapsed(offset: next.length),
-          composing: TextRange.empty,
-        );
-      }
-    });
+    final section = ref.watch(overlaySectionProvider);
+    final items = ref.watch(overlayPaginatedItems);
+    final page = ref.watch(pageProviderFor(section));
+    final totalPages = ref.watch(overlayTotalPages);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: _bg,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.fromLTRB(6, 4, 6, 6),
           child: Column(
             children: [
-              // Auto-install toggle
-              GestureDetector(
-                onTap: () => _toggleAutoInstall(!_autoInstall),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      _autoInstall ? Icons.toggle_on : Icons.toggle_off,
-                      size: 18,
-                      color: _autoInstall ? _accent : _border,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'AUTO\nINSTALL',
-                      style: TextStyle(
-                        color: _autoInstall ? _accent : Colors.white24,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (totalPages > 1) const SizedBox(height: 6),
-              // Page indicator
+              _SectionTabs(active: section, onTap: _switchSection),
+              const SizedBox(height: 4),
               if (totalPages > 1)
-                _PageIndicatorCompact(
-                  current: currentPage + 1,
+                _PageBar(
+                  current: page + 1,
                   total: totalPages,
-                  onPrev: currentPage > 0
+                  onPrev: page > 0
                       ? () => ref
-                          .read(currentPageProvider.notifier)
-                          .setPage(currentPage - 1)
+                          .read(pageProviderFor(section).notifier)
+                          .set(page - 1)
                       : null,
-                  onNext: currentPage < totalPages - 1
+                  onNext: page < totalPages - 1
                       ? () => ref
-                          .read(currentPageProvider.notifier)
-                          .setPage(currentPage + 1)
+                          .read(pageProviderFor(section).notifier)
+                          .set(page + 1)
                       : null,
                 ),
-              if (totalPages > 1) const SizedBox(height: 6),
-              // Mods list
+              if (totalPages > 1) const SizedBox(height: 4),
               Expanded(
-                child: modsAsync.when(
+                child: items.when(
                   loading: () => const Center(child: _Spinner()),
                   error: (err, _) => Center(
                     child: Text('Error',
-                        style: TextStyle(color: Colors.redAccent, fontSize: 12)),
+                        style: TextStyle(
+                            color: Colors.redAccent, fontSize: 12)),
                   ),
                   data: (mods) {
                     if (mods.isEmpty) {
                       return Center(
                         child: Text(
-                          ref.watch(searchQueryProvider).isEmpty
-                              ? 'No mods'
-                              : 'No results',
-                          style: const TextStyle(color: Colors.white24, fontSize: 13),
+                          'No results',
+                          style: const TextStyle(
+                              color: Colors.white24, fontSize: 12),
                         ),
                       );
                     }
@@ -277,39 +249,15 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
                   },
                 ),
               ),
-              const SizedBox(height: 8),
-              // Search bar — at bottom, above keyboard
-              Container(
-                decoration: BoxDecoration(
-                  color: _surface,
-                  border: Border.all(color: _border.withValues(alpha: 0.4)),
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  textInputAction: TextInputAction.search,
-                  onChanged: (v) {
-                    ref.read(searchQueryProvider.notifier).setSearchQuery(v);
-                    ref.read(currentPageProvider.notifier).setPage(0);
-                  },
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  decoration: const InputDecoration(
-                    hintText: 'SEARCH MODS...',
-                    hintStyle: TextStyle(color: Colors.white24, fontSize: 11),
-                    filled: true,
-                    fillColor: Colors.transparent,
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    border: InputBorder.none,
-                    prefixIcon:
-                        Icon(Icons.search, color: Colors.white24, size: 18),
-                  ),
-                ),
+              const SizedBox(height: 6),
+              _SearchBar(
+                controller: _searchCtrl,
+                onChanged: _onSearchChanged,
+              ),
+              const SizedBox(height: 4),
+              _AutoInstallToggle(
+                value: _autoInstall,
+                onTap: () => _toggleAutoInstall(!_autoInstall),
               ),
             ],
           ),
@@ -319,10 +267,51 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   }
 }
 
-// ── Page indicator (compact) ───────────────────────────────────────────────
+class _SectionTabs extends StatelessWidget {
+  const _SectionTabs({required this.active, required this.onTap});
 
-class _PageIndicatorCompact extends StatelessWidget {
-  const _PageIndicatorCompact({
+  final OverlaySection active;
+  final ValueChanged<OverlaySection> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: OverlaySection.values.map((s) {
+          final isActive = s == active;
+          return GestureDetector(
+            onTap: () => onTap(s),
+            child: Container(
+              margin: const EdgeInsets.only(right: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: isActive ? _accent : Colors.white10,
+                    width: 2,
+                  ),
+                ),
+              ),
+              child: Text(
+                s.label,
+                style: TextStyle(
+                  color: isActive ? _accent : _border,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _PageBar extends StatelessWidget {
+  const _PageBar({
     required this.current,
     required this.total,
     this.onPrev,
@@ -339,26 +328,24 @@ class _PageIndicatorCompact extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _ArrowButton(
-            icon: Icons.chevron_left,
-            enabled: onPrev != null,
-            onTap: onPrev),
+        _ArrowIcon(
+            icon: Icons.chevron_left, enabled: onPrev != null, onTap: onPrev),
         const SizedBox(width: 6),
-        Text('$current/$total',
-            style: const TextStyle(
-                color: Colors.white30, fontSize: 10, fontWeight: FontWeight.w700)),
+        Text(
+          '$current/$total',
+          style: const TextStyle(
+              color: Colors.white30, fontSize: 10, fontWeight: FontWeight.w700),
+        ),
         const SizedBox(width: 6),
-        _ArrowButton(
-            icon: Icons.chevron_right,
-            enabled: onNext != null,
-            onTap: onNext),
+        _ArrowIcon(
+            icon: Icons.chevron_right, enabled: onNext != null, onTap: onNext),
       ],
     );
   }
 }
 
-class _ArrowButton extends StatelessWidget {
-  const _ArrowButton({required this.icon, required this.enabled, this.onTap});
+class _ArrowIcon extends StatelessWidget {
+  const _ArrowIcon({required this.icon, required this.enabled, this.onTap});
   final IconData icon;
   final bool enabled;
   final VoidCallback? onTap;
@@ -375,14 +362,82 @@ class _ArrowButton extends StatelessWidget {
           border: Border.all(color: enabled ? _border : Colors.white10),
           color: enabled ? _surface : Colors.transparent,
         ),
-        child:
-            Icon(icon, size: 14, color: enabled ? _accent : Colors.white10),
+        child: Icon(icon, size: 14, color: enabled ? _accent : Colors.white10),
       ),
     );
   }
 }
 
-// ── Mod tile ───────────────────────────────────────────────────────────────
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({required this.controller, required this.onChanged});
+
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _surface,
+        border: Border.all(color: _border.withValues(alpha: 0.4)),
+      ),
+      child: TextField(
+        controller: controller,
+        autocorrect: false,
+        enableSuggestions: false,
+        textInputAction: TextInputAction.search,
+        onChanged: onChanged,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: const InputDecoration(
+          hintText: 'SEARCH...',
+          hintStyle: TextStyle(color: Colors.white24, fontSize: 10),
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+          border: InputBorder.none,
+          prefixIcon: Icon(Icons.search, color: Colors.white24, size: 16),
+        ),
+      ),
+    );
+  }
+}
+
+class _AutoInstallToggle extends StatelessWidget {
+  const _AutoInstallToggle({required this.value, required this.onTap});
+
+  final bool value;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            value ? Icons.toggle_on : Icons.toggle_off,
+            size: 16,
+            color: value ? _accent : _border,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            'AUTO',
+            style: TextStyle(
+              color: value ? _accent : Colors.white24,
+              fontSize: 7,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _ModTile extends ConsumerStatefulWidget {
   const _ModTile({
@@ -392,7 +447,7 @@ class _ModTile extends ConsumerStatefulWidget {
     this.progress,
   });
 
-  final ModEntity mod;
+  final OverlayModItem mod;
   final VoidCallback onDownload;
   final String? status;
   final int? progress;
@@ -413,8 +468,8 @@ class _ModTileState extends ConsumerState<_ModTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      margin: const EdgeInsets.only(bottom: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
       decoration: BoxDecoration(
         color: _surface,
         border: Border.all(color: _border.withValues(alpha: 0.3)),
@@ -427,38 +482,37 @@ class _ModTileState extends ConsumerState<_ModTile> {
               Expanded(
                 child: _titleRow(),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 4),
               if (_isDone)
-                const Icon(Icons.check_circle, size: 16, color: _accent)
+                const Icon(Icons.check_circle, size: 15, color: _accent)
               else if (!_hasSingleUrl)
-                const Icon(Icons.list_alt, size: 16,
-                    color: Colors.white24)
+                const Icon(Icons.list_alt, size: 15, color: Colors.white24)
               else if (_isCancelled)
                 GestureDetector(
                   onTap: widget.onDownload,
-                  child: Icon(Icons.refresh, size: 16,
+                  child: Icon(Icons.refresh, size: 15,
                       color: _accent.withValues(alpha: 0.6)),
                 )
               else if (!_isActive)
                 GestureDetector(
                   onTap: widget.onDownload,
                   child: Container(
-                    width: 26,
-                    height: 26,
+                    width: 24,
+                    height: 24,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: _accent.withValues(alpha: 0.15),
-                      border: Border.all(
-                          color: _accent.withValues(alpha: 0.5)),
+                      border:
+                          Border.all(color: _accent.withValues(alpha: 0.5)),
                     ),
                     child: const Icon(Icons.download,
-                        size: 14, color: _accent),
+                        size: 13, color: _accent),
                   ),
                 )
               else
                 SizedBox(
-                  width: 24,
-                  height: 24,
+                  width: 22,
+                  height: 22,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
                     value: _isDownloading && widget.progress != null
@@ -471,7 +525,7 @@ class _ModTileState extends ConsumerState<_ModTile> {
             ],
           ),
           if (_isActive) ...[
-            const SizedBox(height: 6),
+            const SizedBox(height: 5),
             ClipRRect(
               borderRadius: BorderRadius.circular(0),
               child: LinearProgressIndicator(
@@ -480,7 +534,7 @@ class _ModTileState extends ConsumerState<_ModTile> {
                     : null,
                 backgroundColor: _accent.withValues(alpha: 0.1),
                 color: _accent,
-                minHeight: 3,
+                minHeight: 2.5,
               ),
             ),
           ],
@@ -502,7 +556,7 @@ class _ModTileState extends ConsumerState<_ModTile> {
       label,
       style: TextStyle(
         color: _isDone ? _accent : Colors.white,
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: FontWeight.w700,
       ),
       maxLines: 1,
@@ -511,16 +565,14 @@ class _ModTileState extends ConsumerState<_ModTile> {
   }
 }
 
-// ── Spinner ────────────────────────────────────────────────────────────────
-
 class _Spinner extends StatelessWidget {
   const _Spinner();
 
   @override
   Widget build(BuildContext context) {
     return const SizedBox(
-      width: 18,
-      height: 18,
+      width: 16,
+      height: 16,
       child: CircularProgressIndicator(strokeWidth: 2, color: _accent),
     );
   }

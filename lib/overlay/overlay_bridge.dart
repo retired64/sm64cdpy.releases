@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:floaty_chatheads/floaty_chatheads.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/app_constants.dart';
@@ -17,8 +18,6 @@ class OverlayBridge {
     FloatyChatheads.onData.listen(_onMessageFromOverlay);
     BackgroundInstallService.instance.events.listen(_forwardEventToOverlay);
   }
-
-  // ── Messages FROM overlay → handled here ──────────────────────────────
 
   static Future<void> _onMessageFromOverlay(Object? data) async {
     if (data is! Map) return;
@@ -38,49 +37,102 @@ class OverlayBridge {
   static Future<void> _handleDownload(Map data) async {
     final url = data['url'] as String?;
     final modTitle = data['modTitle'] as String?;
+    final section = data['section'] as String? ?? 'all';
     if (url == null || modTitle == null) return;
 
-    // Check mods folder is selected (required for SAF install)
-    final installer = ModInstaller();
-    final hasFolder = await installer.isDirectorySelected();
-    if (!hasFolder) {
-      FloatyChatheads.shareData({
-        'type': 'install_error',
-        'modTitle': modTitle,
-        'error': 'no_folder',
-      });
-      return;
-    }
-
-    // Check auto-install from SharedPreferences
+    final isDynos = section == 'dynos' || section == 'touchControls';
     final prefs = await SharedPreferences.getInstance();
     final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+
     if (!autoInstall) {
-      FloatyChatheads.shareData({
-        'type': 'install_error',
-        'modTitle': modTitle,
-        'error': 'auto_install_off',
-      });
+      _sendError(modTitle, 'auto_install_off');
       return;
     }
 
-    // Resolve filename (async, may do network request)
+    final installer = ModInstaller();
+    final hasFolder = isDynos
+        ? await installer.isDynosDirectorySelected()
+        : await installer.isDirectorySelected();
+
+    if (!hasFolder) {
+      _sendError(modTitle, 'no_folder');
+      return;
+    }
+
     final filename = await DownloadUrlResolver.instance
         .resolveDownloadFilename(url, modTitle);
-
     final modName = sanitizeModTitle(modTitle);
-
-    // Store raw title so we can translate sanitized modName back
     _titleByModName[modName] = modTitle;
 
-    await BackgroundInstallService.instance.startDownloadAndInstall(
-      url: url,
-      modName: modName,
-      fileName: filename,
-    );
+    if (isDynos) {
+      await _handleDynosDownload(
+        url: url,
+        modTitle: modTitle,
+        modName: modName,
+        filename: filename,
+      );
+    } else {
+      await BackgroundInstallService.instance.startDownloadAndInstall(
+        url: url,
+        modName: modName,
+        fileName: filename,
+      );
+    }
   }
 
-  // ── Events FROM native → forwarded to overlay ──────────────────────────
+  static Future<void> _handleDynosDownload({
+    required String url,
+    required String modTitle,
+    required String modName,
+    required String filename,
+  }) async {
+    try {
+      FileDownloader.downloadFile(
+        url: url,
+        name: filename,
+        onDownloadCompleted: (path) async {
+          try {
+            _sendProgress(modTitle, 'BgInstallProgress', 0);
+            final installer = ModInstaller();
+            await installer.installModToDynosFolder(
+              zipPath: path,
+              modName: modName,
+            );
+            _sendProgress(modTitle, 'completed', 100);
+          } catch (e) {
+            _sendError(modTitle, 'Install failed: $e');
+          }
+        },
+        onDownloadError: (error) {
+          _sendError(modTitle, 'Download failed: $error');
+        },
+        onProgress: (name, progress) {
+          final pct = (progress > 1.0 ? progress / 100.0 : progress)
+              .clamp(0.0, 1.0);
+          _sendProgress(modTitle, 'BgDownloadProgress', (pct * 100).round());
+        },
+      );
+    } catch (e) {
+      _sendError(modTitle, 'Failed to start download: $e');
+    }
+  }
+
+  static void _sendProgress(String modTitle, String status, int progress) {
+    FloatyChatheads.shareData({
+      'type': 'install_progress',
+      'modTitle': modTitle,
+      'status': status,
+      'progress': progress,
+    });
+  }
+
+  static void _sendError(String modTitle, String error) {
+    FloatyChatheads.shareData({
+      'type': 'install_error',
+      'modTitle': modTitle,
+      'error': error,
+    });
+  }
 
   static void _sendActiveInstalls() {
     for (final info in BackgroundInstallService.instance.activeInstalls) {
@@ -94,7 +146,9 @@ class OverlayBridge {
       };
       if (info.downloadProgress != null) {
         payload['progress'] = info.downloadProgress;
-      } else if (info.current != null && info.total != null && info.total! > 0) {
+      } else if (info.current != null &&
+          info.total != null &&
+          info.total! > 0) {
         payload['progress'] = ((info.current! / info.total!) * 100).round();
       }
       FloatyChatheads.shareData(payload);
