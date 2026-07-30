@@ -133,17 +133,17 @@
 
 ## Priorización sugerida
 
-| # | Idea | Impacto | Esfuerzo | Orden |
-|---|------|---------|----------|-------|
-| 9 | Personalizar ícono burbuja | Alto | Bajo | **1** |
-| 6 | Feedback háptico | Alto | Mínimo | **2** |
-| 2 | Badge descargas activas | Alto | Bajo | **3** |
-| 3 | ⭐ Favoritos | Medio | Bajo | **4** |
-| 1 | Cancelar descarga | Alto | Medio | **5** |
-| 5 | Ordenar resultados | Medio | Medio | **6** |
-| 4 | HISTORY tab | Medio | Medio | **7** |
-| 7 | Swipe-down cerrar | Bajo | Medio | **8** |
-| 8 | Opacidad ajustable | Bajo | Medio | **9** |
+| # | Idea | Impacto | Esfuerzo | Estado |
+|---|------|---------|----------|--------|
+| 9 | Personalizar ícono burbuja | Alto | Bajo | **✓ DONE** |
+| 6 | Feedback háptico | Alto | Mínimo | — |
+| 2 | Badge descargas activas | Alto | Bajo | — |
+| 3 | ⭐ Favoritos | Medio | Bajo | — |
+| 1 | Cancelar descarga | Alto | Medio | — |
+| 5 | Ordenar resultados | Medio | Medio | — |
+| 4 | HISTORY tab | Medio | Medio | — |
+| 7 | Swipe-down cerrar | Bajo | Medio | — |
+| 8 | Opacidad ajustable | Bajo | Medio | — |
 
 ---
 

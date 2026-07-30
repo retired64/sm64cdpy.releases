@@ -1370,6 +1370,11 @@ class _OverlayToggleState extends ConsumerState<_OverlayToggle> {
           contentWidth: 260,
           contentHeight: 340,
           persistOnAppClose: true,
+          assets: const ChatHeadAssets(
+            icon: IconSource.asset('assets/icons/floating_icon.png'),
+            closeIcon: IconSource.asset('packages/floaty_chatheads/assets/close.png'),
+            closeBackground: IconSource.asset('packages/floaty_chatheads/assets/closeBg.png'),
+          ),
         );
       }
       await _check();
