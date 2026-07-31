@@ -19,7 +19,8 @@ class OverlayPanel extends ConsumerStatefulWidget {
   ConsumerState<OverlayPanel> createState() => _OverlayPanelState();
 }
 
-class _OverlayPanelState extends ConsumerState<OverlayPanel> {
+class _OverlayPanelState extends ConsumerState<OverlayPanel>
+    with WidgetsBindingObserver {
   StreamSubscription<Object?>? _sub;
   final Map<String, String> _modStatus = {};
   final Map<String, int> _modProgress = {};
@@ -29,11 +30,42 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
 
   static const _bridgeTimeout = Duration(seconds: 4);
 
+  // Debe coincidir con `contentWidth`/`contentHeight` del showChatHead() en
+  // settings_screen.dart — es el tamaño "de reposo" al que volvemos cuando
+  // se cierra el teclado.
+  static const _panelWidth = 260;
+  static const _panelHeight = 340;
+  bool _resizedForKeyboard = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _sub = FloatyOverlay.onData.listen(_onOverlayData);
     FloatyOverlay.shareData({'type': 'panel_opened'});
+  }
+
+  // Confirmado en la doc del plugin (pub.dev/packages/floaty_chatheads):
+  // `FloatyOverlay.resizeContent(w, h)` — "Resizes the content panel from
+  // inside the overlay". Es el mecanismo soportado para esto: como esta
+  // ventana es un View nativo aparte (no una Activity), Android no le
+  // aplica el resize/pan automático que sí le da a la app principal
+  // cuando aparece el teclado — por eso `resizeToAvoidBottomInset: false`
+  // no alcanzaba. En vez de solo esconder elementos, ahora agrandamos la
+  // ventana en tiempo real por la altura que el teclado le está robando.
+  @override
+  void didChangeMetrics() {
+    if (!mounted) return;
+    final view = View.of(context);
+    final bottomInsetLogical = view.viewInsets.bottom / view.devicePixelRatio;
+    final shouldExpand = bottomInsetLogical > 24; // margen contra jitter/IME transitorio
+    if (shouldExpand == _resizedForKeyboard) return;
+    _resizedForKeyboard = shouldExpand;
+
+    final targetHeight = shouldExpand
+        ? (_panelHeight + bottomInsetLogical).round()
+        : _panelHeight;
+    FloatyOverlay.resizeContent(_panelWidth, targetHeight);
   }
 
   void _startDownload(OverlayModItem mod) {
@@ -171,13 +203,21 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sub?.cancel();
     for (final timer in _pendingTimers.values) {
       timer.cancel();
     }
     _searchCtrl.dispose();
+    // Si el panel se cierra mientras el teclado seguía abierto, no dejamos
+    // la ventana nativa agrandada — la próxima vez que se abra el overlay
+    // debe arrancar en su tamaño de reposo.
+    if (_resizedForKeyboard) {
+      FloatyOverlay.resizeContent(_panelWidth, _panelHeight);
+    }
     super.dispose();
   }
+
 
   void _switchSection(OverlaySection s) {
     if (s == ref.read(overlaySectionProvider)) return;
