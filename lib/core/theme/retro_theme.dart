@@ -14,25 +14,64 @@ import 'package:flutter/material.dart';
 /// Container(color: retro.surface, ...)
 /// ```
 class RetroTheme {
-  RetroTheme(this.isDark);
+  RetroTheme(
+    this.isDark, {
+    Color? backgroundOverride,
+    Color? surfaceOverride,
+    Color? surfaceAltOverride,
+    Color? borderOverride,
+    Color? shadowColorOverride,
+  }) : _backgroundOverride = backgroundOverride,
+       _surfaceOverride = surfaceOverride,
+       _surfaceAltOverride = surfaceAltOverride,
+       _borderOverride = borderOverride,
+       _shadowColorOverride = shadowColorOverride;
 
   factory RetroTheme.of(BuildContext context) {
     return RetroTheme(Theme.of(context).brightness == Brightness.dark);
   }
 
+  /// Variante fija para el overlay flotante (corre en un segundo engine de
+  /// Flutter vía `overlayMain()`, sin acceso al `Theme` de la app principal).
+  /// Siempre oscura por diseño: un overlay sobre gameplay en vivo necesita
+  /// contraste alto y no debe competir visualmente con el juego, sin
+  /// importar la preferencia claro/oscuro del usuario en la app. Navy más
+  /// profundo que el `isDark` normal + el mismo acento teal real del
+  /// sistema (antes el overlay usaba 0xFF00D9C0 hardcodeado, divergente de
+  /// `accent` — corregido acá porque ya no hace falta overridearlo).
+  factory RetroTheme.overlay() => RetroTheme(
+    true,
+    backgroundOverride: const Color(0xFF12141C),
+    surfaceOverride: const Color(0xFF1A1D29),
+    surfaceAltOverride: const Color(0xFF232738),
+    shadowColorOverride: const Color(0xFF090A10),
+  );
+
   final bool isDark;
+  final Color? _backgroundOverride;
+  final Color? _surfaceOverride;
+  final Color? _surfaceAltOverride;
+  final Color? _borderOverride;
+  final Color? _shadowColorOverride;
 
   // El modo oscuro es la identidad "real" de la referencia (navy + crema).
   // El modo claro reinterpreta la misma paleta sobre papel cálido para no
   // perder el carácter cuando el sistema pide light mode.
   Color get background =>
-      isDark ? const Color(0xFF262A38) : const Color(0xFFF5F2E9);
-  Color get surface => isDark ? const Color(0xFF2B2F3E) : const Color(0xFFFFFFFF);
+      _backgroundOverride ??
+      (isDark ? const Color(0xFF262A38) : const Color(0xFFF5F2E9));
+  Color get surface =>
+      _surfaceOverride ??
+      (isDark ? const Color(0xFF2B2F3E) : const Color(0xFFFFFFFF));
   Color get surfaceAlt =>
-      isDark ? const Color(0xFF333849) : const Color(0xFFEDE8DA);
-  Color get border => isDark ? const Color(0xFFF2EFE4) : const Color(0xFF262A38);
+      _surfaceAltOverride ??
+      (isDark ? const Color(0xFF333849) : const Color(0xFFEDE8DA));
+  Color get border =>
+      _borderOverride ??
+      (isDark ? const Color(0xFFF2EFE4) : const Color(0xFF262A38));
   Color get shadowColor =>
-      isDark ? const Color(0xFF14161F) : const Color(0xFF262A38);
+      _shadowColorOverride ??
+      (isDark ? const Color(0xFF14161F) : const Color(0xFF262A38));
   Color get ink => isDark ? const Color(0xFFF2EFE4) : const Color(0xFF20232E);
   Color get inkDim =>
       isDark ? const Color(0xFF9096A3) : const Color(0xFF696E7C);

@@ -7,12 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/app_constants.dart';
+import '../core/theme/retro_theme.dart';
 import 'overlay_sections.dart';
 
-const _bg = Color(0xFF262A38);
-const _surface = Color(0xFF2B2F3E);
-const _accent = Color(0xFF00D9C0);
-const _border = Color(0xFF5B5E6B);
+/// Tema fijo del overlay flotante — ver `RetroTheme.overlay()` para el
+/// razonamiento de por qué es una instancia fija y no `RetroTheme.of(context)`.
+final _retro = RetroTheme.overlay();
 
 class OverlayPanel extends ConsumerStatefulWidget {
   const OverlayPanel({super.key});
@@ -73,20 +73,32 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
       if (!mounted) return;
       if (_modStatus[title] == 'connecting') {
         setState(() => _modStatus.remove(title));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No response — open the main app once, then try again',
-              style: TextStyle(fontSize: 11),
-            ),
-            duration: Duration(seconds: 3),
-            backgroundColor: _surface,
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(8),
-          ),
-        );
+        _showToast('No response — open the main app once, then try again');
       }
     });
+  }
+
+  void _showToast(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: _retro.ink,
+          ),
+        ),
+        duration: const Duration(seconds: 3),
+        backgroundColor: _retro.surfaceAlt,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: _retro.border.withValues(alpha: 0.4)),
+          borderRadius: BorderRadius.zero,
+        ),
+      ),
+    );
   }
 
   void _onOverlayData(Object? data) {
@@ -132,15 +144,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
         'auto_install_off' => 'Enable auto-install first (Settings)',
         _ => 'Download failed',
       };
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message, style: const TextStyle(fontSize: 11)),
-          duration: const Duration(seconds: 3),
-          backgroundColor: _surface,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(8),
-        ),
-      );
+      _showToast(message);
     }
   }
 
@@ -174,6 +178,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
 
   void _switchSection(OverlaySection s) {
     if (s == ref.read(overlaySectionProvider)) return;
+    HapticFeedback.selectionClick();
     ref.read(overlaySectionProvider.notifier).select(s);
     _searchCtrl.clear();
     ref.read(searchProviderFor(s).notifier).set('');
@@ -195,14 +200,14 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: _bg,
+      backgroundColor: _retro.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(6, 4, 6, 6),
+          padding: const EdgeInsets.fromLTRB(6, 5, 6, 6),
           child: Column(
             children: [
               _SectionTabs(active: section, onTap: _switchSection),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               if (totalPages > 1)
                 _PageBar(
                   current: page + 1,
@@ -218,23 +223,21 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
                           .set(page + 1)
                       : null,
                 ),
-              if (totalPages > 1) const SizedBox(height: 4),
+              if (totalPages > 1) const SizedBox(height: 6),
               Expanded(
                 child: items.when(
                   loading: () => const Center(child: _Spinner()),
-                  error: (err, _) => Center(
-                    child: Text('Error',
-                        style: TextStyle(
-                            color: Colors.redAccent, fontSize: 12)),
+                  error: (err, _) => _EmptyState(
+                    icon: Icons.error_outline,
+                    label: 'ERROR',
+                    color: _retro.red,
                   ),
                   data: (mods) {
                     if (mods.isEmpty) {
-                      return Center(
-                        child: Text(
-                          'No results',
-                          style: const TextStyle(
-                              color: Colors.white24, fontSize: 12),
-                        ),
+                      return _EmptyState(
+                        icon: Icons.search_off,
+                        label: 'NO RESULTS',
+                        color: _retro.inkDim,
                       );
                     }
                     return ListView.builder(
@@ -249,12 +252,12 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
                   },
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 7),
               _SearchBar(
                 controller: _searchCtrl,
                 onChanged: _onSearchChanged,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               _AutoInstallToggle(
                 value: _autoInstall,
                 onTap: () => _toggleAutoInstall(!_autoInstall),
@@ -267,6 +270,11 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   }
 }
 
+// ── Section tabs ─────────────────────────────────────────────────────────────
+// Antes: subrayado plano de 2px sin identidad. Ahora: SkewChip denso (mismo
+// componente que usan las screens reales de la app), con fade en los bordes
+// para señalar que hay más tabs fuera de vista cuando no entran todas.
+
 class _SectionTabs extends StatelessWidget {
   const _SectionTabs({required this.active, required this.onTap});
 
@@ -275,40 +283,48 @@ class _SectionTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: OverlaySection.values.map((s) {
-          final isActive = s == active;
-          return GestureDetector(
-            onTap: () => onTap(s),
-            child: Container(
-              margin: const EdgeInsets.only(right: 6),
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: isActive ? _accent : Colors.white10,
-                    width: 2,
-                  ),
+    return SizedBox(
+      height: 30,
+      child: ShaderMask(
+        shaderCallback: (bounds) => LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Colors.transparent,
+            Colors.white,
+            Colors.white,
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.04, 0.94, 1.0],
+        ).createShader(bounds),
+        blendMode: BlendMode.dstIn,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: Row(
+            children: OverlaySection.values.map((s) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 7),
+                child: SkewChip(
+                  retro: _retro,
+                  label: s.label,
+                  selected: s == active,
+                  dense: true,
+                  onTap: () => onTap(s),
                 ),
-              ),
-              child: Text(
-                s.label,
-                style: TextStyle(
-                  color: isActive ? _accent : _border,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
 }
+
+// ── Page bar ──────────────────────────────────────────────────────────────────
+// Flechas 32x32 (antes 20x20) — objetivo táctil real sobre un overlay donde
+// el dedo tapa parte de la pantalla. Borde + sombra dura reducida (2px) para
+// mantener el lenguaje visual sin pesar tanto como en pantallas grandes.
 
 class _PageBar extends StatelessWidget {
   const _PageBar({
@@ -328,17 +344,11 @@ class _PageBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _ArrowIcon(
-            icon: Icons.chevron_left, enabled: onPrev != null, onTap: onPrev),
-        const SizedBox(width: 6),
-        Text(
-          '$current/$total',
-          style: const TextStyle(
-              color: Colors.white30, fontSize: 10, fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(width: 6),
-        _ArrowIcon(
-            icon: Icons.chevron_right, enabled: onNext != null, onTap: onNext),
+        _ArrowIcon(icon: Icons.chevron_left, enabled: onPrev != null, onTap: onPrev),
+        const SizedBox(width: 10),
+        RetroTag(retro: _retro, label: '$current / $total', dense: true),
+        const SizedBox(width: 10),
+        _ArrowIcon(icon: Icons.chevron_right, enabled: onNext != null, onTap: onNext),
       ],
     );
   }
@@ -353,20 +363,31 @@ class _ArrowIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: enabled ? onTap : null,
+      onTap: enabled
+          ? () {
+              HapticFeedback.selectionClick();
+              onTap?.call();
+            }
+          : null,
       child: Container(
-        width: 20,
-        height: 20,
+        width: 32,
+        height: 32,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          border: Border.all(color: enabled ? _border : Colors.white10),
-          color: enabled ? _surface : Colors.transparent,
+          color: enabled ? _retro.surface : Colors.transparent,
+          border: Border.all(
+            color: enabled ? _retro.border.withValues(alpha: 0.5) : _retro.border.withValues(alpha: 0.12),
+            width: 1.5,
+          ),
+          boxShadow: enabled ? _retro.hardShadow(dx: 2, dy: 2) : null,
         ),
-        child: Icon(icon, size: 14, color: enabled ? _accent : Colors.white10),
+        child: Icon(icon, size: 18, color: enabled ? _retro.accent : _retro.inkDim.withValues(alpha: 0.3)),
       ),
     );
   }
 }
+
+// ── Search bar ────────────────────────────────────────────────────────────────
 
 class _SearchBar extends StatelessWidget {
   const _SearchBar({required this.controller, required this.onChanged});
@@ -378,8 +399,9 @@ class _SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: _surface,
-        border: Border.all(color: _border.withValues(alpha: 0.4)),
+        color: _retro.surface,
+        border: Border.all(color: _retro.border.withValues(alpha: 0.4), width: 1.5),
+        boxShadow: _retro.hardShadow(dx: 2, dy: 2),
       ),
       child: TextField(
         controller: controller,
@@ -387,24 +409,26 @@ class _SearchBar extends StatelessWidget {
         enableSuggestions: false,
         textInputAction: TextInputAction.search,
         onChanged: onChanged,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-        ),
-        decoration: const InputDecoration(
+        cursorColor: _retro.accent,
+        style: _retro.body(size: 11.5, weight: FontWeight.w600, color: _retro.ink),
+        decoration: InputDecoration(
           hintText: 'SEARCH...',
-          hintStyle: TextStyle(color: Colors.white24, fontSize: 10),
+          hintStyle: _retro.body(size: 10.5, color: _retro.inkDim.withValues(alpha: 0.7)),
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
           border: InputBorder.none,
-          prefixIcon: Icon(Icons.search, color: Colors.white24, size: 16),
+          prefixIcon: Icon(Icons.search, color: _retro.accent.withValues(alpha: 0.8), size: 17),
         ),
       ),
     );
   }
 }
+
+// ── Auto-install toggle ────────────────────────────────────────────────────────
+// Antes: fila suelta sin borde con texto de 7px (por debajo del mínimo
+// legible recomendado ~11px). Ahora: RetroTag (mismo widget de badges de la
+// app) envuelto en gesto, con hitbox ampliada vía padding.
 
 class _AutoInstallToggle extends StatelessWidget {
   const _AutoInstallToggle({required this.value, required this.onTap});
@@ -414,23 +438,55 @@ class _AutoInstallToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Row(
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 3),
+          child: RetroTag(
+            retro: _retro,
+            label: 'AUTO-INSTALL',
+            icon: value ? Icons.toggle_on : Icons.toggle_off,
+            color: value ? _retro.accent : _retro.inkDim,
+            filled: value,
+            dense: true,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Empty / error state ────────────────────────────────────────────────────────
+// Antes: Text suelto en gris genérico. Ahora reusa la paleta semántica real
+// (retro.red para error) en vez de Colors.redAccent/white24 sueltos.
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.icon, required this.label, required this.color});
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            value ? Icons.toggle_on : Icons.toggle_off,
-            size: 16,
-            color: value ? _accent : _border,
-          ),
-          const SizedBox(width: 4),
+          Icon(icon, size: 26, color: color.withValues(alpha: 0.55)),
+          const SizedBox(height: 6),
           Text(
-            'AUTO',
+            label,
             style: TextStyle(
-              color: value ? _accent : Colors.white24,
-              fontSize: 7,
-              fontWeight: FontWeight.w700,
+              color: color.withValues(alpha: 0.7),
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.6,
             ),
           ),
         ],
@@ -438,6 +494,12 @@ class _AutoInstallToggle extends StatelessWidget {
     );
   }
 }
+
+// ── Mod tile ──────────────────────────────────────────────────────────────────
+// Antes: sin sombra, borde 1px al 30% de opacidad, estados de color
+// arbitrarios (_accent para todo). Ahora: hardShadow denso + paleta
+// semántica del changelog ya definida en RetroTheme (added/fixed/blue/red)
+// para que cada estado se lea sin tener que leer el texto.
 
 class _ModTile extends ConsumerStatefulWidget {
   const _ModTile({
@@ -465,77 +527,72 @@ class _ModTileState extends ConsumerState<_ModTile> {
   bool get _hasSingleUrl => widget.mod.downloadUrls.length == 1;
   bool get _isCancelled => widget.status == 'cancelled';
 
+  Color get _statusColor {
+    if (_isDone) return _retro.changelogAdded;
+    if (_isCancelled) return _retro.changelogRemoved;
+    if (_isInstalling) return _retro.changelogFixed;
+    if (_isDownloading) return _retro.changelogImproved;
+    if (_isConnecting) return _retro.inkDim;
+    return _retro.accent;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 3),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+      margin: const EdgeInsets.only(bottom: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
       decoration: BoxDecoration(
-        color: _surface,
-        border: Border.all(color: _border.withValues(alpha: 0.3)),
+        color: _retro.surface,
+        border: Border.all(color: _retro.border.withValues(alpha: 0.35), width: 1.5),
+        boxShadow: _retro.hardShadow(dx: 2, dy: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Expanded(
-                child: _titleRow(),
-              ),
-              const SizedBox(width: 4),
+              Expanded(child: _titleRow()),
+              const SizedBox(width: 6),
               if (_isDone)
-                const Icon(Icons.check_circle, size: 15, color: _accent)
+                Icon(Icons.check_circle, size: 19, color: _statusColor)
               else if (!_hasSingleUrl)
-                const Icon(Icons.list_alt, size: 15, color: Colors.white24)
+                Icon(Icons.list_alt, size: 18, color: _retro.inkDim.withValues(alpha: 0.5))
               else if (_isCancelled)
-                GestureDetector(
+                _RoundIconButton(
+                  icon: Icons.refresh,
+                  color: _statusColor,
                   onTap: widget.onDownload,
-                  child: Icon(Icons.refresh, size: 15,
-                      color: _accent.withValues(alpha: 0.6)),
                 )
               else if (!_isActive)
-                GestureDetector(
+                _RoundIconButton(
+                  icon: Icons.download,
+                  color: _retro.accent,
                   onTap: widget.onDownload,
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: _accent.withValues(alpha: 0.15),
-                      border:
-                          Border.all(color: _accent.withValues(alpha: 0.5)),
-                    ),
-                    child: const Icon(Icons.download,
-                        size: 13, color: _accent),
-                  ),
                 )
               else
                 SizedBox(
-                  width: 22,
-                  height: 22,
+                  width: 26,
+                  height: 26,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
                     value: _isDownloading && widget.progress != null
                         ? widget.progress! / 100.0
                         : null,
-                    color: _accent,
-                    backgroundColor: _accent.withValues(alpha: 0.15),
+                    color: _statusColor,
+                    backgroundColor: _statusColor.withValues(alpha: 0.15),
                   ),
                 ),
             ],
           ),
           if (_isActive) ...[
-            const SizedBox(height: 5),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(0),
-              child: LinearProgressIndicator(
-                value: _isDownloading && widget.progress != null
-                    ? widget.progress! / 100.0
-                    : null,
-                backgroundColor: _accent.withValues(alpha: 0.1),
-                color: _accent,
-                minHeight: 2.5,
-              ),
+            const SizedBox(height: 6),
+            LinearProgressIndicator(
+              value: _isDownloading && widget.progress != null
+                  ? widget.progress! / 100.0
+                  : null,
+              backgroundColor: _statusColor.withValues(alpha: 0.12),
+              color: _statusColor,
+              minHeight: 3,
             ),
           ],
         ],
@@ -554,13 +611,45 @@ class _ModTileState extends ConsumerState<_ModTile> {
 
     return Text(
       label,
-      style: TextStyle(
-        color: _isDone ? _accent : Colors.white,
-        fontSize: 10,
-        fontWeight: FontWeight.w700,
+      style: _retro.body(
+        size: 11,
+        weight: FontWeight.w700,
+        color: _isDone ? _statusColor : _retro.ink,
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+// ── Round icon button ───────────────────────────────────────────────────────
+// Botón de descarga: 30x30 (antes 24x24), con hardShadow denso.
+
+class _RoundIconButton extends StatelessWidget {
+  const _RoundIconButton({required this.icon, required this.color, required this.onTap});
+
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Container(
+        width: 30,
+        height: 30,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.16),
+          border: Border.all(color: color.withValues(alpha: 0.6), width: 1.5),
+          boxShadow: _retro.hardShadow(dx: 2, dy: 2),
+        ),
+        child: Icon(icon, size: 15, color: color),
+      ),
     );
   }
 }
@@ -570,10 +659,10 @@ class _Spinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      width: 16,
-      height: 16,
-      child: CircularProgressIndicator(strokeWidth: 2, color: _accent),
+    return SizedBox(
+      width: 18,
+      height: 18,
+      child: CircularProgressIndicator(strokeWidth: 2, color: _retro.accent),
     );
   }
 }

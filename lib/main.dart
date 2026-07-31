@@ -114,5 +114,20 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
 
 @pragma('vm:entry-point')
 void overlayMain() => FloatyOverlayApp.run(
-    const ProviderScope(child: OverlayPanel()),
+    ProviderScope(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        // Segundo engine de Flutter, sin acceso al Theme de la app
+        // principal: usa la variante fija RetroTheme.overlay() para que
+        // widgets nativos (SnackBar, selection handles, etc.) hereden el
+        // mismo navy oscuro en vez de los defaults de Material.
+        theme: RetroTheme.materialTheme(true).copyWith(
+          scaffoldBackgroundColor: RetroTheme.overlay().background,
+          colorScheme: RetroTheme.materialTheme(true).colorScheme.copyWith(
+            surface: RetroTheme.overlay().surface,
+          ),
+        ),
+        home: const OverlayPanel(),
+      ),
+    ),
   );
