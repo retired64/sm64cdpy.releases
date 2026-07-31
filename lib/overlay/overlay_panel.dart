@@ -4,9 +4,7 @@ import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../core/constants/app_constants.dart';
 import '../core/theme/retro_theme.dart';
 import 'overlay_sections.dart';
 
@@ -26,7 +24,6 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
   final Map<String, String> _modStatus = {};
   final Map<String, int> _modProgress = {};
   final Map<String, Timer> _pendingTimers = {};
-  bool _autoInstall = false;
 
   final _searchCtrl = TextEditingController();
 
@@ -37,21 +34,6 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
     super.initState();
     _sub = FloatyOverlay.onData.listen(_onOverlayData);
     FloatyOverlay.shareData({'type': 'panel_opened'});
-    _loadAutoInstall();
-  }
-
-  Future<void> _loadAutoInstall() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() =>
-          _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false);
-    }
-  }
-
-  Future<void> _toggleAutoInstall(bool value) async {
-    setState(() => _autoInstall = value);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.autoInstallModsKey, value);
   }
 
   void _startDownload(OverlayModItem mod) {
@@ -75,6 +57,27 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
         setState(() => _modStatus.remove(title));
         _showToast('No response — open the main app once, then try again');
       }
+    });
+  }
+
+  /// Cancela una descarga/instalación en curso. A diferencia del botón de
+  /// "cancelled" que ya existía (que solo reacciona a eventos que YA
+  /// vinieron del backend), esto lo dispara el usuario mientras está
+  /// activa — el caso real que faltaba: instalación colgada por internet
+  /// lento o zip corrupto, sin forma de salir de ahí.
+  void _cancelDownload(OverlayModItem mod) {
+    final title = mod.title;
+    HapticFeedback.mediumImpact();
+    _pendingTimers.remove(title)?.cancel();
+
+    FloatyOverlay.shareData({'type': 'cancel_mod', 'modTitle': title});
+
+    // Limpieza optimista: no esperamos confirmación del bridge para que
+    // el usuario recupere el control de inmediato, incluso si la
+    // instalación estaba tan colgada que ni siquiera responde al mensaje.
+    setState(() {
+      _modStatus.remove(title);
+      _modProgress.remove(title);
     });
   }
 
@@ -198,6 +201,17 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
     final page = ref.watch(pageProviderFor(section));
     final totalPages = ref.watch(overlayTotalPages);
 
+    // La ventana del overlay tiene alto fijo (`contentHeight: 340` en
+    // settings_screen.dart) y corre en un engine de Flutter aparte —
+    // Android dibuja el teclado del sistema (IME) POR ENCIMA de ventanas
+    // tipo overlay, sin el ajuste de resize/pan que sí tienen las
+    // Activities normales. Resultado: cualquier elemento anclado cerca del
+    // borde inferior del panel queda tapado en cuanto se abre el teclado,
+    // sin importar qué pongamos en `resizeToAvoidBottomInset`. La mitigación
+    // real es de layout, no de flag: el campo en el que se está escribiendo
+    // tiene que vivir arriba, no abajo, y lo secundario se repliega.
+    final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: _retro.background,
@@ -208,7 +222,12 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
             children: [
               _SectionTabs(active: section, onTap: _switchSection),
               const SizedBox(height: 6),
-              if (totalPages > 1)
+              _SearchBar(
+                controller: _searchCtrl,
+                onChanged: _onSearchChanged,
+              ),
+              const SizedBox(height: 6),
+              if (totalPages > 1 && !keyboardOpen) ...[
                 _PageBar(
                   current: page + 1,
                   total: totalPages,
@@ -223,7 +242,8 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
                           .set(page + 1)
                       : null,
                 ),
-              if (totalPages > 1) const SizedBox(height: 6),
+                const SizedBox(height: 6),
+              ],
               Expanded(
                 child: items.when(
                   loading: () => const Center(child: _Spinner()),
@@ -247,20 +267,11 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel> {
                         status: _modStatus[mods[i].title],
                         progress: _modProgress[mods[i].title],
                         onDownload: () => _startDownload(mods[i]),
+                        onCancel: () => _cancelDownload(mods[i]),
                       ),
                     );
                   },
                 ),
-              ),
-              const SizedBox(height: 7),
-              _SearchBar(
-                controller: _searchCtrl,
-                onChanged: _onSearchChanged,
-              ),
-              const SizedBox(height: 6),
-              _AutoInstallToggle(
-                value: _autoInstall,
-                onTap: () => _toggleAutoInstall(!_autoInstall),
               ),
             ],
           ),
@@ -425,42 +436,6 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-// ── Auto-install toggle ────────────────────────────────────────────────────────
-// Antes: fila suelta sin borde con texto de 7px (por debajo del mínimo
-// legible recomendado ~11px). Ahora: RetroTag (mismo widget de badges de la
-// app) envuelto en gesto, con hitbox ampliada vía padding.
-
-class _AutoInstallToggle extends StatelessWidget {
-  const _AutoInstallToggle({required this.value, required this.onTap});
-
-  final bool value;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: GestureDetector(
-        onTap: () {
-          HapticFeedback.selectionClick();
-          onTap();
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 3),
-          child: RetroTag(
-            retro: _retro,
-            label: 'AUTO-INSTALL',
-            icon: value ? Icons.toggle_on : Icons.toggle_off,
-            color: value ? _retro.accent : _retro.inkDim,
-            filled: value,
-            dense: true,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 // ── Empty / error state ────────────────────────────────────────────────────────
 // Antes: Text suelto en gris genérico. Ahora reusa la paleta semántica real
 // (retro.red para error) en vez de Colors.redAccent/white24 sueltos.
@@ -505,12 +480,14 @@ class _ModTile extends ConsumerStatefulWidget {
   const _ModTile({
     required this.mod,
     required this.onDownload,
+    required this.onCancel,
     this.status,
     this.progress,
   });
 
   final OverlayModItem mod;
   final VoidCallback onDownload;
+  final VoidCallback onCancel;
   final String? status;
   final int? progress;
 
@@ -570,16 +547,25 @@ class _ModTileState extends ConsumerState<_ModTile> {
                   onTap: widget.onDownload,
                 )
               else
-                SizedBox(
-                  width: 26,
-                  height: 26,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    value: _isDownloading && widget.progress != null
-                        ? widget.progress! / 100.0
-                        : null,
-                    color: _statusColor,
-                    backgroundColor: _statusColor.withValues(alpha: 0.15),
+                GestureDetector(
+                  onTap: widget.onCancel,
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          value: _isDownloading && widget.progress != null
+                              ? widget.progress! / 100.0
+                              : null,
+                          color: _statusColor,
+                          backgroundColor: _statusColor.withValues(alpha: 0.15),
+                        ),
+                        Icon(Icons.close, size: 12, color: _statusColor),
+                      ],
+                    ),
                   ),
                 ),
             ],
@@ -593,6 +579,16 @@ class _ModTileState extends ConsumerState<_ModTile> {
               backgroundColor: _statusColor.withValues(alpha: 0.12),
               color: _statusColor,
               minHeight: 3,
+            ),
+            const SizedBox(height: 3),
+            Text(
+              'TAP TO CANCEL',
+              style: TextStyle(
+                color: _statusColor.withValues(alpha: 0.55),
+                fontSize: 8.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.4,
+              ),
             ),
           ],
         ],
