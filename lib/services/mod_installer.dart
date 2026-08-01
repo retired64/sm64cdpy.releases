@@ -120,16 +120,21 @@ class ModInstaller {
   /// Encadena ModDownloadWorker → ModInstallWorker.
   /// Retorna inmediatamente con los workIds.
   /// El progreso se recibe via EventChannel (BackgroundInstallService).
+  ///
+  /// [installDestination] indica qué carpeta SAF usar como destino:
+  /// 'mods' (KEY_TREE_URI) o 'dynos' (KEY_DYNOS_TREE_URI).
   Future<ModChainResult?> downloadAndInstallMod({
     required String url,
     required String modName,
     required String fileName,
+    String installDestination = 'mods',
   }) async {
     try {
       final result = await _channel.invokeMethod<Map>('downloadAndInstallMod', {
         'url': url,
         'modName': modName,
         'fileName': fileName,
+        'installDestination': installDestination,
       });
       if (result == null) return null;
       return ModChainResult(

@@ -31,8 +31,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.io.*
 import java.util.UUID
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
+import kotlinx.coroutines.runBlocking
 
 /**
  * Plugin nativo para gestionar la carpeta de mods mediante Storage Access Framework (SAF).
@@ -424,8 +423,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
-                val fileCount = extractZipToDocumentFile(zipFile, treeDoc, act)
-                val topDir = detectTopLevelDir(zipFile)
+                val fileCount = runBlocking {
+                    SafZipExtractor.extractZipToTree(zipFile, treeDoc, act)
+                }
+                val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
                 val displayDir = topDir ?: modName
                 zipFile.delete()
 
@@ -498,8 +499,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
-                val fileCount = extractZipToDocumentFile(zipFile, treeDoc, act)
-                val topDir = detectTopLevelDir(zipFile)
+                val fileCount = runBlocking {
+                    SafZipExtractor.extractZipToTree(zipFile, treeDoc, act)
+                }
+                val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
                 val displayDir = topDir ?: modName
                 zipFile.delete()
 
@@ -648,7 +651,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      *
      * Retorna inmediatamente un mapa con downloadWorkId e installWorkId.
      */
-    private fun downloadAndInstallMod(call: MethodCall, result: Result) {
+     private fun downloadAndInstallMod(call: MethodCall, result: Result) {
         val act = activity
         if (act == null) {
             result.error("NO_ACTIVITY", "Activity not available", null)
@@ -656,18 +659,22 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         val prefs = getPrefs()
-        val treeUriString = prefs.getString(KEY_TREE_URI, null)
+        val destination = call.argument<String>("installDestination") ?: "mods"
+        val treeUriPrefKey = if (destination == "dynos") KEY_DYNOS_TREE_URI else KEY_TREE_URI
+        val destLabel = if (destination == "dynos") "DynOS" else "mods"
+
+        val treeUriString = prefs.getString(treeUriPrefKey, null)
         if (treeUriString == null) {
-            result.error("NO_DIRECTORY", "No mods directory selected. Please select one in Settings first.", null)
+            result.error("NO_DIRECTORY", "No $destLabel directory selected. Please select one in Settings first.", null)
             return
         }
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_TREE_URI).apply()
+            prefs.edit().remove(treeUriPrefKey).apply()
             result.error(
                 "DIR_NOT_ACCESSIBLE",
-                "The selected directory is no longer accessible. Please select it again in Settings.",
+                "The selected $destLabel directory is no longer accessible. Please select it again in Settings.",
                 null
             )
             return
@@ -1100,134 +1107,4 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    /**
-     * Extrae el contenido de [zipFile] dentro de [targetDir] (DocumentFile del árbol SAF).
-     * Retorna el número de archivos extraídos.
-     */
-    @Throws(IOException::class)
-    private fun extractZipToDocumentFile(zipFile: java.io.File, targetDir: DocumentFile, context: Context): Int {
-        var fileCount = 0
-        val createdDirs = mutableMapOf<String, DocumentFile>()
-
-        ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
-            var entry: ZipEntry? = zis.nextEntry
-            while (entry != null) {
-                if (!entry.isDirectory) {
-                    val entryName = sanitizeEntryName(entry.name)
-                    if (entryName.isEmpty() || entryName.endsWith("/")) {
-                        entry = zis.nextEntry
-                        continue
-                    }
-
-                    val slashIdx = entryName.lastIndexOf('/')
-                    val parentDir: DocumentFile
-                    val fileName: String
-
-                    if (slashIdx > 0) {
-                        val dirPath = entryName.substring(0, slashIdx)
-                        val simpleName = entryName.substring(slashIdx + 1)
-                        parentDir = getOrCreateDir(createdDirs, targetDir, dirPath, context)
-                        fileName = simpleName
-                    } else {
-                        parentDir = targetDir
-                        fileName = entryName
-                    }
-
-                    if (parentDir == targetDir || (parentDir.exists() && parentDir.isDirectory)) {
-                        val outputFile = parentDir.createFile("application/octet-stream", fileName)
-                        if (outputFile != null) {
-                            context.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
-                                zis.copyTo(os)
-                                os.flush()
-                            }
-                            fileCount++
-                        }
-                    }
-                }
-                entry = zis.nextEntry
-            }
-        }
-
-        return fileCount
-    }
-
-    /**
-     * Obtiene o crea un subdirectorio en el árbol SAF.
-     */
-    private fun getOrCreateDir(
-        cache: MutableMap<String, DocumentFile>,
-        root: DocumentFile,
-        path: String,
-        context: Context
-    ): DocumentFile {
-        val cached = cache[path]
-        if (cached != null) return cached
-
-        val parts = path.split("/").filter { it.isNotEmpty() }
-        var current: DocumentFile = root
-        var currentPath = ""
-
-        for (part in parts) {
-            currentPath = if (currentPath.isEmpty()) part else "$currentPath/$part"
-
-            val cachedDir = cache[currentPath]
-            if (cachedDir != null) {
-                current = cachedDir
-                continue
-            }
-
-            val existing = current.findFile(part)
-            current = if (existing != null && existing.isDirectory) {
-                existing
-            } else {
-                current.createDirectory(part) ?: current
-            }
-
-            cache[currentPath] = current
-        }
-
-        return current
-    }
-
-    /**
-     * Detecta el nombre del directorio de nivel superior en el ZIP.
-     */
-    private fun detectTopLevelDir(zipFile: java.io.File): String? {
-        var commonPrefix: String? = null
-
-        try {
-            ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
-                var entry: ZipEntry? = zis.nextEntry
-                while (entry != null) {
-                    val name = sanitizeEntryName(entry.name)
-                    if (name.isNotEmpty() && !name.endsWith("/")) {
-                        val slashIdx = name.indexOf('/')
-                        if (slashIdx > 0) {
-                            val topDir = name.substring(0, slashIdx)
-                            if (commonPrefix == null) {
-                                commonPrefix = topDir
-                            } else if (commonPrefix != topDir) {
-                                return null
-                            }
-                        } else {
-                            return null
-                        }
-                    }
-                    entry = zis.nextEntry
-                }
-            }
-        } catch (_: Exception) { }
-
-        return commonPrefix
-    }
-
-    /**
-     * Sanitiza el nombre de una entrada ZIP para evitar path traversal.
-     */
-    private fun sanitizeEntryName(name: String): String {
-        var sanitized = name.trim().replace("\\", "/").replace("\u0000", "")
-        while (sanitized.startsWith("/")) sanitized = sanitized.substring(1)
-        val parts = sanitized.split("/").filter { it.isNotEmpty() && it != "." && it != ".." }
-        return parts.joinToString("/")
-    }
 }

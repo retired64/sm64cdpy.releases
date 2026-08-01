@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'mod_installer.dart';
 
 enum BgInstallStatus { pending, downloading, installing, completed, cancelled, error }
@@ -80,6 +82,7 @@ class BgInstallInfo {
     this.fileCount,
     this.targetDir,
     this.error,
+    this.displayTitle,
   });
 
   final String modName;
@@ -92,6 +95,7 @@ class BgInstallInfo {
   final int? fileCount;
   final String? targetDir;
   final String? error;
+  final String? displayTitle;
 }
 
 class BackgroundInstallService {
@@ -108,14 +112,65 @@ class BackgroundInstallService {
 
   bool _initialized = false;
 
+  static const _prefsKey = 'bg_install_info';
+
   void init() {
     if (_initialized) return;
     _initialized = true;
+
+    _restoreFromPrefs();
 
     _eventChannel.receiveBroadcastStream().listen(
       _onNativeEvent,
       onError: (e) => debugPrint('BgInstall event error: $e'),
     );
+  }
+
+  Future<void> _restoreFromPrefs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_prefsKey);
+      if (raw == null) return;
+      final list = jsonDecode(raw) as List<dynamic>;
+      for (final entry in list) {
+        if (entry is! Map<String, dynamic>) continue;
+        final statusStr = entry['status'] as String? ?? 'pending';
+        _infoMap.putIfAbsent(entry['modName'] as String, () => BgInstallInfo(
+          modName: entry['modName'] as String,
+          status: switch (statusStr) {
+            'downloading' => BgInstallStatus.downloading,
+            'installing' => BgInstallStatus.installing,
+            'completed' => BgInstallStatus.completed,
+            'cancelled' => BgInstallStatus.cancelled,
+            'error' => BgInstallStatus.error,
+            _ => BgInstallStatus.pending,
+          },
+          workId: entry['workId'] as String?,
+          displayTitle: entry['displayTitle'] as String?,
+        ));
+      }
+    } catch (e) {
+      debugPrint('BgInstall restore failed: $e');
+    }
+  }
+
+  void _persistToPrefs() {
+    final list = _infoMap.entries
+        .where((e) => e.value.status != BgInstallStatus.completed &&
+                    e.value.status != BgInstallStatus.cancelled)
+        .map((e) => {
+              'modName': e.key,
+              'status': e.value.status.name,
+              'workId': e.value.workId,
+              if (e.value.displayTitle != null)
+                'displayTitle': e.value.displayTitle,
+            })
+        .toList();
+    try {
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setString(_prefsKey, jsonEncode(list));
+      });
+    } catch (_) {}
   }
 
   BgInstallInfo? getInfo(String modName) => _infoMap[modName];
@@ -144,6 +199,7 @@ class BackgroundInstallService {
     _controller.add(
       BgOperationCancelled(modName: modName, workId: ''),
     );
+    _persistToPrefs();
     _scheduleCleanup(modName);
   }
 
@@ -151,6 +207,8 @@ class BackgroundInstallService {
     required String url,
     required String modName,
     required String fileName,
+    String? displayTitle,
+    String installDestination = 'mods',
   }) async {
     final installer = ModInstaller();
 
@@ -159,6 +217,7 @@ class BackgroundInstallService {
         url: url,
         modName: modName,
         fileName: fileName,
+        installDestination: installDestination,
       );
 
       if (chainResult == null) return null;
@@ -169,6 +228,7 @@ class BackgroundInstallService {
         phase: BgOperationPhase.downloading,
         workId: chainResult.downloadWorkId,
         downloadProgress: 0,
+        displayTitle: displayTitle,
       );
       _infoMap[modName] = info;
 
@@ -407,6 +467,7 @@ class BackgroundInstallService {
         );
         _scheduleCleanup(modName);
     }
+    _persistToPrefs();
   }
 
   void _scheduleCleanup(String modName) {

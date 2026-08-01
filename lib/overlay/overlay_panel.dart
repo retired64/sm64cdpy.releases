@@ -25,6 +25,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   final Map<String, String> _modStatus = {};
   final Map<String, int> _modProgress = {};
   final Map<String, Timer> _pendingTimers = {};
+  final Set<String> _cancelledMods = {};
 
   final _searchCtrl = TextEditingController();
 
@@ -119,6 +120,13 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
 
     FloatyOverlay.shareData({'type': 'cancel_mod', 'modTitle': title});
 
+    // Evita que un evento de progreso en vuelo (emitido antes de que
+    // WorkManager procese la cancelación) re-active este tile.
+    _cancelledMods.add(title);
+    Future.delayed(const Duration(seconds: 10), () {
+      _cancelledMods.remove(title);
+    });
+
     // Limpieza optimista: no esperamos confirmación del bridge para que
     // el usuario recupere el control de inmediato, incluso si la
     // instalación estaba tan colgada que ni siquiera responde al mensaje.
@@ -161,6 +169,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       final rawStatus = data['status'] as String?;
       final progress = data['progress'] as int?;
       if (modTitle == null || rawStatus == null || !mounted) return;
+      if (_cancelledMods.contains(modTitle)) return;
 
       _pendingTimers.remove(modTitle)?.cancel();
 
@@ -184,6 +193,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       final modTitle = data['modTitle'] as String?;
       final error = data['error'] as String?;
       if (modTitle == null || !mounted) return;
+      if (_cancelledMods.contains(modTitle)) return;
       _pendingTimers.remove(modTitle)?.cancel();
       setState(() {
         _modStatus.remove(modTitle);

@@ -26,7 +26,6 @@ class ModDownloadWorker(
         const val KEY_MOD_NAME = "modName"
         const val KEY_FILE_NAME = "fileName"
         const val DOWNLOAD_CHANNEL_ID = "mod_download_channel"
-        const val NOTIFICATION_ID = 4243
         const val PROGRESS = "progress"
         const val OUTPUT_ZIP_PATH = "zipPath"
 
@@ -47,6 +46,10 @@ class ModDownloadWorker(
         }
     }
 
+    private val notificationId: Int by lazy {
+        (inputData.getString(KEY_MOD_NAME) ?: "").hashCode() and 0x7FFFFFFF
+    }
+
     /** Errores de servidor que NO tiene sentido reintentar (4xx: URL rota, mod eliminado, etc.). */
     private class PermanentDownloadError(message: String) : IOException(message)
 
@@ -65,7 +68,7 @@ class ModDownloadWorker(
             // red de seguridad y tumbaba el proceso completo. Ahora vive
             // adentro, y además ya declaramos el tipo correcto abajo.
             setForeground(
-                buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, 0, true))
+                buildForegroundInfo(notificationId, buildNotification(modName, 0, true))
             )
 
             downloadFile(url, outputFile, modName)
@@ -78,7 +81,7 @@ class ModDownloadWorker(
             setProgress(workDataOf(PROGRESS to 100))
 
             setForeground(
-                buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, null, null))
+                buildForegroundInfo(notificationId, buildNotification(modName, null, null))
             )
 
             return Result.success(
@@ -173,7 +176,7 @@ class ModDownloadWorker(
                         val pct = (downloaded * 100 / total).toInt()
                         setProgress(workDataOf(PROGRESS to pct))
                         setForeground(
-                            buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, pct, null))
+                            buildForegroundInfo(notificationId, buildNotification(modName, pct, null))
                         )
                     }
                 }
@@ -199,7 +202,7 @@ class ModDownloadWorker(
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return buildForegroundInfo(NOTIFICATION_ID, buildNotification(null, 0, true))
+        return buildForegroundInfo(notificationId, buildNotification(null, 0, true))
     }
 
     private fun buildNotification(

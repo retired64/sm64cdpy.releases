@@ -12,12 +12,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import androidx.work.CoroutineWorker
-import java.io.BufferedInputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 
 class ModInstallWorker(
     context: Context,
@@ -28,7 +23,6 @@ class ModInstallWorker(
         const val KEY_ZIP_PATH = "zipPath"
         const val KEY_MOD_NAME = "modName"
         const val KEY_TREE_URI = "treeUri"
-        const val NOTIFICATION_ID = 4242
         const val CHANNEL_ID = "mod_install_channel"
 
         const val PROGRESS_CURRENT = "current"
@@ -48,6 +42,10 @@ class ModInstallWorker(
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             )
         }
+    }
+
+    private val notificationId: Int by lazy {
+        (inputData.getString(KEY_MOD_NAME) ?: "").hashCode() and 0x7FFFFFFF
     }
 
     override suspend fun doWork(): Result {
@@ -78,10 +76,10 @@ class ModInstallWorker(
             // silencio: 0 entradas encontradas, sin excepción).
             if (!isZipFile(zipFile)) {
                 setForeground(
-                    buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, 0, 0, true))
+                    buildForegroundInfo(notificationId, buildNotification(modName, 0, 0, true))
                 )
 
-                val copied = copyFileDirect(zipFile, treeDoc)
+                val copied = SafZipExtractor.copyFileToTree(zipFile, treeDoc, applicationContext)
                 if (!copied) {
                     return Result.failure(
                         workDataOf(
@@ -100,15 +98,51 @@ class ModInstallWorker(
                 )
             }
 
-            val totalEntries = countZipEntries(zipFile)
+            val totalEntries = SafZipExtractor.countZipEntries(zipFile)
             val indeterminate = totalEntries <= 0
 
             setForeground(
-                buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, 0, totalEntries, indeterminate))
+                buildForegroundInfo(notificationId, buildNotification(modName, 0, totalEntries, indeterminate))
             )
 
-            val fileCount = extractWithProgress(zipFile, treeDoc, modName, totalEntries)
-            val topDir = detectTopLevelDir(zipFile)
+            var lastProgress = 0
+            val fileCount = SafZipExtractor.extractZipToTree(
+                zipFile, treeDoc, applicationContext
+            ) { count ->
+                if (!indeterminate && count - lastProgress >= 3) {
+                    lastProgress = count
+                    setProgress(
+                        workDataOf(
+                            PROGRESS_CURRENT to count,
+                            PROGRESS_TOTAL to totalEntries
+                        )
+                    )
+                    setForeground(
+                        buildForegroundInfo(
+                            notificationId,
+                            buildNotification(modName, count, totalEntries, false)
+                        )
+                    )
+                }
+            }
+
+            // Flush final de progreso (antes vivía al final de
+            // extractWithProgress): garantiza que la barra llegue al total
+            // real aunque el último tramo haya sido menor al umbral de
+            // 3 archivos del throttling.
+            if (!indeterminate && lastProgress < fileCount) {
+                setProgress(
+                    workDataOf(
+                        PROGRESS_CURRENT to fileCount,
+                        PROGRESS_TOTAL to totalEntries
+                    )
+                )
+                setForeground(
+                    buildForegroundInfo(notificationId, buildNotification(modName, fileCount, totalEntries, false))
+                )
+            }
+
+            val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
             val displayDir = topDir ?: modName
 
             if (fileCount == 0) {
@@ -149,7 +183,7 @@ class ModInstallWorker(
     override suspend fun getForegroundInfo(): ForegroundInfo {
         val ctx = applicationContext
         return buildForegroundInfo(
-            NOTIFICATION_ID,
+            notificationId,
             buildNotification(ctx.getString(R.string.notification_preparing), 0, 0, true)
         )
     }
@@ -182,96 +216,6 @@ class ModInstallWorker(
             .build()
     }
 
-    @Throws(IOException::class)
-    private suspend fun extractWithProgress(
-        zipFile: File,
-        targetDir: DocumentFile,
-        modName: String,
-        totalEntries: Int
-    ): Int {
-        var fileCount = 0
-        val createdDirs = mutableMapOf<String, DocumentFile>()
-        var lastProgress = 0
-        val indeterminate = totalEntries <= 0
-
-        ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
-            var entry: ZipEntry? = zis.nextEntry
-            while (entry != null) {
-                if (!entry.isDirectory) {
-                    val entryName = sanitizeEntryName(entry.name)
-                    if (entryName.isNotEmpty() && !entryName.endsWith("/")) {
-                        val slashIdx = entryName.lastIndexOf('/')
-                        val parentDir: DocumentFile
-                        val fileName: String
-
-                        if (slashIdx > 0) {
-                            val dirPath = entryName.substring(0, slashIdx)
-                            val simpleName = entryName.substring(slashIdx + 1)
-                            parentDir = getOrCreateDir(createdDirs, targetDir, dirPath)
-                            fileName = simpleName
-                        } else {
-                            parentDir = targetDir
-                            fileName = entryName
-                        }
-
-                        if (parentDir == targetDir || (parentDir.exists() && parentDir.isDirectory)) {
-                            // SAF NO sobreescribe: si ya existe un archivo con
-                            // este nombre (típico al reinstalar/actualizar un
-                            // mod), createFile() de la mayoría de providers
-                            // crea uno nuevo tipo "archivo (1).lua" en vez de
-                            // reemplazarlo — quedan copias viejas huérfanas
-                            // mezcladas con las nuevas. Borramos primero.
-                            parentDir.findFile(fileName)?.delete()
-
-                            val outputFile = parentDir.createFile(
-                                "application/octet-stream", fileName
-                            )
-                            if (outputFile != null) {
-                                applicationContext.contentResolver
-                                    .openOutputStream(outputFile.uri)?.use { os ->
-                                        zis.copyTo(os)
-                                        os.flush()
-                                    }
-                                fileCount++
-
-                                if (!indeterminate && fileCount - lastProgress >= 3) {
-                                    lastProgress = fileCount
-                                    setProgress(
-                                        workDataOf(
-                                            PROGRESS_CURRENT to fileCount,
-                                            PROGRESS_TOTAL to totalEntries
-                                        )
-                                    )
-                                    setForeground(
-                                        buildForegroundInfo(
-                                            NOTIFICATION_ID,
-                                            buildNotification(modName, fileCount, totalEntries, false)
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-                entry = zis.nextEntry
-            }
-        }
-
-        if (!indeterminate && lastProgress < fileCount) {
-            setProgress(
-                workDataOf(
-                    PROGRESS_CURRENT to fileCount,
-                    PROGRESS_TOTAL to totalEntries
-                )
-            )
-            setForeground(
-                buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, fileCount, totalEntries, false))
-            )
-        }
-
-        return fileCount
-    }
-
     /**
      * Determina si el archivo descargado es realmente un ZIP en base a su
      * extensión. No basta con confiar en que "vino del instalador de mods":
@@ -281,127 +225,4 @@ class ModInstallWorker(
         return file.extension.equals("zip", ignoreCase = true)
     }
 
-    /**
-     * Copia un archivo suelto (no-ZIP, ej. .lua) directo a la raíz del árbol
-     * SAF seleccionado, sin intentar extraerlo. Preserva el nombre original
-     * del archivo (que ya trae la extensión correcta, ver ModDownloadWorker /
-     * capa Dart que arma el fileName).
-     */
-    private fun copyFileDirect(sourceFile: File, targetDir: DocumentFile): Boolean {
-        return try {
-            val mimeType = guessMimeType(sourceFile.name)
-            // Mismo motivo que en extractWithProgress: SAF no sobreescribe.
-            targetDir.findFile(sourceFile.name)?.delete()
-            val outputFile = targetDir.createFile(mimeType, sourceFile.name)
-                ?: return false
-
-            applicationContext.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
-                FileInputStream(sourceFile).use { input ->
-                    input.copyTo(os)
-                }
-                os.flush()
-            } ?: return false
-
-            true
-        } catch (_: Exception) {
-            false
-        }
-    }
-
-    private fun guessMimeType(fileName: String): String {
-        return when (fileName.substringAfterLast('.', "").lowercase()) {
-            "lua" -> "text/x-lua"
-            "zip" -> "application/zip"
-            else -> "application/octet-stream"
-        }
-    }
-
-    @Throws(IOException::class)
-    private fun countZipEntries(zipFile: File): Int {
-        var count = 0
-        try {
-            ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
-                var entry: ZipEntry? = zis.nextEntry
-                while (entry != null) {
-                    if (!entry.isDirectory) {
-                        count++
-                    }
-                    entry = zis.nextEntry
-                }
-            }
-        } catch (_: Exception) {
-            return 0
-        }
-        return count
-    }
-
-    private fun getOrCreateDir(
-        cache: MutableMap<String, DocumentFile>,
-        root: DocumentFile,
-        path: String
-    ): DocumentFile {
-        val cached = cache[path]
-        if (cached != null) return cached
-
-        val parts = path.split("/").filter { it.isNotEmpty() }
-        var current: DocumentFile = root
-        var currentPath = ""
-
-        for (part in parts) {
-            currentPath = if (currentPath.isEmpty()) part else "$currentPath/$part"
-
-            val cachedDir = cache[currentPath]
-            if (cachedDir != null) {
-                current = cachedDir
-                continue
-            }
-
-            val existing = current.findFile(part)
-            current = if (existing != null && existing.isDirectory) {
-                existing
-            } else {
-                current.createDirectory(part) ?: current
-            }
-
-            cache[currentPath] = current
-        }
-
-        return current
-    }
-
-    private fun detectTopLevelDir(zipFile: File): String? {
-        var commonPrefix: String? = null
-
-        try {
-            ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
-                var entry: ZipEntry? = zis.nextEntry
-                while (entry != null) {
-                    val name = sanitizeEntryName(entry.name)
-                    if (name.isNotEmpty() && !name.endsWith("/")) {
-                        val slashIdx = name.indexOf('/')
-                        if (slashIdx > 0) {
-                            val topDir = name.substring(0, slashIdx)
-                            if (commonPrefix == null) {
-                                commonPrefix = topDir
-                            } else if (commonPrefix != topDir) {
-                                return null
-                            }
-                        } else {
-                            return null
-                        }
-                    }
-                    entry = zis.nextEntry
-                }
-            }
-        } catch (_: Exception) { }
-
-        return commonPrefix
-    }
-
-    private fun sanitizeEntryName(name: String): String {
-        var sanitized = name.trim().replace("\\", "/").replace("\u0000", "")
-        while (sanitized.startsWith("/")) sanitized = sanitized.substring(1)
-        val parts = sanitized.split("/").filter { it.isNotEmpty() && it != "." && it != ".." }
-        return parts.joinToString("/")
-    }
 }
