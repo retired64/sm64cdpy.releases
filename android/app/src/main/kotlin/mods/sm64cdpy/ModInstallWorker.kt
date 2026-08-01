@@ -2,6 +2,7 @@ package mods.sm64cdpy
 
 import android.app.Notification
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.core.app.NotificationCompat
@@ -34,6 +35,19 @@ class ModInstallWorker(
         const val PROGRESS_TOTAL = "total"
         const val OUTPUT_FILE_COUNT = "fileCount"
         const val OUTPUT_TARGET_DIR = "targetDir"
+
+        /**
+         * En Android 14 (API 34) es obligatorio declarar el foregroundServiceType
+         * al promover un Worker a servicio en primer plano; si se omite, el
+         * sistema mata el proceso con InvalidForegroundServiceTypeException.
+         */
+        fun buildForegroundInfo(notificationId: Int, notification: Notification): ForegroundInfo {
+            return ForegroundInfo(
+                notificationId,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        }
     }
 
     override suspend fun doWork(): Result {
@@ -64,10 +78,7 @@ class ModInstallWorker(
             // silencio: 0 entradas encontradas, sin excepción).
             if (!isZipFile(zipFile)) {
                 setForeground(
-                    ForegroundInfo(
-                        NOTIFICATION_ID,
-                        buildNotification(modName, 0, 0, true)
-                    )
+                    buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, 0, 0, true))
                 )
 
                 val copied = copyFileDirect(zipFile, treeDoc)
@@ -93,10 +104,7 @@ class ModInstallWorker(
             val indeterminate = totalEntries <= 0
 
             setForeground(
-                ForegroundInfo(
-                    NOTIFICATION_ID,
-                    buildNotification(modName, 0, totalEntries, indeterminate)
-                )
+                buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, 0, totalEntries, indeterminate))
             )
 
             val fileCount = extractWithProgress(zipFile, treeDoc, modName, totalEntries)
@@ -119,6 +127,18 @@ class ModInstallWorker(
                     OUTPUT_TARGET_DIR to displayDir
                 )
             )
+        } catch (e: SecurityException) {
+            // El permiso persistente sobre el árbol SAF puede ser revocado por
+            // el sistema (limpieza de storage, reinstalación de la app, o el
+            // usuario cambiándolo en Ajustes) sin que la app se entere hasta
+            // que intenta escribir. Sin este catch específico caía en el
+            // genérico de abajo con un e.message poco útil ("Permission
+            // denied") que no le dice al usuario qué hacer.
+            return Result.failure(
+                workDataOf(
+                    "error" to "Lost access to the selected mods folder. Please re-select it in Settings."
+                )
+            )
         } catch (e: Exception) {
             return Result.failure(
                 workDataOf("error" to (e.message ?: "Unknown error during installation"))
@@ -128,7 +148,7 @@ class ModInstallWorker(
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
         val ctx = applicationContext
-        return ForegroundInfo(
+        return buildForegroundInfo(
             NOTIFICATION_ID,
             buildNotification(ctx.getString(R.string.notification_preparing), 0, 0, true)
         )
@@ -195,6 +215,14 @@ class ModInstallWorker(
                         }
 
                         if (parentDir == targetDir || (parentDir.exists() && parentDir.isDirectory)) {
+                            // SAF NO sobreescribe: si ya existe un archivo con
+                            // este nombre (típico al reinstalar/actualizar un
+                            // mod), createFile() de la mayoría de providers
+                            // crea uno nuevo tipo "archivo (1).lua" en vez de
+                            // reemplazarlo — quedan copias viejas huérfanas
+                            // mezcladas con las nuevas. Borramos primero.
+                            parentDir.findFile(fileName)?.delete()
+
                             val outputFile = parentDir.createFile(
                                 "application/octet-stream", fileName
                             )
@@ -215,11 +243,9 @@ class ModInstallWorker(
                                         )
                                     )
                                     setForeground(
-                                        ForegroundInfo(
+                                        buildForegroundInfo(
                                             NOTIFICATION_ID,
-                                            buildNotification(
-                                                modName, fileCount, totalEntries, false
-                                            )
+                                            buildNotification(modName, fileCount, totalEntries, false)
                                         )
                                     )
                                 }
@@ -239,10 +265,7 @@ class ModInstallWorker(
                 )
             )
             setForeground(
-                ForegroundInfo(
-                    NOTIFICATION_ID,
-                    buildNotification(modName, fileCount, totalEntries, false)
-                )
+                buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, fileCount, totalEntries, false))
             )
         }
 
@@ -267,6 +290,8 @@ class ModInstallWorker(
     private fun copyFileDirect(sourceFile: File, targetDir: DocumentFile): Boolean {
         return try {
             val mimeType = guessMimeType(sourceFile.name)
+            // Mismo motivo que en extractWithProgress: SAF no sobreescribe.
+            targetDir.findFile(sourceFile.name)?.delete()
             val outputFile = targetDir.createFile(mimeType, sourceFile.name)
                 ?: return false
 

@@ -64,6 +64,16 @@
                 <action android:name="${applicationId}.ACTION_INSTALL_COMPLETE" />
             </intent-filter>
         </receiver>
+
+        <!-- Requerido en Android 14+ (API 34): declarar el foregroundServiceType
+             del servicio interno de WorkManager que promueve ModDownloadWorker /
+             ModInstallWorker a primer plano. Sin esto, el sistema mata el
+             proceso con InvalidForegroundServiceTypeException al llamar
+             setForeground() en dispositivos con Android 14+. -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

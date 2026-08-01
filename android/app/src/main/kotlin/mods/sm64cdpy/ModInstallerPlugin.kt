@@ -13,7 +13,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.Observer
+import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
@@ -688,6 +690,16 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 ModDownloadWorker.KEY_MOD_NAME to modName,
                 ModDownloadWorker.KEY_FILE_NAME to fileName
             ))
+            // Antes no había Constraints: sin internet, el Worker arrancaba
+            // igual, fallaba al conectar, y consumía uno de sus reintentos
+            // limitados en vano. Con esto, WorkManager directamente espera
+            // a que haya red antes de arrancar — no gasta reintentos en
+            // fallos que sabemos de antemano que van a ocurrir.
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            )
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .addTag("mod_dl_$modName")
             .addTag(chainName)
@@ -808,8 +820,14 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             .getWorkInfoByIdLiveData(installId)
             .observeForever(instObserver)
 
+        // beginUniqueWork + REPLACE: si el usuario dispara la instalación del
+        // mismo mod dos veces (doble tap, o un flujo de "actualizar" mientras
+        // la instalación anterior seguía corriendo), la cadena vieja se
+        // cancela y arranca una limpia — en vez de dos cadenas escribiendo
+        // en paralelo sobre la misma carpeta SAF, que es una receta para
+        // archivos a medio escribir o corrupción silenciosa.
         WorkManager.getInstance(act)
-            .beginWith(downloadRequest)
+            .beginUniqueWork(chainName, ExistingWorkPolicy.REPLACE, downloadRequest)
             .then(installRequest)
             .enqueue()
 

@@ -2,6 +2,7 @@ package mods.sm64cdpy
 
 import android.app.Notification
 import android.content.Context
+import android.content.pm.ServiceInfo
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
@@ -11,6 +12,7 @@ import androidx.work.workDataOf
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -27,24 +29,45 @@ class ModDownloadWorker(
         const val NOTIFICATION_ID = 4243
         const val PROGRESS = "progress"
         const val OUTPUT_ZIP_PATH = "zipPath"
+
+        /** Tras esta cantidad de reintentos de WorkManager, dejamos de reintentar. */
+        private const val MAX_RETRY_ATTEMPTS = 5
+
+        /**
+         * En Android 14 (API 34) es obligatorio declarar el foregroundServiceType
+         * al promover un Worker a servicio en primer plano; si se omite, el
+         * sistema mata el proceso con InvalidForegroundServiceTypeException.
+         */
+        fun buildForegroundInfo(notificationId: Int, notification: Notification): ForegroundInfo {
+            return ForegroundInfo(
+                notificationId,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        }
     }
+
+    /** Errores de servidor que NO tiene sentido reintentar (4xx: URL rota, mod eliminado, etc.). */
+    private class PermanentDownloadError(message: String) : IOException(message)
 
     override suspend fun doWork(): Result {
         val url = inputData.getString(KEY_URL) ?: return Result.failure()
         val modName = inputData.getString(KEY_MOD_NAME) ?: return Result.failure()
         val fileName = inputData.getString(KEY_FILE_NAME) ?: return Result.failure()
 
-        setForeground(
-            ForegroundInfo(
-                NOTIFICATION_ID,
-                buildNotification(modName, 0, true)
-            )
-        )
-
         val outputFile = File(applicationContext.cacheDir, fileName)
         outputFile.parentFile?.mkdirs()
 
         try {
+            // OJO: antes esta llamada vivía ANTES del try/catch. Si el sistema
+            // rechazaba la promoción a primer plano (p.ej. Android 14 sin el
+            // foregroundServiceType correcto), la excepción no tenía ninguna
+            // red de seguridad y tumbaba el proceso completo. Ahora vive
+            // adentro, y además ya declaramos el tipo correcto abajo.
+            setForeground(
+                buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, 0, true))
+            )
+
             downloadFile(url, outputFile, modName)
 
             if (isStopped) {
@@ -55,19 +78,33 @@ class ModDownloadWorker(
             setProgress(workDataOf(PROGRESS to 100))
 
             setForeground(
-                ForegroundInfo(
-                    NOTIFICATION_ID,
-                    buildNotification(modName, null, null)
-                )
+                buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, null, null))
             )
 
             return Result.success(
                 workDataOf(OUTPUT_ZIP_PATH to outputFile.absolutePath)
             )
+        } catch (e: PermanentDownloadError) {
+            // 4xx / URL inválida: reintentar no va a arreglar nada, y dejar
+            // el work en retry infinito solo gasta batería y datos del usuario.
+            outputFile.delete()
+            return Result.failure(workDataOf("error" to (e.message ?: "Download failed")))
         } catch (e: Exception) {
             outputFile.delete()
             if (isStopped) return Result.failure()
-            return Result.retry()
+
+            // Reintentos con techo: sin esto, un error transitorio persistente
+            // (servidor caído, DNS fallando) reintenta indefinidamente en
+            // background. runAttemptCount es 0-indexed la primera vez.
+            return if (runAttemptCount + 1 >= MAX_RETRY_ATTEMPTS) {
+                Result.failure(
+                    workDataOf(
+                        "error" to "Download failed after $MAX_RETRY_ATTEMPTS attempts: ${e.message}"
+                    )
+                )
+            } else {
+                Result.retry()
+            }
         }
     }
 
@@ -100,6 +137,16 @@ class ModDownloadWorker(
             }
             connection = httpConn
 
+            val responseCode = httpConn.responseCode
+            if (responseCode in 400..499) {
+                // 404/403/410, etc: el asset no existe o no es accesible.
+                // Reintentar no cambia el resultado — falla permanente.
+                throw PermanentDownloadError("Server returned HTTP $responseCode for $urlStr")
+            }
+            if (responseCode !in 200..299) {
+                throw IOException("Server returned HTTP $responseCode for $urlStr")
+            }
+
             val contentLength = httpConn.contentLength
             val total = if (contentLength > 0) contentLength else -1
             var downloaded = 0L
@@ -126,16 +173,24 @@ class ModDownloadWorker(
                         val pct = (downloaded * 100 / total).toInt()
                         setProgress(workDataOf(PROGRESS to pct))
                         setForeground(
-                            ForegroundInfo(
-                                NOTIFICATION_ID,
-                                buildNotification(modName, pct, null)
-                            )
+                            buildForegroundInfo(NOTIFICATION_ID, buildNotification(modName, pct, null))
                         )
                     }
                 }
             }
 
             outputStream.flush()
+
+            // El servidor puede cerrar la conexión antes de tiempo (proxy,
+            // timeout de red, etc.) sin que read() lance excepción — solo
+            // devuelve -1 antes de lo esperado. Sin esta validación, un
+            // ZIP truncado pasa como "descarga exitosa" y falla recién en
+            // el ModInstallWorker con un mensaje confuso.
+            if (total > 0 && downloaded != total.toLong()) {
+                throw IOException(
+                    "Truncated download: got $downloaded of $total bytes"
+                )
+            }
         } finally {
             inputStream?.close()
             outputStream?.close()
@@ -144,10 +199,7 @@ class ModDownloadWorker(
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
-            NOTIFICATION_ID,
-            buildNotification(null, 0, true)
-        )
+        return buildForegroundInfo(NOTIFICATION_ID, buildNotification(null, 0, true))
     }
 
     private fun buildNotification(

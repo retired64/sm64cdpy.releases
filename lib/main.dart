@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,8 +18,38 @@ import 'presentation/providers/theme_provider.dart';
 import 'services/background_install_service.dart';
 import 'services/update_service.dart';
 
+/// Instala manejo de errores global para el engine actual.
+///
+/// Por defecto, una excepción de Dart no capturada en un callback async
+/// (p.ej. un listener de EventChannel, un Future sin await) no tiene por
+/// qué tumbar el proceso nativo — pero sí puede dejar el engine de Flutter
+/// en un estado roto/sin repintar, que desde el punto de vista del usuario
+/// se ve igual de mal ("la burbuja dejó de responder"). Sin esto, ese tipo
+/// de error simplemente desaparece en la consola de debug y no hay forma
+/// de diagnosticarlo en producción.
+void _installErrorHandling(String engineLabel) {
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    debugPrint('[$engineLabel] FlutterError: ${details.exceptionAsString()}');
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('[$engineLabel] Uncaught error: $error\n$stack');
+    return true; // manejado: no relanzar
+  };
+}
+
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    _installErrorHandling('main');
+    await _bootstrapMainApp();
+    runApp(const ProviderScope(child: SM64CoopDXApp()));
+  }, (error, stack) {
+    debugPrint('[main] Zone error: $error\n$stack');
+  });
+}
+
+Future<void> _bootstrapMainApp() async {
 
   // Lock to portrait + landscape (phone only)
   // Android 16+ (API 36): screenOrientation constraints are ignored
@@ -54,8 +86,6 @@ Future<void> main() async {
 
   // Overlay ↔ app download bridge
   OverlayBridge.init();
-
-  runApp(const ProviderScope(child: SM64CoopDXApp()));
 }
 
 class SM64CoopDXApp extends ConsumerStatefulWidget {
@@ -113,21 +143,28 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
 }
 
 @pragma('vm:entry-point')
-void overlayMain() => FloatyOverlayApp.run(
-    ProviderScope(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        // Segundo engine de Flutter, sin acceso al Theme de la app
-        // principal: usa la variante fija RetroTheme.overlay() para que
-        // widgets nativos (SnackBar, selection handles, etc.) hereden el
-        // mismo navy oscuro en vez de los defaults de Material.
-        theme: RetroTheme.materialTheme(true).copyWith(
-          scaffoldBackgroundColor: RetroTheme.overlay().background,
-          colorScheme: RetroTheme.materialTheme(true).colorScheme.copyWith(
-            surface: RetroTheme.overlay().surface,
+void overlayMain() {
+  runZonedGuarded(() {
+    _installErrorHandling('overlay');
+    FloatyOverlayApp.run(
+      ProviderScope(
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          // Segundo engine de Flutter, sin acceso al Theme de la app
+          // principal: usa la variante fija RetroTheme.overlay() para que
+          // widgets nativos (SnackBar, selection handles, etc.) hereden el
+          // mismo navy oscuro en vez de los defaults de Material.
+          theme: RetroTheme.materialTheme(true).copyWith(
+            scaffoldBackgroundColor: RetroTheme.overlay().background,
+            colorScheme: RetroTheme.materialTheme(true).colorScheme.copyWith(
+              surface: RetroTheme.overlay().surface,
+            ),
           ),
+          home: const OverlayPanel(),
         ),
-        home: const OverlayPanel(),
       ),
-    ),
-  );
+    );
+  }, (error, stack) {
+    debugPrint('[overlay] Zone error: $error\n$stack');
+  });
+}

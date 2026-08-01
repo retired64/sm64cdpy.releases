@@ -65,7 +65,22 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     final targetHeight = shouldExpand
         ? (_panelHeight + bottomInsetLogical).round()
         : _panelHeight;
-    FloatyOverlay.resizeContent(_panelWidth, targetHeight);
+    _safeResizeContent(_panelWidth, targetHeight);
+  }
+
+  /// `resizeContent` es una llamada a un canal de plataforma hacia una
+  /// ventana nativa (View) que vive fuera del ciclo de vida normal del
+  /// widget tree — puede estar en proceso de destruirse (usuario cerrando
+  /// el overlay justo cuando el teclado también se está cerrando) cuando
+  /// esto se dispara. Sin try/catch, un PlatformException ahí queda como
+  /// un Future sin manejar: no tumba el proceso nativo, pero sí es ruido
+  /// silencioso que además puede dejar la animación de resize a medias.
+  void _safeResizeContent(int width, int height) {
+    try {
+      FloatyOverlay.resizeContent(width, height);
+    } catch (e) {
+      debugPrint('resizeContent failed (overlay window likely gone): $e');
+    }
   }
 
   void _startDownload(OverlayModItem mod) {
@@ -213,7 +228,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     // la ventana nativa agrandada — la próxima vez que se abra el overlay
     // debe arrancar en su tamaño de reposo.
     if (_resizedForKeyboard) {
-      FloatyOverlay.resizeContent(_panelWidth, _panelHeight);
+      _safeResizeContent(_panelWidth, _panelHeight);
     }
     super.dispose();
   }
