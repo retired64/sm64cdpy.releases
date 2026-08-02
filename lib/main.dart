@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:floaty_chatheads/floaty_chatheads.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'overlay/overlay_panel.dart';
 import 'overlay/overlay_bridge.dart';
@@ -143,62 +142,33 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
   }
 }
 
-/// Carga el locale del usuario desde SharedPreferences — la fuente de verdad
-/// multi-isolate-safe compartida con el engine principal (que lo replica ahí
-/// desde Hive en LocaleNotifier.setLocale). Mientras carga, `locale: null`
-/// deja que Flutter use el locale del sistema como fallback.
-class _OverlayLocaleLoader extends StatefulWidget {
-  const _OverlayLocaleLoader();
-
-  @override
-  State<_OverlayLocaleLoader> createState() => _OverlayLocaleLoaderState();
-}
-
-class _OverlayLocaleLoaderState extends State<_OverlayLocaleLoader> {
-  Locale? _locale;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadLocale();
-  }
-
-  Future<void> _loadLocale() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final tag = prefs.getString(AppConstants.appLocaleKey);
-      if (tag != null && tag != 'system' && mounted) {
-        setState(() => _locale = LocaleNotifier.localeFromTag(tag));
-      }
-    } catch (e) {
-      debugPrint('[_OverlayLocaleLoader] Failed to read locale: $e');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      locale: _locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: RetroTheme.materialTheme(true).copyWith(
-        scaffoldBackgroundColor: RetroTheme.overlay().background,
-        colorScheme: RetroTheme.materialTheme(true).colorScheme.copyWith(
-          surface: RetroTheme.overlay().surface,
-        ),
-      ),
-      home: const OverlayPanel(),
-    );
-  }
-}
-
 @pragma('vm:entry-point')
 void overlayMain() {
   runZonedGuarded(() {
     _installErrorHandling('overlay');
     FloatyOverlayApp.run(
-      const ProviderScope(child: _OverlayLocaleLoader()),
+      ProviderScope(
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          // locale: null → usa el locale del sistema.
+          // SharedPreferences NO se lee acá: este engine no tiene
+          // acceso seguro a todos los plugins nativos que el engine
+          // principal sí tiene inicializados, y llamar a
+          // SharedPreferences.getInstance() desde el overlay causaba
+          // crash nativo intermitente (el channel del plugin no está
+          // del todo listo en el momento en que floaty_chatheads
+          // arranca este segundo engine).
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: RetroTheme.materialTheme(true).copyWith(
+            scaffoldBackgroundColor: RetroTheme.overlay().background,
+            colorScheme: RetroTheme.materialTheme(true).colorScheme.copyWith(
+              surface: RetroTheme.overlay().surface,
+            ),
+          ),
+          home: const OverlayPanel(),
+        ),
+      ),
     );
   }, (error, stack) {
     debugPrint('[overlay] Zone error: $error\n$stack');

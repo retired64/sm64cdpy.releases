@@ -38,16 +38,20 @@ class OverlayBridge {
     final type = data['type'] as String?;
     if (type == null) return;
 
-    switch (type) {
-      case 'download_mod':
-        await _handleDownload(data);
-        break;
-      case 'cancel_mod':
-        _handleCancel(data);
-        break;
-      case 'panel_opened':
-        _sendActiveInstalls();
-        break;
+    try {
+      switch (type) {
+        case 'download_mod':
+          await _handleDownload(data);
+          break;
+        case 'cancel_mod':
+          _handleCancel(data);
+          break;
+        case 'panel_opened':
+          _sendActiveInstalls();
+          break;
+      }
+    } catch (e, stack) {
+      debugPrint('[OverlayBridge] Error handling type=$type: $e\n$stack');
     }
   }
 
