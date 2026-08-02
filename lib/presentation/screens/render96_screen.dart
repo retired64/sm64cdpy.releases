@@ -292,16 +292,28 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
     setState(() => _downloading = true);
     HapticFeedback.mediumImpact();
 
+    // FIX: antes se resolvía el filename con widget.mod.downloadUrl pero se
+    // pasaba esa misma URL SIN RESOLVER al downloader nativo. Cuando
+    // downloadUrl es una página de GitHub Releases (ej.
+    // "github.com/DorfDork/render96/releases/latest"), el nativo descargaba
+    // el HTML de esa página en vez del asset .zip real. Ahora se resuelve
+    // la URL real PRIMERO, y tanto el filename como la descarga usan esa
+    // URL resuelta — ver DownloadUrlResolver.resolveDownloadUrl().
+    final resolvedUrl =
+        await DownloadUrlResolver.instance.resolveDownloadUrl(
+      widget.mod.downloadUrl,
+    );
+
     final filename =
         await DownloadUrlResolver.instance.resolveDownloadFilename(
-      widget.mod.downloadUrl,
+      resolvedUrl,
       widget.mod.name,
     );
     final modName = sanitizeModTitle(widget.mod.name);
 
     // Flujo unificado WorkManager con installDestination del JSON
     await BackgroundInstallService.instance.startDownloadAndInstall(
-      url: widget.mod.downloadUrl,
+      url: resolvedUrl,
       modName: modName,
       fileName: filename,
       displayTitle: widget.mod.name,
