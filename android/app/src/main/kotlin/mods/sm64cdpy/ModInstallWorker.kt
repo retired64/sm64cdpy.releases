@@ -98,16 +98,33 @@ class ModInstallWorker(
 
             // ── 7z extraction (SevenZFile, Apache Commons Compress) ──────────
             if (SafZipExtractor.isSevenZipFile(zipFile)) {
+                // Pre-pase de solo metadata para conocer el total de bytes de
+                // TODO el archivo — mismo patrón que countZipEntries() para el
+                // path de ZIP. Antes no existía: el progreso se calculaba solo
+                // sobre la entrada individual en curso, que se reinicia con
+                // cada archivo nuevo del .7z y rompía el throttle de abajo en
+                // cuanto el primer archivo llegaba a 100% (ver comentario en
+                // SafZipExtractor.extractSevenZToTree).
+                val totalBytes = SafZipExtractor.countSevenZTotalBytes(zipFile)
+                val indeterminate = totalBytes <= 0
+
                 setForeground(
-                    buildForegroundInfo(notificationId, buildNotification(modName, 0, 0, true))
+                    buildForegroundInfo(
+                        notificationId,
+                        buildNotification(modName, 0, 100, indeterminate)
+                    )
                 )
 
                 var lastProgress = 0
                 val fileCount = SafZipExtractor.extractSevenZToTree(
-                    zipFile, treeDoc, applicationContext
+                    zipFile, treeDoc, applicationContext, totalBytes
                 ) { pct ->
-                    // Throttle: notifica cada cambio ≥10%
-                    if (pct - lastProgress >= 10) {
+                    // Throttle: notifica cada cambio ≥10%. Ahora pct es el
+                    // porcentaje REAL sobre todo el archivo (monótono
+                    // creciente 0→100 una sola vez por toda la extracción),
+                    // no por-archivo-individual, así que este umbral ya no
+                    // se queda varado a mitad de la extracción.
+                    if (!indeterminate && pct - lastProgress >= 10) {
                         lastProgress = pct
                         setProgress(
                             workDataOf(

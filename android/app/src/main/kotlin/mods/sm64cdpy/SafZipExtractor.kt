@@ -140,6 +140,38 @@ object SafZipExtractor {
         }
     }
 
+    /**
+     * Suma el tamaño total en bytes de todas las entradas no-directorio de
+     * un .7z, en un pase de solo-metadata antes de la extracción real —
+     * mismo patrón que [countZipEntries] para ZIP.
+     *
+     * Se usa para calcular el progreso de extracción sobre TODO el archivo
+     * (no solo la entrada que se está copiando en ese momento). Antes,
+     * [extractSevenZToTree] reportaba el porcentaje de la entrada ACTUAL,
+     * que se reinicia a ~0 con cada archivo nuevo dentro del .7z — eso
+     * rompía el throttle de progreso de [ModInstallWorker] en cuanto el
+     * primer archivo terminaba (ver comentario en extractSevenZToTree).
+     */
+    @Throws(IOException::class)
+    fun countSevenZTotalBytes(zipFile: File): Long {
+        var total = 0L
+        try {
+            SevenZFile.builder().setFile(zipFile).get().use { szf ->
+                var entry: SevenZArchiveEntry? = szf.nextEntry
+                while (entry != null) {
+                    if (!entry.isDirectory) {
+                        total += entry.size
+                    }
+                    entry = szf.nextEntry
+                }
+            }
+        } catch (e: Exception) {
+            Log.w("ModInstall", "countSevenZTotalBytes failed", e)
+            return 0L
+        }
+        return total
+    }
+
     @Throws(IOException::class)
     fun countZipEntries(zipFile: File): Int {
         var count = 0
@@ -255,20 +287,36 @@ object SafZipExtractor {
      * SAF), igual que extractZipToTree pero usando SevenZFile (Apache Commons
      * Compress) en vez de ZipInputStream.
      *
-     * SevenZFile requiere acceso aleatorio al archivo (ya descargado en cache por
-     * ModDownloadWorker). A diferencia del ZIP que cuenta archivos, el 7z expone
-     * el tamaño exacto de cada entrada vía [SevenZArchiveEntry.getSize()], así que
-     * el callback onProgress recibe el porcentaje de la entrada actual en lugar del
-     * conteo acumulado (más útil para archivos grandes como texturas HD de 374 MB).
+     * [totalBytes]: suma total de bytes de todas las entradas del archivo,
+     * obtenida de antemano con [countSevenZTotalBytes] (mismo patrón que
+     * [countZipEntries] para el path de ZIP). Con esto, [onProgress] reporta
+     * el porcentaje sobre TODO el archivo, no sobre la entrada individual
+     * que se está copiando — ese era el bug real detrás de la notificación
+     * y la barra de progreso quedándose "congeladas": antes el porcentaje
+     * se reiniciaba a ~0 con cada archivo nuevo del .7z, y el throttle de
+     * [ModInstallWorker] (que solo notifica en saltos de +10% respecto al
+     * último valor reportado) quedaba varado en cuanto el PRIMER archivo
+     * llegaba a 100% — ningún archivo posterior podía volver a cruzar ese
+     * umbral porque su propio porcentaje individual nunca superaba 100.
+     * La extracción seguía completándose bien en segundo plano (por eso se
+     * veían los archivos aparecer en el explorador de archivos), pero la UI
+     * y la notificación se quedaban mostrando el último valor que sí logró
+     * cruzar el umbral, sin actualizarse nunca más.
+     *
+     * Si [totalBytes] es 0 o negativo (conteo falló, o archivo vacío),
+     * [onProgress] no se invoca — el caller debe caer a modo indeterminado,
+     * mismo criterio que ya usa el path de ZIP cuando countZipEntries falla.
      */
     @Throws(IOException::class, SecurityException::class)
     suspend fun extractSevenZToTree(
         zipFile: File,
         targetDir: DocumentFile,
         context: Context,
+        totalBytes: Long = 0L,
         onProgress: (suspend (percent: Int) -> Unit)? = null
     ): Int {
         var fileCount = 0
+        var bytesReadSoFar = 0L
         val createdDirs = mutableMapOf<String, DocumentFile>()
 
         SevenZFile.builder().setFile(zipFile).get().use { szf ->
@@ -302,38 +350,28 @@ object SafZipExtractor {
 
                             context.contentResolver
                                 .openOutputStream(outputFile.uri)?.use { os ->
-                                    val total = entry.size
+                                    val entrySize = entry.size
                                     val buffer = ByteArray(8192)
                                     var read: Long = 0
 
-                                    // FIX: bug crítico confirmado — antes el loop cortaba
-                                    // solo cuando szf.read(...) devolvía -1. Al llegar
-                                    // read == total, el siguiente chunk pedido era
-                                    // minOf(buffer.size, total - read) = 0, y una lectura
-                                    // de largo 0 devuelve 0 (contrato estándar de
-                                    // InputStream), NUNCA -1. El loop quedaba girando para
-                                    // siempre en el primer archivo completado, sin llegar
-                                    // jamás a szf.nextEntry() — el resto del .7z (Render96
-                                    // v4.0, HD Texture Pack) nunca se extraía; solo quedaba
-                                    // en disco la primera carpeta + el primer archivo.
-                                    //
-                                    // Ahora la condición de corte es "¿ya leí todo lo que
-                                    // el propio 7z me dijo que medía esta entrada?" — nunca
-                                    // se llega a pedir un chunk de largo 0. `n <= 0` queda
-                                    // como salvaguarda extra por si el stream real viene
-                                    // más corto que `entry.size` (archivo corrupto), para
-                                    // que ni ese escenario pueda volver a colgar el loop.
-                                    while (read < total) {
+                                    // Mismo fix de loop infinito que antes (condición de
+                                    // corte por bytes leídos, no por valor de retorno),
+                                    // más el tracking de bytesReadSoFar ACUMULADO entre
+                                    // entradas (fuera de este scope) para el progreso real.
+                                    while (read < entrySize) {
                                         val toRead = minOf(
                                             buffer.size.toLong(),
-                                            total - read
+                                            entrySize - read
                                         ).toInt()
                                         val n = szf.read(buffer, 0, toRead)
                                         if (n <= 0) break
                                         os.write(buffer, 0, n)
                                         read += n
-                                        if (total > 0) {
-                                            onProgress?.invoke(((read * 100) / total).toInt())
+                                        bytesReadSoFar += n
+                                        if (totalBytes > 0) {
+                                            onProgress?.invoke(
+                                                ((bytesReadSoFar * 100) / totalBytes).toInt()
+                                            )
                                         }
                                     }
                                     os.flush()
