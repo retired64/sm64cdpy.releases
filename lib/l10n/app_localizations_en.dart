@@ -1185,4 +1185,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overlayError => 'ERROR';
+
+  @override
+  String get settingsOverlayActive => 'Chathead active';
+
+  @override
+  String get settingsOverlayInactive => 'Floating overlay';
+
+  @override
+  String get settingsOverlayActiveDesc => 'Tap to hide the bubble';
+
+  @override
+  String get settingsOverlayInactiveDesc =>
+      'Tap to show the bubble over the game';
 }

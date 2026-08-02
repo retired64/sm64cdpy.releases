@@ -371,5 +371,10 @@
   "overlayInstalling": "Instalando...",
   "overlayConnecting": "Conectando...",
   "overlayNoResults": "SIN RESULTADOS",
-  "overlayError": "ERROR"
+  "overlayError": "ERROR",
+
+  "settingsOverlayActive": "Burbuja activa",
+  "settingsOverlayInactive": "Overlay flotante",
+  "settingsOverlayActiveDesc": "Toca para ocultar la burbuja",
+  "settingsOverlayInactiveDesc": "Toca para mostrar la burbuja sobre el juego"
 }

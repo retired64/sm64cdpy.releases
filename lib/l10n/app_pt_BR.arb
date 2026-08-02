@@ -371,5 +371,10 @@
   "overlayInstalling": "Instalando...",
   "overlayConnecting": "Conectando...",
   "overlayNoResults": "SEM RESULTADOS",
-  "overlayError": "ERRO"
+  "overlayError": "ERRO",
+
+  "settingsOverlayActive": "Chathead ativo",
+  "settingsOverlayInactive": "Overlay flutuante",
+  "settingsOverlayActiveDesc": "Toque para esconder o chathead",
+  "settingsOverlayInactiveDesc": "Toque para mostrar o chathead sobre o jogo"
 }

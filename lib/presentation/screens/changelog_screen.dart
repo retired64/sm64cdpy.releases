@@ -336,9 +336,47 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
+    version: '1.7.0',
+    date: 'August 2026',
+    tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'Floating bubble overlay (second Flutter engine) via floaty_chatheads — browse, search, and download mods, dynos, and touch controls without opening the main app. Real-time progress bars and cancel buttons directly in the overlay panel.',
+          'Dynos and touch controls now use the same WorkManager download+install pipeline as regular mods — previously a separate file downloader path with no background recovery. Cancelled downloads now properly stop WorkManager jobs.',
+          'SafZipExtractor shared object — single source of truth for ZIP extraction to SAF document trees with delete-before-create (prevents duplicate files on reinstall) and explicit failure when SAF permissions are lost mid-operation.',
+          'Background install state now persisted to SharedPreferences — survives process death. WorkManager-resumed workers have full context on app restart. Uses putIfAbsent to never overwrite fresher live events with stale stored data.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Notification IDs derived from mod name hash — two simultaneous downloads no longer overwrite each other\'s progress notifications.',
+          'Floating overlay fully localized: search hint, error toasts, status labels, cancel text, and empty/error states now translated in all 5 supported languages (EN, ES, ES-419, PT, PT-BR).',
+          'Floating overlay toggle in Settings also localized with new ARB keys.',
+          'Overlay bridge auto-install cache now refreshes when the toggle is changed in Settings (OverlayBridge.refreshAutoInstall).',
+          'Cancelled state race condition fixed — in-flight progress events no longer reactivate cancelled mod tiles (events from cancelled mods silently dropped for 10 seconds).',
+          'Display titles stored in install info instead of separate static map — single source of truth, survives process restarts.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Cancel button in the overlay was silently ignored — now correctly cancels WorkManager jobs via cancelAllWorkByTag.',
+          'Silent ZIP corruption when SAF permission was revoked mid-extraction — createFile returning null now throws SecurityException caught by existing handler with user-actionable "re-select folder" message.',
+          'Silent stream subscription death in overlay bridge — all FloatyChatheads.shareData calls now wrapped in try/catch to prevent a single PlatformException from permanently killing the stream listener.',
+          'Duplicate files in SAF on re-installation via the sync install path — now uses SafZipExtractor with delete-before-create for all code paths.',
+          'Native crash in overlay engine caused by SharedPreferences.getInstance() in second Flutter engine — removed plugin call not guaranteed to be initialized there.',
+          'Floating overlay toggle text in Settings was hardcoded in English — now uses the localization system.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
     version: '1.6.2',
     date: 'July 2026',
-    tag: 'Latest',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.fixed,

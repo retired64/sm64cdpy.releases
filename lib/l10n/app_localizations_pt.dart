@@ -1192,6 +1192,19 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get overlayError => 'ERRO';
+
+  @override
+  String get settingsOverlayActive => 'Chathead ativo';
+
+  @override
+  String get settingsOverlayInactive => 'Overlay flutuante';
+
+  @override
+  String get settingsOverlayActiveDesc => 'Toque para esconder o chathead';
+
+  @override
+  String get settingsOverlayInactiveDesc =>
+      'Toque para mostrar o chathead sobre o jogo';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2382,4 +2395,17 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get overlayError => 'ERRO';
+
+  @override
+  String get settingsOverlayActive => 'Chathead ativo';
+
+  @override
+  String get settingsOverlayInactive => 'Overlay flutuante';
+
+  @override
+  String get settingsOverlayActiveDesc => 'Toque para esconder o chathead';
+
+  @override
+  String get settingsOverlayInactiveDesc =>
+      'Toque para mostrar o chathead sobre o jogo';
 }

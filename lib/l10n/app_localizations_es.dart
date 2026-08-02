@@ -1200,6 +1200,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get overlayError => 'ERROR';
+
+  @override
+  String get settingsOverlayActive => 'Burbuja activa';
+
+  @override
+  String get settingsOverlayInactive => 'Overlay flotante';
+
+  @override
+  String get settingsOverlayActiveDesc => 'Toca para ocultar la burbuja';
+
+  @override
+  String get settingsOverlayInactiveDesc =>
+      'Toca para mostrar la burbuja sobre el juego';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2398,4 +2411,17 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get overlayError => 'ERROR';
+
+  @override
+  String get settingsOverlayActive => 'Burbuja activa';
+
+  @override
+  String get settingsOverlayInactive => 'Overlay flotante';
+
+  @override
+  String get settingsOverlayActiveDesc => 'Toca para ocultar la burbuja';
+
+  @override
+  String get settingsOverlayInactiveDesc =>
+      'Toca para mostrar la burbuja sobre el juego';
 }

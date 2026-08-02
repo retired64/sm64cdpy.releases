@@ -1396,6 +1396,7 @@ class _OverlayToggleState extends ConsumerState<_OverlayToggle> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return _RetroTileShell(
       retro: retro,
@@ -1410,10 +1411,10 @@ class _OverlayToggleState extends ConsumerState<_OverlayToggle> {
                   : Icons.picture_in_picture_rounded,
               accentColor: _active ? retro.accent : null,
             ),
-      title: _active ? 'Chathead active' : 'Floating overlay',
+      title: _active ? l10n.settingsOverlayActive : l10n.settingsOverlayInactive,
       subtitle: _active
-          ? 'Tap to hide the bubble'
-          : 'Tap to show the bubble over the game',
+          ? l10n.settingsOverlayActiveDesc
+          : l10n.settingsOverlayInactiveDesc,
       trailing: _loading
           ? null
           : _RetroSwitch(

@@ -1532,5 +1532,22 @@
   "overlayError": "ERROR",
   "@overlayError": {
     "description": "Error state label shown in the overlay when content fails to load"
+  },
+
+  "settingsOverlayActive": "Chathead active",
+  "@settingsOverlayActive": {
+    "description": "Settings tile title when the floating overlay bubble is active"
+  },
+  "settingsOverlayInactive": "Floating overlay",
+  "@settingsOverlayInactive": {
+    "description": "Settings tile title when the floating overlay bubble is not active"
+  },
+  "settingsOverlayActiveDesc": "Tap to hide the bubble",
+  "@settingsOverlayActiveDesc": {
+    "description": "Settings tile subtitle when the floating overlay is active"
+  },
+  "settingsOverlayInactiveDesc": "Tap to show the bubble over the game",
+  "@settingsOverlayInactiveDesc": {
+    "description": "Settings tile subtitle when the floating overlay is not active"
   }
 }

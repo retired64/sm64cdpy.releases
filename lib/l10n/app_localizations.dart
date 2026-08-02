@@ -2171,6 +2171,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ERROR'**
   String get overlayError;
+
+  /// Settings tile title when the floating overlay bubble is active
+  ///
+  /// In en, this message translates to:
+  /// **'Chathead active'**
+  String get settingsOverlayActive;
+
+  /// Settings tile title when the floating overlay bubble is not active
+  ///
+  /// In en, this message translates to:
+  /// **'Floating overlay'**
+  String get settingsOverlayInactive;
+
+  /// Settings tile subtitle when the floating overlay is active
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to hide the bubble'**
+  String get settingsOverlayActiveDesc;
+
+  /// Settings tile subtitle when the floating overlay is not active
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to show the bubble over the game'**
+  String get settingsOverlayInactiveDesc;
 }
 
 class _AppLocalizationsDelegate
