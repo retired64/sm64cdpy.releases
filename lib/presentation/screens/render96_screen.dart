@@ -377,30 +377,77 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                         color: widget.retro.inkDim,
                       ),
                     ],
-                    if (widget.mod.repo.isNotEmpty) ...[
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.mod.repo,
-                        style: widget.retro.body(
-                          size: 10,
-                          color: widget.retro.inkDim.withValues(alpha: 0.7),
-                        ),
-                      ),
-                    ],
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
                 // Title
                 Text(
                   widget.mod.name,
-                  style: widget.retro.heading(size: 15),
+                  style: widget.retro.heading(size: 16.5),
                 ),
-                if (widget.mod.author != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.mod.author!,
-                    style: widget.retro.body(size: 11),
+
+                // Author · Repo — antes vivían en lugares distintos (autor
+                // debajo del título, repo apretado en el row de badges sin
+                // límite de ancho → se cortaba con "pokeheadroom/REN...").
+                // Ahora comparten una sola línea de metadata secundaria,
+                // cada uno en un Flexible independiente: si ambos caben,
+                // se muestran completos; si no, cada uno trunca por su
+                // cuenta con ellipsis en vez de desbordar la tarjeta.
+                if (widget.mod.author != null || widget.mod.repo.isNotEmpty) ...[
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      if (widget.mod.author != null)
+                        Flexible(
+                          child: Text(
+                            widget.mod.author!,
+                            style: widget.retro.body(
+                              size: 11.5,
+                              weight: FontWeight.w700,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      if (widget.mod.author != null &&
+                          widget.mod.repo.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 7),
+                          child: Text(
+                            '·',
+                            style: widget.retro.body(
+                              size: 12,
+                              color: widget.retro.inkDim.withValues(alpha: 0.45),
+                            ),
+                          ),
+                        ),
+                      if (widget.mod.repo.isNotEmpty)
+                        Flexible(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.code_rounded,
+                                size: 12,
+                                color: widget.retro.inkDim.withValues(alpha: 0.55),
+                              ),
+                              const SizedBox(width: 3),
+                              Flexible(
+                                child: Text(
+                                  widget.mod.repo,
+                                  style: widget.retro.body(
+                                    size: 10.5,
+                                    color: widget.retro.inkDim.withValues(
+                                      alpha: 0.65,
+                                    ),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
                 ],
 
@@ -430,36 +477,47 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                   ),
                 ],
 
-                // Notes
+                // Notes — antes: borde parejo en los 4 lados + Icons.info_outline
+                // genérico sin importar el contexto. Ahora: barra de acento
+                // lateral (patrón "callout") + ícono que cambia según lo que
+                // el aviso realmente comunica — prioridad para una dependencia
+                // requerida, informativo para todo lo demás.
                 if (widget.mod.notes != null && widget.mod.notes!.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Container(
-                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: _accentColor.withValues(alpha: 0.06),
-                      border: Border.all(
-                        color: _accentColor.withValues(alpha: 0.3),
+                      color: _accentColor.withValues(alpha: 0.07),
+                      border: Border(
+                        top: BorderSide(color: _accentColor.withValues(alpha: 0.25)),
+                        right: BorderSide(color: _accentColor.withValues(alpha: 0.25)),
+                        bottom: BorderSide(color: _accentColor.withValues(alpha: 0.25)),
+                        left: BorderSide(color: _accentColor, width: 3),
                       ),
                     ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          size: 14,
-                          color: _accentColor,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            widget.mod.notes!,
-                            style: widget.retro.body(
-                              size: 11,
-                              color: widget.retro.ink,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 9, 10, 9),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            widget.mod.category == 'Dependency'
+                                ? Icons.priority_high_rounded
+                                : Icons.info_outline_rounded,
+                            size: 14,
+                            color: _accentColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              widget.mod.notes!,
+                              style: widget.retro.body(
+                                size: 11,
+                                color: widget.retro.ink,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -481,13 +539,10 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 if (widget.isMain && widget.mod.youtube != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: _OutlinedButton(
+                    child: _ActionButton(
                       retro: widget.retro,
-                      label: '▶  ${widget.l10n.homeLaunchGame}'.replaceAll(
-                        widget.l10n.homeLaunchGame,
-                        'WATCH TRAILER',
-                      ),
-                      // ^ temporal: ícono de play + label simple
+                      label: 'WATCH TRAILER',
+                      icon: Icons.play_circle_fill_rounded,
                       color: widget.retro.red,
                       onTap: _openTrailer,
                     ),
@@ -495,14 +550,20 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 Row(
                   children: [
                     Expanded(
-                      child: _OutlinedButton(
+                      child: _ActionButton(
                         retro: widget.retro,
                         label: _downloading
                             ? 'DOWNLOADING...'
                             : _status == 'done'
-                                ? '✓  INSTALLED'
-                                : '⬇  ${widget.l10n.sharedDownload}',
-                        color: _accentColor,
+                                ? 'INSTALLED'
+                                : widget.l10n.sharedDownload,
+                        icon: _status == 'done'
+                            ? Icons.check_circle_rounded
+                            : Icons.download_rounded,
+                        loading: _downloading,
+                        color: _status == 'done'
+                            ? widget.retro.changelogAdded
+                            : _accentColor,
                         filled: true,
                         onTap:
                             isActive ? null : _download,
@@ -520,42 +581,84 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
 }
 
 // ── Button helpers ─────────────────────────────────────────────────────────────
+// Antes (_OutlinedButton): el "ícono" era un carácter emoji (⬇, ▶) metido a
+// mano dentro del string del label. Eso lo renderiza la fuente emoji del
+// sistema — colores y trazo que no tienen nada que ver con el resto del
+// lenguaje visual "manga panel" (Icon() con stroke fino y color controlado
+// como en SkewChip/RetroTag/RetroMeta). _ActionButton reemplaza eso con un
+// slot real de IconData, más un estado `loading` que muestra un spinner del
+// mismo color que el ícono en vez de dejar el botón "congelado" durante la
+// descarga.
 
-class _OutlinedButton extends StatelessWidget {
-  const _OutlinedButton({
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
     required this.retro,
     required this.label,
     required this.color,
     required this.onTap,
+    this.icon,
     this.filled = false,
+    this.loading = false,
   });
 
   final RetroTheme retro;
   final String label;
   final Color color;
   final VoidCallback? onTap;
+  final IconData? icon;
   final bool filled;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
+    // Mismo criterio de contraste que ya usa SkewChip para accentColor
+    // custom: sobre un relleno claro (amber, teal) la tinta oscura del tema
+    // gana legibilidad; sobre un relleno oscuro (verde éxito, azul, rojo)
+    // gana el blanco.
+    final fg = filled
+        ? (ThemeData.estimateBrightnessForColor(color) == Brightness.dark
+              ? Colors.white
+              : retro.background)
+        : color;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: filled ? color : Colors.transparent,
           border: Border.all(color: color, width: 2),
           boxShadow: retro.hardShadow(dx: 2, dy: 2),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: filled ? retro.background : color,
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.4,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (loading) ...[
+              SizedBox(
+                width: 13,
+                height: 13,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(fg),
+                ),
+              ),
+              const SizedBox(width: 9),
+            ] else if (icon != null) ...[
+              Icon(icon, size: 16, color: fg),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                color: fg,
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -626,7 +729,7 @@ class _Render96Error extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Icon(Icons.error_outline, size: 32, color: retro.red),
+                  Icon(Icons.error_outline_rounded, size: 32, color: retro.red),
                   const SizedBox(height: 8),
                   Text(
                     l10n.render96FailedToLoad,
@@ -675,7 +778,7 @@ class _Render96Empty extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Icon(Icons.inventory_2_outlined,
+                  Icon(Icons.inventory_2_rounded,
                       size: 32, color: retro.inkDim),
                   const SizedBox(height: 8),
                   Text(l10n.render96Empty,
