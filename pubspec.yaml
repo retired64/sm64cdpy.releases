@@ -56,5 +56,6 @@ flutter:
     - assets/db/dynos.json
     - assets/db/touch_controls.json
     - assets/db/omm.json
+    - assets/db/render96.json
     - assets/icons/
     - assets/icons/menu/
