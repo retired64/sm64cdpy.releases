@@ -1198,4 +1198,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsOverlayInactiveDesc =>
       'Tap to show the bubble over the game';
+
+  @override
+  String get navRender96 => 'Render96';
+
+  @override
+  String get render96Title => 'RENDER96';
+
+  @override
+  String get render96SectionHeader => 'EXCLUSIVE COLLECTION';
+
+  @override
+  String get render96Empty => 'COMING SOON';
+
+  @override
+  String get render96EmptyHint => 'New Render96 content will appear here.';
+
+  @override
+  String get render96FailedToLoad => 'FAILED TO LOAD';
 }

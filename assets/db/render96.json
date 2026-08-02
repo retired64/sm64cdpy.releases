@@ -1,0 +1,46 @@
+{
+  "render96_mods": [
+    {
+      "id": "render96-v4",
+      "name": "Render96 v4.0",
+      "category": "Skinpack",
+      "repo": "DorfDork/render96",
+      "youtube": "https://www.youtube.com/watch?v=IiIw_Nt4jl0",
+      "notes": "Requiere Character Select para funcionar",
+      "description": "As most of you know today marks the day Super Mario 64 released 30 years ago. While I was away I would still pop in from time to time to watch the community grow and transform over the years. Back in April the team decided to take off the breaks and go full throttle into developing this update. I'm proud to announce the new update for the model pack releasing exclusively for SM64CoopDX for everyone to enjoy. There has been a lot of ground covered with more updates in the upcoming months. I can't wait for you to relive your childhoods and experience Render96 again!",
+      "download_url": "https://github.com/DorfDork/render96/releases/latest",
+      "version": "4.0",
+      "author": "DorfDork & Render96 Team",
+      "image_url": null,
+      "install_destination": "mods"
+    },
+    {
+      "id": "char-select",
+      "name": "Character Select",
+      "category": "Dependency",
+      "repo": "Squishy6094/character-select-coop",
+      "youtube": null,
+      "notes": "Requerido por Render96 — instala primero",
+      "description": "Character Select is required for Render96 to work. This mod enables in-game character switching so you can play as any of the Render96 models.",
+      "download_url": "https://github.com/Squishy6094/character-select-coop/releases/latest",
+      "version": null,
+      "author": "Squishy6094",
+      "image_url": null,
+      "install_destination": "mods"
+    },
+    {
+      "id": "render96-hd",
+      "name": "Render96 HD Texture Pack",
+      "category": "Texture Pack",
+      "repo": "pokeheadroom/RENDER96-HD-TEXTURE-PACK",
+      "youtube": null,
+      "notes": "Texturas HD opcionales · 374 MB · Formato 7z",
+      "description": "High-definition texture pack for Render96 models. This enhances all character models with 4K-quality textures. Installed directly into the DynOS folder so the game loads them automatically. Requires Render96 v4.0 to be installed first.",
+      "download_url": "https://github.com/pokeheadroom/RENDER96-HD-TEXTURE-PACK/releases/latest",
+      "version": "1.3.26.7.7",
+      "author": "pokeheadroom",
+      "image_url": null,
+      "install_destination": "dynos"
+    }
+  ]
+}

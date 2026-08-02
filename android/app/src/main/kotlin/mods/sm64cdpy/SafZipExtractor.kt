@@ -9,6 +9,8 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry
+import org.apache.commons.compress.archivers.sevenz.SevenZFile
 
 /**
  * Lógica compartida de extracción de ZIPs y copia de archivos sueltos
@@ -239,7 +241,95 @@ object SafZipExtractor {
         return when (fileName.substringAfterLast('.', "").lowercase()) {
             "lua" -> "text/x-lua"
             "zip" -> "application/zip"
+            "7z" -> "application/x-7z-compressed"
             else -> "application/octet-stream"
         }
+    }
+
+    fun isSevenZipFile(file: File): Boolean {
+        return file.extension.equals("7z", ignoreCase = true)
+    }
+
+    /**
+     * Extrae el contenido de un archivo .7z dentro de [targetDir] (raíz del árbol
+     * SAF), igual que extractZipToTree pero usando SevenZFile (Apache Commons
+     * Compress) en vez de ZipInputStream.
+     *
+     * SevenZFile requiere acceso aleatorio al archivo (ya descargado en cache por
+     * ModDownloadWorker). A diferencia del ZIP que cuenta archivos, el 7z expone
+     * el tamaño exacto de cada entrada vía [SevenZArchiveEntry.getSize()], así que
+     * el callback onProgress recibe el porcentaje de la entrada actual en lugar del
+     * conteo acumulado (más útil para archivos grandes como texturas HD de 374 MB).
+     */
+    @Throws(IOException::class, SecurityException::class)
+    suspend fun extractSevenZToTree(
+        zipFile: File,
+        targetDir: DocumentFile,
+        context: Context,
+        onProgress: (suspend (percent: Int) -> Unit)? = null
+    ): Int {
+        var fileCount = 0
+        val createdDirs = mutableMapOf<String, DocumentFile>()
+
+        SevenZFile.builder().setFile(zipFile).get().use { szf ->
+            var entry: SevenZArchiveEntry? = szf.nextEntry
+            while (entry != null) {
+                if (!entry.isDirectory) {
+                    val entryName = sanitizeEntryName(entry.name)
+                    if (entryName.isNotEmpty() && !entryName.endsWith("/")) {
+                        val slashIdx = entryName.lastIndexOf('/')
+                        val parentDir: DocumentFile
+                        val fileName: String
+
+                        if (slashIdx > 0) {
+                            val dirPath = entryName.substring(0, slashIdx)
+                            val simpleName = entryName.substring(slashIdx + 1)
+                            parentDir = getOrCreateDir(createdDirs, targetDir, dirPath)
+                            fileName = simpleName
+                        } else {
+                            parentDir = targetDir
+                            fileName = entryName
+                        }
+
+                        if (parentDir == targetDir || (parentDir.exists() && parentDir.isDirectory)) {
+                            parentDir.findFile(fileName)?.delete()
+
+                            val outputFile = parentDir.createFile(
+                                "application/octet-stream", fileName
+                            ) ?: throw SecurityException(
+                                "Lost SAF access during 7z extraction: cannot create $fileName"
+                            )
+
+                            context.contentResolver
+                                .openOutputStream(outputFile.uri)?.use { os ->
+                                    val total = entry.size
+                                    val buffer = ByteArray(8192)
+                                    var read: Long = 0
+                                    var n: Int
+                                    while (szf.read(buffer, 0,
+                                            minOf(buffer.size, (total - read).toInt())
+                                        ).also { n = it } != -1
+                                    ) {
+                                        os.write(buffer, 0, n)
+                                        read += n
+                                        if (total > 0) {
+                                            onProgress?.invoke(((read * 100) / total).toInt())
+                                        }
+                                    }
+                                    os.flush()
+                                }
+                                ?: throw SecurityException(
+                                    "Lost SAF access during 7z extraction: cannot open $fileName"
+                                )
+
+                            fileCount++
+                        }
+                    }
+                }
+                entry = szf.nextEntry
+            }
+        }
+
+        return fileCount
     }
 }

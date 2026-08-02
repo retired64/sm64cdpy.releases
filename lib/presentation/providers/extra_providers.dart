@@ -4,10 +4,12 @@ import '../../data/datasource/vip_mod_datasource.dart';
 import '../../data/datasource/dynos_datasource.dart';
 import '../../data/datasource/touch_control_datasource.dart';
 import '../../data/datasource/omm_rebirth_datasource.dart';
+import '../../data/datasource/render96_datasource.dart';
 import '../../domain/entities/vip_mod_entity.dart';
 import '../../domain/entities/dynos_entity.dart';
 import '../../domain/entities/touch_control_entity.dart';
 import '../../domain/entities/omm_rebirth_entity.dart';
+import '../../domain/entities/render96_entity.dart';
 import 'mod_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -231,3 +233,17 @@ bool isTouchFavourite(WidgetRef ref, String touchId) {
   final notifier = ref.read(favouritesProvider.notifier);
   return notifier.isFav('$_kTouchPrefix$touchId');
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Render96
+// ─────────────────────────────────────────────────────────────────────────────
+
+final render96DatasourceProvider = Provider<Render96Datasource>(
+  (_) => Render96Datasource(),
+);
+
+final allRender96Provider = FutureProvider<List<Render96Entity>>((ref) async {
+  final datasource = ref.watch(render96DatasourceProvider);
+  final models = await datasource.getAll();
+  return models.map((model) => model.toEntity()).toList();
+});

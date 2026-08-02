@@ -70,11 +70,9 @@ class ModInstallWorker(
         }
 
         try {
-            // El archivo descargado no siempre es un ZIP (ej. mods sueltos en .lua).
-            // Si no es ZIP, lo copiamos directo a la raíz de la carpeta seleccionada
-            // en vez de intentar "extraerlo" con ZipInputStream (que fallaría en
-            // silencio: 0 entradas encontradas, sin excepción).
-            if (!isZipFile(zipFile)) {
+            // El archivo descargado no siempre es un ZIP (ej. mods sueltos en .lua,
+            // o .7z para packs de texturas grandes como Render96 HD).
+            if (!isZipFile(zipFile) && !SafZipExtractor.isSevenZipFile(zipFile)) {
                 setForeground(
                     buildForegroundInfo(notificationId, buildNotification(modName, 0, 0, true))
                 )
@@ -98,6 +96,63 @@ class ModInstallWorker(
                 )
             }
 
+            // ── 7z extraction (SevenZFile, Apache Commons Compress) ──────────
+            if (SafZipExtractor.isSevenZipFile(zipFile)) {
+                setForeground(
+                    buildForegroundInfo(notificationId, buildNotification(modName, 0, 0, true))
+                )
+
+                var lastProgress = 0
+                val fileCount = SafZipExtractor.extractSevenZToTree(
+                    zipFile, treeDoc, applicationContext
+                ) { pct ->
+                    // Throttle: notifica cada cambio ≥10%
+                    if (pct - lastProgress >= 10) {
+                        lastProgress = pct
+                        setProgress(
+                            workDataOf(
+                                PROGRESS_CURRENT to pct,
+                                PROGRESS_TOTAL to 100
+                            )
+                        )
+                        setForeground(
+                            buildForegroundInfo(
+                                notificationId,
+                                buildNotification(modName, pct, 100, false)
+                            )
+                        )
+                    }
+                }
+
+                if (fileCount == 0) {
+                    return Result.failure(
+                        workDataOf(
+                            "error" to "No files were extracted. The downloaded 7z file may be invalid."
+                        )
+                    )
+                }
+
+                setProgress(
+                    workDataOf(
+                        PROGRESS_CURRENT to 100,
+                        PROGRESS_TOTAL to 100
+                    )
+                )
+                setForeground(
+                    buildForegroundInfo(notificationId, buildNotification(modName, 100, 100, false))
+                )
+
+                zipFile.delete()
+
+                return Result.success(
+                    workDataOf(
+                        OUTPUT_FILE_COUNT to fileCount,
+                        OUTPUT_TARGET_DIR to modName
+                    )
+                )
+            }
+
+            // ── ZIP extraction (ZipInputStream) ───────────────────────────────
             val totalEntries = SafZipExtractor.countZipEntries(zipFile)
             val indeterminate = totalEntries <= 0
 

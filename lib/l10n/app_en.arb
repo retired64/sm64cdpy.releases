@@ -1549,5 +1549,30 @@
   "settingsOverlayInactiveDesc": "Tap to show the bubble over the game",
   "@settingsOverlayInactiveDesc": {
     "description": "Settings tile subtitle when the floating overlay is not active"
+  },
+
+  "navRender96": "Render96",
+  "@navRender96": {
+    "description": "Drawer navigation label for the Render96 screen"
+  },
+  "render96Title": "RENDER96",
+  "@render96Title": {
+    "description": "Title shown on the Render96 screen"
+  },
+  "render96SectionHeader": "EXCLUSIVE COLLECTION",
+  "@render96SectionHeader": {
+    "description": "Section header on the Render96 screen"
+  },
+  "render96Empty": "COMING SOON",
+  "@render96Empty": {
+    "description": "Empty state title on the Render96 screen"
+  },
+  "render96EmptyHint": "New Render96 content will appear here.",
+  "@render96EmptyHint": {
+    "description": "Empty state hint on the Render96 screen"
+  },
+  "render96FailedToLoad": "FAILED TO LOAD",
+  "@render96FailedToLoad": {
+    "description": "Error message shown on the Render96 screen when content fails to load"
   }
 }

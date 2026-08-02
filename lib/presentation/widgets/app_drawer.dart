@@ -98,6 +98,15 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
+                  'assets/icons/menu/render96.svg',
+                  width: 19, height: 19,
+                ),
+                label: l10n.navRender96, route: '/render96',
+                isActive: currentRoute == '/render96',
+                accentColor: retro.amber,
+              ),
+              _NavItem(
+                iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/vip.svg',
                   width: 19, height: 19,
                 ),

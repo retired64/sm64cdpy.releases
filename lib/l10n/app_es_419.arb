@@ -376,5 +376,12 @@
   "settingsOverlayActive": "Burbuja activa",
   "settingsOverlayInactive": "Overlay flotante",
   "settingsOverlayActiveDesc": "Toca para ocultar la burbuja",
-  "settingsOverlayInactiveDesc": "Toca para mostrar la burbuja sobre el juego"
+  "settingsOverlayInactiveDesc": "Toca para mostrar la burbuja sobre el juego",
+
+  "navRender96": "Render96",
+  "render96Title": "RENDER96",
+  "render96SectionHeader": "COLECCIÓN EXCLUSIVA",
+  "render96Empty": "PRÓXIMAMENTE",
+  "render96EmptyHint": "El nuevo contenido de Render96 aparecerá aquí.",
+  "render96FailedToLoad": "ERROR AL CARGAR"
 }

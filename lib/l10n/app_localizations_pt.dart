@@ -1205,6 +1205,25 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get settingsOverlayInactiveDesc =>
       'Toque para mostrar o chathead sobre o jogo';
+
+  @override
+  String get navRender96 => 'Render96';
+
+  @override
+  String get render96Title => 'RENDER96';
+
+  @override
+  String get render96SectionHeader => 'COLEÇÃO EXCLUSIVA';
+
+  @override
+  String get render96Empty => 'EM BREVE';
+
+  @override
+  String get render96EmptyHint =>
+      'Novos conteúdos do Render96 aparecerão aqui.';
+
+  @override
+  String get render96FailedToLoad => 'FALHA AO CARREGAR';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2408,4 +2427,23 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get settingsOverlayInactiveDesc =>
       'Toque para mostrar o chathead sobre o jogo';
+
+  @override
+  String get navRender96 => 'Render96';
+
+  @override
+  String get render96Title => 'RENDER96';
+
+  @override
+  String get render96SectionHeader => 'COLEÇÃO EXCLUSIVA';
+
+  @override
+  String get render96Empty => 'EM BREVE';
+
+  @override
+  String get render96EmptyHint =>
+      'Novos conteúdos do Render96 aparecerão aqui.';
+
+  @override
+  String get render96FailedToLoad => 'FALHA AO CARREGAR';
 }

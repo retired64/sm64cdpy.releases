@@ -376,5 +376,12 @@
   "settingsOverlayActive": "Chathead ativo",
   "settingsOverlayInactive": "Overlay flutuante",
   "settingsOverlayActiveDesc": "Toque para esconder o chathead",
-  "settingsOverlayInactiveDesc": "Toque para mostrar o chathead sobre o jogo"
+  "settingsOverlayInactiveDesc": "Toque para mostrar o chathead sobre o jogo",
+
+  "navRender96": "Render96",
+  "render96Title": "RENDER96",
+  "render96SectionHeader": "COLEÇÃO EXCLUSIVA",
+  "render96Empty": "EM BREVE",
+  "render96EmptyHint": "Novos conteúdos do Render96 aparecerão aqui.",
+  "render96FailedToLoad": "FALHA AO CARREGAR"
 }

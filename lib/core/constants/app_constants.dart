@@ -6,6 +6,7 @@ class AppConstants {
   static const String dynosAssetPath = 'assets/db/dynos.json';
   static const String touchControlsAssetPath = 'assets/db/touch_controls.json';
   static const String ommRebirthAssetPath = 'assets/db/omm.json';
+  static const String render96AssetPath = 'assets/db/render96.json';
   static const String settingsBoxKey = 'settings';
 
   static const int pageSize = 6;

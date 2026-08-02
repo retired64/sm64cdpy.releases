@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/entities/dynos_entity.dart';
 import '../domain/entities/mod_entity.dart';
 import '../domain/entities/omm_rebirth_entity.dart';
+import '../domain/entities/render96_entity.dart';
 import '../domain/entities/touch_control_entity.dart';
 import '../domain/entities/vip_mod_entity.dart';
 import '../presentation/providers/extra_providers.dart';
 import '../presentation/providers/mod_providers.dart';
 
-enum OverlaySection { all, vip, dynos, touchControls, omm }
+enum OverlaySection { all, vip, dynos, touchControls, omm, render96 }
 
 extension OverlaySectionLabel on OverlaySection {
   String get label => switch (this) {
@@ -17,6 +18,7 @@ extension OverlaySectionLabel on OverlaySection {
         OverlaySection.dynos => 'DYN',
         OverlaySection.touchControls => 'TCH',
         OverlaySection.omm => 'OMM',
+        OverlaySection.render96 => 'R96',
       };
 }
 
@@ -74,6 +76,14 @@ class OverlayModItem {
         imageUrl: m.imageUrl,
         section: OverlaySection.omm,
       );
+
+  factory OverlayModItem.fromRender96(Render96Entity m) => OverlayModItem(
+        id: m.id,
+        title: m.name,
+        downloadUrls: [m.downloadUrl],
+        imageUrl: m.imageUrl,
+        section: OverlaySection.render96,
+      );
 }
 
 final overlaySectionProvider =
@@ -110,6 +120,8 @@ final overlayTouchSearchQuery =
     NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
 final overlayOmmSearchQuery =
     NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
+final overlayRender96SearchQuery =
+    NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
 
 final overlayAllPage =
     NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
@@ -120,6 +132,8 @@ final overlayDynosPage =
 final overlayTouchPage =
     NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
 final overlayOmmPage =
+    NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
+final overlayRender96Page =
     NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
 
 final overlayAllItems = FutureProvider<List<OverlayModItem>>((ref) async {
@@ -147,6 +161,11 @@ final overlayOmmItems = FutureProvider<List<OverlayModItem>>((ref) async {
   return mods.map(OverlayModItem.fromOmm).toList();
 });
 
+final overlayRender96Items = FutureProvider<List<OverlayModItem>>((ref) async {
+  final mods = await ref.watch(allRender96Provider.future);
+  return mods.map(OverlayModItem.fromRender96).toList();
+});
+
 FutureProvider<List<OverlayModItem>> itemsProviderFor(OverlaySection s) =>
     switch (s) {
       OverlaySection.all => overlayAllItems,
@@ -154,6 +173,7 @@ FutureProvider<List<OverlayModItem>> itemsProviderFor(OverlaySection s) =>
       OverlaySection.dynos => overlayDynosItems,
       OverlaySection.touchControls => overlayTouchItems,
       OverlaySection.omm => overlayOmmItems,
+      OverlaySection.render96 => overlayRender96Items,
     };
 
 NotifierProvider<OverlaySearchNotifier, String> searchProviderFor(
@@ -164,6 +184,7 @@ NotifierProvider<OverlaySearchNotifier, String> searchProviderFor(
       OverlaySection.dynos => overlayDynosSearchQuery,
       OverlaySection.touchControls => overlayTouchSearchQuery,
       OverlaySection.omm => overlayOmmSearchQuery,
+      OverlaySection.render96 => overlayRender96SearchQuery,
     };
 
 NotifierProvider<OverlayPageNotifier, int> pageProviderFor(OverlaySection s) =>
@@ -173,6 +194,7 @@ NotifierProvider<OverlayPageNotifier, int> pageProviderFor(OverlaySection s) =>
       OverlaySection.dynos => overlayDynosPage,
       OverlaySection.touchControls => overlayTouchPage,
       OverlaySection.omm => overlayOmmPage,
+      OverlaySection.render96 => overlayRender96Page,
     };
 
 final overlayFilteredItems =

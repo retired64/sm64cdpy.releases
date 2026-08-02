@@ -2195,6 +2195,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap to show the bubble over the game'**
   String get settingsOverlayInactiveDesc;
+
+  /// Drawer navigation label for the Render96 screen
+  ///
+  /// In en, this message translates to:
+  /// **'Render96'**
+  String get navRender96;
+
+  /// Title shown on the Render96 screen
+  ///
+  /// In en, this message translates to:
+  /// **'RENDER96'**
+  String get render96Title;
+
+  /// Section header on the Render96 screen
+  ///
+  /// In en, this message translates to:
+  /// **'EXCLUSIVE COLLECTION'**
+  String get render96SectionHeader;
+
+  /// Empty state title on the Render96 screen
+  ///
+  /// In en, this message translates to:
+  /// **'COMING SOON'**
+  String get render96Empty;
+
+  /// Empty state hint on the Render96 screen
+  ///
+  /// In en, this message translates to:
+  /// **'New Render96 content will appear here.'**
+  String get render96EmptyHint;
+
+  /// Error message shown on the Render96 screen when content fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'FAILED TO LOAD'**
+  String get render96FailedToLoad;
 }
 
 class _AppLocalizationsDelegate

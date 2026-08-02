@@ -14,6 +14,7 @@ import '../../presentation/screens/settings_screen.dart';
 import '../../presentation/screens/touch_controls_screen.dart';
 import '../../presentation/screens/vip_mods_screen.dart';
 import '../../presentation/screens/omm_rebirth_screen.dart';
+import '../../presentation/screens/render96_screen.dart';
 import '../../presentation/widgets/app_shell.dart';
 
 final appRouter = GoRouter(
@@ -69,6 +70,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/omm-rebirth',
           pageBuilder: (_, s) => _page(const OmmRebirthScreen(), s),
+        ),
+        GoRoute(
+          path: '/render96',
+          pageBuilder: (_, s) => _page(const Render96Screen(), s),
         ),
       ],
     ),

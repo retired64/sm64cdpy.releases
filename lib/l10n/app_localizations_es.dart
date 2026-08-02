@@ -1213,6 +1213,25 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get settingsOverlayInactiveDesc =>
       'Toca para mostrar la burbuja sobre el juego';
+
+  @override
+  String get navRender96 => 'Render96';
+
+  @override
+  String get render96Title => 'RENDER96';
+
+  @override
+  String get render96SectionHeader => 'COLECCIÓN EXCLUSIVA';
+
+  @override
+  String get render96Empty => 'PRÓXIMAMENTE';
+
+  @override
+  String get render96EmptyHint =>
+      'El nuevo contenido de Render96 aparecerá aquí.';
+
+  @override
+  String get render96FailedToLoad => 'ERROR AL CARGAR';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2424,4 +2443,23 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get settingsOverlayInactiveDesc =>
       'Toca para mostrar la burbuja sobre el juego';
+
+  @override
+  String get navRender96 => 'Render96';
+
+  @override
+  String get render96Title => 'RENDER96';
+
+  @override
+  String get render96SectionHeader => 'COLECCIÓN EXCLUSIVA';
+
+  @override
+  String get render96Empty => 'PRÓXIMAMENTE';
+
+  @override
+  String get render96EmptyHint =>
+      'El nuevo contenido de Render96 aparecerá aquí.';
+
+  @override
+  String get render96FailedToLoad => 'ERROR AL CARGAR';
 }
