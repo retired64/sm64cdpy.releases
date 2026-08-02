@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:floaty_chatheads/floaty_chatheads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'overlay/overlay_panel.dart';
 import 'overlay/overlay_bridge.dart';
@@ -142,27 +143,62 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
   }
 }
 
+/// Carga el locale del usuario desde SharedPreferences — la fuente de verdad
+/// multi-isolate-safe compartida con el engine principal (que lo replica ahí
+/// desde Hive en LocaleNotifier.setLocale). Mientras carga, `locale: null`
+/// deja que Flutter use el locale del sistema como fallback.
+class _OverlayLocaleLoader extends StatefulWidget {
+  const _OverlayLocaleLoader();
+
+  @override
+  State<_OverlayLocaleLoader> createState() => _OverlayLocaleLoaderState();
+}
+
+class _OverlayLocaleLoaderState extends State<_OverlayLocaleLoader> {
+  Locale? _locale;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocale();
+  }
+
+  Future<void> _loadLocale() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final tag = prefs.getString(AppConstants.appLocaleKey);
+      if (tag != null && tag != 'system' && mounted) {
+        setState(() => _locale = LocaleNotifier.localeFromTag(tag));
+      }
+    } catch (e) {
+      debugPrint('[_OverlayLocaleLoader] Failed to read locale: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      locale: _locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      theme: RetroTheme.materialTheme(true).copyWith(
+        scaffoldBackgroundColor: RetroTheme.overlay().background,
+        colorScheme: RetroTheme.materialTheme(true).colorScheme.copyWith(
+          surface: RetroTheme.overlay().surface,
+        ),
+      ),
+      home: const OverlayPanel(),
+    );
+  }
+}
+
 @pragma('vm:entry-point')
 void overlayMain() {
   runZonedGuarded(() {
     _installErrorHandling('overlay');
     FloatyOverlayApp.run(
-      ProviderScope(
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          // Segundo engine de Flutter, sin acceso al Theme de la app
-          // principal: usa la variante fija RetroTheme.overlay() para que
-          // widgets nativos (SnackBar, selection handles, etc.) hereden el
-          // mismo navy oscuro en vez de los defaults de Material.
-          theme: RetroTheme.materialTheme(true).copyWith(
-            scaffoldBackgroundColor: RetroTheme.overlay().background,
-            colorScheme: RetroTheme.materialTheme(true).colorScheme.copyWith(
-              surface: RetroTheme.overlay().surface,
-            ),
-          ),
-          home: const OverlayPanel(),
-        ),
-      ),
+      const ProviderScope(child: _OverlayLocaleLoader()),
     );
   }, (error, stack) {
     debugPrint('[overlay] Zone error: $error\n$stack');

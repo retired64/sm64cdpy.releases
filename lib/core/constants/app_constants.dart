@@ -59,4 +59,9 @@ class AppConstants {
 
   /// Clave en SharedPreferences para la URI del directorio dynos seleccionado.
   static const String dynosDirectoryUriKey = 'dynos_directory_uri';
+
+  /// Clave en SharedPreferences para el locale forzado por el usuario
+  /// (réplica del valor guardado en Hive, para que el overlay engine
+  /// pueda leerlo sin inicializar Hive desde su propio isolate).
+  static const String appLocaleKey = 'app_locale';
 }

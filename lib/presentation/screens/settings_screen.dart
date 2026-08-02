@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
+import '../../overlay/overlay_bridge.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../services/mod_installer.dart';
 import '../../services/update_service.dart';
@@ -650,6 +651,7 @@ class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
   Future<void> _toggle(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(AppConstants.autoInstallModsKey, value);
+    OverlayBridge.refreshAutoInstall();
     setState(() => _autoInstall = value);
   }
 

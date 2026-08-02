@@ -2111,6 +2111,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Português'**
   String get languagePortuguese;
+
+  /// Placeholder text for the search field in the floating overlay
+  ///
+  /// In en, this message translates to:
+  /// **'SEARCH...'**
+  String get overlaySearchHint;
+
+  /// Toast shown in the floating overlay when the download bridge does not respond
+  ///
+  /// In en, this message translates to:
+  /// **'No response — open the main app once, then try again'**
+  String get overlayNoResponse;
+
+  /// Error toast shown in the overlay when no destination folder has been selected
+  ///
+  /// In en, this message translates to:
+  /// **'Select a folder first (Settings)'**
+  String get overlaySelectFolder;
+
+  /// Error toast shown in the overlay when auto-install is disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Enable auto-install first (Settings)'**
+  String get overlayEnableAutoInstall;
+
+  /// Error toast shown in the overlay when a download fails
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed'**
+  String get overlayDownloadFailed;
+
+  /// Label below the progress bar in the overlay mod tile during download/install
+  ///
+  /// In en, this message translates to:
+  /// **'TAP TO CANCEL'**
+  String get overlayTapToCancel;
+
+  /// Status text shown in the overlay mod tile title during installation
+  ///
+  /// In en, this message translates to:
+  /// **'Installing...'**
+  String get overlayInstalling;
+
+  /// Status text shown in the overlay mod tile title while waiting for the bridge
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting...'**
+  String get overlayConnecting;
+
+  /// Empty state label shown in the overlay when search/filter yields no mods
+  ///
+  /// In en, this message translates to:
+  /// **'NO RESULTS'**
+  String get overlayNoResults;
+
+  /// Error state label shown in the overlay when content fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'ERROR'**
+  String get overlayError;
 }
 
 class _AppLocalizationsDelegate

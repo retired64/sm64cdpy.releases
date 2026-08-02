@@ -1168,6 +1168,38 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get languagePortuguese => 'Português';
+
+  @override
+  String get overlaySearchHint => 'BUSCAR...';
+
+  @override
+  String get overlayNoResponse =>
+      'Sin respuesta — abre la app principal una vez y vuelve a intentarlo';
+
+  @override
+  String get overlaySelectFolder => 'Selecciona una carpeta primero (Ajustes)';
+
+  @override
+  String get overlayEnableAutoInstall =>
+      'Activa auto-instalación primero (Ajustes)';
+
+  @override
+  String get overlayDownloadFailed => 'Descarga fallida';
+
+  @override
+  String get overlayTapToCancel => 'TOCA PARA CANCELAR';
+
+  @override
+  String get overlayInstalling => 'Instalando...';
+
+  @override
+  String get overlayConnecting => 'Conectando...';
+
+  @override
+  String get overlayNoResults => 'SIN RESULTADOS';
+
+  @override
+  String get overlayError => 'ERROR';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2334,4 +2366,36 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get languagePortuguese => 'Português';
+
+  @override
+  String get overlaySearchHint => 'BUSCAR...';
+
+  @override
+  String get overlayNoResponse =>
+      'Sin respuesta — abre la app principal una vez y vuelve a intentarlo';
+
+  @override
+  String get overlaySelectFolder => 'Selecciona una carpeta primero (Ajustes)';
+
+  @override
+  String get overlayEnableAutoInstall =>
+      'Activa auto-instalación primero (Ajustes)';
+
+  @override
+  String get overlayDownloadFailed => 'Descarga fallida';
+
+  @override
+  String get overlayTapToCancel => 'TOCA PARA CANCELAR';
+
+  @override
+  String get overlayInstalling => 'Instalando...';
+
+  @override
+  String get overlayConnecting => 'Conectando...';
+
+  @override
+  String get overlayNoResults => 'SIN RESULTADOS';
+
+  @override
+  String get overlayError => 'ERROR';
 }

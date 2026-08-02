@@ -17,10 +17,10 @@ class OverlayBridge {
   static void init() {
     FloatyChatheads.onData.listen(_onMessageFromOverlay);
     BackgroundInstallService.instance.events.listen(_forwardEventToOverlay);
-    _refreshAutoInstall();
+    refreshAutoInstall();
   }
 
-  static Future<void> _refreshAutoInstall() async {
+  static Future<void> refreshAutoInstall() async {
     final prefs = await SharedPreferences.getInstance();
     _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
   }

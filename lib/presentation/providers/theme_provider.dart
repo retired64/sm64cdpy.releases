@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_constants.dart';
 
@@ -109,6 +110,15 @@ class LocaleNotifier extends Notifier<String?> {
           .put('locale', tag ?? 'system');
     } catch (e) {
       debugPrint('Failed to save locale preference: $e');
+    }
+
+    // Réplica en SharedPreferences para que el overlay engine
+    // (segundo isolate) pueda leer la preferencia sin inicializar Hive.
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(AppConstants.appLocaleKey, tag ?? 'system');
+    } catch (e) {
+      debugPrint('Failed to mirror locale to SharedPreferences: $e');
     }
   }
 

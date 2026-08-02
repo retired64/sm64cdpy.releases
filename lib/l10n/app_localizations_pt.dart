@@ -1159,6 +1159,39 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get languagePortuguese => 'Português';
+
+  @override
+  String get overlaySearchHint => 'BUSCAR...';
+
+  @override
+  String get overlayNoResponse =>
+      'Sem resposta — abra o app principal uma vez e tente novamente';
+
+  @override
+  String get overlaySelectFolder =>
+      'Selecione uma pasta primeiro (Configurações)';
+
+  @override
+  String get overlayEnableAutoInstall =>
+      'Ative a instalação automática primeiro (Configurações)';
+
+  @override
+  String get overlayDownloadFailed => 'Falha no download';
+
+  @override
+  String get overlayTapToCancel => 'TOQUE PARA CANCELAR';
+
+  @override
+  String get overlayInstalling => 'Instalando...';
+
+  @override
+  String get overlayConnecting => 'Conectando...';
+
+  @override
+  String get overlayNoResults => 'SEM RESULTADOS';
+
+  @override
+  String get overlayError => 'ERRO';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2316,4 +2349,37 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get languagePortuguese => 'Português';
+
+  @override
+  String get overlaySearchHint => 'BUSCAR...';
+
+  @override
+  String get overlayNoResponse =>
+      'Sem resposta — abra o app principal uma vez e tente novamente';
+
+  @override
+  String get overlaySelectFolder =>
+      'Selecione uma pasta primeiro (Configurações)';
+
+  @override
+  String get overlayEnableAutoInstall =>
+      'Ative a instalação automática primeiro (Configurações)';
+
+  @override
+  String get overlayDownloadFailed => 'Falha no download';
+
+  @override
+  String get overlayTapToCancel => 'TOQUE PARA CANCELAR';
+
+  @override
+  String get overlayInstalling => 'Instalando...';
+
+  @override
+  String get overlayConnecting => 'Conectando...';
+
+  @override
+  String get overlayNoResults => 'SEM RESULTADOS';
+
+  @override
+  String get overlayError => 'ERRO';
 }

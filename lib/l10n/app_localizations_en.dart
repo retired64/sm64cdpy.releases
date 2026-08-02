@@ -1154,4 +1154,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languagePortuguese => 'Português';
+
+  @override
+  String get overlaySearchHint => 'SEARCH...';
+
+  @override
+  String get overlayNoResponse =>
+      'No response — open the main app once, then try again';
+
+  @override
+  String get overlaySelectFolder => 'Select a folder first (Settings)';
+
+  @override
+  String get overlayEnableAutoInstall => 'Enable auto-install first (Settings)';
+
+  @override
+  String get overlayDownloadFailed => 'Download failed';
+
+  @override
+  String get overlayTapToCancel => 'TAP TO CANCEL';
+
+  @override
+  String get overlayInstalling => 'Installing...';
+
+  @override
+  String get overlayConnecting => 'Connecting...';
+
+  @override
+  String get overlayNoResults => 'NO RESULTS';
+
+  @override
+  String get overlayError => 'ERROR';
 }

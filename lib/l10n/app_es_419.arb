@@ -360,5 +360,16 @@
   "languageFollowSystem": "Seguir sistema",
   "languageEnglish": "English",
   "languageSpanish": "Español",
-  "languagePortuguese": "Português"
+  "languagePortuguese": "Português",
+
+  "overlaySearchHint": "BUSCAR...",
+  "overlayNoResponse": "Sin respuesta — abre la app principal una vez y vuelve a intentarlo",
+  "overlaySelectFolder": "Selecciona una carpeta primero (Ajustes)",
+  "overlayEnableAutoInstall": "Activa auto-instalación primero (Ajustes)",
+  "overlayDownloadFailed": "Descarga fallida",
+  "overlayTapToCancel": "TOCA PARA CANCELAR",
+  "overlayInstalling": "Instalando...",
+  "overlayConnecting": "Conectando...",
+  "overlayNoResults": "SIN RESULTADOS",
+  "overlayError": "ERROR"
 }

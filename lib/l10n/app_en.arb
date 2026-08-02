@@ -1491,5 +1491,46 @@
   "languagePortuguese": "Português",
   "@languagePortuguese": {
     "description": "Language name for Brazilian Portuguese (endonym)"
+  },
+
+  "overlaySearchHint": "SEARCH...",
+  "@overlaySearchHint": {
+    "description": "Placeholder text for the search field in the floating overlay"
+  },
+  "overlayNoResponse": "No response — open the main app once, then try again",
+  "@overlayNoResponse": {
+    "description": "Toast shown in the floating overlay when the download bridge does not respond"
+  },
+  "overlaySelectFolder": "Select a folder first (Settings)",
+  "@overlaySelectFolder": {
+    "description": "Error toast shown in the overlay when no destination folder has been selected"
+  },
+  "overlayEnableAutoInstall": "Enable auto-install first (Settings)",
+  "@overlayEnableAutoInstall": {
+    "description": "Error toast shown in the overlay when auto-install is disabled"
+  },
+  "overlayDownloadFailed": "Download failed",
+  "@overlayDownloadFailed": {
+    "description": "Error toast shown in the overlay when a download fails"
+  },
+  "overlayTapToCancel": "TAP TO CANCEL",
+  "@overlayTapToCancel": {
+    "description": "Label below the progress bar in the overlay mod tile during download/install"
+  },
+  "overlayInstalling": "Installing...",
+  "@overlayInstalling": {
+    "description": "Status text shown in the overlay mod tile title during installation"
+  },
+  "overlayConnecting": "Connecting...",
+  "@overlayConnecting": {
+    "description": "Status text shown in the overlay mod tile title while waiting for the bridge"
+  },
+  "overlayNoResults": "NO RESULTS",
+  "@overlayNoResults": {
+    "description": "Empty state label shown in the overlay when search/filter yields no mods"
+  },
+  "overlayError": "ERROR",
+  "@overlayError": {
+    "description": "Error state label shown in the overlay when content fails to load"
   }
 }

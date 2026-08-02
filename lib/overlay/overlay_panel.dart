@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme/retro_theme.dart';
+import '../l10n/app_localizations.dart';
 import 'overlay_sections.dart';
 
 /// Tema fijo del overlay flotante — ver `RetroTheme.overlay()` para el
@@ -103,7 +104,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       if (!mounted) return;
       if (_modStatus[title] == 'connecting') {
         setState(() => _modStatus.remove(title));
-        _showToast('No response — open the main app once, then try again');
+        _showToast(AppLocalizations.of(context).overlayNoResponse);
       }
     });
   }
@@ -200,9 +201,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
         _modProgress.remove(modTitle);
       });
       final message = switch (error) {
-        'no_folder' => 'Select a folder first (Settings)',
-        'auto_install_off' => 'Enable auto-install first (Settings)',
-        _ => 'Download failed',
+        'no_folder' => AppLocalizations.of(context).overlaySelectFolder,
+        'auto_install_off' => AppLocalizations.of(context).overlayEnableAutoInstall,
+        _ => AppLocalizations.of(context).overlayDownloadFailed,
       };
       _showToast(message);
     }
@@ -314,14 +315,14 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
                   loading: () => const Center(child: _Spinner()),
                   error: (err, _) => _EmptyState(
                     icon: Icons.error_outline,
-                    label: 'ERROR',
+                    label: AppLocalizations.of(context).overlayError,
                     color: _retro.red,
                   ),
                   data: (mods) {
                     if (mods.isEmpty) {
                       return _EmptyState(
                         icon: Icons.search_off,
-                        label: 'NO RESULTS',
+                        label: AppLocalizations.of(context).overlayNoResults,
                         color: _retro.inkDim,
                       );
                     }
@@ -488,7 +489,7 @@ class _SearchBar extends StatelessWidget {
         cursorColor: _retro.accent,
         style: _retro.body(size: 11.5, weight: FontWeight.w600, color: _retro.ink),
         decoration: InputDecoration(
-          hintText: 'SEARCH...',
+          hintText: AppLocalizations.of(context).overlaySearchHint,
           hintStyle: _retro.body(size: 10.5, color: _retro.inkDim.withValues(alpha: 0.7)),
           filled: true,
           fillColor: Colors.transparent,
@@ -647,7 +648,7 @@ class _ModTileState extends ConsumerState<_ModTile> {
             ),
             const SizedBox(height: 3),
             Text(
-              'TAP TO CANCEL',
+              AppLocalizations.of(context).overlayTapToCancel,
               style: TextStyle(
                 color: _statusColor.withValues(alpha: 0.55),
                 fontSize: 8.5,
@@ -662,12 +663,13 @@ class _ModTileState extends ConsumerState<_ModTile> {
   }
 
   Widget _titleRow() {
+    final l10n = AppLocalizations.of(context);
     final label = _isDownloading && widget.progress != null
         ? '${widget.mod.title}  ${widget.progress}%'
         : _isInstalling
-            ? '${widget.mod.title}  Installing...'
+            ? '${widget.mod.title}  ${l10n.overlayInstalling}'
             : _isConnecting
-                ? '${widget.mod.title}  Connecting...'
+                ? '${widget.mod.title}  ${l10n.overlayConnecting}'
                 : widget.mod.title;
 
     return Text(
