@@ -305,11 +305,31 @@ object SafZipExtractor {
                                     val total = entry.size
                                     val buffer = ByteArray(8192)
                                     var read: Long = 0
-                                    var n: Int
-                                    while (szf.read(buffer, 0,
-                                            minOf(buffer.size, (total - read).toInt())
-                                        ).also { n = it } != -1
-                                    ) {
+
+                                    // FIX: bug crítico confirmado — antes el loop cortaba
+                                    // solo cuando szf.read(...) devolvía -1. Al llegar
+                                    // read == total, el siguiente chunk pedido era
+                                    // minOf(buffer.size, total - read) = 0, y una lectura
+                                    // de largo 0 devuelve 0 (contrato estándar de
+                                    // InputStream), NUNCA -1. El loop quedaba girando para
+                                    // siempre en el primer archivo completado, sin llegar
+                                    // jamás a szf.nextEntry() — el resto del .7z (Render96
+                                    // v4.0, HD Texture Pack) nunca se extraía; solo quedaba
+                                    // en disco la primera carpeta + el primer archivo.
+                                    //
+                                    // Ahora la condición de corte es "¿ya leí todo lo que
+                                    // el propio 7z me dijo que medía esta entrada?" — nunca
+                                    // se llega a pedir un chunk de largo 0. `n <= 0` queda
+                                    // como salvaguarda extra por si el stream real viene
+                                    // más corto que `entry.size` (archivo corrupto), para
+                                    // que ni ese escenario pueda volver a colgar el loop.
+                                    while (read < total) {
+                                        val toRead = minOf(
+                                            buffer.size.toLong(),
+                                            total - read
+                                        ).toInt()
+                                        val n = szf.read(buffer, 0, toRead)
+                                        if (n <= 0) break
                                         os.write(buffer, 0, n)
                                         read += n
                                         if (total > 0) {
