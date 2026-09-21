@@ -13,10 +13,12 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/omm_rebirth_entity.dart';
 import '../../services/background_install_service.dart';
+import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/dynos_install_flow.dart';
 import '../../l10n/app_localizations.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -75,9 +77,7 @@ class _OmmBody extends StatelessWidget {
           floating: true,
           snap: true,
           elevation: 0,
-          shape: Border(
-            bottom: BorderSide(color: retro.border, width: 3),
-          ),
+          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
           leading: DrawerMenuButton(color: retro.accent),
           title: Text(
             l10n.ommTitle,
@@ -198,7 +198,9 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
     final isNowFav = ref.read(ommFavouritesProvider).contains(widget.mod.id);
     AppSnackbar.info(
       context,
-      message: isNowFav ? AppLocalizations.of(context).sharedAddedToFavorites : AppLocalizations.of(context).sharedRemovedFromFavorites,
+      message: isNowFav
+          ? AppLocalizations.of(context).sharedAddedToFavorites
+          : AppLocalizations.of(context).sharedRemovedFromFavorites,
       duration: const Duration(seconds: 1),
     );
   }
@@ -210,29 +212,44 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
     final installer = ModInstaller();
 
     final isDynosMod = widget.mod.id == 'cappy-bros-dynos';
+    final prefs = await SharedPreferences.getInstance();
+    final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
     final hasFolder = isDynosMod
         ? await installer.isDynosDirectorySelected()
         : await installer.isDirectorySelected();
 
-    if (!hasFolder) {
-      final prefs = await SharedPreferences.getInstance();
-      final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
-      if (autoInstall && mounted) {
+    if (!hasFolder && autoInstall) {
+      if (isDynosMod) {
+        if (!mounted) return;
+        final goToSettings = await showDynosFolderRequiredDialog(context);
+        if (goToSettings && mounted) GoRouter.of(context).push('/settings');
+        return;
+      } else if (mounted) {
         final l10n = AppLocalizations.of(context);
         final goToSettings = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            icon: Icon(Icons.folder_open_rounded, color: RetroTheme.of(ctx).accent, size: 28),
-            title: Text(l10n.detailModsFolderNotSelected,
-                style: TextStyle(color: RetroTheme.of(ctx).ink)),
-            content: Text(l10n.detailModsFolderBody,
-                style: TextStyle(color: RetroTheme.of(ctx).inkDim)),
+            icon: Icon(
+              Icons.folder_open_rounded,
+              color: RetroTheme.of(ctx).accent,
+              size: 28,
+            ),
+            title: Text(
+              l10n.detailModsFolderNotSelected,
+              style: TextStyle(color: RetroTheme.of(ctx).ink),
+            ),
+            content: Text(
+              l10n.detailModsFolderBody,
+              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(l10n.detailCancel,
-                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+                child: Text(
+                  l10n.detailCancel,
+                  style: TextStyle(color: RetroTheme.of(ctx).ink),
+                ),
               ),
               FilledButton.icon(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -249,39 +266,85 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
       }
     }
 
-    final url = widget.mod.downloadUrl;
-    final rawName = widget.mod.title
-        .toLowerCase()
-        .replaceAll(RegExp(r"[^\w\s\-]"), '')
-        .replaceAll(RegExp(r'\s+'), '-')
-        .replaceAll(RegExp(r'-{2,}'), '-')
-        .trim();
-    final urlExt = url.split('.').last.split('?').first.toLowerCase();
-    final ext = (urlExt == 'lua' || urlExt == 'zip') ? urlExt : 'zip';
-    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.$ext';
+    final url = await DownloadUrlResolver.instance.resolveDownloadUrl(
+      widget.mod.downloadUrl,
+    );
+    final filename = await DownloadUrlResolver.instance.resolveDownloadFilename(
+      url,
+      widget.mod.title,
+    );
+    final rawName = sanitizeModTitle(
+      'omm-${widget.mod.id}-${widget.mod.title}',
+    );
 
-    // Los mods DynOS (cappy-bros-dynos) no pasan por el WorkManager de
-    // BackgroundInstallService: van directo a la carpeta DynOS.
     if (isDynosMod) {
-      await _downloadSimple(url, filename, installer, isDynosMod: true, rawName: rawName);
+      if (autoInstall) {
+        final hasPermission = await installer.hasNotificationPermission();
+        if (!hasPermission && mounted) {
+          final granted = await installer.requestNotificationPermission();
+          if (!granted && mounted) {
+            AppSnackbar.info(
+              context,
+              message: AppLocalizations.of(context).detailNotificationsDisabled,
+            );
+          }
+        }
+        final chain = await BackgroundInstallService.instance
+            .startDownloadAndInstall(
+              url: url,
+              modName: rawName,
+              fileName: filename,
+              displayTitle: widget.mod.title,
+              installDestination: 'dynos',
+            );
+        if (!mounted) return;
+        if (chain == null) {
+          AppSnackbar.error(
+            context,
+            message: AppLocalizations.of(context).detailInstallFailed,
+          );
+        } else {
+          AppSnackbar.info(
+            context,
+            message: AppLocalizations.of(context).detailInstallQueued(filename),
+          );
+        }
+      } else {
+        await _downloadSimple(
+          url,
+          filename,
+          installer,
+          isDynosMod: true,
+          askBeforeDynosInstall: true,
+          rawName: rawName,
+        );
+      }
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
-
     if (autoInstall && hasFolder && mounted) {
-      final chain = await BackgroundInstallService.instance.startDownloadAndInstall(
-        url: url, modName: rawName, fileName: filename,
-      );
+      final chain = await BackgroundInstallService.instance
+          .startDownloadAndInstall(
+            url: url,
+            modName: rawName,
+            fileName: filename,
+          );
       if (!mounted) return;
       if (chain != null) {
-        AppSnackbar.info(context,
-            message: AppLocalizations.of(context).detailDownloading(filename));
+        AppSnackbar.info(
+          context,
+          message: AppLocalizations.of(context).detailDownloading(filename),
+        );
       } else {
         // Fallback: el encolado de WorkManager falló silenciosamente
         // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
-        await _downloadSimple(url, filename, installer, extract: true, rawName: rawName);
+        await _downloadSimple(
+          url,
+          filename,
+          installer,
+          extract: true,
+          rawName: rawName,
+        );
       }
     } else if (mounted) {
       await _downloadSimple(url, filename, installer, rawName: rawName);
@@ -294,17 +357,22 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
     ModInstaller installer, {
     bool extract = false,
     bool isDynosMod = false,
+    bool askBeforeDynosInstall = false,
     required String rawName,
   }) async {
     if (!mounted) return;
-    setState(() { _downloading = true; _progress = 0.0; });
+    setState(() {
+      _downloading = true;
+      _progress = 0.0;
+    });
     try {
       await FileDownloader.downloadFile(
         url: url,
         name: filename,
         onProgress: (name, progress) {
           if (!mounted) return;
-          final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          final normalized = (progress > 1.0 ? progress / 100.0 : progress)
+              .clamp(0.0, 1.0);
           setState(() => _progress = normalized);
         },
         onDownloadCompleted: (path) async {
@@ -314,48 +382,111 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
           String? copyError;
           try {
             if (isDynosMod) {
-              if (await installer.isDynosDirectorySelected()) {
-                if (savedName.toLowerCase().endsWith('.zip')) {
-                  final result = await installer.installModToDynosFolder(zipPath: path, modName: rawName);
-                  if (!result.success) copyError = result.errorMessage ?? l10n.detailInstallFailed;
-                } else {
-                  await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
+              if (askBeforeDynosInstall) {
+                if (!mounted) return;
+                final installNow = await confirmDynosInstall(
+                  context,
+                  name: widget.mod.title,
+                );
+                if (!installNow) {
+                  if (mounted) {
+                    setState(() {
+                      _downloading = false;
+                      _progress = 0.0;
+                    });
+                    AppSnackbar.success(
+                      context,
+                      message: l10n.detailDownloadedNotInstalled(savedName),
+                    );
+                  }
+                  return;
                 }
               }
+              if (!await installer.isDynosDirectorySelected()) {
+                if (!mounted) return;
+                final goToSettings = await showDynosFolderRequiredDialog(
+                  context,
+                );
+                if (goToSettings && mounted) {
+                  GoRouter.of(context).push('/settings');
+                }
+                if (mounted) {
+                  setState(() {
+                    _downloading = false;
+                    _progress = 0.0;
+                  });
+                  AppSnackbar.info(
+                    context,
+                    message: l10n.detailDownloadedNotInstalled(savedName),
+                  );
+                }
+                return;
+              }
+              copyError = await installDownloadedDynosFile(
+                installer: installer,
+                path: path,
+                modName: rawName,
+                fallbackError: l10n.detailInstallFailed,
+              );
             } else if (extract) {
-              final result = await installer.installMod(zipPath: path, modName: rawName);
-              if (!result.success) copyError = result.errorMessage ?? l10n.detailInstallFailed;
+              final result = await installer.installMod(
+                zipPath: path,
+                modName: rawName,
+              );
+              if (!result.success) {
+                copyError = result.errorMessage ?? l10n.detailInstallFailed;
+              }
             } else {
-              await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
+              await installer.copyFileToModsFolder(
+                sourcePath: path,
+                targetName: savedName,
+              );
             }
           } catch (e) {
             copyError = e.toString();
           }
           if (!mounted) return;
-          setState(() { _downloading = false; _progress = 0.0; });
+          setState(() {
+            _downloading = false;
+            _progress = 0.0;
+          });
           if (copyError != null) {
-            AppSnackbar.errorWithCopy(context,
-                message: copyError,
-                copyText: copyError);
+            AppSnackbar.errorWithCopy(
+              context,
+              message: copyError,
+              copyText: copyError,
+            );
           } else {
-            AppSnackbar.success(context,
-                message: l10n.detailSavedToFolder(savedName, l10n.navOmmRebirth));
+            AppSnackbar.success(
+              context,
+              message: l10n.detailSavedToFolder(savedName, l10n.navOmmRebirth),
+            );
           }
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          setState(() { _downloading = false; _progress = 0.0; });
-          AppSnackbar.errorWithCopy(context,
-              message: AppLocalizations.of(context).detailError(error),
-              copyText: error);
+          setState(() {
+            _downloading = false;
+            _progress = 0.0;
+          });
+          AppSnackbar.errorWithCopy(
+            context,
+            message: friendlyDownloadError(AppLocalizations.of(context), error),
+            copyText: error,
+          );
         },
       );
     } catch (e) {
       if (!mounted) return;
-      setState(() { _downloading = false; _progress = 0.0; });
-      AppSnackbar.errorWithCopy(context,
-          message: AppLocalizations.of(context).detailError(e.toString()),
-          copyText: e.toString());
+      setState(() {
+        _downloading = false;
+        _progress = 0.0;
+      });
+      AppSnackbar.errorWithCopy(
+        context,
+        message: friendlyDownloadError(AppLocalizations.of(context), e),
+        copyText: e.toString(),
+      );
     }
   }
 
@@ -373,8 +504,8 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
     final isFav = ref.watch(ommFavouritesProvider).contains(widget.mod.id);
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
-            ? 140.0
-            : 180.0;
+        ? 140.0
+        : 180.0;
 
     // ── PATCH: solo hay banner de imagen si el mod trae una URL real.
     // Si no hay imageUrl, la sección completa se elimina — nada de
@@ -403,10 +534,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                 color: retro.surface,
                 borderRadius: RetroTheme.radius,
                 border: Border.all(color: retro.border, width: 3),
-                boxShadow: retro.hardShadow(
-                  dx: 5 - offset,
-                  dy: 5 - offset,
-                ),
+                boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
               ),
               child: child,
             ),
@@ -494,7 +622,9 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                         child: Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(
-                            _isExpanded ? l10n.sharedShowLess : l10n.sharedReadMore,
+                            _isExpanded
+                                ? l10n.sharedShowLess
+                                : l10n.sharedReadMore,
                             style: TextStyle(
                               color: retro.accent,
                               fontSize: 11,
@@ -519,7 +649,9 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                           color: retro.accent,
                         ),
                         label: Text(
-                          isFav ? l10n.sharedRemoveFromFavorites : l10n.sharedAddToFavorites,
+                          isFav
+                              ? l10n.sharedRemoveFromFavorites
+                              : l10n.sharedAddToFavorites,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
@@ -691,10 +823,7 @@ class _EmptyView extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               l10n.ommEmptyHint,
-              style: TextStyle(
-                color: retro.inkDim,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
             ),
           ],
@@ -800,10 +929,7 @@ class _OmmError extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 message,
-                style: TextStyle(
-                  color: retro.inkDim,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: retro.inkDim, fontSize: 12),
                 textAlign: TextAlign.center,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,

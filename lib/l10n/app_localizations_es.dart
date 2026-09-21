@@ -674,6 +674,47 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailInstalling => 'Instalando...';
 
   @override
+  String get detailDynosFolderNotSelected =>
+      'Carpeta de DynOS y controles táctiles no seleccionada';
+
+  @override
+  String get detailDynosFolderBody =>
+      'Selecciona la carpeta compartida de DynOS y controles táctiles en Ajustes → Integración del Juego antes de instalar este contenido.';
+
+  @override
+  String get detailInstallDownloadedTitle =>
+      '¿Instalar el contenido descargado?';
+
+  @override
+  String detailInstallDownloadedBody(String name) {
+    return '$name terminó de descargarse. ¿Quieres instalarlo ahora en la carpeta de DynOS y controles táctiles?';
+  }
+
+  @override
+  String get detailInstallNow => 'Instalar ahora';
+
+  @override
+  String get detailKeepDownload => 'Ahora no';
+
+  @override
+  String detailDownloadedNotInstalled(String name) {
+    return 'Descargado, pero no instalado: $name';
+  }
+
+  @override
+  String detailInstallQueued(String name) {
+    return 'Descarga e instalación iniciadas: $name';
+  }
+
+  @override
+  String get detailContentUnavailable =>
+      'Esta descarga ya no está disponible (404). Es posible que el enlace haya sido eliminado o cambiado.';
+
+  @override
+  String get detailFriendlyDownloadError =>
+      'No se pudo completar la descarga. Comprueba tu conexión e inténtalo de nuevo.';
+
+  @override
   String get detailScreenshots => 'Capturas';
 
   @override
@@ -859,7 +900,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsAutoInstallOn =>
-      'Los mods se instalarán automáticamente en la carpeta del juego';
+      'Las descargas se instalarán automáticamente en la carpeta del juego configurada';
 
   @override
   String get settingsAutoInstallOff =>
@@ -1126,7 +1167,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get settingsDynosFolder => 'Carpeta DynOS';
+  String get settingsDynosFolder => 'Carpeta de DynOS y controles táctiles';
 
   @override
   String get settingsSelectDynosFolder => 'Seleccionar carpeta DynOS';
@@ -1141,7 +1182,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsDynosFolderSelected =>
-      'Carpeta DynOS seleccionada. Los packs se instalarán aquí.';
+      'Carpeta de DynOS y controles táctiles seleccionada. Ambos tipos de contenido se instalarán aquí.';
 
   @override
   String get settingsClearDynosFolderTitle => '¿LIMPIAR CARPETA DYNOS?';
@@ -1904,6 +1945,47 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get detailInstalling => 'Instalando...';
 
   @override
+  String get detailDynosFolderNotSelected =>
+      'Carpeta de DynOS y controles táctiles no seleccionada';
+
+  @override
+  String get detailDynosFolderBody =>
+      'Selecciona la carpeta compartida de DynOS y controles táctiles en Ajustes → Integración del Juego antes de instalar este contenido.';
+
+  @override
+  String get detailInstallDownloadedTitle =>
+      '¿Instalar el contenido descargado?';
+
+  @override
+  String detailInstallDownloadedBody(String name) {
+    return '$name terminó de descargarse. ¿Quieres instalarlo ahora en la carpeta de DynOS y controles táctiles?';
+  }
+
+  @override
+  String get detailInstallNow => 'Instalar ahora';
+
+  @override
+  String get detailKeepDownload => 'Ahora no';
+
+  @override
+  String detailDownloadedNotInstalled(String name) {
+    return 'Descargado, pero no instalado: $name';
+  }
+
+  @override
+  String detailInstallQueued(String name) {
+    return 'Descarga e instalación iniciadas: $name';
+  }
+
+  @override
+  String get detailContentUnavailable =>
+      'Esta descarga ya no está disponible (404). Es posible que el enlace haya sido eliminado o cambiado.';
+
+  @override
+  String get detailFriendlyDownloadError =>
+      'No se pudo completar la descarga. Comprueba tu conexión e inténtalo de nuevo.';
+
+  @override
   String get detailScreenshots => 'Capturas';
 
   @override
@@ -2089,7 +2171,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get settingsAutoInstallOn =>
-      'Los mods se instalarán automáticamente en la carpeta del juego';
+      'Las descargas se instalarán automáticamente en la carpeta del juego configurada';
 
   @override
   String get settingsAutoInstallOff =>
@@ -2356,7 +2438,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   }
 
   @override
-  String get settingsDynosFolder => 'Carpeta DynOS';
+  String get settingsDynosFolder => 'Carpeta de DynOS y controles táctiles';
 
   @override
   String get settingsSelectDynosFolder => 'Seleccionar carpeta DynOS';
@@ -2371,7 +2453,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get settingsDynosFolderSelected =>
-      'Carpeta DynOS seleccionada. Los packs se instalarán aquí.';
+      'Carpeta de DynOS y controles táctiles seleccionada. Ambos tipos de contenido se instalarán aquí.';
 
   @override
   String get settingsClearDynosFolderTitle => '¿LIMPIAR CARPETA DYNOS?';

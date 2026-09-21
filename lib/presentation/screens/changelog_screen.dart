@@ -35,17 +35,14 @@ class ChangelogScreen extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
           sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, i) {
-                final version = _kVersions[i];
-                final isLatest = i == 0;
-                return Padding(
-                  padding: EdgeInsets.only(top: i > 0 ? 12 : 0),
-                  child: _VersionCard(version: version, isLatest: isLatest),
-                );
-              },
-              childCount: _kVersions.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, i) {
+              final version = _kVersions[i];
+              final isLatest = i == 0;
+              return Padding(
+                padding: EdgeInsets.only(top: i > 0 ? 12 : 0),
+                child: _VersionCard(version: version, isLatest: isLatest),
+              );
+            }, childCount: _kVersions.length),
           ),
         ),
       ],
@@ -104,7 +101,9 @@ class _VersionCardState extends State<_VersionCard>
     final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
 
-    final tagLabel = widget.version.tag == 'Latest' ? l10n.changelogLatest : widget.version.tag;
+    final tagLabel = widget.version.tag == 'Latest'
+        ? l10n.changelogLatest
+        : widget.version.tag;
 
     return Container(
       decoration: BoxDecoration(
@@ -149,10 +148,7 @@ class _VersionCardState extends State<_VersionCard>
                           ],
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          widget.version.date,
-                          style: retro.body(size: 11),
-                        ),
+                        Text(widget.version.date, style: retro.body(size: 11)),
                       ],
                     ),
                   ),
@@ -352,6 +348,9 @@ const _kVersions = <_VersionData>[
       _ChangeGroupData(
         type: _ChangeType.improved,
         items: [
+          'DynOS and Touch Controls now follow the global auto-install setting consistently: automatic mode uses the shared background pipeline, while manual mode asks before installing a completed download.',
+          'Broken Touch Controls and DynOS links now show a friendly unavailable/download error while keeping technical details available through the copy action.',
+          'Settings now identifies the shared destination as the DynOS and Touch Controls folder, making it clear that both content types are installed there.',
           'Notification IDs derived from mod name hash — two simultaneous downloads no longer overwrite each other\'s progress notifications.',
           'Floating overlay fully localized: search hint, error toasts, status labels, cancel text, and empty/error states now translated in all 5 supported languages (EN, ES, ES-419, PT, PT-BR).',
           'Floating overlay toggle in Settings also localized with new ARB keys.',
@@ -363,6 +362,8 @@ const _kVersions = <_VersionData>[
       _ChangeGroupData(
         type: _ChangeType.fixed,
         items: [
+          'DynOS and Touch Controls previously installed files even when auto-install was disabled; downloads now remain uninstalled unless the user confirms installation.',
+          'Touch Controls could report success when no DynOS destination existed even though nothing had been copied; success is now shown only after a confirmed installation.',
           'Cancel button in the overlay was silently ignored — now correctly cancels WorkManager jobs via cancelAllWorkByTag.',
           'Silent ZIP corruption when SAF permission was revoked mid-extraction — createFile returning null now throws SecurityException caught by existing handler with user-actionable "re-select folder" message.',
           'Silent stream subscription death in overlay bridge — all FloatyChatheads.shareData calls now wrapped in try/catch to prevent a single PlatformException from permanently killing the stream listener.',
@@ -468,9 +469,7 @@ const _kVersions = <_VersionData>[
     groups: [
       _ChangeGroupData(
         type: _ChangeType.improved,
-        items: [
-          'New app icon — concept by Retired64, adapted by □●AGS4●□.',
-        ],
+        items: ['New app icon — concept by Retired64, adapted by □●AGS4●□.'],
       ),
       _ChangeGroupData(
         type: _ChangeType.fixed,

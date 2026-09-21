@@ -666,6 +666,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailInstalling => 'Installing...';
 
   @override
+  String get detailDynosFolderNotSelected =>
+      'DynOS and Touch Controls folder not selected';
+
+  @override
+  String get detailDynosFolderBody =>
+      'Select the shared DynOS and Touch Controls folder in Settings → Game Integration before installing this content.';
+
+  @override
+  String get detailInstallDownloadedTitle => 'Install downloaded content?';
+
+  @override
+  String detailInstallDownloadedBody(String name) {
+    return '$name has finished downloading. Install it in the DynOS and Touch Controls folder now?';
+  }
+
+  @override
+  String get detailInstallNow => 'Install now';
+
+  @override
+  String get detailKeepDownload => 'Not now';
+
+  @override
+  String detailDownloadedNotInstalled(String name) {
+    return 'Downloaded, but not installed: $name';
+  }
+
+  @override
+  String detailInstallQueued(String name) {
+    return 'Download and installation started: $name';
+  }
+
+  @override
+  String get detailContentUnavailable =>
+      'This download is no longer available (404). The link may have been removed or changed.';
+
+  @override
+  String get detailFriendlyDownloadError =>
+      'The download could not be completed. Check your connection and try again.';
+
+  @override
   String get detailScreenshots => 'Screenshots';
 
   @override
@@ -849,7 +889,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsAutoInstallOn =>
-      'Mods will be automatically installed to the game folder';
+      'Downloads will be installed automatically in their configured game folder';
 
   @override
   String get settingsAutoInstallOff => 'You will be asked after each download';
@@ -1114,7 +1154,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsDynosFolder => 'DynOS folder';
+  String get settingsDynosFolder => 'DynOS and Touch Controls folder';
 
   @override
   String get settingsSelectDynosFolder => 'Select DynOS folder';
@@ -1128,7 +1168,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDynosFolderSelected =>
-      'DynOS folder selected. Packs will be installed here.';
+      'DynOS and Touch Controls folder selected. Both content types will be installed here.';
 
   @override
   String get settingsClearDynosFolderTitle => 'CLEAR DYNOS FOLDER?';

@@ -43,6 +43,8 @@
 - [x] ZIP, 7z and standalone file handling exists.
 - [x] GitHub Release URL resolution and OTA update flow exist.
 - [x] The floating overlay and main-engine bridge exist.
+- [x] DynOS and Touch Controls share one destination and respect the global auto-install preference in the drawer flow.
+- [x] DynOS and Touch Controls use friendly download errors while retaining copyable technical details.
 - [x] `flutter analyze lib` completed with no issues on 2026-09-20.
 - [ ] Verify every item above at runtime on a clean physical device.
 
@@ -312,6 +314,7 @@ Use this section as the checklist is executed.
 | 2026-09-20 | Toolchain | Repository declares Flutter 3.41.6; audit host reported 3.38.7 | Must choose and align |
 | 2026-09-20 | Tests | No `test/` or `integration_test/` suite exists | Open |
 | 2026-09-20 | Release plan | Publish current 1.7.0 as a GitHub pre-release after P0 gates | Decided |
+| 2026-09-20 | DynOS / Touch Controls | Unified automatic WorkManager flow, manual post-download confirmation, shared-folder wording, background card progress and friendly 404 handling; the DynOS-targeted OMM sibling was aligned too | Implemented; runtime test pending |
 
 ## Notes
 

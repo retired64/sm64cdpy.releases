@@ -670,6 +670,46 @@ class AppLocalizationsPt extends AppLocalizations {
   String get detailInstalling => 'Instalando...';
 
   @override
+  String get detailDynosFolderNotSelected =>
+      'Pasta de DynOS e controles de toque não selecionada';
+
+  @override
+  String get detailDynosFolderBody =>
+      'Selecione a pasta compartilhada de DynOS e controles de toque em Configurações → Integração com o Jogo antes de instalar este conteúdo.';
+
+  @override
+  String get detailInstallDownloadedTitle => 'Instalar o conteúdo baixado?';
+
+  @override
+  String detailInstallDownloadedBody(String name) {
+    return 'O download de $name terminou. Deseja instalá-lo agora na pasta de DynOS e controles de toque?';
+  }
+
+  @override
+  String get detailInstallNow => 'Instalar agora';
+
+  @override
+  String get detailKeepDownload => 'Agora não';
+
+  @override
+  String detailDownloadedNotInstalled(String name) {
+    return 'Baixado, mas não instalado: $name';
+  }
+
+  @override
+  String detailInstallQueued(String name) {
+    return 'Download e instalação iniciados: $name';
+  }
+
+  @override
+  String get detailContentUnavailable =>
+      'Este download não está mais disponível (404). O link pode ter sido removido ou alterado.';
+
+  @override
+  String get detailFriendlyDownloadError =>
+      'Não foi possível concluir o download. Verifique sua conexão e tente novamente.';
+
+  @override
   String get detailScreenshots => 'Capturas de Tela';
 
   @override
@@ -853,7 +893,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsAutoInstallOn =>
-      'Os mods serão instalados automaticamente na pasta do jogo';
+      'Os downloads serão instalados automaticamente na pasta do jogo configurada';
 
   @override
   String get settingsAutoInstallOff =>
@@ -1118,7 +1158,7 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get settingsDynosFolder => 'Pasta DynOS';
+  String get settingsDynosFolder => 'Pasta de DynOS e controles de toque';
 
   @override
   String get settingsSelectDynosFolder => 'Selecionar pasta DynOS';
@@ -1133,7 +1173,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsDynosFolderSelected =>
-      'Pasta DynOS selecionada. Os pacotes serão instalados aqui.';
+      'Pasta de DynOS e controles de toque selecionada. Os dois tipos de conteúdo serão instalados aqui.';
 
   @override
   String get settingsClearDynosFolderTitle => 'LIMPAR PASTA DYNOS?';
@@ -1892,6 +1932,46 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get detailInstalling => 'Instalando...';
 
   @override
+  String get detailDynosFolderNotSelected =>
+      'Pasta de DynOS e controles de toque não selecionada';
+
+  @override
+  String get detailDynosFolderBody =>
+      'Selecione a pasta compartilhada de DynOS e controles de toque em Configurações → Integração com o Jogo antes de instalar este conteúdo.';
+
+  @override
+  String get detailInstallDownloadedTitle => 'Instalar o conteúdo baixado?';
+
+  @override
+  String detailInstallDownloadedBody(String name) {
+    return 'O download de $name terminou. Deseja instalá-lo agora na pasta de DynOS e controles de toque?';
+  }
+
+  @override
+  String get detailInstallNow => 'Instalar agora';
+
+  @override
+  String get detailKeepDownload => 'Agora não';
+
+  @override
+  String detailDownloadedNotInstalled(String name) {
+    return 'Baixado, mas não instalado: $name';
+  }
+
+  @override
+  String detailInstallQueued(String name) {
+    return 'Download e instalação iniciados: $name';
+  }
+
+  @override
+  String get detailContentUnavailable =>
+      'Este download não está mais disponível (404). O link pode ter sido removido ou alterado.';
+
+  @override
+  String get detailFriendlyDownloadError =>
+      'Não foi possível concluir o download. Verifique sua conexão e tente novamente.';
+
+  @override
   String get detailScreenshots => 'Capturas de Tela';
 
   @override
@@ -2075,7 +2155,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsAutoInstallOn =>
-      'Os mods serão instalados automaticamente na pasta do jogo';
+      'Os downloads serão instalados automaticamente na pasta do jogo configurada';
 
   @override
   String get settingsAutoInstallOff =>
@@ -2340,7 +2420,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
-  String get settingsDynosFolder => 'Pasta DynOS';
+  String get settingsDynosFolder => 'Pasta de DynOS e controles de toque';
 
   @override
   String get settingsSelectDynosFolder => 'Selecionar pasta DynOS';
@@ -2355,7 +2435,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsDynosFolderSelected =>
-      'Pasta DynOS selecionada. Os pacotes serão instalados aqui.';
+      'Pasta de DynOS e controles de toque selecionada. Os dois tipos de conteúdo serão instalados aqui.';
 
   @override
   String get settingsClearDynosFolderTitle => 'LIMPAR PASTA DYNOS?';

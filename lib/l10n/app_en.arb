@@ -862,6 +862,25 @@
   "@detailInstalling": {
     "description": "Detail screen message during installation step"
   },
+  "detailDynosFolderNotSelected": "DynOS and Touch Controls folder not selected",
+  "detailDynosFolderBody": "Select the shared DynOS and Touch Controls folder in Settings → Game Integration before installing this content.",
+  "detailInstallDownloadedTitle": "Install downloaded content?",
+  "detailInstallDownloadedBody": "{name} has finished downloading. Install it in the DynOS and Touch Controls folder now?",
+  "@detailInstallDownloadedBody": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "detailInstallNow": "Install now",
+  "detailKeepDownload": "Not now",
+  "detailDownloadedNotInstalled": "Downloaded, but not installed: {name}",
+  "@detailDownloadedNotInstalled": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "detailInstallQueued": "Download and installation started: {name}",
+  "@detailInstallQueued": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "detailContentUnavailable": "This download is no longer available (404). The link may have been removed or changed.",
+  "detailFriendlyDownloadError": "The download could not be completed. Check your connection and try again.",
   "detailScreenshots": "Screenshots",
   "@detailScreenshots": {
     "description": "Detail screen section title for screenshots gallery"
@@ -1099,7 +1118,7 @@
   "@settingsAutoInstall": {
     "description": "Settings screen label for auto-install toggle"
   },
-  "settingsAutoInstallOn": "Mods will be automatically installed to the game folder",
+  "settingsAutoInstallOn": "Downloads will be installed automatically in their configured game folder",
   "@settingsAutoInstallOn": {
     "description": "Settings screen message when auto-install is on"
   },
@@ -1440,7 +1459,7 @@
     }
   },
 
-  "settingsDynosFolder": "DynOS folder",
+  "settingsDynosFolder": "DynOS and Touch Controls folder",
   "@settingsDynosFolder": {
     "description": "Settings tile label for the DynOS folder picker"
   },
@@ -1456,7 +1475,7 @@
   "@settingsDynosFolderDesc": {
     "description": "Description subtitle on the DynOS folder settings tile"
   },
-  "settingsDynosFolderSelected": "DynOS folder selected. Packs will be installed here.",
+  "settingsDynosFolderSelected": "DynOS and Touch Controls folder selected. Both content types will be installed here.",
   "@settingsDynosFolderSelected": {
     "description": "Snackbar message shown after selecting the DynOS folder"
   },

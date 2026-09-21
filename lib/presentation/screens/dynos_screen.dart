@@ -10,13 +10,17 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/dynos_entity.dart';
 import '../providers/extra_providers.dart';
+import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
+import '../../services/background_install_service.dart';
+import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
+import '../widgets/dynos_install_flow.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -158,6 +162,9 @@ class _DynosCardState extends ConsumerState<DynosCard>
   bool _downloading = false;
   double _progress = 0.0;
 
+  String get _operationName =>
+      sanitizeModTitle('dynos-${widget.mod.id}-${widget.mod.title}');
+
   @override
   void initState() {
     super.initState();
@@ -199,7 +206,9 @@ class _DynosCardState extends ConsumerState<DynosCard>
     final isNowFav = ref.read(dynosFavouritesProvider).contains(widget.mod.id);
     AppSnackbar.info(
       context,
-      message: isNowFav ? AppLocalizations.of(context).sharedAddedToFavorites : AppLocalizations.of(context).sharedRemovedFromFavorites,
+      message: isNowFav
+          ? AppLocalizations.of(context).sharedAddedToFavorites
+          : AppLocalizations.of(context).sharedRemovedFromFavorites,
       duration: const Duration(seconds: 1),
     );
   }
@@ -219,15 +228,21 @@ class _DynosCardState extends ConsumerState<DynosCard>
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            title: Text(AppLocalizations.of(context).detailNotificationsNeeded,
-                style: TextStyle(color: RetroTheme.of(ctx).ink)),
-            content: Text(AppLocalizations.of(context).detailNotificationsBody,
-                style: TextStyle(color: RetroTheme.of(ctx).inkDim)),
+            title: Text(
+              AppLocalizations.of(context).detailNotificationsNeeded,
+              style: TextStyle(color: RetroTheme.of(ctx).ink),
+            ),
+            content: Text(
+              AppLocalizations.of(context).detailNotificationsBody,
+              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(AppLocalizations.of(context).detailNotNow,
-                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+                child: Text(
+                  AppLocalizations.of(context).detailNotNow,
+                  style: TextStyle(color: RetroTheme.of(ctx).ink),
+                ),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -237,131 +252,178 @@ class _DynosCardState extends ConsumerState<DynosCard>
           ),
         );
         if (proceed != true && mounted) {
-          AppSnackbar.info(context, message: AppLocalizations.of(context).detailNotificationsSkipped);
+          AppSnackbar.info(
+            context,
+            message: AppLocalizations.of(context).detailNotificationsSkipped,
+          );
         }
       }
       if (!mounted) return;
       final granted = await installer.requestNotificationPermission();
       if (!granted && mounted) {
-        AppSnackbar.info(context, message: AppLocalizations.of(context).detailNotificationsDisabled);
-      }
-    }
-
-    final url = widget.mod.downloadUrl;
-    final rawName = widget.mod.title
-        .toLowerCase()
-        .replaceAll(RegExp(r"[^\w\s\-]"), '')
-        .replaceAll(RegExp(r'\s+'), '-')
-        .replaceAll(RegExp(r'-{2,}'), '-')
-        .trim();
-    final urlExt = url.split('.').last.split('?').first.toLowerCase();
-    final ext = (urlExt == 'lua' || urlExt == 'zip') ? urlExt : 'zip';
-    final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.$ext';
-
-    final hasDynosFolder = await installer.isDynosDirectorySelected();
-
-    if (!hasDynosFolder) {
-      final prefs = await SharedPreferences.getInstance();
-      final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
-      if (autoInstall && mounted) {
-        final goToSettings = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            icon: Icon(Icons.folder_open_rounded, color: RetroTheme.of(ctx).accent, size: 28),
-            title: Text(AppLocalizations.of(context).detailModsFolderNotSelected,
-                style: TextStyle(color: RetroTheme.of(ctx).ink)),
-            content: Text('You need to select a DynOS folder before installing DynOS packs.\n\nGo to Settings → Game Integration to select it.',
-                style: TextStyle(color: RetroTheme.of(ctx).inkDim)),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(AppLocalizations.of(context).detailCancel,
-                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                icon: const Icon(Icons.settings, size: 16),
-                label: Text(AppLocalizations.of(context).detailGoToSettings),
-              ),
-            ],
-          ),
+        AppSnackbar.info(
+          context,
+          message: AppLocalizations.of(context).detailNotificationsDisabled,
         );
-        if (goToSettings == true && mounted) {
-          GoRouter.of(context).push('/settings');
-        }
-        return;
       }
-      if (!mounted) return;
-      await _downloadSimple(url, filename, installer, rawName);
-      return;
     }
 
     final prefs = await SharedPreferences.getInstance();
     final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+    final hasDynosFolder = await installer.isDynosDirectorySelected();
+    final resolvedUrl = await DownloadUrlResolver.instance.resolveDownloadUrl(
+      widget.mod.downloadUrl,
+    );
+    final filename = await DownloadUrlResolver.instance.resolveDownloadFilename(
+      resolvedUrl,
+      widget.mod.title,
+    );
+    final operationName = _operationName;
 
-    if (autoInstall && mounted) {
-      // Auto-install to dynos folder — download only, no background install for dynos yet
+    if (autoInstall) {
+      if (!hasDynosFolder) {
+        if (!mounted) return;
+        final goToSettings = await showDynosFolderRequiredDialog(context);
+        if (goToSettings && mounted) GoRouter.of(context).push('/settings');
+        return;
+      }
+
+      final chain = await BackgroundInstallService.instance
+          .startDownloadAndInstall(
+            url: resolvedUrl,
+            modName: operationName,
+            fileName: filename,
+            displayTitle: widget.mod.title,
+            installDestination: 'dynos',
+          );
       if (!mounted) return;
-      await _downloadSimple(url, filename, installer, rawName);
-    } else if (mounted) {
-      await _downloadSimple(url, filename, installer, rawName);
+      if (chain == null) {
+        AppSnackbar.error(
+          context,
+          message: AppLocalizations.of(context).detailInstallFailed,
+        );
+      } else {
+        AppSnackbar.info(
+          context,
+          message: AppLocalizations.of(context).detailInstallQueued(filename),
+        );
+      }
+      return;
     }
+
+    if (!mounted) return;
+    await _downloadForConfirmation(
+      resolvedUrl,
+      filename,
+      installer,
+      operationName,
+    );
   }
 
-  Future<void> _downloadSimple(String url, String filename, ModInstaller installer, String rawName) async {
+  Future<void> _downloadForConfirmation(
+    String url,
+    String filename,
+    ModInstaller installer,
+    String operationName,
+  ) async {
     if (!mounted) return;
-    setState(() { _downloading = true; _progress = 0.0; });
+    setState(() {
+      _downloading = true;
+      _progress = 0.0;
+    });
     try {
       await FileDownloader.downloadFile(
-        url: url, name: filename,
+        url: url,
+        name: filename,
         onProgress: (name, progress) {
           if (!mounted) return;
-          final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          final normalized = (progress > 1.0 ? progress / 100.0 : progress)
+              .clamp(0.0, 1.0);
           setState(() => _progress = normalized);
         },
         onDownloadCompleted: (path) async {
           if (!mounted) return;
           final l10n = AppLocalizations.of(context);
           final savedName = path.split('/').last;
-          String? copyError;
-          try {
-            if (await installer.isDynosDirectorySelected()) {
-              if (savedName.toLowerCase().endsWith('.zip')) {
-                final result = await installer.installModToDynosFolder(zipPath: path, modName: rawName);
-                if (!result.success) copyError = result.errorMessage ?? l10n.detailInstallFailed;
-              } else {
-                await installer.copyFileToDynosFolder(sourcePath: path, targetName: savedName);
-              }
-            }
-          } catch (e) {
-            copyError = e.toString();
-          }
+          setState(() {
+            _downloading = false;
+            _progress = 0.0;
+          });
+          final installNow = await confirmDynosInstall(
+            context,
+            name: widget.mod.title,
+          );
           if (!mounted) return;
-          setState(() { _downloading = false; _progress = 0.0; });
-          if (copyError != null) {
-            AppSnackbar.errorWithCopy(context,
-                message: copyError,
-                copyText: copyError);
+          if (!installNow) {
+            AppSnackbar.success(
+              context,
+              message: l10n.detailDownloadedNotInstalled(savedName),
+            );
+            return;
+          }
+
+          if (!await installer.isDynosDirectorySelected()) {
+            if (!mounted) return;
+            final goToSettings = await showDynosFolderRequiredDialog(context);
+            if (goToSettings && mounted) GoRouter.of(context).push('/settings');
+            if (mounted) {
+              AppSnackbar.info(
+                context,
+                message: l10n.detailDownloadedNotInstalled(savedName),
+              );
+            }
+            return;
+          }
+
+          if (mounted) setState(() => _downloading = true);
+          final installError = await installDownloadedDynosFile(
+            installer: installer,
+            path: path,
+            modName: operationName,
+            fallbackError: l10n.detailInstallFailed,
+          );
+          if (!mounted) return;
+          setState(() {
+            _downloading = false;
+            _progress = 0.0;
+          });
+          if (installError != null) {
+            AppSnackbar.errorWithCopy(
+              context,
+              message: installError,
+              copyText: installError,
+            );
           } else {
-            AppSnackbar.success(context,
-                message: AppLocalizations.of(context).detailSavedToFolder(savedName, AppLocalizations.of(context).navDynOS));
+            AppSnackbar.success(
+              context,
+              message: l10n.detailSavedToFolder(savedName, l10n.navDynOS),
+            );
           }
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          setState(() { _downloading = false; _progress = 0.0; });
-          AppSnackbar.errorWithCopy(context,
-              message: AppLocalizations.of(context).detailError(error),
-              copyText: error);
+          setState(() {
+            _downloading = false;
+            _progress = 0.0;
+          });
+          AppSnackbar.errorWithCopy(
+            context,
+            message: friendlyDownloadError(AppLocalizations.of(context), error),
+            copyText: error,
+          );
         },
       );
     } catch (e) {
       if (!mounted) return;
-      setState(() { _downloading = false; _progress = 0.0; });
-      AppSnackbar.errorWithCopy(context,
-          message: AppLocalizations.of(context).detailError(e.toString()),
-          copyText: e.toString());
+      setState(() {
+        _downloading = false;
+        _progress = 0.0;
+      });
+      AppSnackbar.errorWithCopy(
+        context,
+        message: friendlyDownloadError(AppLocalizations.of(context), e),
+        copyText: e.toString(),
+      );
     }
   }
 
@@ -377,10 +439,24 @@ class _DynosCardState extends ConsumerState<DynosCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(dynosFavouritesProvider).contains(widget.mod.id);
+    final backgroundInfo = ref.watch(bgInstallStateProvider)[_operationName];
+    final backgroundBusy =
+        backgroundInfo != null &&
+        (backgroundInfo.status == BgInstallStatus.downloading ||
+            backgroundInfo.status == BgInstallStatus.installing);
+    final isDownloading = _downloading || backgroundBusy;
+    final backgroundProgress = backgroundInfo?.downloadProgress != null
+        ? backgroundInfo!.downloadProgress! / 100
+        : (backgroundInfo?.current != null &&
+              backgroundInfo?.total != null &&
+              backgroundInfo!.total! > 0)
+        ? backgroundInfo.current! / backgroundInfo.total!
+        : null;
+    final visibleProgress = _downloading ? _progress : backgroundProgress;
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
-            ? 140.0
-            : 180.0;
+        ? 140.0
+        : 180.0;
 
     // Solo hay banner de imagen si el mod trae una URL real.
     final hasImage =
@@ -551,7 +627,9 @@ class _DynosCardState extends ConsumerState<DynosCard>
                         child: Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(
-                            _isExpanded ? l10n.sharedShowLess : l10n.sharedReadMore,
+                            _isExpanded
+                                ? l10n.sharedShowLess
+                                : l10n.sharedReadMore,
                             style: TextStyle(
                               color: retro.blue,
                               fontSize: 11,
@@ -576,7 +654,9 @@ class _DynosCardState extends ConsumerState<DynosCard>
                           color: retro.blue,
                         ),
                         label: Text(
-                          isFav ? l10n.sharedRemoveFromFavorites : l10n.sharedAddToFavorites,
+                          isFav
+                              ? l10n.sharedRemoveFromFavorites
+                              : l10n.sharedAddToFavorites,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
@@ -603,12 +683,12 @@ class _DynosCardState extends ConsumerState<DynosCard>
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(color: retro.border, width: 3),
-                          boxShadow: _downloading
+                          boxShadow: isDownloading
                               ? []
                               : retro.hardShadow(dx: 4, dy: 4),
                         ),
                         child: ElevatedButton(
-                          onPressed: _downloading ? null : _download,
+                          onPressed: isDownloading ? null : _download,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.blue,
                             foregroundColor: Colors.white,
@@ -620,29 +700,47 @@ class _DynosCardState extends ConsumerState<DynosCard>
                               borderRadius: BorderRadius.zero,
                             ),
                           ),
-                          child: _downloading
+                          child: isDownloading
                               ? Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     LinearProgressIndicator(
-                                      value: _progress,
-                                      backgroundColor: retro.inkOnAccent.withValues(alpha: 0.25),
+                                      value: visibleProgress,
+                                      backgroundColor: retro.inkOnAccent
+                                          .withValues(alpha: 0.25),
                                       color: retro.inkOnAccent,
                                       minHeight: 4,
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '${(_progress * 100).toStringAsFixed(0)}%',
-                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: retro.inkOnAccent),
+                                      visibleProgress == null
+                                          ? l10n.detailInstalling
+                                          : '${(visibleProgress * 100).toStringAsFixed(0)}%',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w900,
+                                        color: retro.inkOnAccent,
+                                      ),
                                     ),
                                   ],
                                 )
                               : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.download_rounded, color: retro.inkOnAccent, size: 20),
+                                    Icon(
+                                      Icons.download_rounded,
+                                      color: retro.inkOnAccent,
+                                      size: 20,
+                                    ),
                                     const SizedBox(width: 10),
-                                    Text(l10n.sharedDownload, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: retro.inkOnAccent)),
+                                    Text(
+                                      l10n.sharedDownload,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w900,
+                                        color: retro.inkOnAccent,
+                                      ),
+                                    ),
                                   ],
                                 ),
                         ),

@@ -1236,6 +1236,66 @@ abstract class AppLocalizations {
   /// **'Installing...'**
   String get detailInstalling;
 
+  /// No description provided for @detailDynosFolderNotSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'DynOS and Touch Controls folder not selected'**
+  String get detailDynosFolderNotSelected;
+
+  /// No description provided for @detailDynosFolderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the shared DynOS and Touch Controls folder in Settings → Game Integration before installing this content.'**
+  String get detailDynosFolderBody;
+
+  /// No description provided for @detailInstallDownloadedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Install downloaded content?'**
+  String get detailInstallDownloadedTitle;
+
+  /// No description provided for @detailInstallDownloadedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has finished downloading. Install it in the DynOS and Touch Controls folder now?'**
+  String detailInstallDownloadedBody(String name);
+
+  /// No description provided for @detailInstallNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Install now'**
+  String get detailInstallNow;
+
+  /// No description provided for @detailKeepDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get detailKeepDownload;
+
+  /// No description provided for @detailDownloadedNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded, but not installed: {name}'**
+  String detailDownloadedNotInstalled(String name);
+
+  /// No description provided for @detailInstallQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Download and installation started: {name}'**
+  String detailInstallQueued(String name);
+
+  /// No description provided for @detailContentUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This download is no longer available (404). The link may have been removed or changed.'**
+  String get detailContentUnavailable;
+
+  /// No description provided for @detailFriendlyDownloadError.
+  ///
+  /// In en, this message translates to:
+  /// **'The download could not be completed. Check your connection and try again.'**
+  String get detailFriendlyDownloadError;
+
   /// Detail screen section title for screenshots gallery
   ///
   /// In en, this message translates to:
@@ -1557,7 +1617,7 @@ abstract class AppLocalizations {
   /// Settings screen message when auto-install is on
   ///
   /// In en, this message translates to:
-  /// **'Mods will be automatically installed to the game folder'**
+  /// **'Downloads will be installed automatically in their configured game folder'**
   String get settingsAutoInstallOn;
 
   /// Settings screen message when auto-install is off
@@ -2037,7 +2097,7 @@ abstract class AppLocalizations {
   /// Settings tile label for the DynOS folder picker
   ///
   /// In en, this message translates to:
-  /// **'DynOS folder'**
+  /// **'DynOS and Touch Controls folder'**
   String get settingsDynosFolder;
 
   /// Prompt text to select the DynOS packs directory
@@ -2061,7 +2121,7 @@ abstract class AppLocalizations {
   /// Snackbar message shown after selecting the DynOS folder
   ///
   /// In en, this message translates to:
-  /// **'DynOS folder selected. Packs will be installed here.'**
+  /// **'DynOS and Touch Controls folder selected. Both content types will be installed here.'**
   String get settingsDynosFolderSelected;
 
   /// Confirmation dialog title before clearing the DynOS folder selection
