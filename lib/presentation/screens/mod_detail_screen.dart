@@ -2172,42 +2172,64 @@ class _ReleaseDates extends StatelessWidget {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        borderRadius: RetroTheme.radius,
-        border: Border.all(color: retro.border.withValues(alpha: 0.35)),
-      ),
-      child: Row(
-        children: [
-          if (firstRelease != null)
-            Expanded(
-              child: _DateCell(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textScale = MediaQuery.textScalerOf(context).scale(1);
+        final useStackedLayout = constraints.maxWidth < 360 || textScale > 1.15;
+
+        final firstCell = firstRelease == null
+            ? null
+            : _DateCell(
                 icon: Icons.rocket_launch_rounded,
                 label: l10n.detailFirstRelease,
                 date: firstRelease!,
                 retro: retro,
-              ),
-            ),
-          if (firstRelease != null && lastUpdate != null)
-            Container(
-              width: 1,
-              height: 36,
-              color: retro.border.withValues(alpha: 0.3),
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-            ),
-          if (lastUpdate != null)
-            Expanded(
-              child: _DateCell(
+                boxed: useStackedLayout,
+              );
+        final lastCell = lastUpdate == null
+            ? null
+            : _DateCell(
                 icon: Icons.update_rounded,
                 label: l10n.detailLastUpdate,
                 date: lastUpdate!,
                 retro: retro,
-              ),
-            ),
-        ],
-      ),
+                boxed: useStackedLayout,
+              );
+
+        if (useStackedLayout) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ?firstCell,
+              if (firstCell != null && lastCell != null)
+                const SizedBox(height: 8),
+              ?lastCell,
+            ],
+          );
+        }
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: retro.surface,
+            borderRadius: RetroTheme.radius,
+            border: Border.all(color: retro.border.withValues(alpha: 0.35)),
+          ),
+          child: Row(
+            children: [
+              if (firstCell != null) Expanded(child: firstCell),
+              if (firstCell != null && lastCell != null)
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: retro.border.withValues(alpha: 0.3),
+                  margin: const EdgeInsets.symmetric(horizontal: 12),
+                ),
+              if (lastCell != null) Expanded(child: lastCell),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -2218,17 +2240,19 @@ class _DateCell extends StatelessWidget {
     required this.label,
     required this.date,
     required this.retro,
+    this.boxed = false,
   });
 
   final IconData icon;
   final String label;
   final String date;
   final RetroTheme retro;
+  final bool boxed;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Row(
+    final content = Row(
       children: [
         Container(
           width: 32,
@@ -2240,30 +2264,47 @@ class _DateCell extends StatelessWidget {
           child: Icon(icon, size: 14, color: retro.inkDim),
         ),
         const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: retro.inkDim,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: retro.inkDim,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              formatDate(date, locale: l10n.localeName) ?? date,
-              style: TextStyle(
-                color: retro.ink,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+              const SizedBox(height: 2),
+              Text(
+                formatDate(date, locale: l10n.localeName) ?? date,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: retro.ink,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
+    );
+
+    if (!boxed) return content;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: retro.surface,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.border.withValues(alpha: 0.35)),
+      ),
+      child: content,
     );
   }
 }

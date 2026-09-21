@@ -333,7 +333,7 @@ class _ChangeGroupData {
 const _kVersions = <_VersionData>[
   _VersionData(
     version: '1.7.0',
-    date: 'August 2026',
+    date: 'September 2026',
     tag: 'Latest',
     groups: [
       _ChangeGroupData(
