@@ -3,7 +3,17 @@ app-flotante.md
 source-code.zip
 run-actions-github
 coopdx64.py
-docs/
+# Historical/reference material in docs/ is intentionally ignored. Keep the
+# small canonical documentation set versioned.
+docs/*
+!docs/README.md
+!docs/ARCHITECTURE.md
+!docs/DOWNLOADS_AND_OVERLAY.md
+!docs/PROJECT_STATUS.md
+!docs/CI_CD.md
+!docs/archive/
+docs/archive/*
+!docs/archive/README.md
 migrations-checklist.md
 guia-migracion-desing-screens.md
 foreground-services.md

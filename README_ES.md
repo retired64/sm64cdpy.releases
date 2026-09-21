@@ -1,108 +1,93 @@
-# SM64CoopDX Mods Browser
+# SM64CDPY — Navegador de mods para SM64CoopDX
 
-[English](README.md) · **Español** · [Português](README_PT.md)
+[English](README.md) · **Español** · [Português do Brasil](README_PT.md)
 
-> Una app personal para Android que te permite explorar, buscar y gestionar mods de **SM64 Coop Deluxe** — no oficial, hecha con ❤️ para la comunidad.
+SM64CDPY es un navegador y gestor de mods no oficial, orientado a Android, para
+**SM64CoopDX**. Reúne el descubrimiento, descarga e instalación de contenido,
+la integración con el juego y la actualización del catálogo en una interfaz
+móvil.
 
-![App sm64cdpy android](assets/app.webp)
+El proyecto está retomando mantenimiento. Su versión declarada es **1.7.0+18**.
+La burbuja flotante de la línea 1.7 está implementada, pero sigue siendo
+experimental hasta completar pruebas en dispositivos Android reales.
 
-<div align="center">
+![SM64CDPY](assets/app.webp)
 
-| Inicio | Inicio (Claro) | Popular | Popular (Claro) | Menú |
-|:---:|:---:|:---:|:---:|:---:|
-| <img src="ss/inicio.webp" width="150"> | <img src="ss/inicio-modoClaro.webp" width="150"> | <img src="ss/popular.webp" width="150"> | <img src="ss/popular-modoClaro.webp" width="150"> | <img src="ss/menu.webp" width="150"> |
+## Para qué sirve y cuál es su potencial
 
-| Mod. Detalles | Mod. Detalles (Claro) | Mod. Detalles (Claro 2) | Ajustes | Ajustes (Claro) |
-|:---:|:---:|:---:|:---:|:---:|
-| <img src="ss/mod-detalles.webp" width="150"> | <img src="ss/mod-detalles-modoClaro.webp" width="150"> | <img src="ss/mod-detalles-modoClaro2.webp" width="150"> | <img src="ss/ajustes.webp" width="150"> | <img src="ss/ajustes-modoClaro.webp" width="150"> |
+La aplicación busca ser un compañero móvil completo para SM64CoopDX, no solo
+una lista de mods. Puede unir el proceso de encontrar contenido, descargarlo y
+colocarlo en una carpeta accesible para el juego, mostrando el progreso de
+descarga e instalación.
 
-</div>
+- Catálogo comunitario con búsqueda, categorías, filtros y favoritos.
+- Gestor de descargas en segundo plano con progreso, cancelación y
+  notificaciones.
+- Instalador de ZIP, 7z y archivos sueltos mediante Storage Access Framework.
+- Burbuja flotante accesible mientras el juego está abierto.
+- Actualización de catálogos y de APK por arquitectura del dispositivo.
+- Base para mejorar la instalación automática, recuperación tras cierres de
+  Android y una experiencia más directa dentro del juego.
 
-![Platform](https://img.shields.io/badge/Platform-Android-green)
-![Flutter](https://img.shields.io/badge/Flutter-3.41.6-blue)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-![Min SDK](https://img.shields.io/badge/Min%20Android-7.0-orange)
+## Funciones actuales
 
----
+- Catálogo principal, contenido popular y destacado.
+- Secciones VIP, DynOS, controles táctiles, OMM Rebirth y Render96.
+- Importación y exportación de favoritos en JSON.
+- Interfaz en inglés, español y portugués brasileño; temas claro y oscuro.
+- Actualización manual de bases JSON remotas.
+- Selección persistente de carpetas con el selector de Android.
+- Resolución de enlaces, incluidos assets de GitHub Releases.
+- Descarga e instalación mediante WorkManager con progreso y cancelación.
+- Copia de archivos sueltos y extracción de ZIP/7z.
+- Lanzamiento de SM64CoopDX y actualización OTA de la aplicación.
 
-## Inicio rápido
+## Burbuja flotante
+
+El overlay utiliza un segundo engine de Flutter sobre el juego. Permite buscar,
+solicitar o cancelar descargas y recibir el progreso reenviado por el engine
+principal. Como ambos engines no comparten memoria y Android puede recrear el
+proceso, todavía requiere pruebas de concurrencia, permisos y recuperación en
+Android 7–16.
+
+## Estado actual
+
+- Catálogo, descargas, instalación y actualización OTA: implementados.
+- Overlay: implementado, en estabilización y pruebas.
+- Plataforma soportada: Android 7.0 o superior (`minSdk 24`).
+- Pruebas automatizadas: todavía no hay suites `test/` o `integration_test/`.
+
+Consulta [Estado y próximos pasos](docs/PROJECT_STATUS.md).
+
+## Compilación rápida
+
+Requiere Flutter **3.41.6**, Dart **3.11.x**, Java 17 y Android SDK.
 
 ```bash
-# 1. Clonar el repositorio
-git clone --depth 1 https://github.com/retired64/sm64cdpy.releases.git
-cd sm64cdpy.releases
-
-# 2. Instalar dependencias
 flutter pub get
-
-# 3. Compilar (arm64 — recomendado para la mayoría de dispositivos)
-flutter build apk --release --target-platform android-arm64
-
-# Salida: build/app/outputs/flutter-apk/app-release.apk
+flutter analyze --no-fatal-infos
+flutter build apk --release --target-platform android-arm64 --split-per-abi
 ```
 
-## 📥 Descarga
+La guía completa está en [BUILDING.md](BUILDING.md) y el índice técnico en
+[docs/README.md](docs/README.md).
 
-Ve a la sección de [**Releases**](https://github.com/retired64/sm64cdpy.releases/releases) y descarga el archivo `.apk` más reciente.
+## Repositorios locales de referencia
 
-> **Solo Android.** Mínimo Android 7.0 (Marshmallow).
+Komi Store, Floating Apps y otros repositorios clonados son ejemplos locales
+para investigación. Están excluidos mediante `.gitignore`, no forman parte de
+la aplicación y no deben subirse a GitHub ni entrar en el análisis o build del
+proyecto. Solo están representados en el
+[archivo documental](docs/archive/README.md).
 
----
+## Privacidad y aviso
 
-## ¿Qué es esto?
+La app no tiene cuentas, publicidad ni telemetría. Usa Internet para catálogos,
+descargas, actualizaciones y recursos externos; favoritos y preferencias se
+guardan localmente.
 
-Es una app personal que hice para poder explorar y organizar los mods de SM64 Coop Deluxe desde mi celular, sin tener que abrir el navegador cada vez. Lee el catálogo público de mods sm64coopdx y lo presenta en una interfaz móvil limpia y rápida.
+Es un proyecto personal no oficial, sin afiliación con SM64CoopDX, Nintendo o
+los autores de mods. El contenido pertenece a sus respectivos creadores.
 
-No es oficial. No tiene ninguna relación con el equipo de SM64CoopDX ni con los creadores de mods. Es solo un proyecto personal.
-
-## ¿Qué puedes hacer con ella?
-
-- **Explorar el catálogo completo** — todos los mods del sitio oficial, en un solo lugar.
-- **Buscar al instante** — encuentra cualquier mod por nombre, autor o etiqueta mientras escribes.
-- **Filtrar por categoría** — Personajes, Modos de Juego, ROM Hacks, Visuales, Audio, Utilidades, y más.
-- **Ordenar mods** — por calificación, descargas o los actualizados más recientemente.
-- **Ver lo más popular** — una pantalla dedicada con los mods más descargados, del mayor al menor.
-- **Guardar favoritos** — toca el corazón en cualquier mod para guardarlo. Tu lista se conserva aunque cierres la app.
-- **Exportar e importar favoritos** — guarda tu lista como archivo `.json` y restáurala cuando quieras, incluso después de reinstalar o cambiar de dispositivo.
-- **Pantalla de detalle del mod** — descripción completa, capturas, etiquetas, estadísticas, historial de actualizaciones y enlaces de descarga directa.
-- **Actualizar la base de datos** — toca *Reload database* en Ajustes para descargar la lista de mods más reciente directamente desde este repositorio. Sin necesidad de reinstalar.
-- **Tema claro y oscuro** — elige cómo se ve la app o deja que siga la configuración de tu sistema.
-- **Bilingüe** — la pantalla de Aviso Legal está disponible en inglés y español con un botón de traducción.
-
-## Cómo instalar
-
-1. Descarga el `.apk` desde la página de [Releases](https://github.com/retired64/sm64cdpy.releases/releases).
-2. En tu teléfono Android, abre el archivo. Si te pide permiso para instalar desde fuentes desconocidas, acéptalo — esto es normal para apps que no vienen de la Play Store.
-3. Instala y abre. Eso es todo.
-
-## Cómo actualizar la lista de mods
-
-La app viene con una copia local de la base de datos. Cuando se agregan mods nuevos al sitio oficial, puedes actualizar tu lista sin reinstalar:
-
-1. Abre la app → toca el **ícono de menú** (arriba a la izquierda) → **Settings**.
-2. Toca **Reload database**.
-3. La app descarga la lista más reciente desde este repositorio y actualiza todo automáticamente.
-
-## ¿Es segura?
-
-Sí. La app no recopila ningún dato, no requiere cuenta, no muestra publicidad y no se comunica con ningún servidor fuera de este repositorio de GitHub (y solo cuando tú tocas Reload manualmente). Tus favoritos se guardan localmente en tu dispositivo.
-
----
-
-## ⚠️ Aviso Legal
-
-Esta app es un **proyecto personal no oficial**. No está asociada, respaldada ni aprobada por los desarrolladores de SM64CoopDX, Super Mario 64, Nintendo, ni por ningún creador de mods. Los nombres, imágenes y contenido mostrado pertenecen a sus respectivos autores.
-
----
-
-## 📬 Contacto
-
-¿Encontraste un error o tienes una sugerencia? Escríbeme por Discord.
-
-[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/thuhUH2WNX)
-
----
-
-<div align="center">
-  <sub>Hecha con ❤️ para uso personal · Sin afiliación oficial · <a href="https://github.com/retired64/sm64cdpy.releases/releases">Descargar el APK más reciente</a></sub>
-</div>
+[Releases](https://github.com/retired64/sm64cdpy.releases/releases) ·
+[Discord](https://discord.com/invite/thuhUH2WNX)
