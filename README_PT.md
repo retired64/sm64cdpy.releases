@@ -60,7 +60,7 @@ Consulte [Estado e próximos passos](docs/PROJECT_STATUS.md).
 
 ## Compilação rápida
 
-Requer Flutter **3.41.6**, Dart **3.11.x**, Java 17 e Android SDK.
+Requer Flutter **3.41.7**, Dart **3.11.x**, Java 17 e Android SDK.
 
 ```bash
 flutter pub get

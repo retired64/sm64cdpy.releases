@@ -16,7 +16,7 @@ devices and across process recreation scenarios.
 ![SM64CDPY](assets/app.webp)
 
 ![Platform](https://img.shields.io/badge/platform-Android-green)
-![Flutter](https://img.shields.io/badge/Flutter-3.41.6-blue)
+![Flutter](https://img.shields.io/badge/Flutter-3.41.7-blue)
 ![Min Android](https://img.shields.io/badge/minSdk-24%20(Android%207.0)-orange)
 ![License](https://img.shields.io/badge/license-MIT-yellow)
 
@@ -93,7 +93,7 @@ implementation work.
 
 ## Quick start
 
-Requirements: Flutter **3.41.6**, Dart **3.11.x**, Java 17, and the Android SDK.
+Requirements: Flutter **3.41.7**, Dart **3.11.x**, Java 17, and the Android SDK.
 A release build also requires `android/key.properties` and its matching
 keystore.
 

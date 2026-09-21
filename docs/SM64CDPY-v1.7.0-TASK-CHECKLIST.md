@@ -55,7 +55,7 @@ These items should be completed before publishing `v1.7.0` as a GitHub pre-relea
 ### Reproducible environment
 
 - [ ] Decide the single Flutter version for local development and GitHub Actions.
-  - Repository/workflows currently declare Flutter `3.41.6`.
+  - Repository/workflows now declare Flutter `3.41.7`.
   - The environment used during the documentation audit reported Flutter `3.38.7`.
   - Do not change CI blindly: first run a clean successful build with the chosen version.
 - [ ] Pin the chosen Flutter version consistently in both workflows and documentation.
@@ -311,7 +311,7 @@ Use this section as the checklist is executed.
 |---|---|---|---|
 | 2026-09-20 | Static analysis | `flutter analyze lib` passed with no issues | Confirmed |
 | 2026-09-20 | Local workspace | Root analysis includes ignored example repositories and reports unrelated issues | Use canonical source scope |
-| 2026-09-20 | Toolchain | Repository declares Flutter 3.41.6; audit host reported 3.38.7 | Must choose and align |
+| 2026-09-20 | Toolchain | Repository and workflows aligned to Flutter 3.41.7 | Updated; verify the release build in GitHub Actions |
 | 2026-09-20 | Tests | No `test/` or `integration_test/` suite exists | Open |
 | 2026-09-20 | Release plan | Publish current 1.7.0 as a GitHub pre-release after P0 gates | Decided |
 | 2026-09-20 | DynOS / Touch Controls | Unified automatic WorkManager flow, manual post-download confirmation, shared-folder wording, background card progress and friendly 404 handling; the DynOS-targeted OMM sibling was aligned too | Implemented; runtime test pending |

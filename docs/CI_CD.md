@@ -7,7 +7,7 @@ Revisado el 2026-09-20.
 ### `buildAndroid-testing.yml`
 
 - Se ejecuta manualmente o con un push cuyo mensaje contiene `[testing]`.
-- Instala Java 17 y Flutter 3.41.6.
+- Instala Java 17 y Flutter 3.41.7.
 - Firma el APK con secretos, ejecuta `flutter analyze` y conserva el log.
 - Compila solo arm64 y publica un artifact durante 7 días.
 - No crea tag ni GitHub Release.
@@ -33,7 +33,7 @@ Revisado el 2026-09-20.
 
 ## Observaciones de auditoría
 
-- Los workflows están alineados con Java 17, Flutter 3.41.6 y los nombres de APK que consume la selección OTA.
+- Los workflows están alineados con Java 17, Flutter 3.41.7 y los nombres de APK que consume la selección OTA.
 - No hay suite de tests; ambos dependen de análisis estático y éxito del build.
 - El workflow de release dice que se debe subir `versionCode` si el tag existe, pero el tag solo usa `versionName`: para otro release hay que cambiar la parte anterior al `+` (y normalmente también incrementar el build number).
 - El release extrae el changelog con `grep`/`awk`; un cambio de formato en el archivo Dart puede producir notas genéricas aunque la compilación funcione.

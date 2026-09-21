@@ -16,6 +16,7 @@ import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
+import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/dynos_install_flow.dart';
@@ -157,6 +158,9 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   bool _downloading = false;
   double _progress = 0.0;
 
+  String get _operationName =>
+      sanitizeModTitle('omm-${widget.mod.id}-${widget.mod.title}');
+
   @override
   void initState() {
     super.initState();
@@ -273,9 +277,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
       url,
       widget.mod.title,
     );
-    final rawName = sanitizeModTitle(
-      'omm-${widget.mod.id}-${widget.mod.title}',
-    );
+    final rawName = _operationName;
 
     if (isDynosMod) {
       if (autoInstall) {
@@ -502,6 +504,19 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(ommFavouritesProvider).contains(widget.mod.id);
+    ref.listen<BgInstallInfo?>(
+      bgInstallStateProvider.select((state) => state[_operationName]),
+      (previous, next) {
+        final wasRunning =
+            previous?.status == BgInstallStatus.downloading ||
+            previous?.status == BgInstallStatus.installing;
+        if (wasRunning &&
+            next?.status == BgInstallStatus.completed &&
+            mounted) {
+          AppSnackbar.success(context, message: l10n.detailInstallComplete);
+        }
+      },
+    );
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
         ? 140.0
