@@ -11,6 +11,7 @@ docs/*
 !docs/DOWNLOADS_AND_OVERLAY.md
 !docs/PROJECT_STATUS.md
 !docs/CI_CD.md
+!docs/SM64CDPY-v1.7.0-TASK-CHECKLIST.md
 !docs/archive/
 docs/archive/*
 !docs/archive/README.md

@@ -7,6 +7,7 @@ Este directorio es el punto de entrada técnico del proyecto. Los documentos de 
 | [Arquitectura](ARCHITECTURE.md) | Componentes, engines, persistencia y flujo de datos | Vigente |
 | [Descargas y overlay](DOWNLOADS_AND_OVERLAY.md) | Flujo WorkManager/SAF, progreso y burbuja | Vigente |
 | [Estado del proyecto](PROJECT_STATUS.md) | Funciones, riesgos y próximos pasos | Vigente |
+| [Task Checklist v1.7.0](SM64CDPY-v1.7.0-TASK-CHECKLIST.md) | Plan incremental para estabilizar y publicar la pre-release | Activo |
 | [CI/CD](CI_CD.md) | Workflows, secretos y publicación | Vigente |
 | [Compilación](../BUILDING.md) | Entorno y comandos de build | Vigente |
 | [Archivo](archive/README.md) | Notas antiguas, referencias copiadas y prototipos | Histórico |

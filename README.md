@@ -116,6 +116,7 @@ The canonical documentation index is [docs/README.md](docs/README.md):
 - [Current architecture](docs/ARCHITECTURE.md)
 - [Downloads, installation, and overlay](docs/DOWNLOADS_AND_OVERLAY.md)
 - [Project status, risks, and next steps](docs/PROJECT_STATUS.md)
+- [SM64CDPY v1.7.0 task checklist](docs/SM64CDPY-v1.7.0-TASK-CHECKLIST.md)
 - [GitHub Actions and releases](docs/CI_CD.md)
 - [Local build guide](BUILDING.md)
 - [Archived documentation and local references](docs/archive/README.md)
