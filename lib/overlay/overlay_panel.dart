@@ -27,6 +27,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   final Map<String, String> _modStatus = {};
   final Map<String, int> _modProgress = {};
   final Map<String, Timer> _pendingTimers = {};
+  final Map<String, String> _activeOperationNames = {};
   final Set<String> _cancelledMods = {};
 
   final _searchCtrl = TextEditingController();
@@ -87,18 +88,73 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     }
   }
 
-  void _startDownload(OverlayModItem mod) {
-    if (mod.downloadUrls.isEmpty) return;
+  Future<void> _requestDownload(OverlayModItem mod) async {
+    if (mod.downloadOptions.isEmpty) return;
+    var option = mod.downloadOptions.first;
+    if (mod.downloadOptions.length > 1) {
+      final selected = await showDialog<OverlayDownloadOption>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          backgroundColor: _retro.surfaceAlt,
+          title: Text(
+            AppLocalizations.of(context).overlayChooseFile,
+            style: _retro.body(size: 13, weight: FontWeight.w800),
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 190),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: mod.downloadOptions.length,
+              itemBuilder: (context, index) {
+                final candidate = mod.downloadOptions[index];
+                final pathSegments =
+                    Uri.tryParse(candidate.url)?.pathSegments ?? const [];
+                final filename = candidate.filename.trim().isEmpty
+                    ? pathSegments.isNotEmpty
+                          ? pathSegments.last
+                          : AppLocalizations.of(
+                              context,
+                            ).overlayFileFallback(index + 1)
+                    : candidate.filename;
+                return ListTile(
+                  dense: true,
+                  leading: Icon(Icons.download, color: _retro.accent, size: 18),
+                  title: Text(
+                    filename,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: _retro.body(size: 10, weight: FontWeight.w700),
+                  ),
+                  onTap: () => Navigator.of(dialogContext).pop(candidate),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      if (selected == null || !mounted) return;
+      option = selected;
+    }
+    _startDownload(mod, option);
+  }
+
+  void _startDownload(OverlayModItem mod, OverlayDownloadOption option) {
     HapticFeedback.lightImpact();
     final title = mod.title;
+    final operationName = _operationName(mod, option);
 
-    setState(() => _modStatus[title] = 'connecting');
+    setState(() {
+      _modStatus[title] = 'connecting';
+      _activeOperationNames[title] = operationName;
+    });
 
     FloatyOverlay.shareData({
       'type': 'download_mod',
-      'url': mod.downloadUrls.first,
+      'url': option.url,
       'modTitle': title,
-      'operationName': _operationName(mod),
+      'versionLabel': option.versionLabel,
+      'operationName': operationName,
       'section': mod.section.name,
       'installDestination': mod.installDestination,
     });
@@ -107,7 +163,10 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     _pendingTimers[title] = Timer(_bridgeTimeout, () {
       if (!mounted) return;
       if (_modStatus[title] == 'connecting') {
-        setState(() => _modStatus.remove(title));
+        setState(() {
+          _modStatus.remove(title);
+          _activeOperationNames.remove(title);
+        });
         _showToast(AppLocalizations.of(context).overlayNoResponse);
       }
     });
@@ -126,7 +185,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     FloatyOverlay.shareData({
       'type': 'cancel_mod',
       'modTitle': title,
-      'operationName': _operationName(mod),
+      'operationName':
+          _activeOperationNames[title] ??
+          _operationName(mod, mod.downloadOptions.first),
     });
 
     // Evita que un evento de progreso en vuelo (emitido antes de que
@@ -141,9 +202,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     setState(() => _modStatus[title] = 'cancelling');
   }
 
-  String _operationName(OverlayModItem mod) {
+  String _operationName(OverlayModItem mod, OverlayDownloadOption option) {
     final raw = switch (mod.section) {
-      OverlaySection.all => 'mod-${mod.id}-primary',
+      OverlaySection.all => 'mod-${mod.id}-${option.fileKey}',
       OverlaySection.vip => 'vip-${mod.id}-${mod.title}',
       OverlaySection.dynos => 'dynos-${mod.id}-${mod.title}',
       OverlaySection.touchControls => 'touch-${mod.id}-${mod.title}',
@@ -198,9 +259,11 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       setState(() {
         _modStatus[modTitle] = mapped;
         if (progress != null) _modProgress[modTitle] = progress;
+        if (mapped == 'done') _activeOperationNames.remove(modTitle);
       });
 
       if (mapped == 'cancelled') {
+        _activeOperationNames.remove(modTitle);
         Future.delayed(const Duration(seconds: 3), () {
           if (mounted && _modStatus[modTitle] == 'cancelled') {
             setState(() {
@@ -220,6 +283,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       setState(() {
         _modStatus.remove(modTitle);
         _modProgress.remove(modTitle);
+        _activeOperationNames.remove(modTitle);
       });
       final message = switch (error) {
         'no_folder' => AppLocalizations.of(context).overlaySelectFolder,
@@ -351,7 +415,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
                         mod: mods[i],
                         status: _modStatus[mods[i].title],
                         progress: _modProgress[mods[i].title],
-                        onDownload: () => _startDownload(mods[i]),
+                        onDownload: () => unawaited(_requestDownload(mods[i])),
                         onCancel: () => _cancelDownload(mods[i]),
                       ),
                     );
@@ -623,7 +687,8 @@ class _ModTileState extends ConsumerState<_ModTile> {
   bool get _isCancelling => widget.status == 'cancelling';
   bool get _isActive =>
       _isConnecting || _isDownloading || _isInstalling || _isCancelling;
-  bool get _hasSingleUrl => widget.mod.downloadUrls.length == 1;
+  bool get _hasDownloads => widget.mod.downloadOptions.isNotEmpty;
+  bool get _hasMultipleFiles => widget.mod.downloadOptions.length > 1;
   bool get _isCancelled => widget.status == 'cancelled';
 
   Color get _statusColor {
@@ -657,9 +722,9 @@ class _ModTileState extends ConsumerState<_ModTile> {
               const SizedBox(width: 6),
               if (_isDone)
                 Icon(Icons.check_circle, size: 19, color: _statusColor)
-              else if (!_hasSingleUrl)
+              else if (!_hasDownloads)
                 Icon(
-                  Icons.list_alt,
+                  Icons.block,
                   size: 18,
                   color: _retro.inkDim.withValues(alpha: 0.5),
                 )
@@ -680,7 +745,7 @@ class _ModTileState extends ConsumerState<_ModTile> {
                 )
               else if (!_isActive)
                 _RoundIconButton(
-                  icon: Icons.download,
+                  icon: _hasMultipleFiles ? Icons.list_alt : Icons.download,
                   color: _retro.accent,
                   onTap: widget.onDownload,
                 )

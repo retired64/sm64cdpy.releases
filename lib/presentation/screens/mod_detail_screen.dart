@@ -14,6 +14,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/entities/mod_entity.dart';
+import '../../domain/entities/mod_version_resolver.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
@@ -667,7 +668,6 @@ class _VersionAccordion extends StatefulWidget {
 }
 
 class _VersionAccordionState extends State<_VersionAccordion> {
-  int? _expandedIndex;
   AppLocalizations? _l10n;
 
   @override
@@ -713,94 +713,123 @@ class _VersionAccordionState extends State<_VersionAccordion> {
   }
 
   Widget _buildVersionList(RetroTheme retro) {
+    final latest = resolveLatestDownloadableVersion(widget.versions);
+    if (latest == null) {
+      return Text(
+        _l10n!.detailNoDownloadFiles,
+        style: retro.body(size: 12, color: retro.inkDim),
+      );
+    }
+    final previous = widget.versions
+        .asMap()
+        .entries
+        .where(
+          (entry) =>
+              entry.key != latest.versionIndex &&
+              entry.value.files.any(
+                (file) => file.downloadUrl.trim().isNotEmpty,
+              ),
+        )
+        .toList(growable: false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionTitle(label: _l10n!.detailVersions(widget.versions.length)),
         const SizedBox(height: 10),
-        ...widget.versions.asMap().entries.map((entry) {
-          final idx = entry.key;
-          final v = entry.value;
-          final isExpanded = _expandedIndex == idx;
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            decoration: BoxDecoration(
-              color: retro.surfaceAlt,
-              borderRadius: RetroTheme.radius,
-              border: Border.all(color: retro.border.withValues(alpha: 0.4)),
+        Text(
+          _l10n!.detailLatestVersion,
+          style: retro.body(
+            size: 10,
+            weight: FontWeight.w800,
+            color: retro.accent,
+          ),
+        ),
+        const SizedBox(height: 6),
+        _VersionCard(
+          modId: widget.modId,
+          modTitle: widget.modTitle,
+          versionIndex: latest.versionIndex,
+          version: latest.version,
+          initiallyExpanded: true,
+          collapsible: false,
+        ),
+        if (previous.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _showVersionHistory(previous),
+              icon: const Icon(Icons.history_rounded, size: 18),
+              label: Text(_l10n!.detailViewPreviousVersions(previous.length)),
             ),
-            child: Column(
-              children: [
-                InkWell(
-                  borderRadius: RetroTheme.radius,
-                  onTap: () =>
-                      setState(() => _expandedIndex = isExpanded ? null : idx),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          isExpanded
-                              ? Icons.expand_less_rounded
-                              : Icons.expand_more_rounded,
-                          size: 20,
-                          color: retro.ink,
-                        ),
-                        const SizedBox(width: 8),
-                        RetroTag(
-                          retro: retro,
-                          label: v.version.isEmpty
-                              ? _l10n!.detailVersionFallback
-                              : v.version,
-                        ),
-                        const Spacer(),
-                        Text(
-                          v.releaseDate,
-                          style: retro.body(size: 11, color: retro.inkDim),
-                        ),
-                        if (v.downloads > 0) ...[
-                          const SizedBox(width: 12),
-                          Icon(
-                            Icons.download_rounded,
-                            size: 13,
-                            color: retro.accent,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            v.downloads.toString(),
-                            style: retro.body(
-                              size: 11,
-                              weight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                if (isExpanded)
-                  ...v.files.asMap().entries.map(
-                    (fileEntry) => Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-                      child: _PrimaryDownloadButton(
-                        url: fileEntry.value.downloadUrl,
-                        modId: widget.modId,
-                        fileKey: 'version-$idx-file-${fileEntry.key}',
-                        modTitle: widget.modTitle,
-                        filename: fileEntry.value.filename,
-                        retro: retro,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          );
-        }),
+          ),
+        ],
       ],
+    );
+  }
+
+  Future<void> _showVersionHistory(
+    List<MapEntry<int, ModVersionEntity>> previous,
+  ) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: RetroTheme.of(context).surface,
+      builder: (sheetContext) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.72,
+        minChildSize: 0.4,
+        maxChildSize: 0.94,
+        builder: (context, scrollController) => Column(
+          children: [
+            const SizedBox(height: 10),
+            Container(
+              width: 42,
+              height: 4,
+              decoration: BoxDecoration(
+                color: RetroTheme.of(context).inkDim.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 14, 8, 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _l10n!.detailPreviousVersions,
+                      style: RetroTheme.of(
+                        context,
+                      ).heading(size: 17, weight: FontWeight.w800),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(sheetContext).pop(),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                itemCount: previous.length,
+                itemBuilder: (context, index) {
+                  final entry = previous[index];
+                  return _VersionCard(
+                    modId: widget.modId,
+                    modTitle: widget.modTitle,
+                    versionIndex: entry.key,
+                    version: entry.value,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -816,6 +845,116 @@ class _VersionAccordionState extends State<_VersionAccordion> {
       debugPrint('_extractFilename: $e');
     }
     return url.split('/').last;
+  }
+}
+
+class _VersionCard extends StatefulWidget {
+  const _VersionCard({
+    required this.modId,
+    required this.modTitle,
+    required this.versionIndex,
+    required this.version,
+    this.initiallyExpanded = false,
+    this.collapsible = true,
+  });
+
+  final String modId;
+  final String modTitle;
+  final int versionIndex;
+  final ModVersionEntity version;
+  final bool initiallyExpanded;
+  final bool collapsible;
+
+  @override
+  State<_VersionCard> createState() => _VersionCardState();
+}
+
+class _VersionCardState extends State<_VersionCard> {
+  late bool _expanded = widget.initiallyExpanded;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final files = widget.version.files.asMap().entries.where(
+      (entry) => entry.value.downloadUrl.trim().isNotEmpty,
+    );
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: retro.surfaceAlt,
+        borderRadius: RetroTheme.radius,
+        border: Border.all(color: retro.border.withValues(alpha: 0.4)),
+      ),
+      child: Column(
+        children: [
+          InkWell(
+            borderRadius: RetroTheme.radius,
+            onTap: widget.collapsible
+                ? () => setState(() => _expanded = !_expanded)
+                : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: Row(
+                children: [
+                  if (widget.collapsible) ...[
+                    Icon(
+                      _expanded
+                          ? Icons.expand_less_rounded
+                          : Icons.expand_more_rounded,
+                      size: 20,
+                      color: retro.ink,
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  RetroTag(
+                    retro: retro,
+                    label: widget.version.version.isEmpty
+                        ? l10n.detailVersionFallback
+                        : widget.version.version,
+                  ),
+                  const Spacer(),
+                  Flexible(
+                    child: Text(
+                      widget.version.releaseDate,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: retro.body(size: 11, color: retro.inkDim),
+                    ),
+                  ),
+                  if (widget.version.downloads > 0) ...[
+                    const SizedBox(width: 10),
+                    Icon(Icons.download_rounded, size: 13, color: retro.accent),
+                    const SizedBox(width: 3),
+                    Text(
+                      widget.version.downloads.toString(),
+                      style: retro.body(size: 11, weight: FontWeight.w700),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          if (_expanded)
+            ...files.map(
+              (fileEntry) => Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+                child: _PrimaryDownloadButton(
+                  url: fileEntry.value.downloadUrl,
+                  modId: widget.modId,
+                  fileKey:
+                      'version-${widget.versionIndex}-file-${fileEntry.key}',
+                  modTitle: widget.modTitle,
+                  filename: fileEntry.value.filename,
+                  versionLabel: widget.version.version,
+                  retro: retro,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 
@@ -1231,6 +1370,7 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
     required this.modTitle,
     required this.retro,
     this.filename,
+    this.versionLabel,
   });
 
   final String url;
@@ -1239,6 +1379,7 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
   final String modTitle;
   final RetroTheme retro;
   final String? filename;
+  final String? versionLabel;
 
   @override
   ConsumerState<_PrimaryDownloadButton> createState() =>
@@ -1397,6 +1538,10 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             modName: modName,
             fileName: filename,
             displayTitle: widget.modTitle,
+            notificationTitle:
+                widget.versionLabel == null || widget.versionLabel!.isEmpty
+                ? widget.modTitle
+                : '${widget.modTitle} · ${widget.versionLabel}',
           );
       if (!mounted) return;
       if (chain != null) {

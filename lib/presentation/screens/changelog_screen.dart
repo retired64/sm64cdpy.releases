@@ -361,6 +361,9 @@ const _kVersions = <_VersionData>[
           'A global operation coordinator reports completion, failure, or cancellation even after navigating away from the card that started the download.',
           'Canonical operation keys now include section, content ID, and file ID; overlay and main screens address the same chain without title collisions.',
           'Render96, VIP, OMM, regular mods, DynOS, and Touch Controls now consume the same shared background state instead of declaring success when work is only queued.',
+          'Multi-version mods now resolve one canonical latest downloadable release in both the detail screen and floating overlay; multiple files in that release remain explicitly selectable.',
+          'The latest release stays visible in mod details while older releases move to an on-demand, virtualized bottom sheet instead of filling the entire screen.',
+          'Completed installations now use a separate visible Android notification channel, a custom status icon, and the readable mod title.',
         ],
       ),
       _ChangeGroupData(

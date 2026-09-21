@@ -687,6 +687,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val url = call.argument<String>("url")
         val modName = call.argument<String>("modName")
+        val displayTitle = call.argument<String>("displayTitle") ?: modName
+        val notificationTitle = call.argument<String>("notificationTitle") ?: displayTitle
         val fileName = call.argument<String>("fileName")
 
         if (url == null || modName == null || fileName == null) {
@@ -700,6 +702,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             .setInputData(workDataOf(
                 ModDownloadWorker.KEY_URL to url,
                 ModDownloadWorker.KEY_MOD_NAME to modName,
+                ModDownloadWorker.KEY_DISPLAY_TITLE to displayTitle,
                 ModDownloadWorker.KEY_FILE_NAME to fileName
             ))
             // Antes no había Constraints: sin internet, el Worker arrancaba
@@ -720,6 +723,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         val installRequest = OneTimeWorkRequestBuilder<ModInstallWorker>()
             .setInputData(workDataOf(
                 ModInstallWorker.KEY_MOD_NAME to modName,
+                ModInstallWorker.KEY_DISPLAY_TITLE to displayTitle,
+                ModInstallWorker.KEY_NOTIFICATION_TITLE to notificationTitle,
                 ModInstallWorker.KEY_TREE_URI to treeUriString
             ))
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)

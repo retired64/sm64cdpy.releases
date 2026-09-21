@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/entities/dynos_entity.dart';
 import '../domain/entities/mod_entity.dart';
+import '../domain/entities/mod_version_resolver.dart';
 import '../domain/entities/omm_rebirth_entity.dart';
 import '../domain/entities/render96_entity.dart';
 import '../domain/entities/touch_control_entity.dart';
@@ -26,7 +27,7 @@ class OverlayModItem {
   const OverlayModItem({
     required this.id,
     required this.title,
-    required this.downloadUrls,
+    required this.downloadOptions,
     this.imageUrl,
     required this.section,
     required this.installDestination,
@@ -34,24 +35,52 @@ class OverlayModItem {
 
   final String id;
   final String title;
-  final List<String> downloadUrls;
+  final List<OverlayDownloadOption> downloadOptions;
   final String? imageUrl;
   final OverlaySection section;
   final String installDestination;
 
-  factory OverlayModItem.fromModEntity(ModEntity m) => OverlayModItem(
-    id: m.id,
-    title: m.title,
-    downloadUrls: m.downloadUrls,
-    imageUrl: m.imageUrl,
-    section: OverlaySection.all,
-    installDestination: 'mods',
-  );
+  factory OverlayModItem.fromModEntity(ModEntity m) {
+    final latest = resolveLatestDownloadableVersion(m.versions);
+    final options = latest != null
+        ? latest.files
+              .map(
+                (file) => OverlayDownloadOption(
+                  url: file.file.downloadUrl,
+                  filename: file.file.filename,
+                  fileKey: file.operationFileKey,
+                  versionLabel: latest.version.version,
+                ),
+              )
+              .toList(growable: false)
+        : m.downloadUrls
+              .where((url) => url.trim().isNotEmpty)
+              .toList(growable: false)
+              .asMap()
+              .entries
+              .map(
+                (entry) => OverlayDownloadOption(
+                  url: entry.value,
+                  filename: '',
+                  fileKey: entry.key == 0 ? 'primary' : 'file-${entry.key}',
+                  versionLabel: m.version,
+                ),
+              )
+              .toList(growable: false);
+    return OverlayModItem(
+      id: m.id,
+      title: m.title,
+      downloadOptions: options,
+      imageUrl: m.imageUrl,
+      section: OverlaySection.all,
+      installDestination: 'mods',
+    );
+  }
 
   factory OverlayModItem.fromVip(VipModEntity m) => OverlayModItem(
     id: m.id,
     title: m.title,
-    downloadUrls: [m.downloadUrl],
+    downloadOptions: [OverlayDownloadOption.primary(m.downloadUrl, m.version)],
     imageUrl: m.imageUrl,
     section: OverlaySection.vip,
     installDestination: 'mods',
@@ -60,7 +89,7 @@ class OverlayModItem {
   factory OverlayModItem.fromDynos(DynosEntity m) => OverlayModItem(
     id: m.id,
     title: m.title,
-    downloadUrls: [m.downloadUrl],
+    downloadOptions: [OverlayDownloadOption.primary(m.downloadUrl, m.version)],
     imageUrl: m.imageUrl,
     section: OverlaySection.dynos,
     installDestination: 'dynos',
@@ -69,7 +98,7 @@ class OverlayModItem {
   factory OverlayModItem.fromTouch(TouchControlEntity m) => OverlayModItem(
     id: m.id,
     title: m.title,
-    downloadUrls: [m.downloadUrl],
+    downloadOptions: [OverlayDownloadOption.primary(m.downloadUrl, '')],
     imageUrl: m.imageUrl,
     section: OverlaySection.touchControls,
     installDestination: 'dynos',
@@ -78,7 +107,7 @@ class OverlayModItem {
   factory OverlayModItem.fromOmm(OmmRebirthEntity m) => OverlayModItem(
     id: m.id,
     title: m.title,
-    downloadUrls: [m.downloadUrl],
+    downloadOptions: [OverlayDownloadOption.primary(m.downloadUrl, '')],
     imageUrl: m.imageUrl,
     section: OverlaySection.omm,
     installDestination: m.id == 'cappy-bros-dynos' ? 'dynos' : 'mods',
@@ -87,11 +116,35 @@ class OverlayModItem {
   factory OverlayModItem.fromRender96(Render96Entity m) => OverlayModItem(
     id: m.id,
     title: m.name,
-    downloadUrls: [m.downloadUrl],
+    downloadOptions: [
+      OverlayDownloadOption.primary(m.downloadUrl, m.version ?? ''),
+    ],
     imageUrl: m.imageUrl,
     section: OverlaySection.render96,
     installDestination: m.installDestination,
   );
+}
+
+class OverlayDownloadOption {
+  const OverlayDownloadOption({
+    required this.url,
+    required this.filename,
+    required this.fileKey,
+    required this.versionLabel,
+  });
+
+  factory OverlayDownloadOption.primary(String url, String versionLabel) =>
+      OverlayDownloadOption(
+        url: url,
+        filename: '',
+        fileKey: 'primary',
+        versionLabel: versionLabel,
+      );
+
+  final String url;
+  final String filename;
+  final String fileKey;
+  final String versionLabel;
 }
 
 final overlaySectionProvider =

@@ -75,9 +75,20 @@ class MainActivity : FlutterActivity() {
                 setShowBadge(false)
             }
 
+            val resultChannel = NotificationChannel(
+                ModInstallWorker.RESULT_CHANNEL_ID,
+                getString(R.string.channel_mod_results),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = getString(R.string.channel_mod_results_desc)
+                setShowBadge(true)
+                enableVibration(true)
+            }
+
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(installChannel)
             manager.createNotificationChannel(downloadChannel)
+            manager.createNotificationChannel(resultChannel)
         }
     }
 }

@@ -1362,6 +1362,30 @@ abstract class AppLocalizations {
   /// **'v?'**
   String get detailVersionFallback;
 
+  /// No description provided for @detailLatestVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'LATEST VERSION'**
+  String get detailLatestVersion;
+
+  /// No description provided for @detailPreviousVersions.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous versions'**
+  String get detailPreviousVersions;
+
+  /// No description provided for @detailViewPreviousVersions.
+  ///
+  /// In en, this message translates to:
+  /// **'View {count} previous versions'**
+  String detailViewPreviousVersions(int count);
+
+  /// No description provided for @detailNoDownloadFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'No downloadable files are available.'**
+  String get detailNoDownloadFiles;
+
   /// Detail screen label for initial release date
   ///
   /// In en, this message translates to:
@@ -2183,6 +2207,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SEARCH...'**
   String get overlaySearchHint;
+
+  /// No description provided for @overlayChooseFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get overlayChooseFile;
+
+  /// No description provided for @overlayFileFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'File {number}'**
+  String overlayFileFallback(int number);
 
   /// Toast shown in the floating overlay when the download bridge does not respond
   ///

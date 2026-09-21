@@ -743,6 +743,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailVersionFallback => 'v?';
 
   @override
+  String get detailLatestVersion => 'LATEST VERSION';
+
+  @override
+  String get detailPreviousVersions => 'Previous versions';
+
+  @override
+  String detailViewPreviousVersions(int count) {
+    return 'View $count previous versions';
+  }
+
+  @override
+  String get detailNoDownloadFiles => 'No downloadable files are available.';
+
+  @override
   String get detailFirstRelease => 'First Release';
 
   @override
@@ -1200,6 +1214,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overlaySearchHint => 'SEARCH...';
+
+  @override
+  String get overlayChooseFile => 'Choose a file';
+
+  @override
+  String overlayFileFallback(int number) {
+    return 'File $number';
+  }
 
   @override
   String get overlayNoResponse =>

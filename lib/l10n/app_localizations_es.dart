@@ -752,6 +752,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailVersionFallback => 'v?';
 
   @override
+  String get detailLatestVersion => 'ÚLTIMA VERSIÓN';
+
+  @override
+  String get detailPreviousVersions => 'Versiones anteriores';
+
+  @override
+  String detailViewPreviousVersions(int count) {
+    return 'Ver $count versiones anteriores';
+  }
+
+  @override
+  String get detailNoDownloadFiles =>
+      'No hay archivos disponibles para descargar.';
+
+  @override
   String get detailFirstRelease => 'Primer Lanzamiento';
 
   @override
@@ -1215,6 +1230,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get overlaySearchHint => 'BUSCAR...';
+
+  @override
+  String get overlayChooseFile => 'Elige un archivo';
+
+  @override
+  String overlayFileFallback(int number) {
+    return 'Archivo $number';
+  }
 
   @override
   String get overlayNoResponse =>
@@ -2026,6 +2049,21 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get detailVersionFallback => 'v?';
 
   @override
+  String get detailLatestVersion => 'ÚLTIMA VERSIÓN';
+
+  @override
+  String get detailPreviousVersions => 'Versiones anteriores';
+
+  @override
+  String detailViewPreviousVersions(int count) {
+    return 'Ver $count versiones anteriores';
+  }
+
+  @override
+  String get detailNoDownloadFiles =>
+      'No hay archivos disponibles para descargar.';
+
+  @override
   String get detailFirstRelease => 'Primer Lanzamiento';
 
   @override
@@ -2489,6 +2527,14 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get overlaySearchHint => 'BUSCAR...';
+
+  @override
+  String get overlayChooseFile => 'Elige un archivo';
+
+  @override
+  String overlayFileFallback(int number) {
+    return 'Archivo $number';
+  }
 
   @override
   String get overlayNoResponse =>

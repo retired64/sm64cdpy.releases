@@ -24,6 +24,7 @@ class ModDownloadWorker(
     companion object {
         const val KEY_URL = "url"
         const val KEY_MOD_NAME = "modName"
+        const val KEY_DISPLAY_TITLE = "displayTitle"
         const val KEY_FILE_NAME = "fileName"
         const val DOWNLOAD_CHANNEL_ID = "mod_download_channel"
         const val PROGRESS = "progress"
@@ -55,7 +56,9 @@ class ModDownloadWorker(
 
     override suspend fun doWork(): Result {
         val url = inputData.getString(KEY_URL) ?: return Result.failure()
-        val modName = inputData.getString(KEY_MOD_NAME) ?: return Result.failure()
+        val modName = inputData.getString(KEY_DISPLAY_TITLE)
+            ?: inputData.getString(KEY_MOD_NAME)
+            ?: return Result.failure()
         val fileName = inputData.getString(KEY_FILE_NAME) ?: return Result.failure()
 
         // Cada Worker descarga en su propio directorio. Dos assets llamados
@@ -234,7 +237,7 @@ class ModDownloadWorker(
             .createCancelPendingIntent(id)
 
         return NotificationCompat.Builder(applicationContext, DOWNLOAD_CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setSmallIcon(R.drawable.ic_stat_sm64cdpy)
             .setContentTitle(title)
             .setContentText(text)
             .setOngoing(true)

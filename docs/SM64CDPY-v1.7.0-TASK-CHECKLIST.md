@@ -43,6 +43,9 @@
 - [x] ZIP, 7z and standalone file handling exists.
 - [x] GitHub Release URL resolution and OTA update flow exist.
 - [x] The floating overlay and main-engine bridge exist.
+- [x] Main catalogue detail and overlay share one canonical latest-version resolver.
+- [x] Previous releases open progressively in a virtualized Android bottom sheet.
+- [x] Installation results use a visible notification channel and a user-facing mod title.
 - [x] DynOS and Touch Controls share one destination and respect the global auto-install preference in the drawer flow.
 - [x] DynOS and Touch Controls use friendly download errors while retaining copyable technical details.
 - [x] `flutter analyze lib` completed with no issues on 2026-09-20.
@@ -101,6 +104,8 @@ Result:
 - [ ] Download and copy one standalone Lua or other supported file.
 - [ ] Progress changes during both download and extraction.
 - [ ] Completion is shown in the app and notification.
+- [ ] Confirm the completion notification produces a heads-up alert when the new results channel is enabled.
+- [ ] Confirm the notification shows the mod title instead of its internal operation key.
 - [ ] Cancel an active download from the app.
 - [ ] Cancel an active operation from the notification.
 - [ ] Confirm a failed URL produces an error instead of an infinite spinner.
@@ -114,6 +119,8 @@ Result:
 - [ ] Open and close the bubble repeatedly without freezing either engine.
 - [ ] Search and change overlay sections.
 - [ ] Start a download from the overlay.
+- [ ] Confirm a multi-version mod downloads its newest available release from the overlay.
+- [ ] Confirm a newest release with multiple files opens the compact file selector.
 - [ ] Receive live download and installation progress in the overlay.
 - [ ] Cancel from the overlay.
 - [ ] Close and reopen the panel during an active operation.

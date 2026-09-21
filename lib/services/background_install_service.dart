@@ -352,6 +352,7 @@ class BackgroundInstallService {
     required String modName,
     required String fileName,
     String? displayTitle,
+    String? notificationTitle,
     String installDestination = 'mods',
   }) async {
     final installer = ModInstaller();
@@ -361,6 +362,8 @@ class BackgroundInstallService {
         url: url,
         modName: modName,
         fileName: fileName,
+        displayTitle: displayTitle,
+        notificationTitle: notificationTitle,
         installDestination: installDestination,
       );
 

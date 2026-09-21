@@ -59,6 +59,7 @@ class OverlayBridge {
     final url = data['url'] as String?;
     final modTitle = data['modTitle'] as String?;
     final operationName = data['operationName'] as String?;
+    final versionLabel = data['versionLabel'] as String?;
     final destination = data['installDestination'] as String? ?? 'mods';
     if (url == null || modTitle == null) return;
 
@@ -91,6 +92,9 @@ class OverlayBridge {
           modName: modName,
           fileName: filename,
           displayTitle: modTitle,
+          notificationTitle: versionLabel == null || versionLabel.trim().isEmpty
+              ? modTitle
+              : '$modTitle · $versionLabel',
           installDestination: destination,
         );
     if (chain == null) _sendError(modTitle, 'start_failed');

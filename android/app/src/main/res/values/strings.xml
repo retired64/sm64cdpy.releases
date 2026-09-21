@@ -4,6 +4,8 @@
   <string name="channel_mod_installation_desc">Shows progress while installing mods</string>
   <string name="channel_mod_download">Mod Downloads</string>
   <string name="channel_mod_download_desc">Shows progress while downloading mods</string>
+  <string name="channel_mod_results">Installation results</string>
+  <string name="channel_mod_results_desc">Alerts when a mod installation finishes</string>
   <string name="notification_downloading_mod">Downloading mod</string>
   <string name="notification_downloading_progress">%1$s · %2$d%%</string>
   <string name="notification_preparing_download">Preparing download…</string>

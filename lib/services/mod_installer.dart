@@ -173,6 +173,8 @@ class ModInstaller {
     required String url,
     required String modName,
     required String fileName,
+    String? displayTitle,
+    String? notificationTitle,
     String installDestination = 'mods',
   }) async {
     try {
@@ -180,6 +182,8 @@ class ModInstaller {
         'url': url,
         'modName': modName,
         'fileName': fileName,
+        'displayTitle': displayTitle ?? modName,
+        'notificationTitle': notificationTitle ?? displayTitle ?? modName,
         'installDestination': installDestination,
       });
       if (result == null) return null;

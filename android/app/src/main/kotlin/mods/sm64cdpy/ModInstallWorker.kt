@@ -1,7 +1,9 @@
 package mods.sm64cdpy
 
 import android.app.Notification
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.provider.DocumentsContract
@@ -23,8 +25,11 @@ class ModInstallWorker(
     companion object {
         const val KEY_ZIP_PATH = "zipPath"
         const val KEY_MOD_NAME = "modName"
+        const val KEY_DISPLAY_TITLE = "displayTitle"
+        const val KEY_NOTIFICATION_TITLE = "notificationTitle"
         const val KEY_TREE_URI = "treeUri"
         const val CHANNEL_ID = "mod_install_channel"
+        const val RESULT_CHANNEL_ID = "mod_install_results_v1"
 
         const val PROGRESS_CURRENT = "current"
         const val PROGRESS_TOTAL = "total"
@@ -52,6 +57,8 @@ class ModInstallWorker(
     override suspend fun doWork(): Result {
         val zipPath = inputData.getString(KEY_ZIP_PATH) ?: return Result.failure()
         val modName = inputData.getString(KEY_MOD_NAME) ?: return Result.failure()
+        val displayTitle = inputData.getString(KEY_DISPLAY_TITLE) ?: modName
+        val notificationTitle = inputData.getString(KEY_NOTIFICATION_TITLE) ?: displayTitle
         val treeUriString = inputData.getString(KEY_TREE_URI) ?: return Result.failure()
 
         val treeUri = Uri.parse(treeUriString)
@@ -76,7 +83,7 @@ class ModInstallWorker(
             // o .7z para packs de texturas grandes como Render96 HD).
             if (!isZipFile(zipFile) && !SafZipExtractor.isSevenZipFile(zipFile)) {
                 setForeground(
-                    buildForegroundInfo(notificationId, buildNotification(modName, 0, 0, true))
+                    buildForegroundInfo(notificationId, buildNotification(displayTitle, 0, 0, true))
                 )
 
                 val copied = SafZipExtractor.copyFileToTree(zipFile, treeDoc, applicationContext)
@@ -91,7 +98,7 @@ class ModInstallWorker(
 
                 deleteSource(zipFile)
 
-                showCompletionNotification(modName)
+                showCompletionNotification(notificationTitle)
                 return Result.success(
                     workDataOf(
                         OUTPUT_FILE_COUNT to 1,
@@ -166,7 +173,7 @@ class ModInstallWorker(
 
                 deleteSource(zipFile)
 
-                showCompletionNotification(modName)
+                showCompletionNotification(notificationTitle)
                 return Result.success(
                     workDataOf(
                         OUTPUT_FILE_COUNT to fileCount,
@@ -234,7 +241,7 @@ class ModInstallWorker(
 
             deleteSource(zipFile)
 
-            showCompletionNotification(modName)
+            showCompletionNotification(notificationTitle)
             return Result.success(
                 workDataOf(
                     OUTPUT_FILE_COUNT to fileCount,
@@ -293,7 +300,7 @@ class ModInstallWorker(
             .createCancelPendingIntent(id)
 
         return NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setSmallIcon(R.drawable.ic_stat_sm64cdpy)
             .setContentTitle(ctx.getString(R.string.notification_installing_mod))
             .setContentText(contentText)
             .setOngoing(true)
@@ -305,13 +312,24 @@ class ModInstallWorker(
     }
 
     private fun showCompletionNotification(modName: String) {
-        val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.stat_sys_download_done)
+        val openAppIntent = Intent(applicationContext, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val contentIntent = PendingIntent.getActivity(
+            applicationContext,
+            notificationId,
+            openAppIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val notification = NotificationCompat.Builder(applicationContext, RESULT_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_stat_sm64cdpy)
             .setContentTitle(applicationContext.getString(R.string.notification_install_complete))
             .setContentText(modName)
+            .setContentIntent(contentIntent)
             .setAutoCancel(true)
             .setOngoing(false)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
             .build()
         try {
             // ID distinto al foreground: WorkManager retira su notificación al

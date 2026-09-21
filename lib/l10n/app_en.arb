@@ -928,6 +928,13 @@
   "@detailVersionFallback": {
     "description": "Detail screen fallback label when version is unknown"
   },
+  "detailLatestVersion": "LATEST VERSION",
+  "detailPreviousVersions": "Previous versions",
+  "detailViewPreviousVersions": "View {count} previous versions",
+  "@detailViewPreviousVersions": {
+    "placeholders": {"count": {"type": "int", "example": "12"}}
+  },
+  "detailNoDownloadFiles": "No downloadable files are available.",
   "detailFirstRelease": "First Release",
   "@detailFirstRelease": {
     "description": "Detail screen label for initial release date"
@@ -1514,6 +1521,11 @@
   },
 
   "overlaySearchHint": "SEARCH...",
+  "overlayChooseFile": "Choose a file",
+  "overlayFileFallback": "File {number}",
+  "@overlayFileFallback": {
+    "placeholders": {"number": {"type": "int", "example": "1"}}
+  },
   "@overlaySearchHint": {
     "description": "Placeholder text for the search field in the floating overlay"
   },
