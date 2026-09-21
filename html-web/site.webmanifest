@@ -1,0 +1,21 @@
+{
+  "name": "Sm64cdpy — Sm64CoopDX Mod Manager",
+  "short_name": "Sm64cdpy",
+  "description": "App Android open source para explorar, descargar y administrar mods de SM64CoopDX sin salir del juego.",
+  "icons": [
+    {
+      "src": "assets/icons/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#262a38",
+  "background_color": "#262a38",
+  "display": "standalone",
+  "start_url": "."
+}

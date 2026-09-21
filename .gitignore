@@ -15,6 +15,7 @@ docs/*
 !docs/archive/
 docs/archive/*
 !docs/archive/README.md
+!docs/archive/FUTURE-TRANSLATION-IDEAS.md
 migrations-checklist.md
 guia-migracion-desing-screens.md
 foreground-services.md

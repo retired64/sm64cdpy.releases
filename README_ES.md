@@ -11,7 +11,7 @@ El proyecto está retomando mantenimiento. Su versión declarada es **1.7.0+18**
 La burbuja flotante de la línea 1.7 está implementada, pero sigue siendo
 experimental hasta completar pruebas en dispositivos Android reales.
 
-![SM64CDPY](assets/app.webp)
+![SM64CDPY para Android mostrando las pantallas de inicio, catálogo y detalle de un mod](assets/sm64cdpy-readme-banner.webp)
 
 ## Para qué sirve y cuál es su potencial
 

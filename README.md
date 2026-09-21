@@ -13,7 +13,7 @@ is **1.7.0+18**. The floating overlay introduced for the 1.7 line is implemented
 but remains experimental until it completes broader testing on real Android
 devices and across process recreation scenarios.
 
-![SM64CDPY](assets/app.webp)
+![SM64CDPY Android mod manager showing the home, catalogue, and mod detail screens](assets/sm64cdpy-readme-banner.webp)
 
 ![Platform](https://img.shields.io/badge/platform-Android-green)
 ![Flutter](https://img.shields.io/badge/Flutter-3.41.7-blue)

@@ -10,7 +10,7 @@ O projeto está retomando a manutenção. A versão declarada é **1.7.0+18**. A
 bolha flutuante da linha 1.7 está implementada, mas continua experimental até a
 conclusão de testes em dispositivos Android reais.
 
-![SM64CDPY](assets/app.webp)
+![SM64CDPY para Android mostrando as telas inicial, catálogo e detalhes de um mod](assets/sm64cdpy-readme-banner.webp)
 
 ## Para que serve e qual é o potencial
 

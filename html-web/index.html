@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- ============ SEO base ============
+     ⚠️ Reemplaza TU-DOMINIO-AQUI.com por tu dominio real antes de publicar
+     (aquí, en el canonical, en las meta og:url / twitter, en robots.txt
+     y en sitemap.xml). Sin esto, canonical y OG apuntan a una URL falsa. -->
+<title>Sm64cdpy — Mod Manager para SM64CoopDX en Android</title>
+<meta name="description" content="Sm64cdpy: mod manager para SM64CoopDX en Android. Explora, descarga e instala mods desde la app, sin salir del juego. Open source y gratis." />
+<meta name="keywords" content="sm64cdpy, sm64cdpy android, sm64coopdx mod manager android, mods sm64coopdx, super mario 64 coop deluxe mods, mod manager android" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Retired64" />
+<link rel="canonical" href="https://TU-DOMINIO-AQUI.com/" />
+
+<!-- ============ Favicons / PWA ============ -->
+<link rel="icon" type="image/x-icon" href="assets/icons/favicon/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon/favicon-32x32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/icons/favicon/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/favicon/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="assets/icons/favicon/android-chrome-512x512.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta name="theme-color" content="#262a38" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#f5f2e9" media="(prefers-color-scheme: light)" />
+
+<!-- ============ Open Graph ============ -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Sm64cdpy" />
+<meta property="og:locale" content="es_ES" />
+<meta property="og:url" content="https://TU-DOMINIO-AQUI.com/" />
+<meta property="og:title" content="Sm64cdpy — Mod Manager para SM64CoopDX en Android" />
+<meta property="og:description" content="Explora, descarga e instala mods de SM64CoopDX sin salir del juego. App Android open source y gratuita." />
+<meta property="og:image" content="https://TU-DOMINIO-AQUI.com/assets/images/og-banner.jpg" />
+<meta property="og:image:width" content="1983" />
+<meta property="og:image:height" content="793" />
+<meta property="og:image:alt" content="Sm64cdpy, Android App Manager para mods de SM64CoopDX — miles de mods en un solo lugar" />
+
+<!-- ============ Twitter Card ============ -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Sm64cdpy — Mod Manager para SM64CoopDX en Android" />
+<meta name="twitter:description" content="Explora, descarga e instala mods de SM64CoopDX sin salir del juego. App Android open source y gratuita." />
+<meta name="twitter:image" content="https://TU-DOMINIO-AQUI.com/assets/images/og-banner.jpg" />
+<meta name="twitter:image:alt" content="Sm64cdpy, Android App Manager para mods de SM64CoopDX" />
+
+<!-- ============ Datos estructurados (Schema.org) ============
+     SoftwareApplication + Organization (autor) + FAQPage (coincide 1:1
+     con la sección #faq visible en la página, requisito de Google para
+     que el rich result sea válido). softwareVersion, fileSize y las
+     fechas están verificadas: release real en GitHub (28 jul 2026),
+     tamaño del build arm64, y Android mínimo (ver minSdk en
+     build.gradle.kts) reflejado como texto en el hero. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Sm64cdpy",
+      "alternateName": "Sm64CdPy Mods CoopDX64",
+      "description": "App Android open source para explorar, descargar y administrar mods de SM64CoopDX sin salir del juego.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Android",
+      "softwareVersion": "1.6.2",
+      "fileSize": "22MB",
+      "datePublished": "2026-07-28",
+      "dateModified": "2026-07-28",
+      "url": "https://TU-DOMINIO-AQUI.com/",
+      "downloadUrl": "https://github.com/retired64/sm64cdpy.releases/releases/tag/v1.6.2",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": { "@id": "https://TU-DOMINIO-AQUI.com/#author" },
+      "publisher": { "@id": "https://TU-DOMINIO-AQUI.com/#author" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://TU-DOMINIO-AQUI.com/#author",
+      "name": "Retired64",
+      "url": "https://github.com/Retired64",
+      "sameAs": [
+        "https://github.com/Retired64",
+        "https://www.youtube.com/@Retired64",
+        "https://discord.com/invite/thuhUH2WNX"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "name": "Sm64cdpy",
+      "url": "https://TU-DOMINIO-AQUI.com/"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Qué es Sm64cdpy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sm64cdpy es un mod manager para Android que te permite explorar, descargar e instalar mods de SM64CoopDX sin salir del juego."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Sm64cdpy es gratis?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Sm64cdpy es gratuito y de código abierto, publicado en GitHub bajo licencia libre."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Necesito tener SM64CoopDX ya instalado?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, Sm64cdpy administra mods para SM64CoopDX; no incluye ni distribuye el juego base."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Es seguro instalar mods con Sm64cdpy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El código de la app es público en GitHub y cualquiera puede revisarlo. Si una instalación falla, la app muestra el error real (no un mensaje genérico) para que puedas reportarlo o resolverlo."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="css/variables.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/halftone.css" />
+<link rel="stylesheet" href="css/layout.css" />
+<link rel="stylesheet" href="css/components.css" />
+<link rel="stylesheet" href="css/carousel.css" />
+<link rel="stylesheet" href="css/animations.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+<!-- Sprite embebido (de tu sprite.svg) — solo los 3 íconos que usa
+     esta página. El archivo completo queda en assets/icons/sprite.svg
+     por si quieres sumar más redes después (ya trae Telegram, TikTok,
+     X, etc.). Va inline (no como archivo externo enlazado) para que
+     <use> funcione también al abrir el HTML directo con doble clic,
+     sin depender de un servidor. -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="youtube" viewBox="0 0 256 180">
+    <path d="M250.346 28.075A32.18 32.18 0 0 0 227.69 5.418C207.824 0 127.87 0 127.87 0S47.912.164 28.046 5.582A32.18 32.18 0 0 0 5.39 28.24c-6.009 35.298-8.34 89.084.165 122.97a32.18 32.18 0 0 0 22.656 22.657c19.866 5.418 99.822 5.418 99.822 5.418s79.955 0 99.82-5.418a32.18 32.18 0 0 0 22.657-22.657c6.338-35.348 8.291-89.1-.164-123.134Z" fill="red"/>
+    <path fill="#FFF" d="m102.421 128.06 66.328-38.418-66.328-38.418z"/>
+  </symbol>
+  <symbol id="discord" viewBox="0 0 48 48">
+    <path d="M0 24C0 10.7452 10.7452 0 24 0C37.2548 0 48 10.7452 48 24C48 37.2548 37.2548 48 24 48C10.7452 48 0 37.2548 0 24Z" fill="white"/>
+    <mask id="discord_mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M0 24C0 10.7452 10.7452 0 24 0C37.2548 0 48 10.7452 48 24C48 37.2548 37.2548 48 24 48C10.7452 48 0 37.2548 0 24Z" fill="white"/>
+    </mask>
+    <g mask="url(#discord_mask0)">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.8 24C20.8 23.1207 21.4327 22.4 22.2341 22.4C23.0355 22.4 23.6823 23.1207 23.6682 24C23.6682 24.8793 23.0355 25.6 22.2341 25.6C21.4468 25.6 20.8 24.8793 20.8 24ZM25.9318 24C25.9318 23.1207 26.5645 22.4 27.3659 22.4C28.1673 22.4 28.8 23.1207 28.8 24C28.8 24.8793 28.1673 25.6 27.3659 25.6C26.5786 25.6 25.9318 24.8793 25.9318 24Z" fill="#7289DA"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M14.9051 10.4H33.8949C35.4962 10.4 36.8 11.688 36.8 13.284V38.4L33.7531 35.74L32.0384 34.172L30.2245 32.506L30.9755 35.096H14.9051C13.3038 35.096 12 33.808 12 32.212V13.284C12 11.688 13.3038 10.4 14.9051 10.4ZM27.4894 27.55C27.9145 28.082 28.4247 28.684 28.4247 28.684C31.5566 28.586 32.7611 26.556 32.7611 26.556C32.7611 22.048 30.7205 18.394 30.7205 18.394C28.6798 16.882 26.7383 16.924 26.7383 16.924L26.5399 17.148C28.949 17.876 30.0686 18.926 30.0686 18.926C28.5947 18.128 27.1493 17.736 25.803 17.582C24.7826 17.47 23.8048 17.498 22.9403 17.61C22.8661 17.61 22.8027 17.6207 22.7312 17.6327C22.7208 17.6345 22.7102 17.6362 22.6994 17.638C22.2034 17.68 20.9989 17.862 19.4825 18.52C18.9582 18.758 18.6464 18.926 18.6464 18.926C18.6464 18.926 19.8226 17.82 22.3735 17.092L22.2318 16.924C22.2318 16.924 20.2903 16.882 18.2496 18.394C18.2496 18.394 16.2089 22.048 16.2089 26.556C16.2089 26.556 17.3993 28.586 20.5312 28.684C20.5312 28.684 21.0555 28.054 21.4807 27.522C19.6809 26.99 19.0007 25.87 19.0007 25.87C19.0007 25.87 19.1424 25.968 19.3975 26.108C19.4117 26.122 19.4258 26.136 19.4542 26.15C19.4754 26.164 19.4967 26.1745 19.5179 26.185C19.5392 26.1955 19.5605 26.206 19.5817 26.22C19.936 26.416 20.2903 26.57 20.6162 26.696C21.1973 26.92 21.8917 27.144 22.6994 27.298C23.7623 27.494 25.0094 27.564 26.3698 27.312C27.0359 27.2 27.7161 27.004 28.4247 26.71C28.9207 26.528 29.4734 26.262 30.0544 25.884C30.0544 25.884 29.3458 27.032 27.4894 27.55Z" fill="#7289DA"/>
+    </g>
+  </symbol>
+  <symbol id="github" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" fill="#fff"/>
+  </symbol>
+</svg>
+
+<div class="halftone" aria-hidden="true"></div>
+
+<header class="header">
+  <div class="header__row">
+    <a href="#top" class="header__brand h-hero">
+      <span class="header__brand-mark" aria-hidden="true"></span>
+      SM64CDPY
+    </a>
+    <nav class="header__nav" id="header-nav">
+      <a href="#features">Características</a>
+      <a href="#screens">Capturas</a>
+      <a href="#community">Comunidad</a>
+      <a href="#novedades">Novedades</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/retired64/sm64cdpy.releases/" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <div class="header__controls">
+      <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema">🌙</button>
+      <button id="nav-toggle" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="header-nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="diagonal-stripes" aria-hidden="true"></div>
+    <div class="container hero__grid">
+      <div>
+        <div class="hero__eyebrow">
+          <span class="retro-tag retro-tag--filled">Open Source</span>
+          <span class="retro-tag">Android</span>
+        </div>
+        <h1 class="hero__title h-hero">
+          SM64CDPY MODS<br /><span>COOPDX64</span>
+        </h1>
+        <p class="hero__desc">
+          Descarga y administra mods de SM64CoopDX sin salir del juego.
+          Explora el catálogo, instala lo que quieras y vuelve a jugar
+          en segundos.
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="https://github.com/retired64/sm64cdpy.releases/" target="_blank" rel="noopener">
+            Descargar en GitHub
+          </a>
+          <a class="btn btn--ghost" href="https://discord.com/invite/thuhUH2WNX" target="_blank" rel="noopener">
+            Unirme al Discord
+          </a>
+        </div>
+
+        <!-- Todos los datos de esta barra son reales:
+             versión y fecha verificadas contra el release en GitHub,
+             tamaño según el build arm64, y Android mínimo tomado de
+             minSdk = 24 en build.gradle.kts. -->
+        <ul class="trust-strip" aria-label="Datos de la app">
+          <li><span class="trust-strip__label">Versión</span> v1.6.2</li>
+          <li><span class="trust-strip__label">Tamaño</span> ~22 MB</li>
+          <li><span class="trust-strip__label">Requiere</span> Android 7.0+</li>
+          <li><span class="trust-strip__label">Actualizado</span> 28 jul 2026</li>
+        </ul>
+        <p class="hero__arch-note">Disponible en <strong>arm64</strong> (recomendado, 2018+), arm32 y x86_64 — elige tu build en la página del release.</p>
+      </div>
+      <div class="hero__frame">
+        <img src="assets/images/home-merged.jpg" alt="Pantalla principal de Sm64CdPy Mods CoopDX64, mostrando el catálogo destacado en modo oscuro y claro" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-kicker reveal">
+        <span class="section-kicker__mark" aria-hidden="true"></span>
+        <h2 class="section-kicker__label h-display">QUÉ HACE</h2>
+        <span class="section-kicker__jp">機能</span>
+        <span class="section-kicker__rule" aria-hidden="true"></span>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-card__icon">01</div>
+          <h3 class="feature-card__title h-display">Catálogo completo</h3>
+          <p class="feature-card__desc">Explora más de 1,000 mods de personajes, modos de juego y ROM hacks, con búsqueda y filtros.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-card__icon">02</div>
+          <h3 class="feature-card__title h-display">Sin salir del juego</h3>
+          <p class="feature-card__desc">Descarga e instala mods directo desde la app, sin cambiar de pantalla ni tocar archivos a mano.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-card__icon">03</div>
+          <h3 class="feature-card__title h-display">Favoritos y perfiles</h3>
+          <p class="feature-card__desc">Guarda tus mods favoritos y expórtalos o impórtalos cuando quieras respaldarlos.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-card__icon">04</div>
+          <h3 class="feature-card__title h-display">Ficha de cada mod</h3>
+          <p class="feature-card__desc">Versión, descargas, tags y descripción de cada mod antes de instalarlo.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-card__icon">05</div>
+          <h3 class="feature-card__title h-display">100% open source</h3>
+          <p class="feature-card__desc">Código y releases públicos en GitHub, mantenidos en abierto por la comunidad.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-card__icon">06</div>
+          <h3 class="feature-card__title h-display">Multilenguaje</h3>
+          <p class="feature-card__desc">Disponible en español, inglés y portugués (Brasil), con selector de idioma en ajustes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREENS / CAROUSEL ============ -->
+  <section class="section section--alt" id="screens">
+    <div class="container">
+      <div class="section-kicker reveal">
+        <span class="section-kicker__mark" aria-hidden="true"></span>
+        <h2 class="section-kicker__label h-display">ASÍ SE VE</h2>
+        <span class="section-kicker__jp">画面</span>
+        <span class="section-kicker__rule" aria-hidden="true"></span>
+      </div>
+
+      <div class="carousel reveal" data-carousel>
+        <div class="carousel__viewport">
+          <div class="carousel__track">
+
+            <div class="carousel__slide">
+              <div class="carousel__image-wrap">
+                <img src="assets/images/home-merged.jpg" alt="Pantalla de inicio con mods destacados y botón de lanzar juego" />
+              </div>
+              <div class="carousel__caption">
+                <span class="retro-tag">Inicio</span>
+                <h3 class="h-display">Todo a la mano</h3>
+                <p>Mods destacados, acceso directo al catálogo y un botón para lanzar el juego apenas termines de instalar.</p>
+              </div>
+            </div>
+
+            <div class="carousel__slide">
+              <div class="carousel__image-wrap">
+                <img src="assets/images/catalog-merged.jpg" alt="Catálogo de mods con filtros por personajes, modos de juego y ROM hacks" />
+              </div>
+              <div class="carousel__caption">
+                <span class="retro-tag">Catálogo</span>
+                <h3 class="h-display">Busca y filtra</h3>
+                <p>Cientos de mods organizados por personajes, modos de juego o ROM hacks, con buscador integrado.</p>
+              </div>
+            </div>
+
+            <div class="carousel__slide">
+              <div class="carousel__image-wrap">
+                <img src="assets/images/modDetail-merged.jpg" alt="Ficha de detalle de un mod, con descargas, versión y descripción" />
+              </div>
+              <div class="carousel__caption">
+                <span class="retro-tag">Ficha del mod</span>
+                <h3 class="h-display">Sabe qué instalas</h3>
+                <p>Versión, descargas, vistas y descripción de cada mod antes de darle a descargar.</p>
+              </div>
+            </div>
+
+            <div class="carousel__slide">
+              <div class="carousel__image-wrap">
+                <img src="assets/images/drawer-merged.jpg" alt="Menú lateral con accesos a favoritos, contenido exclusivo y redes sociales" />
+              </div>
+              <div class="carousel__caption">
+                <span class="retro-tag">Menú</span>
+                <h3 class="h-display">Navega rápido</h3>
+                <p>Favoritos, mods populares, contenido exclusivo y tus redes, siempre a un toque de distancia.</p>
+              </div>
+            </div>
+
+            <div class="carousel__slide">
+              <div class="carousel__image-wrap">
+                <img src="assets/images/linksResource-merged.jpg" alt="Sección de links y recursos oficiales del proyecto" />
+              </div>
+              <div class="carousel__caption">
+                <span class="retro-tag">Links &amp; Recursos</span>
+                <h3 class="h-display">Todo oficial, un lugar</h3>
+                <p>Web, Discord y GitHub del proyecto: toca para abrir o mantén presionado para copiar el link.</p>
+              </div>
+            </div>
+
+            <div class="carousel__slide">
+              <div class="carousel__image-wrap">
+                <img src="assets/images/settings-merged.jpg" alt="Pantalla de ajustes con opciones de base de datos, favoritos y carpeta de mods" />
+              </div>
+              <div class="carousel__caption">
+                <span class="retro-tag">Ajustes</span>
+                <h3 class="h-display">Tú tienes el control</h3>
+                <p>Recarga la base de datos, respalda tus favoritos y define en qué carpeta viven tus mods.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="carousel__controls">
+          <button class="carousel__arrow" data-carousel-prev aria-label="Captura anterior">‹</button>
+          <div class="carousel__dots"></div>
+          <button class="carousel__arrow" data-carousel-next aria-label="Siguiente captura">›</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMMUNITY ============ -->
+  <section class="section" id="community">
+    <div class="container">
+      <div class="section-kicker reveal">
+        <span class="section-kicker__mark" aria-hidden="true"></span>
+        <h2 class="section-kicker__label h-display">COMUNIDAD</h2>
+        <span class="section-kicker__jp">交流</span>
+        <span class="section-kicker__rule" aria-hidden="true"></span>
+      </div>
+
+      <div class="community-grid">
+        <a class="community-card reveal" href="https://discord.com/invite/thuhUH2WNX" target="_blank" rel="noopener">
+          <div class="community-card__icon">
+            <svg class="icon-svg" viewBox="0 0 48 48" width="26" height="26"><use href="#discord"></use></svg>
+          </div>
+          <div>
+            <div class="community-card__title">Discord</div>
+            <div class="community-card__sub">Comunidad y soporte</div>
+          </div>
+        </a>
+        <a class="community-card reveal" href="https://www.youtube.com/@Retired64" target="_blank" rel="noopener">
+          <div class="community-card__icon">
+            <svg class="icon-svg" viewBox="0 0 256 180" width="26" height="18"><use href="#youtube"></use></svg>
+          </div>
+          <div>
+            <div class="community-card__title">YouTube</div>
+            <div class="community-card__sub">@Retired64</div>
+          </div>
+        </a>
+        <a class="community-card reveal" href="https://github.com/retired64/sm64cdpy.releases/" target="_blank" rel="noopener">
+          <div class="community-card__icon community-card__icon--fixed-dark">
+            <svg class="icon-svg" viewBox="0 0 16 16" width="22" height="22"><use href="#github"></use></svg>
+          </div>
+          <div>
+            <div class="community-card__title">GitHub</div>
+            <div class="community-card__sub">Código y releases</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NOVEDADES (changelog real, v1.6.2) ============ -->
+  <section class="section" id="novedades">
+    <div class="container">
+      <div class="section-kicker reveal">
+        <span class="section-kicker__mark" aria-hidden="true"></span>
+        <h2 class="section-kicker__label h-display">NOVEDADES</h2>
+        <span class="section-kicker__jp">更新</span>
+        <span class="section-kicker__rule" aria-hidden="true"></span>
+      </div>
+
+      <div class="faq-item reveal changelog-card">
+        <div class="faq-item__q h-display changelog-card__version">
+          v1.6.2 <span class="retro-tag retro-tag--filled">28 jul 2026</span>
+        </div>
+        <ul class="changelog-highlights">
+          <li>Se corrigió la instalación de mods cuyo nombre de archivo tenía caracteres especiales (espacios, corchetes, emojis) — antes fallaba en silencio.</li>
+          <li>Los errores de descarga ahora muestran el mensaje real (con botón de copiar) en vez de un genérico "Error al instalar".</li>
+          <li>Enlaces de descarga rotos en la base de datos de mods se corrigen automáticamente al cargarlos.</li>
+        </ul>
+        <a class="changelog-card__link" href="https://github.com/retired64/sm64cdpy.releases/releases/tag/v1.6.2" target="_blank" rel="noopener">Ver release v1.6.2 en GitHub →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============
+       El texto de cada pregunta/respuesta debe coincidir con el
+       FAQPage de <head> — si editas uno, edita el otro. -->
+  <section class="section section--alt" id="faq">
+    <div class="container">
+      <div class="section-kicker reveal">
+        <span class="section-kicker__mark" aria-hidden="true"></span>
+        <h2 class="section-kicker__label h-display">PREGUNTAS FRECUENTES</h2>
+        <span class="section-kicker__jp">質問</span>
+        <span class="section-kicker__rule" aria-hidden="true"></span>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary class="faq-item__q h-display">¿Qué es Sm64cdpy?</summary>
+          <p class="faq-item__a">Sm64cdpy es un mod manager para Android que te permite explorar, descargar e instalar mods de SM64CoopDX sin salir del juego.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary class="faq-item__q h-display">¿Sm64cdpy es gratis?</summary>
+          <p class="faq-item__a">Sí. Sm64cdpy es gratuito y de código abierto, publicado en GitHub bajo licencia libre.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary class="faq-item__q h-display">¿Necesito tener SM64CoopDX ya instalado?</summary>
+          <p class="faq-item__a">Sí, Sm64cdpy administra mods para SM64CoopDX; no incluye ni distribuye el juego base.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary class="faq-item__q h-display">¿Es seguro instalar mods con Sm64cdpy?</summary>
+          <p class="faq-item__a">El código de la app es público en GitHub y cualquiera puede revisarlo. Si una instalación falla, la app muestra el error real (no un mensaje genérico) para que puedas reportarlo o resolverlo.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>
+    Sm64cdpy (Sm64CdPy Mods CoopDX64) — hecho por
+    <a href="https://github.com/Retired64" target="_blank" rel="noopener author">Retired64</a>.
+    Proyecto open source, no afiliado a Nintendo.
+  </p>
+  <p class="footer__meta">
+    <!-- Mantén esta línea sincronizada con cada nueva versión -->
+    v1.6.2 · Última actualización: 28 jul 2026 ·
+    <a href="https://github.com/retired64/sm64cdpy.releases/" target="_blank" rel="noopener">Ver changelog</a>
+  </p>
+</footer>
+
+<script src="js/theme.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/carousel.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

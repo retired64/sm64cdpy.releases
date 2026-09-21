@@ -1,0 +1,106 @@
+/* ============================================================
+   VARIABLES — tokens del sistema "manga panel" (RetroTheme.dart)
+   El modo oscuro es la identidad real; el claro reinterpreta la
+   misma paleta sobre papel cálido.
+   ============================================================ */
+
+:root,
+[data-theme="dark"] {
+  --bg: #262a38;
+  --surface: #2b2f3e;
+  --surface-alt: #333849;
+  --border: #f2efe4;
+  --shadow: #14161f;
+  --ink: #f2efe4;
+  --ink-dim: #9096a3;
+
+  --accent: #a7dee1;
+  --ink-on-accent: #20232e;
+  --red: #e0483a;
+  --blue: #3e63e0;
+  --amber: #f2a91e;
+  --ink-on-amber: #20232e;
+
+  --halftone-dot: rgba(242, 239, 228, 0.06);
+
+  --shadow-offset: 4px;
+  --shadow-offset-sm: 3px;
+}
+
+[data-theme="light"] {
+  --bg: #f5f2e9;
+  --surface: #ffffff;
+  --surface-alt: #ede8da;
+  --border: #262a38;
+  --shadow: #262a38;
+  --ink: #20232e;
+  --ink-dim: #696e7c;
+
+  /* Acentos: iguales en ambos modos, son la identidad de marca */
+  --accent: #a7dee1;
+  --ink-on-accent: #20232e;
+  --red: #e0483a;
+  --blue: #3e63e0;
+  --amber: #f2a91e;
+  --ink-on-amber: #20232e;
+
+  --halftone-dot: rgba(38, 42, 56, 0.06);
+}
+
+/* ── Tipografía ──────────────────────────────────────────────
+   4 de tus 5 fuentes quedan integradas, cada una con un rol
+   distinto (para no saturar la página con cinco estilos a la
+   vez — el quinto archivo, 1.ttf "Mario64", no tiene acentos ni
+   puntuación y se solapa mucho con Typeface Mario 64, así que
+   queda copiado en assets/fonts/ como extra sin usar):
+
+   - "Typeface Mario 64" → SOLO el título del hero y el wordmark
+     del header. Es el momento de mayor personalidad de la
+     página; por eso se usa una sola vez y en grande, no en todos
+     los headings (y por eso no necesita acentos: el nombre de
+     la app no los lleva).
+   - "Super Mario 286"   → el resto de los headings (kickers,
+     tarjetas, botones). Tiene el set completo de acentos/ñ, así
+     que es segura para texto real en español.
+   - "SuperMario64Font"  → números y etiquetas cortas tipo HUD
+     (los "01/02/03" de las feature cards).
+   - "SM64 Text"         → las píldoras (retro-tag): Open Source,
+     Android, nombres de sección en el carrusel, etc.
+   - body (párrafos)     → se queda en la pila del sistema. Los
+     cuatro estilos de arriba son de juego/pixel-ish y a tamaño
+     de párrafo pierden legibilidad; el propio RetroTheme.dart ya
+     apuntaba a esto ("nada de monospace... sans normal" para
+     body).
+*/
+
+@font-face {
+  font-family: "Typeface Mario 64";
+  src: url("../assets/fonts/TypefaceMario64.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Super Mario 286";
+  src: url("../assets/fonts/3.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SuperMario64Font";
+  src: url("../assets/fonts/4hudFont.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SM64 Text";
+  src: url("../assets/fonts/2.otf") format("opentype");
+  font-display: swap;
+}
+
+:root {
+  --font-hero: "Typeface Mario 64", "Super Mario 286", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Super Mario 286", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-hud: "SuperMario64Font", "Super Mario 286", monospace;
+  --font-tag: "SM64 Text", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-body: -apple-system, "Segoe UI", Roboto, sans-serif;
+}

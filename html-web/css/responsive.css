@@ -1,0 +1,78 @@
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+    padding: 48px 20px 56px;
+  }
+
+  .hero__frame {
+    order: -1;
+    transform: none;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .community-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel__slide {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel__image-wrap {
+    padding: 20px 20px 0;
+  }
+
+  .carousel__caption {
+    padding: 24px 24px 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .header__nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: 2px solid var(--border);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease;
+  }
+
+  .header__nav.is-open {
+    max-height: 320px;
+  }
+
+  .header__nav a {
+    width: 100%;
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__title {
+    font-size: 32px;
+  }
+
+  .carousel__image-wrap img {
+    max-height: 340px;
+  }
+}

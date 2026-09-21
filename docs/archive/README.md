@@ -11,6 +11,7 @@ Este índice conserva material útil sin presentarlo como documentación vigente
 | `../../.opencode/plans/` | Planes de 1.7.0 | Material de trabajo, no especificación actual |
 | `../estructura-sm64cdpy.md` | Arquitectura sustituida | Contiene versiones, conteos y módulos anteriores |
 | `../ideas-coopdx64.md` | Ideas/backlog antiguo | Algunas propuestas ya existen con otro diseño |
+| [`FUTURE-TRANSLATION-IDEAS.md`](FUTURE-TRANSLATION-IDEAS.md) | Propuesta futura pública | Traducción incremental de descripciones; no forma parte de 1.7.0 |
 
 ## Referencia externa o copiada
 

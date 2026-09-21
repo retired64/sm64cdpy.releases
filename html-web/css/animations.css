@@ -1,0 +1,38 @@
+/* ============================================================
+   ANIMATIONS — una sola secuencia de entrada + reveal al scroll
+   ============================================================ */
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero__eyebrow,
+.hero__title,
+.hero__desc,
+.hero__cta,
+.hero__badges {
+  animation: hero-rise 0.6s ease both;
+}
+
+.hero__title { animation-delay: 0.05s; }
+.hero__desc { animation-delay: 0.12s; }
+.hero__cta { animation-delay: 0.18s; }
+.hero__badges { animation-delay: 0.24s; }
+
+.hero__frame {
+  animation: hero-rise 0.7s ease both;
+  animation-delay: 0.1s;
+}
+
+/* Reveal al hacer scroll — se activa agregando .is-visible vía JS */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}

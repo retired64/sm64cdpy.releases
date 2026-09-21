@@ -1,0 +1,32 @@
+/* ============================================================
+   HALFTONE — trama de puntos tipo screentone, fija detrás del
+   contenido. Se resuelve con un radial-gradient repetido en vez
+   de canvas: mismo look, coste cero en JS.
+   ============================================================ */
+
+.halftone {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(var(--halftone-dot) 1.1px, transparent 1.6px);
+  background-size: 15px 15px;
+}
+
+/* Franjas diagonales — backdrop decorativo detrás del hero,
+   igual de barato: un solo repeating-linear-gradient. */
+.diagonal-stripes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background-image: repeating-linear-gradient(
+    -28deg,
+    var(--surface-alt) 0px,
+    var(--surface-alt) 22px,
+    transparent 22px,
+    transparent 44px
+  );
+  opacity: 0.6;
+}

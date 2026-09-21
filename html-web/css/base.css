@@ -1,0 +1,87 @@
+/* ============================================================
+   BASE — reset + tipografía por defecto
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 500;
+  line-height: 1.35;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+.h-display {
+  font-family: var(--font-display);
+  /* "Super Mario 286" es una fuente de un solo peso, ya bastante
+     cargada por sí misma — forzar 900 aquí solo produciría negrita
+     sintética (el navegador la engrosa a mano) y se ve distorsionada.
+     Se deja en su peso nativo. */
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+/* Momento de mayor personalidad de la página: la fuente del logo
+   de Mario 64, reservada solo para el wordmark y el título del
+   hero (ver css/variables.css para el porqué). */
+.h-hero {
+  font-family: var(--font-hero);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.body-dim {
+  color: var(--ink-dim);
+}
+
+/* Foco de teclado visible — accesibilidad */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
