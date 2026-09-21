@@ -103,17 +103,19 @@ final allModsProvider = FutureProvider<List<ModEntity>>((ref) async {
 // ── Home-screen built-in models ─────────────────────────────────────────────────
 
 final featuredModsProvider = Provider<AsyncValue<List<ModEntity>>>((ref) {
-  return ref.watch(allModsProvider).whenData(
-    (mods) => mods.where((m) => m.isFeatured).toList(),
-  );
+  return ref
+      .watch(allModsProvider)
+      .whenData((mods) => mods.where((m) => m.isFeatured).toList());
 });
 
 final topModsProvider = Provider<AsyncValue<List<ModEntity>>>((ref) {
-  return ref.watch(allModsProvider).whenData(
-    (mods) => ([...mods]..sort((a, b) => b.downloads.compareTo(a.downloads)))
-        .take(5)
-        .toList(),
-  );
+  return ref
+      .watch(allModsProvider)
+      .whenData(
+        (mods) => ([
+          ...mods,
+        ]..sort((a, b) => b.downloads.compareTo(a.downloads))).take(5).toList(),
+      );
 });
 
 // ── Sort options ──────────────────────────────────────────────────────────────
@@ -446,7 +448,14 @@ class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
   Map<String, BgInstallInfo> build() {
     _sub = BackgroundInstallService.instance.events.listen(_onEvent);
     ref.onDispose(() => _sub?.cancel());
+    unawaited(_loadRestoredState());
     return {};
+  }
+
+  Future<void> _loadRestoredState() async {
+    await BackgroundInstallService.instance.ready;
+    if (!ref.mounted) return;
+    state = {...BackgroundInstallService.instance.snapshot, ...state};
   }
 
   void _onEvent(BgInstallEvent event) {
@@ -454,6 +463,7 @@ class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
       modName: event.modName,
       status: switch (event) {
         BgInstallStarted() => BgInstallStatus.downloading,
+        BgInstallPending() => BgInstallStatus.pending,
         BgDownloadProgress() => BgInstallStatus.downloading,
         BgDownloadCompleted() => BgInstallStatus.downloading,
         BgInstallProgress() => BgInstallStatus.installing,
@@ -463,6 +473,7 @@ class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
       },
       phase: switch (event) {
         BgInstallStarted() => BgOperationPhase.downloading,
+        BgInstallPending(phase: final phase) => phase,
         BgDownloadProgress() => BgOperationPhase.downloading,
         BgDownloadCompleted() => BgOperationPhase.downloading,
         BgInstallProgress() => BgOperationPhase.installing,
@@ -471,13 +482,28 @@ class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
         BgInstallError() => null,
       },
       workId: event.workId,
-      downloadProgress: event is BgDownloadProgress ? event.progress :
-                        event is BgDownloadCompleted ? 100 : null,
+      downloadProgress: event is BgDownloadProgress
+          ? event.progress
+          : event is BgDownloadCompleted
+          ? 100
+          : null,
       current: event is BgInstallProgress ? event.current : null,
       total: event is BgInstallProgress ? event.total : null,
       fileCount: event is BgInstallCompleted ? event.fileCount : null,
       targetDir: event is BgInstallCompleted ? event.targetDir : null,
       error: event is BgInstallError ? event.error : null,
+      displayTitle: BackgroundInstallService.instance
+          .getInfo(event.modName)
+          ?.displayTitle,
+      downloadWorkId: BackgroundInstallService.instance
+          .getInfo(event.modName)
+          ?.downloadWorkId,
+      installWorkId: BackgroundInstallService.instance
+          .getInfo(event.modName)
+          ?.installWorkId,
+      installDestination: BackgroundInstallService.instance
+          .getInfo(event.modName)
+          ?.installDestination,
     );
 
     state = {...state, event.modName: info};
@@ -486,13 +512,17 @@ class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
 
 final bgInstallStateProvider =
     NotifierProvider<BgInstallStateNotifier, Map<String, BgInstallInfo>>(
-  () => BgInstallStateNotifier(),
-);
+      () => BgInstallStateNotifier(),
+    );
 
 final bgActiveInstallCountProvider = Provider<int>((ref) {
   final state = ref.watch(bgInstallStateProvider);
   return state.values
-      .where((i) => i.status == BgInstallStatus.downloading ||
-                   i.status == BgInstallStatus.installing)
+      .where(
+        (i) =>
+            i.status == BgInstallStatus.downloading ||
+            i.status == BgInstallStatus.installing ||
+            i.status == BgInstallStatus.pending,
+      )
       .length;
 });

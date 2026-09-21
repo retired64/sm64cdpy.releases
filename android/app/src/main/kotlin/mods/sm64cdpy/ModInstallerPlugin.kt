@@ -31,6 +31,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.io.*
 import java.util.UUID
+import kotlin.concurrent.thread
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -135,7 +136,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        onDetachedFromActivity()
+        // El engine y el plugin sobreviven a la rotación. Los observers son
+        // observeForever y no dependen de la Activity vieja; eliminarlos aquí
+        // cortaría el EventChannel hasta el siguiente reinicio/reconcile.
+        activity = null
     }
 
     // ── MethodCallHandler ───────────────────────────────────────────────────
@@ -149,6 +153,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "installModBackground" -> installModBackground(call, result)
             "downloadAndInstallMod" -> downloadAndInstallMod(call, result)
             "cancelModOperation" -> cancelModOperation(call, result)
+            "reconcileBackgroundOperations" -> reconcileBackgroundOperations(call, result)
             "isDirectorySelected" -> isDirectorySelected(result)
             "clearDirectorySelection" -> clearDirectorySelection(result)
             "hasNotificationPermission" -> hasNotificationPermission(result)
@@ -861,11 +866,133 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         val wm = WorkManager.getInstance(act)
-        wm.cancelAllWorkByTag("mod_dl_$modName")
-        wm.cancelAllWorkByTag("mod_install_$modName")
-        wm.cancelAllWorkByTag("mod_chain_$modName")
+        thread(name = "cancel-mod-$modName") {
+            try {
+                // Operation.result solo termina cuando WorkManager confirma que
+                // la cancelación fue escrita en su base de datos. Flutter ya no
+                // anuncia "cancelado" por el mero hecho de enviar la orden.
+                wm.cancelAllWorkByTag("mod_dl_$modName").result.get()
+                wm.cancelAllWorkByTag("mod_install_$modName").result.get()
+                wm.cancelAllWorkByTag("mod_chain_$modName").result.get()
+                act.runOnUiThread { result.success(true) }
+            } catch (e: Exception) {
+                act.runOnUiThread {
+                    result.error("CANCEL_FAILED", e.message ?: "Cancellation failed", null)
+                }
+            }
+        }
+    }
 
-        result.success(true)
+    /**
+     * Reconstruye el puente EventChannel <-> WorkManager después de recrear
+     * el engine. SharedPreferences de Flutter conserva la identidad y los dos
+     * UUID; WorkManager sigue siendo la autoridad sobre el estado real.
+     */
+    private fun reconcileBackgroundOperations(call: MethodCall, result: Result) {
+        val act = activity
+        if (act == null) {
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+        val operations = call.argument<List<Map<String, String>>>("operations") ?: emptyList()
+        val wm = WorkManager.getInstance(act)
+
+        thread(name = "reconcile-mod-workers") {
+            try {
+                val snapshots = mutableListOf<Map<String, Any?>>()
+                val observed = mutableListOf<Triple<UUID, String, String>>()
+
+                for (operation in operations) {
+                    val modName = operation["modName"] ?: continue
+                    for (phase in listOf("downloading", "installing")) {
+                        val idValue = operation[if (phase == "downloading") "downloadWorkId" else "installWorkId"]
+                            ?: continue
+                        val id = try { UUID.fromString(idValue) } catch (_: Exception) { continue }
+                        val info = wm.getWorkInfoById(id).get() ?: continue
+                        snapshots.add(workInfoSnapshot(id, info))
+                        if (!info.state.isFinished) observed.add(Triple(id, modName, phase))
+                    }
+                }
+
+                act.runOnUiThread {
+                    for ((id, modName, phase) in observed) {
+                        observeReconciledWork(wm, id, modName, phase)
+                    }
+                    result.success(snapshots)
+                }
+            } catch (e: Exception) {
+                act.runOnUiThread {
+                    result.error("RECONCILE_FAILED", e.message ?: "Reconciliation failed", null)
+                }
+            }
+        }
+    }
+
+    private fun workInfoSnapshot(id: UUID, info: WorkInfo): Map<String, Any?> {
+        return mapOf(
+            "workId" to id.toString(),
+            "state" to info.state.name,
+            "progress" to info.progress.getInt(ModDownloadWorker.PROGRESS, 0),
+            "current" to info.progress.getInt(ModInstallWorker.PROGRESS_CURRENT, 0),
+            "total" to info.progress.getInt(ModInstallWorker.PROGRESS_TOTAL, 0),
+            "fileCount" to info.outputData.getInt(ModInstallWorker.OUTPUT_FILE_COUNT, 0),
+            "targetDir" to info.outputData.getString(ModInstallWorker.OUTPUT_TARGET_DIR),
+            "error" to info.outputData.getString("error")
+        )
+    }
+
+    private fun observeReconciledWork(
+        wm: WorkManager,
+        workId: UUID,
+        modName: String,
+        phase: String
+    ) {
+        if (workObservers.containsKey(workId)) return
+        val observer = Observer<WorkInfo> { info ->
+            val eventData = mutableMapOf<String, Any?>(
+                "workId" to workId.toString(),
+                "modName" to modName,
+                "phase" to phase,
+                "state" to info.state.name
+            )
+            if (phase == "downloading") {
+                eventData["progress"] = info.progress.getInt(ModDownloadWorker.PROGRESS, 0)
+                eventData["type"] = when (info.state) {
+                    WorkInfo.State.SUCCEEDED -> "download_completed"
+                    WorkInfo.State.FAILED -> "error"
+                    WorkInfo.State.CANCELLED -> "cancelled"
+                    WorkInfo.State.RUNNING -> "download_progress"
+                    else -> "pending"
+                }
+                if (info.state == WorkInfo.State.FAILED) {
+                    eventData["error"] = info.outputData.getString("error") ?: "Download failed"
+                }
+            } else {
+                eventData["current"] = info.progress.getInt(ModInstallWorker.PROGRESS_CURRENT, 0)
+                eventData["total"] = info.progress.getInt(ModInstallWorker.PROGRESS_TOTAL, 0)
+                eventData["type"] = when (info.state) {
+                    WorkInfo.State.SUCCEEDED -> "install_completed"
+                    WorkInfo.State.FAILED -> "error"
+                    WorkInfo.State.CANCELLED -> "cancelled"
+                    WorkInfo.State.RUNNING -> "install_progress"
+                    else -> "pending"
+                }
+                if (info.state == WorkInfo.State.SUCCEEDED) {
+                    eventData["fileCount"] = info.outputData.getInt(ModInstallWorker.OUTPUT_FILE_COUNT, 0)
+                    eventData["targetDir"] = info.outputData.getString(ModInstallWorker.OUTPUT_TARGET_DIR) ?: modName
+                } else if (info.state == WorkInfo.State.FAILED) {
+                    eventData["error"] = info.outputData.getString("error") ?: "Installation failed"
+                }
+            }
+            sendEvent(eventData)
+            if (info.state.isFinished) {
+                workObservers.remove(workId)?.let {
+                    wm.getWorkInfoByIdLiveData(workId).removeObserver(it)
+                }
+            }
+        }
+        workObservers[workId] = observer
+        wm.getWorkInfoByIdLiveData(workId).observeForever(observer)
     }
 
     // ── Métodos DynOS ───────────────────────────────────────────────────────

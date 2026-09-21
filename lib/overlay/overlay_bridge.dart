@@ -44,7 +44,7 @@ class OverlayBridge {
           await _handleDownload(data);
           break;
         case 'cancel_mod':
-          _handleCancel(data);
+          await _handleCancel(data);
           break;
         case 'panel_opened':
           _sendActiveInstalls();
@@ -58,10 +58,11 @@ class OverlayBridge {
   static Future<void> _handleDownload(Map data) async {
     final url = data['url'] as String?;
     final modTitle = data['modTitle'] as String?;
-    final section = data['section'] as String? ?? 'all';
+    final operationName = data['operationName'] as String?;
+    final destination = data['installDestination'] as String? ?? 'mods';
     if (url == null || modTitle == null) return;
 
-    final isDynos = section == 'dynos' || section == 'touchControls';
+    final isDynos = destination == 'dynos';
 
     if (!_autoInstall) {
       _sendError(modTitle, 'auto_install_off');
@@ -78,33 +79,36 @@ class OverlayBridge {
       return;
     }
 
-    final filename = await DownloadUrlResolver.instance
-        .resolveDownloadFilename(url, modTitle);
-    final modName = sanitizeModTitle(modTitle);
-
-    final destination = isDynos ? 'dynos' : 'mods';
-    await BackgroundInstallService.instance.startDownloadAndInstall(
-      url: url,
-      modName: modName,
-      fileName: filename,
-      displayTitle: modTitle,
-      installDestination: destination,
+    final filename = await DownloadUrlResolver.instance.resolveDownloadFilename(
+      url,
+      modTitle,
     );
+    final modName = operationName ?? sanitizeModTitle(modTitle);
+
+    final chain = await BackgroundInstallService.instance
+        .startDownloadAndInstall(
+          url: url,
+          modName: modName,
+          fileName: filename,
+          displayTitle: modTitle,
+          installDestination: destination,
+        );
+    if (chain == null) _sendError(modTitle, 'start_failed');
   }
 
-  static void _handleCancel(Map data) {
+  static Future<void> _handleCancel(Map data) async {
     final modTitle = data['modTitle'] as String?;
     if (modTitle == null) return;
-    final modName = sanitizeModTitle(modTitle);
-    BackgroundInstallService.instance.cancelMod(modName);
+    final modName =
+        data['operationName'] as String? ?? sanitizeModTitle(modTitle);
+    final cancelled = await BackgroundInstallService.instance.cancelMod(
+      modName,
+    );
+    if (!cancelled) _sendError(modTitle, 'cancel_failed');
   }
 
   static void _sendError(String modTitle, String error) {
-    _safeShare({
-      'type': 'install_error',
-      'modTitle': modTitle,
-      'error': error,
-    });
+    _safeShare({'type': 'install_error', 'modTitle': modTitle, 'error': error});
   }
 
   static void _sendActiveInstalls() {
@@ -130,7 +134,9 @@ class OverlayBridge {
 
   static void _forwardEventToOverlay(BgInstallEvent event) {
     final modTitle =
-        BackgroundInstallService.instance.getInfo(event.modName)?.displayTitle ??
+        BackgroundInstallService.instance
+            .getInfo(event.modName)
+            ?.displayTitle ??
         event.modName;
 
     final payload = <String, dynamic>{

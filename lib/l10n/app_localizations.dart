@@ -1236,6 +1236,12 @@ abstract class AppLocalizations {
   /// **'Installing...'**
   String get detailInstalling;
 
+  /// No description provided for @overlayCancelling.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelling...'**
+  String get overlayCancelling;
+
   /// No description provided for @detailDynosFolderNotSelected.
   ///
   /// In en, this message translates to:

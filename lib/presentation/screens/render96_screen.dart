@@ -11,7 +11,9 @@ import '../../l10n/app_localizations.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../providers/extra_providers.dart';
+import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/app_snackbar.dart';
 
 class Render96Screen extends ConsumerStatefulWidget {
   const Render96Screen({super.key});
@@ -29,11 +31,8 @@ class _Render96ScreenState extends ConsumerState<Render96Screen> {
 
     return modsAsync.when(
       loading: () => const _Render96Skeleton(),
-      error: (e, _) => _Render96Error(
-        retro: retro,
-        l10n: l10n,
-        message: e.toString(),
-      ),
+      error: (e, _) =>
+          _Render96Error(retro: retro, l10n: l10n, message: e.toString()),
       data: (mods) {
         if (mods.isEmpty) {
           return _Render96Empty(retro: retro, l10n: l10n);
@@ -247,8 +246,9 @@ class _Render96MainCard extends ConsumerStatefulWidget {
 class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
   bool _isExpanded = false;
   bool _downloading = false;
-  double _progress = 0.0;
-  String? _status;
+
+  String get _operationName =>
+      sanitizeModTitle('render96-${widget.mod.id}-${widget.mod.name}');
 
   Color get _accentColor {
     switch (widget.mod.category) {
@@ -292,39 +292,41 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
     setState(() => _downloading = true);
     HapticFeedback.mediumImpact();
 
-    // FIX: antes se resolvía el filename con widget.mod.downloadUrl pero se
-    // pasaba esa misma URL SIN RESOLVER al downloader nativo. Cuando
-    // downloadUrl es una página de GitHub Releases (ej.
-    // "github.com/DorfDork/render96/releases/latest"), el nativo descargaba
-    // el HTML de esa página en vez del asset .zip real. Ahora se resuelve
-    // la URL real PRIMERO, y tanto el filename como la descarga usan esa
-    // URL resuelta — ver DownloadUrlResolver.resolveDownloadUrl().
-    final resolvedUrl =
-        await DownloadUrlResolver.instance.resolveDownloadUrl(
-      widget.mod.downloadUrl,
-    );
+    try {
+      // FIX: antes se resolvía el filename con widget.mod.downloadUrl pero se
+      // pasaba esa misma URL SIN RESOLVER al downloader nativo. Cuando
+      // downloadUrl es una página de GitHub Releases (ej.
+      // "github.com/DorfDork/render96/releases/latest"), el nativo descargaba
+      // el HTML de esa página en vez del asset .zip real. Ahora se resuelve
+      // la URL real PRIMERO, y tanto el filename como la descarga usan esa
+      // URL resuelta — ver DownloadUrlResolver.resolveDownloadUrl().
+      final resolvedUrl = await DownloadUrlResolver.instance.resolveDownloadUrl(
+        widget.mod.downloadUrl,
+      );
 
-    final filename =
-        await DownloadUrlResolver.instance.resolveDownloadFilename(
-      resolvedUrl,
-      widget.mod.name,
-    );
-    final modName = sanitizeModTitle(widget.mod.name);
+      final filename = await DownloadUrlResolver.instance
+          .resolveDownloadFilename(resolvedUrl, widget.mod.name);
+      final modName = _operationName;
 
-    // Flujo unificado WorkManager con installDestination del JSON
-    await BackgroundInstallService.instance.startDownloadAndInstall(
-      url: resolvedUrl,
-      modName: modName,
-      fileName: filename,
-      displayTitle: widget.mod.name,
-      installDestination: widget.mod.installDestination,
-    );
-
-    setState(() {
-      _downloading = false;
-      _progress = 1.0;
-      _status = 'done';
-    });
+      // Flujo unificado WorkManager con installDestination del JSON
+      await BackgroundInstallService.instance.startDownloadAndInstall(
+        url: resolvedUrl,
+        modName: modName,
+        fileName: filename,
+        displayTitle: widget.mod.name,
+        installDestination: widget.mod.installDestination,
+      );
+    } catch (e) {
+      if (mounted) {
+        AppSnackbar.errorWithCopy(
+          context,
+          message: widget.l10n.detailDownloadFailed,
+          copyText: e.toString(),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _downloading = false);
+    }
   }
 
   Future<void> _openTrailer() async {
@@ -339,7 +341,24 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
   @override
   Widget build(BuildContext context) {
     final desc = widget.mod.description;
-    final isActive = _downloading || _status == 'done';
+    final info = ref.watch(bgInstallStateProvider)[_operationName];
+    final isBusy =
+        _downloading ||
+        info?.status == BgInstallStatus.pending ||
+        info?.status == BgInstallStatus.downloading ||
+        info?.status == BgInstallStatus.installing;
+    final isInstalled = info?.status == BgInstallStatus.completed;
+    final isActive = isBusy || isInstalled;
+    final progress = info?.status == BgInstallStatus.downloading
+        ? (info?.downloadProgress == null
+              ? null
+              : info!.downloadProgress! / 100)
+        : info?.status == BgInstallStatus.installing &&
+              info?.current != null &&
+              info?.total != null &&
+              info!.total! > 0
+        ? info.current! / info.total!
+        : null;
 
     return Container(
       decoration: BoxDecoration(
@@ -382,10 +401,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 const SizedBox(height: 12),
 
                 // Title
-                Text(
-                  widget.mod.name,
-                  style: widget.retro.heading(size: 16.5),
-                ),
+                Text(widget.mod.name, style: widget.retro.heading(size: 16.5)),
 
                 // Author · Repo — antes vivían en lugares distintos (autor
                 // debajo del título, repo apretado en el row de badges sin
@@ -394,7 +410,8 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 // cada uno en un Flexible independiente: si ambos caben,
                 // se muestran completos; si no, cada uno trunca por su
                 // cuenta con ellipsis en vez de desbordar la tarjeta.
-                if (widget.mod.author != null || widget.mod.repo.isNotEmpty) ...[
+                if (widget.mod.author != null ||
+                    widget.mod.repo.isNotEmpty) ...[
                   const SizedBox(height: 5),
                   Row(
                     children: [
@@ -417,7 +434,9 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                             '·',
                             style: widget.retro.body(
                               size: 12,
-                              color: widget.retro.inkDim.withValues(alpha: 0.45),
+                              color: widget.retro.inkDim.withValues(
+                                alpha: 0.45,
+                              ),
                             ),
                           ),
                         ),
@@ -429,7 +448,9 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                               Icon(
                                 Icons.code_rounded,
                                 size: 12,
-                                color: widget.retro.inkDim.withValues(alpha: 0.55),
+                                color: widget.retro.inkDim.withValues(
+                                  alpha: 0.55,
+                                ),
                               ),
                               const SizedBox(width: 3),
                               Flexible(
@@ -458,8 +479,9 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                     desc,
                     style: widget.retro.body(size: 12, height: 1.5),
                     maxLines: _isExpanded ? null : 3,
-                    overflow:
-                        _isExpanded ? TextOverflow.visible : TextOverflow.fade,
+                    overflow: _isExpanded
+                        ? TextOverflow.visible
+                        : TextOverflow.fade,
                   ),
                   const SizedBox(height: 4),
                   GestureDetector(
@@ -482,15 +504,22 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 // lateral (patrón "callout") + ícono que cambia según lo que
                 // el aviso realmente comunica — prioridad para una dependencia
                 // requerida, informativo para todo lo demás.
-                if (widget.mod.notes != null && widget.mod.notes!.isNotEmpty) ...[
+                if (widget.mod.notes != null &&
+                    widget.mod.notes!.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
                       color: _accentColor.withValues(alpha: 0.07),
                       border: Border(
-                        top: BorderSide(color: _accentColor.withValues(alpha: 0.25)),
-                        right: BorderSide(color: _accentColor.withValues(alpha: 0.25)),
-                        bottom: BorderSide(color: _accentColor.withValues(alpha: 0.25)),
+                        top: BorderSide(
+                          color: _accentColor.withValues(alpha: 0.25),
+                        ),
+                        right: BorderSide(
+                          color: _accentColor.withValues(alpha: 0.25),
+                        ),
+                        bottom: BorderSide(
+                          color: _accentColor.withValues(alpha: 0.25),
+                        ),
                         left: BorderSide(color: _accentColor, width: 3),
                       ),
                     ),
@@ -526,10 +555,9 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 if (isActive) ...[
                   const SizedBox(height: 12),
                   LinearProgressIndicator(
-                    value: _downloading ? null : _progress,
+                    value: progress,
                     color: _accentColor,
-                    backgroundColor:
-                        _accentColor.withValues(alpha: 0.12),
+                    backgroundColor: _accentColor.withValues(alpha: 0.12),
                     minHeight: 4,
                   ),
                 ],
@@ -552,21 +580,20 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                     Expanded(
                       child: _ActionButton(
                         retro: widget.retro,
-                        label: _downloading
+                        label: isBusy
                             ? 'DOWNLOADING...'
-                            : _status == 'done'
-                                ? 'INSTALLED'
-                                : widget.l10n.sharedDownload,
-                        icon: _status == 'done'
+                            : isInstalled
+                            ? 'INSTALLED'
+                            : widget.l10n.sharedDownload,
+                        icon: isInstalled
                             ? Icons.check_circle_rounded
                             : Icons.download_rounded,
-                        loading: _downloading,
-                        color: _status == 'done'
+                        loading: isBusy,
+                        color: isInstalled
                             ? widget.retro.changelogAdded
                             : _accentColor,
                         filled: true,
-                        onTap:
-                            isActive ? null : _download,
+                        onTap: isActive ? null : _download,
                       ),
                     ),
                   ],
@@ -724,7 +751,10 @@ class _Render96Error extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                border: Border.all(color: retro.red.withValues(alpha: 0.35), width: 2),
+                border: Border.all(
+                  color: retro.red.withValues(alpha: 0.35),
+                  width: 2,
+                ),
                 boxShadow: retro.hardShadow(dx: 3, dy: 3),
               ),
               child: Column(
@@ -778,14 +808,22 @@ class _Render96Empty extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Icon(Icons.inventory_2_rounded,
-                      size: 32, color: retro.inkDim),
+                  Icon(
+                    Icons.inventory_2_rounded,
+                    size: 32,
+                    color: retro.inkDim,
+                  ),
                   const SizedBox(height: 8),
-                  Text(l10n.render96Empty,
-                      style: retro.heading(size: 14, color: retro.inkDim)),
+                  Text(
+                    l10n.render96Empty,
+                    style: retro.heading(size: 14, color: retro.inkDim),
+                  ),
                   const SizedBox(height: 6),
-                  Text(l10n.render96EmptyHint,
-                      textAlign: TextAlign.center, style: retro.body(size: 12)),
+                  Text(
+                    l10n.render96EmptyHint,
+                    textAlign: TextAlign.center,
+                    style: retro.body(size: 12),
+                  ),
                 ],
               ),
             ),

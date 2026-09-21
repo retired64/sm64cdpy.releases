@@ -13,13 +13,13 @@ enum OverlaySection { all, vip, dynos, touchControls, omm, render96 }
 
 extension OverlaySectionLabel on OverlaySection {
   String get label => switch (this) {
-        OverlaySection.all => 'ALL',
-        OverlaySection.vip => 'VIP',
-        OverlaySection.dynos => 'DYN',
-        OverlaySection.touchControls => 'TCH',
-        OverlaySection.omm => 'OMM',
-        OverlaySection.render96 => 'R96',
-      };
+    OverlaySection.all => 'ALL',
+    OverlaySection.vip => 'VIP',
+    OverlaySection.dynos => 'DYN',
+    OverlaySection.touchControls => 'TCH',
+    OverlaySection.omm => 'OMM',
+    OverlaySection.render96 => 'R96',
+  };
 }
 
 class OverlayModItem {
@@ -29,6 +29,7 @@ class OverlayModItem {
     required this.downloadUrls,
     this.imageUrl,
     required this.section,
+    required this.installDestination,
   });
 
   final String id;
@@ -36,60 +37,67 @@ class OverlayModItem {
   final List<String> downloadUrls;
   final String? imageUrl;
   final OverlaySection section;
+  final String installDestination;
 
   factory OverlayModItem.fromModEntity(ModEntity m) => OverlayModItem(
-        id: m.id,
-        title: m.title,
-        downloadUrls: m.downloadUrls,
-        imageUrl: m.imageUrl,
-        section: OverlaySection.all,
-      );
+    id: m.id,
+    title: m.title,
+    downloadUrls: m.downloadUrls,
+    imageUrl: m.imageUrl,
+    section: OverlaySection.all,
+    installDestination: 'mods',
+  );
 
   factory OverlayModItem.fromVip(VipModEntity m) => OverlayModItem(
-        id: m.id,
-        title: m.title,
-        downloadUrls: [m.downloadUrl],
-        imageUrl: m.imageUrl,
-        section: OverlaySection.vip,
-      );
+    id: m.id,
+    title: m.title,
+    downloadUrls: [m.downloadUrl],
+    imageUrl: m.imageUrl,
+    section: OverlaySection.vip,
+    installDestination: 'mods',
+  );
 
   factory OverlayModItem.fromDynos(DynosEntity m) => OverlayModItem(
-        id: m.id,
-        title: m.title,
-        downloadUrls: [m.downloadUrl],
-        imageUrl: m.imageUrl,
-        section: OverlaySection.dynos,
-      );
+    id: m.id,
+    title: m.title,
+    downloadUrls: [m.downloadUrl],
+    imageUrl: m.imageUrl,
+    section: OverlaySection.dynos,
+    installDestination: 'dynos',
+  );
 
   factory OverlayModItem.fromTouch(TouchControlEntity m) => OverlayModItem(
-        id: m.id,
-        title: m.title,
-        downloadUrls: [m.downloadUrl],
-        imageUrl: m.imageUrl,
-        section: OverlaySection.touchControls,
-      );
+    id: m.id,
+    title: m.title,
+    downloadUrls: [m.downloadUrl],
+    imageUrl: m.imageUrl,
+    section: OverlaySection.touchControls,
+    installDestination: 'dynos',
+  );
 
   factory OverlayModItem.fromOmm(OmmRebirthEntity m) => OverlayModItem(
-        id: m.id,
-        title: m.title,
-        downloadUrls: [m.downloadUrl],
-        imageUrl: m.imageUrl,
-        section: OverlaySection.omm,
-      );
+    id: m.id,
+    title: m.title,
+    downloadUrls: [m.downloadUrl],
+    imageUrl: m.imageUrl,
+    section: OverlaySection.omm,
+    installDestination: m.id == 'cappy-bros-dynos' ? 'dynos' : 'mods',
+  );
 
   factory OverlayModItem.fromRender96(Render96Entity m) => OverlayModItem(
-        id: m.id,
-        title: m.name,
-        downloadUrls: [m.downloadUrl],
-        imageUrl: m.imageUrl,
-        section: OverlaySection.render96,
-      );
+    id: m.id,
+    title: m.name,
+    downloadUrls: [m.downloadUrl],
+    imageUrl: m.imageUrl,
+    section: OverlaySection.render96,
+    installDestination: m.installDestination,
+  );
 }
 
 final overlaySectionProvider =
     NotifierProvider<OverlaySectionNotifier, OverlaySection>(
-  OverlaySectionNotifier.new,
-);
+      OverlaySectionNotifier.new,
+    );
 
 class OverlaySectionNotifier extends Notifier<OverlaySection> {
   @override
@@ -110,31 +118,42 @@ class OverlayPageNotifier extends Notifier<int> {
   void reset() => state = 0;
 }
 
-final overlayAllSearchQuery =
-    NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
-final overlayVipSearchQuery =
-    NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
-final overlayDynosSearchQuery =
-    NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
-final overlayTouchSearchQuery =
-    NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
-final overlayOmmSearchQuery =
-    NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
+final overlayAllSearchQuery = NotifierProvider<OverlaySearchNotifier, String>(
+  OverlaySearchNotifier.new,
+);
+final overlayVipSearchQuery = NotifierProvider<OverlaySearchNotifier, String>(
+  OverlaySearchNotifier.new,
+);
+final overlayDynosSearchQuery = NotifierProvider<OverlaySearchNotifier, String>(
+  OverlaySearchNotifier.new,
+);
+final overlayTouchSearchQuery = NotifierProvider<OverlaySearchNotifier, String>(
+  OverlaySearchNotifier.new,
+);
+final overlayOmmSearchQuery = NotifierProvider<OverlaySearchNotifier, String>(
+  OverlaySearchNotifier.new,
+);
 final overlayRender96SearchQuery =
     NotifierProvider<OverlaySearchNotifier, String>(OverlaySearchNotifier.new);
 
-final overlayAllPage =
-    NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
-final overlayVipPage =
-    NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
-final overlayDynosPage =
-    NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
-final overlayTouchPage =
-    NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
-final overlayOmmPage =
-    NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
-final overlayRender96Page =
-    NotifierProvider<OverlayPageNotifier, int>(OverlayPageNotifier.new);
+final overlayAllPage = NotifierProvider<OverlayPageNotifier, int>(
+  OverlayPageNotifier.new,
+);
+final overlayVipPage = NotifierProvider<OverlayPageNotifier, int>(
+  OverlayPageNotifier.new,
+);
+final overlayDynosPage = NotifierProvider<OverlayPageNotifier, int>(
+  OverlayPageNotifier.new,
+);
+final overlayTouchPage = NotifierProvider<OverlayPageNotifier, int>(
+  OverlayPageNotifier.new,
+);
+final overlayOmmPage = NotifierProvider<OverlayPageNotifier, int>(
+  OverlayPageNotifier.new,
+);
+final overlayRender96Page = NotifierProvider<OverlayPageNotifier, int>(
+  OverlayPageNotifier.new,
+);
 
 final overlayAllItems = FutureProvider<List<OverlayModItem>>((ref) async {
   final mods = await ref.watch(allModsProvider.future);
@@ -177,15 +196,15 @@ FutureProvider<List<OverlayModItem>> itemsProviderFor(OverlaySection s) =>
     };
 
 NotifierProvider<OverlaySearchNotifier, String> searchProviderFor(
-        OverlaySection s) =>
-    switch (s) {
-      OverlaySection.all => overlayAllSearchQuery,
-      OverlaySection.vip => overlayVipSearchQuery,
-      OverlaySection.dynos => overlayDynosSearchQuery,
-      OverlaySection.touchControls => overlayTouchSearchQuery,
-      OverlaySection.omm => overlayOmmSearchQuery,
-      OverlaySection.render96 => overlayRender96SearchQuery,
-    };
+  OverlaySection s,
+) => switch (s) {
+  OverlaySection.all => overlayAllSearchQuery,
+  OverlaySection.vip => overlayVipSearchQuery,
+  OverlaySection.dynos => overlayDynosSearchQuery,
+  OverlaySection.touchControls => overlayTouchSearchQuery,
+  OverlaySection.omm => overlayOmmSearchQuery,
+  OverlaySection.render96 => overlayRender96SearchQuery,
+};
 
 NotifierProvider<OverlayPageNotifier, int> pageProviderFor(OverlaySection s) =>
     switch (s) {
@@ -197,8 +216,7 @@ NotifierProvider<OverlayPageNotifier, int> pageProviderFor(OverlaySection s) =>
       OverlaySection.render96 => overlayRender96Page,
     };
 
-final overlayFilteredItems =
-    Provider<AsyncValue<List<OverlayModItem>>>((ref) {
+final overlayFilteredItems = Provider<AsyncValue<List<OverlayModItem>>>((ref) {
   final section = ref.watch(overlaySectionProvider);
   final items = ref.watch(itemsProviderFor(section));
   final search = ref.watch(searchProviderFor(section)).toLowerCase();
@@ -210,8 +228,7 @@ final overlayFilteredItems =
 
 const _pageSize = 3;
 
-final overlayPaginatedItems =
-    Provider<AsyncValue<List<OverlayModItem>>>((ref) {
+final overlayPaginatedItems = Provider<AsyncValue<List<OverlayModItem>>>((ref) {
   final section = ref.watch(overlaySectionProvider);
   final items = ref.watch(overlayFilteredItems);
   final page = ref.watch(pageProviderFor(section));

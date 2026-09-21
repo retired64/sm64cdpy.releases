@@ -6,6 +6,7 @@ import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
@@ -45,7 +46,7 @@ class ModInstallWorker(
     }
 
     private val notificationId: Int by lazy {
-        (inputData.getString(KEY_MOD_NAME) ?: "").hashCode() and 0x7FFFFFFF
+        id.hashCode() and 0x7FFFFFFF
     }
 
     override suspend fun doWork(): Result {
@@ -64,6 +65,7 @@ class ModInstallWorker(
 
         val treeDoc = DocumentFile.fromTreeUri(applicationContext, treeUri)
         if (treeDoc == null) {
+            deleteSource(zipFile)
             return Result.failure(
                 workDataOf("error" to "Could not access the selected directory tree.")
             )
@@ -79,6 +81,7 @@ class ModInstallWorker(
 
                 val copied = SafZipExtractor.copyFileToTree(zipFile, treeDoc, applicationContext)
                 if (!copied) {
+                    deleteSource(zipFile)
                     return Result.failure(
                         workDataOf(
                             "error" to "Could not copy file to the selected directory."
@@ -86,8 +89,9 @@ class ModInstallWorker(
                     )
                 }
 
-                zipFile.delete()
+                deleteSource(zipFile)
 
+                showCompletionNotification(modName)
                 return Result.success(
                     workDataOf(
                         OUTPUT_FILE_COUNT to 1,
@@ -142,6 +146,7 @@ class ModInstallWorker(
                 }
 
                 if (fileCount == 0) {
+                    deleteSource(zipFile)
                     return Result.failure(
                         workDataOf(
                             "error" to "No files were extracted. The downloaded 7z file may be invalid."
@@ -159,8 +164,9 @@ class ModInstallWorker(
                     buildForegroundInfo(notificationId, buildNotification(modName, 100, 100, false))
                 )
 
-                zipFile.delete()
+                deleteSource(zipFile)
 
+                showCompletionNotification(modName)
                 return Result.success(
                     workDataOf(
                         OUTPUT_FILE_COUNT to fileCount,
@@ -218,6 +224,7 @@ class ModInstallWorker(
             val displayDir = topDir ?: modName
 
             if (fileCount == 0) {
+                deleteSource(zipFile)
                 return Result.failure(
                     workDataOf(
                         "error" to "No files were extracted. The downloaded file may not be a valid ZIP archive."
@@ -225,8 +232,9 @@ class ModInstallWorker(
                 )
             }
 
-            zipFile.delete()
+            deleteSource(zipFile)
 
+            showCompletionNotification(modName)
             return Result.success(
                 workDataOf(
                     OUTPUT_FILE_COUNT to fileCount,
@@ -240,16 +248,24 @@ class ModInstallWorker(
             // que intenta escribir. Sin este catch específico caía en el
             // genérico de abajo con un e.message poco útil ("Permission
             // denied") que no le dice al usuario qué hacer.
+            deleteSource(zipFile)
             return Result.failure(
                 workDataOf(
                     "error" to "Lost access to the selected mods folder. Please re-select it in Settings."
                 )
             )
         } catch (e: Exception) {
+            deleteSource(zipFile)
             return Result.failure(
                 workDataOf("error" to (e.message ?: "Unknown error during installation"))
             )
         }
+    }
+
+    private fun deleteSource(file: File) {
+        file.delete()
+        val parent = file.parentFile
+        if (parent?.parentFile?.name == "mod_downloads") parent.delete()
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
@@ -286,6 +302,26 @@ class ModInstallWorker(
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .addAction(android.R.drawable.ic_delete, ctx.getString(R.string.notification_cancel), cancelIntent)
             .build()
+    }
+
+    private fun showCompletionNotification(modName: String) {
+        val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.stat_sys_download_done)
+            .setContentTitle(applicationContext.getString(R.string.notification_install_complete))
+            .setContentText(modName)
+            .setAutoCancel(true)
+            .setOngoing(false)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+        try {
+            // ID distinto al foreground: WorkManager retira su notificación al
+            // terminar el Worker, pero no debe borrar la confirmación final.
+            NotificationManagerCompat.from(applicationContext)
+                .notify(notificationId xor 0x40000000, notification)
+        } catch (_: SecurityException) {
+            // POST_NOTIFICATIONS puede estar denegado; Flutter sigue mostrando
+            // el resultado cuando la interfaz está visible.
+        }
     }
 
     /**

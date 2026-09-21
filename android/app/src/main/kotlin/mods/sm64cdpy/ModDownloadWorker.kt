@@ -47,7 +47,7 @@ class ModDownloadWorker(
     }
 
     private val notificationId: Int by lazy {
-        (inputData.getString(KEY_MOD_NAME) ?: "").hashCode() and 0x7FFFFFFF
+        id.hashCode() and 0x7FFFFFFF
     }
 
     /** Errores de servidor que NO tiene sentido reintentar (4xx: URL rota, mod eliminado, etc.). */
@@ -58,7 +58,12 @@ class ModDownloadWorker(
         val modName = inputData.getString(KEY_MOD_NAME) ?: return Result.failure()
         val fileName = inputData.getString(KEY_FILE_NAME) ?: return Result.failure()
 
-        val outputFile = File(applicationContext.cacheDir, fileName)
+        // Cada Worker descarga en su propio directorio. Dos assets llamados
+        // "mod.zip" ya no pueden truncarse mutuamente al correr en paralelo.
+        val outputFile = File(
+            File(applicationContext.cacheDir, "mod_downloads/${id}"),
+            fileName
+        )
         outputFile.parentFile?.mkdirs()
 
         try {
@@ -75,6 +80,7 @@ class ModDownloadWorker(
 
             if (isStopped) {
                 outputFile.delete()
+                outputFile.parentFile?.delete()
                 return Result.failure()
             }
 
@@ -91,9 +97,11 @@ class ModDownloadWorker(
             // 4xx / URL inválida: reintentar no va a arreglar nada, y dejar
             // el work en retry infinito solo gasta batería y datos del usuario.
             outputFile.delete()
+            outputFile.parentFile?.delete()
             return Result.failure(workDataOf("error" to (e.message ?: "Download failed")))
         } catch (e: Exception) {
             outputFile.delete()
+            outputFile.parentFile?.delete()
             if (isStopped) return Result.failure()
 
             // Reintentos con techo: sin esto, un error transitorio persistente

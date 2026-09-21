@@ -859,6 +859,7 @@
     }
   },
   "detailInstalling": "Installing...",
+  "overlayCancelling": "Cancelling...",
   "@detailInstalling": {
     "description": "Detail screen message during installation step"
   },

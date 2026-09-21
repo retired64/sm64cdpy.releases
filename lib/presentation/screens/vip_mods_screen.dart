@@ -13,8 +13,10 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/vip_mod_entity.dart';
 import '../../services/background_install_service.dart';
+import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
+import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../../l10n/app_localizations.dart';
@@ -159,6 +161,9 @@ class _VipModCardState extends ConsumerState<VipModCard>
   bool _downloading = false;
   double _progress = 0.0;
 
+  String get _operationName =>
+      sanitizeModTitle('vip-${widget.mod.id}-${widget.mod.title}');
+
   @override
   void initState() {
     super.initState();
@@ -202,13 +207,18 @@ class _VipModCardState extends ConsumerState<VipModCard>
     final isNowFav = ref.read(vipFavouritesProvider).contains(widget.mod.id);
     AppSnackbar.info(
       context,
-      message: isNowFav ? AppLocalizations.of(context).sharedAddedToFavorites : AppLocalizations.of(context).sharedRemovedFromFavorites,
+      message: isNowFav
+          ? AppLocalizations.of(context).sharedAddedToFavorites
+          : AppLocalizations.of(context).sharedRemovedFromFavorites,
       duration: const Duration(seconds: 1),
     );
   }
 
   Future<void> _download() async {
-    if (_downloading) return;
+    if (_downloading ||
+        BackgroundInstallService.instance.isInstalling(_operationName)) {
+      return;
+    }
     HapticFeedback.mediumImpact();
 
     final installer = ModInstaller();
@@ -223,15 +233,21 @@ class _VipModCardState extends ConsumerState<VipModCard>
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            title: Text(l10n.detailNotificationsNeeded,
-                style: TextStyle(color: RetroTheme.of(ctx).ink)),
-            content: Text(l10n.detailNotificationsBody,
-                style: TextStyle(color: RetroTheme.of(ctx).inkDim)),
+            title: Text(
+              l10n.detailNotificationsNeeded,
+              style: TextStyle(color: RetroTheme.of(ctx).ink),
+            ),
+            content: Text(
+              l10n.detailNotificationsBody,
+              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(l10n.detailNotNow,
-                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+                child: Text(
+                  l10n.detailNotNow,
+                  style: TextStyle(color: RetroTheme.of(ctx).ink),
+                ),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -247,17 +263,15 @@ class _VipModCardState extends ConsumerState<VipModCard>
       if (!mounted) return;
       final granted = await installer.requestNotificationPermission();
       if (!granted && mounted) {
-        AppSnackbar.info(context, message: AppLocalizations.of(context).detailNotificationsDisabled);
+        AppSnackbar.info(
+          context,
+          message: AppLocalizations.of(context).detailNotificationsDisabled,
+        );
       }
     }
 
     final url = widget.mod.downloadUrl;
-    final rawName = widget.mod.title
-        .toLowerCase()
-        .replaceAll(RegExp(r"[^\w\s\-]"), '')
-        .replaceAll(RegExp(r'\s+'), '-')
-        .replaceAll(RegExp(r'-{2,}'), '-')
-        .trim();
+    final rawName = _operationName;
     final urlExt = url.split('.').last.split('?').first.toLowerCase();
     final ext = (urlExt == 'lua' || urlExt == 'zip') ? urlExt : 'zip';
     final filename = '${rawName.isNotEmpty ? rawName : 'mod'}.$ext';
@@ -266,23 +280,34 @@ class _VipModCardState extends ConsumerState<VipModCard>
 
     if (!hasFolder) {
       final prefs = await SharedPreferences.getInstance();
-      final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+      final autoInstall =
+          prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
       if (autoInstall && mounted) {
         final l10n = AppLocalizations.of(context);
         final goToSettings = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            icon: Icon(Icons.folder_open_rounded, color: RetroTheme.of(ctx).accent, size: 28),
-            title: Text(l10n.detailModsFolderNotSelected,
-                style: TextStyle(color: RetroTheme.of(ctx).ink)),
-            content: Text(l10n.detailModsFolderBody,
-                style: TextStyle(color: RetroTheme.of(ctx).inkDim)),
+            icon: Icon(
+              Icons.folder_open_rounded,
+              color: RetroTheme.of(ctx).accent,
+              size: 28,
+            ),
+            title: Text(
+              l10n.detailModsFolderNotSelected,
+              style: TextStyle(color: RetroTheme.of(ctx).ink),
+            ),
+            content: Text(
+              l10n.detailModsFolderBody,
+              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(l10n.detailCancel,
-                    style: TextStyle(color: RetroTheme.of(ctx).ink)),
+                child: Text(
+                  l10n.detailCancel,
+                  style: TextStyle(color: RetroTheme.of(ctx).ink),
+                ),
               ),
               FilledButton.icon(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -306,17 +331,29 @@ class _VipModCardState extends ConsumerState<VipModCard>
     final autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
     if (autoInstall && mounted) {
-      final chain = await BackgroundInstallService.instance.startDownloadAndInstall(
-        url: url, modName: rawName, fileName: filename,
-      );
+      final chain = await BackgroundInstallService.instance
+          .startDownloadAndInstall(
+            url: url,
+            modName: rawName,
+            fileName: filename,
+            displayTitle: widget.mod.title,
+          );
       if (!mounted) return;
       if (chain != null) {
-        AppSnackbar.info(context,
-            message: AppLocalizations.of(context).detailDownloading(filename));
+        AppSnackbar.info(
+          context,
+          message: AppLocalizations.of(context).detailDownloading(filename),
+        );
       } else {
         // Fallback: el encolado de WorkManager falló silenciosamente
         // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
-        await _downloadSimple(url, filename, installer, extract: true, modName: rawName);
+        await _downloadSimple(
+          url,
+          filename,
+          installer,
+          extract: true,
+          modName: rawName,
+        );
       }
     } else if (mounted) {
       await _downloadSimple(url, filename, installer);
@@ -331,13 +368,18 @@ class _VipModCardState extends ConsumerState<VipModCard>
     String? modName,
   }) async {
     if (!mounted) return;
-    setState(() { _downloading = true; _progress = 0.0; });
+    setState(() {
+      _downloading = true;
+      _progress = 0.0;
+    });
     try {
       await FileDownloader.downloadFile(
-        url: url, name: filename,
+        url: url,
+        name: filename,
         onProgress: (name, progress) {
           if (!mounted) return;
-          final normalized = (progress > 1.0 ? progress / 100.0 : progress).clamp(0.0, 1.0);
+          final normalized = (progress > 1.0 ? progress / 100.0 : progress)
+              .clamp(0.0, 1.0);
           setState(() => _progress = normalized);
         },
         onDownloadCompleted: (path) async {
@@ -347,39 +389,64 @@ class _VipModCardState extends ConsumerState<VipModCard>
           String? copyError;
           try {
             if (extract) {
-              final result = await installer.installMod(zipPath: path, modName: modName ?? savedName);
-              if (!result.success) copyError = result.errorMessage ?? l10n.detailInstallFailed;
+              final result = await installer.installMod(
+                zipPath: path,
+                modName: modName ?? savedName,
+              );
+              if (!result.success) {
+                copyError = result.errorMessage ?? l10n.detailInstallFailed;
+              }
             } else {
-              await installer.copyFileToModsFolder(sourcePath: path, targetName: savedName);
+              await installer.copyFileToModsFolder(
+                sourcePath: path,
+                targetName: savedName,
+              );
             }
           } catch (e) {
             copyError = e.toString();
           }
           if (!mounted) return;
-          setState(() { _downloading = false; _progress = 0.0; });
+          setState(() {
+            _downloading = false;
+            _progress = 0.0;
+          });
           if (copyError != null) {
-            AppSnackbar.errorWithCopy(context,
-                message: copyError,
-                copyText: copyError);
+            AppSnackbar.errorWithCopy(
+              context,
+              message: copyError,
+              copyText: copyError,
+            );
           } else {
-            AppSnackbar.success(context,
-                message: l10n.detailSavedToFolder(savedName, l10n.navVIPMods));
+            AppSnackbar.success(
+              context,
+              message: l10n.detailSavedToFolder(savedName, l10n.navVIPMods),
+            );
           }
         },
         onDownloadError: (error) {
           if (!mounted) return;
-          setState(() { _downloading = false; _progress = 0.0; });
-          AppSnackbar.errorWithCopy(context,
-              message: AppLocalizations.of(context).detailError(error),
-              copyText: error);
+          setState(() {
+            _downloading = false;
+            _progress = 0.0;
+          });
+          AppSnackbar.errorWithCopy(
+            context,
+            message: AppLocalizations.of(context).detailError(error),
+            copyText: error,
+          );
         },
       );
     } catch (e) {
       if (!mounted) return;
-      setState(() { _downloading = false; _progress = 0.0; });
-      AppSnackbar.errorWithCopy(context,
-          message: AppLocalizations.of(context).detailError(e.toString()),
-          copyText: e.toString());
+      setState(() {
+        _downloading = false;
+        _progress = 0.0;
+      });
+      AppSnackbar.errorWithCopy(
+        context,
+        message: AppLocalizations.of(context).detailError(e.toString()),
+        copyText: e.toString(),
+      );
     }
   }
 
@@ -395,10 +462,27 @@ class _VipModCardState extends ConsumerState<VipModCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(vipFavouritesProvider).contains(widget.mod.id);
+    final backgroundInfo = ref.watch(bgInstallStateProvider)[_operationName];
+    final backgroundBusy =
+        backgroundInfo != null &&
+        (backgroundInfo.status == BgInstallStatus.pending ||
+            backgroundInfo.status == BgInstallStatus.downloading ||
+            backgroundInfo.status == BgInstallStatus.installing);
+    final isDownloading = _downloading || backgroundBusy;
+    final visibleProgress = _downloading
+        ? _progress
+        : backgroundInfo?.status == BgInstallStatus.downloading
+        ? (backgroundInfo?.downloadProgress ?? 0) / 100
+        : backgroundInfo?.status == BgInstallStatus.installing &&
+              backgroundInfo?.current != null &&
+              backgroundInfo?.total != null &&
+              backgroundInfo!.total! > 0
+        ? backgroundInfo.current! / backgroundInfo.total!
+        : null;
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
-            ? 140.0
-            : 180.0;
+        ? 140.0
+        : 180.0;
 
     // Solo hay banner de imagen si el mod trae una URL real. Sin imageUrl,
     // la sección completa se omite — nada de placeholder ni ícono suelto.
@@ -549,7 +633,9 @@ class _VipModCardState extends ConsumerState<VipModCard>
                         child: Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(
-                            _isExpanded ? l10n.sharedShowLess : l10n.sharedReadMore,
+                            _isExpanded
+                                ? l10n.sharedShowLess
+                                : l10n.sharedReadMore,
                             style: TextStyle(
                               color: retro.amber,
                               fontSize: 11,
@@ -574,7 +660,9 @@ class _VipModCardState extends ConsumerState<VipModCard>
                           color: retro.amber,
                         ),
                         label: Text(
-                          isFav ? l10n.sharedRemoveFromFavorites : l10n.sharedAddToFavorites,
+                          isFav
+                              ? l10n.sharedRemoveFromFavorites
+                              : l10n.sharedAddToFavorites,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
@@ -601,12 +689,12 @@ class _VipModCardState extends ConsumerState<VipModCard>
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(color: retro.border, width: 3),
-                          boxShadow: _downloading
+                          boxShadow: isDownloading
                               ? []
                               : retro.hardShadow(dx: 4, dy: 4),
                         ),
                         child: ElevatedButton(
-                          onPressed: _downloading ? null : _download,
+                          onPressed: isDownloading ? null : _download,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.amber,
                             foregroundColor: retro.onAmber,
@@ -618,7 +706,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
                               borderRadius: BorderRadius.zero,
                             ),
                           ),
-                          child: _downloading
+                          child: isDownloading
                               ? Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
@@ -627,7 +715,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       LinearProgressIndicator(
-                                        value: _progress,
+                                        value: visibleProgress,
                                         backgroundColor: retro.onAmber
                                             .withValues(alpha: 0.25),
                                         color: retro.onAmber,
@@ -635,7 +723,9 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        '${(_progress * 100).toStringAsFixed(0)}%',
+                                        visibleProgress == null
+                                            ? l10n.detailInstalling
+                                            : '${(visibleProgress * 100).toStringAsFixed(0)}%',
                                         style: TextStyle(
                                           color: retro.onAmber,
                                           fontSize: 11,
@@ -646,14 +736,26 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                   ),
                                 )
                               : Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.download_rounded, color: retro.onAmber, size: 20),
+                                      Icon(
+                                        Icons.download_rounded,
+                                        color: retro.onAmber,
+                                        size: 20,
+                                      ),
                                       const SizedBox(width: 10),
-                                      Text(l10n.sharedDownload,
-                                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: retro.onAmber)),
+                                      Text(
+                                        l10n.sharedDownload,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w900,
+                                          color: retro.onAmber,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),

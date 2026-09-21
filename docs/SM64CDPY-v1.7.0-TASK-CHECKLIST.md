@@ -139,17 +139,17 @@ Result:
 
 ### WorkManager as the source of truth
 
-- [ ] Reconcile restored `BackgroundInstallService._infoMap` entries with actual WorkManager state.
-- [ ] Remove or correct stale active entries after process death.
-- [ ] Define behavior when the stored Work UUID no longer exists.
-- [ ] Restore download and installation progress after reopening the app where possible.
+- [x] Reconcile restored `BackgroundInstallService._infoMap` entries with actual WorkManager state.
+- [x] Remove or correct stale active entries after process death.
+- [x] Define behavior when the stored Work UUID no longer exists.
+- [x] Restore download and installation progress after reopening the app where possible.
 - [ ] Add a test for RUNNING, ENQUEUED, SUCCEEDED, FAILED and CANCELLED restoration.
 
 ### Unique identities and parallel operations
 
-- [ ] Stop using sanitized display titles as the only work identity.
-- [ ] Define an operation key such as `section + modId + fileId`.
-- [ ] Derive temporary filenames, unique work names and notification IDs from that key.
+- [x] Stop using sanitized display titles as the only work identity.
+- [x] Define an operation key such as `section + modId + fileId`.
+- [x] Derive temporary filenames/directories, unique work names and notification IDs from an operation/Worker identity.
 - [ ] Test two different mods whose titles sanitize to the same value.
 - [ ] Test two different mods in parallel.
 - [ ] Test a repeated tap on the same mod and confirm intentional replacement.
@@ -157,10 +157,10 @@ Result:
 
 ### Async persistence and cancellation
 
-- [ ] Replace or explicitly document the fire-and-forget persistence in `_persistToPrefs()`.
-- [ ] Ensure asynchronous SharedPreferences failures are actually caught and logged.
-- [ ] Decide whether `cancelMod()` must await native WorkManager cancellation.
-- [ ] Avoid showing a final cancelled state before native cancellation is confirmed, or document optimistic cancellation.
+- [x] Replace or explicitly document the fire-and-forget persistence in `_persistToPrefs()`.
+- [x] Ensure asynchronous SharedPreferences failures are contained without escaping the event listener.
+- [x] Make `cancelMod()` await native WorkManager cancellation.
+- [x] Avoid showing a final cancelled state before native cancellation is confirmed.
 - [ ] Review every unawaited Future in download, overlay and persistence paths.
 
 ### Favourites initialization

@@ -9,8 +9,15 @@ class ModInstallResult {
     this.errorMessage,
   });
 
-  factory ModInstallResult.ok({required String targetDir, required int fileCount}) {
-    return ModInstallResult._(success: true, targetDir: targetDir, fileCount: fileCount);
+  factory ModInstallResult.ok({
+    required String targetDir,
+    required int fileCount,
+  }) {
+    return ModInstallResult._(
+      success: true,
+      targetDir: targetDir,
+      fileCount: fileCount,
+    );
   }
 
   factory ModInstallResult.error(String message) {
@@ -34,6 +41,43 @@ class ModChainResult {
   final String installWorkId;
 }
 
+/// Instantánea de un trabajo nativo usada para reconstruir el estado de
+/// Flutter después de que el proceso o alguno de sus engines se reinicie.
+class NativeWorkSnapshot {
+  const NativeWorkSnapshot({
+    required this.workId,
+    required this.state,
+    this.progress,
+    this.current,
+    this.total,
+    this.fileCount,
+    this.targetDir,
+    this.error,
+  });
+
+  factory NativeWorkSnapshot.fromMap(Map<dynamic, dynamic> map) {
+    return NativeWorkSnapshot(
+      workId: map['workId'] as String,
+      state: map['state'] as String? ?? 'UNKNOWN',
+      progress: map['progress'] as int?,
+      current: map['current'] as int?,
+      total: map['total'] as int?,
+      fileCount: map['fileCount'] as int?,
+      targetDir: map['targetDir'] as String?,
+      error: map['error'] as String?,
+    );
+  }
+
+  final String workId;
+  final String state;
+  final int? progress;
+  final int? current;
+  final int? total;
+  final int? fileCount;
+  final String? targetDir;
+  final String? error;
+}
+
 /// Servicio Dart que envuelve el MethodChannel hacia ModInstallerPlugin (Android nativo).
 ///
 /// Responsabilidades:
@@ -54,7 +98,9 @@ class ModInstaller {
       final uri = await _channel.invokeMethod<String>('openDirectoryPicker');
       return uri;
     } on PlatformException catch (e) {
-      throw ModInstallerException(e.message ?? 'Failed to open directory picker');
+      throw ModInstallerException(
+        e.message ?? 'Failed to open directory picker',
+      );
     }
   }
 
@@ -151,13 +197,37 @@ class ModInstaller {
   /// Cancela todas las operaciones WorkManager asociadas a un mod.
   Future<bool> cancelModOperation({required String modName}) async {
     try {
-      final result = await _channel.invokeMethod<bool>(
-        'cancelModOperation',
-        {'modName': modName},
-      );
+      final result = await _channel.invokeMethod<bool>('cancelModOperation', {
+        'modName': modName,
+      });
       return result ?? false;
     } on PlatformException {
       return false;
+    }
+  }
+
+  /// Reconecta observers nativos y devuelve el estado actual de los Workers
+  /// que Flutter había persistido antes de cerrar el proceso.
+  Future<Map<String, NativeWorkSnapshot>> reconcileBackgroundOperations(
+    List<Map<String, String>> operations,
+  ) async {
+    if (operations.isEmpty) return const {};
+    try {
+      final raw = await _channel.invokeMethod<List<dynamic>>(
+        'reconcileBackgroundOperations',
+        {'operations': operations},
+      );
+      final result = <String, NativeWorkSnapshot>{};
+      for (final entry in raw ?? const <dynamic>[]) {
+        if (entry is! Map) continue;
+        final snapshot = NativeWorkSnapshot.fromMap(entry);
+        result[snapshot.workId] = snapshot;
+      }
+      return result;
+    } on PlatformException catch (e) {
+      throw ModInstallerException(
+        e.message ?? 'Failed to reconcile background operations',
+      );
     }
   }
 
@@ -168,10 +238,10 @@ class ModInstaller {
     required String sourcePath,
     required String targetName,
   }) async {
-    final result = await _channel.invokeMethod<bool>(
-      'copyFileToModsFolder',
-      {'sourcePath': sourcePath, 'targetName': targetName},
-    );
+    final result = await _channel.invokeMethod<bool>('copyFileToModsFolder', {
+      'sourcePath': sourcePath,
+      'targetName': targetName,
+    });
     if (result != true) {
       throw const ModInstallerException('Failed to copy file to mods folder');
     }
@@ -180,7 +250,9 @@ class ModInstaller {
   /// Returns true if POST_NOTIFICATIONS is granted (always true on Android < 13).
   Future<bool> hasNotificationPermission() async {
     try {
-      final result = await _channel.invokeMethod<bool>('hasNotificationPermission');
+      final result = await _channel.invokeMethod<bool>(
+        'hasNotificationPermission',
+      );
       return result ?? false;
     } on PlatformException {
       return false;
@@ -190,8 +262,9 @@ class ModInstaller {
   /// Returns true if a rationale dialog should be shown before requesting.
   Future<bool> shouldShowNotificationRationale() async {
     try {
-      final result =
-          await _channel.invokeMethod<bool>('shouldShowNotificationRationale');
+      final result = await _channel.invokeMethod<bool>(
+        'shouldShowNotificationRationale',
+      );
       return result ?? false;
     } on PlatformException {
       return false;
@@ -202,8 +275,9 @@ class ModInstaller {
   /// Returns true if granted, false if denied.
   Future<bool> requestNotificationPermission() async {
     try {
-      final result =
-          await _channel.invokeMethod<bool>('requestNotificationPermission');
+      final result = await _channel.invokeMethod<bool>(
+        'requestNotificationPermission',
+      );
       return result ?? false;
     } on PlatformException {
       return false;
@@ -218,14 +292,18 @@ class ModInstaller {
       final uri = await _channel.invokeMethod<String>('openDynosPicker');
       return uri;
     } on PlatformException catch (e) {
-      throw ModInstallerException(e.message ?? 'Failed to open dynos directory picker');
+      throw ModInstallerException(
+        e.message ?? 'Failed to open dynos directory picker',
+      );
     }
   }
 
   /// Consulta si hay una carpeta de dynos seleccionada y accesible.
   Future<bool> isDynosDirectorySelected() async {
     try {
-      final result = await _channel.invokeMethod<bool>('isDynosDirectorySelected');
+      final result = await _channel.invokeMethod<bool>(
+        'isDynosDirectorySelected',
+      );
       return result ?? false;
     } on PlatformException {
       return false;
@@ -247,10 +325,10 @@ class ModInstaller {
     required String sourcePath,
     required String targetName,
   }) async {
-    final result = await _channel.invokeMethod<bool>(
-      'copyFileToDynosFolder',
-      {'sourcePath': sourcePath, 'targetName': targetName},
-    );
+    final result = await _channel.invokeMethod<bool>('copyFileToDynosFolder', {
+      'sourcePath': sourcePath,
+      'targetName': targetName,
+    });
     if (result != true) {
       throw const ModInstallerException('Failed to copy file to DynOS folder');
     }
@@ -270,10 +348,10 @@ class ModInstaller {
     required String modName,
   }) async {
     try {
-      final result = await _channel.invokeMethod<Map>('installModToDynosFolder', {
-        'zipPath': zipPath,
-        'modName': modName,
-      });
+      final result = await _channel.invokeMethod<Map>(
+        'installModToDynosFolder',
+        {'zipPath': zipPath, 'modName': modName},
+      );
 
       if (result == null) {
         return ModInstallResult.error('No result from native plugin');
@@ -328,7 +406,9 @@ class ModInstaller {
       );
       return workId;
     } on PlatformException catch (e) {
-      throw ModInstallerException(e.message ?? 'Failed to start background install');
+      throw ModInstallerException(
+        e.message ?? 'Failed to start background install',
+      );
     }
   }
 }

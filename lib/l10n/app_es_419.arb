@@ -208,6 +208,7 @@
   "detailOperationCancelled": "Operación cancelada",
   "detailDownloadingPct": "Descargando {pct}%",
   "detailInstalling": "Instalando...",
+  "overlayCancelling": "Cancelando...",
   "detailDynosFolderNotSelected": "Carpeta de DynOS y controles táctiles no seleccionada",
   "detailDynosFolderBody": "Selecciona la carpeta compartida de DynOS y controles táctiles en Ajustes → Integración del Juego antes de instalar este contenido.",
   "detailInstallDownloadedTitle": "¿Instalar el contenido descargado?",

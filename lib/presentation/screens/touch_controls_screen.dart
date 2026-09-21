@@ -385,23 +385,11 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(touchFavouritesProvider).contains(widget.mod.id);
-    ref.listen<BgInstallInfo?>(
-      bgInstallStateProvider.select((state) => state[_operationName]),
-      (previous, next) {
-        final wasRunning =
-            previous?.status == BgInstallStatus.downloading ||
-            previous?.status == BgInstallStatus.installing;
-        if (wasRunning &&
-            next?.status == BgInstallStatus.completed &&
-            mounted) {
-          AppSnackbar.success(context, message: l10n.detailInstallComplete);
-        }
-      },
-    );
     final backgroundInfo = ref.watch(bgInstallStateProvider)[_operationName];
     final backgroundBusy =
         backgroundInfo != null &&
-        (backgroundInfo.status == BgInstallStatus.downloading ||
+        (backgroundInfo.status == BgInstallStatus.pending ||
+            backgroundInfo.status == BgInstallStatus.downloading ||
             backgroundInfo.status == BgInstallStatus.installing);
     final isDownloading = _downloading || backgroundBusy;
     final backgroundProgress = backgroundInfo?.downloadProgress != null

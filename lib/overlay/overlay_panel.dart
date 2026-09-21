@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme/retro_theme.dart';
 import '../l10n/app_localizations.dart';
+import '../services/download_url_resolver.dart';
 import 'overlay_sections.dart';
 
 /// Tema fijo del overlay flotante — ver `RetroTheme.overlay()` para el
@@ -60,7 +61,8 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     if (!mounted) return;
     final view = View.of(context);
     final bottomInsetLogical = view.viewInsets.bottom / view.devicePixelRatio;
-    final shouldExpand = bottomInsetLogical > 24; // margen contra jitter/IME transitorio
+    final shouldExpand =
+        bottomInsetLogical > 24; // margen contra jitter/IME transitorio
     if (shouldExpand == _resizedForKeyboard) return;
     _resizedForKeyboard = shouldExpand;
 
@@ -96,7 +98,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       'type': 'download_mod',
       'url': mod.downloadUrls.first,
       'modTitle': title,
+      'operationName': _operationName(mod),
       'section': mod.section.name,
+      'installDestination': mod.installDestination,
     });
 
     _pendingTimers[title]?.cancel();
@@ -119,7 +123,11 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     HapticFeedback.mediumImpact();
     _pendingTimers.remove(title)?.cancel();
 
-    FloatyOverlay.shareData({'type': 'cancel_mod', 'modTitle': title});
+    FloatyOverlay.shareData({
+      'type': 'cancel_mod',
+      'modTitle': title,
+      'operationName': _operationName(mod),
+    });
 
     // Evita que un evento de progreso en vuelo (emitido antes de que
     // WorkManager procese la cancelación) re-active este tile.
@@ -128,13 +136,22 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       _cancelledMods.remove(title);
     });
 
-    // Limpieza optimista: no esperamos confirmación del bridge para que
-    // el usuario recupere el control de inmediato, incluso si la
-    // instalación estaba tan colgada que ni siquiera responde al mensaje.
-    setState(() {
-      _modStatus.remove(title);
-      _modProgress.remove(title);
-    });
+    // El tile queda en transición hasta que Kotlin confirme que WorkManager
+    // escribió la cancelación. No mostramos un éxito optimista falso.
+    setState(() => _modStatus[title] = 'cancelling');
+  }
+
+  String _operationName(OverlayModItem mod) {
+    final raw = switch (mod.section) {
+      OverlaySection.all => 'mod-${mod.id}-primary',
+      OverlaySection.vip => 'vip-${mod.id}-${mod.title}',
+      OverlaySection.dynos => 'dynos-${mod.id}-${mod.title}',
+      OverlaySection.touchControls => 'touch-${mod.id}-${mod.title}',
+      OverlaySection.omm => 'omm-${mod.id}-${mod.title}',
+      OverlaySection.render96 => 'render96-${mod.id}-${mod.title}',
+    };
+    final sanitized = sanitizeModTitle(raw);
+    return sanitized.isEmpty ? 'mod-${mod.id}' : sanitized;
   }
 
   void _showToast(String message) {
@@ -170,7 +187,10 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       final rawStatus = data['status'] as String?;
       final progress = data['progress'] as int?;
       if (modTitle == null || rawStatus == null || !mounted) return;
-      if (_cancelledMods.contains(modTitle)) return;
+      final isCancellation =
+          rawStatus == 'cancelled' || rawStatus == 'BgOperationCancelled';
+      if (_cancelledMods.contains(modTitle) && !isCancellation) return;
+      if (isCancellation) _cancelledMods.remove(modTitle);
 
       _pendingTimers.remove(modTitle)?.cancel();
 
@@ -194,7 +214,8 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       final modTitle = data['modTitle'] as String?;
       final error = data['error'] as String?;
       if (modTitle == null || !mounted) return;
-      if (_cancelledMods.contains(modTitle)) return;
+      if (_cancelledMods.contains(modTitle) && error != 'cancel_failed') return;
+      if (error == 'cancel_failed') _cancelledMods.remove(modTitle);
       _pendingTimers.remove(modTitle)?.cancel();
       setState(() {
         _modStatus.remove(modTitle);
@@ -202,7 +223,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       });
       final message = switch (error) {
         'no_folder' => AppLocalizations.of(context).overlaySelectFolder,
-        'auto_install_off' => AppLocalizations.of(context).overlayEnableAutoInstall,
+        'auto_install_off' => AppLocalizations.of(
+          context,
+        ).overlayEnableAutoInstall,
         _ => AppLocalizations.of(context).overlayDownloadFailed,
       };
       _showToast(message);
@@ -243,7 +266,6 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     }
     super.dispose();
   }
-
 
   void _switchSection(OverlaySection s) {
     if (s == ref.read(overlaySectionProvider)) return;
@@ -288,10 +310,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
             children: [
               _SectionTabs(active: section, onTap: _switchSection),
               const SizedBox(height: 6),
-              _SearchBar(
-                controller: _searchCtrl,
-                onChanged: _onSearchChanged,
-              ),
+              _SearchBar(controller: _searchCtrl, onChanged: _onSearchChanged),
               const SizedBox(height: 6),
               if (totalPages > 1 && !keyboardOpen) ...[
                 _PageBar(
@@ -299,13 +318,13 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
                   total: totalPages,
                   onPrev: page > 0
                       ? () => ref
-                          .read(pageProviderFor(section).notifier)
-                          .set(page - 1)
+                            .read(pageProviderFor(section).notifier)
+                            .set(page - 1)
                       : null,
                   onNext: page < totalPages - 1
                       ? () => ref
-                          .read(pageProviderFor(section).notifier)
-                          .set(page + 1)
+                            .read(pageProviderFor(section).notifier)
+                            .set(page + 1)
                       : null,
                 ),
                 const SizedBox(height: 6),
@@ -421,11 +440,19 @@ class _PageBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _ArrowIcon(icon: Icons.chevron_left, enabled: onPrev != null, onTap: onPrev),
+        _ArrowIcon(
+          icon: Icons.chevron_left,
+          enabled: onPrev != null,
+          onTap: onPrev,
+        ),
         const SizedBox(width: 10),
         RetroTag(retro: _retro, label: '$current / $total', dense: true),
         const SizedBox(width: 10),
-        _ArrowIcon(icon: Icons.chevron_right, enabled: onNext != null, onTap: onNext),
+        _ArrowIcon(
+          icon: Icons.chevron_right,
+          enabled: onNext != null,
+          onTap: onNext,
+        ),
       ],
     );
   }
@@ -453,12 +480,18 @@ class _ArrowIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: enabled ? _retro.surface : Colors.transparent,
           border: Border.all(
-            color: enabled ? _retro.border.withValues(alpha: 0.5) : _retro.border.withValues(alpha: 0.12),
+            color: enabled
+                ? _retro.border.withValues(alpha: 0.5)
+                : _retro.border.withValues(alpha: 0.12),
             width: 1.5,
           ),
           boxShadow: enabled ? _retro.hardShadow(dx: 2, dy: 2) : null,
         ),
-        child: Icon(icon, size: 18, color: enabled ? _retro.accent : _retro.inkDim.withValues(alpha: 0.3)),
+        child: Icon(
+          icon,
+          size: 18,
+          color: enabled ? _retro.accent : _retro.inkDim.withValues(alpha: 0.3),
+        ),
       ),
     );
   }
@@ -477,7 +510,10 @@ class _SearchBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: _retro.surface,
-        border: Border.all(color: _retro.border.withValues(alpha: 0.4), width: 1.5),
+        border: Border.all(
+          color: _retro.border.withValues(alpha: 0.4),
+          width: 1.5,
+        ),
         boxShadow: _retro.hardShadow(dx: 2, dy: 2),
       ),
       child: TextField(
@@ -487,15 +523,29 @@ class _SearchBar extends StatelessWidget {
         textInputAction: TextInputAction.search,
         onChanged: onChanged,
         cursorColor: _retro.accent,
-        style: _retro.body(size: 11.5, weight: FontWeight.w600, color: _retro.ink),
+        style: _retro.body(
+          size: 11.5,
+          weight: FontWeight.w600,
+          color: _retro.ink,
+        ),
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context).overlaySearchHint,
-          hintStyle: _retro.body(size: 10.5, color: _retro.inkDim.withValues(alpha: 0.7)),
+          hintStyle: _retro.body(
+            size: 10.5,
+            color: _retro.inkDim.withValues(alpha: 0.7),
+          ),
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 9,
+          ),
           border: InputBorder.none,
-          prefixIcon: Icon(Icons.search, color: _retro.accent.withValues(alpha: 0.8), size: 17),
+          prefixIcon: Icon(
+            Icons.search,
+            color: _retro.accent.withValues(alpha: 0.8),
+            size: 17,
+          ),
         ),
       ),
     );
@@ -507,7 +557,11 @@ class _SearchBar extends StatelessWidget {
 // (retro.red para error) en vez de Colors.redAccent/white24 sueltos.
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.icon, required this.label, required this.color});
+  const _EmptyState({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
 
   final IconData icon;
   final String label;
@@ -566,7 +620,9 @@ class _ModTileState extends ConsumerState<_ModTile> {
   bool get _isConnecting => widget.status == 'connecting';
   bool get _isDownloading => widget.status == 'downloading';
   bool get _isInstalling => widget.status == 'installing';
-  bool get _isActive => _isConnecting || _isDownloading || _isInstalling;
+  bool get _isCancelling => widget.status == 'cancelling';
+  bool get _isActive =>
+      _isConnecting || _isDownloading || _isInstalling || _isCancelling;
   bool get _hasSingleUrl => widget.mod.downloadUrls.length == 1;
   bool get _isCancelled => widget.status == 'cancelled';
 
@@ -586,7 +642,10 @@ class _ModTileState extends ConsumerState<_ModTile> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
       decoration: BoxDecoration(
         color: _retro.surface,
-        border: Border.all(color: _retro.border.withValues(alpha: 0.35), width: 1.5),
+        border: Border.all(
+          color: _retro.border.withValues(alpha: 0.35),
+          width: 1.5,
+        ),
         boxShadow: _retro.hardShadow(dx: 2, dy: 2),
       ),
       child: Column(
@@ -599,12 +658,25 @@ class _ModTileState extends ConsumerState<_ModTile> {
               if (_isDone)
                 Icon(Icons.check_circle, size: 19, color: _statusColor)
               else if (!_hasSingleUrl)
-                Icon(Icons.list_alt, size: 18, color: _retro.inkDim.withValues(alpha: 0.5))
+                Icon(
+                  Icons.list_alt,
+                  size: 18,
+                  color: _retro.inkDim.withValues(alpha: 0.5),
+                )
               else if (_isCancelled)
                 _RoundIconButton(
                   icon: Icons.refresh,
                   color: _statusColor,
                   onTap: widget.onDownload,
+                )
+              else if (_isCancelling)
+                SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: _retro.inkDim,
+                  ),
                 )
               else if (!_isActive)
                 _RoundIconButton(
@@ -636,7 +708,7 @@ class _ModTileState extends ConsumerState<_ModTile> {
                 ),
             ],
           ),
-          if (_isActive) ...[
+          if (_isActive && !_isCancelling) ...[
             const SizedBox(height: 6),
             LinearProgressIndicator(
               value: _isDownloading && widget.progress != null
@@ -664,13 +736,15 @@ class _ModTileState extends ConsumerState<_ModTile> {
 
   Widget _titleRow() {
     final l10n = AppLocalizations.of(context);
-    final label = _isDownloading && widget.progress != null
+    final label = _isCancelling
+        ? '${widget.mod.title}  ${l10n.overlayCancelling}'
+        : _isDownloading && widget.progress != null
         ? '${widget.mod.title}  ${widget.progress}%'
         : _isInstalling
-            ? '${widget.mod.title}  ${l10n.overlayInstalling}'
-            : _isConnecting
-                ? '${widget.mod.title}  ${l10n.overlayConnecting}'
-                : widget.mod.title;
+        ? '${widget.mod.title}  ${l10n.overlayInstalling}'
+        : _isConnecting
+        ? '${widget.mod.title}  ${l10n.overlayConnecting}'
+        : widget.mod.title;
 
     return Text(
       label,
@@ -689,7 +763,11 @@ class _ModTileState extends ConsumerState<_ModTile> {
 // Botón de descarga: 30x30 (antes 24x24), con hardShadow denso.
 
 class _RoundIconButton extends StatelessWidget {
-  const _RoundIconButton({required this.icon, required this.color, required this.onTap});
+  const _RoundIconButton({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
 
   final IconData icon;
   final Color color;

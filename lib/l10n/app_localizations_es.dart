@@ -674,6 +674,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailInstalling => 'Instalando...';
 
   @override
+  String get overlayCancelling => 'Cancelando...';
+
+  @override
   String get detailDynosFolderNotSelected =>
       'Carpeta de DynOS y controles táctiles no seleccionada';
 
@@ -1943,6 +1946,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get detailInstalling => 'Instalando...';
+
+  @override
+  String get overlayCancelling => 'Cancelando...';
 
   @override
   String get detailDynosFolderNotSelected =>

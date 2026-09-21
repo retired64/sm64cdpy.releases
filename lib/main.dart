@@ -15,6 +15,7 @@ import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/retro_theme.dart';
 import 'presentation/providers/theme_provider.dart';
+import 'presentation/widgets/background_operation_coordinator.dart';
 import 'services/background_install_service.dart';
 import 'services/update_service.dart';
 
@@ -39,18 +40,20 @@ void _installErrorHandling(String engineLabel) {
 }
 
 Future<void> main() async {
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    _installErrorHandling('main');
-    await _bootstrapMainApp();
-    runApp(const ProviderScope(child: SM64CoopDXApp()));
-  }, (error, stack) {
-    debugPrint('[main] Zone error: $error\n$stack');
-  });
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      _installErrorHandling('main');
+      await _bootstrapMainApp();
+      runApp(const ProviderScope(child: SM64CoopDXApp()));
+    },
+    (error, stack) {
+      debugPrint('[main] Zone error: $error\n$stack');
+    },
+  );
 }
 
 Future<void> _bootstrapMainApp() async {
-
   // Lock to portrait + landscape (phone only)
   // Android 16+ (API 36): screenOrientation constraints are ignored
   // on devices with smallestWidth >= 600dp (tablets, foldables).
@@ -125,8 +128,9 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
 
     final themeMode = ref.watch(themeModeProvider);
     final localeTag = ref.watch(localeNotifierProvider);
-    final locale =
-        localeTag != null ? LocaleNotifier.localeFromTag(localeTag) : null;
+    final locale = localeTag != null
+        ? LocaleNotifier.localeFromTag(localeTag)
+        : null;
 
     return MaterialApp.router(
       title: 'SM64CoopDX Mods',
@@ -138,39 +142,45 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
       darkTheme: RetroTheme.materialTheme(true),
       themeMode: themeMode,
       routerConfig: appRouter,
+      builder: (context, child) => BackgroundOperationCoordinator(
+        child: child ?? const SizedBox.shrink(),
+      ),
     );
   }
 }
 
 @pragma('vm:entry-point')
 void overlayMain() {
-  runZonedGuarded(() {
-    _installErrorHandling('overlay');
-    FloatyOverlayApp.run(
-      ProviderScope(
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          // locale: null → usa el locale del sistema.
-          // SharedPreferences NO se lee acá: este engine no tiene
-          // acceso seguro a todos los plugins nativos que el engine
-          // principal sí tiene inicializados, y llamar a
-          // SharedPreferences.getInstance() desde el overlay causaba
-          // crash nativo intermitente (el channel del plugin no está
-          // del todo listo en el momento en que floaty_chatheads
-          // arranca este segundo engine).
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          theme: RetroTheme.materialTheme(true).copyWith(
-            scaffoldBackgroundColor: RetroTheme.overlay().background,
-            colorScheme: RetroTheme.materialTheme(true).colorScheme.copyWith(
-              surface: RetroTheme.overlay().surface,
+  runZonedGuarded(
+    () {
+      _installErrorHandling('overlay');
+      FloatyOverlayApp.run(
+        ProviderScope(
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            // locale: null → usa el locale del sistema.
+            // SharedPreferences NO se lee acá: este engine no tiene
+            // acceso seguro a todos los plugins nativos que el engine
+            // principal sí tiene inicializados, y llamar a
+            // SharedPreferences.getInstance() desde el overlay causaba
+            // crash nativo intermitente (el channel del plugin no está
+            // del todo listo en el momento en que floaty_chatheads
+            // arranca este segundo engine).
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: RetroTheme.materialTheme(true).copyWith(
+              scaffoldBackgroundColor: RetroTheme.overlay().background,
+              colorScheme: RetroTheme.materialTheme(
+                true,
+              ).colorScheme.copyWith(surface: RetroTheme.overlay().surface),
             ),
+            home: const OverlayPanel(),
           ),
-          home: const OverlayPanel(),
         ),
-      ),
-    );
-  }, (error, stack) {
-    debugPrint('[overlay] Zone error: $error\n$stack');
-  });
+      );
+    },
+    (error, stack) {
+      debugPrint('[overlay] Zone error: $error\n$stack');
+    },
+  );
 }

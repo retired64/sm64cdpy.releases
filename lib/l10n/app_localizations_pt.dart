@@ -670,6 +670,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get detailInstalling => 'Instalando...';
 
   @override
+  String get overlayCancelling => 'Cancelando...';
+
+  @override
   String get detailDynosFolderNotSelected =>
       'Pasta de DynOS e controles de toque não selecionada';
 
@@ -1930,6 +1933,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get detailInstalling => 'Instalando...';
+
+  @override
+  String get overlayCancelling => 'Cancelando...';
 
   @override
   String get detailDynosFolderNotSelected =>

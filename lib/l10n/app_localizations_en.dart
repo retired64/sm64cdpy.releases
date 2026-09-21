@@ -666,6 +666,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailInstalling => 'Installing...';
 
   @override
+  String get overlayCancelling => 'Cancelling...';
+
+  @override
   String get detailDynosFolderNotSelected =>
       'DynOS and Touch Controls folder not selected';
 

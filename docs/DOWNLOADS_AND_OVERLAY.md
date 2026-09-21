@@ -10,13 +10,16 @@ Revisado contra `1.7.0+18` el 2026-09-20.
 4. `ModInstallerPlugin` crea una cadena única de WorkManager: primero `ModDownloadWorker`, después `ModInstallWorker`.
 5. El downloader sigue redirects, limita reintentos, verifica el tamaño cuando el servidor lo informa y publica porcentaje mediante `setProgress`.
 6. El instalador copia archivos sueltos o extrae ZIP/7z hacia el árbol SAF.
-7. El EventChannel `mods.sm64cdpy/mod_install_events` actualiza la UI y el overlay; ambos workers muestran notificaciones de primer plano cancelables.
+7. El EventChannel `mods.sm64cdpy/mod_install_events` actualiza un provider global, la UI y el overlay; ambos workers muestran notificaciones de primer plano cancelables.
+8. Al terminar, un coordinador global muestra el resultado aunque el usuario haya cambiado de pantalla, y Android conserva una notificación de instalación completa.
 
-Las cadenas usan un nombre derivado del mod con política `REPLACE`. Repetir la misma instalación reemplaza la anterior; mods distintos pueden avanzar en paralelo.
+Al recrear el proceso, Flutter carga los UUID persistidos, solicita una instantánea a WorkManager y vuelve a registrar los observers nativos. Los trabajos inexistentes se descartan; RUNNING, ENQUEUED, SUCCEEDED, FAILED y CANCELLED se traducen de nuevo al estado compartido.
+
+Las cadenas usan una clave canónica derivada de sección, ID del contenido y archivo con política `REPLACE`. Repetir exactamente la misma instalación reemplaza la anterior; archivos o mods distintos pueden avanzar en paralelo. Los IDs de notificación se derivan del UUID de cada Worker.
 
 ## Burbuja flotante
 
-`floaty_chatheads` inicia `overlayMain()` en un engine Flutter separado. El panel puede buscar el catálogo y solicitar descarga/cancelación. `OverlayBridge` vive en el engine principal, recibe mensajes, inicia WorkManager y reenvía progreso al panel.
+`floaty_chatheads` inicia `overlayMain()` en un engine Flutter separado. El panel puede buscar el catálogo y solicitar descarga/cancelación. `OverlayBridge` vive en el engine principal, recibe mensajes, inicia WorkManager y reenvía progreso al panel. Ambos lados intercambian la misma clave canónica; la cancelación permanece en estado "cancelando" hasta que WorkManager la confirma.
 
 La preferencia `auto_install_mods` tiene SharedPreferences como fuente persistente y un caché `OverlayBridge._autoInstall` en el engine principal. El toggle de Settings escribe la preferencia y llama a `OverlayBridge.refreshAutoInstall()`. Este detalle no debe eliminarse: evita que el bridge opere con un valor antiguo.
 

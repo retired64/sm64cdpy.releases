@@ -210,7 +210,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   }
 
   Future<void> _download() async {
-    if (_downloading) return;
+    if (_downloading ||
+        BackgroundInstallService.instance.isInstalling(_operationName)) {
+      return;
+    }
     HapticFeedback.mediumImpact();
 
     final installer = ModInstaller();
@@ -330,6 +333,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
             url: url,
             modName: rawName,
             fileName: filename,
+            displayTitle: widget.mod.title,
           );
       if (!mounted) return;
       if (chain != null) {
@@ -504,19 +508,23 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(ommFavouritesProvider).contains(widget.mod.id);
-    ref.listen<BgInstallInfo?>(
-      bgInstallStateProvider.select((state) => state[_operationName]),
-      (previous, next) {
-        final wasRunning =
-            previous?.status == BgInstallStatus.downloading ||
-            previous?.status == BgInstallStatus.installing;
-        if (wasRunning &&
-            next?.status == BgInstallStatus.completed &&
-            mounted) {
-          AppSnackbar.success(context, message: l10n.detailInstallComplete);
-        }
-      },
-    );
+    final backgroundInfo = ref.watch(bgInstallStateProvider)[_operationName];
+    final backgroundBusy =
+        backgroundInfo != null &&
+        (backgroundInfo.status == BgInstallStatus.pending ||
+            backgroundInfo.status == BgInstallStatus.downloading ||
+            backgroundInfo.status == BgInstallStatus.installing);
+    final isDownloading = _downloading || backgroundBusy;
+    final visibleProgress = _downloading
+        ? _progress
+        : backgroundInfo?.status == BgInstallStatus.downloading
+        ? (backgroundInfo?.downloadProgress ?? 0) / 100
+        : backgroundInfo?.status == BgInstallStatus.installing &&
+              backgroundInfo?.current != null &&
+              backgroundInfo?.total != null &&
+              backgroundInfo!.total! > 0
+        ? backgroundInfo.current! / backgroundInfo.total!
+        : null;
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
         ? 140.0
@@ -693,12 +701,12 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(color: retro.border, width: 3),
-                          boxShadow: _downloading
+                          boxShadow: isDownloading
                               ? []
                               : retro.hardShadow(dx: 4, dy: 4),
                         ),
                         child: ElevatedButton(
-                          onPressed: _downloading ? null : _download,
+                          onPressed: isDownloading ? null : _download,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.red,
                             foregroundColor: Colors.white,
@@ -710,7 +718,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                               borderRadius: BorderRadius.zero,
                             ),
                           ),
-                          child: _downloading
+                          child: isDownloading
                               ? Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
@@ -719,7 +727,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       LinearProgressIndicator(
-                                        value: _progress,
+                                        value: visibleProgress,
                                         backgroundColor: Colors.black
                                             .withValues(alpha: 0.35),
                                         color: retro.accent,
@@ -727,7 +735,9 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        '${(_progress * 100).toStringAsFixed(1)}%',
+                                        visibleProgress == null
+                                            ? l10n.detailInstalling
+                                            : '${(visibleProgress * 100).toStringAsFixed(0)}%',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 11,
