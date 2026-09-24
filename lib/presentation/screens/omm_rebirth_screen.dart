@@ -12,6 +12,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/omm_rebirth_entity.dart';
+import '../../domain/entities/install_identity.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
@@ -158,8 +159,14 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   bool _downloading = false;
   double _progress = 0.0;
 
-  String get _operationName =>
-      sanitizeModTitle('omm-${widget.mod.id}-${widget.mod.title}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.omm,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+    versionLabel: widget.mod.version,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   @override
   void initState() {
@@ -301,6 +308,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
               fileName: filename,
               displayTitle: widget.mod.title,
               installDestination: 'dynos',
+              identity: _identity,
             );
         if (!mounted) return;
         if (chain == null) {
@@ -334,6 +342,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
             modName: rawName,
             fileName: filename,
             displayTitle: widget.mod.title,
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain != null) {

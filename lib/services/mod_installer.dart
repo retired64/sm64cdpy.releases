@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 
+import '../domain/entities/install_identity.dart';
+
 /// Resultado de una instalación de mod.
 class ModInstallResult {
   const ModInstallResult._({
@@ -176,6 +178,7 @@ class ModInstaller {
     String? displayTitle,
     String? notificationTitle,
     String installDestination = 'mods',
+    InstallIdentity? identity,
   }) async {
     try {
       final result = await _channel.invokeMethod<Map>('downloadAndInstallMod', {
@@ -185,6 +188,7 @@ class ModInstaller {
         'displayTitle': displayTitle ?? modName,
         'notificationTitle': notificationTitle ?? displayTitle ?? modName,
         'installDestination': installDestination,
+        if (identity != null) ...identity.toMap(),
       });
       if (result == null) return null;
       return ModChainResult(
@@ -213,7 +217,7 @@ class ModInstaller {
   /// Reconecta observers nativos y devuelve el estado actual de los Workers
   /// que Flutter había persistido antes de cerrar el proceso.
   Future<Map<String, NativeWorkSnapshot>> reconcileBackgroundOperations(
-    List<Map<String, String>> operations,
+    List<Map<String, dynamic>> operations,
   ) async {
     if (operations.isEmpty) return const {};
     try {

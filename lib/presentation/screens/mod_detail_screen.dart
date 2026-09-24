@@ -14,6 +14,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/entities/mod_entity.dart';
+import '../../domain/entities/install_identity.dart';
 import '../../domain/entities/mod_version_resolver.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
@@ -987,8 +988,13 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
   double _localProgress = 0.0;
   AppLocalizations? _l10n;
 
-  String get _operationName =>
-      sanitizeModTitle('mod-${widget.modId}-${widget.fileKey}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.mods,
+    contentId: widget.modId,
+    downloadUrl: widget.url,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   Future<void> _download() async {
     HapticFeedback.lightImpact();
@@ -1106,6 +1112,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
             modName: modName,
             fileName: filename,
             displayTitle: widget.modTitle,
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain != null) {
@@ -1395,8 +1402,15 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
   double _localProgress = 0.0;
   AppLocalizations? _l10n;
 
-  String get _operationName =>
-      sanitizeModTitle('mod-${widget.modId}-${widget.fileKey}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.mods,
+    contentId: widget.modId,
+    downloadUrl: widget.url,
+    versionLabel: widget.versionLabel,
+    fileName: widget.filename,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   @override
   void initState() {
@@ -1542,6 +1556,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                 widget.versionLabel == null || widget.versionLabel!.isEmpty
                 ? widget.modTitle
                 : '${widget.modTitle} · ${widget.versionLabel}',
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain != null) {

@@ -1,6 +1,6 @@
 # Descargas, instalación y overlay
 
-Revisado contra `1.7.0+18` el 2026-09-20.
+Revisado contra `1.7.0+18` el 2026-09-23.
 
 ## Flujo de instalación
 
@@ -15,13 +15,19 @@ Revisado contra `1.7.0+18` el 2026-09-20.
 
 Al recrear el proceso, Flutter carga los UUID persistidos, solicita una instantánea a WorkManager y vuelve a registrar los observers nativos. Los trabajos inexistentes se descartan; RUNNING, ENQUEUED, SUCCEEDED, FAILED y CANCELLED se traducen de nuevo al estado compartido.
 
-Las cadenas usan una clave canónica derivada de sección, ID del contenido y archivo con política `REPLACE`. Repetir exactamente la misma instalación reemplaza la anterior; archivos o mods distintos pueden avanzar en paralelo. Los IDs de notificación se derivan del UUID de cada Worker.
+Las cadenas usan `operationKey = v1|section|contentId|artifactId` con política
+`REPLACE`. El artefacto usa IDs de versión/archivo de la fuente cuando están
+disponibles y un SHA-256 determinista como respaldo; nunca usa el título ni el
+índice mutable de una lista. Repetir exactamente la misma instalación reemplaza
+la anterior; archivos o mods distintos pueden avanzar en paralelo. Sección,
+IDs, versión, filename y destino viajan hasta ambos Workers y regresan en los
+eventos. Los IDs de notificación se derivan del UUID de cada Worker.
 
 El catálogo general resuelve una versión actual canónica antes de presentar descargas: prioriza la fecha de publicación válida, usa los componentes numéricos de versión como respaldo y conserva el orden de la fuente para empates. Las versiones sin archivos descargables se ignoran. Detalle y overlay consumen el mismo resolvedor, por lo que una descarga directa nunca selecciona accidentalmente un archivo histórico. Si la versión actual contiene varios archivos, el overlay ofrece un selector compacto.
 
 ## Burbuja flotante
 
-`floaty_chatheads` inicia `overlayMain()` en un engine Flutter separado. El panel puede buscar el catálogo y solicitar descarga/cancelación. `OverlayBridge` vive en el engine principal, recibe mensajes, inicia WorkManager y reenvía progreso al panel. Ambos lados intercambian la misma clave canónica; la cancelación permanece en estado "cancelando" hasta que WorkManager la confirma.
+`floaty_chatheads` inicia `overlayMain()` en un engine Flutter separado. El panel puede buscar el catálogo y solicitar descarga/cancelación. `OverlayBridge` vive en el engine principal, recibe mensajes, inicia WorkManager y reenvía progreso al panel. Ambos lados derivan e intercambian el mismo contrato de identidad. El estado local del panel se indexa por `contentKey`, por lo que dos títulos iguales no se pisan; la cancelación permanece en estado "cancelando" hasta que WorkManager la confirma.
 
 La pantalla de detalle presenta únicamente la versión actual expandida. El historial se abre bajo demanda en una hoja inferior con `ListView.builder`, evitando que decenas o cientos de versiones aumenten el alto inicial o se construyan simultáneamente.
 

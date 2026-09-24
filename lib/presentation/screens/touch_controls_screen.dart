@@ -12,6 +12,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/touch_control_entity.dart';
+import '../../domain/entities/install_identity.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
@@ -161,8 +162,13 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   bool _downloading = false;
   double _progress = 0.0;
 
-  String get _operationName =>
-      sanitizeModTitle('touch-${widget.mod.id}-${widget.mod.title}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.touchControls,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   @override
   void initState() {
@@ -256,6 +262,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
             fileName: filename,
             displayTitle: widget.mod.title,
             installDestination: 'dynos',
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain == null) {

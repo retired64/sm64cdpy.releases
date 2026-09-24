@@ -9,6 +9,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/dynos_entity.dart';
+import '../../domain/entities/install_identity.dart';
 import '../providers/extra_providers.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
@@ -162,8 +163,14 @@ class _DynosCardState extends ConsumerState<DynosCard>
   bool _downloading = false;
   double _progress = 0.0;
 
-  String get _operationName =>
-      sanitizeModTitle('dynos-${widget.mod.id}-${widget.mod.title}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.dynos,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+    versionLabel: widget.mod.version,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   @override
   void initState() {
@@ -295,6 +302,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
             fileName: filename,
             displayTitle: widget.mod.title,
             installDestination: 'dynos',
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain == null) {

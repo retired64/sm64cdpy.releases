@@ -26,6 +26,7 @@ class ModDownloadWorker(
         const val KEY_MOD_NAME = "modName"
         const val KEY_DISPLAY_TITLE = "displayTitle"
         const val KEY_FILE_NAME = "fileName"
+        const val KEY_INSTALL_DESTINATION = "installDestination"
         const val DOWNLOAD_CHANNEL_ID = "mod_download_channel"
         const val PROGRESS = "progress"
         const val OUTPUT_ZIP_PATH = "zipPath"
@@ -55,6 +56,14 @@ class ModDownloadWorker(
     private class PermanentDownloadError(message: String) : IOException(message)
 
     override suspend fun doWork(): Result {
+        // Optional only for chains restored from app versions predating the
+        // installed-library identity contract.
+        try {
+            InstallIdentityMetadata.fromData(inputData)
+        } catch (e: IllegalArgumentException) {
+            return Result.failure(workDataOf("error" to (e.message ?: "Invalid install identity")))
+        }
+        inputData.getString(KEY_INSTALL_DESTINATION)
         val url = inputData.getString(KEY_URL) ?: return Result.failure()
         val modName = inputData.getString(KEY_DISPLAY_TITLE)
             ?: inputData.getString(KEY_MOD_NAME)

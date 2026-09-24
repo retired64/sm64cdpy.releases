@@ -5,6 +5,7 @@ import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/app_constants.dart';
+import '../domain/entities/install_identity.dart';
 import '../services/background_install_service.dart';
 import '../services/download_url_resolver.dart';
 import '../services/mod_installer.dart';
@@ -63,10 +64,16 @@ class OverlayBridge {
     final destination = data['installDestination'] as String? ?? 'mods';
     if (url == null || modTitle == null) return;
 
+    InstallIdentity? identity;
+    try {
+      identity = InstallIdentity.fromMap(data);
+    } catch (error) {
+      debugPrint('[OverlayBridge] Legacy/invalid identity: $error');
+    }
     final isDynos = destination == 'dynos';
 
     if (!_autoInstall) {
-      _sendError(modTitle, 'auto_install_off');
+      _sendError(modTitle, 'auto_install_off', identity: identity);
       return;
     }
 
@@ -76,7 +83,7 @@ class OverlayBridge {
         : await installer.isDirectorySelected();
 
     if (!hasFolder) {
-      _sendError(modTitle, 'no_folder');
+      _sendError(modTitle, 'no_folder', identity: identity);
       return;
     }
 
@@ -84,12 +91,14 @@ class OverlayBridge {
       url,
       modTitle,
     );
-    final modName = operationName ?? sanitizeModTitle(modTitle);
+    final modName =
+        identity?.operationKey ?? operationName ?? sanitizeModTitle(modTitle);
 
     final chain = await BackgroundInstallService.instance
         .startDownloadAndInstall(
           url: url,
           modName: modName,
+          identity: identity,
           fileName: filename,
           displayTitle: modTitle,
           notificationTitle: versionLabel == null || versionLabel.trim().isEmpty
@@ -97,7 +106,9 @@ class OverlayBridge {
               : '$modTitle · $versionLabel',
           installDestination: destination,
         );
-    if (chain == null) _sendError(modTitle, 'start_failed');
+    if (chain == null) {
+      _sendError(modTitle, 'start_failed', identity: identity);
+    }
   }
 
   static Future<void> _handleCancel(Map data) async {
@@ -105,14 +116,31 @@ class OverlayBridge {
     if (modTitle == null) return;
     final modName =
         data['operationName'] as String? ?? sanitizeModTitle(modTitle);
+    InstallIdentity? identity;
+    try {
+      identity = InstallIdentity.fromMap(data);
+    } catch (_) {
+      identity = null;
+    }
     final cancelled = await BackgroundInstallService.instance.cancelMod(
       modName,
     );
-    if (!cancelled) _sendError(modTitle, 'cancel_failed');
+    if (!cancelled) {
+      _sendError(modTitle, 'cancel_failed', identity: identity);
+    }
   }
 
-  static void _sendError(String modTitle, String error) {
-    _safeShare({'type': 'install_error', 'modTitle': modTitle, 'error': error});
+  static void _sendError(
+    String modTitle,
+    String error, {
+    InstallIdentity? identity,
+  }) {
+    _safeShare({
+      'type': 'install_error',
+      'modTitle': modTitle,
+      'error': error,
+      if (identity != null) ...identity.toMap(),
+    });
   }
 
   static void _sendActiveInstalls() {
@@ -124,6 +152,7 @@ class OverlayBridge {
         'status': info.status == BgInstallStatus.downloading
             ? 'BgDownloadProgress'
             : 'BgInstallProgress',
+        if (info.identity != null) ...info.identity!.toMap(),
       };
       if (info.downloadProgress != null) {
         payload['progress'] = info.downloadProgress;
@@ -147,6 +176,12 @@ class OverlayBridge {
       'type': 'install_progress',
       'modTitle': modTitle,
       'status': event.runtimeType.toString(),
+      if (BackgroundInstallService.instance.getInfo(event.modName)?.identity !=
+          null)
+        ...BackgroundInstallService.instance
+            .getInfo(event.modName)!
+            .identity!
+            .toMap(),
     };
 
     switch (event) {

@@ -12,8 +12,8 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/vip_mod_entity.dart';
+import '../../domain/entities/install_identity.dart';
 import '../../services/background_install_service.dart';
-import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
 import '../providers/mod_providers.dart';
@@ -161,8 +161,14 @@ class _VipModCardState extends ConsumerState<VipModCard>
   bool _downloading = false;
   double _progress = 0.0;
 
-  String get _operationName =>
-      sanitizeModTitle('vip-${widget.mod.id}-${widget.mod.title}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.vip,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+    versionLabel: widget.mod.version,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   @override
   void initState() {
@@ -337,6 +343,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
             modName: rawName,
             fileName: filename,
             displayTitle: widget.mod.title,
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain != null) {

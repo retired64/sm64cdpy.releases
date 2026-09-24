@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
@@ -686,13 +687,25 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         val url = call.argument<String>("url")
-        val modName = call.argument<String>("modName")
-        val displayTitle = call.argument<String>("displayTitle") ?: modName
+        val requestedModName = call.argument<String>("modName")
+        val displayTitle = call.argument<String>("displayTitle") ?: requestedModName
         val notificationTitle = call.argument<String>("notificationTitle") ?: displayTitle
         val fileName = call.argument<String>("fileName")
 
-        if (url == null || modName == null || fileName == null) {
+        if (url == null || requestedModName == null || fileName == null) {
             result.error("INVALID_ARGS", "url, modName and fileName are required", null)
+            return
+        }
+
+        val identityMetadata = try {
+            InstallIdentityMetadata.fromMap(call.arguments as? Map<*, *> ?: emptyMap<Any?, Any?>())
+        } catch (e: IllegalArgumentException) {
+            result.error("INVALID_IDENTITY", e.message, null)
+            return
+        }
+        val modName = identityMetadata?.operationKey ?: requestedModName
+        if (identityMetadata != null && requestedModName != modName) {
+            result.error("INVALID_IDENTITY", "modName must match operationKey", null)
             return
         }
 
@@ -703,7 +716,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 ModDownloadWorker.KEY_URL to url,
                 ModDownloadWorker.KEY_MOD_NAME to modName,
                 ModDownloadWorker.KEY_DISPLAY_TITLE to displayTitle,
-                ModDownloadWorker.KEY_FILE_NAME to fileName
+                ModDownloadWorker.KEY_FILE_NAME to fileName,
+                ModDownloadWorker.KEY_INSTALL_DESTINATION to destination,
+                *(identityMetadata?.toWorkDataPairs() ?: emptyArray())
             ))
             // Antes no había Constraints: sin internet, el Worker arrancaba
             // igual, fallaba al conectar, y consumía uno de sus reintentos
@@ -725,7 +740,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 ModInstallWorker.KEY_MOD_NAME to modName,
                 ModInstallWorker.KEY_DISPLAY_TITLE to displayTitle,
                 ModInstallWorker.KEY_NOTIFICATION_TITLE to notificationTitle,
-                ModInstallWorker.KEY_TREE_URI to treeUriString
+                ModInstallWorker.KEY_TREE_URI to treeUriString,
+                ModInstallWorker.KEY_INSTALL_DESTINATION to destination,
+                *(identityMetadata?.toWorkDataPairs() ?: emptyArray())
             ))
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .addTag("mod_install_$modName")
@@ -743,6 +760,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     "phase" to "downloading",
                     "state" to workInfo.state.name
                 )
+                identityMetadata?.addToEvent(eventData)
+                eventData["displayTitle"] = displayTitle
+                eventData["installDestination"] = destination
 
                 val progress = workInfo.progress
                 eventData["progress"] = progress.getInt(ModDownloadWorker.PROGRESS, 0)
@@ -782,6 +802,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     "phase" to "installing",
                     "state" to workInfo.state.name
                 )
+                identityMetadata?.addToEvent(eventData)
+                eventData["displayTitle"] = displayTitle
+                eventData["installDestination"] = destination
 
                 val progress = workInfo.progress
                 eventData["current"] = progress.getInt(
@@ -893,35 +916,73 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * el engine. SharedPreferences de Flutter conserva la identidad y los dos
      * UUID; WorkManager sigue siendo la autoridad sobre el estado real.
      */
+    private data class ReconciledOperation(
+        val id: UUID,
+        val modName: String,
+        val phase: String,
+        val identity: InstallIdentityMetadata?,
+        val displayTitle: String?,
+        val destination: String?
+    )
+
     private fun reconcileBackgroundOperations(call: MethodCall, result: Result) {
         val act = activity
         if (act == null) {
             result.error("NO_ACTIVITY", "Activity not available", null)
             return
         }
-        val operations = call.argument<List<Map<String, String>>>("operations") ?: emptyList()
+        val operations = call.argument<List<Map<String, Any?>>>("operations") ?: emptyList()
         val wm = WorkManager.getInstance(act)
 
         thread(name = "reconcile-mod-workers") {
             try {
                 val snapshots = mutableListOf<Map<String, Any?>>()
-                val observed = mutableListOf<Triple<UUID, String, String>>()
+                val observed = mutableListOf<ReconciledOperation>()
 
                 for (operation in operations) {
-                    val modName = operation["modName"] ?: continue
+                    val modName = operation["modName"] as? String ?: continue
+                    val identity = try {
+                        InstallIdentityMetadata.fromMap(operation)
+                    } catch (e: IllegalArgumentException) {
+                        Log.w("ModInstall", "Ignoring invalid reconciled identity", e)
+                        null
+                    }
+                    val displayTitle = operation["displayTitle"] as? String
+                    val destination = operation["installDestination"] as? String
                     for (phase in listOf("downloading", "installing")) {
-                        val idValue = operation[if (phase == "downloading") "downloadWorkId" else "installWorkId"]
+                        val idValue = operation[
+                            if (phase == "downloading") "downloadWorkId" else "installWorkId"
+                        ] as? String
                             ?: continue
                         val id = try { UUID.fromString(idValue) } catch (_: Exception) { continue }
                         val info = wm.getWorkInfoById(id).get() ?: continue
                         snapshots.add(workInfoSnapshot(id, info))
-                        if (!info.state.isFinished) observed.add(Triple(id, modName, phase))
+                        if (!info.state.isFinished) {
+                            observed.add(
+                                ReconciledOperation(
+                                    id,
+                                    modName,
+                                    phase,
+                                    identity,
+                                    displayTitle,
+                                    destination
+                                )
+                            )
+                        }
                     }
                 }
 
                 act.runOnUiThread {
-                    for ((id, modName, phase) in observed) {
-                        observeReconciledWork(wm, id, modName, phase)
+                    for (operation in observed) {
+                        observeReconciledWork(
+                            wm,
+                            operation.id,
+                            operation.modName,
+                            operation.phase,
+                            operation.identity,
+                            operation.displayTitle,
+                            operation.destination
+                        )
                     }
                     result.success(snapshots)
                 }
@@ -950,7 +1011,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         wm: WorkManager,
         workId: UUID,
         modName: String,
-        phase: String
+        phase: String,
+        identity: InstallIdentityMetadata?,
+        displayTitle: String?,
+        destination: String?
     ) {
         if (workObservers.containsKey(workId)) return
         val observer = Observer<WorkInfo> { info ->
@@ -960,6 +1024,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 "phase" to phase,
                 "state" to info.state.name
             )
+            identity?.addToEvent(eventData)
+            displayTitle?.let { eventData["displayTitle"] = it }
+            destination?.let { eventData["installDestination"] = it }
             if (phase == "downloading") {
                 eventData["progress"] = info.progress.getInt(ModDownloadWorker.PROGRESS, 0)
                 eventData["type"] = when (info.state) {

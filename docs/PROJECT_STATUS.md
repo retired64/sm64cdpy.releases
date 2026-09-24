@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado contra `1.7.0+18` el 2026-09-20.
+Revisado contra `1.7.0+18` el 2026-09-23.
 
 ## Implementado
 
@@ -12,11 +12,14 @@ Revisado contra `1.7.0+18` el 2026-09-20.
 - ZIP, 7z y archivos sueltos.
 - Actualizaciones OTA por ABI.
 - Overlay con búsqueda, órdenes de descarga y reflejo del progreso.
+- Identidad canónica de contenido/artefacto compartida por app, overlay,
+  WorkManager, persistencia temporal y eventos.
 
 ## Experimental o pendiente de validación
 
 - Overlay en Android 7–16, especialmente recreación del proceso y retorno desde permisos del sistema.
-- Descargas simultáneas de mods cuyos títulos sanitizados puedan coincidir.
+- Descargas simultáneas en dispositivo; las colisiones por títulos ya no son
+  parte del identificador, pero falta validación física del paralelismo.
 - Restauración visual de trabajos activos después de reiniciar la app/engine.
 - Proveedores SAF distintos (Files de Google, fabricantes y almacenamiento externo).
 - URLs externas no cubiertas por la resolución especializada.

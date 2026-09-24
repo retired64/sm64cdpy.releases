@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado contra `1.7.0+18` el 2026-09-20.
+Revisado contra `1.7.0+18` el 2026-09-23.
 
 ## Alcance
 
@@ -35,6 +35,16 @@ Existe una segunda entrada, `overlayMain()`, usada por `floaty_chatheads`. Este 
 - El plugin Kotlin guarda las URI SAF (`tree_uri`, `dynos_tree_uri`) en sus propias SharedPreferences nativas y conserva permisos persistentes del árbol.
 - `BackgroundInstallService` mantiene una vista en memoria de trabajos activos; WorkManager sigue siendo la autoridad para su ejecución.
 
+Las operaciones nuevas usan una identidad de dominio versionada:
+`contentKey = v1|section|contentId` y
+`artifactKey/operationKey = contentKey|artifactId`. El `artifactId` prioriza
+IDs estables de la fuente y utiliza un SHA-256 determinista cuando el catálogo
+no los publica. Título, filename, URL, posición en un array y destino son
+metadata, no identidad. La metadata viaja por SharedPreferences, MethodChannel,
+ambos Workers, reconciliación y EventChannel. Las operaciones antiguas sin este
+contrato todavía pueden restaurarse usando su `modName` legacy, pero nunca se
+convierten por aproximación en una identidad nueva.
+
 ## Navegación y estado
 
 GoRouter define un `ShellRoute` para las pantallas principales y una ruta de detalle fuera del shell. Riverpod administra catálogo, filtros, paginación, favoritos, tema e idioma.
@@ -43,7 +53,7 @@ GoRouter define un `ShellRoute` para las pantallas principales y una ruta de det
 
 1. El proceso o cualquiera de los engines puede ser recreado por Android.
 2. Las variables estáticas no sincronizan el engine principal y el overlay.
-3. Dos instalaciones pueden ejecutarse en paralelo; nombres de trabajo, archivos temporales y notificaciones deben ser únicos por mod/instancia.
+3. Dos instalaciones pueden ejecutarse en paralelo; nombres de trabajo, archivos temporales y notificaciones derivan de la identidad de artefacto/UUID, no del título.
 4. Una URI SAF puede perder permisos y debe revalidarse antes de escribir.
 5. Los eventos en memoria no sustituyen el estado persistido de WorkManager.
 

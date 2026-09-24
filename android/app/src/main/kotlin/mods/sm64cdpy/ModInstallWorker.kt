@@ -28,6 +28,7 @@ class ModInstallWorker(
         const val KEY_DISPLAY_TITLE = "displayTitle"
         const val KEY_NOTIFICATION_TITLE = "notificationTitle"
         const val KEY_TREE_URI = "treeUri"
+        const val KEY_INSTALL_DESTINATION = "installDestination"
         const val CHANNEL_ID = "mod_install_channel"
         const val RESULT_CHANNEL_ID = "mod_install_results_v1"
 
@@ -55,6 +56,14 @@ class ModInstallWorker(
     }
 
     override suspend fun doWork(): Result {
+        // Phase 2 will use this validated metadata to write the durable
+        // receipt. Reading it now verifies that it reached the install Worker.
+        try {
+            InstallIdentityMetadata.fromData(inputData)
+        } catch (e: IllegalArgumentException) {
+            return Result.failure(workDataOf("error" to (e.message ?: "Invalid install identity")))
+        }
+        inputData.getString(KEY_INSTALL_DESTINATION)
         val zipPath = inputData.getString(KEY_ZIP_PATH) ?: return Result.failure()
         val modName = inputData.getString(KEY_MOD_NAME) ?: return Result.failure()
         val displayTitle = inputData.getString(KEY_DISPLAY_TITLE) ?: modName
@@ -177,7 +186,7 @@ class ModInstallWorker(
                 return Result.success(
                     workDataOf(
                         OUTPUT_FILE_COUNT to fileCount,
-                        OUTPUT_TARGET_DIR to modName
+                        OUTPUT_TARGET_DIR to displayTitle
                     )
                 )
             }
@@ -228,7 +237,7 @@ class ModInstallWorker(
             }
 
             val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
-            val displayDir = topDir ?: modName
+            val displayDir = topDir ?: displayTitle
 
             if (fileCount == 0) {
                 deleteSource(zipFile)

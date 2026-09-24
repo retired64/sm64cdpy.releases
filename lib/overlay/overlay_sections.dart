@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/entities/dynos_entity.dart';
+import '../domain/entities/install_identity.dart';
 import '../domain/entities/mod_entity.dart';
 import '../domain/entities/mod_version_resolver.dart';
 import '../domain/entities/omm_rebirth_entity.dart';
@@ -39,6 +40,22 @@ class OverlayModItem {
   final String? imageUrl;
   final OverlaySection section;
   final String installDestination;
+
+  InstallIdentity identityFor(OverlayDownloadOption option) =>
+      InstallIdentity.forCatalogArtifact(
+        section: switch (section) {
+          OverlaySection.all => InstallSection.mods,
+          OverlaySection.vip => InstallSection.vip,
+          OverlaySection.dynos => InstallSection.dynos,
+          OverlaySection.touchControls => InstallSection.touchControls,
+          OverlaySection.omm => InstallSection.omm,
+          OverlaySection.render96 => InstallSection.render96,
+        },
+        contentId: id,
+        downloadUrl: option.url,
+        versionLabel: option.versionLabel,
+        fileName: option.filename,
+      );
 
   factory OverlayModItem.fromModEntity(ModEntity m) {
     final latest = resolveLatestDownloadableVersion(m.versions);

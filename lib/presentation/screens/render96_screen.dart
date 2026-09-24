@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/render96_entity.dart';
+import '../../domain/entities/install_identity.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
@@ -247,8 +248,14 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
   bool _isExpanded = false;
   bool _downloading = false;
 
-  String get _operationName =>
-      sanitizeModTitle('render96-${widget.mod.id}-${widget.mod.name}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.render96,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+    versionLabel: widget.mod.version,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   Color get _accentColor {
     switch (widget.mod.category) {
@@ -315,6 +322,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
         fileName: filename,
         displayTitle: widget.mod.name,
         installDestination: widget.mod.installDestination,
+        identity: _identity,
       );
     } catch (e) {
       if (mounted) {

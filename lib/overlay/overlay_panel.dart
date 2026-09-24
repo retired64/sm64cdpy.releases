@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme/retro_theme.dart';
 import '../l10n/app_localizations.dart';
-import '../services/download_url_resolver.dart';
 import 'overlay_sections.dart';
 
 /// Tema fijo del overlay flotante — ver `RetroTheme.overlay()` para el
@@ -142,11 +141,12 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   void _startDownload(OverlayModItem mod, OverlayDownloadOption option) {
     HapticFeedback.lightImpact();
     final title = mod.title;
+    final itemKey = _itemKey(mod);
     final operationName = _operationName(mod, option);
 
     setState(() {
-      _modStatus[title] = 'connecting';
-      _activeOperationNames[title] = operationName;
+      _modStatus[itemKey] = 'connecting';
+      _activeOperationNames[itemKey] = operationName;
     });
 
     FloatyOverlay.shareData({
@@ -157,15 +157,16 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       'operationName': operationName,
       'section': mod.section.name,
       'installDestination': mod.installDestination,
+      ...mod.identityFor(option).toMap(),
     });
 
-    _pendingTimers[title]?.cancel();
-    _pendingTimers[title] = Timer(_bridgeTimeout, () {
+    _pendingTimers[itemKey]?.cancel();
+    _pendingTimers[itemKey] = Timer(_bridgeTimeout, () {
       if (!mounted) return;
-      if (_modStatus[title] == 'connecting') {
+      if (_modStatus[itemKey] == 'connecting') {
         setState(() {
-          _modStatus.remove(title);
-          _activeOperationNames.remove(title);
+          _modStatus.remove(itemKey);
+          _activeOperationNames.remove(itemKey);
         });
         _showToast(AppLocalizations.of(context).overlayNoResponse);
       }
@@ -179,40 +180,36 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   /// lento o zip corrupto, sin forma de salir de ahí.
   void _cancelDownload(OverlayModItem mod) {
     final title = mod.title;
+    final itemKey = _itemKey(mod);
+    final option = mod.downloadOptions.first;
     HapticFeedback.mediumImpact();
-    _pendingTimers.remove(title)?.cancel();
+    _pendingTimers.remove(itemKey)?.cancel();
 
     FloatyOverlay.shareData({
       'type': 'cancel_mod',
       'modTitle': title,
       'operationName':
-          _activeOperationNames[title] ??
-          _operationName(mod, mod.downloadOptions.first),
+          _activeOperationNames[itemKey] ?? _operationName(mod, option),
+      ...mod.identityFor(option).toMap(),
     });
 
     // Evita que un evento de progreso en vuelo (emitido antes de que
     // WorkManager procese la cancelación) re-active este tile.
-    _cancelledMods.add(title);
+    _cancelledMods.add(itemKey);
     Future.delayed(const Duration(seconds: 10), () {
-      _cancelledMods.remove(title);
+      _cancelledMods.remove(itemKey);
     });
 
     // El tile queda en transición hasta que Kotlin confirme que WorkManager
     // escribió la cancelación. No mostramos un éxito optimista falso.
-    setState(() => _modStatus[title] = 'cancelling');
+    setState(() => _modStatus[itemKey] = 'cancelling');
   }
 
+  String _itemKey(OverlayModItem mod) =>
+      mod.identityFor(mod.downloadOptions.first).contentKey;
+
   String _operationName(OverlayModItem mod, OverlayDownloadOption option) {
-    final raw = switch (mod.section) {
-      OverlaySection.all => 'mod-${mod.id}-${option.fileKey}',
-      OverlaySection.vip => 'vip-${mod.id}-${mod.title}',
-      OverlaySection.dynos => 'dynos-${mod.id}-${mod.title}',
-      OverlaySection.touchControls => 'touch-${mod.id}-${mod.title}',
-      OverlaySection.omm => 'omm-${mod.id}-${mod.title}',
-      OverlaySection.render96 => 'render96-${mod.id}-${mod.title}',
-    };
-    final sanitized = sanitizeModTitle(raw);
-    return sanitized.isEmpty ? 'mod-${mod.id}' : sanitized;
+    return mod.identityFor(option).operationKey;
   }
 
   void _showToast(String message) {
@@ -245,45 +242,52 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       ref.invalidate(overlayAllItems);
     } else if (type == 'install_progress') {
       final modTitle = data['modTitle'] as String?;
+      final itemKey = data['contentKey'] as String? ?? modTitle;
       final rawStatus = data['status'] as String?;
       final progress = data['progress'] as int?;
-      if (modTitle == null || rawStatus == null || !mounted) return;
+      if (modTitle == null ||
+          itemKey == null ||
+          rawStatus == null ||
+          !mounted) {
+        return;
+      }
       final isCancellation =
           rawStatus == 'cancelled' || rawStatus == 'BgOperationCancelled';
-      if (_cancelledMods.contains(modTitle) && !isCancellation) return;
-      if (isCancellation) _cancelledMods.remove(modTitle);
+      if (_cancelledMods.contains(itemKey) && !isCancellation) return;
+      if (isCancellation) _cancelledMods.remove(itemKey);
 
-      _pendingTimers.remove(modTitle)?.cancel();
+      _pendingTimers.remove(itemKey)?.cancel();
 
       final mapped = _mapStatus(rawStatus);
       setState(() {
-        _modStatus[modTitle] = mapped;
-        if (progress != null) _modProgress[modTitle] = progress;
-        if (mapped == 'done') _activeOperationNames.remove(modTitle);
+        _modStatus[itemKey] = mapped;
+        if (progress != null) _modProgress[itemKey] = progress;
+        if (mapped == 'done') _activeOperationNames.remove(itemKey);
       });
 
       if (mapped == 'cancelled') {
-        _activeOperationNames.remove(modTitle);
+        _activeOperationNames.remove(itemKey);
         Future.delayed(const Duration(seconds: 3), () {
-          if (mounted && _modStatus[modTitle] == 'cancelled') {
+          if (mounted && _modStatus[itemKey] == 'cancelled') {
             setState(() {
-              _modStatus.remove(modTitle);
-              _modProgress.remove(modTitle);
+              _modStatus.remove(itemKey);
+              _modProgress.remove(itemKey);
             });
           }
         });
       }
     } else if (type == 'install_error') {
       final modTitle = data['modTitle'] as String?;
+      final itemKey = data['contentKey'] as String? ?? modTitle;
       final error = data['error'] as String?;
-      if (modTitle == null || !mounted) return;
-      if (_cancelledMods.contains(modTitle) && error != 'cancel_failed') return;
-      if (error == 'cancel_failed') _cancelledMods.remove(modTitle);
-      _pendingTimers.remove(modTitle)?.cancel();
+      if (modTitle == null || itemKey == null || !mounted) return;
+      if (_cancelledMods.contains(itemKey) && error != 'cancel_failed') return;
+      if (error == 'cancel_failed') _cancelledMods.remove(itemKey);
+      _pendingTimers.remove(itemKey)?.cancel();
       setState(() {
-        _modStatus.remove(modTitle);
-        _modProgress.remove(modTitle);
-        _activeOperationNames.remove(modTitle);
+        _modStatus.remove(itemKey);
+        _modProgress.remove(itemKey);
+        _activeOperationNames.remove(itemKey);
       });
       final message = switch (error) {
         'no_folder' => AppLocalizations.of(context).overlaySelectFolder,
@@ -413,8 +417,8 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
                       itemCount: mods.length,
                       itemBuilder: (context, i) => _ModTile(
                         mod: mods[i],
-                        status: _modStatus[mods[i].title],
-                        progress: _modProgress[mods[i].title],
+                        status: _modStatus[_itemKey(mods[i])],
+                        progress: _modProgress[_itemKey(mods[i])],
                         onDownload: () => unawaited(_requestDownload(mods[i])),
                         onCancel: () => _cancelDownload(mods[i]),
                       ),
