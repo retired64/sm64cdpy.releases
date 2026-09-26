@@ -918,6 +918,48 @@ abstract class AppLocalizations {
   /// **'DOWNLOAD'**
   String get sharedDownload;
 
+  /// No description provided for @installationChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'CHECKING...'**
+  String get installationChecking;
+
+  /// No description provided for @installationCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get installationCancel;
+
+  /// No description provided for @installationInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTALLED'**
+  String get installationInstalled;
+
+  /// No description provided for @installationUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'UPDATE'**
+  String get installationUpdate;
+
+  /// No description provided for @installationReinstall.
+  ///
+  /// In en, this message translates to:
+  /// **'REINSTALL'**
+  String get installationReinstall;
+
+  /// No description provided for @installationVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'VERIFY'**
+  String get installationVerify;
+
+  /// No description provided for @installationSelectFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'SELECT FOLDER'**
+  String get installationSelectFolder;
+
   /// Shared button label to expand text
   ///
   /// In en, this message translates to:

@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado contra `1.7.0+18` el 2026-09-23.
+Revisado contra `1.7.0+18` el 2026-09-24.
 
 ## Implementado
 
@@ -14,8 +14,21 @@ Revisado contra `1.7.0+18` el 2026-09-23.
 - Overlay con búsqueda, órdenes de descarga y reflejo del progreso.
 - Identidad canónica de contenido/artefacto compartida por app, overlay,
   WorkManager, persistencia temporal y eventos.
+- Recibos nativos atómicos para instalaciones automáticas confirmadas, con
+  manifiesto SAF acotado y recuperación independiente de los engines Flutter.
+- Repositorio de Biblioteca con lectura nativa validada, historial de hasta 500
+  eventos, proyección Hive reconstruible y estado Riverpod listo/parcial/error.
+- Verificación SAF acotada por centinelas con estados presente, ausente,
+  desconocido y permiso revocado; refresco global e individual fuera del hilo
+  principal.
+- Selector canónico de acciones aplicado a detalle, VIP, DynOS, Touch
+  Controls, OMM y Render96, con comparación conservadora de versiones.
 
 ## Experimental o pendiente de validación
+
+- Biblioteca/historial: están implementados recibos, historial, proyección y
+  verificación SAF; faltan la validación física con proveedores lentos, el
+  selector en overlay y las superficies Biblioteca/Home.
 
 - Overlay en Android 7–16, especialmente recreación del proceso y retorno desde permisos del sistema.
 - Descargas simultáneas en dispositivo; las colisiones por títulos ya no son

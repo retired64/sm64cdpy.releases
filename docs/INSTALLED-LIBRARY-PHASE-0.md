@@ -178,7 +178,9 @@ the selection rules so packages with thousands of entries remain cheap:
 
 1. include `main.lua` and `mod.lua` paths first;
 2. include a loose file's exact relative path;
-3. include at least one file from every detected top-level root;
+3. include at least one file from every detected top-level root while the
+   package fits the 32-sentinel cap; for larger packages retain the first
+   roots in deterministic lexicographic order;
 4. fill remaining slots with deterministic lexicographic paths;
 5. cap receipts at 32 sentinels and record total `fileCount` separately;
 6. never use directories alone as proof that installation is present.

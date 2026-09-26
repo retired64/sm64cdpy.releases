@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 import '../domain/entities/install_identity.dart';
@@ -91,6 +93,12 @@ class NativeWorkSnapshot {
 /// - Limpiar la selección.
 class ModInstaller {
   static const _channel = MethodChannel('mods.sm64cdpy/mod_installer');
+  static final _libraryInvalidations = StreamController<String>.broadcast();
+  static Stream<String> get libraryInvalidations =>
+      _libraryInvalidations.stream;
+  static void invalidateInstallationLibrary(String reason) {
+    _libraryInvalidations.add(reason);
+  }
 
   /// Abre el explorador de archivos del sistema para que el usuario
   /// seleccione la carpeta de mods. Retorna la URI si se seleccionó,
@@ -98,6 +106,7 @@ class ModInstaller {
   Future<String?> openDirectoryPicker() async {
     try {
       final uri = await _channel.invokeMethod<String>('openDirectoryPicker');
+      if (uri != null) invalidateInstallationLibrary('modsFolderChanged');
       return uri;
     } on PlatformException catch (e) {
       throw ModInstallerException(
@@ -298,6 +307,7 @@ class ModInstaller {
   Future<String?> openDynosPicker() async {
     try {
       final uri = await _channel.invokeMethod<String>('openDynosPicker');
+      if (uri != null) invalidateInstallationLibrary('dynosFolderChanged');
       return uri;
     } on PlatformException catch (e) {
       throw ModInstallerException(
@@ -385,6 +395,7 @@ class ModInstaller {
   Future<void> clearDynosSelection() async {
     try {
       await _channel.invokeMethod('clearDynosSelection');
+      invalidateInstallationLibrary('dynosFolderCleared');
     } on PlatformException {
       // Silently ignore
     }
@@ -394,6 +405,7 @@ class ModInstaller {
   Future<void> clearDirectorySelection() async {
     try {
       await _channel.invokeMethod('clearDirectorySelection');
+      invalidateInstallationLibrary('modsFolderCleared');
     } on PlatformException {
       // Silently ignore
     }
@@ -418,6 +430,36 @@ class ModInstaller {
         e.message ?? 'Failed to start background install',
       );
     }
+  }
+
+  Future<Map<String, dynamic>> getInstallationLibrary() async {
+    final raw = await _channel.invokeMethod<Map>('getInstallationLibrary');
+    if (raw == null) {
+      throw const ModInstallerException('No installation library result');
+    }
+    return Map<String, dynamic>.from(raw);
+  }
+
+  Future<Map<String, dynamic>> verifyInstallationLibrary({
+    List<String>? artifactKeys,
+  }) async {
+    final raw = await _channel.invokeMethod<Map>('verifyInstallationLibrary', {
+      'artifactKeys': ?artifactKeys,
+    });
+    if (raw == null) {
+      throw const ModInstallerException('No installation verification result');
+    }
+    return Map<String, dynamic>.from(raw);
+  }
+
+  Future<void> clearInstallationHistory() async {
+    final cleared = await _channel.invokeMethod<bool>(
+      'clearInstallationHistory',
+    );
+    if (cleared != true) {
+      throw const ModInstallerException('Could not clear installation history');
+    }
+    invalidateInstallationLibrary('historyCleared');
   }
 }
 

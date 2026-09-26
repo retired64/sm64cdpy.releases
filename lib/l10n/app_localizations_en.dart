@@ -475,6 +475,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sharedDownload => 'DOWNLOAD';
 
   @override
+  String get installationChecking => 'CHECKING...';
+
+  @override
+  String get installationCancel => 'CANCEL';
+
+  @override
+  String get installationInstalled => 'INSTALLED';
+
+  @override
+  String get installationUpdate => 'UPDATE';
+
+  @override
+  String get installationReinstall => 'REINSTALL';
+
+  @override
+  String get installationVerify => 'VERIFY';
+
+  @override
+  String get installationSelectFolder => 'SELECT FOLDER';
+
+  @override
   String get sharedReadMore => 'READ MORE';
 
   @override

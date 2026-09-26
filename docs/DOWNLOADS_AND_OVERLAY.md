@@ -1,6 +1,6 @@
 # Descargas, instalación y overlay
 
-Revisado contra `1.7.0+18` el 2026-09-23.
+Revisado contra `1.7.0+18` el 2026-09-24.
 
 ## Flujo de instalación
 
@@ -10,10 +10,35 @@ Revisado contra `1.7.0+18` el 2026-09-23.
 4. `ModInstallerPlugin` crea una cadena única de WorkManager: primero `ModDownloadWorker`, después `ModInstallWorker`.
 5. El downloader sigue redirects, limita reintentos, verifica el tamaño cuando el servidor lo informa y publica porcentaje mediante `setProgress`.
 6. El instalador copia archivos sueltos o extrae ZIP/7z hacia el árbol SAF.
-7. El EventChannel `mods.sm64cdpy/mod_install_events` actualiza un provider global, la UI y el overlay; ambos workers muestran notificaciones de primer plano cancelables.
-8. Al terminar, un coordinador global muestra el resultado aunque el usuario haya cambiado de pantalla. Android conserva una notificación de instalación completa en un canal de resultados independiente y visible, mientras los canales de progreso siguen siendo silenciosos.
+7. Tras completar todas las escrituras, el instalador guarda atómicamente un
+   recibo privado con la identidad y hasta 32 rutas centinela; solo entonces
+   puede devolver `SUCCEEDED`.
+8. El EventChannel `mods.sm64cdpy/mod_install_events` actualiza un provider global, la UI y el overlay; ambos workers muestran notificaciones de primer plano cancelables.
+9. Al terminar, un coordinador global muestra el resultado aunque el usuario haya cambiado de pantalla. Android conserva una notificación de instalación completa en un canal de resultados independiente y visible, mientras los canales de progreso siguen siendo silenciosos.
 
 Al recrear el proceso, Flutter carga los UUID persistidos, solicita una instantánea a WorkManager y vuelve a registrar los observers nativos. Los trabajos inexistentes se descartan; RUNNING, ENQUEUED, SUCCEEDED, FAILED y CANCELLED se traducen de nuevo al estado compartido.
+
+El recibo se escribe desde Kotlin, de modo que una instalación confirmada
+persiste incluso si ambos engines estaban cerrados y ningún consumidor recibió
+el evento. Si guardar el recibo falla después de copiar los archivos, el Worker
+termina en error y no publica la notificación final; una fase posterior importa
+estos recibos en la Biblioteca Flutter/Hive. Esa importación ya se realiza al
+arrancar y tras cada instalación confirmada: Kotlin sigue siendo la autoridad y
+Hive es solo una proyección versionada que puede reconstruirse.
+
+La proyección también incorpora verificación física SAF. Kotlin comprueba
+solamente las rutas centinela registradas (máximo 32 por recibo), en un hilo de
+trabajo y con lotes serializados. Abrir/refrescar Biblioteca verifica el lote;
+el provider también ofrece verificación individual por `artifactKey`. Cambiar
+o limpiar una carpeta invalida esta proyección, pero nunca borra recibos,
+historial ni archivos del juego.
+
+Los botones del engine principal consumen un selector canónico por
+`InstallIdentity`. Puede producir Comprobar, Descargar, Cancelar, Instalado,
+Actualizar, Reinstalar, Verificar o Seleccionar carpeta. Un estado terminal de
+WorkManager por sí solo nunca produce Instalado. El overlay mantendrá la misma
+política cuando la Fase 7 envíe el snapshot de Biblioteca entre engines; no
+puede leer el provider/Hive del engine principal como memoria compartida.
 
 Las cadenas usan `operationKey = v1|section|contentId|artifactId` con política
 `REPLACE`. El artefacto usa IDs de versión/archivo de la fuente cuando están

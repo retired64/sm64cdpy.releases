@@ -7,7 +7,7 @@
 |---|---|
 | Proyecto | SM64CDPY — SM64CoopDX Mods Browser |
 | Rama de trabajo | `historial-hive` |
-| Estado | Fases 0 y 1 completadas; Fase 2 pendiente de autorización |
+| Estado | Fase 5 implementada en app principal; overlay reservado para Fase 7 |
 | Creado | 2026-09-23 |
 | Plataforma | Android 7.0+ |
 | Alcance | Biblioteca, historial, detección de versión y verificación SAF |
@@ -129,72 +129,120 @@ catálogo antes de comenzar, no si intenta reconstruirla después desde el títu
 
 ## Fase 2 — Manifiesto de escritura e instalación confirmada
 
-- [ ] Cambiar el resultado interno de extracción para obtener conteo y huella
+- [x] Cambiar el resultado interno de extracción para obtener conteo y huella
   verificable, sin duplicar `SafZipExtractor`.
-- [ ] Definir centinelas para archivo suelto, carpeta única y múltiples raíces.
-- [ ] Limitar el tamaño de la huella para archivos con miles de entradas.
-- [ ] Escribir el recibo solamente después de completar todas las escrituras.
-- [ ] Usar escritura atómica: temporal, flush y reemplazo final.
-- [ ] No crear recibo en descarga completa sin instalación.
-- [ ] No crear recibo en fallo, cancelación o permiso SAF revocado.
-- [ ] Evitar carreras entre dos Workers paralelos.
-- [ ] Reconciliar un Worker `SUCCEEDED` cuyo evento no fue recibido por Flutter.
-- [ ] Definir tratamiento de éxito nativo con fallo posterior al guardar recibo.
+- [x] Definir centinelas para archivo suelto, carpeta única y múltiples raíces.
+- [x] Limitar el tamaño de la huella para archivos con miles de entradas.
+- [x] Escribir el recibo solamente después de completar todas las escrituras.
+- [x] Usar escritura atómica: temporal, flush y reemplazo final.
+- [x] No crear recibo en descarga completa sin instalación.
+- [x] No crear recibo en fallo, cancelación o permiso SAF revocado.
+- [x] Evitar carreras entre dos Workers paralelos.
+- [x] Reconciliar un Worker `SUCCEEDED` cuyo evento no fue recibido por Flutter.
+- [x] Definir tratamiento de éxito nativo con fallo posterior al guardar recibo.
 
 **Motivo:** `install_completed` debe dejar evidencia aun cuando ambos engines
 Flutter estén cerrados.
 
+**Implementación:** `SafZipExtractor` devuelve un manifiesto acotado después
+de cada escritura SAF confirmada. `ModInstallWorker` persiste el recibo nativo
+antes de devolver `SUCCEEDED`; por ello la evidencia sobrevive aunque ningún
+engine reciba el evento. El archivo se reemplaza con `AtomicFile`, `flush` y
+`fsync`, bajo bloqueo de proceso. Una cancelación posterior restaura el recibo
+anterior si el archivo aún pertenece al mismo Worker. Si los archivos se
+copiaron pero el recibo falla, el Worker devuelve `FAILED`, no muestra la
+notificación final y permite una reinstalación explícita. Las rutas síncronas
+legacy sin identidad canónica continúan funcionando, pero deliberadamente no
+fabrican recibos por título.
+
+`eventKind` usa `reinstall` cuando ya existía el mismo `artifactKey` e
+`install` para un artefacto distinto. `update` queda reservado para una fase
+posterior que pueda demostrar la intención y comparar versiones sin confundir
+la instalación voluntaria de una versión antigua con una actualización.
+
 ## Fase 3 — Repositorio de Biblioteca y proyección Hive
 
-- [ ] Crear un repositorio de dominio independiente de widgets y tarjetas.
-- [ ] Leer y validar recibos nativos al iniciar.
-- [ ] Diseñar una caja Hive separada y versionada si se confirma que aporta una
+- [x] Crear un repositorio de dominio independiente de widgets y tarjetas.
+- [x] Leer y validar recibos nativos al iniciar.
+- [x] Diseñar una caja Hive separada y versionada si se confirma que aporta una
   mejora de arranque, ordenación o historial.
-- [ ] Hacer idempotente la importación de recibos mediante `artifactKey` y UUID.
-- [ ] Exponer estados con Riverpod: cargando, listo, parcial y error.
-- [ ] Ordenar eventos por fecha sin depender del orden físico del almacén.
-- [ ] Invalidar la proyección al instalar, actualizar, reinstalar, verificar,
+- [x] Hacer idempotente la importación de recibos mediante `artifactKey` y UUID.
+- [x] Exponer estados con Riverpod: cargando, listo, parcial y error.
+- [x] Ordenar eventos por fecha sin depender del orden físico del almacén.
+- [x] Invalidar la proyección al instalar, actualizar, reinstalar, verificar,
   cambiar carpeta o recuperar permisos.
-- [ ] Manejar recibos corruptos sin impedir abrir la Biblioteca.
-- [ ] Definir limpieza y límite razonable del historial.
-- [ ] Añadir migraciones y pruebas de versiones de esquema.
+- [x] Manejar recibos corruptos sin impedir abrir la Biblioteca.
+- [x] Definir limpieza y límite razonable del historial.
+- [x] Añadir migraciones y pruebas de versiones de esquema.
 
 **Motivo:** Hive es útil como proyección Flutter, pero el sistema no debe perder
 una instalación terminada mientras Dart no estaba ejecutándose.
 
+**Implementación:** Kotlin valida cada recibo, aísla archivos corruptos o de
+esquema desconocido y devuelve los elementos sanos junto con incidencias. El
+historial nativo conserva como máximo 500 eventos y puede limpiarse sin borrar
+recibos ni archivos del juego. El repositorio de dominio reconstruye una caja
+Hive exclusiva y versionada desde esa fuente nativa: deduplica recibos por
+`artifactKey`, eventos por UUID del Worker y ordena por fecha UTC. Riverpod
+expone `AsyncLoading`/`AsyncError` y datos `ready` o `partial`. La proyección se
+sincroniza al arrancar, después de `install_completed` y al cambiar/limpiar una
+carpeta; además existe una invalidación pública para el verificador de Fase 4.
+
 ## Fase 4 — Verificación SAF
 
-- [ ] Añadir una operación nativa de verificación por destino y centinelas.
-- [ ] Diferenciar `present`, `missing`, `unknown` y `permissionRevoked`.
-- [ ] No recorrer recursivamente ambas carpetas en cada render de tarjeta.
-- [ ] Hacer verificación rápida al abrir Biblioteca y bajo demanda por elemento.
-- [ ] Marcar como no verificados los registros al cambiar la URI de destino.
-- [ ] Mantener historial al limpiar una selección de carpeta.
-- [ ] Volver a verificar después de recuperar el permiso.
-- [ ] Definir una actualización controlada de toda la Biblioteca.
-- [ ] Limitar concurrencia y trabajo de I/O para evitar congelamientos.
+- [x] Añadir una operación nativa de verificación por destino y centinelas.
+- [x] Diferenciar `present`, `missing`, `unknown`, `folderNotSelected` y
+  `permissionRevoked`.
+- [x] No recorrer recursivamente ambas carpetas en cada render de tarjeta.
+- [x] Hacer verificación rápida al abrir Biblioteca y bajo demanda por elemento.
+- [x] Marcar como no verificados los registros al cambiar la URI de destino.
+- [x] Mantener historial al limpiar una selección de carpeta.
+- [x] Volver a verificar después de recuperar el permiso.
+- [x] Definir una actualización controlada de toda la Biblioteca.
+- [x] Limitar concurrencia y trabajo de I/O para evitar congelamientos.
 - [ ] Probar proveedores SAF lentos y árboles grandes.
 
 **Motivo:** el recibo explica qué ocurrió; SAF confirma qué sigue existiendo.
 
+**Implementación:** Kotlin verifica únicamente las rutas centinela exactas de
+cada recibo, sin recorrer recursivamente el árbol. Las verificaciones se
+serializan, reutilizan directorios ya resueltos durante el lote y se ejecutan
+fuera del hilo principal. El resultado distingue presencia, archivo ausente,
+estado desconocido, carpeta no seleccionada y permiso revocado. Flutter conserva esos resultados en la
+proyección Hive v2, permite refrescar todo el conjunto o un solo `artifactKey`
+y descarta la proyección anterior al cambiar o limpiar una carpeta. Recibos e
+historial no se eliminan por perder acceso SAF. La aceptación con proveedores
+reales y árboles grandes sigue pendiente en dispositivo físico.
+
 ## Fase 5 — Selector canónico de estado y acciones
 
-- [ ] Crear un selector compartido que combine operación, recibo, verificación
+- [x] Crear un selector compartido que combine operación, recibo, verificación
   y versión del catálogo.
-- [ ] Mostrar Descargar cuando no exista instalación conocida.
-- [ ] Mostrar progreso y Cancelar durante una operación activa.
-- [ ] Mostrar Instalado únicamente con estado confirmado y verificable.
-- [ ] Mostrar Actualizar cuando la versión canónica sea distinta y la
+- [x] Mostrar Descargar cuando no exista instalación conocida.
+- [x] Mostrar progreso y Cancelar durante una operación activa.
+- [x] Mostrar Instalado únicamente con estado confirmado y verificable.
+- [x] Mostrar Actualizar cuando la versión canónica sea distinta y la
   comparación sea confiable.
-- [ ] Mostrar Reinstalar cuando falten archivos registrados.
-- [ ] Mostrar Verificar cuando el estado sea desconocido.
-- [ ] Mostrar Seleccionar carpeta cuando falte acceso SAF.
-- [ ] Ofrecer Reinstalar como acción secundaria de un elemento instalado.
-- [ ] No afirmar que una versión es antigua si su formato no puede compararse.
-- [ ] Aplicar el selector a catálogo, detalle, VIP, DynOS, Touch Controls, OMM,
-  Render96 y overlay.
+- [x] Mostrar Reinstalar cuando falten archivos registrados.
+- [x] Mostrar Verificar cuando el estado sea desconocido.
+- [x] Mostrar Seleccionar carpeta cuando falte acceso SAF.
+- [x] Ofrecer Reinstalar como acción secundaria de un elemento instalado.
+- [x] No afirmar que una versión es antigua si su formato no puede compararse.
+- [x] Aplicar el selector a catálogo/detalle, VIP, DynOS, Touch Controls, OMM y
+  Render96 en el engine principal.
+- [ ] Consumir el selector en overlay mediante snapshot entre engines (Fase 7).
 
 **Motivo:** ninguna tarjeta debe inventar su propio criterio de “instalado”.
+
+**Implementación:** `InstallationActionSelector` aplica precedencia estable:
+operación WorkManager activa, recibo durable, verificación SAF y por último
+comparación conservadora de versión. Solo versiones numéricas de hasta cuatro
+componentes pueden producir `Actualizar`; texto libre, prereleases ambiguos o
+versiones ausentes nunca se declaran antiguas. Riverpod combina las fuentes por
+`InstallIdentity` y todas las superficies de descarga del engine principal
+consumen la misma acción y ejecutor. Los archivos múltiples de detalle usan su
+`fileKey` explícito para no compartir `artifactKey`. El overlay requiere un
+snapshot cruzando engines y queda deliberadamente en la Fase 7.
 
 ## Fase 6 — Pantalla Biblioteca y Home
 
@@ -347,6 +395,13 @@ enlazar pruebas o commits cuando existan.
 | 2026-09-23 | Planificación | Se creó la rama `historial-hive` y este roadmap | Aislar una función transversal y evitar riesgos en `main` | Revisión documental pendiente | — |
 | 2026-09-23 | Fase 0 | Auditoría de catálogos/instalador, contrato de identidad y recibo v1, política de sentinelas y fixtures ZIP/7z/sueltos | Evitar identidad por título, filename o índices mutables antes de propagar metadata | Listados ZIP/7z, JSON auditado y `git diff --check` | — |
 | 2026-09-23 | Fase 1 | Identidad canónica versionada propagada por pantallas, overlay, SharedPreferences, MethodChannel, Workers, reconciliación y eventos | Eliminar colisiones por títulos/índices y preparar recibos nativos sin crearlos aún | 8 tests Flutter, `flutter analyze lib`, `compileDebugKotlin` y `git diff --check` | — |
+| 2026-09-24 | Fase 2 | Manifiesto SAF acotado y recibo JSON privado por artefacto, escrito atómicamente antes de `SUCCEEDED` | Conservar evidencia aunque Flutter esté cerrado y evitar éxito final sin persistencia | 6 tests Kotlin, `compileDebugKotlin`, `flutter analyze lib` y `git diff --check` | — |
+| 2026-09-25 | Fase 3 | Lector nativo validado, historial durable limitado, repositorio de dominio, proyección Hive v1 y estado Riverpod | Recuperar instalaciones tras process death sin convertir Hive en autoridad | 7 tests Flutter, 6 tests Kotlin, `flutter analyze`, `compileDebugKotlin` y `git diff --check` | — |
+| 2026-09-25 | Fase 4 | Verificador SAF acotado por centinelas, cuatro estados, refresco global/individual y proyección Hive v2 | Confirmar presencia física sin escaneos recursivos ni bloquear la UI | 17 tests Flutter, 6 tests Kotlin, `flutter analyze` y `compileDebugKotlin`; dispositivo pendiente | — |
+| 2026-09-26 | Fase 5 | Selector canónico y botones coherentes en detalle/VIP/DynOS/Touch Controls/OMM/Render96 | Evitar “instalado” basado en un Worker terminado, dobles toques y actualizaciones falsas | 23 tests Flutter y `flutter analyze`; overlay transferido a Fase 7 | — |
+| 2026-09-26 | Corrección física Fases 4–5 | La ausencia deliberada de carpeta ahora conduce a Seleccionar carpeta; navegación a Ajustes reemplaza la ruta de detalle; el Worker registra y retira archivos nuevos de una instalación cancelada | Las pruebas físicas detectaron “Verificar” sin efecto, navegación vacía y mods nuevos parcialmente extraídos | Compilación/tests automatizados y repetición física pendientes | — |
+| 2026-09-26 | Endurecimiento de cancelación | El rollback SAF es idempotente, serializado y no propaga errores del proveedor de documentos | Dos pruebas físicas iniciales cerraron el proceso; después de corregir observers, dos cancelaciones retiraron los parciales en 8–15 s sin errores de rollback | `logcat` físico en OPPO CPH2365 confirmado | — |
+| 2026-09-26 | Corrección de crash al repetir operación | Todos los observers de WorkManager aceptan la emisión transitoria `null` producida cuando `REPLACE` retira la fila anterior | `logcat` capturó NPE antes de entrar al null-check Kotlin; el nuevo APK soportó dos cancelaciones y una instalación final de la misma identidad | Kotlin/Flutter sin errores y matriz física repetida correctamente | — |
 
 ## Definición de terminado
 

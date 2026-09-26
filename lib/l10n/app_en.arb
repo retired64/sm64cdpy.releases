@@ -608,6 +608,13 @@
   "@sharedDownload": {
     "description": "Shared button label to download a mod"
   },
+  "installationChecking": "CHECKING...",
+  "installationCancel": "CANCEL",
+  "installationInstalled": "INSTALLED",
+  "installationUpdate": "UPDATE",
+  "installationReinstall": "REINSTALL",
+  "installationVerify": "VERIFY",
+  "installationSelectFolder": "SELECT FOLDER",
   "sharedReadMore": "READ MORE",
   "@sharedReadMore": {
     "description": "Shared button label to expand text"

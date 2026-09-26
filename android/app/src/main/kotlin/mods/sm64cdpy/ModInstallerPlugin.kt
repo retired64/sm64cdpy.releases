@@ -8,6 +8,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.DocumentsContract
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -58,6 +60,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val PREF_NAME = "mod_installer_prefs"
         const val KEY_TREE_URI = "tree_uri"
         const val KEY_DYNOS_TREE_URI = "dynos_tree_uri"
+        const val KEY_TREE_PERMISSION_REVOKED = "tree_permission_revoked"
+        const val KEY_DYNOS_TREE_PERMISSION_REVOKED = "dynos_tree_permission_revoked"
         const val REQUEST_CODE_TREE = 9001
         const val REQUEST_CODE_DYNOS_TREE = 9003
         const val REQUEST_CODE_NOTIFICATION_PERMISSION = 9002
@@ -65,6 +69,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private lateinit var channel: MethodChannel
+    private lateinit var applicationContext: Context
     private var eventChannel: EventChannel? = null
     private val eventSinks = mutableListOf<EventChannel.EventSink>()
     private var activity: Activity? = null
@@ -72,9 +77,13 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var pendingDynosPickerResult: Result? = null
     private var pendingPermissionResult: Result? = null
 
-    private val workObservers = mutableMapOf<UUID, Observer<WorkInfo>>()
+    // WorkManager may emit null when REPLACE prunes the previous row for the
+    // same unique work. The observer type must therefore be nullable; a
+    // non-null Kotlin lambda crashes before its own null check can execute.
+    private val workObservers = mutableMapOf<UUID, Observer<WorkInfo?>>()
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        applicationContext = binding.applicationContext
         channel = MethodChannel(binding.binaryMessenger, CHANNEL)
         channel.setMethodCallHandler(this)
 
@@ -155,6 +164,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "downloadAndInstallMod" -> downloadAndInstallMod(call, result)
             "cancelModOperation" -> cancelModOperation(call, result)
             "reconcileBackgroundOperations" -> reconcileBackgroundOperations(call, result)
+            "getInstallationLibrary" -> getInstallationLibrary(result)
+            "verifyInstallationLibrary" -> verifyInstallationLibrary(call, result)
+            "clearInstallationHistory" -> clearInstallationHistory(result)
             "isDirectorySelected" -> isDirectorySelected(result)
             "clearDirectorySelection" -> clearDirectorySelection(result)
             "hasNotificationPermission" -> hasNotificationPermission(result)
@@ -171,6 +183,44 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     // ── Métodos expuestos ──────────────────────────────────────────────────
+
+    private fun getInstallationLibrary(result: Result) {
+        try {
+            result.success(InstallationReceiptStore.readSnapshot(applicationContext))
+        } catch (error: Exception) {
+            result.error("LIBRARY_READ_ERROR", error.message, null)
+        }
+    }
+
+    private fun clearInstallationHistory(result: Result) {
+        try {
+            InstallationReceiptStore.clearHistory(applicationContext)
+            result.success(true)
+        } catch (error: Exception) {
+            result.error("LIBRARY_CLEAR_ERROR", error.message, null)
+        }
+    }
+
+    private fun verifyInstallationLibrary(call: MethodCall, result: Result) {
+        val requestedKeys = call.argument<List<String>>("artifactKeys")?.toSet()
+        thread(name = "installation-library-verifier") {
+            try {
+                val snapshot = InstallationReceiptStore.readSnapshot(applicationContext)
+                @Suppress("UNCHECKED_CAST")
+                val receipts = snapshot["receipts"] as? List<Map<String, Any?>> ?: emptyList()
+                val verification = InstallationSafVerifier.verify(
+                    applicationContext,
+                    receipts,
+                    requestedKeys
+                )
+                Handler(Looper.getMainLooper()).post { result.success(verification) }
+            } catch (error: Exception) {
+                Handler(Looper.getMainLooper()).post {
+                    result.error("LIBRARY_VERIFY_ERROR", error.message, null)
+                }
+            }
+        }
+    }
 
     /**
      * Abre el picker de directorios del sistema (ACTION_OPEN_DOCUMENT_TREE).
@@ -211,7 +261,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             if (isTreeAccessible(uri)) {
                 result.success(uriString)
             } else {
-                prefs.edit().remove(KEY_TREE_URI).apply()
+                markTreePermissionRevoked(prefs, "mods")
                 result.success(null)
             }
         } else {
@@ -247,7 +297,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 activity?.contentResolver?.releasePersistableUriPermission(uri, flags)
             } catch (_: Exception) { }
         }
-        prefs.edit().remove(KEY_TREE_URI).apply()
+        prefs.edit()
+            .remove(KEY_TREE_URI)
+            .remove(KEY_TREE_PERMISSION_REVOKED)
+            .apply()
         result.success(true)
     }
 
@@ -333,7 +386,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "mods")
             result.error(
                 "DIR_NOT_ACCESSIBLE",
                 "The selected directory is no longer accessible.",
@@ -396,7 +449,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "mods")
             result.error(
                 "DIR_NOT_ACCESSIBLE",
                 "The selected directory is no longer accessible. Please select it again in Settings.",
@@ -429,7 +482,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
-                val fileCount = runBlocking {
+                val manifest = runBlocking {
                     SafZipExtractor.extractZipToTree(zipFile, treeDoc, act)
                 }
                 val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
@@ -440,7 +493,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     result.success(mapOf(
                         "success" to true,
                         "targetDir" to displayDir,
-                        "fileCount" to fileCount
+                        "fileCount" to manifest.fileCount
                     ))
                 }
             } catch (e: Exception) {
@@ -472,7 +525,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "dynos")
             result.error(
                 "DIR_NOT_ACCESSIBLE",
                 "The selected DynOS directory is no longer accessible. Please select it again in Settings.",
@@ -505,7 +558,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
-                val fileCount = runBlocking {
+                val manifest = runBlocking {
                     SafZipExtractor.extractZipToTree(zipFile, treeDoc, act)
                 }
                 val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
@@ -516,7 +569,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     result.success(mapOf(
                         "success" to true,
                         "targetDir" to displayDir,
-                        "fileCount" to fileCount
+                        "fileCount" to manifest.fileCount
                     ))
                 }
             } catch (e: Exception) {
@@ -551,7 +604,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "mods")
             result.error(
                 "DIR_NOT_ACCESSIBLE",
                 "The selected directory is no longer accessible. Please select it again in Settings.",
@@ -590,7 +643,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val workId = request.id
 
-        val observer = Observer<WorkInfo> { workInfo ->
+        val observer = Observer<WorkInfo?> { workInfo ->
             if (workInfo != null) {
                 val eventData = mutableMapOf<String, Any?>(
                     "workId" to workId.toString(),
@@ -752,7 +805,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         val downloadId = downloadRequest.id
         val installId = installRequest.id
 
-        val dlObserver = Observer<WorkInfo> { workInfo ->
+        val dlObserver = Observer<WorkInfo?> { workInfo ->
             if (workInfo != null) {
                 val eventData = mutableMapOf<String, Any?>(
                     "workId" to downloadId.toString(),
@@ -794,7 +847,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
         }
 
-        val instObserver = Observer<WorkInfo> { workInfo ->
+        val instObserver = Observer<WorkInfo?> { workInfo ->
             if (workInfo != null) {
                 val eventData = mutableMapOf<String, Any?>(
                     "workId" to installId.toString(),
@@ -1017,7 +1070,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         destination: String?
     ) {
         if (workObservers.containsKey(workId)) return
-        val observer = Observer<WorkInfo> { info ->
+        val observer = Observer<WorkInfo?> { info ->
+            if (info == null) return@Observer
             val eventData = mutableMapOf<String, Any?>(
                 "workId" to workId.toString(),
                 "modName" to modName,
@@ -1108,7 +1162,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             if (isTreeAccessible(uri)) {
                 result.success(uriString)
             } else {
-                prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+                markTreePermissionRevoked(prefs, "dynos")
                 result.success(null)
             }
         } else {
@@ -1149,7 +1203,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "dynos")
             result.error("DIR_NOT_ACCESSIBLE", "The selected DynOS directory is no longer accessible.", null)
             return
         }
@@ -1202,7 +1256,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 activity?.contentResolver?.releasePersistableUriPermission(uri, flags)
             } catch (_: Exception) { }
         }
-        prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+        prefs.edit()
+            .remove(KEY_DYNOS_TREE_URI)
+            .remove(KEY_DYNOS_TREE_PERMISSION_REVOKED)
+            .apply()
         result.success(true)
     }
 
@@ -1225,7 +1282,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             activity?.contentResolver?.takePersistableUriPermission(treeUri, takeFlags)
 
-            getPrefs().edit().putString(KEY_DYNOS_TREE_URI, treeUri.toString()).apply()
+            getPrefs().edit()
+                .putString(KEY_DYNOS_TREE_URI, treeUri.toString())
+                .remove(KEY_DYNOS_TREE_PERMISSION_REVOKED)
+                .apply()
 
             result.success(treeUri.toString())
         } catch (e: Exception) {
@@ -1264,6 +1324,15 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             ?: throw IllegalStateException("Activity not available")
     }
 
+    private fun markTreePermissionRevoked(prefs: SharedPreferences, destination: String) {
+        val (uriKey, markerKey) = if (destination == "dynos") {
+            KEY_DYNOS_TREE_URI to KEY_DYNOS_TREE_PERMISSION_REVOKED
+        } else {
+            KEY_TREE_URI to KEY_TREE_PERMISSION_REVOKED
+        }
+        prefs.edit().remove(uriKey).putBoolean(markerKey, true).apply()
+    }
+
     /**
      * Procesa el resultado del picker de directorios.
      */
@@ -1283,7 +1352,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             activity?.contentResolver?.takePersistableUriPermission(treeUri, takeFlags)
 
-            getPrefs().edit().putString(KEY_TREE_URI, treeUri.toString()).apply()
+            getPrefs().edit()
+                .putString(KEY_TREE_URI, treeUri.toString())
+                .remove(KEY_TREE_PERMISSION_REVOKED)
+                .apply()
 
             val doc = DocumentFile.fromTreeUri(activity!!, treeUri)
             val displayName = doc?.name ?: treeUri.lastPathSegment ?: "Unknown"

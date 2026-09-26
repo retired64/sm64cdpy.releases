@@ -17,6 +17,7 @@ import 'core/theme/retro_theme.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'presentation/widgets/background_operation_coordinator.dart';
 import 'services/background_install_service.dart';
+import 'services/installation_library_projection_service.dart';
 import 'services/update_service.dart';
 
 /// Instala manejo de errores global para el engine actual.
@@ -76,6 +77,7 @@ Future<void> _bootstrapMainApp() async {
   try {
     await Hive.initFlutter();
     await Hive.openBox<String>(AppConstants.settingsBoxKey);
+    await Hive.openBox<dynamic>(AppConstants.installationLibraryBoxKey);
   } catch (e) {
     debugPrint('Hive initialization failed: $e');
     // Continue without Hive (favourites won't persist)
@@ -86,6 +88,10 @@ Future<void> _bootstrapMainApp() async {
 
   // Background install service — EventChannel listener
   BackgroundInstallService.instance.init();
+
+  // Keep the optional Hive projection synchronized even before Library UI is
+  // opened. Native durable receipts remain the authority.
+  await InstallationLibraryProjectionService.instance.init();
 
   // Overlay ↔ app download bridge
   OverlayBridge.init();

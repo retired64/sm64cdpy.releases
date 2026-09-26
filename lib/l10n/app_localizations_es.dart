@@ -480,6 +480,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sharedDownload => 'DESCARGAR';
 
   @override
+  String get installationChecking => 'COMPROBANDO...';
+
+  @override
+  String get installationCancel => 'CANCELAR';
+
+  @override
+  String get installationInstalled => 'INSTALADO';
+
+  @override
+  String get installationUpdate => 'ACTUALIZAR';
+
+  @override
+  String get installationReinstall => 'REINSTALAR';
+
+  @override
+  String get installationVerify => 'VERIFICAR';
+
+  @override
+  String get installationSelectFolder => 'SELECCIONAR CARPETA';
+
+  @override
   String get sharedReadMore => 'LEER MÁS';
 
   @override
@@ -1775,6 +1796,27 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get sharedDownload => 'DESCARGAR';
+
+  @override
+  String get installationChecking => 'COMPROBANDO...';
+
+  @override
+  String get installationCancel => 'CANCELAR';
+
+  @override
+  String get installationInstalled => 'INSTALADO';
+
+  @override
+  String get installationUpdate => 'ACTUALIZAR';
+
+  @override
+  String get installationReinstall => 'REINSTALAR';
+
+  @override
+  String get installationVerify => 'VERIFICAR';
+
+  @override
+  String get installationSelectFolder => 'SELECCIONAR CARPETA';
 
   @override
   String get sharedReadMore => 'LEER MÁS';

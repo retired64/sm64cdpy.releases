@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado contra `1.7.0+18` el 2026-09-23.
+Revisado contra `1.7.0+18` el 2026-09-24.
 
 ## Alcance
 
@@ -44,6 +44,37 @@ metadata, no identidad. La metadata viaja por SharedPreferences, MethodChannel,
 ambos Workers, reconciliación y EventChannel. Las operaciones antiguas sin este
 contrato todavía pueden restaurarse usando su `modName` legacy, pero nunca se
 convierten por aproximación en una identidad nueva.
+
+Después de una instalación automática confirmada, el Worker escribe un recibo
+JSON por `artifactKey` en almacenamiento privado. El recibo contiene identidad,
+destino lógico, snapshot de presentación y un manifiesto de hasta 32 archivos
+centinela; no contiene la URI SAF ni la URL de descarga. Se reemplaza de forma
+atómica antes de que WorkManager publique `SUCCEEDED`, por lo que no depende de
+que alguno de los dos engines Flutter permanezca vivo.
+
+Al iniciar, `InstallationLibraryRepository` solicita a Kotlin una instantánea
+validada. Los recibos dañados o de esquema desconocido se aíslan sin impedir
+leer los demás. Hive usa una caja exclusiva `installation_library_v1` como
+proyección reconstruible para ordenar y consultar; nunca sustituye al recibo
+nativo. Los recibos se deduplican por `artifactKey`, el historial por UUID del
+Worker y ambos se ordenan por fecha UTC. Riverpod expone la carga como estado
+asíncrono listo, parcial o fallido y vuelve a sincronizar tras instalaciones o
+cambios de carpeta. Un coordinador de proceso mantiene Hive actualizado aunque
+la pantalla de Biblioteca todavía no se haya construido.
+
+La presencia actual se resuelve por separado mediante un verificador SAF
+nativo. Solo consulta las rutas centinela del recibo, serializa los lotes y
+reutiliza directorios resueltos; no escanea recursivamente las carpetas en cada
+render. Sus estados `present`, `missing`, `unknown` y `permissionRevoked` son
+una proyección reemplazable en Hive v2. SAF es la autoridad de presencia; el
+recibo y el historial sobreviven a una carpeta cambiada o permiso perdido.
+
+`InstallationActionSelector` es la política única que combina estas fuentes
+con WorkManager y la versión solicitada por el catálogo. Una operación activa
+siempre gana; `Instalado` requiere recibo más SAF presente; y `Actualizar` solo
+se ofrece cuando una comparación numérica conservadora demuestra que el
+catálogo es posterior. Los widgets renderizan la decisión y no reconstruyen
+esta lógica localmente.
 
 ## Navegación y estado
 

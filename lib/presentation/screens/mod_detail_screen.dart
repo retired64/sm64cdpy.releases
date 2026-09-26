@@ -15,13 +15,17 @@ import '../../core/utils/extensions.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../../domain/entities/install_identity.dart';
+import '../../domain/entities/installation_action.dart';
 import '../../domain/entities/mod_version_resolver.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/mod_providers.dart';
+import '../providers/installation_action_provider.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/post_install_dialog.dart';
+import '../widgets/installation_action_presentation.dart';
+import '../widgets/dynos_install_flow.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -992,6 +996,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
     section: InstallSection.mods,
     contentId: widget.modId,
     downloadUrl: widget.url,
+    explicitFileId: widget.fileKey,
   );
 
   String get _operationName => _identity.operationKey;
@@ -1058,41 +1063,9 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
       if (autoInstall && mounted) {
-        final goToSettings = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            icon: Icon(
-              Icons.folder_open_rounded,
-              color: RetroTheme.of(ctx).accent,
-              size: 28,
-            ),
-            title: Text(
-              _l10n!.detailModsFolderNotSelected,
-              style: TextStyle(color: RetroTheme.of(ctx).ink),
-            ),
-            content: Text(
-              _l10n!.detailModsFolderBody,
-              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(
-                  _l10n!.detailCancel,
-                  style: TextStyle(color: RetroTheme.of(ctx).ink),
-                ),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                icon: const Icon(Icons.settings, size: 16),
-                label: Text(_l10n!.detailGoToSettings),
-              ),
-            ],
-          ),
-        );
-        if (goToSettings == true && mounted) {
-          GoRouter.of(context).push('/settings');
+        final goToSettings = await showModsFolderRequiredDialog(context);
+        if (goToSettings && mounted) {
+          GoRouter.of(context).go('/settings');
         }
         return;
       }
@@ -1282,23 +1255,10 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     _l10n = AppLocalizations.of(context);
-    final info = ref.watch(bgInstallStateProvider)[_operationName];
-    final backgroundBusy =
-        info != null &&
-        (info.status == BgInstallStatus.pending ||
-            info.status == BgInstallStatus.downloading ||
-            info.status == BgInstallStatus.installing);
-    final isDownloading = _localDownloading || backgroundBusy;
-    final progress = _localDownloading
-        ? _localProgress
-        : info?.status == BgInstallStatus.downloading
-        ? (info?.downloadProgress ?? 0) / 100
-        : info?.status == BgInstallStatus.installing &&
-              info?.current != null &&
-              info?.total != null &&
-              info!.total! > 0
-        ? info.current! / info.total!
-        : null;
+    final actionState = ref.watch(installationActionProvider(_identity));
+    final action = actionState.primaryAction;
+    final isDownloading = _localDownloading || actionState.isOperationActive;
+    final progress = _localDownloading ? _localProgress : actionState.progress;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
@@ -1347,9 +1307,19 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           SizedBox(
             height: 34,
             child: FilledButton.icon(
-              onPressed: isDownloading ? null : _download,
-              icon: const Icon(Icons.download_rounded, size: 14),
-              label: Text(_l10n!.detailDownload),
+              onPressed:
+                  (_localDownloading && !actionState.isOperationActive) ||
+                      action == InstallationPrimaryAction.checking ||
+                      action == InstallationPrimaryAction.installed
+                  ? null
+                  : () => runCanonicalInstallationAction(
+                      context: context,
+                      ref: ref,
+                      state: actionState,
+                      onTransfer: _download,
+                    ),
+              icon: Icon(action.icon, size: 14),
+              label: Text(action.label(_l10n!)),
               style: FilledButton.styleFrom(
                 backgroundColor: retro.accent,
                 foregroundColor: retro.background,
@@ -1408,6 +1378,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     downloadUrl: widget.url,
     versionLabel: widget.versionLabel,
     fileName: widget.filename,
+    explicitFileId: widget.fileKey,
   );
 
   String get _operationName => _identity.operationKey;
@@ -1498,41 +1469,9 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
 
       if (autoInstall && mounted) {
-        final goToSettings = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            icon: Icon(
-              Icons.folder_open_rounded,
-              color: RetroTheme.of(ctx).accent,
-              size: 28,
-            ),
-            title: Text(
-              _l10n!.detailModsFolderNotSelected,
-              style: TextStyle(color: RetroTheme.of(ctx).ink),
-            ),
-            content: Text(
-              _l10n!.detailModsFolderBody,
-              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(
-                  _l10n!.detailCancel,
-                  style: TextStyle(color: RetroTheme.of(ctx).ink),
-                ),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                icon: const Icon(Icons.settings, size: 16),
-                label: Text(_l10n!.detailGoToSettings),
-              ),
-            ],
-          ),
-        );
-        if (goToSettings == true && mounted) {
-          GoRouter.of(context).push('/settings');
+        final goToSettings = await showModsFolderRequiredDialog(context);
+        if (goToSettings && mounted) {
+          GoRouter.of(context).go('/settings');
         }
         return;
       }
@@ -1726,14 +1665,10 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
   Widget build(BuildContext context) {
     final retro = widget.retro;
     _l10n = AppLocalizations.of(context);
-    final modName = _operationName;
-    final info = ref.watch(bgInstallStateProvider)[modName];
-    final isActive =
-        _localDownloading ||
-        (info != null &&
-            (info.status == BgInstallStatus.pending ||
-                info.status == BgInstallStatus.downloading ||
-                info.status == BgInstallStatus.installing));
+    final actionState = ref.watch(installationActionProvider(_identity));
+    final action = actionState.primaryAction;
+    final info = actionState.operation;
+    final isActive = _localDownloading || actionState.isOperationActive;
     final downloadProgress = _localDownloading
         ? (_localProgress * 100).round()
         : (info?.status == BgInstallStatus.downloading
@@ -1747,9 +1682,18 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       children: [
         GestureDetector(
           onTapDown: (_) => _scaleCtrl.forward(),
-          onTapUp: (_) {
+          onTapUp: (_) async {
             _scaleCtrl.reverse();
-            _download();
+            if ((!_localDownloading || actionState.isOperationActive) &&
+                action != InstallationPrimaryAction.checking &&
+                action != InstallationPrimaryAction.installed) {
+              await runCanonicalInstallationAction(
+                context: context,
+                ref: ref,
+                state: actionState,
+                onTransfer: _download,
+              );
+            }
           },
           onTapCancel: () => _scaleCtrl.reverse(),
           child: ScaleTransition(
@@ -1768,23 +1712,15 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      isActive
-                          ? Icons.downloading_rounded
-                          : Icons.download_rounded,
+                      isActive ? Icons.downloading_rounded : action.icon,
                       color: retro.accent,
                       size: 20,
                     ),
                     const SizedBox(width: 10),
                     Text(
                       isActive
-                          ? _localDownloading
-                                ? _l10n!.detailDownloadingPct(
-                                    (_localProgress * 100).toStringAsFixed(0),
-                                  )
-                                : _l10n!.detailDownloadingPct(
-                                    '${downloadProgress ?? 0}',
-                                  )
-                          : _l10n!.detailDownloadButton,
+                          ? '${downloadProgress ?? (_localProgress * 100).round()}% · ${action.label(_l10n!)}'
+                          : action.label(_l10n!),
                       style: retro.heading(size: 15, color: retro.accent),
                     ),
                   ],
@@ -1835,6 +1771,12 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             ),
           ),
         ],
+        if (actionState.canReinstall)
+          TextButton.icon(
+            onPressed: _download,
+            icon: const Icon(Icons.refresh_rounded, size: 15),
+            label: Text(_l10n!.installationReinstall),
+          ),
       ],
     );
   }

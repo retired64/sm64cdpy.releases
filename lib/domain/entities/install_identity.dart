@@ -132,6 +132,17 @@ class InstallIdentity {
   final String? versionLabel;
   final String? fileName;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InstallIdentity &&
+          artifactKey == other.artifactKey &&
+          versionLabel == other.versionLabel &&
+          fileName == other.fileName;
+
+  @override
+  int get hashCode => Object.hash(artifactKey, versionLabel, fileName);
+
   Map<String, Object> toMap() {
     final result = <String, Object>{
       'identitySchemaVersion': schemaVersion,
@@ -217,11 +228,4 @@ class InstallIdentity {
     final trimmed = value?.trim();
     return trimmed == null || trimmed.isEmpty ? null : trimmed;
   }
-
-  @override
-  bool operator ==(Object other) =>
-      other is InstallIdentity && other.artifactKey == artifactKey;
-
-  @override
-  int get hashCode => artifactKey.hashCode;
 }

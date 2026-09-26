@@ -4,6 +4,25 @@ import 'package:sm64cdpy/domain/entities/dynos_entity.dart';
 import 'package:sm64cdpy/overlay/overlay_sections.dart';
 
 void main() {
+  test('equivalent identities are stable Riverpod family arguments', () {
+    final first = InstallIdentity.forCatalogArtifact(
+      section: InstallSection.mods,
+      contentId: 1,
+      downloadUrl: 'https://example.test/version/2?file=3',
+      versionLabel: 'v2',
+      fileName: 'mod.zip',
+    );
+    final second = InstallIdentity.forCatalogArtifact(
+      section: InstallSection.mods,
+      contentId: 1,
+      downloadUrl: 'https://example.test/version/2?file=3',
+      versionLabel: 'v2',
+      fileName: 'mod.zip',
+    );
+
+    expect(first, second);
+    expect(first.hashCode, second.hashCode);
+  });
   group('InstallIdentity', () {
     test('uses stable source version and file ids when available', () {
       final identity = InstallIdentity.forCatalogArtifact(

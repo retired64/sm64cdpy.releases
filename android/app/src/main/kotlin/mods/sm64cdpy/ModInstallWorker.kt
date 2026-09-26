@@ -16,6 +16,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import androidx.work.CoroutineWorker
 import java.io.File
+import kotlinx.coroutines.CancellationException
 
 class ModInstallWorker(
     context: Context,
@@ -36,6 +37,8 @@ class ModInstallWorker(
         const val PROGRESS_TOTAL = "total"
         const val OUTPUT_FILE_COUNT = "fileCount"
         const val OUTPUT_TARGET_DIR = "targetDir"
+        const val OUTPUT_RECEIPT_FILE = "receiptFile"
+        const val OUTPUT_INSTALL_EVENT_KIND = "installEventKind"
 
         /**
          * En Android 14 (API 34) es obligatorio declarar el foregroundServiceType
@@ -58,12 +61,12 @@ class ModInstallWorker(
     override suspend fun doWork(): Result {
         // Phase 2 will use this validated metadata to write the durable
         // receipt. Reading it now verifies that it reached the install Worker.
-        try {
+        val identity = try {
             InstallIdentityMetadata.fromData(inputData)
         } catch (e: IllegalArgumentException) {
             return Result.failure(workDataOf("error" to (e.message ?: "Invalid install identity")))
         }
-        inputData.getString(KEY_INSTALL_DESTINATION)
+        val destination = inputData.getString(KEY_INSTALL_DESTINATION) ?: "mods"
         val zipPath = inputData.getString(KEY_ZIP_PATH) ?: return Result.failure()
         val modName = inputData.getString(KEY_MOD_NAME) ?: return Result.failure()
         val displayTitle = inputData.getString(KEY_DISPLAY_TITLE) ?: modName
@@ -87,6 +90,8 @@ class ModInstallWorker(
             )
         }
 
+        val writeJournal = SafZipExtractor.WriteJournal()
+
         try {
             // El archivo descargado no siempre es un ZIP (ej. mods sueltos en .lua,
             // o .7z para packs de texturas grandes como Render96 HD).
@@ -95,8 +100,11 @@ class ModInstallWorker(
                     buildForegroundInfo(notificationId, buildNotification(displayTitle, 0, 0, true))
                 )
 
-                val copied = SafZipExtractor.copyFileToTree(zipFile, treeDoc, applicationContext)
-                if (!copied) {
+                val manifest = SafZipExtractor.copyFileToTree(
+                    zipFile, treeDoc, applicationContext, writeJournal
+                )
+                if (manifest == null) {
+                    writeJournal.rollback(treeDoc)
                     deleteSource(zipFile)
                     return Result.failure(
                         workDataOf(
@@ -105,14 +113,16 @@ class ModInstallWorker(
                     )
                 }
 
-                deleteSource(zipFile)
-
-                showCompletionNotification(notificationTitle)
-                return Result.success(
-                    workDataOf(
-                        OUTPUT_FILE_COUNT to 1,
-                        OUTPUT_TARGET_DIR to ""
-                    )
+                return completeInstallation(
+                    source = zipFile,
+                    identity = identity,
+                    destination = destination,
+                    displayTitle = displayTitle,
+                    notificationTitle = notificationTitle,
+                    manifest = manifest,
+                    targetDir = "",
+                    treeDoc = treeDoc,
+                    writeJournal = writeJournal
                 )
             }
 
@@ -136,8 +146,8 @@ class ModInstallWorker(
                 )
 
                 var lastProgress = 0
-                val fileCount = SafZipExtractor.extractSevenZToTree(
-                    zipFile, treeDoc, applicationContext, totalBytes
+                val manifest = SafZipExtractor.extractSevenZToTree(
+                    zipFile, treeDoc, applicationContext, totalBytes, writeJournal
                 ) { pct ->
                     // Throttle: notifica cada cambio ≥10%. Ahora pct es el
                     // porcentaje REAL sobre todo el archivo (monótono
@@ -161,7 +171,8 @@ class ModInstallWorker(
                     }
                 }
 
-                if (fileCount == 0) {
+                if (manifest.fileCount == 0) {
+                    writeJournal.rollback(treeDoc)
                     deleteSource(zipFile)
                     return Result.failure(
                         workDataOf(
@@ -180,14 +191,16 @@ class ModInstallWorker(
                     buildForegroundInfo(notificationId, buildNotification(modName, 100, 100, false))
                 )
 
-                deleteSource(zipFile)
-
-                showCompletionNotification(notificationTitle)
-                return Result.success(
-                    workDataOf(
-                        OUTPUT_FILE_COUNT to fileCount,
-                        OUTPUT_TARGET_DIR to displayTitle
-                    )
+                return completeInstallation(
+                    source = zipFile,
+                    identity = identity,
+                    destination = destination,
+                    displayTitle = displayTitle,
+                    notificationTitle = notificationTitle,
+                    manifest = manifest,
+                    targetDir = displayTitle,
+                    treeDoc = treeDoc,
+                    writeJournal = writeJournal
                 )
             }
 
@@ -200,8 +213,8 @@ class ModInstallWorker(
             )
 
             var lastProgress = 0
-            val fileCount = SafZipExtractor.extractZipToTree(
-                zipFile, treeDoc, applicationContext
+            val manifest = SafZipExtractor.extractZipToTree(
+                zipFile, treeDoc, applicationContext, writeJournal
             ) { count ->
                 if (!indeterminate && count - lastProgress >= 3) {
                     lastProgress = count
@@ -224,22 +237,23 @@ class ModInstallWorker(
             // extractWithProgress): garantiza que la barra llegue al total
             // real aunque el último tramo haya sido menor al umbral de
             // 3 archivos del throttling.
-            if (!indeterminate && lastProgress < fileCount) {
+            if (!indeterminate && lastProgress < manifest.fileCount) {
                 setProgress(
                     workDataOf(
-                        PROGRESS_CURRENT to fileCount,
+                        PROGRESS_CURRENT to manifest.fileCount,
                         PROGRESS_TOTAL to totalEntries
                     )
                 )
                 setForeground(
-                    buildForegroundInfo(notificationId, buildNotification(modName, fileCount, totalEntries, false))
+                    buildForegroundInfo(notificationId, buildNotification(modName, manifest.fileCount, totalEntries, false))
                 )
             }
 
             val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
             val displayDir = topDir ?: displayTitle
 
-            if (fileCount == 0) {
+            if (manifest.fileCount == 0) {
+                writeJournal.rollback(treeDoc)
                 deleteSource(zipFile)
                 return Result.failure(
                     workDataOf(
@@ -248,15 +262,21 @@ class ModInstallWorker(
                 )
             }
 
-            deleteSource(zipFile)
-
-            showCompletionNotification(notificationTitle)
-            return Result.success(
-                workDataOf(
-                    OUTPUT_FILE_COUNT to fileCount,
-                    OUTPUT_TARGET_DIR to displayDir
-                )
+            return completeInstallation(
+                source = zipFile,
+                identity = identity,
+                destination = destination,
+                displayTitle = displayTitle,
+                notificationTitle = notificationTitle,
+                manifest = manifest,
+                targetDir = displayDir,
+                treeDoc = treeDoc,
+                writeJournal = writeJournal
             )
+        } catch (e: CancellationException) {
+            writeJournal.rollback(treeDoc)
+            deleteSource(zipFile)
+            throw e
         } catch (e: SecurityException) {
             // El permiso persistente sobre el árbol SAF puede ser revocado por
             // el sistema (limpieza de storage, reinstalación de la app, o el
@@ -264,6 +284,7 @@ class ModInstallWorker(
             // que intenta escribir. Sin este catch específico caía en el
             // genérico de abajo con un e.message poco útil ("Permission
             // denied") que no le dice al usuario qué hacer.
+            writeJournal.rollback(treeDoc)
             deleteSource(zipFile)
             return Result.failure(
                 workDataOf(
@@ -271,11 +292,81 @@ class ModInstallWorker(
                 )
             )
         } catch (e: Exception) {
+            writeJournal.rollback(treeDoc)
             deleteSource(zipFile)
             return Result.failure(
                 workDataOf("error" to (e.message ?: "Unknown error during installation"))
             )
         }
+    }
+
+    private fun completeInstallation(
+        source: File,
+        identity: InstallIdentityMetadata?,
+        destination: String,
+        displayTitle: String,
+        notificationTitle: String,
+        manifest: SafZipExtractor.WriteManifest,
+        targetDir: String,
+        treeDoc: DocumentFile,
+        writeJournal: SafZipExtractor.WriteJournal
+    ): Result {
+        if (isStopped) {
+            writeJournal.rollback(treeDoc)
+            deleteSource(source)
+            return Result.failure(workDataOf("error" to "Installation was cancelled"))
+        }
+
+        val receipt = if (identity != null) {
+            try {
+                InstallationReceiptStore.writeConfirmed(
+                    context = applicationContext,
+                    identity = identity,
+                    destination = destination,
+                    displayTitle = displayTitle,
+                    installWorkerId = id.toString(),
+                    manifest = manifest
+                )
+            } catch (error: Exception) {
+                writeJournal.rollback(treeDoc)
+                deleteSource(source)
+                return Result.failure(
+                    workDataOf(
+                        "error" to (error.message
+                            ?: "Files were copied, but the installation receipt could not be saved")
+                    )
+                )
+            }
+        } else {
+            // Compatibility only for a Worker enqueued by an older app build.
+            // A legacy title is not enough to fabricate a durable identity.
+            null
+        }
+
+        if (isStopped) {
+            receipt?.let {
+                try {
+                    InstallationReceiptStore.rollbackIfCurrent(applicationContext, it)
+                } catch (_: Exception) {
+                    // WorkManager remains cancelled. A later repository read can
+                    // quarantine any receipt that cannot be rolled back safely.
+                }
+            }
+            writeJournal.rollback(treeDoc)
+            deleteSource(source)
+            return Result.failure(workDataOf("error" to "Installation was cancelled"))
+        }
+
+        deleteSource(source)
+        showCompletionNotification(notificationTitle)
+        return Result.success(
+            workDataOf(
+                OUTPUT_FILE_COUNT to manifest.fileCount,
+                OUTPUT_TARGET_DIR to targetDir,
+                OUTPUT_RECEIPT_FILE to receipt?.receiptFileName,
+                OUTPUT_INSTALL_EVENT_KIND to receipt?.eventKind
+            )
+        )
     }
 
     private fun deleteSource(file: File) {

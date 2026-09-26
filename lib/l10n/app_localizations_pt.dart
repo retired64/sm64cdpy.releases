@@ -478,6 +478,27 @@ class AppLocalizationsPt extends AppLocalizations {
   String get sharedDownload => 'BAIXAR';
 
   @override
+  String get installationChecking => 'VERIFICANDO...';
+
+  @override
+  String get installationCancel => 'CANCELAR';
+
+  @override
+  String get installationInstalled => 'INSTALADO';
+
+  @override
+  String get installationUpdate => 'ATUALIZAR';
+
+  @override
+  String get installationReinstall => 'REINSTALAR';
+
+  @override
+  String get installationVerify => 'VERIFICAR';
+
+  @override
+  String get installationSelectFolder => 'SELECIONAR PASTA';
+
+  @override
   String get sharedReadMore => 'LER MAIS';
 
   @override
@@ -1764,6 +1785,27 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get sharedDownload => 'BAIXAR';
+
+  @override
+  String get installationChecking => 'VERIFICANDO...';
+
+  @override
+  String get installationCancel => 'CANCELAR';
+
+  @override
+  String get installationInstalled => 'INSTALADO';
+
+  @override
+  String get installationUpdate => 'ATUALIZAR';
+
+  @override
+  String get installationReinstall => 'REINSTALAR';
+
+  @override
+  String get installationVerify => 'VERIFICAR';
+
+  @override
+  String get installationSelectFolder => 'SELECIONAR PASTA';
 
   @override
   String get sharedReadMore => 'LER MAIS';

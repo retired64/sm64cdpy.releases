@@ -150,6 +150,13 @@
   "sharedAddToFavorites": "AGREGAR A FAVORITOS",
   "sharedRemoveFromFavorites": "QUITAR DE FAVORITOS",
   "sharedDownload": "DESCARGAR",
+  "installationChecking": "COMPROBANDO...",
+  "installationCancel": "CANCELAR",
+  "installationInstalled": "INSTALADO",
+  "installationUpdate": "ACTUALIZAR",
+  "installationReinstall": "REINSTALAR",
+  "installationVerify": "VERIFICAR",
+  "installationSelectFolder": "SELECCIONAR CARPETA",
   "sharedReadMore": "LEER MÁS",
   "sharedShowLess": "MOSTRAR MENOS",
 
