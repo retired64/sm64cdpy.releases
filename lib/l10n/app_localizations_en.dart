@@ -1136,7 +1136,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get disclaimerBodyPersonalPurpose =>
-      'SM64CDPY is an independent Android catalog and manager for community-created SM64CoopDX mods. It helps users browse, download, organize, and install compatible content. The app does not include Super Mario 64, a ROM, or a copy of SM64CoopDX; users must provide their own legitimate and compatible game setup.';
+      'SM64CDPY is an independent Android catalog and manager for community-created SM64CoopDX mods. It helps users browse, download, organize, and install compatible content in folders selected by the user. The app does not distribute or install Super Mario 64, ROM files, SM64CoopDX, or Android builds of SM64CoopDX. It does not request, verify, or provide instructions for obtaining any game file.';
 
   @override
   String get disclaimerSectionNoAffiliation => 'No official affiliation';

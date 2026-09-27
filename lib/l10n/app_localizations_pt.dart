@@ -1141,7 +1141,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get disclaimerBodyPersonalPurpose =>
-      'O SM64CDPY é um catálogo e gerenciador independente para Android de mods do SM64CoopDX criados pela comunidade. Ele permite explorar, baixar, organizar e instalar conteúdo compatível. O aplicativo não inclui Super Mario 64, uma ROM nem uma cópia do SM64CoopDX; cada usuário deve fornecer sua própria instalação legítima e compatível do jogo.';
+      'O SM64CDPY é um catálogo e gerenciador independente para Android de mods do SM64CoopDX criados pela comunidade. Ele permite explorar, baixar, organizar e instalar conteúdo compatível em pastas escolhidas pelo usuário. O aplicativo não distribui nem instala Super Mario 64, arquivos ROM, SM64CoopDX ou versões do SM64CoopDX para Android. Também não solicita, verifica nem fornece instruções para obter arquivos do jogo.';
 
   @override
   String get disclaimerSectionNoAffiliation => 'Sem afiliação oficial';
@@ -2624,7 +2624,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get disclaimerBodyPersonalPurpose =>
-      'O SM64CDPY é um catálogo e gerenciador independente para Android de mods do SM64CoopDX criados pela comunidade. Ele permite explorar, baixar, organizar e instalar conteúdo compatível. O aplicativo não inclui Super Mario 64, uma ROM nem uma cópia do SM64CoopDX; cada usuário deve fornecer sua própria instalação legítima e compatível do jogo.';
+      'O SM64CDPY é um catálogo e gerenciador independente para Android de mods do SM64CoopDX criados pela comunidade. Ele permite explorar, baixar, organizar e instalar conteúdo compatível em pastas escolhidas pelo usuário. O aplicativo não distribui nem instala Super Mario 64, arquivos ROM, SM64CoopDX ou versões do SM64CoopDX para Android. Também não solicita, verifica nem fornece instruções para obter arquivos do jogo.';
 
   @override
   String get disclaimerSectionNoAffiliation => 'Sem afiliação oficial';

@@ -15,13 +15,16 @@
 
 ## 1. Contexto y criterio
 
-SM64CDPY no incluye ROMs, claves, firmware ni una copia completa de un juego de
-Nintendo. El catálogo principal contiene principalmente código Lua publicado
-por la comunidad para SM64CoopDX; DynOS y otros recursos pueden incluir
-archivos creados por sus autores con herramientas como Blender. La aplicación
-conserva título, autor, fechas, versiones y procedencia, y recupera las
-descargas desde la fuente publicada para cada recurso. Estas diferencias son
-importantes frente a servicios dedicados a piratería.
+SM64CDPY no incluye ni instala ROMs, claves, firmware, SM64CoopDX, su port para
+Android ni una copia completa de un juego de Nintendo. Tampoco solicita una ROM,
+comprueba que exista ni enseña a obtener archivos del juego: su alcance comienza
+en el catálogo de mods y termina en las carpetas de contenido elegidas por el
+usuario. El catálogo principal contiene principalmente código Lua publicado por
+la comunidad para SM64CoopDX; DynOS y otros recursos pueden incluir archivos
+creados por sus autores con herramientas como Blender. La aplicación conserva
+título, autor, fechas, versiones y procedencia, y recupera las descargas desde
+la fuente publicada para cada recurso. Estas diferencias son importantes frente
+a servicios dedicados a piratería.
 
 La revisión no requiere certificar jurídicamente miles de mods uno por uno. El
 control proporcionado debe basarse en la procedencia y moderación de la fuente,
@@ -48,8 +51,8 @@ descripciones ni archivos de terceros.
 - [ ] No incluir claves, firmware, BIOS ni credenciales de servicios.
 - [ ] No ofrecer herramientas o instrucciones cuyo propósito sea eludir medidas
       tecnológicas de protección.
-- [ ] No aceptar ROMs previamente parcheadas cuando pueda distribuirse un
-      parche separado que requiera una copia obtenida legítimamente.
+- [ ] No incorporar en el futuro flujos de ROMs o parches de ROM dentro del
+      gestor de mods sin una revisión jurídica y técnica separada.
 - [ ] No aceptar música, voces, modelos, texturas u otros recursos extraídos de
       juegos comerciales sin permiso verificable.
 - [ ] No presentar el proyecto como oficial, aprobado, asociado o patrocinado
