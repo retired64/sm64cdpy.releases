@@ -22,13 +22,20 @@ Revisado contra `1.7.0+18` el 2026-09-24.
   desconocido y permiso revocado; refresco global e individual fuera del hilo
   principal.
 - Selector canónico de acciones aplicado a detalle, VIP, DynOS, Touch
-  Controls, OMM y Render96, con comparación conservadora de versiones.
+  Controls, OMM, Render96 y overlay, con comparación conservadora de versiones.
+- Biblioteca y Home con vistas instaladas/recientes, filtros, reconciliación
+  SAF y navegación hacia el contenido de origen.
+- Snapshot versionado de Biblioteca hacia el segundo engine del overlay, con
+  descarte de respuestas antiguas y actualización tras instalación,
+  verificación o cambio de carpeta.
 
 ## Experimental o pendiente de validación
 
-- Biblioteca/historial: están implementados recibos, historial, proyección y
-  verificación SAF; faltan la validación física con proveedores lentos, el
-  selector en overlay y las superficies Biblioteca/Home.
+- Biblioteca/historial: implementación funcional completada; falta ampliar la
+  matriz física con proveedores SAF lentos, permisos revocados y texto grande.
+- Sincronización de Biblioteca en overlay: implementada y cubierta por pruebas
+  de codec/identidad/selector; falta validación física de cierre, reapertura y
+  recreación de engines.
 
 - Overlay en Android 7–16, especialmente recreación del proceso y retorno desde permisos del sistema.
 - Descargas simultáneas en dispositivo; las colisiones por títulos ya no son

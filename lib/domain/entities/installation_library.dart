@@ -133,6 +133,29 @@ class InstallationRecord {
   final String? versionLabel;
   final String? filename;
   final InstallationPackageShape packageShape;
+
+  Map<String, dynamic> toMap() => {
+    'schemaVersion': 1,
+    'contentKey': contentKey,
+    'artifactKey': artifactKey,
+    'operationKey': operationKey,
+    'section': section,
+    'contentId': contentId,
+    'artifactId': artifactId,
+    'destination': destination,
+    'installedAt': installedAt.toUtc().toIso8601String(),
+    'installWorkerId': installWorkerId,
+    'eventKind': eventKind,
+    'fileCount': fileCount,
+    'sentinels': sentinels.map((sentinel) => sentinel.toMap()).toList(),
+    'source': source,
+    'displaySnapshot': {
+      'title': title,
+      if (versionLabel != null) 'versionLabel': versionLabel,
+      if (filename != null) 'filename': filename,
+    },
+    'packageShape': packageShape.wireValue,
+  };
 }
 
 class InstallationLibraryIssue {
@@ -146,6 +169,8 @@ class InstallationLibraryIssue {
 
   final String file;
   final String reason;
+
+  Map<String, dynamic> toMap() => {'file': file, 'reason': reason};
 }
 
 enum InstallationVerificationStatus {
@@ -200,6 +225,13 @@ class InstallationVerification {
   final InstallationVerificationStatus status;
   final DateTime verifiedAt;
   final String? missingPath;
+
+  Map<String, dynamic> toMap() => {
+    'artifactKey': artifactKey,
+    'status': status.name,
+    'verifiedAt': verifiedAt.toUtc().toIso8601String(),
+    if (missingPath != null) 'missingPath': missingPath,
+  };
 }
 
 class InstallationLibrarySnapshot {
@@ -216,4 +248,61 @@ class InstallationLibrarySnapshot {
   final Map<String, InstallationVerification> verifications;
 
   bool get isPartial => issues.isNotEmpty;
+
+  /// Compact, versioned projection sent to the independent overlay engine.
+  ///
+  /// History is intentionally omitted: the overlay only needs the latest
+  /// receipt per artifact and its SAF verification to run the canonical
+  /// action selector. Native receipts and SAF remain the authorities.
+  Map<String, dynamic> toOverlayMap() => {
+    'schemaVersion': 1,
+    'receipts': receipts.map((record) => record.toMap()).toList(),
+    'issues': issues.map((issue) => issue.toMap()).toList(),
+    'verificationResults': verifications.values
+        .map((verification) => verification.toMap())
+        .toList(),
+  };
+
+  factory InstallationLibrarySnapshot.fromOverlayMap(
+    Map<dynamic, dynamic> map,
+  ) {
+    if (map['schemaVersion'] != 1) {
+      throw const FormatException('Unsupported overlay library schema');
+    }
+
+    final receipts = <InstallationRecord>[];
+    for (final value in map['receipts'] as List? ?? const []) {
+      if (value is! Map) {
+        throw const FormatException('Overlay receipt is not a map');
+      }
+      receipts.add(InstallationRecord.fromMap(value));
+    }
+
+    final issues = <InstallationLibraryIssue>[];
+    for (final value in map['issues'] as List? ?? const []) {
+      if (value is! Map) {
+        throw const FormatException('Overlay issue is not a map');
+      }
+      issues.add(InstallationLibraryIssue.fromMap(value));
+    }
+
+    final verifications = <String, InstallationVerification>{};
+    for (final value in map['verificationResults'] as List? ?? const []) {
+      if (value is! Map) {
+        throw const FormatException('Overlay verification is not a map');
+      }
+      final verification = InstallationVerification.fromMap(
+        value,
+        DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+      );
+      verifications[verification.artifactKey] = verification;
+    }
+
+    return InstallationLibrarySnapshot(
+      receipts: List.unmodifiable(receipts),
+      history: const [],
+      issues: List.unmodifiable(issues),
+      verifications: Map.unmodifiable(verifications),
+    );
+  }
 }

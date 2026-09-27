@@ -55,6 +55,10 @@ class OverlayModItem {
         downloadUrl: option.url,
         versionLabel: option.versionLabel,
         fileName: option.filename,
+        // General catalog details use the resolver's stable
+        // version-{index}-file-{index} key. Passing the same key here is what
+        // lets receipts created from the main engine match the overlay.
+        explicitFileId: section == OverlaySection.all ? option.fileKey : null,
       );
 
   factory OverlayModItem.fromModEntity(ModEntity m) {

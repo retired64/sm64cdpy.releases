@@ -76,6 +76,14 @@ se ofrece cuando una comparación numérica conservadora demuestra que el
 catálogo es posterior. Los widgets renderizan la decisión y no reconstruyen
 esta lógica localmente.
 
+El overlay consume esa misma política sin abrir Hive ni asumir memoria
+compartida. Cada actualización del repositorio se anuncia en el engine
+principal mediante un bus de invalidación que no conserva autoridad; el
+`OverlayBridge` serializa una proyección versionada por el canal de
+`floaty_chatheads`. El segundo engine mantiene únicamente la última respuesta
+válida según `requestId`. Recibos nativos, SAF y WorkManager continúan siendo
+las fuentes de verdad.
+
 ## Navegación y estado
 
 GoRouter define un `ShellRoute` para las pantallas principales y una ruta de detalle fuera del shell. Riverpod administra catálogo, filtros, paginación, favoritos, tema e idioma.

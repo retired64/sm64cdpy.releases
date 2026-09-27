@@ -5,25 +5,49 @@ import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/app_constants.dart';
+import '../data/repositories/installation_library_repository_impl.dart';
 import '../domain/entities/install_identity.dart';
+import '../domain/entities/installation_library.dart';
 import '../services/background_install_service.dart';
 import '../services/download_url_resolver.dart';
+import '../services/installation_library_update_bus.dart';
 import '../services/mod_installer.dart';
 
 class OverlayBridge {
   OverlayBridge._();
 
   static bool _autoInstall = false;
+  static bool _initialized = false;
+  static bool _panelOpen = false;
+  static int _libraryRequestId = 0;
+  static int _libraryRefreshDepth = 0;
+  static final _libraryRepository = InstallationLibraryRepositoryImpl();
 
   static void init() {
+    if (_initialized) return;
+    _initialized = true;
     FloatyChatheads.onData.listen(_onMessageFromOverlay);
     BackgroundInstallService.instance.events.listen(_forwardEventToOverlay);
-    refreshAutoInstall();
+    InstallationLibraryUpdateBus.snapshots.listen((snapshot) {
+      if (_panelOpen && _libraryRefreshDepth == 0) {
+        _sendLibrarySnapshot(snapshot, ++_libraryRequestId);
+      }
+    });
+    ModInstaller.libraryInvalidations.listen((_) {
+      if (_panelOpen) unawaited(_refreshLibrary(verify: true));
+    });
+    unawaited(refreshAutoInstall());
   }
 
   static Future<void> refreshAutoInstall() async {
-    final prefs = await SharedPreferences.getInstance();
-    _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
+    } catch (error, stack) {
+      debugPrint(
+        '[OverlayBridge] Failed to refresh auto-install: $error\n$stack',
+      );
+    }
   }
 
   static void _safeShare(Map<String, dynamic> data) {
@@ -48,7 +72,22 @@ class OverlayBridge {
           await _handleCancel(data);
           break;
         case 'panel_opened':
+          _panelOpen = true;
           _sendActiveInstalls();
+          unawaited(_refreshLibrary(verify: true, announceLoading: true));
+          break;
+        case 'panel_closed':
+          _panelOpen = false;
+          break;
+        case 'verify_installation':
+          final artifactKey = data['artifactKey'] as String?;
+          if (artifactKey != null && artifactKey.isNotEmpty) {
+            await _refreshLibrary(
+              verify: true,
+              artifactKey: artifactKey,
+              announceLoading: true,
+            );
+          }
           break;
       }
     } catch (e, stack) {
@@ -149,9 +188,12 @@ class OverlayBridge {
       final payload = <String, dynamic>{
         'type': 'install_progress',
         'modTitle': modTitle,
-        'status': info.status == BgInstallStatus.downloading
-            ? 'BgDownloadProgress'
-            : 'BgInstallProgress',
+        'status': switch (info.status) {
+          BgInstallStatus.pending => 'BgInstallPending',
+          BgInstallStatus.downloading => 'BgDownloadProgress',
+          BgInstallStatus.installing => 'BgInstallProgress',
+          _ => info.status.name,
+        },
         if (info.identity != null) ...info.identity!.toMap(),
       };
       if (info.downloadProgress != null) {
@@ -209,5 +251,57 @@ class OverlayBridge {
     }
 
     _safeShare(payload);
+    if (event is BgInstallCompleted && _panelOpen) {
+      // The native receipt exists before SUCCEEDED/install_completed. Re-read
+      // and verify it so the overlay moves from transient completion to the
+      // same durable Installed/Update state used by the main engine.
+      unawaited(_refreshLibrary(verify: true));
+    }
+  }
+
+  static Future<void> _refreshLibrary({
+    required bool verify,
+    String? artifactKey,
+    bool announceLoading = false,
+  }) async {
+    if (!_panelOpen) return;
+    final requestId = ++_libraryRequestId;
+    if (announceLoading) {
+      _safeShare({
+        'type': 'installation_library_loading',
+        'requestId': requestId,
+      });
+    }
+
+    _libraryRefreshDepth++;
+    try {
+      final snapshot = verify
+          ? artifactKey == null
+                ? await _libraryRepository.verifyAll()
+                : await _libraryRepository.verifyArtifact(artifactKey)
+          : await _libraryRepository.synchronize();
+      if (_panelOpen) _sendLibrarySnapshot(snapshot, requestId);
+    } catch (error, stack) {
+      debugPrint('[OverlayBridge] Library refresh failed: $error\n$stack');
+      if (_panelOpen) {
+        _safeShare({
+          'type': 'installation_library_error',
+          'requestId': requestId,
+        });
+      }
+    } finally {
+      _libraryRefreshDepth--;
+    }
+  }
+
+  static void _sendLibrarySnapshot(
+    InstallationLibrarySnapshot snapshot,
+    int requestId,
+  ) {
+    _safeShare({
+      'type': 'installation_library_snapshot',
+      'requestId': requestId,
+      'snapshot': snapshot.toOverlayMap(),
+    });
   }
 }

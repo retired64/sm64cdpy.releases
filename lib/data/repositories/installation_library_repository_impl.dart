@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../core/constants/app_constants.dart';
 import '../../domain/entities/installation_library.dart';
 import '../../domain/repositories/installation_library_repository.dart';
+import '../../services/installation_library_update_bus.dart';
 import '../../services/mod_installer.dart';
 
 abstract interface class InstallationLibraryNativeGateway {
@@ -100,13 +101,15 @@ class InstallationLibraryRepositoryImpl
     final snapshot = _parseSnapshot(raw);
     final box = _box;
     if (box == null) {
-      return _withIssue(
+      final result = _withIssue(
         snapshot,
         const InstallationLibraryIssue(
           file: 'hive',
           reason: 'Library projection is unavailable',
         ),
       );
+      InstallationLibraryUpdateBus.publish(result);
+      return result;
     }
     try {
       if (box.get(_schemaKey) != projectionSchemaVersion) {
@@ -114,12 +117,15 @@ class InstallationLibraryRepositoryImpl
       }
       await box.put(_schemaKey, projectionSchemaVersion);
       await box.put(_snapshotKey, raw);
+      InstallationLibraryUpdateBus.publish(snapshot);
       return snapshot;
     } catch (error) {
-      return _withIssue(
+      final result = _withIssue(
         snapshot,
         InstallationLibraryIssue(file: 'hive', reason: error.toString()),
       );
+      InstallationLibraryUpdateBus.publish(result);
+      return result;
     }
   }
 

@@ -52,4 +52,31 @@ void main() {
       expect(verification.status, status);
     }
   });
+
+  test('overlay transport round-trip preserves selector inputs only', () {
+    final record = InstallationRecord.fromMap(installationReceiptFixture());
+    final snapshot = InstallationLibrarySnapshot(
+      receipts: [record],
+      history: [record],
+      issues: const [],
+      verifications: {
+        record.artifactKey: InstallationVerification(
+          artifactKey: record.artifactKey,
+          status: InstallationVerificationStatus.present,
+          verifiedAt: DateTime.utc(2026, 9, 26),
+        ),
+      },
+    );
+
+    final restored = InstallationLibrarySnapshot.fromOverlayMap(
+      snapshot.toOverlayMap(),
+    );
+
+    expect(restored.receipts.single.artifactKey, record.artifactKey);
+    expect(
+      restored.verifications[record.artifactKey]?.status,
+      InstallationVerificationStatus.present,
+    );
+    expect(restored.history, isEmpty);
+  });
 }

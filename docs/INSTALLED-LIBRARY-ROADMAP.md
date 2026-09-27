@@ -7,7 +7,7 @@
 |---|---|
 | Proyecto | SM64CDPY — SM64CoopDX Mods Browser |
 | Rama de trabajo | `historial-hive` |
-| Estado | Fase 6 completada y validada físicamente; overlay reservado para Fase 7 |
+| Estado | Fase 7 implementada; sincronización del overlay pendiente de prueba física |
 | Creado | 2026-09-23 |
 | Plataforma | Android 7.0+ |
 | Alcance | Biblioteca, historial, detección de versión y verificación SAF |
@@ -230,7 +230,7 @@ reales y árboles grandes sigue pendiente en dispositivo físico.
 - [x] No afirmar que una versión es antigua si su formato no puede compararse.
 - [x] Aplicar el selector a catálogo/detalle, VIP, DynOS, Touch Controls, OMM y
   Render96 en el engine principal.
-- [ ] Consumir el selector en overlay mediante snapshot entre engines (Fase 7).
+- [x] Consumir el selector en overlay mediante snapshot entre engines (Fase 7).
 
 **Motivo:** ninguna tarjeta debe inventar su propio criterio de “instalado”.
 
@@ -293,16 +293,31 @@ mantiene como regresión general previa al release.
 
 ## Fase 7 — Sincronización con el overlay
 
-- [ ] Enviar snapshot de instalaciones relevantes cuando se abra el panel.
-- [ ] Enviar cambios después de instalar, verificar o detectar actualización.
-- [ ] No leer Hive desde el segundo engine como si compartiera memoria.
-- [ ] Mostrar estado instalado/actualización usando la misma `artifactKey`.
-- [ ] Resolver el caso en que el overlay se abre antes de cargar la proyección.
-- [ ] Evitar duplicar toasts o resultados terminales entre engines.
+- [x] Enviar snapshot de instalaciones relevantes cuando se abra el panel.
+- [x] Enviar cambios después de instalar, verificar o detectar actualización.
+- [x] No leer Hive desde el segundo engine como si compartiera memoria.
+- [x] Mostrar estado instalado/actualización usando la misma `artifactKey`.
+- [x] Resolver el caso en que el overlay se abre antes de cargar la proyección.
+- [x] Evitar duplicar toasts o resultados terminales entre engines.
 - [ ] Probar cierre y reapertura del panel durante una reconciliación.
 
 **Motivo:** app y burbuja deben presentar la misma verdad aunque tengan engines
 e isolates independientes.
+
+**Implementado (2026-09-26):** `OverlayBridge` solicita una verificación SAF al
+abrir el panel y envía un snapshot compacto y versionado por
+`FloatyChatheads.shareData`. El segundo engine conserva esa proyección solo en
+memoria, descarta respuestas antiguas mediante `requestId` y ejecuta el mismo
+`InstallationActionSelector` usado por la app principal. Mientras llega la
+primera proyección muestra Comprobando, sin inferir que el contenido falta.
+
+El bridge vuelve a publicar después de instalación confirmada, verificación
+puntual, refrescos del repositorio y cambios de carpeta. Los resultados
+terminales continúan siendo responsabilidad del coordinador global y las
+notificaciones nativas; el snapshot no genera un segundo toast. También se
+alineó el `fileKey` explícito del catálogo general, incluidas versiones con
+varios archivos, para que detalle y overlay produzcan la misma `artifactKey`.
+La prueba física de cierre/reapertura y ciclo de vida permanece pendiente.
 
 ## Fase 8 — Descubrimiento de instalaciones antiguas o externas
 
@@ -431,6 +446,7 @@ enlazar pruebas o commits cuando existan.
 | 2026-09-25 | Fase 4 | Verificador SAF acotado por centinelas, cuatro estados, refresco global/individual y proyección Hive v2 | Confirmar presencia física sin escaneos recursivos ni bloquear la UI | 17 tests Flutter, 6 tests Kotlin, `flutter analyze` y `compileDebugKotlin`; dispositivo pendiente | — |
 | 2026-09-26 | Fase 5 | Selector canónico y botones coherentes en detalle/VIP/DynOS/Touch Controls/OMM/Render96 | Evitar “instalado” basado en un Worker terminado, dobles toques y actualizaciones falsas | 23 tests Flutter y `flutter analyze`; overlay transferido a Fase 7 | — |
 | 2026-09-26 | Fase 6 | Biblioteca con Instalados/Actualizaciones/Detectados/Recientes, filtros, resumen en Home y navegación coherente | Hacer visible el estado durable y verificable sin convertir el historial ni Hive en autoridad física | Prueba física en OPPO CPH2365: drawer, detalle y regreso, recibo instalado, recientes y reconciliación “No encontrado” tras borrado externo | — |
+| 2026-09-26 | Fase 7 | Snapshot versionado de Biblioteca hacia el segundo engine y selector canónico en cada tarjeta del overlay | Evitar estados divergentes entre app y burbuja sin compartir memoria ni convertir Hive en autoridad | 25 tests Flutter, `flutter analyze lib test` y `git diff --check`; matriz física pendiente | — |
 | 2026-09-26 | Corrección física Fases 4–5 | La ausencia deliberada de carpeta ahora conduce a Seleccionar carpeta; navegación a Ajustes reemplaza la ruta de detalle; el Worker registra y retira archivos nuevos de una instalación cancelada | Las pruebas físicas detectaron “Verificar” sin efecto, navegación vacía y mods nuevos parcialmente extraídos | Compilación/tests automatizados y repetición física pendientes | — |
 | 2026-09-26 | Endurecimiento de cancelación | El rollback SAF es idempotente, serializado y no propaga errores del proveedor de documentos | Dos pruebas físicas iniciales cerraron el proceso; después de corregir observers, dos cancelaciones retiraron los parciales en 8–15 s sin errores de rollback | `logcat` físico en OPPO CPH2365 confirmado | — |
 | 2026-09-26 | Corrección de crash al repetir operación | Todos los observers de WorkManager aceptan la emisión transitoria `null` producida cuando `REPLACE` retira la fila anterior | `logcat` capturó NPE antes de entrar al null-check Kotlin; el nuevo APK soportó dos cancelaciones y una instalación final de la misma identidad | Kotlin/Flutter sin errores y matriz física repetida correctamente | — |

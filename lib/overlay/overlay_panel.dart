@@ -6,7 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme/retro_theme.dart';
+import '../domain/entities/installation_action.dart';
+import '../domain/entities/installation_library.dart';
 import '../l10n/app_localizations.dart';
+import '../presentation/widgets/installation_action_presentation.dart';
+import '../services/background_install_service.dart';
 import 'overlay_sections.dart';
 
 /// Tema fijo del overlay flotante — ver `RetroTheme.overlay()` para el
@@ -28,6 +32,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   final Map<String, Timer> _pendingTimers = {};
   final Map<String, String> _activeOperationNames = {};
   final Set<String> _cancelledMods = {};
+  InstallationLibrarySnapshot? _librarySnapshot;
+  bool _libraryLoading = true;
+  int _libraryRequestId = 0;
 
   final _searchCtrl = TextEditingController();
 
@@ -205,6 +212,33 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     setState(() => _modStatus[itemKey] = 'cancelling');
   }
 
+  void _requestVerification(InstallationActionState action) {
+    final artifactKey =
+        action.receipt?.artifactKey ?? action.identity.artifactKey;
+    setState(() => _libraryLoading = true);
+    FloatyOverlay.shareData({
+      'type': 'verify_installation',
+      'artifactKey': artifactKey,
+    });
+  }
+
+  void _runLibraryAction(OverlayModItem mod, InstallationActionState action) {
+    switch (action.primaryAction) {
+      case InstallationPrimaryAction.download:
+      case InstallationPrimaryAction.update:
+      case InstallationPrimaryAction.reinstall:
+        unawaited(_requestDownload(mod));
+      case InstallationPrimaryAction.verify:
+        _requestVerification(action);
+      case InstallationPrimaryAction.selectFolder:
+        _showToast(AppLocalizations.of(context).overlaySelectFolder);
+      case InstallationPrimaryAction.checking:
+      case InstallationPrimaryAction.installed:
+      case InstallationPrimaryAction.cancel:
+        break;
+    }
+  }
+
   String _itemKey(OverlayModItem mod) =>
       mod.identityFor(mod.downloadOptions.first).contentKey;
 
@@ -240,6 +274,42 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     final type = data['type'] as String?;
     if (type == 'db_reloaded') {
       ref.invalidate(overlayAllItems);
+    } else if (type == 'installation_library_loading') {
+      final requestId = data['requestId'] as int? ?? 0;
+      if (requestId < _libraryRequestId || !mounted) return;
+      setState(() {
+        _libraryRequestId = requestId;
+        _libraryLoading = true;
+      });
+    } else if (type == 'installation_library_snapshot') {
+      final requestId = data['requestId'] as int? ?? 0;
+      final raw = data['snapshot'];
+      if (requestId < _libraryRequestId || raw is! Map || !mounted) return;
+      try {
+        final snapshot = InstallationLibrarySnapshot.fromOverlayMap(raw);
+        setState(() {
+          _libraryRequestId = requestId;
+          _librarySnapshot = snapshot;
+          _libraryLoading = false;
+          // `done` is only the short-lived WorkManager result. Once the
+          // durable receipt/SAF projection arrives, the canonical selector
+          // owns the tile (Installed/Update/Verify/etc.).
+          _modStatus.removeWhere((_, status) => status == 'done');
+        });
+      } catch (error, stack) {
+        debugPrint('[overlay] Invalid installation snapshot: $error\n$stack');
+        setState(() {
+          _libraryRequestId = requestId;
+          _libraryLoading = false;
+        });
+      }
+    } else if (type == 'installation_library_error') {
+      final requestId = data['requestId'] as int? ?? 0;
+      if (requestId < _libraryRequestId || !mounted) return;
+      setState(() {
+        _libraryRequestId = requestId;
+        _libraryLoading = false;
+      });
     } else if (type == 'install_progress') {
       final modTitle = data['modTitle'] as String?;
       final itemKey = data['contentKey'] as String? ?? modTitle;
@@ -321,6 +391,11 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    try {
+      FloatyOverlay.shareData({'type': 'panel_closed'});
+    } catch (error) {
+      debugPrint('Failed to notify panel closure: $error');
+    }
     _sub?.cancel();
     for (final timer in _pendingTimers.values) {
       timer.cancel();
@@ -349,6 +424,52 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     ref.read(searchProviderFor(section).notifier).set(v);
     ref.read(pageProviderFor(section).notifier).reset();
   }
+
+  InstallationActionState? _libraryActionFor(OverlayModItem mod) {
+    if (mod.downloadOptions.isEmpty) return null;
+    final itemKey = _itemKey(mod);
+    final localStatus = _modStatus[itemKey];
+    final operationStatus = switch (localStatus) {
+      'connecting' => BgInstallStatus.pending,
+      'downloading' => BgInstallStatus.downloading,
+      'installing' => BgInstallStatus.installing,
+      _ => null,
+    };
+    final operation = operationStatus == null
+        ? null
+        : BgInstallInfo(
+            modName: _activeOperationNames[itemKey] ?? itemKey,
+            status: operationStatus,
+            downloadProgress: _modProgress[itemKey],
+          );
+    final candidates = mod.downloadOptions
+        .map(
+          (option) => InstallationActionSelector.select(
+            identity: mod.identityFor(option),
+            operation: operation,
+            library: _librarySnapshot,
+            libraryLoading: _libraryLoading,
+          ),
+        )
+        .toList(growable: false);
+    candidates.sort(
+      (left, right) => _actionPriority(
+        left.primaryAction,
+      ).compareTo(_actionPriority(right.primaryAction)),
+    );
+    return candidates.first;
+  }
+
+  int _actionPriority(InstallationPrimaryAction action) => switch (action) {
+    InstallationPrimaryAction.cancel => 0,
+    InstallationPrimaryAction.update => 1,
+    InstallationPrimaryAction.installed => 2,
+    InstallationPrimaryAction.selectFolder => 3,
+    InstallationPrimaryAction.verify => 4,
+    InstallationPrimaryAction.reinstall => 5,
+    InstallationPrimaryAction.download => 6,
+    InstallationPrimaryAction.checking => 7,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -415,13 +536,21 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
                     }
                     return ListView.builder(
                       itemCount: mods.length,
-                      itemBuilder: (context, i) => _ModTile(
-                        mod: mods[i],
-                        status: _modStatus[_itemKey(mods[i])],
-                        progress: _modProgress[_itemKey(mods[i])],
-                        onDownload: () => unawaited(_requestDownload(mods[i])),
-                        onCancel: () => _cancelDownload(mods[i]),
-                      ),
+                      itemBuilder: (context, i) {
+                        final mod = mods[i];
+                        final action = _libraryActionFor(mod);
+                        return _ModTile(
+                          mod: mod,
+                          action: action,
+                          status: _modStatus[_itemKey(mod)],
+                          progress: _modProgress[_itemKey(mod)],
+                          onDownload: () => unawaited(_requestDownload(mod)),
+                          onCancel: () => _cancelDownload(mod),
+                          onCanonicalAction: action == null
+                              ? null
+                              : () => _runLibraryAction(mod, action),
+                        );
+                      },
                     );
                   },
                 ),
@@ -669,6 +798,8 @@ class _ModTile extends ConsumerStatefulWidget {
     required this.mod,
     required this.onDownload,
     required this.onCancel,
+    required this.action,
+    required this.onCanonicalAction,
     this.status,
     this.progress,
   });
@@ -676,6 +807,8 @@ class _ModTile extends ConsumerStatefulWidget {
   final OverlayModItem mod;
   final VoidCallback onDownload;
   final VoidCallback onCancel;
+  final InstallationActionState? action;
+  final VoidCallback? onCanonicalAction;
   final String? status;
   final int? progress;
 
@@ -694,6 +827,8 @@ class _ModTileState extends ConsumerState<_ModTile> {
   bool get _hasDownloads => widget.mod.downloadOptions.isNotEmpty;
   bool get _hasMultipleFiles => widget.mod.downloadOptions.length > 1;
   bool get _isCancelled => widget.status == 'cancelled';
+  InstallationPrimaryAction? get _canonicalAction =>
+      widget.action?.primaryAction;
 
   Color get _statusColor {
     if (_isDone) return _retro.changelogAdded;
@@ -701,6 +836,16 @@ class _ModTileState extends ConsumerState<_ModTile> {
     if (_isInstalling) return _retro.changelogFixed;
     if (_isDownloading) return _retro.changelogImproved;
     if (_isConnecting) return _retro.inkDim;
+    if (_canonicalAction == InstallationPrimaryAction.installed) {
+      return _retro.changelogAdded;
+    }
+    if (_canonicalAction == InstallationPrimaryAction.update) {
+      return _retro.changelogImproved;
+    }
+    if (_canonicalAction == InstallationPrimaryAction.reinstall ||
+        _canonicalAction == InstallationPrimaryAction.selectFolder) {
+      return _retro.changelogFixed;
+    }
     return _retro.accent;
   }
 
@@ -724,7 +869,8 @@ class _ModTileState extends ConsumerState<_ModTile> {
             children: [
               Expanded(child: _titleRow()),
               const SizedBox(width: 6),
-              if (_isDone)
+              if (_isDone ||
+                  _canonicalAction == InstallationPrimaryAction.installed)
                 Icon(Icons.check_circle, size: 19, color: _statusColor)
               else if (!_hasDownloads)
                 Icon(
@@ -745,6 +891,29 @@ class _ModTileState extends ConsumerState<_ModTile> {
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
                     color: _retro.inkDim,
+                  ),
+                )
+              else if (!_isActive &&
+                  _canonicalAction == InstallationPrimaryAction.checking)
+                SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: _retro.accent,
+                  ),
+                )
+              else if (!_isActive &&
+                  _canonicalAction != null &&
+                  _canonicalAction != InstallationPrimaryAction.download)
+                Tooltip(
+                  message: _canonicalAction!.label(
+                    AppLocalizations.of(context),
+                  ),
+                  child: _RoundIconButton(
+                    icon: _canonicalAction!.icon,
+                    color: _statusColor,
+                    onTap: widget.onCanonicalAction ?? () {},
                   ),
                 )
               else if (!_isActive)
@@ -805,6 +974,15 @@ class _ModTileState extends ConsumerState<_ModTile> {
 
   Widget _titleRow() {
     final l10n = AppLocalizations.of(context);
+    final canonicalLabel = switch (_canonicalAction) {
+      InstallationPrimaryAction.installed ||
+      InstallationPrimaryAction.update ||
+      InstallationPrimaryAction.reinstall ||
+      InstallationPrimaryAction.verify ||
+      InstallationPrimaryAction.selectFolder ||
+      InstallationPrimaryAction.checking => _canonicalAction!.label(l10n),
+      _ => null,
+    };
     final label = _isCancelling
         ? '${widget.mod.title}  ${l10n.overlayCancelling}'
         : _isDownloading && widget.progress != null
@@ -813,6 +991,8 @@ class _ModTileState extends ConsumerState<_ModTile> {
         ? '${widget.mod.title}  ${l10n.overlayInstalling}'
         : _isConnecting
         ? '${widget.mod.title}  ${l10n.overlayConnecting}'
+        : canonicalLabel != null
+        ? '${widget.mod.title}  ·  $canonicalLabel'
         : widget.mod.title;
 
     return Text(
@@ -820,7 +1000,10 @@ class _ModTileState extends ConsumerState<_ModTile> {
       style: _retro.body(
         size: 11,
         weight: FontWeight.w700,
-        color: _isDone ? _statusColor : _retro.ink,
+        color:
+            _isDone || _canonicalAction == InstallationPrimaryAction.installed
+            ? _statusColor
+            : _retro.ink,
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,

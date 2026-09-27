@@ -36,9 +36,10 @@ historial ni archivos del juego.
 Los botones del engine principal consumen un selector canónico por
 `InstallIdentity`. Puede producir Comprobar, Descargar, Cancelar, Instalado,
 Actualizar, Reinstalar, Verificar o Seleccionar carpeta. Un estado terminal de
-WorkManager por sí solo nunca produce Instalado. El overlay mantendrá la misma
-política cuando la Fase 7 envíe el snapshot de Biblioteca entre engines; no
-puede leer el provider/Hive del engine principal como memoria compartida.
+WorkManager por sí solo nunca produce Instalado. El overlay usa la misma
+política sobre un snapshot compacto y versionado que `OverlayBridge` envía
+entre engines; no lee el provider/Hive del engine principal como memoria
+compartida.
 
 Las cadenas usan `operationKey = v1|section|contentId|artifactId` con política
 `REPLACE`. El artefacto usa IDs de versión/archivo de la fuente cuando están
@@ -53,6 +54,16 @@ El catálogo general resuelve una versión actual canónica antes de presentar d
 ## Burbuja flotante
 
 `floaty_chatheads` inicia `overlayMain()` en un engine Flutter separado. El panel puede buscar el catálogo y solicitar descarga/cancelación. `OverlayBridge` vive en el engine principal, recibe mensajes, inicia WorkManager y reenvía progreso al panel. Ambos lados derivan e intercambian el mismo contrato de identidad. El estado local del panel se indexa por `contentKey`, por lo que dos títulos iguales no se pisan; la cancelación permanece en estado "cancelando" hasta que WorkManager la confirma.
+
+Al abrir el panel, el bridge envía primero un estado de carga y verifica los
+recibos contra SAF. La respuesta lleva un `requestId`, recibos validados y
+resultados de presencia, pero omite el historial porque no participa en la
+decisión de cada tarjeta. El overlay descarta respuestas antiguas y ejecuta
+`InstallationActionSelector` localmente para mostrar Comprobando, Descargar,
+Instalado, Actualizar, Reinstalar, Verificar o Seleccionar carpeta. Al completar
+una instalación, verificar un artefacto o cambiar una carpeta se publica una
+nueva proyección. El estado `done` de WorkManager es transitorio y se retira al
+llegar el recibo durable, evitando confundir finalización con presencia física.
 
 La pantalla de detalle presenta únicamente la versión actual expandida. El historial se abre bajo demanda en una hoja inferior con `ListView.builder`, evitando que decenas o cientos de versiones aumenten el alto inicial o se construyan simultáneamente.
 
