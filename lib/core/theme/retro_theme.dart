@@ -68,7 +68,7 @@ class RetroTheme {
       (isDark ? const Color(0xFF21262D) : const Color(0xFFEDE8DA));
   Color get border =>
       _borderOverride ??
-      (isDark ? const Color(0xFFF2EFE4) : const Color(0xFF262A38));
+      (isDark ? const Color(0xFF6E7681) : const Color(0xFF262A38));
   Color get shadowColor =>
       _shadowColorOverride ??
       (isDark ? const Color(0xFF010409) : const Color(0xFF262A38));

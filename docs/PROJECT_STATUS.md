@@ -39,8 +39,9 @@ Revisado contra `1.7.0+18` el 2026-09-27.
   gobiernan Actualizaciones y solo aparecen con opciones reales; las tarjetas
   evitan estados duplicados y detalles internos de detección.
 - Modo oscuro con lienzo casi negro y superficies escalonadas inspiradas en
-  GitHub Dark; conserva el acento cyan, los bordes retro y reduce la trama de
-  fondo para evitar una apariencia gris o excesivamente luminosa.
+  GitHub Dark; conserva el acento cyan, usa bordes gris intermedio y reduce la
+  trama de fondo para evitar una apariencia gris, deslumbrante o excesivamente
+  luminosa.
 
 ## Experimental o pendiente de validación
 

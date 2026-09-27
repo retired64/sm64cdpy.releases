@@ -60,13 +60,22 @@ class InstallationLibraryCard extends ConsumerWidget {
       InstallationVerificationStatus.folderNotSelected => retro.amber,
       InstallationVerificationStatus.unknown || null => retro.inkDim,
     };
+    final displayLabel = historyEntry
+        ? _eventLabel(l10n, record.eventKind)
+        : statusLabel;
+    final displayColor = historyEntry
+        ? _eventColor(retro, record.eventKind)
+        : statusColor;
+    final displayIcon = historyEntry
+        ? _eventIcon(record.eventKind)
+        : Icons.inventory_2_outlined;
     final date = DateFormat.yMMMd(
       l10n.localeName,
     ).format(record.installedAt.toLocal());
 
     return Semantics(
       container: true,
-      label: '${record.title}, $statusLabel',
+      label: '${record.title}, $displayLabel',
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 10),
@@ -85,7 +94,7 @@ class InstallationLibraryCard extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.inventory_2_outlined, color: statusColor, size: 22),
+                Icon(displayIcon, color: displayColor, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -114,12 +123,12 @@ class InstallationLibraryCard extends ConsumerWidget {
                       horizontal: 8,
                       vertical: 5,
                     ),
-                    color: statusColor.withValues(alpha: 0.14),
+                    color: displayColor.withValues(alpha: 0.14),
                     child: Text(
-                      statusLabel,
+                      displayLabel,
                       style: retro.body(
                         size: 10,
-                        color: statusColor,
+                        color: displayColor,
                         weight: FontWeight.w800,
                       ),
                     ),
@@ -157,11 +166,6 @@ class InstallationLibraryCard extends ConsumerWidget {
                   icon: Icons.folder_outlined,
                   label: _destinationLabel(l10n, record.destination),
                 ),
-                if (historyEntry)
-                  _Meta(
-                    icon: _eventIcon(record.eventKind),
-                    label: _eventLabel(l10n, record.eventKind),
-                  ),
               ],
             ),
             if (record.replacedByArtifactKey != null) ...[
@@ -529,4 +533,10 @@ IconData _eventIcon(String eventKind) => switch (eventKind) {
   'update' => Icons.system_update_alt_rounded,
   'reinstall' => Icons.refresh_rounded,
   _ => Icons.download_done_rounded,
+};
+
+Color _eventColor(RetroTheme retro, String eventKind) => switch (eventKind) {
+  'update' => retro.changelogImproved,
+  'reinstall' => retro.amber,
+  _ => retro.accent,
 };
