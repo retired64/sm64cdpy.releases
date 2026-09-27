@@ -1613,5 +1613,32 @@
   "render96FailedToLoad": "FAILED TO LOAD",
   "@render96FailedToLoad": {
     "description": "Error message shown on the Render96 screen when content fails to load"
-  }
+  },
+  "navLibrary": "Library",
+  "libraryTitle": "LIBRARY",
+  "libraryInstalled": "Installed",
+  "libraryUpdates": "Updates",
+  "libraryDetected": "Detected",
+  "libraryRecent": "Recent",
+  "libraryViewAll": "View all",
+  "libraryRefresh": "Refresh library",
+  "libraryAllSections": "All sections",
+  "libraryAllDestinations": "All folders",
+  "libraryModsDestination": "Mods folder",
+  "libraryDynosDestination": "DynOS folder",
+  "libraryPresent": "Installed",
+  "libraryMissing": "Missing",
+  "libraryPermissionRevoked": "Permission required",
+  "libraryFolderNotSelected": "Folder required",
+  "libraryNotVerified": "Not verified",
+  "libraryOpenSource": "OPEN CONTENT",
+  "libraryEmptyTitle": "NO INSTALLATIONS YET",
+  "libraryEmptyBody": "Mods installed by SM64CDPY will appear here.",
+  "libraryUpdatesEmptyTitle": "NO KNOWN UPDATES",
+  "libraryUpdatesEmptyBody": "Updates confirmed by the catalog will appear here. You can still check each content section.",
+  "libraryDetectedEmptyTitle": "NO EXTERNAL CONTENT DETECTED",
+  "libraryDetectedEmptyBody": "Device discovery will be added in a later phase. This view never guesses from folder names.",
+  "libraryErrorTitle": "LIBRARY UNAVAILABLE",
+  "libraryErrorBody": "The installation history could not be read. Try again without changing your game files.",
+  "libraryPartialWarning": "Some records could not be read. Valid installations are still shown."
 }

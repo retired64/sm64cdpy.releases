@@ -58,33 +58,48 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/m64.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navHome, route: '/',
+                label: l10n.navHome,
+                route: '/',
                 isActive: currentRoute == '/',
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/catalog.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navCatalog, route: '/catalogue',
+                label: l10n.navCatalog,
+                route: '/catalogue',
                 isActive: currentRoute == '/catalogue',
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/favorites.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navFavourites, route: '/favourites',
+                label: l10n.navFavourites,
+                route: '/favourites',
                 isActive: currentRoute == '/favourites',
+              ),
+              _NavItem(
+                iconBuilder: (color) =>
+                    Icon(Icons.inventory_2_outlined, size: 19, color: color),
+                label: l10n.navLibrary,
+                route: '/library',
+                isActive: currentRoute == '/library',
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/popular.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navPopular, route: '/popular',
+                label: l10n.navPopular,
+                route: '/popular',
                 isActive: currentRoute == '/popular',
               ),
 
@@ -94,49 +109,62 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                child: SectionKicker(retro: retro, label: l10n.sectionExclusive),
+                child: SectionKicker(
+                  retro: retro,
+                  label: l10n.sectionExclusive,
+                ),
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/render96.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navRender96, route: '/render96',
+                label: l10n.navRender96,
+                route: '/render96',
                 isActive: currentRoute == '/render96',
                 accentColor: retro.amber,
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/vip.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navVIPMods, route: '/vip',
+                label: l10n.navVIPMods,
+                route: '/vip',
                 isActive: currentRoute == '/vip',
                 accentColor: retro.amber,
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/dynos.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navDynOS, route: '/dynos',
+                label: l10n.navDynOS,
+                route: '/dynos',
                 isActive: currentRoute == '/dynos',
                 accentColor: retro.blue,
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/controls.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navTouchControls, route: '/touch-controls',
+                label: l10n.navTouchControls,
+                route: '/touch-controls',
                 isActive: currentRoute == '/touch-controls',
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/omm.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navOmmRebirth, route: '/omm-rebirth',
+                label: l10n.navOmmRebirth,
+                route: '/omm-rebirth',
                 isActive: currentRoute == '/omm-rebirth',
                 accentColor: retro.red,
               ),
@@ -159,33 +187,41 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/links-resource.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navLinksResource, route: '/links-resource',
+                label: l10n.navLinksResource,
+                route: '/links-resource',
                 isActive: currentRoute == '/links-resource',
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/disclaimer.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navDisclaimer, route: '/disclaimer',
+                label: l10n.navDisclaimer,
+                route: '/disclaimer',
                 isActive: currentRoute == '/disclaimer',
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/changelogs.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navChangelog, route: '/changelog',
+                label: l10n.navChangelog,
+                route: '/changelog',
                 isActive: currentRoute == '/changelog',
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/settings.svg',
-                  width: 19, height: 19,
+                  width: 19,
+                  height: 19,
                 ),
-                label: l10n.navSettings, route: '/settings',
+                label: l10n.navSettings,
+                route: '/settings',
                 isActive: currentRoute == '/settings',
               ),
               Padding(
@@ -207,7 +243,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
     );
   }
 }
-
 
 // ─────────────────────────────────────────────────────────────────────────────
 // _RetroDivider — línea sólida, sin gradientes.
@@ -245,7 +280,11 @@ class _DrawerHeader extends StatelessWidget {
               boxShadow: retro.hardShadow(dx: 3, dy: 3),
             ),
             child: RepaintBoundary(
-              child: SvgPicture.asset('assets/icons/logo.svg', width: 32, height: 32),
+              child: SvgPicture.asset(
+                'assets/icons/logo.svg',
+                width: 32,
+                height: 32,
+              ),
             ),
           ),
           const SizedBox(width: 14),
@@ -254,7 +293,10 @@ class _DrawerHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('SM64', style: retro.heading(size: 16, color: retro.ink)),
-                Text('CoopDX', style: retro.heading(size: 16, color: retro.accent)),
+                Text(
+                  'CoopDX',
+                  style: retro.heading(size: 16, color: retro.accent),
+                ),
                 const SizedBox(height: 3),
                 Text('モッド・カタログ', style: retro.body(size: 10.5)),
               ],
@@ -336,7 +378,9 @@ class _NavItemState extends State<_NavItem>
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           decoration: BoxDecoration(
             color: widget.isActive ? accent : Colors.transparent,
-            border: widget.isActive ? Border.all(color: retro.border, width: 2) : null,
+            border: widget.isActive
+                ? Border.all(color: retro.border, width: 2)
+                : null,
           ),
           child: Row(
             children: [
@@ -362,9 +406,7 @@ class _NavItemState extends State<_NavItem>
                         // el scroll del drawer solo se recompone (barato) en
                         // vez de volver a ejecutar los draw calls vectoriales
                         // en cada frame (caro, sobre todo en gama baja).
-                        child: RepaintBoundary(
-                          child: widget.iconBuilder(fg),
-                        ),
+                        child: RepaintBoundary(child: widget.iconBuilder(fg)),
                       ),
                       const SizedBox(width: 12),
                       AnimatedDefaultTextStyle(
@@ -457,10 +499,12 @@ class _CategoryListState extends ConsumerState<_CategoryList> {
               ? Column(
                   mainAxisSize: MainAxisSize.min,
                   children: CategoryConstants.allCategories
-                      .map((cat) => _CategoryItem(
-                            category: cat,
-                            selectedCategory: selectedCategory,
-                          ))
+                      .map(
+                        (cat) => _CategoryItem(
+                          category: cat,
+                          selectedCategory: selectedCategory,
+                        ),
+                      )
                       .toList(),
                 )
               : const SizedBox.shrink(),
@@ -474,10 +518,7 @@ class _CategoryListState extends ConsumerState<_CategoryList> {
 // CategoryItem — una categoría individual tappeable.
 // ─────────────────────────────────────────────────────────────────────────────
 class _CategoryItem extends ConsumerStatefulWidget {
-  const _CategoryItem({
-    required this.category,
-    required this.selectedCategory,
-  });
+  const _CategoryItem({required this.category, required this.selectedCategory});
 
   final String category;
   final String? selectedCategory;
@@ -548,7 +589,9 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: isSelected ? catColor : Colors.transparent,
-            border: isSelected ? Border.all(color: retro.border, width: 1.5) : null,
+            border: isSelected
+                ? Border.all(color: retro.border, width: 1.5)
+                : null,
           ),
           child: Row(
             children: [
@@ -573,7 +616,9 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     fontSize: 12.5,
                   ),
-                  child: Text(CategoryConstants.displayName(context, widget.category)),
+                  child: Text(
+                    CategoryConstants.displayName(context, widget.category),
+                  ),
                 ),
               ),
               AnimatedOpacity(
@@ -652,11 +697,13 @@ class _SortOptionsState extends ConsumerState<_SortOptions> {
               ? Column(
                   mainAxisSize: MainAxisSize.min,
                   children: sortItems
-                      .map((item) => _SortItem(
-                            value: item.value,
-                            label: item.label,
-                            currentSort: currentSort,
-                          ))
+                      .map(
+                        (item) => _SortItem(
+                          value: item.value,
+                          label: item.label,
+                          currentSort: currentSort,
+                        ),
+                      )
                       .toList(),
                 )
               : const SizedBox.shrink(),
@@ -738,7 +785,9 @@ class _SortItemState extends ConsumerState<_SortItem>
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: isSelected ? retro.accent : Colors.transparent,
-            border: isSelected ? Border.all(color: retro.border, width: 1.5) : null,
+            border: isSelected
+                ? Border.all(color: retro.border, width: 1.5)
+                : null,
           ),
           child: Row(
             children: [
@@ -927,7 +976,8 @@ class _SocialButtonState extends State<_SocialButton>
                   widget.link.asset,
                   width: 20,
                   height: 20,
-                  colorFilter: retro.isDark && widget.link.asset.contains('github')
+                  colorFilter:
+                      retro.isDark && widget.link.asset.contains('github')
                       ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
                       : null,
                 ),

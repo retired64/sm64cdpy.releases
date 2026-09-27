@@ -8,6 +8,7 @@ import '../../presentation/screens/dynos_screen.dart';
 import '../../presentation/screens/favourites_screen.dart';
 import '../../presentation/screens/home_screen.dart';
 import '../../presentation/screens/links_resource_screen.dart';
+import '../../presentation/screens/library_screen.dart';
 import '../../presentation/screens/mod_detail_screen.dart';
 import '../../presentation/screens/popular_screen.dart';
 import '../../presentation/screens/settings_screen.dart';
@@ -21,10 +22,8 @@ final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     ShellRoute(
-      builder: (context, state, child) => AppShell(
-        currentRoute: state.uri.path,
-        child: child,
-      ),
+      builder: (context, state, child) =>
+          AppShell(currentRoute: state.uri.path, child: child),
       routes: [
         GoRoute(path: '/', pageBuilder: (_, s) => _page(const HomeScreen(), s)),
         GoRoute(
@@ -34,6 +33,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/favourites',
           pageBuilder: (_, s) => _page(const FavouritesScreen(), s),
+        ),
+        GoRoute(
+          path: '/library',
+          pageBuilder: (_, s) => _page(const LibraryScreen(), s),
         ),
         GoRoute(
           path: '/popular',

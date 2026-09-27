@@ -1320,6 +1320,92 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get render96FailedToLoad => 'ERROR AL CARGAR';
+
+  @override
+  String get navLibrary => 'Biblioteca';
+
+  @override
+  String get libraryTitle => 'BIBLIOTECA';
+
+  @override
+  String get libraryInstalled => 'Instalados';
+
+  @override
+  String get libraryUpdates => 'Actualizaciones';
+
+  @override
+  String get libraryDetected => 'Detectados';
+
+  @override
+  String get libraryRecent => 'Recientes';
+
+  @override
+  String get libraryViewAll => 'Ver todo';
+
+  @override
+  String get libraryRefresh => 'Actualizar biblioteca';
+
+  @override
+  String get libraryAllSections => 'Todas las secciones';
+
+  @override
+  String get libraryAllDestinations => 'Todas las carpetas';
+
+  @override
+  String get libraryModsDestination => 'Carpeta de mods';
+
+  @override
+  String get libraryDynosDestination => 'Carpeta DynOS';
+
+  @override
+  String get libraryPresent => 'Instalado';
+
+  @override
+  String get libraryMissing => 'No encontrado';
+
+  @override
+  String get libraryPermissionRevoked => 'Permiso requerido';
+
+  @override
+  String get libraryFolderNotSelected => 'Carpeta requerida';
+
+  @override
+  String get libraryNotVerified => 'Sin verificar';
+
+  @override
+  String get libraryOpenSource => 'ABRIR CONTENIDO';
+
+  @override
+  String get libraryEmptyTitle => 'AÚN NO HAY INSTALACIONES';
+
+  @override
+  String get libraryEmptyBody =>
+      'Los mods instalados por SM64CDPY aparecerán aquí.';
+
+  @override
+  String get libraryUpdatesEmptyTitle => 'NO HAY ACTUALIZACIONES CONOCIDAS';
+
+  @override
+  String get libraryUpdatesEmptyBody =>
+      'Aquí aparecerán las actualizaciones confirmadas por el catálogo. También puedes revisar cada sección.';
+
+  @override
+  String get libraryDetectedEmptyTitle => 'NO HAY CONTENIDO EXTERNO DETECTADO';
+
+  @override
+  String get libraryDetectedEmptyBody =>
+      'La detección del dispositivo llegará en una fase posterior. Esta vista no adivina por nombres de carpetas.';
+
+  @override
+  String get libraryErrorTitle => 'BIBLIOTECA NO DISPONIBLE';
+
+  @override
+  String get libraryErrorBody =>
+      'No se pudo leer el historial de instalaciones. Reintenta sin modificar los archivos del juego.';
+
+  @override
+  String get libraryPartialWarning =>
+      'Algunos registros no se pudieron leer. Las instalaciones válidas siguen visibles.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2638,4 +2724,90 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get render96FailedToLoad => 'ERROR AL CARGAR';
+
+  @override
+  String get navLibrary => 'Biblioteca';
+
+  @override
+  String get libraryTitle => 'BIBLIOTECA';
+
+  @override
+  String get libraryInstalled => 'Instalados';
+
+  @override
+  String get libraryUpdates => 'Actualizaciones';
+
+  @override
+  String get libraryDetected => 'Detectados';
+
+  @override
+  String get libraryRecent => 'Recientes';
+
+  @override
+  String get libraryViewAll => 'Ver todo';
+
+  @override
+  String get libraryRefresh => 'Actualizar biblioteca';
+
+  @override
+  String get libraryAllSections => 'Todas las secciones';
+
+  @override
+  String get libraryAllDestinations => 'Todas las carpetas';
+
+  @override
+  String get libraryModsDestination => 'Carpeta de mods';
+
+  @override
+  String get libraryDynosDestination => 'Carpeta DynOS';
+
+  @override
+  String get libraryPresent => 'Instalado';
+
+  @override
+  String get libraryMissing => 'No encontrado';
+
+  @override
+  String get libraryPermissionRevoked => 'Permiso requerido';
+
+  @override
+  String get libraryFolderNotSelected => 'Carpeta requerida';
+
+  @override
+  String get libraryNotVerified => 'Sin verificar';
+
+  @override
+  String get libraryOpenSource => 'ABRIR CONTENIDO';
+
+  @override
+  String get libraryEmptyTitle => 'AÚN NO HAY INSTALACIONES';
+
+  @override
+  String get libraryEmptyBody =>
+      'Los mods instalados por SM64CDPY aparecerán aquí.';
+
+  @override
+  String get libraryUpdatesEmptyTitle => 'NO HAY ACTUALIZACIONES CONOCIDAS';
+
+  @override
+  String get libraryUpdatesEmptyBody =>
+      'Aquí aparecerán las actualizaciones confirmadas por el catálogo. También puedes revisar cada sección.';
+
+  @override
+  String get libraryDetectedEmptyTitle => 'NO HAY CONTENIDO EXTERNO DETECTADO';
+
+  @override
+  String get libraryDetectedEmptyBody =>
+      'La detección del dispositivo llegará en una fase posterior. Esta vista no adivina por nombres de carpetas.';
+
+  @override
+  String get libraryErrorTitle => 'BIBLIOTECA NO DISPONIBLE';
+
+  @override
+  String get libraryErrorBody =>
+      'No se pudo leer el historial de instalaciones. Reintenta sin modificar los archivos del juego.';
+
+  @override
+  String get libraryPartialWarning =>
+      'Algunos registros no se pudieron leer. Las instalaciones válidas siguen visibles.';
 }

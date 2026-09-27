@@ -1302,4 +1302,89 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get render96FailedToLoad => 'FAILED TO LOAD';
+
+  @override
+  String get navLibrary => 'Library';
+
+  @override
+  String get libraryTitle => 'LIBRARY';
+
+  @override
+  String get libraryInstalled => 'Installed';
+
+  @override
+  String get libraryUpdates => 'Updates';
+
+  @override
+  String get libraryDetected => 'Detected';
+
+  @override
+  String get libraryRecent => 'Recent';
+
+  @override
+  String get libraryViewAll => 'View all';
+
+  @override
+  String get libraryRefresh => 'Refresh library';
+
+  @override
+  String get libraryAllSections => 'All sections';
+
+  @override
+  String get libraryAllDestinations => 'All folders';
+
+  @override
+  String get libraryModsDestination => 'Mods folder';
+
+  @override
+  String get libraryDynosDestination => 'DynOS folder';
+
+  @override
+  String get libraryPresent => 'Installed';
+
+  @override
+  String get libraryMissing => 'Missing';
+
+  @override
+  String get libraryPermissionRevoked => 'Permission required';
+
+  @override
+  String get libraryFolderNotSelected => 'Folder required';
+
+  @override
+  String get libraryNotVerified => 'Not verified';
+
+  @override
+  String get libraryOpenSource => 'OPEN CONTENT';
+
+  @override
+  String get libraryEmptyTitle => 'NO INSTALLATIONS YET';
+
+  @override
+  String get libraryEmptyBody => 'Mods installed by SM64CDPY will appear here.';
+
+  @override
+  String get libraryUpdatesEmptyTitle => 'NO KNOWN UPDATES';
+
+  @override
+  String get libraryUpdatesEmptyBody =>
+      'Updates confirmed by the catalog will appear here. You can still check each content section.';
+
+  @override
+  String get libraryDetectedEmptyTitle => 'NO EXTERNAL CONTENT DETECTED';
+
+  @override
+  String get libraryDetectedEmptyBody =>
+      'Device discovery will be added in a later phase. This view never guesses from folder names.';
+
+  @override
+  String get libraryErrorTitle => 'LIBRARY UNAVAILABLE';
+
+  @override
+  String get libraryErrorBody =>
+      'The installation history could not be read. Try again without changing your game files.';
+
+  @override
+  String get libraryPartialWarning =>
+      'Some records could not be read. Valid installations are still shown.';
 }

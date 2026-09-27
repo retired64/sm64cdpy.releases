@@ -10,6 +10,8 @@ import '../../domain/entities/mod_entity.dart';
 import '../../services/game_launcher_service.dart';
 import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
+import '../providers/installation_library_provider.dart';
+import '../widgets/installation_library_card.dart';
 import '../widgets/app_shell.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -70,6 +72,8 @@ class _HomeBody extends ConsumerWidget {
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
         const SliverToBoxAdapter(child: _LaunchGameButton()),
 
+        const SliverToBoxAdapter(child: _RecentInstallations()),
+
         // ── Exclusive content ─────────────────────────────────
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
         SliverToBoxAdapter(
@@ -98,6 +102,48 @@ class _HomeBody extends ConsumerWidget {
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
         const SliverToBoxAdapter(child: SizedBox(height: 40)),
       ],
+    );
+  }
+}
+
+class _RecentInstallations extends ConsumerWidget {
+  const _RecentInstallations();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final library = ref.watch(installationLibraryProvider);
+    final records =
+        library.value?.snapshot.history.take(3).toList() ?? const [];
+    if (records.isEmpty) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Column(
+        children: [
+          _SectionHeader(
+            title: l10n.libraryRecent,
+            actionLabel: l10n.libraryViewAll,
+            onAction: () => context.go('/library?view=recent'),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: records
+                  .map(
+                    (record) => InstallationLibraryCard(
+                      record: record,
+                      verification: library
+                          .value
+                          ?.snapshot
+                          .verifications[record.artifactKey],
+                      compact: true,
+                    ),
+                  )
+                  .toList(growable: false),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -471,39 +517,42 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
       'red': retro.red,
       'blue': retro.blue,
     };
-    final items = <({
-      String label,
-      String description,
-      String route,
-      String colorKey,
-      IconData icon,
-      String? imageUrl,
-    })>[
-      (
-        icon: Icons.apps_rounded,
-        label: l10n.homeCatalog,
-        description: l10n.homeCatalogDesc,
-        route: '/catalogue',
-        colorKey: 'amber',
-        imageUrl: null,
-      ),
-      (
-        icon: Icons.favorite_rounded,
-        label: l10n.homeFavorites,
-        description: l10n.homeFavoritesDesc,
-        route: '/favourites',
-        colorKey: 'red',
-        imageUrl: null,
-      ),
-      (
-        icon: Icons.trending_up_rounded,
-        label: l10n.homePopular,
-        description: l10n.homePopularDesc,
-        route: '/popular',
-        colorKey: 'blue',
-        imageUrl: null,
-      ),
-    ];
+    final items =
+        <
+          ({
+            String label,
+            String description,
+            String route,
+            String colorKey,
+            IconData icon,
+            String? imageUrl,
+          })
+        >[
+          (
+            icon: Icons.apps_rounded,
+            label: l10n.homeCatalog,
+            description: l10n.homeCatalogDesc,
+            route: '/catalogue',
+            colorKey: 'amber',
+            imageUrl: null,
+          ),
+          (
+            icon: Icons.favorite_rounded,
+            label: l10n.homeFavorites,
+            description: l10n.homeFavoritesDesc,
+            route: '/favourites',
+            colorKey: 'red',
+            imageUrl: null,
+          ),
+          (
+            icon: Icons.trending_up_rounded,
+            label: l10n.homePopular,
+            description: l10n.homePopularDesc,
+            route: '/popular',
+            colorKey: 'blue',
+            imageUrl: null,
+          ),
+        ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -725,42 +774,45 @@ class _ExclusiveSection extends StatelessWidget {
       'accent': retro.accent,
       'red': retro.red,
     };
-    final items = <({
-      String label,
-      String description,
-      String route,
-      String colorKey,
-      IconData icon,
-    })>[
-      (
-        route: '/vip',
-        label: l10n.homeVipMods,
-        description: l10n.homeVipModsDesc,
-        icon: Icons.workspace_premium_rounded,
-        colorKey: 'amber',
-      ),
-      (
-        route: '/dynos',
-        label: l10n.homeDynos,
-        description: l10n.homeDynosDesc,
-        icon: Icons.color_lens_rounded,
-        colorKey: 'blue',
-      ),
-      (
-        route: '/touch-controls',
-        label: l10n.homeTouchControls,
-        description: l10n.homeTouchControlsDesc,
-        icon: Icons.touch_app_rounded,
-        colorKey: 'accent',
-      ),
-      (
-        route: '/omm-rebirth',
-        label: l10n.homeOmmrPack,
-        description: l10n.homeOmmrPackDesc,
-        icon: Icons.folder_zip_rounded,
-        colorKey: 'red',
-      ),
-    ];
+    final items =
+        <
+          ({
+            String label,
+            String description,
+            String route,
+            String colorKey,
+            IconData icon,
+          })
+        >[
+          (
+            route: '/vip',
+            label: l10n.homeVipMods,
+            description: l10n.homeVipModsDesc,
+            icon: Icons.workspace_premium_rounded,
+            colorKey: 'amber',
+          ),
+          (
+            route: '/dynos',
+            label: l10n.homeDynos,
+            description: l10n.homeDynosDesc,
+            icon: Icons.color_lens_rounded,
+            colorKey: 'blue',
+          ),
+          (
+            route: '/touch-controls',
+            label: l10n.homeTouchControls,
+            description: l10n.homeTouchControlsDesc,
+            icon: Icons.touch_app_rounded,
+            colorKey: 'accent',
+          ),
+          (
+            route: '/omm-rebirth',
+            label: l10n.homeOmmrPack,
+            description: l10n.homeOmmrPackDesc,
+            icon: Icons.folder_zip_rounded,
+            colorKey: 'red',
+          ),
+        ];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),

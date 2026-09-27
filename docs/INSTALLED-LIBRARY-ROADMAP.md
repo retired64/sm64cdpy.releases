@@ -7,7 +7,7 @@
 |---|---|
 | Proyecto | SM64CDPY — SM64CoopDX Mods Browser |
 | Rama de trabajo | `historial-hive` |
-| Estado | Fase 5 implementada en app principal; overlay reservado para Fase 7 |
+| Estado | Fase 6 completada y validada físicamente; overlay reservado para Fase 7 |
 | Creado | 2026-09-23 |
 | Plataforma | Android 7.0+ |
 | Alcance | Biblioteca, historial, detección de versión y verificación SAF |
@@ -246,19 +246,50 @@ snapshot cruzando engines y queda deliberadamente en la Fase 7.
 
 ## Fase 6 — Pantalla Biblioteca y Home
 
-- [ ] Añadir ruta y entrada **Biblioteca** cerca de Favoritos en el drawer.
-- [ ] Diseñar estados vacío, cargando, error y permiso revocado.
-- [ ] Añadir vistas Instalados, Actualizaciones, Detectados y Recientes.
-- [ ] Permitir filtrar por sección y destino.
-- [ ] Mostrar versión instalada, fecha, verificación y acción disponible.
-- [ ] Añadir hasta tres instalaciones recientes en Home.
-- [ ] Ocultar el bloque de Home cuando no haya historial.
-- [ ] Permitir “Ver todo” sin duplicar listas completas en Home.
-- [ ] Mantener el diseño usable en pantallas pequeñas y con texto ampliado.
-- [ ] Añadir todas las cadenas a EN, ES, ES-419, PT y PT-BR.
+- [x] Añadir ruta y entrada **Biblioteca** cerca de Favoritos en el drawer.
+- [x] Diseñar estados vacío, cargando, error y permiso revocado.
+- [x] Añadir vistas Instalados, Actualizaciones, Detectados y Recientes.
+- [x] Permitir filtrar por sección y destino.
+- [x] Mostrar versión instalada, fecha, verificación y acción disponible.
+- [x] Añadir hasta tres instalaciones recientes en Home.
+- [x] Ocultar el bloque de Home cuando no haya historial.
+- [x] Permitir “Ver todo” sin duplicar listas completas en Home.
+- [x] Mantener el diseño usable en pantallas pequeñas y con texto ampliado.
+- [x] Añadir todas las cadenas a EN, ES, ES-419, PT y PT-BR.
 
 **Motivo:** Biblioteca es una función permanente; Home solo debe ofrecer un
 resumen compacto y no convertirse en una lista interminable.
+
+**Implementado (2026-09-26):** la ruta `/library` consume directamente la
+proyección reconciliada de recibos nativos y verificación SAF. Incluye estados
+de carga, error, proyección parcial, carpeta ausente, permiso revocado y listas
+vacías; filtros por sección/destino; navegación a la superficie de origen; y
+verificación puntual sin convertir la tarjeta en fuente de verdad. Home muestra
+como máximo tres eventos del historial y enlaza a la vista Recientes.
+
+Las vistas Actualizaciones y Detectados existen con estados vacíos explícitos.
+Actualizaciones no compara etiquetas no numéricas ni inventa candidatos fuera
+del selector canónico de la Fase 5; Detectados no infiere instalaciones por el
+nombre de una carpeta y se poblará únicamente con el escaneo confiable de la
+Fase 8. Esta separación evita falsos positivos mientras deja estable el flujo
+visual de Biblioteca.
+
+**Prueba física completada (OPPO CPH2365, 2026-09-26):** acceso desde el drawer,
+vista Instalados y vista Recientes confirmados con un recibo real. Durante la
+prueba se detectó que “Abrir contenido” reemplazaba la ruta de Biblioteca al
+usar `go` hacia un detalle que vive fuera del shell. El detalle general ahora
+se apila con `push`, por lo que Atrás recupera Biblioteca y su drawer. Una
+captura ADB posterior no registró `FATAL EXCEPTION`; el cierre previo no quedó
+en el búfer de crashes. Al volver se confirmó otra inconsistencia: Biblioteca
+tenía un `Scaffold` anidado que interceptaba `DrawerMenuButton` sin poseer un
+drawer. Se sustituyó por `CustomScrollView` + `SliverAppBar`, usando directamente
+el `Scaffold` canónico de `AppShell`, como Catálogo y las demás rutas hermanas.
+La prueba de borrado físico y actualización también pasó: SAF proyectó
+“No encontrado” y la acción “Reinstalar”. El APK final también confirmó el
+drawer dentro de Biblioteca, la apertura del contenido y el regreso correcto a
+la pantalla. Con ello queda cerrado el flujo crítico de navegación y
+reconciliación de la Fase 6; la matriz ampliada de permisos y accesibilidad se
+mantiene como regresión general previa al release.
 
 ## Fase 7 — Sincronización con el overlay
 
@@ -399,6 +430,7 @@ enlazar pruebas o commits cuando existan.
 | 2026-09-25 | Fase 3 | Lector nativo validado, historial durable limitado, repositorio de dominio, proyección Hive v1 y estado Riverpod | Recuperar instalaciones tras process death sin convertir Hive en autoridad | 7 tests Flutter, 6 tests Kotlin, `flutter analyze`, `compileDebugKotlin` y `git diff --check` | — |
 | 2026-09-25 | Fase 4 | Verificador SAF acotado por centinelas, cuatro estados, refresco global/individual y proyección Hive v2 | Confirmar presencia física sin escaneos recursivos ni bloquear la UI | 17 tests Flutter, 6 tests Kotlin, `flutter analyze` y `compileDebugKotlin`; dispositivo pendiente | — |
 | 2026-09-26 | Fase 5 | Selector canónico y botones coherentes en detalle/VIP/DynOS/Touch Controls/OMM/Render96 | Evitar “instalado” basado en un Worker terminado, dobles toques y actualizaciones falsas | 23 tests Flutter y `flutter analyze`; overlay transferido a Fase 7 | — |
+| 2026-09-26 | Fase 6 | Biblioteca con Instalados/Actualizaciones/Detectados/Recientes, filtros, resumen en Home y navegación coherente | Hacer visible el estado durable y verificable sin convertir el historial ni Hive en autoridad física | Prueba física en OPPO CPH2365: drawer, detalle y regreso, recibo instalado, recientes y reconciliación “No encontrado” tras borrado externo | — |
 | 2026-09-26 | Corrección física Fases 4–5 | La ausencia deliberada de carpeta ahora conduce a Seleccionar carpeta; navegación a Ajustes reemplaza la ruta de detalle; el Worker registra y retira archivos nuevos de una instalación cancelada | Las pruebas físicas detectaron “Verificar” sin efecto, navegación vacía y mods nuevos parcialmente extraídos | Compilación/tests automatizados y repetición física pendientes | — |
 | 2026-09-26 | Endurecimiento de cancelación | El rollback SAF es idempotente, serializado y no propaga errores del proveedor de documentos | Dos pruebas físicas iniciales cerraron el proceso; después de corregir observers, dos cancelaciones retiraron los parciales en 8–15 s sin errores de rollback | `logcat` físico en OPPO CPH2365 confirmado | — |
 | 2026-09-26 | Corrección de crash al repetir operación | Todos los observers de WorkManager aceptan la emisión transitoria `null` producida cuando `REPLACE` retira la fila anterior | `logcat` capturó NPE antes de entrar al null-check Kotlin; el nuevo APK soportó dos cancelaciones y una instalación final de la misma identidad | Kotlin/Flutter sin errores y matriz física repetida correctamente | — |

@@ -2375,6 +2375,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'FAILED TO LOAD'**
   String get render96FailedToLoad;
+
+  /// No description provided for @navLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get navLibrary;
+
+  /// No description provided for @libraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LIBRARY'**
+  String get libraryTitle;
+
+  /// No description provided for @libraryInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get libraryInstalled;
+
+  /// No description provided for @libraryUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates'**
+  String get libraryUpdates;
+
+  /// No description provided for @libraryDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected'**
+  String get libraryDetected;
+
+  /// No description provided for @libraryRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get libraryRecent;
+
+  /// No description provided for @libraryViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get libraryViewAll;
+
+  /// No description provided for @libraryRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh library'**
+  String get libraryRefresh;
+
+  /// No description provided for @libraryAllSections.
+  ///
+  /// In en, this message translates to:
+  /// **'All sections'**
+  String get libraryAllSections;
+
+  /// No description provided for @libraryAllDestinations.
+  ///
+  /// In en, this message translates to:
+  /// **'All folders'**
+  String get libraryAllDestinations;
+
+  /// No description provided for @libraryModsDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods folder'**
+  String get libraryModsDestination;
+
+  /// No description provided for @libraryDynosDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'DynOS folder'**
+  String get libraryDynosDestination;
+
+  /// No description provided for @libraryPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get libraryPresent;
+
+  /// No description provided for @libraryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing'**
+  String get libraryMissing;
+
+  /// No description provided for @libraryPermissionRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission required'**
+  String get libraryPermissionRevoked;
+
+  /// No description provided for @libraryFolderNotSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder required'**
+  String get libraryFolderNotSelected;
+
+  /// No description provided for @libraryNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not verified'**
+  String get libraryNotVerified;
+
+  /// No description provided for @libraryOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN CONTENT'**
+  String get libraryOpenSource;
+
+  /// No description provided for @libraryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NO INSTALLATIONS YET'**
+  String get libraryEmptyTitle;
+
+  /// No description provided for @libraryEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods installed by SM64CDPY will appear here.'**
+  String get libraryEmptyBody;
+
+  /// No description provided for @libraryUpdatesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NO KNOWN UPDATES'**
+  String get libraryUpdatesEmptyTitle;
+
+  /// No description provided for @libraryUpdatesEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates confirmed by the catalog will appear here. You can still check each content section.'**
+  String get libraryUpdatesEmptyBody;
+
+  /// No description provided for @libraryDetectedEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NO EXTERNAL CONTENT DETECTED'**
+  String get libraryDetectedEmptyTitle;
+
+  /// No description provided for @libraryDetectedEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Device discovery will be added in a later phase. This view never guesses from folder names.'**
+  String get libraryDetectedEmptyBody;
+
+  /// No description provided for @libraryErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LIBRARY UNAVAILABLE'**
+  String get libraryErrorTitle;
+
+  /// No description provided for @libraryErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The installation history could not be read. Try again without changing your game files.'**
+  String get libraryErrorBody;
+
+  /// No description provided for @libraryPartialWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Some records could not be read. Valid installations are still shown.'**
+  String get libraryPartialWarning;
 }
 
 class _AppLocalizationsDelegate
