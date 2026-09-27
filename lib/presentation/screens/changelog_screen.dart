@@ -352,6 +352,7 @@ const _kVersions = <_VersionData>[
         items: [
           'Dark mode now uses a deeper GitHub-inspired near-black palette with layered surfaces and a subtler halftone texture, reducing perceived brightness while preserving the retro identity.',
           'Dark-mode borders and dividers now use a muted intermediate gray instead of bright cream, reducing glare across cards, panels, menus, and section separators.',
+          'The legal notice now clearly explains the unofficial app scope, community catalog provenance and attribution, curated sources, local-only user data, external services, and the correction or removal contact path.',
           'The Library now shares the catalog visual language with skewed views, contextual filters that only appear when useful, retro filter sheets, useful counters, and clearer installed or externally detected cards.',
           'DynOS and Touch Controls now follow the global auto-install setting consistently: automatic mode uses the shared background pipeline, while manual mode asks before installing a completed download.',
           'Broken Touch Controls and DynOS links now show a friendly unavailable/download error while keeping technical details available through the copy action.',

@@ -1126,47 +1126,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get disclaimerWarningBody =>
-      'This app is a personal project. Any issues related to it (functionality, bugs, etc.) are the sole responsibility of the developer. The SM64CoopDX developers and mod creators bear no responsibility whatsoever for this application.';
+      'SM64CDPY is independent software. Questions, technical issues, and requests concerning this app must be directed to the SM64CDPY developer, not to Nintendo, the SM64CoopDX team, or the listed mod authors.';
 
   @override
   String get disclaimerCouldNotOpenLink => 'Could not open the link';
 
   @override
-  String get disclaimerSectionPersonalPurpose => 'Personal purpose';
+  String get disclaimerSectionPersonalPurpose => 'About this app';
 
   @override
   String get disclaimerBodyPersonalPurpose =>
-      'This application was independently developed as a personal project. Its sole purpose is to give me faster access, organization, and download management for mods I use for my own entertainment. It is not an application supported by the SM64CoopDX team or an official service of any kind.';
+      'SM64CDPY is an independent Android catalog and manager for community-created SM64CoopDX mods. It helps users browse, download, organize, and install compatible content. The app does not include Super Mario 64, a ROM, or a copy of SM64CoopDX; users must provide their own legitimate and compatible game setup.';
 
   @override
   String get disclaimerSectionNoAffiliation => 'No official affiliation';
 
   @override
   String get disclaimerBodyNoAffiliation =>
-      'This project is not associated with, endorsed by, or approved by the developers of SM64CoopDX, Super Mario 64, Nintendo, or any of the mod creators listed. All names, images, and content displayed belong to their respective authors.';
+      'This project is not associated with, endorsed by, or approved by Nintendo, the SM64CoopDX team, or the listed mod authors. Product names and trademarks identify compatibility only. Mod titles, descriptions, images, files, and other credited material remain the property of their respective authors or rights holders.';
 
   @override
   String get disclaimerSectionDataSource => 'Data source';
 
   @override
   String get disclaimerBodyDataSource =>
-      'Mod information comes from the public catalog at mods.sm64coopdx.com. This app only presents that information in a more accessible way; it does not host, modify, or redistribute any mod files.';
+      'The main catalog presents public community listings from Coop DX Mods (mods.sm64coopdx.com) while preserving the published author, title, dates, versions, and source. SM64CDPY provides a mobile interface and retrieves downloads from the source made available for each resource; catalog inclusion does not imply ownership or official endorsement by SM64CDPY.';
 
   @override
   String get disclaimerSectionExclusive =>
-      'Exclusive sections (VIP · DynOS · Touch Controls)';
+      'Curated sections (VIP · DynOS · Touch Controls)';
 
   @override
   String disclaimerBodyExclusive(Object version) {
-    return 'Starting with v$version, the app includes curated sections with content not officially listed on the SM64CoopDX website. These sections (VIP Mods, DynOS packs, and Touch Control layouts) are maintained independently by the developer and are not affiliated with any official source. All credit goes to the original creators.';
+    return 'In v$version, VIP Mods, DynOS packs, Touch Control layouts, OMM Rebirth, and Render96 may use independently curated sources. Whenever content was not created by the SM64CDPY developer, its credited creator retains authorship. These sections are separate from the main Coop DX Mods catalog and are not official Nintendo or SM64CoopDX services.';
   }
 
   @override
-  String get disclaimerSectionBugs => 'Bugs, suggestions & requests';
+  String get disclaimerSectionLocalData => 'Accounts and local data';
+
+  @override
+  String get disclaimerBodyLocalData =>
+      'SM64CDPY currently does not create user accounts. Favorites, installation history, selected folders, and app preferences are stored locally on the device. Removing the app or clearing its data may remove this information.';
+
+  @override
+  String get disclaimerSectionExternalServices => 'External services';
+
+  @override
+  String get disclaimerBodyExternalServices =>
+      'Browsing, refreshing catalogs, opening links, and downloading content may connect to services such as Coop DX Mods, GitHub, Google Drive, Dropbox, or GameBanana. Those services operate under their own terms and privacy practices, which SM64CDPY does not control.';
+
+  @override
+  String get disclaimerSectionBugs => 'Support and content corrections';
 
   @override
   String get disclaimerBodyBugs =>
-      'If you find an issue with this app, have a suggestion, or want to request something, contact me directly through my social media. Please do not contact the official SM64CoopDX developers or mod creators about anything related to this application.';
+      'Contact the SM64CDPY developer if you find an app issue, incorrect attribution, outdated information, or content that should be corrected or removed. Please include the mod title and source when applicable. App-related requests should not be directed to Nintendo, the SM64CoopDX team, or mod authors.';
 
   @override
   String get vipSectionHeader => 'EXCLUSIVE CONTENT';

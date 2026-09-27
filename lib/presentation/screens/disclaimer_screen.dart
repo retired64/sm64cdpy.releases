@@ -38,9 +38,7 @@ class DisclaimerScreen extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(
-          child: _DisclaimerBody(l10n: l10n),
-        ),
+        Expanded(child: _DisclaimerBody(l10n: l10n)),
       ],
     );
   }
@@ -56,7 +54,7 @@ class _DisclaimerBody extends StatelessWidget {
 
     final sections = <_SectionData>[
       _SectionData(
-        icon: Icons.person_rounded,
+        icon: Icons.info_outline_rounded,
         title: l10n.disclaimerSectionPersonalPurpose,
         body: l10n.disclaimerBodyPersonalPurpose,
       ),
@@ -66,17 +64,27 @@ class _DisclaimerBody extends StatelessWidget {
         body: l10n.disclaimerBodyNoAffiliation,
       ),
       _SectionData(
-        icon: Icons.storage_rounded,
+        icon: Icons.hub_outlined,
         title: l10n.disclaimerSectionDataSource,
         body: l10n.disclaimerBodyDataSource,
       ),
       _SectionData(
-        icon: Icons.auto_awesome_rounded,
+        icon: Icons.collections_bookmark_outlined,
         title: l10n.disclaimerSectionExclusive,
         body: l10n.disclaimerBodyExclusive(UpdateService.currentVersion),
       ),
       _SectionData(
-        icon: Icons.bug_report_rounded,
+        icon: Icons.lock_outline_rounded,
+        title: l10n.disclaimerSectionLocalData,
+        body: l10n.disclaimerBodyLocalData,
+      ),
+      _SectionData(
+        icon: Icons.language_rounded,
+        title: l10n.disclaimerSectionExternalServices,
+        body: l10n.disclaimerBodyExternalServices,
+      ),
+      _SectionData(
+        icon: Icons.contact_support_outlined,
         title: l10n.disclaimerSectionBugs,
         body: l10n.disclaimerBodyBugs,
       ),
@@ -156,10 +164,7 @@ class _HeroBadge extends StatelessWidget {
           child: Icon(Icons.info_outline, size: 38, color: retro.accent),
         ),
         const SizedBox(height: 16),
-        Text(
-          l10n.disclaimerUnofficialBanner,
-          style: retro.heading(size: 22),
-        ),
+        Text(l10n.disclaimerUnofficialBanner, style: retro.heading(size: 22)),
         const SizedBox(height: 5),
         RetroTag(
           retro: retro,
@@ -280,8 +285,10 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    return Text(label.toUpperCase(),
-        style: retro.heading(size: 10, color: retro.inkDim, letterSpacing: 1.5));
+    return Text(
+      label.toUpperCase(),
+      style: retro.heading(size: 10, color: retro.inkDim, letterSpacing: 1.5),
+    );
   }
 }
 
@@ -336,7 +343,10 @@ class _ContactButtonState extends State<_ContactButton>
       );
     } catch (_) {
       if (context.mounted) {
-        AppSnackbar.error(context, message: widget.l10n.disclaimerCouldNotOpenLink);
+        AppSnackbar.error(
+          context,
+          message: widget.l10n.disclaimerCouldNotOpenLink,
+        );
       }
     }
   }

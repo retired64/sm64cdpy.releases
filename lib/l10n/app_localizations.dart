@@ -2067,7 +2067,7 @@ abstract class AppLocalizations {
   /// Disclaimer screen warning banner body text
   ///
   /// In en, this message translates to:
-  /// **'This app is a personal project. Any issues related to it (functionality, bugs, etc.) are the sole responsibility of the developer. The SM64CoopDX developers and mod creators bear no responsibility whatsoever for this application.'**
+  /// **'SM64CDPY is independent software. Questions, technical issues, and requests concerning this app must be directed to the SM64CDPY developer, not to Nintendo, the SM64CoopDX team, or the listed mod authors.'**
   String get disclaimerWarningBody;
 
   /// Disclaimer screen error message when a link cannot be opened
@@ -2079,13 +2079,13 @@ abstract class AppLocalizations {
   /// Disclaimer screen section header for personal purpose
   ///
   /// In en, this message translates to:
-  /// **'Personal purpose'**
+  /// **'About this app'**
   String get disclaimerSectionPersonalPurpose;
 
   /// Disclaimer screen body text for the personal purpose section
   ///
   /// In en, this message translates to:
-  /// **'This application was independently developed as a personal project. Its sole purpose is to give me faster access, organization, and download management for mods I use for my own entertainment. It is not an application supported by the SM64CoopDX team or an official service of any kind.'**
+  /// **'SM64CDPY is an independent Android catalog and manager for community-created SM64CoopDX mods. It helps users browse, download, organize, and install compatible content. The app does not include Super Mario 64, a ROM, or a copy of SM64CoopDX; users must provide their own legitimate and compatible game setup.'**
   String get disclaimerBodyPersonalPurpose;
 
   /// Disclaimer screen section header for no official affiliation
@@ -2097,7 +2097,7 @@ abstract class AppLocalizations {
   /// Disclaimer screen body text for the no affiliation section
   ///
   /// In en, this message translates to:
-  /// **'This project is not associated with, endorsed by, or approved by the developers of SM64CoopDX, Super Mario 64, Nintendo, or any of the mod creators listed. All names, images, and content displayed belong to their respective authors.'**
+  /// **'This project is not associated with, endorsed by, or approved by Nintendo, the SM64CoopDX team, or the listed mod authors. Product names and trademarks identify compatibility only. Mod titles, descriptions, images, files, and other credited material remain the property of their respective authors or rights holders.'**
   String get disclaimerBodyNoAffiliation;
 
   /// Disclaimer screen section header for data source
@@ -2109,31 +2109,55 @@ abstract class AppLocalizations {
   /// Disclaimer screen body text for the data source section
   ///
   /// In en, this message translates to:
-  /// **'Mod information comes from the public catalog at mods.sm64coopdx.com. This app only presents that information in a more accessible way; it does not host, modify, or redistribute any mod files.'**
+  /// **'The main catalog presents public community listings from Coop DX Mods (mods.sm64coopdx.com) while preserving the published author, title, dates, versions, and source. SM64CDPY provides a mobile interface and retrieves downloads from the source made available for each resource; catalog inclusion does not imply ownership or official endorsement by SM64CDPY.'**
   String get disclaimerBodyDataSource;
 
   /// Disclaimer screen section header for exclusive sections
   ///
   /// In en, this message translates to:
-  /// **'Exclusive sections (VIP · DynOS · Touch Controls)'**
+  /// **'Curated sections (VIP · DynOS · Touch Controls)'**
   String get disclaimerSectionExclusive;
 
   /// Disclaimer screen body text for the exclusive sections
   ///
   /// In en, this message translates to:
-  /// **'Starting with v{version}, the app includes curated sections with content not officially listed on the SM64CoopDX website. These sections (VIP Mods, DynOS packs, and Touch Control layouts) are maintained independently by the developer and are not affiliated with any official source. All credit goes to the original creators.'**
+  /// **'In v{version}, VIP Mods, DynOS packs, Touch Control layouts, OMM Rebirth, and Render96 may use independently curated sources. Whenever content was not created by the SM64CDPY developer, its credited creator retains authorship. These sections are separate from the main Coop DX Mods catalog and are not official Nintendo or SM64CoopDX services.'**
   String disclaimerBodyExclusive(Object version);
+
+  /// Disclaimer section header for accounts and locally stored app data
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts and local data'**
+  String get disclaimerSectionLocalData;
+
+  /// Disclaimer body explaining the current absence of accounts and local storage
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CDPY currently does not create user accounts. Favorites, installation history, selected folders, and app preferences are stored locally on the device. Removing the app or clearing its data may remove this information.'**
+  String get disclaimerBodyLocalData;
+
+  /// Disclaimer section header for third-party network services
+  ///
+  /// In en, this message translates to:
+  /// **'External services'**
+  String get disclaimerSectionExternalServices;
+
+  /// Disclaimer body describing external content and download services
+  ///
+  /// In en, this message translates to:
+  /// **'Browsing, refreshing catalogs, opening links, and downloading content may connect to services such as Coop DX Mods, GitHub, Google Drive, Dropbox, or GameBanana. Those services operate under their own terms and privacy practices, which SM64CDPY does not control.'**
+  String get disclaimerBodyExternalServices;
 
   /// Disclaimer screen section header for bugs and suggestions
   ///
   /// In en, this message translates to:
-  /// **'Bugs, suggestions & requests'**
+  /// **'Support and content corrections'**
   String get disclaimerSectionBugs;
 
   /// Disclaimer screen body text for the bugs and suggestions section
   ///
   /// In en, this message translates to:
-  /// **'If you find an issue with this app, have a suggestion, or want to request something, contact me directly through my social media. Please do not contact the official SM64CoopDX developers or mod creators about anything related to this application.'**
+  /// **'Contact the SM64CDPY developer if you find an app issue, incorrect attribution, outdated information, or content that should be corrected or removed. Please include the mod title and source when applicable. App-related requests should not be directed to Nintendo, the SM64CoopDX team, or mod authors.'**
   String get disclaimerBodyBugs;
 
   /// Section header for the VIP mods list
