@@ -35,8 +35,9 @@ Revisado contra `1.7.0+18` el 2026-09-27.
   clasificación durable de instalación/actualización/reinstalación, reemplazo
   lógico recuperable y mantenimiento individual sin borrar archivos del juego.
 - Biblioteca alineada visualmente con Catálogo mediante pestañas y filtros
-  inclinados, contadores, menús retro y estados vacíos coherentes; los filtros
-  también gobiernan la vista de actualizaciones.
+  inclinados, contadores, menús retro y estados vacíos coherentes. Los filtros
+  gobiernan Actualizaciones y solo aparecen con opciones reales; las tarjetas
+  evitan estados duplicados y detalles internos de detección.
 
 ## Experimental o pendiente de validación
 

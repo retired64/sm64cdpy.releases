@@ -136,7 +136,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   ),
                   _viewSelector(l10n, retro, state.snapshot, updates),
                   const SizedBox(height: 14),
-                  _filters(l10n, retro, state.snapshot),
+                  _filters(l10n, retro, state.snapshot, updates),
                   const SizedBox(height: 18),
                   if (_view == _LibraryView.detected &&
                       state.snapshot.discoveryTruncated)
@@ -197,7 +197,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             icon: icons[index],
             selected: _view == _LibraryView.values[index],
             dense: true,
-            onTap: () => setState(() => _view = _LibraryView.values[index]),
+            onTap: () => setState(() {
+              _view = _LibraryView.values[index];
+              _section = null;
+              _destination = null;
+            }),
           );
         },
       ),
@@ -208,11 +212,34 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     AppLocalizations l10n,
     RetroTheme retro,
     InstallationLibrarySnapshot snapshot,
+    AsyncValue<List<InstallationUpdateCandidate>> updates,
   ) {
-    final sections = {
-      ...snapshot.receipts.map((e) => e.section),
-      ...snapshot.history.map((e) => e.section),
+    final sections = switch (_view) {
+      _LibraryView.installed =>
+        snapshot.receipts.map((item) => item.section).toSet(),
+      _LibraryView.updates =>
+        updates.asData?.value.map((item) => item.installed.section).toSet() ??
+            <String>{},
+      _LibraryView.recent =>
+        snapshot.history.map((item) => item.section).toSet(),
+      _LibraryView.detected => <String>{},
     }.toList()..sort();
+    final destinations = switch (_view) {
+      _LibraryView.installed =>
+        snapshot.receipts.map((item) => item.destination).toSet(),
+      _LibraryView.updates =>
+        updates.asData?.value
+                .map((item) => item.installed.destination)
+                .toSet() ??
+            <String>{},
+      _LibraryView.detected =>
+        snapshot.discoveries.map((item) => item.destination).toSet(),
+      _LibraryView.recent =>
+        snapshot.history.map((item) => item.destination).toSet(),
+    }.toList()..sort();
+    final showSection = sections.length > 1;
+    final showDestination = destinations.length > 1;
+    if (!showSection && !showDestination) return const SizedBox.shrink();
     return SizedBox(
       height: 44,
       child: ListView(
@@ -221,7 +248,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsetsDirectional.only(start: 3, end: 6),
         children: [
-          if (_view != _LibraryView.detected) ...[
+          if (showSection) ...[
             _LibraryFilterChip(
               retro: retro,
               label: _section == null
@@ -235,17 +262,18 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             ),
             const SizedBox(width: 10),
           ],
-          _LibraryFilterChip(
-            retro: retro,
-            label: _destination == null
-                ? l10n.libraryAllDestinations
-                : _destinationLabel(l10n, _destination!),
-            icon: Icons.folder_outlined,
-            active: _destination != null,
-            onTap: () => _destination == null
-                ? _showDestinationSheet(l10n, retro)
-                : setState(() => _destination = null),
-          ),
+          if (showDestination)
+            _LibraryFilterChip(
+              retro: retro,
+              label: _destination == null
+                  ? l10n.libraryAllDestinations
+                  : _destinationLabel(l10n, _destination!),
+              icon: Icons.folder_outlined,
+              active: _destination != null,
+              onTap: () => _destination == null
+                  ? _showDestinationSheet(l10n, retro, destinations)
+                  : setState(() => _destination = null),
+            ),
         ],
       ),
     );
@@ -283,6 +311,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   Future<void> _showDestinationSheet(
     AppLocalizations l10n,
     RetroTheme retro,
+    List<String> destinations,
   ) async {
     final result = await showModalBottomSheet<String>(
       context: context,
@@ -296,16 +325,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         title: l10n.libraryAllDestinations,
         selected: _destination,
         options: [
-          _LibraryFilterOption(
-            value: 'mods',
-            label: l10n.libraryModsDestination,
-            icon: Icons.folder_copy_outlined,
-          ),
-          _LibraryFilterOption(
-            value: 'dynos',
-            label: l10n.libraryDynosDestination,
-            icon: Icons.folder_special_outlined,
-          ),
+          for (final destination in destinations)
+            _LibraryFilterOption(
+              value: destination,
+              label: _destinationLabel(l10n, destination),
+              icon: destination == 'dynos'
+                  ? Icons.folder_special_outlined
+                  : Icons.folder_copy_outlined,
+            ),
         ],
       ),
     );

@@ -419,8 +419,11 @@ restante pueda aparecer como externo. La desinstalación continúa pospuesta.
 La interfaz de Biblioteca adopta el mismo sistema visual del Catálogo: vistas y
 filtros inclinados, contadores, hojas inferiores retro, cabecera con borde duro
 y estados vacíos o parciales con jerarquía clara. Los filtros de sección y
-carpeta también se aplican a Actualizaciones; antes se mostraban en esa vista
-sin afectar sus resultados.
+carpeta también se aplican a Actualizaciones y solo aparecen cuando hay dos o
+más opciones reales; al cambiar de vista se limpian para no dejar un filtro
+invisible. Las tarjetas actuales muestran una sola vez su estado de instalación
+y Detectados reserva la clasificación de confianza para la lógica interna, sin
+exponer etiquetas técnicas al usuario final.
 
 Falta la matriz física de actualización, reinstalación, downgrade voluntario,
 mantenimiento individual, reapertura y sincronización con el overlay antes de

@@ -157,10 +157,11 @@ class InstallationLibraryCard extends ConsumerWidget {
                   icon: Icons.folder_outlined,
                   label: _destinationLabel(l10n, record.destination),
                 ),
-                _Meta(
-                  icon: _eventIcon(record.eventKind),
-                  label: _eventLabel(l10n, record.eventKind),
-                ),
+                if (historyEntry)
+                  _Meta(
+                    icon: _eventIcon(record.eventKind),
+                    label: _eventLabel(l10n, record.eventKind),
+                  ),
               ],
             ),
             if (record.replacedByArtifactKey != null) ...[
@@ -355,18 +356,6 @@ class DetectedInstallationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
-    final confidenceLabel = switch (discovery.confidence) {
-      InstallationDiscoveryConfidence.exact =>
-        l10n.libraryDiscoveryHeaderIdentified,
-      InstallationDiscoveryConfidence.probable => l10n.libraryDiscoveryProbable,
-      InstallationDiscoveryConfidence.unlinked => l10n.libraryDiscoveryUnlinked,
-    };
-    final confidenceColor = switch (discovery.confidence) {
-      InstallationDiscoveryConfidence.exact => retro.accent,
-      InstallationDiscoveryConfidence.probable => retro.amber,
-      InstallationDiscoveryConfidence.unlinked => retro.inkDim,
-    };
-
     return Semantics(
       container: true,
       label: '${discovery.displayName}, ${l10n.libraryDetectedOnDevice}',
@@ -388,12 +377,20 @@ class DetectedInstallationCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.manage_search_rounded,
-                  color: confidenceColor,
-                  size: 23,
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: retro.surfaceAlt,
+                    border: Border.all(color: retro.accent, width: 2),
+                  ),
+                  child: Icon(
+                    Icons.extension_rounded,
+                    color: retro.accent,
+                    size: 23,
+                  ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -407,29 +404,16 @@ class DetectedInstallationCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         l10n.libraryDetectedOnDevice,
-                        style: retro.body(size: 11, color: retro.inkDim),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: retro.body(size: 11.5, color: retro.inkDim),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 5,
-                  ),
-                  color: confidenceColor.withValues(alpha: 0.14),
-                  child: Text(
-                    confidenceLabel,
-                    style: retro.body(
-                      size: 10,
-                      color: confidenceColor,
-                      weight: FontWeight.w800,
-                    ),
-                  ),
-                ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 14),
             Wrap(
               spacing: 12,
               runSpacing: 6,
@@ -455,12 +439,33 @@ class DetectedInstallationCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 9),
-            Text(
-              '${l10n.libraryDetectedPath}: ${discovery.entryPath}',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: retro.body(size: 10.5, color: retro.inkDim),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+              decoration: BoxDecoration(
+                color: retro.surfaceAlt,
+                border: Border(left: BorderSide(color: retro.accent, width: 3)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.description_outlined,
+                    size: 15,
+                    color: retro.inkDim,
+                  ),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Text(
+                      '${l10n.libraryDetectedPath}: ${discovery.entryPath}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: retro.body(size: 10.5, color: retro.inkDim),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

@@ -350,7 +350,7 @@ const _kVersions = <_VersionData>[
       _ChangeGroupData(
         type: _ChangeType.improved,
         items: [
-          'The Library now shares the catalog visual language with skewed view and filter controls, retro filter sheets, useful counters, and clearer empty and warning states.',
+          'The Library now shares the catalog visual language with skewed views, contextual filters that only appear when useful, retro filter sheets, useful counters, and clearer installed or externally detected cards.',
           'DynOS and Touch Controls now follow the global auto-install setting consistently: automatic mode uses the shared background pipeline, while manual mode asks before installing a completed download.',
           'Broken Touch Controls and DynOS links now show a friendly unavailable/download error while keeping technical details available through the copy action.',
           'Settings now identifies the shared destination as the DynOS and Touch Controls folder, making it clear that both content types are installed there.',
