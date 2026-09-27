@@ -158,6 +158,40 @@ class InstallationLibraryNotifier
       );
     });
   }
+
+  Future<void> forgetContent(String contentKey) => _mutate(
+    () => ref
+        .read(installationLibraryRepositoryProvider)
+        .forgetContent(contentKey),
+  );
+
+  Future<void> removeHistoryEvent(String workerId) => _mutate(
+    () => ref
+        .read(installationLibraryRepositoryProvider)
+        .removeHistoryEvent(workerId),
+  );
+
+  Future<void> _mutate(
+    Future<InstallationLibrarySnapshot> Function() operation,
+  ) async {
+    final previous = state;
+    state = const AsyncLoading<InstallationLibraryState>();
+    try {
+      final snapshot = await operation();
+      if (!ref.mounted) return;
+      state = AsyncData(
+        InstallationLibraryState(
+          status: snapshot.isPartial
+              ? InstallationLibraryLoadStatus.partial
+              : InstallationLibraryLoadStatus.ready,
+          snapshot: snapshot,
+        ),
+      );
+    } catch (_) {
+      if (ref.mounted) state = previous;
+      rethrow;
+    }
+  }
 }
 
 final installationLibraryProvider =

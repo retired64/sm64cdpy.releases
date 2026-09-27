@@ -50,6 +50,8 @@ class InstallationRecord {
     required this.packageShape,
     this.versionLabel,
     this.filename,
+    this.replacedByArtifactKey,
+    this.replacedAt,
   });
 
   factory InstallationRecord.fromMap(Map<dynamic, dynamic> map) {
@@ -97,6 +99,8 @@ class InstallationRecord {
       title: _displayString(display, 'title', required: true)!,
       versionLabel: _displayString(display, 'versionLabel'),
       filename: _displayString(display, 'filename'),
+      replacedByArtifactKey: _optionalString(map, 'replacedByArtifactKey'),
+      replacedAt: _optionalDate(map, 'replacedAt'),
       packageShape: InstallationPackageShape.parse(
         requiredString('packageShape'),
       ),
@@ -116,6 +120,16 @@ class InstallationRecord {
     return value;
   }
 
+  static String? _optionalString(Map<dynamic, dynamic> map, String key) {
+    final value = map[key];
+    return value is String && value.trim().isNotEmpty ? value.trim() : null;
+  }
+
+  static DateTime? _optionalDate(Map<dynamic, dynamic> map, String key) {
+    final value = _optionalString(map, key);
+    return value == null ? null : DateTime.parse(value).toUtc();
+  }
+
   final String contentKey;
   final String artifactKey;
   final String operationKey;
@@ -132,6 +146,8 @@ class InstallationRecord {
   final String title;
   final String? versionLabel;
   final String? filename;
+  final String? replacedByArtifactKey;
+  final DateTime? replacedAt;
   final InstallationPackageShape packageShape;
 
   Map<String, dynamic> toMap() => {
@@ -155,6 +171,9 @@ class InstallationRecord {
       if (filename != null) 'filename': filename,
     },
     'packageShape': packageShape.wireValue,
+    if (replacedByArtifactKey != null)
+      'replacedByArtifactKey': replacedByArtifactKey,
+    if (replacedAt != null) 'replacedAt': replacedAt!.toUtc().toIso8601String(),
   };
 }
 

@@ -1407,4 +1407,58 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get libraryPartialWarning =>
       'Some records could not be read. Valid installations are still shown.';
+
+  @override
+  String get libraryCatalogLoading => 'Checking the current catalog…';
+
+  @override
+  String get libraryCatalogError =>
+      'The catalog could not be checked. Installed content is still available.';
+
+  @override
+  String libraryUpdateVersions(String installed, String available) {
+    return '$installed → $available';
+  }
+
+  @override
+  String get libraryEventInstall => 'Installed';
+
+  @override
+  String get libraryEventUpdate => 'Updated';
+
+  @override
+  String get libraryEventReinstall => 'Reinstalled';
+
+  @override
+  String get libraryEventReplaced => 'Replaced by a newer version';
+
+  @override
+  String get libraryForgetAction => 'FORGET INSTALLATION';
+
+  @override
+  String get libraryForgetTitle => 'FORGET THIS INSTALLATION?';
+
+  @override
+  String get libraryForgetBody =>
+      'SM64CDPY will remove this item from the Library, but it will not delete any game files.';
+
+  @override
+  String get libraryForgetConfirm => 'FORGET';
+
+  @override
+  String get libraryRemoveHistoryAction => 'REMOVE FROM HISTORY';
+
+  @override
+  String get libraryRemoveHistoryTitle => 'REMOVE THIS EVENT?';
+
+  @override
+  String get libraryRemoveHistoryBody =>
+      'Only this history entry will be removed. The current installation and game files will not change.';
+
+  @override
+  String get libraryRemoveHistoryConfirm => 'REMOVE';
+
+  @override
+  String get libraryMaintenanceError =>
+      'The Library could not be updated. Try again.';
 }

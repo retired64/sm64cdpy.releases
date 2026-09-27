@@ -5,9 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/retro_theme.dart';
+import '../../domain/entities/installation_catalog.dart';
 import '../../domain/entities/installation_library.dart';
 import '../../l10n/app_localizations.dart';
+import '../providers/extra_providers.dart';
 import '../providers/installation_library_provider.dart';
+import '../providers/installation_update_provider.dart';
+import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/installation_library_card.dart';
 
@@ -24,6 +28,18 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   String? _section;
   String? _destination;
   bool _initialViewApplied = false;
+
+  Future<void> _refresh() async {
+    ref.invalidate(allModsProvider);
+    ref.invalidate(allVipModsProvider);
+    ref.invalidate(allDynosProvider);
+    ref.invalidate(allTouchControlsProvider);
+    ref.invalidate(allOmmRebirthProvider);
+    ref.invalidate(allRender96Provider);
+    await ref
+        .read(installationLibraryProvider.notifier)
+        .refresh(discover: true, forceDiscovery: true);
+  }
 
   @override
   void initState() {
@@ -51,10 +67,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final value = ref.watch(installationLibraryProvider);
+    final updates = ref.watch(installationUpdatesProvider);
     return RefreshIndicator(
-      onRefresh: () => ref
-          .read(installationLibraryProvider.notifier)
-          .refresh(discover: true, forceDiscovery: true),
+      onRefresh: _refresh,
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
@@ -67,17 +82,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             snap: true,
             elevation: 0,
             scrolledUnderElevation: 0,
-            leading: const DrawerMenuButton(icon: Icons.menu),
-            title: Text(l10n.libraryTitle, style: retro.heading(size: 18)),
+            shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
+            leading: const DrawerMenuButton(),
+            title: Text(
+              l10n.libraryTitle,
+              style: retro.heading(size: 18, color: retro.accent),
+            ),
             actions: [
-              IconButton(
-                tooltip: l10n.libraryRefresh,
-                onPressed: value.isLoading
-                    ? null
-                    : () => ref
-                          .read(installationLibraryProvider.notifier)
-                          .refresh(discover: true, forceDiscovery: true),
-                icon: const Icon(Icons.refresh_rounded),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 14),
+                child: _RetroIconButton(
+                  tooltip: l10n.libraryRefresh,
+                  onPressed: value.isLoading ? null : _refresh,
+                  icon: Icons.refresh_rounded,
+                  busy: value.isLoading,
+                ),
               ),
             ],
           ),
@@ -107,17 +126,25 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       text: l10n.libraryPartialWarning,
                       color: retro.amber,
                     ),
-                  _viewSelector(l10n, retro),
-                  const SizedBox(height: 12),
-                  _filters(l10n, retro, state.snapshot),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: SectionKicker(
+                      retro: retro,
+                      label: l10n.libraryTitle,
+                      japanese: 'ライブラリ',
+                    ),
+                  ),
+                  _viewSelector(l10n, retro, state.snapshot, updates),
                   const SizedBox(height: 14),
+                  _filters(l10n, retro, state.snapshot),
+                  const SizedBox(height: 18),
                   if (_view == _LibraryView.detected &&
                       state.snapshot.discoveryTruncated)
                     _Notice(
                       text: l10n.libraryDetectedScanLimit,
                       color: retro.amber,
                     ),
-                  ..._content(l10n, state.snapshot),
+                  ..._content(l10n, state.snapshot, updates),
                 ],
               ),
             ),
@@ -127,26 +154,52 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     );
   }
 
-  Widget _viewSelector(AppLocalizations l10n, RetroTheme retro) {
+  Widget _viewSelector(
+    AppLocalizations l10n,
+    RetroTheme retro,
+    InstallationLibrarySnapshot snapshot,
+    AsyncValue<List<InstallationUpdateCandidate>> updates,
+  ) {
     final labels = [
       l10n.libraryInstalled,
       l10n.libraryUpdates,
       l10n.libraryDetected,
       l10n.libraryRecent,
     ];
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SegmentedButton<_LibraryView>(
-        segments: [
-          for (var i = 0; i < _LibraryView.values.length; i++)
-            ButtonSegment(
-              value: _LibraryView.values[i],
-              label: Text(labels[i]),
-            ),
-        ],
-        selected: {_view},
-        onSelectionChanged: (value) => setState(() => _view = value.first),
-        showSelectedIcon: false,
+    final icons = [
+      Icons.inventory_2_outlined,
+      Icons.system_update_alt_rounded,
+      Icons.manage_search_rounded,
+      Icons.history_rounded,
+    ];
+    final counts = <int?>[
+      snapshot.receipts.length,
+      updates.asData?.value.length,
+      snapshot.discoveries.length,
+      snapshot.history.length,
+    ];
+    return SizedBox(
+      height: 44,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsetsDirectional.only(start: 3, end: 6),
+        itemCount: _LibraryView.values.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          final count = counts[index];
+          return SkewChip(
+            retro: retro,
+            label: count == null
+                ? labels[index].toUpperCase()
+                : '${labels[index].toUpperCase()}  $count',
+            icon: icons[index],
+            selected: _view == _LibraryView.values[index],
+            dense: true,
+            onTap: () => setState(() => _view = _LibraryView.values[index]),
+          );
+        },
       ),
     );
   }
@@ -156,56 +209,113 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     RetroTheme retro,
     InstallationLibrarySnapshot snapshot,
   ) {
-    final sections = snapshot.receipts.map((e) => e.section).toSet().toList()
-      ..sort();
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        if (_view != _LibraryView.detected)
-          DropdownButton<String?>(
-            value: _section,
-            hint: Text(l10n.libraryAllSections),
-            items: [
-              DropdownMenuItem(
-                value: null,
-                child: Text(l10n.libraryAllSections),
-              ),
-              ...sections.map(
-                (e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e.replaceAll('_', ' ').toUpperCase()),
-                ),
-              ),
-            ],
-            onChanged: (value) => setState(() => _section = value),
-          ),
-        DropdownButton<String?>(
-          value: _destination,
-          hint: Text(l10n.libraryAllDestinations),
-          items: [
-            DropdownMenuItem(
-              value: null,
-              child: Text(l10n.libraryAllDestinations),
+    final sections = {
+      ...snapshot.receipts.map((e) => e.section),
+      ...snapshot.history.map((e) => e.section),
+    }.toList()..sort();
+    return SizedBox(
+      height: 44,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsetsDirectional.only(start: 3, end: 6),
+        children: [
+          if (_view != _LibraryView.detected) ...[
+            _LibraryFilterChip(
+              retro: retro,
+              label: _section == null
+                  ? l10n.libraryAllSections
+                  : _sectionLabel(l10n, _section!),
+              icon: Icons.category_outlined,
+              active: _section != null,
+              onTap: () => _section == null
+                  ? _showSectionSheet(l10n, retro, sections)
+                  : setState(() => _section = null),
             ),
-            DropdownMenuItem(
-              value: 'mods',
-              child: Text(l10n.libraryModsDestination),
-            ),
-            DropdownMenuItem(
-              value: 'dynos',
-              child: Text(l10n.libraryDynosDestination),
-            ),
+            const SizedBox(width: 10),
           ],
-          onChanged: (value) => setState(() => _destination = value),
-        ),
-      ],
+          _LibraryFilterChip(
+            retro: retro,
+            label: _destination == null
+                ? l10n.libraryAllDestinations
+                : _destinationLabel(l10n, _destination!),
+            icon: Icons.folder_outlined,
+            active: _destination != null,
+            onTap: () => _destination == null
+                ? _showDestinationSheet(l10n, retro)
+                : setState(() => _destination = null),
+          ),
+        ],
+      ),
     );
+  }
+
+  Future<void> _showSectionSheet(
+    AppLocalizations l10n,
+    RetroTheme retro,
+    List<String> sections,
+  ) async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: retro.surface,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: retro.border, width: 3),
+        borderRadius: BorderRadius.zero,
+      ),
+      builder: (context) => _LibraryFilterSheet(
+        retro: retro,
+        title: l10n.libraryAllSections,
+        selected: _section,
+        options: [
+          for (final section in sections)
+            _LibraryFilterOption(
+              value: section,
+              label: _sectionLabel(l10n, section),
+              icon: _sectionIcon(section),
+            ),
+        ],
+      ),
+    );
+    if (result != null && mounted) setState(() => _section = result);
+  }
+
+  Future<void> _showDestinationSheet(
+    AppLocalizations l10n,
+    RetroTheme retro,
+  ) async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: retro.surface,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: retro.border, width: 3),
+        borderRadius: BorderRadius.zero,
+      ),
+      builder: (context) => _LibraryFilterSheet(
+        retro: retro,
+        title: l10n.libraryAllDestinations,
+        selected: _destination,
+        options: [
+          _LibraryFilterOption(
+            value: 'mods',
+            label: l10n.libraryModsDestination,
+            icon: Icons.folder_copy_outlined,
+          ),
+          _LibraryFilterOption(
+            value: 'dynos',
+            label: l10n.libraryDynosDestination,
+            icon: Icons.folder_special_outlined,
+          ),
+        ],
+      ),
+    );
+    if (result != null && mounted) setState(() => _destination = result);
   }
 
   List<Widget> _content(
     AppLocalizations l10n,
     InstallationLibrarySnapshot snapshot,
+    AsyncValue<List<InstallationUpdateCandidate>> updates,
   ) {
     if (_view == _LibraryView.detected) {
       final discoveries = snapshot.discoveries
@@ -227,13 +337,45 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           .toList(growable: false);
     }
     if (_view == _LibraryView.updates) {
-      return [
-        _MessageState(
-          icon: Icons.system_update_alt_rounded,
-          title: l10n.libraryUpdatesEmptyTitle,
-          body: l10n.libraryUpdatesEmptyBody,
-        ),
-      ];
+      return updates.when(
+        loading: () => [
+          _MessageState(
+            icon: Icons.sync_rounded,
+            title: l10n.libraryCatalogLoading,
+            body: l10n.libraryUpdatesEmptyBody,
+          ),
+        ],
+        error: (_, _) => [
+          _MessageState(
+            icon: Icons.cloud_off_rounded,
+            title: l10n.libraryUpdatesEmptyTitle,
+            body: l10n.libraryCatalogError,
+            action: l10n.generalRetry,
+            onAction: _refresh,
+          ),
+        ],
+        data: (items) {
+          final filtered = items
+              .where(
+                (item) =>
+                    (_section == null || item.installed.section == _section) &&
+                    (_destination == null ||
+                        item.installed.destination == _destination),
+              )
+              .toList(growable: false);
+          return filtered.isEmpty
+              ? [
+                  _MessageState(
+                    icon: Icons.system_update_alt_rounded,
+                    title: l10n.libraryUpdatesEmptyTitle,
+                    body: l10n.libraryUpdatesEmptyBody,
+                  ),
+                ]
+              : filtered
+                    .map((item) => InstallationUpdateCard(update: item))
+                    .toList(growable: false);
+        },
+      );
     }
     final source = _view == _LibraryView.recent
         ? snapshot.history
@@ -261,6 +403,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           (record) => InstallationLibraryCard(
             record: record,
             verification: snapshot.verifications[record.artifactKey],
+            historyEntry: _view == _LibraryView.recent,
           ),
         )
         .toList(growable: false);
@@ -272,12 +415,25 @@ class _Notice extends StatelessWidget {
   final String text;
   final Color color;
   @override
-  Widget build(BuildContext context) => Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(border: Border.all(color: color, width: 2)),
-    child: Text(text),
-  );
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: retro.surface,
+        border: Border(left: BorderSide(color: color, width: 5)),
+        boxShadow: retro.hardShadow(dx: 3, dy: 3),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, color: color, size: 19),
+          const SizedBox(width: 10),
+          Expanded(child: Text(text, style: retro.body(size: 12))),
+        ],
+      ),
+    );
+  }
 }
 
 class _MessageState extends StatelessWidget {
@@ -296,25 +452,260 @@ class _MessageState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 12, bottom: 4),
+      padding: const EdgeInsets.symmetric(vertical: 34, horizontal: 22),
+      decoration: BoxDecoration(
+        color: retro.surface,
+        border: Border.all(color: retro.border, width: 2.5),
+        boxShadow: retro.hardShadow(dx: 4, dy: 4),
+      ),
       child: Column(
         children: [
-          Icon(icon, size: 52, color: retro.inkDim),
-          const SizedBox(height: 14),
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: retro.surfaceAlt,
+              border: Border.all(color: retro.border, width: 2),
+            ),
+            child: Icon(icon, size: 34, color: retro.accent),
+          ),
+          const SizedBox(height: 18),
           Text(
             title,
             textAlign: TextAlign.center,
             style: retro.heading(size: 19),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 9),
           Text(body, textAlign: TextAlign.center, style: retro.body(size: 13)),
           if (action != null) ...[
-            const SizedBox(height: 16),
-            OutlinedButton(onPressed: onAction, child: Text(action!)),
+            const SizedBox(height: 18),
+            SkewChip(
+              retro: retro,
+              label: action!,
+              icon: Icons.refresh_rounded,
+              selected: true,
+              onTap: onAction,
+            ),
           ],
         ],
       ),
     );
   }
 }
+
+class _RetroIconButton extends StatelessWidget {
+  const _RetroIconButton({
+    required this.tooltip,
+    required this.onPressed,
+    required this.icon,
+    this.busy = false,
+  });
+
+  final String tooltip;
+  final VoidCallback? onPressed;
+  final IconData icon;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    return Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        enabled: onPressed != null,
+        label: tooltip,
+        child: InkWell(
+          onTap: onPressed,
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: retro.surface,
+              border: Border.all(color: retro.border, width: 2),
+              boxShadow: onPressed == null
+                  ? null
+                  : retro.hardShadow(dx: 2, dy: 2),
+            ),
+            child: busy
+                ? Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: retro.accent,
+                    ),
+                  )
+                : Icon(
+                    icon,
+                    size: 20,
+                    color: onPressed == null ? retro.inkDim : retro.ink,
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LibraryFilterChip extends StatelessWidget {
+  const _LibraryFilterChip({
+    required this.retro,
+    required this.label,
+    required this.icon,
+    required this.active,
+    required this.onTap,
+  });
+
+  final RetroTheme retro;
+  final String label;
+  final IconData icon;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => SkewChip(
+    retro: retro,
+    label: label.toUpperCase(),
+    icon: icon,
+    trailing: active ? Icons.close_rounded : Icons.expand_more_rounded,
+    selected: active,
+    dense: true,
+    onTap: onTap,
+  );
+}
+
+class _LibraryFilterOption {
+  const _LibraryFilterOption({
+    required this.value,
+    required this.label,
+    required this.icon,
+  });
+
+  final String value;
+  final String label;
+  final IconData icon;
+}
+
+class _LibraryFilterSheet extends StatelessWidget {
+  const _LibraryFilterSheet({
+    required this.retro,
+    required this.title,
+    required this.selected,
+    required this.options,
+  });
+
+  final RetroTheme retro;
+  final String title;
+  final String? selected;
+  final List<_LibraryFilterOption> options;
+
+  @override
+  Widget build(BuildContext context) => SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(child: Container(width: 36, height: 4, color: retro.border)),
+          const SizedBox(height: 18),
+          SectionKicker(retro: retro, label: title.toUpperCase()),
+          const SizedBox(height: 14),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  for (final option in options)
+                    _LibraryFilterSheetItem(
+                      option: option,
+                      selected: selected == option.value,
+                      retro: retro,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _LibraryFilterSheetItem extends StatelessWidget {
+  const _LibraryFilterSheetItem({
+    required this.option,
+    required this.selected,
+    required this.retro,
+  });
+
+  final _LibraryFilterOption option;
+  final bool selected;
+  final RetroTheme retro;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    selected: selected,
+    child: InkWell(
+      onTap: () => Navigator.of(context).pop(option.value),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        decoration: BoxDecoration(
+          color: selected ? retro.accent : retro.surfaceAlt,
+          border: Border.all(color: retro.border, width: 2),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              option.icon,
+              size: 18,
+              color: selected ? retro.inkOnAccent : retro.ink,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                option.label.toUpperCase(),
+                style: retro.heading(
+                  size: 13,
+                  color: selected ? retro.inkOnAccent : retro.ink,
+                ),
+              ),
+            ),
+            if (selected)
+              Icon(Icons.check_rounded, size: 19, color: retro.inkOnAccent),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+String _sectionLabel(AppLocalizations l10n, String section) =>
+    switch (section) {
+      'mods' => l10n.navCatalog,
+      'vip' => l10n.navVIPMods,
+      'dynos' => l10n.navDynOS,
+      'touch_controls' => l10n.navTouchControls,
+      'omm' => l10n.navOmmRebirth,
+      'render96' => l10n.navRender96,
+      _ => section.replaceAll('_', ' '),
+    };
+
+IconData _sectionIcon(String section) => switch (section) {
+  'mods' => Icons.extension_outlined,
+  'vip' => Icons.workspace_premium_outlined,
+  'dynos' => Icons.accessibility_new_rounded,
+  'touch_controls' => Icons.gamepad_outlined,
+  'omm' => Icons.auto_awesome_outlined,
+  'render96' => Icons.palette_outlined,
+  _ => Icons.category_outlined,
+};
+
+String _destinationLabel(AppLocalizations l10n, String destination) =>
+    destination == 'dynos'
+    ? l10n.libraryDynosDestination
+    : l10n.libraryModsDestination;

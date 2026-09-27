@@ -188,4 +188,14 @@ void main() {
     expect(state.primaryAction, InstallationPrimaryAction.update);
     expect(state.verification?.artifactKey, olderIdentity.artifactKey);
   });
+
+  test('version policy orders numeric versions and only equates prose', () {
+    expect(InstallationVersionPolicy.compare('v1.9', 'v2.0'), greaterThan(0));
+    expect(InstallationVersionPolicy.compare('release', 'RELEASE'), 0);
+    expect(InstallationVersionPolicy.compare('alpha', 'beta'), isNull);
+    expect(
+      InstallationVersionPolicy.isReliableUpgrade('v2.0', 'v1.9'),
+      isFalse,
+    );
+  });
 }

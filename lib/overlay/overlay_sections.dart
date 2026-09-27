@@ -128,7 +128,7 @@ class OverlayModItem {
   factory OverlayModItem.fromOmm(OmmRebirthEntity m) => OverlayModItem(
     id: m.id,
     title: m.title,
-    downloadOptions: [OverlayDownloadOption.primary(m.downloadUrl, '')],
+    downloadOptions: [OverlayDownloadOption.primary(m.downloadUrl, m.version)],
     imageUrl: m.imageUrl,
     section: OverlaySection.omm,
     installDestination: m.id == 'cappy-bros-dynos' ? 'dynos' : 'mods',

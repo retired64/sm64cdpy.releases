@@ -4,9 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/theme/retro_theme.dart';
+import '../../domain/entities/installation_catalog.dart';
 import '../../domain/entities/installation_library.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/background_install_service.dart';
 import '../providers/installation_library_provider.dart';
+import '../providers/mod_providers.dart';
+import 'app_snackbar.dart';
 
 class InstallationLibraryCard extends ConsumerWidget {
   const InstallationLibraryCard({
@@ -14,16 +18,31 @@ class InstallationLibraryCard extends ConsumerWidget {
     required this.record,
     this.verification,
     this.compact = false,
+    this.historyEntry = false,
   });
 
   final InstallationRecord record;
   final InstallationVerification? verification;
   final bool compact;
+  final bool historyEntry;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    final contentBusy = ref
+        .watch(bgInstallStateProvider)
+        .values
+        .any(
+          (operation) =>
+              operation.identity?.contentKey == record.contentKey &&
+              switch (operation.status) {
+                BgInstallStatus.pending ||
+                BgInstallStatus.downloading ||
+                BgInstallStatus.installing => true,
+                _ => false,
+              },
+        );
     final status = verification?.status;
     final statusLabel = switch (status) {
       InstallationVerificationStatus.present => l10n.libraryPresent,
@@ -105,6 +124,27 @@ class InstallationLibraryCard extends ConsumerWidget {
                       ),
                     ),
                   ),
+                if (!compact)
+                  PopupMenuButton<_LibraryMaintenanceAction>(
+                    enabled: historyEntry || !contentBusy,
+                    tooltip: historyEntry
+                        ? l10n.libraryRemoveHistoryAction
+                        : l10n.libraryForgetAction,
+                    onSelected: (action) =>
+                        _maintain(context, ref, l10n, action),
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        value: historyEntry
+                            ? _LibraryMaintenanceAction.removeHistory
+                            : _LibraryMaintenanceAction.forget,
+                        child: Text(
+                          historyEntry
+                              ? l10n.libraryRemoveHistoryAction
+                              : l10n.libraryForgetAction,
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
             const SizedBox(height: 9),
@@ -117,9 +157,20 @@ class InstallationLibraryCard extends ConsumerWidget {
                   icon: Icons.folder_outlined,
                   label: _destinationLabel(l10n, record.destination),
                 ),
+                _Meta(
+                  icon: _eventIcon(record.eventKind),
+                  label: _eventLabel(l10n, record.eventKind),
+                ),
               ],
             ),
-            if (!compact) ...[
+            if (record.replacedByArtifactKey != null) ...[
+              const SizedBox(height: 7),
+              Text(
+                l10n.libraryEventReplaced,
+                style: retro.body(size: 10.5, color: retro.inkDim),
+              ),
+            ],
+            if (!compact && !historyEntry) ...[
               const SizedBox(height: 10),
               Align(
                 alignment: AlignmentDirectional.centerEnd,
@@ -130,6 +181,56 @@ class InstallationLibraryCard extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _maintain(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    _LibraryMaintenanceAction action,
+  ) async {
+    final forget = action == _LibraryMaintenanceAction.forget;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          forget ? l10n.libraryForgetTitle : l10n.libraryRemoveHistoryTitle,
+        ),
+        content: Text(
+          forget ? l10n.libraryForgetBody : l10n.libraryRemoveHistoryBody,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.detailCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              forget
+                  ? l10n.libraryForgetConfirm
+                  : l10n.libraryRemoveHistoryConfirm,
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    try {
+      if (forget) {
+        await ref
+            .read(installationLibraryProvider.notifier)
+            .forgetContent(record.contentKey);
+      } else {
+        await ref
+            .read(installationLibraryProvider.notifier)
+            .removeHistoryEvent(record.installWorkerId);
+      }
+    } catch (_) {
+      if (context.mounted) {
+        AppSnackbar.error(context, message: l10n.libraryMaintenanceError);
+      }
+    }
   }
 
   Widget _action(
@@ -175,6 +276,71 @@ class InstallationLibraryCard extends ConsumerWidget {
         status == InstallationVerificationStatus.missing
             ? l10n.installationReinstall
             : l10n.libraryOpenSource,
+      ),
+    );
+  }
+}
+
+enum _LibraryMaintenanceAction { forget, removeHistory }
+
+class InstallationUpdateCard extends StatelessWidget {
+  const InstallationUpdateCard({super.key, required this.update});
+
+  final InstallationUpdateCandidate update;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final installed = update.installed.versionLabel ?? '—';
+    final available = update.available.identity.versionLabel ?? '—';
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: retro.surface,
+        border: Border.all(color: retro.accent, width: 2),
+        boxShadow: retro.hardShadow(dx: 3, dy: 3),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.system_update_alt_rounded, color: retro.accent),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  update.available.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: retro.heading(size: 16),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 9),
+          Text(
+            l10n.libraryUpdateVersions(installed, available),
+            style: retro.body(size: 12, color: retro.inkDim),
+          ),
+          const SizedBox(height: 10),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: FilledButton.icon(
+              onPressed: () {
+                if (update.installed.section == 'mods') {
+                  context.push(update.available.route);
+                } else {
+                  context.go(update.available.route);
+                }
+              },
+              icon: const Icon(Icons.system_update_alt_rounded, size: 18),
+              label: Text(l10n.installationUpdate),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -346,3 +512,16 @@ String _destinationLabel(AppLocalizations l10n, String destination) =>
     destination == 'dynos'
     ? l10n.libraryDynosDestination
     : l10n.libraryModsDestination;
+
+String _eventLabel(AppLocalizations l10n, String eventKind) =>
+    switch (eventKind) {
+      'update' => l10n.libraryEventUpdate,
+      'reinstall' => l10n.libraryEventReinstall,
+      _ => l10n.libraryEventInstall,
+    };
+
+IconData _eventIcon(String eventKind) => switch (eventKind) {
+  'update' => Icons.system_update_alt_rounded,
+  'reinstall' => Icons.refresh_rounded,
+  _ => Icons.download_done_rounded,
+};

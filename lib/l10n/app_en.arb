@@ -1646,5 +1646,28 @@
   "libraryDetectedScanLimit": "The safety scan limit was reached. Some content may not be shown.",
   "libraryErrorTitle": "LIBRARY UNAVAILABLE",
   "libraryErrorBody": "The installation history could not be read. Try again without changing your game files.",
-  "libraryPartialWarning": "Some records could not be read. Valid installations are still shown."
+  "libraryPartialWarning": "Some records could not be read. Valid installations are still shown.",
+  "libraryCatalogLoading": "Checking the current catalog…",
+  "libraryCatalogError": "The catalog could not be checked. Installed content is still available.",
+  "libraryUpdateVersions": "{installed} → {available}",
+  "@libraryUpdateVersions": {
+    "description": "Installed and available versions shown on a Library update card",
+    "placeholders": {
+      "installed": {"type": "String"},
+      "available": {"type": "String"}
+    }
+  },
+  "libraryEventInstall": "Installed",
+  "libraryEventUpdate": "Updated",
+  "libraryEventReinstall": "Reinstalled",
+  "libraryEventReplaced": "Replaced by a newer version",
+  "libraryForgetAction": "FORGET INSTALLATION",
+  "libraryForgetTitle": "FORGET THIS INSTALLATION?",
+  "libraryForgetBody": "SM64CDPY will remove this item from the Library, but it will not delete any game files.",
+  "libraryForgetConfirm": "FORGET",
+  "libraryRemoveHistoryAction": "REMOVE FROM HISTORY",
+  "libraryRemoveHistoryTitle": "REMOVE THIS EVENT?",
+  "libraryRemoveHistoryBody": "Only this history entry will be removed. The current installation and game files will not change.",
+  "libraryRemoveHistoryConfirm": "REMOVE",
+  "libraryMaintenanceError": "The Library could not be updated. Try again."
 }

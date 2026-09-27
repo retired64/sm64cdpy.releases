@@ -474,6 +474,28 @@ class ModInstaller {
     }
     invalidateInstallationLibrary('historyCleared');
   }
+
+  Future<void> forgetInstallationContent(String contentKey) async {
+    final removed = await _channel.invokeMethod<bool>(
+      'forgetInstallationContent',
+      {'contentKey': contentKey},
+    );
+    if (removed != true) {
+      throw const ModInstallerException('Installation record was not found');
+    }
+  }
+
+  Future<void> removeInstallationHistoryEvent(String installWorkerId) async {
+    final removed = await _channel.invokeMethod<bool>(
+      'removeInstallationHistoryEvent',
+      {'installWorkerId': installWorkerId},
+    );
+    if (removed != true) {
+      throw const ModInstallerException(
+        'Installation history event was not found',
+      );
+    }
+  }
 }
 
 /// Excepción lanzada por el ModInstaller.

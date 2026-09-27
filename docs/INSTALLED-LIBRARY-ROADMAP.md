@@ -7,7 +7,7 @@
 |---|---|
 | Proyecto | SM64CDPY — SM64CoopDX Mods Browser |
 | Rama de trabajo | `historial-hive` |
-| Estado | Fase 8 implementada; pendiente validación física |
+| Estado | Fase 9 implementada; pendiente validación física |
 | Creado | 2026-09-23 |
 | Plataforma | Android 7.0+ |
 | Alcance | Biblioteca, historial, detección de versión y verificación SAF |
@@ -366,25 +366,93 @@ escaneo. Home solo consume la proyección existente y no recorre SAF durante el
 arranque. Verificación y descubrimiento comparten un coordinador nativo de I/O,
 y el escaneo se difiere si WorkManager está escribiendo una instalación para
 no clasificar archivos parciales como externos. El límite alcanzado se comunica
-en la UI. Falta validar físicamente
-proveedores SAF reales, árboles grandes, permisos revocados y los tres tipos de
-hallazgo antes de declarar cerrada la fase.
+en la UI.
+
+**Validación física completada (2026-09-27):** la matriz de aceptación de la
+fase pasó en dispositivo real. Se comprobó la detección de carpetas externas
+con `main.lua`, la lectura de nombre/versión/autor/categoría, la limpieza visual
+de códigos de color, el tratamiento conservador de Lua suelto, la ausencia de
+duplicados entre Instalados y Detectados, el alta y baja mediante actualización
+manual, el destino compartido DynOS sin inferir Touch Controls, la limpieza o
+revocación de carpeta sin fallos, la exclusión de archivos parciales durante
+una instalación activa y el comportamiento acotado ante árboles grandes. La
+fase 8 queda cerrada sin convertir ningún hallazgo externo en recibo o identidad
+de catálogo.
 
 ## Fase 9 — Actualizaciones, reinstalación y mantenimiento
 
-- [ ] Comparar versión instalada con la versión canónica del catálogo.
-- [ ] Usar coincidencia exacta como fallback cuando no exista SemVer válido.
-- [ ] Registrar instalación, actualización y reinstalación como eventos
+- [x] Comparar versión instalada con la versión canónica del catálogo.
+- [x] Usar coincidencia exacta como fallback cuando no exista SemVer válido.
+- [x] Registrar instalación, actualización y reinstalación como eventos
   distintos sin duplicar el elemento lógico de Biblioteca.
-- [ ] Marcar recibos anteriores como reemplazados solo cuando sea seguro.
-- [ ] No borrar archivos obsoletos de una versión anterior sin comprobar
+- [x] Marcar recibos anteriores como reemplazados solo cuando sea seguro.
+- [x] No borrar archivos obsoletos de una versión anterior sin comprobar
   propiedad y solapamiento.
-- [ ] Permitir retirar una entrada del historial sin borrar contenido.
-- [ ] Posponer desinstalación hasta disponer de manifiestos de propiedad
+- [x] Permitir retirar una entrada del historial sin borrar contenido.
+- [x] Posponer desinstalación hasta disponer de manifiestos de propiedad
   suficientemente precisos.
 
 **Motivo:** una actualización puede dejar archivos antiguos; eliminar por nombre
 o carpeta sin propiedad demostrada podría romper otros mods.
+
+**Implementado (2026-09-27):** una política compartida compara únicamente
+versiones numéricas punteadas y acepta texto no semántico solo para igualdad
+exacta, sin inventar un orden. Biblioteca construye un índice de artefactos
+canónicos con las mismas identidades de detalle y overlay; la vista
+Actualizaciones muestra solo coincidencias verificadas y omite variantes
+multiarchivo ambiguas.
+
+El Worker nativo clasifica cada éxito confirmado como `install`, `update` o
+`reinstall`. Un recibo `update` persiste qué artefactos anteriores sustituye
+solo cuando la versión nueva es demostrablemente posterior; una reinstalación
+conserva esa relación. La proyección oculta los reemplazados, pero conserva sus
+manifiestos como evidencia de propiedad y mantiene los eventos en Recientes.
+Retirar o revertir el recibo nuevo restaura naturalmente el estado anterior sin
+una transacción frágil entre archivos.
+
+La Biblioteca permite olvidar una instalación completa o retirar un evento
+individual del historial. Ambas acciones piden confirmación, modifican solo
+metadata privada y vuelven a reconciliar la proyección; nunca eliminan archivos
+del juego. Olvidar fuerza un nuevo descubrimiento para que el contenido físico
+restante pueda aparecer como externo. La desinstalación continúa pospuesta.
+
+La interfaz de Biblioteca adopta el mismo sistema visual del Catálogo: vistas y
+filtros inclinados, contadores, hojas inferiores retro, cabecera con borde duro
+y estados vacíos o parciales con jerarquía clara. Los filtros de sección y
+carpeta también se aplican a Actualizaciones; antes se mostraban en esa vista
+sin afectar sus resultados.
+
+Falta la matriz física de actualización, reinstalación, downgrade voluntario,
+mantenimiento individual, reapertura y sincronización con el overlay antes de
+declarar cerrada la fase.
+
+### Matriz física para cerrar la fase 9
+
+- [ ] Instalar una versión anterior y confirmar que aparece en
+  **Actualizaciones** cuando el catálogo ofrece una versión numérica posterior.
+- [ ] Abrir la actualización desde Biblioteca y completar el flujo desde la
+  pantalla de origen.
+- [ ] Confirmar que la versión nueva queda como única instalación lógica y que
+  Recientes distingue el evento **Actualizado**.
+- [ ] Reinstalar esa versión y confirmar **Reinstalado** sin que reaparezca la
+  versión sustituida.
+- [ ] Cancelar o provocar un fallo de actualización y comprobar que el recibo
+  anterior continúa siendo el vigente.
+- [ ] Instalar voluntariamente una versión anterior después de una nueva y
+  comprobar que no se etiqueta falsamente como actualización.
+- [ ] Usar **Olvidar instalación**, confirmar que desaparece de Instalados,
+  que ningún archivo físico se borra y que el escaneo puede mostrarlo como
+  contenido externo.
+- [ ] Quitar un solo evento de Recientes y confirmar que la instalación vigente
+  y sus archivos permanecen intactos.
+- [ ] Actualizar/reinstalar con la burbuja abierta y confirmar que ambos engines
+  terminan mostrando el mismo estado.
+- [ ] Abrir Biblioteca sin red y confirmar que un fallo al consultar el catálogo
+  no oculta Instalados, Recientes ni Detectados.
+- [ ] Revisar un mod con varios archivos de versión y confirmar que Biblioteca
+  no propone una variante arbitraria.
+- [ ] Comprobar que **Olvidar instalación** queda bloqueado mientras ese mismo
+  contenido tiene una operación activa.
 
 ## Pruebas automatizadas requeridas
 
@@ -393,7 +461,7 @@ o carpeta sin propiedad demostrada podría romper otros mods.
 - [ ] Idempotencia de importación a la proyección Flutter/Hive.
 - [ ] Identidad con títulos iguales y artefactos diferentes.
 - [ ] Estado de botón para cada combinación relevante.
-- [ ] Comparación de versiones semánticas y no semánticas.
+- [x] Comparación de versiones semánticas y no semánticas.
 - [ ] Verificación de archivo suelto, carpeta única y raíces múltiples.
 - [ ] Permiso revocado, carpeta cambiada y archivo eliminado manualmente.
 - [ ] Worker completado con Flutter cerrado.
@@ -480,7 +548,8 @@ enlazar pruebas o commits cuando existan.
 | 2026-09-26 | Fase 5 | Selector canónico y botones coherentes en detalle/VIP/DynOS/Touch Controls/OMM/Render96 | Evitar “instalado” basado en un Worker terminado, dobles toques y actualizaciones falsas | 23 tests Flutter y `flutter analyze`; overlay transferido a Fase 7 | — |
 | 2026-09-26 | Fase 6 | Biblioteca con Instalados/Actualizaciones/Detectados/Recientes, filtros, resumen en Home y navegación coherente | Hacer visible el estado durable y verificable sin convertir el historial ni Hive en autoridad física | Prueba física en OPPO CPH2365: drawer, detalle y regreso, recibo instalado, recientes y reconciliación “No encontrado” tras borrado externo | — |
 | 2026-09-26 | Fase 7 | Snapshot versionado de Biblioteca hacia el segundo engine y selector canónico en cada tarjeta del overlay | Evitar estados divergentes entre app y burbuja sin compartir memoria ni convertir Hive en autoridad | 25 tests Flutter, análisis estático y matriz física de 10 escenarios aprobados | — |
-| 2026-09-26 | Fase 8 | Escaneo SAF acotado de Lua externo, parser de encabezados, caché nativa separada, proyección Hive v3 y vista Detectados | Descubrir contenido previo/manual sin fabricar recibos ni inferir identidad de catálogo | Suite Flutter completa (29 tests), suite Kotlin completa (9 tests), análisis estático y compilación Kotlin; dispositivo pendiente | — |
+| 2026-09-27 | Fase 8 | Escaneo SAF acotado de Lua externo, parser de encabezados, caché nativa separada, proyección Hive v3 y vista Detectados | Descubrir contenido previo/manual sin fabricar recibos ni inferir identidad de catálogo | Suite Flutter completa (29 tests), suite Kotlin completa (9 tests), análisis estático, compilación Kotlin y matriz física completa aprobada | — |
+| 2026-09-27 | Fase 9 | Índice canónico de catálogo, actualizaciones verificadas, eventos install/update/reinstall, reemplazo lógico y mantenimiento no destructivo | Completar el ciclo de versiones sin borrar archivos cuya propiedad o solapamiento no esté demostrado | Suite Flutter completa (35 tests), suite Kotlin completa (14 tests), análisis estático y compilación Kotlin; dispositivo pendiente | — |
 | 2026-09-26 | Corrección física Fases 4–5 | La ausencia deliberada de carpeta ahora conduce a Seleccionar carpeta; navegación a Ajustes reemplaza la ruta de detalle; el Worker registra y retira archivos nuevos de una instalación cancelada | Las pruebas físicas detectaron “Verificar” sin efecto, navegación vacía y mods nuevos parcialmente extraídos | Compilación/tests automatizados y repetición física pendientes | — |
 | 2026-09-26 | Endurecimiento de cancelación | El rollback SAF es idempotente, serializado y no propaga errores del proveedor de documentos | Dos pruebas físicas iniciales cerraron el proceso; después de corregir observers, dos cancelaciones retiraron los parciales en 8–15 s sin errores de rollback | `logcat` físico en OPPO CPH2365 confirmado | — |
 | 2026-09-26 | Corrección de crash al repetir operación | Todos los observers de WorkManager aceptan la emisión transitoria `null` producida cuando `REPLACE` retira la fila anterior | `logcat` capturó NPE antes de entrar al null-check Kotlin; el nuevo APK soportó dos cancelaciones y una instalación final de la misma identidad | Kotlin/Flutter sin errores y matriz física repetida correctamente | — |

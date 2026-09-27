@@ -2573,6 +2573,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Some records could not be read. Valid installations are still shown.'**
   String get libraryPartialWarning;
+
+  /// No description provided for @libraryCatalogLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking the current catalog…'**
+  String get libraryCatalogLoading;
+
+  /// No description provided for @libraryCatalogError.
+  ///
+  /// In en, this message translates to:
+  /// **'The catalog could not be checked. Installed content is still available.'**
+  String get libraryCatalogError;
+
+  /// Installed and available versions shown on a Library update card
+  ///
+  /// In en, this message translates to:
+  /// **'{installed} → {available}'**
+  String libraryUpdateVersions(String installed, String available);
+
+  /// No description provided for @libraryEventInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get libraryEventInstall;
+
+  /// No description provided for @libraryEventUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get libraryEventUpdate;
+
+  /// No description provided for @libraryEventReinstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Reinstalled'**
+  String get libraryEventReinstall;
+
+  /// No description provided for @libraryEventReplaced.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaced by a newer version'**
+  String get libraryEventReplaced;
+
+  /// No description provided for @libraryForgetAction.
+  ///
+  /// In en, this message translates to:
+  /// **'FORGET INSTALLATION'**
+  String get libraryForgetAction;
+
+  /// No description provided for @libraryForgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FORGET THIS INSTALLATION?'**
+  String get libraryForgetTitle;
+
+  /// No description provided for @libraryForgetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CDPY will remove this item from the Library, but it will not delete any game files.'**
+  String get libraryForgetBody;
+
+  /// No description provided for @libraryForgetConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'FORGET'**
+  String get libraryForgetConfirm;
+
+  /// No description provided for @libraryRemoveHistoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE FROM HISTORY'**
+  String get libraryRemoveHistoryAction;
+
+  /// No description provided for @libraryRemoveHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE THIS EVENT?'**
+  String get libraryRemoveHistoryTitle;
+
+  /// No description provided for @libraryRemoveHistoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only this history entry will be removed. The current installation and game files will not change.'**
+  String get libraryRemoveHistoryBody;
+
+  /// No description provided for @libraryRemoveHistoryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE'**
+  String get libraryRemoveHistoryConfirm;
+
+  /// No description provided for @libraryMaintenanceError.
+  ///
+  /// In en, this message translates to:
+  /// **'The Library could not be updated. Try again.'**
+  String get libraryMaintenanceError;
 }
 
 class _AppLocalizationsDelegate

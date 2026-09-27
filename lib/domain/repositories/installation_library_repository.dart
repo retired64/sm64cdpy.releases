@@ -7,4 +7,6 @@ abstract interface class InstallationLibraryRepository {
   Future<InstallationLibrarySnapshot> verifyArtifact(String artifactKey);
   Future<InstallationLibrarySnapshot?> readCached();
   Future<InstallationLibrarySnapshot> clearHistory();
+  Future<InstallationLibrarySnapshot> forgetContent(String contentKey);
+  Future<InstallationLibrarySnapshot> removeHistoryEvent(String workerId);
 }

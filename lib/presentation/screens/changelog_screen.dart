@@ -344,11 +344,13 @@ const _kVersions = <_VersionData>[
           'SafZipExtractor shared object — single source of truth for ZIP extraction to SAF document trees with delete-before-create (prevents duplicate files on reinstall) and explicit failure when SAF permissions are lost mid-operation.',
           'Background install state now persisted to SharedPreferences — survives process death. WorkManager-resumed workers have full context on app restart. Uses putIfAbsent to never overwrite fresher live events with stale stored data.',
           'Library discovery can now find untracked Lua mods already present in the selected folders, using bounded native SAF scanning without treating them as confirmed catalog installations.',
+          'Library maintenance now distinguishes installs, updates, and reinstalls, lists verified catalog updates, and lets users forget records without deleting game files.',
         ],
       ),
       _ChangeGroupData(
         type: _ChangeType.improved,
         items: [
+          'The Library now shares the catalog visual language with skewed view and filter controls, retro filter sheets, useful counters, and clearer empty and warning states.',
           'DynOS and Touch Controls now follow the global auto-install setting consistently: automatic mode uses the shared background pipeline, while manual mode asks before installing a completed download.',
           'Broken Touch Controls and DynOS links now show a friendly unavailable/download error while keeping technical details available through the copy action.',
           'Settings now identifies the shared destination as the DynOS and Touch Controls folder, making it clear that both content types are installed there.',

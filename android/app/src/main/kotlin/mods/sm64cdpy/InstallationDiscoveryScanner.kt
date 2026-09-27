@@ -101,7 +101,10 @@ object InstallationDiscoveryScanner {
         discoverySnapshot: Map<String, Any?>
     ): Map<String, Any?> {
         @Suppress("UNCHECKED_CAST")
-        val receipts = receiptSnapshot["receipts"] as? List<Map<String, Any?>> ?: emptyList()
+        val receipts =
+            receiptSnapshot["ownershipReceipts"] as? List<Map<String, Any?>>
+                ?: receiptSnapshot["receipts"] as? List<Map<String, Any?>>
+                ?: emptyList()
         val ownedPaths = receipts.groupBy { it["destination"] as? String }
             .mapValues { (_, values) ->
                 values.flatMap { receipt ->
@@ -125,6 +128,7 @@ object InstallationDiscoveryScanner {
             ?: emptyList()
         return buildMap {
             putAll(receiptSnapshot)
+            remove("ownershipReceipts")
             put("discoveries", discoveries)
             put("discoveryScannedAt", discoverySnapshot["scannedAt"])
             put("discoveryTruncated", discoverySnapshot["truncated"] == true)

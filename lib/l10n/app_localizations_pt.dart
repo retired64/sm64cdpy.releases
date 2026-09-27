@@ -1417,6 +1417,60 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get libraryPartialWarning =>
       'Alguns registros não puderam ser lidos. As instalações válidas continuam visíveis.';
+
+  @override
+  String get libraryCatalogLoading => 'Verificando o catálogo atual…';
+
+  @override
+  String get libraryCatalogError =>
+      'Não foi possível verificar o catálogo. O conteúdo instalado continua disponível.';
+
+  @override
+  String libraryUpdateVersions(String installed, String available) {
+    return '$installed → $available';
+  }
+
+  @override
+  String get libraryEventInstall => 'Instalado';
+
+  @override
+  String get libraryEventUpdate => 'Atualizado';
+
+  @override
+  String get libraryEventReinstall => 'Reinstalado';
+
+  @override
+  String get libraryEventReplaced => 'Substituído por uma versão mais recente';
+
+  @override
+  String get libraryForgetAction => 'ESQUECER INSTALAÇÃO';
+
+  @override
+  String get libraryForgetTitle => 'ESQUECER ESTA INSTALAÇÃO?';
+
+  @override
+  String get libraryForgetBody =>
+      'O SM64CDPY removerá este item da Biblioteca, mas não excluirá nenhum arquivo do jogo.';
+
+  @override
+  String get libraryForgetConfirm => 'ESQUECER';
+
+  @override
+  String get libraryRemoveHistoryAction => 'REMOVER DO HISTÓRICO';
+
+  @override
+  String get libraryRemoveHistoryTitle => 'REMOVER ESTE EVENTO?';
+
+  @override
+  String get libraryRemoveHistoryBody =>
+      'Apenas esta entrada do histórico será removida. A instalação atual e os arquivos do jogo não serão alterados.';
+
+  @override
+  String get libraryRemoveHistoryConfirm => 'REMOVER';
+
+  @override
+  String get libraryMaintenanceError =>
+      'Não foi possível atualizar a Biblioteca. Tente novamente.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2832,4 +2886,58 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get libraryPartialWarning =>
       'Alguns registros não puderam ser lidos. As instalações válidas continuam visíveis.';
+
+  @override
+  String get libraryCatalogLoading => 'Verificando o catálogo atual…';
+
+  @override
+  String get libraryCatalogError =>
+      'Não foi possível verificar o catálogo. O conteúdo instalado continua disponível.';
+
+  @override
+  String libraryUpdateVersions(String installed, String available) {
+    return '$installed → $available';
+  }
+
+  @override
+  String get libraryEventInstall => 'Instalado';
+
+  @override
+  String get libraryEventUpdate => 'Atualizado';
+
+  @override
+  String get libraryEventReinstall => 'Reinstalado';
+
+  @override
+  String get libraryEventReplaced => 'Substituído por uma versão mais recente';
+
+  @override
+  String get libraryForgetAction => 'ESQUECER INSTALAÇÃO';
+
+  @override
+  String get libraryForgetTitle => 'ESQUECER ESTA INSTALAÇÃO?';
+
+  @override
+  String get libraryForgetBody =>
+      'O SM64CDPY removerá este item da Biblioteca, mas não excluirá nenhum arquivo do jogo.';
+
+  @override
+  String get libraryForgetConfirm => 'ESQUECER';
+
+  @override
+  String get libraryRemoveHistoryAction => 'REMOVER DO HISTÓRICO';
+
+  @override
+  String get libraryRemoveHistoryTitle => 'REMOVER ESTE EVENTO?';
+
+  @override
+  String get libraryRemoveHistoryBody =>
+      'Apenas esta entrada do histórico será removida. A instalação atual e os arquivos do jogo não serão alterados.';
+
+  @override
+  String get libraryRemoveHistoryConfirm => 'REMOVER';
+
+  @override
+  String get libraryMaintenanceError =>
+      'Não foi possível atualizar a Biblioteca. Tente novamente.';
 }

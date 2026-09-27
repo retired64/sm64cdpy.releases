@@ -168,6 +168,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "discoverInstallationLibrary" -> discoverInstallationLibrary(call, result)
             "verifyInstallationLibrary" -> verifyInstallationLibrary(call, result)
             "clearInstallationHistory" -> clearInstallationHistory(result)
+            "forgetInstallationContent" -> forgetInstallationContent(call, result)
+            "removeInstallationHistoryEvent" -> removeInstallationHistoryEvent(call, result)
             "isDirectorySelected" -> isDirectorySelected(result)
             "clearDirectorySelection" -> clearDirectorySelection(result)
             "hasNotificationPermission" -> hasNotificationPermission(result)
@@ -221,6 +223,34 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             result.success(true)
         } catch (error: Exception) {
             result.error("LIBRARY_CLEAR_ERROR", error.message, null)
+        }
+    }
+
+    private fun forgetInstallationContent(call: MethodCall, result: Result) {
+        val contentKey = call.argument<String>("contentKey")
+        if (contentKey.isNullOrBlank()) {
+            result.error("LIBRARY_FORGET_ERROR", "Missing contentKey", null)
+            return
+        }
+        try {
+            result.success(InstallationReceiptStore.forgetContent(applicationContext, contentKey))
+        } catch (error: Exception) {
+            result.error("LIBRARY_FORGET_ERROR", error.message, null)
+        }
+    }
+
+    private fun removeInstallationHistoryEvent(call: MethodCall, result: Result) {
+        val workerId = call.argument<String>("installWorkerId")
+        if (workerId.isNullOrBlank()) {
+            result.error("LIBRARY_HISTORY_REMOVE_ERROR", "Missing installWorkerId", null)
+            return
+        }
+        try {
+            result.success(
+                InstallationReceiptStore.removeHistoryEvent(applicationContext, workerId)
+            )
+        } catch (error: Exception) {
+            result.error("LIBRARY_HISTORY_REMOVE_ERROR", error.message, null)
         }
     }
 

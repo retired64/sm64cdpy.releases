@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado contra `1.7.0+18` el 2026-09-26.
+Revisado contra `1.7.0+18` el 2026-09-27.
 
 ## Implementado
 
@@ -31,6 +31,12 @@ Revisado contra `1.7.0+18` el 2026-09-26.
 - Detección conservadora de contenido Lua externo mediante SAF, con lectura
   limitada de encabezados, caché nativa separada, confianza estructural y vista
   Detectados sin fabricar identidad de catálogo ni recibos.
+- Actualizaciones de Biblioteca contra artefactos canónicos del catálogo,
+  clasificación durable de instalación/actualización/reinstalación, reemplazo
+  lógico recuperable y mantenimiento individual sin borrar archivos del juego.
+- Biblioteca alineada visualmente con Catálogo mediante pestañas y filtros
+  inclinados, contadores, menús retro y estados vacíos coherentes; los filtros
+  también gobiernan la vista de actualizaciones.
 
 ## Experimental o pendiente de validación
 
@@ -38,9 +44,13 @@ Revisado contra `1.7.0+18` el 2026-09-26.
   matriz física con proveedores SAF lentos, permisos revocados y texto grande.
 - Sincronización de Biblioteca en overlay: implementada y cubierta por pruebas
   de codec/identidad/selector y por una matriz física de diez escenarios.
-- Descubrimiento externo: implementación y límites automatizados completos;
-  falta validar físicamente proveedores SAF lentos, árboles grandes, permisos
-  revocados y ejemplos reales de `main.lua`, `mod.lua` y Lua suelto.
+- Descubrimiento externo: fase 8 completada con pruebas automatizadas y matriz
+  física aprobada en dispositivo real para contenido estructurado, Lua suelto,
+  actualización manual, permisos/carpetas, exclusión de duplicados y protección
+  frente a archivos parciales de una instalación activa.
+- Actualización y mantenimiento de Biblioteca: fase 9 implementada y cubierta
+  por pruebas automatizadas; pendiente matriz física de actualización,
+  reinstalación, downgrade voluntario, reapertura y overlay.
 
 - Overlay en Android 7–16, especialmente recreación del proceso y retorno desde permisos del sistema.
 - Descargas simultáneas en dispositivo; las colisiones por títulos ya no son

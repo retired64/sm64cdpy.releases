@@ -51,9 +51,41 @@ object InstallationReceiptStore {
             val receiptName = "${sha256(identity.artifactKey)}.json"
             val target = File(directory, receiptName)
             val previousContent = target.takeIf(File::isFile)?.readBytes()
-            val eventKind = when {
-                target.isFile -> "reinstall"
-                else -> "install"
+            val existing = readReceiptObjects(directory)
+            val eventKind = InstallationReceiptPolicy.classify(
+                artifactKey = identity.artifactKey,
+                contentKey = identity.contentKey,
+                versionLabel = identity.versionLabel,
+                existing = existing.map {
+                    InstallationReceiptPolicy.Candidate(
+                        artifactKey = it.getString("artifactKey"),
+                        contentKey = it.getString("contentKey"),
+                        versionLabel = it.getJSONObject("displaySnapshot")
+                            .optString("versionLabel").takeIf(String::isNotBlank)
+                    )
+                }
+            )
+            val supersededArtifactKeys = when (eventKind) {
+                "update" -> existing.asSequence()
+                    .filter { it.getString("contentKey") == identity.contentKey }
+                    .filter {
+                        InstallationReceiptPolicy.isReliableUpgrade(
+                            it.getJSONObject("displaySnapshot")
+                                .optString("versionLabel").takeIf(String::isNotBlank),
+                            identity.versionLabel
+                        )
+                    }
+                    .flatMap { sequenceOf(it.getString("artifactKey")) + supersededKeys(it) }
+                    .filter { it != identity.artifactKey }
+                    .distinct()
+                    .toList()
+                "reinstall" -> existing
+                    .firstOrNull { it.getString("artifactKey") == identity.artifactKey }
+                    ?.let(::supersededKeys)
+                    ?.distinct()
+                    ?.toList()
+                    .orEmpty()
+                else -> emptyList()
             }
 
             val sentinels = JSONArray()
@@ -85,6 +117,7 @@ object InstallationReceiptStore {
                 .put("source", "sm64cdpy")
                 .put("displaySnapshot", displaySnapshot)
                 .put("packageShape", manifest.packageShape.wireValue)
+                .put("supersedesArtifactKeys", JSONArray(supersededArtifactKeys))
 
             try {
                 writeAtomically(target, receipt.toString().toByteArray(Charsets.UTF_8))
@@ -120,7 +153,7 @@ object InstallationReceiptStore {
             } else {
                 writeAtomically(target, write.previousContent)
             }
-            removeHistoryEvent(context, write.installWorkerId)
+            removeHistoryEventLocked(context, write.installWorkerId)
         }
     }
 
@@ -135,13 +168,17 @@ object InstallationReceiptStore {
         historyQuarantine.listFiles().orEmpty().filter(File::isFile).forEach {
             issues += mapOf("file" to it.name, "reason" to "History quarantined")
         }
-        val receipts = receiptsDirectory.listFiles()
+        val ownedReceipts = receiptsDirectory.listFiles()
             .orEmpty()
             .filter { it.isFile && it.extension == "json" }
             .sortedBy { it.name }
-            .mapNotNull { file ->
-                readValidated(file, issues, receiptsDirectory)?.let(::jsonObjectToMap)
-            }
+            .mapNotNull { file -> readValidated(file, issues, receiptsDirectory) }
+            .map(::jsonObjectToMap)
+        val projectedReceipts = projectReplacements(ownedReceipts)
+        val receipts = projectedReceipts.filter { it["replacedByArtifactKey"] == null }
+        val replacementByArtifact = projectedReceipts
+            .filter { it["replacedByArtifactKey"] != null }
+            .associateBy { it["artifactKey"] as String }
 
         val historyFile = File(context.filesDir, HISTORY_FILE)
         val history = if (!historyFile.isFile) {
@@ -149,12 +186,18 @@ object InstallationReceiptStore {
         } else {
             try {
                 val array = JSONArray(historyFile.readText(Charsets.UTF_8))
-                buildList {
+                buildList<Map<String, Any?>> {
                     for (index in 0 until array.length()) {
                         val item = array.optJSONObject(index)
                             ?: throw IllegalArgumentException("History entry $index is not an object")
                         validateReceipt(item)
-                        add(jsonObjectToMap(item))
+                        val mapped = jsonObjectToMap(item).toMutableMap()
+                        val replacement = replacementByArtifact[mapped["artifactKey"]]
+                        if (replacement != null) {
+                            mapped["replacedByArtifactKey"] = replacement["replacedByArtifactKey"]
+                            mapped["replacedAt"] = replacement["replacedAt"]
+                        }
+                        add(mapped)
                     }
                 }.sortedByDescending { it["installedAt"] as String }
             } catch (error: Exception) {
@@ -170,6 +213,9 @@ object InstallationReceiptStore {
         mapOf(
             "schemaVersion" to SCHEMA_VERSION,
             "receipts" to receipts,
+            // Not projected to Flutter. Discovery uses the full ownership set
+            // so files left by a safe update are not reclassified as external.
+            "ownershipReceipts" to projectedReceipts,
             "history" to history,
             "issues" to issues
         )
@@ -179,6 +225,32 @@ object InstallationReceiptStore {
         writeAtomically(File(context.filesDir, HISTORY_FILE), JSONArray().toString().toByteArray())
         File(context.filesDir, QUARANTINE_DIRECTORY)
             .listFiles().orEmpty().forEach(File::delete)
+    }
+
+    /** Forget all current receipt evidence for one logical content item. */
+    fun forgetContent(context: Context, contentKey: String): Boolean = synchronized(writeLock) {
+        require(contentKey.isNotBlank()) { "Missing contentKey" }
+        val directory = File(context.filesDir, RECEIPTS_DIRECTORY)
+        var removed = false
+        directory.listFiles().orEmpty()
+            .filter { it.isFile && it.extension == "json" }
+            .forEach { file ->
+                val matches = try {
+                    val receipt = JSONObject(file.readText(Charsets.UTF_8))
+                    validateReceipt(receipt)
+                    receipt.getString("contentKey") == contentKey
+                } catch (_: Exception) {
+                    false
+                }
+                if (matches && file.delete()) removed = true
+            }
+        removed
+    }
+
+    /** Remove one historical event without changing receipts or game files. */
+    fun removeHistoryEvent(context: Context, workerId: String): Boolean = synchronized(writeLock) {
+        require(workerId.isNotBlank()) { "Missing installWorkerId" }
+        removeHistoryEventLocked(context, workerId)
     }
 
     private fun appendHistory(context: Context, receipt: JSONObject) {
@@ -206,17 +278,63 @@ object InstallationReceiptStore {
         writeAtomically(file, output.toString().toByteArray(Charsets.UTF_8))
     }
 
-    private fun removeHistoryEvent(context: Context, workerId: String) {
+    private fun removeHistoryEventLocked(context: Context, workerId: String): Boolean {
         val file = File(context.filesDir, HISTORY_FILE)
-        if (!file.isFile) return
+        if (!file.isFile) return false
         val current = JSONArray(file.readText(Charsets.UTF_8))
         val output = JSONArray()
+        var removed = false
         for (index in 0 until current.length()) {
             val item = current.optJSONObject(index) ?: continue
-            if (item.optString("installWorkerId") != workerId) output.put(item)
+            if (item.optString("installWorkerId") != workerId) {
+                output.put(item)
+            } else {
+                removed = true
+            }
         }
-        writeAtomically(file, output.toString().toByteArray(Charsets.UTF_8))
+        if (removed) writeAtomically(file, output.toString().toByteArray(Charsets.UTF_8))
+        return removed
     }
+
+    private fun readReceiptObjects(directory: File): List<JSONObject> = directory.listFiles()
+        .orEmpty()
+        .filter { it.isFile && it.extension == "json" }
+        .mapNotNull { file ->
+            try {
+                JSONObject(file.readText(Charsets.UTF_8)).also(::validateReceipt)
+            } catch (_: Exception) {
+                null
+            }
+        }
+
+    internal fun projectReplacements(
+        receipts: List<Map<String, Any?>>
+    ): List<Map<String, Any?>> = receipts.map { receipt ->
+        val replacement = receipts.asSequence()
+            .filter { it["artifactKey"] != receipt["artifactKey"] }
+            .filter { it["contentKey"] == receipt["contentKey"] }
+            .filter { supersededKeys(it).contains(receipt["artifactKey"] as String) }
+            .minByOrNull { it["installedAt"] as String }
+        if (replacement == null) receipt else receipt.toMutableMap().apply {
+            put("replacedByArtifactKey", replacement["artifactKey"])
+            put("replacedAt", replacement["installedAt"])
+        }
+    }
+
+    private fun supersededKeys(receipt: JSONObject): Sequence<String> {
+        val values = receipt.optJSONArray("supersedesArtifactKeys") ?: return emptySequence()
+        return sequence {
+            for (index in 0 until values.length()) {
+                values.optString(index).takeIf(String::isNotBlank)?.let { yield(it) }
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun supersededKeys(receipt: Map<String, Any?>): List<String> =
+        (receipt["supersedesArtifactKeys"] as? List<Any?>)
+            .orEmpty()
+            .mapNotNull { (it as? String)?.takeIf(String::isNotBlank) }
 
     private fun readValidated(
         file: File,
@@ -267,6 +385,15 @@ object InstallationReceiptStore {
             val path = sentinel.requiredString("relativePath")
             require(SafZipExtractor.sanitizeEntryName(path) == path)
             require(sentinel.requiredString("kind") == "file")
+        }
+        receipt.optJSONArray("supersedesArtifactKeys")?.let { superseded ->
+            require(superseded.length() <= 64) { "Too many superseded artifacts" }
+            for (index in 0 until superseded.length()) {
+                val supersededKey = superseded.optString(index)
+                require(
+                    supersededKey.startsWith("$contentKey|") && supersededKey != artifactKey
+                ) { "Invalid superseded artifact key" }
+            }
         }
         receipt.getJSONObject("displaySnapshot").requiredString("title")
     }
@@ -322,4 +449,47 @@ object InstallationReceiptStore {
         .getInstance("SHA-256")
         .digest(value.toByteArray(Charsets.UTF_8))
         .joinToString("") { "%02x".format(it) }
+}
+
+/** Pure, conservative event classification shared with JVM unit tests. */
+internal object InstallationReceiptPolicy {
+    data class Candidate(
+        val artifactKey: String,
+        val contentKey: String,
+        val versionLabel: String?
+    )
+
+    fun classify(
+        artifactKey: String,
+        contentKey: String,
+        versionLabel: String?,
+        existing: List<Candidate>
+    ): String {
+        if (existing.any { it.artifactKey == artifactKey }) return "reinstall"
+        return if (existing.any {
+                it.contentKey == contentKey &&
+                    isReliableUpgrade(it.versionLabel, versionLabel)
+            }) "update" else "install"
+    }
+
+    fun isReliableUpgrade(installed: String?, candidate: String?): Boolean {
+        val leftLabel = installed?.trim()?.takeIf(String::isNotEmpty) ?: return false
+        val rightLabel = candidate?.trim()?.takeIf(String::isNotEmpty) ?: return false
+        if (leftLabel.equals(rightLabel, ignoreCase = true)) return false
+        val left = numericVersion(leftLabel) ?: return false
+        val right = numericVersion(rightLabel) ?: return false
+        val size = maxOf(left.size, right.size)
+        for (index in 0 until size) {
+            val oldPart = left.getOrElse(index) { 0 }
+            val newPart = right.getOrElse(index) { 0 }
+            if (oldPart != newPart) return newPart > oldPart
+        }
+        return false
+    }
+
+    private fun numericVersion(value: String): List<Int>? {
+        val normalized = value.replaceFirst(Regex("^[vV]"), "")
+        if (!Regex("^\\d+(?:\\.\\d+){0,3}$").matches(normalized)) return null
+        return normalized.split('.').map(String::toInt)
+    }
 }

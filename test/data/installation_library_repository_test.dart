@@ -14,6 +14,8 @@ class FakeGateway implements InstallationLibraryNativeGateway {
   int clearCalls = 0;
   int verifyCalls = 0;
   int discoverCalls = 0;
+  int forgetCalls = 0;
+  int removeHistoryCalls = 0;
   Map<String, dynamic> verification = {
     'schemaVersion': 1,
     'verifiedAt': '2026-09-25T13:00:00Z',
@@ -48,6 +50,28 @@ class FakeGateway implements InstallationLibraryNativeGateway {
   Future<void> clearHistory() async {
     clearCalls++;
     snapshot = {...snapshot, 'history': <dynamic>[]};
+  }
+
+  @override
+  Future<void> forgetContent(String contentKey) async {
+    forgetCalls++;
+    snapshot = {
+      ...snapshot,
+      'receipts': (snapshot['receipts'] as List<dynamic>? ?? const [])
+          .where((value) => (value as Map)['contentKey'] != contentKey)
+          .toList(),
+    };
+  }
+
+  @override
+  Future<void> removeHistoryEvent(String workerId) async {
+    removeHistoryCalls++;
+    snapshot = {
+      ...snapshot,
+      'history': (snapshot['history'] as List<dynamic>? ?? const [])
+          .where((value) => (value as Map)['installWorkerId'] != workerId)
+          .toList(),
+    };
   }
 }
 
@@ -169,6 +193,51 @@ void main() {
     final snapshot = await repository.clearHistory();
 
     expect(gateway.clearCalls, 1);
+    expect(snapshot.receipts, hasLength(1));
+    expect(snapshot.history, isEmpty);
+  });
+
+  test('forgetting content preserves history and forces discovery', () async {
+    final receipt = installationReceiptFixture();
+    final gateway = FakeGateway({
+      'schemaVersion': 1,
+      'receipts': [receipt],
+      'history': [receipt],
+      'issues': <dynamic>[],
+    });
+    final repository = InstallationLibraryRepositoryImpl(
+      gateway: gateway,
+      projection: box,
+    );
+
+    final snapshot = await repository.forgetContent(
+      receipt['contentKey'] as String,
+    );
+
+    expect(gateway.forgetCalls, 1);
+    expect(gateway.discoverCalls, 1);
+    expect(snapshot.receipts, isEmpty);
+    expect(snapshot.history, hasLength(1));
+  });
+
+  test('removing one history event preserves current receipt', () async {
+    final receipt = installationReceiptFixture();
+    final gateway = FakeGateway({
+      'schemaVersion': 1,
+      'receipts': [receipt],
+      'history': [receipt],
+      'issues': <dynamic>[],
+    });
+    final repository = InstallationLibraryRepositoryImpl(
+      gateway: gateway,
+      projection: box,
+    );
+
+    final snapshot = await repository.removeHistoryEvent(
+      receipt['installWorkerId'] as String,
+    );
+
+    expect(gateway.removeHistoryCalls, 1);
     expect(snapshot.receipts, hasLength(1));
     expect(snapshot.history, isEmpty);
   });

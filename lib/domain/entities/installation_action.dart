@@ -90,7 +90,10 @@ class InstallationActionSelector {
     final verification = library?.verifications[receipt.artifactKey];
     final action = switch (verification?.status) {
       InstallationVerificationStatus.present =>
-        _isReliableUpgrade(receipt.versionLabel, identity.versionLabel)
+        InstallationVersionPolicy.isReliableUpgrade(
+              receipt.versionLabel,
+              identity.versionLabel,
+            )
             ? InstallationPrimaryAction.update
             : exactReceipt != null
             ? InstallationPrimaryAction.installed
@@ -135,20 +138,42 @@ class InstallationActionSelector {
     }
     return null;
   }
+}
 
-  static bool _isReliableUpgrade(String? installed, String? catalogue) {
-    final left = _numericVersion(installed);
-    final right = _numericVersion(catalogue);
-    if (left == null || right == null) return false;
+/// Conservative comparison shared by catalogue surfaces and Library.
+///
+/// Numeric dotted versions can be ordered. Non-numeric labels are only equal
+/// when their normalized source text matches; their relative order is never
+/// invented.
+class InstallationVersionPolicy {
+  const InstallationVersionPolicy._();
+
+  static bool isReliableUpgrade(String? installed, String? catalogue) {
+    final comparison = compare(installed, catalogue);
+    return comparison != null && comparison > 0;
+  }
+
+  /// Returns a value greater than zero when [catalogue] is newer than
+  /// [installed], zero for an exact/equivalent version, and null when the two
+  /// labels cannot be ordered safely.
+  static int? compare(String? installed, String? catalogue) {
+    final installedLabel = _normalizedLabel(installed);
+    final catalogueLabel = _normalizedLabel(catalogue);
+    if (installedLabel == null || catalogueLabel == null) return null;
+    if (installedLabel.toLowerCase() == catalogueLabel.toLowerCase()) return 0;
+
+    final left = _numericVersion(installedLabel);
+    final right = _numericVersion(catalogueLabel);
+    if (left == null || right == null) return null;
     final length = left.length > right.length ? left.length : right.length;
     for (var index = 0; index < length; index++) {
       final installedPart = index < left.length ? left[index] : 0;
       final cataloguePart = index < right.length ? right[index] : 0;
       if (cataloguePart != installedPart) {
-        return cataloguePart > installedPart;
+        return cataloguePart.compareTo(installedPart);
       }
     }
-    return false;
+    return 0;
   }
 
   static List<int>? _numericVersion(String? value) {
@@ -156,5 +181,10 @@ class InstallationActionSelector {
     final normalized = value.trim().replaceFirst(RegExp(r'^[vV]'), '');
     if (!RegExp(r'^\d+(?:\.\d+){0,3}$').hasMatch(normalized)) return null;
     return normalized.split('.').map(int.parse).toList(growable: false);
+  }
+
+  static String? _normalizedLabel(String? value) {
+    final trimmed = value?.trim();
+    return trimmed == null || trimmed.isEmpty ? null : trimmed;
   }
 }

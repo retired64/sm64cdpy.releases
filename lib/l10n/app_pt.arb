@@ -440,5 +440,21 @@
   "libraryDetectedScanLimit": "O limite seguro de verificação foi atingido. Parte do conteúdo pode não aparecer.",
   "libraryErrorTitle": "BIBLIOTECA INDISPONÍVEL",
   "libraryErrorBody": "Não foi possível ler o histórico de instalações. Tente novamente sem alterar os arquivos do jogo.",
-  "libraryPartialWarning": "Alguns registros não puderam ser lidos. As instalações válidas continuam visíveis."
+  "libraryPartialWarning": "Alguns registros não puderam ser lidos. As instalações válidas continuam visíveis.",
+  "libraryCatalogLoading": "Verificando o catálogo atual…",
+  "libraryCatalogError": "Não foi possível verificar o catálogo. O conteúdo instalado continua disponível.",
+  "libraryUpdateVersions": "{installed} → {available}",
+  "libraryEventInstall": "Instalado",
+  "libraryEventUpdate": "Atualizado",
+  "libraryEventReinstall": "Reinstalado",
+  "libraryEventReplaced": "Substituído por uma versão mais recente",
+  "libraryForgetAction": "ESQUECER INSTALAÇÃO",
+  "libraryForgetTitle": "ESQUECER ESTA INSTALAÇÃO?",
+  "libraryForgetBody": "O SM64CDPY removerá este item da Biblioteca, mas não excluirá nenhum arquivo do jogo.",
+  "libraryForgetConfirm": "ESQUECER",
+  "libraryRemoveHistoryAction": "REMOVER DO HISTÓRICO",
+  "libraryRemoveHistoryTitle": "REMOVER ESTE EVENTO?",
+  "libraryRemoveHistoryBody": "Apenas esta entrada do histórico será removida. A instalação atual e os arquivos do jogo não serão alterados.",
+  "libraryRemoveHistoryConfirm": "REMOVER",
+  "libraryMaintenanceError": "Não foi possível atualizar a Biblioteca. Tente novamente."
 }

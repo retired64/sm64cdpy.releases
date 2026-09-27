@@ -13,6 +13,8 @@ abstract interface class InstallationLibraryNativeGateway {
   Future<Map<String, dynamic>> discover({bool force = false});
   Future<Map<String, dynamic>> verify({List<String>? artifactKeys});
   Future<void> clearHistory();
+  Future<void> forgetContent(String contentKey);
+  Future<void> removeHistoryEvent(String workerId);
 }
 
 class MethodChannelInstallationLibraryGateway
@@ -35,6 +37,14 @@ class MethodChannelInstallationLibraryGateway
 
   @override
   Future<void> clearHistory() => _installer.clearInstallationHistory();
+
+  @override
+  Future<void> forgetContent(String contentKey) =>
+      _installer.forgetInstallationContent(contentKey);
+
+  @override
+  Future<void> removeHistoryEvent(String workerId) =>
+      _installer.removeInstallationHistoryEvent(workerId);
 }
 
 class InstallationLibraryRepositoryImpl
@@ -172,6 +182,22 @@ class InstallationLibraryRepositoryImpl
       return _synchronize();
     });
   }
+
+  @override
+  Future<InstallationLibrarySnapshot> forgetContent(String contentKey) =>
+      _serialized(() async {
+        await _gateway.forgetContent(contentKey);
+        // Force discovery because forgotten files remain in the selected SAF
+        // tree and should now be represented conservatively as external.
+        return _store(await _gateway.discover(force: true));
+      });
+
+  @override
+  Future<InstallationLibrarySnapshot> removeHistoryEvent(String workerId) =>
+      _serialized(() async {
+        await _gateway.removeHistoryEvent(workerId);
+        return _synchronize();
+      });
 
   Future<T> _serialized<T>(Future<T> Function() operation) {
     final previous = _operationTail;

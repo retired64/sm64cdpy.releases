@@ -76,6 +76,22 @@ se ofrece cuando una comparación numérica conservadora demuestra que el
 catálogo es posterior. Los widgets renderizan la decisión y no reconstruyen
 esta lógica localmente.
 
+La fase de mantenimiento añade `InstallationVersionPolicy`: solo ordena
+versiones numéricas punteadas y usa igualdad textual normalizada como fallback
+sin atribuir precedencia a etiquetas arbitrarias. El índice de catálogo de
+Biblioteca reutiliza las identidades canónicas de todas las secciones y omite
+una actualización cuando no puede elegir con seguridad entre varios archivos.
+
+Kotlin clasifica una instalación confirmada como `reinstall` si reemplaza el
+mismo `artifactKey`, `update` si otro artefacto del mismo contenido tiene una
+versión demostrablemente anterior, o `install` en los demás casos. Los recibos
+anteriores sustituidos permanecen durables y conservan sus centinelas para
+propiedad/descubrimiento; el recibo sustituto guarda esa relación incluso al
+reinstalarse, pero la instantánea pública expone solo los activos. El historial
+los presenta como reemplazados. Olvidar un contenido o retirar un
+evento elimina únicamente metadata privada: ningún método de mantenimiento
+borra archivos SAF.
+
 El overlay consume esa misma política sin abrir Hive ni asumir memoria
 compartida. Cada actualización del repositorio se anuncia en el engine
 principal mediante un bus de invalidación que no conserva autoridad; el
