@@ -41,7 +41,9 @@ class _AppShellState extends ConsumerState<AppShell> {
               children: [
                 Positioned.fill(
                   child: HalftoneBackground(
-                    color: retro.ink.withValues(alpha: retro.isDark ? 0.05 : 0.08),
+                    color: retro.ink.withValues(
+                      alpha: retro.isDark ? 0.035 : 0.08,
+                    ),
                   ),
                 ),
                 widget.child,

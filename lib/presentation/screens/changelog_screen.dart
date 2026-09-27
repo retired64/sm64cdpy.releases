@@ -350,6 +350,7 @@ const _kVersions = <_VersionData>[
       _ChangeGroupData(
         type: _ChangeType.improved,
         items: [
+          'Dark mode now uses a deeper GitHub-inspired near-black palette with layered surfaces and a subtler halftone texture, reducing perceived brightness while preserving the retro identity.',
           'The Library now shares the catalog visual language with skewed views, contextual filters that only appear when useful, retro filter sheets, useful counters, and clearer installed or externally detected cards.',
           'DynOS and Touch Controls now follow the global auto-install setting consistently: automatic mode uses the shared background pipeline, while manual mode asks before installing a completed download.',
           'Broken Touch Controls and DynOS links now show a friendly unavailable/download error while keeping technical details available through the copy action.',
