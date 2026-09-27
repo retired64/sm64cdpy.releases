@@ -31,6 +31,8 @@ class InstallationLibraryNotifier
   StreamSubscription<String>? _settingsSubscription;
   bool _refreshing = false;
   bool _refreshRequested = false;
+  bool _discoveryRequested = false;
+  bool _forceDiscoveryRequested = false;
 
   @override
   Future<InstallationLibraryState> build() async {
@@ -39,8 +41,12 @@ class InstallationLibraryNotifier
     ) {
       if (event is BgInstallCompleted) unawaited(refresh());
     });
-    _settingsSubscription = ModInstaller.libraryInvalidations.listen((_) {
-      unawaited(refresh());
+    _settingsSubscription = ModInstaller.libraryInvalidations.listen((reason) {
+      final folderChanged =
+          reason.contains('FolderChanged') || reason.contains('FolderCleared');
+      unawaited(
+        refresh(discover: folderChanged, forceDiscovery: folderChanged),
+      );
     });
     ref.onDispose(() {
       _installSubscription?.cancel();
@@ -51,7 +57,11 @@ class InstallationLibraryNotifier
       InstallationLibraryState next;
       do {
         _refreshRequested = false;
-        next = await _load();
+        final discover = _discoveryRequested;
+        final forceDiscovery = _forceDiscoveryRequested;
+        _discoveryRequested = false;
+        _forceDiscoveryRequested = false;
+        next = await _load(discover: discover, forceDiscovery: forceDiscovery);
       } while (_refreshRequested);
       return next;
     } finally {
@@ -59,7 +69,18 @@ class InstallationLibraryNotifier
     }
   }
 
-  Future<InstallationLibraryState> _load() async {
+  Future<InstallationLibraryState> _load({
+    bool discover = false,
+    bool forceDiscovery = false,
+  }) async {
+    // Scanning while WorkManager is writing could misclassify a partial mod as
+    // external. Receipt reconciliation after completion is authoritative, so
+    // defer discovery until no installation is active.
+    if (discover && BackgroundInstallService.instance.activeInstalls.isEmpty) {
+      await ref
+          .read(installationLibraryRepositoryProvider)
+          .discover(force: forceDiscovery);
+    }
     final snapshot = await ref
         .read(installationLibraryRepositoryProvider)
         .verifyAll();
@@ -86,17 +107,36 @@ class InstallationLibraryNotifier
     });
   }
 
-  Future<void> refresh() async {
+  Future<void> refresh({
+    bool discover = false,
+    bool forceDiscovery = false,
+  }) async {
     if (!ref.mounted) return;
     if (_refreshing) {
       _refreshRequested = true;
+      _discoveryRequested = _discoveryRequested || discover;
+      _forceDiscoveryRequested = _forceDiscoveryRequested || forceDiscovery;
       return;
     }
     _refreshing = true;
+    var pendingDiscover = discover;
+    var pendingForceDiscovery = forceDiscovery;
     try {
       do {
         _refreshRequested = false;
-        final next = await AsyncValue.guard(_load);
+        final shouldDiscover = pendingDiscover || _discoveryRequested;
+        final shouldForceDiscovery =
+            pendingForceDiscovery || _forceDiscoveryRequested;
+        pendingDiscover = false;
+        pendingForceDiscovery = false;
+        _discoveryRequested = false;
+        _forceDiscoveryRequested = false;
+        final next = await AsyncValue.guard(
+          () => _load(
+            discover: shouldDiscover,
+            forceDiscovery: shouldForceDiscovery,
+          ),
+        );
         if (ref.mounted) state = next;
       } while (_refreshRequested && ref.mounted);
     } finally {

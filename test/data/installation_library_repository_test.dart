@@ -13,6 +13,7 @@ class FakeGateway implements InstallationLibraryNativeGateway {
   Map<String, dynamic> snapshot;
   int clearCalls = 0;
   int verifyCalls = 0;
+  int discoverCalls = 0;
   Map<String, dynamic> verification = {
     'schemaVersion': 1,
     'verifiedAt': '2026-09-25T13:00:00Z',
@@ -21,6 +22,12 @@ class FakeGateway implements InstallationLibraryNativeGateway {
 
   @override
   Future<Map<String, dynamic>> read() async => snapshot;
+
+  @override
+  Future<Map<String, dynamic>> discover({bool force = false}) async {
+    discoverCalls++;
+    return snapshot;
+  }
 
   @override
   Future<Map<String, dynamic>> verify({List<String>? artifactKeys}) async {
@@ -141,7 +148,7 @@ void main() {
 
       await repository.synchronize();
 
-      expect(box.get('schemaVersion'), 2);
+      expect(box.get('schemaVersion'), 3);
       expect(box.containsKey('stale'), isFalse);
       expect((await repository.readCached())?.receipts, hasLength(1));
     },
@@ -224,6 +231,50 @@ void main() {
         one.verifications[second['artifactKey']]?.status,
         InstallationVerificationStatus.missing,
       );
+    },
+  );
+
+  test(
+    'discovery is projected separately from installation receipts',
+    () async {
+      final gateway = FakeGateway({
+        'schemaVersion': 1,
+        'receipts': [installationReceiptFixture()],
+        'history': <dynamic>[],
+        'issues': <dynamic>[],
+        'discoveryScannedAt': '2026-09-26T18:00:00Z',
+        'discoveries': [
+          {
+            'schemaVersion': 1,
+            'discoveryKey': 'external-1',
+            'destination': 'mods',
+            'entryPath': 'external/main.lua',
+            'displayName': 'External Fixture',
+            'versionLabel': '1.2',
+            'category': 'romhack',
+            'author': 'Fixture Author',
+            'sourceType': 'folder',
+            'confidence': 'exact',
+            'detectedAt': '2026-09-26T18:00:00Z',
+          },
+        ],
+        'discoveryTruncated': false,
+      });
+      final repository = InstallationLibraryRepositoryImpl(
+        gateway: gateway,
+        projection: box,
+      );
+
+      final snapshot = await repository.discover(force: true);
+
+      expect(gateway.discoverCalls, 1);
+      expect(snapshot.receipts, hasLength(1));
+      expect(snapshot.discoveries.single.displayName, 'External Fixture');
+      expect(
+        snapshot.discoveries.single.confidence,
+        InstallationDiscoveryConfidence.exact,
+      );
+      expect(snapshot.discoveryScannedAt?.isUtc, isTrue);
     },
   );
 }

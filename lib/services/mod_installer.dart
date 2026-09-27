@@ -440,6 +440,19 @@ class ModInstaller {
     return Map<String, dynamic>.from(raw);
   }
 
+  Future<Map<String, dynamic>> discoverInstallationLibrary({
+    bool force = false,
+  }) async {
+    final raw = await _channel.invokeMethod<Map>(
+      'discoverInstallationLibrary',
+      {'force': force},
+    );
+    if (raw == null) {
+      throw const ModInstallerException('No installation discovery result');
+    }
+    return Map<String, dynamic>.from(raw);
+  }
+
   Future<Map<String, dynamic>> verifyInstallationLibrary({
     List<String>? artifactKeys,
   }) async {

@@ -2517,8 +2517,44 @@ abstract class AppLocalizations {
   /// No description provided for @libraryDetectedEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Device discovery will be added in a later phase. This view never guesses from folder names.'**
+  /// **'No untracked Lua content was found in the selected folders. Refresh after making external changes.'**
   String get libraryDetectedEmptyBody;
+
+  /// No description provided for @libraryDetectedOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected on device — not linked to the catalog'**
+  String get libraryDetectedOnDevice;
+
+  /// No description provided for @libraryDiscoveryHeaderIdentified.
+  ///
+  /// In en, this message translates to:
+  /// **'Header identified'**
+  String get libraryDiscoveryHeaderIdentified;
+
+  /// No description provided for @libraryDiscoveryProbable.
+  ///
+  /// In en, this message translates to:
+  /// **'Probable mod'**
+  String get libraryDiscoveryProbable;
+
+  /// No description provided for @libraryDiscoveryUnlinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlinked Lua'**
+  String get libraryDiscoveryUnlinked;
+
+  /// No description provided for @libraryDetectedPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry file'**
+  String get libraryDetectedPath;
+
+  /// No description provided for @libraryDetectedScanLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'The safety scan limit was reached. Some content may not be shown.'**
+  String get libraryDetectedScanLimit;
 
   /// No description provided for @libraryErrorTitle.
   ///

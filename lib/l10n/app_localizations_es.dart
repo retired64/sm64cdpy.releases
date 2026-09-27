@@ -1394,7 +1394,27 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get libraryDetectedEmptyBody =>
-      'La detección del dispositivo llegará en una fase posterior. Esta vista no adivina por nombres de carpetas.';
+      'No se encontró contenido Lua sin registrar en las carpetas seleccionadas. Actualiza después de hacer cambios externos.';
+
+  @override
+  String get libraryDetectedOnDevice =>
+      'Detectado en el dispositivo — sin vincular al catálogo';
+
+  @override
+  String get libraryDiscoveryHeaderIdentified => 'Encabezado identificado';
+
+  @override
+  String get libraryDiscoveryProbable => 'Mod probable';
+
+  @override
+  String get libraryDiscoveryUnlinked => 'Lua sin vincular';
+
+  @override
+  String get libraryDetectedPath => 'Archivo de entrada';
+
+  @override
+  String get libraryDetectedScanLimit =>
+      'Se alcanzó el límite seguro de escaneo. Puede que parte del contenido no aparezca.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA NO DISPONIBLE';
@@ -2798,7 +2818,27 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get libraryDetectedEmptyBody =>
-      'La detección del dispositivo llegará en una fase posterior. Esta vista no adivina por nombres de carpetas.';
+      'No se encontró contenido Lua sin registrar en las carpetas seleccionadas. Actualiza después de hacer cambios externos.';
+
+  @override
+  String get libraryDetectedOnDevice =>
+      'Detectado en el dispositivo — sin vincular al catálogo';
+
+  @override
+  String get libraryDiscoveryHeaderIdentified => 'Encabezado identificado';
+
+  @override
+  String get libraryDiscoveryProbable => 'Mod probable';
+
+  @override
+  String get libraryDiscoveryUnlinked => 'Lua sin vincular';
+
+  @override
+  String get libraryDetectedPath => 'Archivo de entrada';
+
+  @override
+  String get libraryDetectedScanLimit =>
+      'Se alcanzó el límite seguro de escaneo. Puede que parte del contenido no aparezca.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA NO DISPONIBLE';

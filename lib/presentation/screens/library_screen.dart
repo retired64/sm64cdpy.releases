@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +26,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   bool _initialViewApplied = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(
+        ref.read(installationLibraryProvider.notifier).refresh(discover: true),
+      );
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialViewApplied &&
@@ -39,7 +52,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final l10n = AppLocalizations.of(context);
     final value = ref.watch(installationLibraryProvider);
     return RefreshIndicator(
-      onRefresh: () => ref.read(installationLibraryProvider.notifier).refresh(),
+      onRefresh: () => ref
+          .read(installationLibraryProvider.notifier)
+          .refresh(discover: true, forceDiscovery: true),
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
@@ -61,7 +76,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     ? null
                     : () => ref
                           .read(installationLibraryProvider.notifier)
-                          .refresh(),
+                          .refresh(discover: true, forceDiscovery: true),
                 icon: const Icon(Icons.refresh_rounded),
               ),
             ],
@@ -96,6 +111,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   const SizedBox(height: 12),
                   _filters(l10n, retro, state.snapshot),
                   const SizedBox(height: 14),
+                  if (_view == _LibraryView.detected &&
+                      state.snapshot.discoveryTruncated)
+                    _Notice(
+                      text: l10n.libraryDetectedScanLimit,
+                      color: retro.amber,
+                    ),
                   ..._content(l10n, state.snapshot),
                 ],
               ),
@@ -141,20 +162,24 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       spacing: 8,
       runSpacing: 8,
       children: [
-        DropdownButton<String?>(
-          value: _section,
-          hint: Text(l10n.libraryAllSections),
-          items: [
-            DropdownMenuItem(value: null, child: Text(l10n.libraryAllSections)),
-            ...sections.map(
-              (e) => DropdownMenuItem(
-                value: e,
-                child: Text(e.replaceAll('_', ' ').toUpperCase()),
+        if (_view != _LibraryView.detected)
+          DropdownButton<String?>(
+            value: _section,
+            hint: Text(l10n.libraryAllSections),
+            items: [
+              DropdownMenuItem(
+                value: null,
+                child: Text(l10n.libraryAllSections),
               ),
-            ),
-          ],
-          onChanged: (value) => setState(() => _section = value),
-        ),
+              ...sections.map(
+                (e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e.replaceAll('_', ' ').toUpperCase()),
+                ),
+              ),
+            ],
+            onChanged: (value) => setState(() => _section = value),
+          ),
         DropdownButton<String?>(
           value: _destination,
           hint: Text(l10n.libraryAllDestinations),
@@ -183,13 +208,23 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     InstallationLibrarySnapshot snapshot,
   ) {
     if (_view == _LibraryView.detected) {
-      return [
-        _MessageState(
-          icon: Icons.manage_search_rounded,
-          title: l10n.libraryDetectedEmptyTitle,
-          body: l10n.libraryDetectedEmptyBody,
-        ),
-      ];
+      final discoveries = snapshot.discoveries
+          .where(
+            (item) => _destination == null || item.destination == _destination,
+          )
+          .toList();
+      if (discoveries.isEmpty) {
+        return [
+          _MessageState(
+            icon: Icons.manage_search_rounded,
+            title: l10n.libraryDetectedEmptyTitle,
+            body: l10n.libraryDetectedEmptyBody,
+          ),
+        ];
+      }
+      return discoveries
+          .map((item) => DetectedInstallationCard(discovery: item))
+          .toList(growable: false);
     }
     if (_view == _LibraryView.updates) {
       return [

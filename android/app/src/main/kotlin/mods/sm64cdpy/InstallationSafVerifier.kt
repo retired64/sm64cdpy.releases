@@ -14,13 +14,11 @@ import java.io.IOException
  * document providers become unstable when many directory queries overlap.
  */
 object InstallationSafVerifier {
-    private val verificationLock = Any()
-
     fun verify(
         context: Context,
         receipts: List<Map<String, Any?>>,
         requestedArtifactKeys: Set<String>? = null
-    ): Map<String, Any?> = synchronized(verificationLock) {
+    ): Map<String, Any?> = synchronized(InstallationSafAccessCoordinator.lock) {
         val selected = receipts.asSequence()
             .filter { requestedArtifactKeys == null || it["artifactKey"] in requestedArtifactKeys }
             .toList()

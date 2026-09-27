@@ -234,18 +234,105 @@ class InstallationVerification {
   };
 }
 
+enum InstallationDiscoveryConfidence {
+  exact,
+  probable,
+  unlinked;
+
+  static InstallationDiscoveryConfidence parse(String value) =>
+      values.firstWhere(
+        (confidence) => confidence.name == value,
+        orElse: () => throw FormatException(
+          'Unknown installation discovery confidence: $value',
+        ),
+      );
+}
+
+/// Content observed in a selected SAF folder without a durable installation
+/// receipt. This is discovery evidence only and never a catalog identity.
+class DiscoveredInstallation {
+  const DiscoveredInstallation({
+    required this.discoveryKey,
+    required this.destination,
+    required this.entryPath,
+    required this.displayName,
+    required this.sourceType,
+    required this.confidence,
+    required this.detectedAt,
+    this.versionLabel,
+    this.category,
+    this.author,
+  });
+
+  factory DiscoveredInstallation.fromMap(Map<dynamic, dynamic> map) {
+    if (map['schemaVersion'] != 1) {
+      throw const FormatException('Unsupported discovery schema');
+    }
+    String requiredString(String key) {
+      final value = map[key];
+      if (value is! String || value.trim().isEmpty) {
+        throw FormatException('Missing discovery field: $key');
+      }
+      return value;
+    }
+
+    String? optionalString(String key) {
+      final value = map[key];
+      if (value == null) return null;
+      if (value is! String || value.trim().isEmpty) return null;
+      return value.trim();
+    }
+
+    final destination = requiredString('destination');
+    if (destination != 'mods' && destination != 'dynos') {
+      throw const FormatException('Invalid discovery destination');
+    }
+    return DiscoveredInstallation(
+      discoveryKey: requiredString('discoveryKey'),
+      destination: destination,
+      entryPath: requiredString('entryPath'),
+      displayName: requiredString('displayName'),
+      versionLabel: optionalString('versionLabel'),
+      category: optionalString('category'),
+      author: optionalString('author'),
+      sourceType: requiredString('sourceType'),
+      confidence: InstallationDiscoveryConfidence.parse(
+        requiredString('confidence'),
+      ),
+      detectedAt: DateTime.parse(requiredString('detectedAt')).toUtc(),
+    );
+  }
+
+  final String discoveryKey;
+  final String destination;
+  final String entryPath;
+  final String displayName;
+  final String? versionLabel;
+  final String? category;
+  final String? author;
+  final String sourceType;
+  final InstallationDiscoveryConfidence confidence;
+  final DateTime detectedAt;
+}
+
 class InstallationLibrarySnapshot {
   const InstallationLibrarySnapshot({
     required this.receipts,
     required this.history,
     required this.issues,
     this.verifications = const {},
+    this.discoveries = const [],
+    this.discoveryScannedAt,
+    this.discoveryTruncated = false,
   });
 
   final List<InstallationRecord> receipts;
   final List<InstallationRecord> history;
   final List<InstallationLibraryIssue> issues;
   final Map<String, InstallationVerification> verifications;
+  final List<DiscoveredInstallation> discoveries;
+  final DateTime? discoveryScannedAt;
+  final bool discoveryTruncated;
 
   bool get isPartial => issues.isNotEmpty;
 
@@ -303,6 +390,7 @@ class InstallationLibrarySnapshot {
       history: const [],
       issues: List.unmodifiable(issues),
       verifications: Map.unmodifiable(verifications),
+      discoveries: const [],
     );
   }
 }

@@ -180,6 +180,129 @@ class InstallationLibraryCard extends ConsumerWidget {
   }
 }
 
+class DetectedInstallationCard extends StatelessWidget {
+  const DetectedInstallationCard({super.key, required this.discovery});
+
+  final DiscoveredInstallation discovery;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final confidenceLabel = switch (discovery.confidence) {
+      InstallationDiscoveryConfidence.exact =>
+        l10n.libraryDiscoveryHeaderIdentified,
+      InstallationDiscoveryConfidence.probable => l10n.libraryDiscoveryProbable,
+      InstallationDiscoveryConfidence.unlinked => l10n.libraryDiscoveryUnlinked,
+    };
+    final confidenceColor = switch (discovery.confidence) {
+      InstallationDiscoveryConfidence.exact => retro.accent,
+      InstallationDiscoveryConfidence.probable => retro.amber,
+      InstallationDiscoveryConfidence.unlinked => retro.inkDim,
+    };
+
+    return Semantics(
+      container: true,
+      label: '${discovery.displayName}, ${l10n.libraryDetectedOnDevice}',
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: retro.surface,
+          border: Border.all(
+            color: retro.border.withValues(alpha: 0.45),
+            width: 2,
+          ),
+          boxShadow: retro.hardShadow(dx: 3, dy: 3),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.manage_search_rounded,
+                  color: confidenceColor,
+                  size: 23,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        discovery.displayName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: retro.heading(size: 16),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.libraryDetectedOnDevice,
+                        style: retro.body(size: 11, color: retro.inkDim),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 5,
+                  ),
+                  color: confidenceColor.withValues(alpha: 0.14),
+                  child: Text(
+                    confidenceLabel,
+                    style: retro.body(
+                      size: 10,
+                      color: confidenceColor,
+                      weight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 12,
+              runSpacing: 6,
+              children: [
+                if (discovery.versionLabel != null)
+                  _Meta(
+                    icon: Icons.sell_outlined,
+                    label: discovery.versionLabel!,
+                  ),
+                if (discovery.author != null)
+                  _Meta(
+                    icon: Icons.person_outline_rounded,
+                    label: discovery.author!,
+                  ),
+                if (discovery.category != null)
+                  _Meta(
+                    icon: Icons.category_outlined,
+                    label: discovery.category!,
+                  ),
+                _Meta(
+                  icon: Icons.folder_outlined,
+                  label: _destinationLabel(l10n, discovery.destination),
+                ),
+              ],
+            ),
+            const SizedBox(height: 9),
+            Text(
+              '${l10n.libraryDetectedPath}: ${discovery.entryPath}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: retro.body(size: 10.5, color: retro.inkDim),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _Meta extends StatelessWidget {
   const _Meta({required this.icon, required this.label});
   final IconData icon;

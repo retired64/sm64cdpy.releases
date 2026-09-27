@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado contra `1.7.0+18` el 2026-09-24.
+Revisado contra `1.7.0+18` el 2026-09-26.
 
 ## Implementado
 
@@ -28,14 +28,19 @@ Revisado contra `1.7.0+18` el 2026-09-24.
 - Snapshot versionado de Biblioteca hacia el segundo engine del overlay, con
   descarte de respuestas antiguas y actualización tras instalación,
   verificación o cambio de carpeta.
+- Detección conservadora de contenido Lua externo mediante SAF, con lectura
+  limitada de encabezados, caché nativa separada, confianza estructural y vista
+  Detectados sin fabricar identidad de catálogo ni recibos.
 
 ## Experimental o pendiente de validación
 
 - Biblioteca/historial: implementación funcional completada; falta ampliar la
   matriz física con proveedores SAF lentos, permisos revocados y texto grande.
 - Sincronización de Biblioteca en overlay: implementada y cubierta por pruebas
-  de codec/identidad/selector; falta validación física de cierre, reapertura y
-  recreación de engines.
+  de codec/identidad/selector y por una matriz física de diez escenarios.
+- Descubrimiento externo: implementación y límites automatizados completos;
+  falta validar físicamente proveedores SAF lentos, árboles grandes, permisos
+  revocados y ejemplos reales de `main.lua`, `mod.lua` y Lua suelto.
 
 - Overlay en Android 7–16, especialmente recreación del proceso y retorno desde permisos del sistema.
 - Descargas simultáneas en dispositivo; las colisiones por títulos ya no son

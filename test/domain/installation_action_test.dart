@@ -76,6 +76,33 @@ void main() {
     expect(state.primaryAction, InstallationPrimaryAction.download);
   });
 
+  test('external discovery never changes a catalog action without receipt', () {
+    final state = InstallationActionSelector.select(
+      identity: identity,
+      operation: null,
+      library: InstallationLibrarySnapshot(
+        receipts: const [],
+        history: const [],
+        issues: const [],
+        discoveries: [
+          DiscoveredInstallation(
+            discoveryKey: 'external-1',
+            destination: 'mods',
+            entryPath: 'same-title/main.lua',
+            displayName: 'Same catalogue title',
+            sourceType: 'folder',
+            confidence: InstallationDiscoveryConfidence.exact,
+            detectedAt: DateTime.utc(2026, 9, 26),
+          ),
+        ],
+      ),
+      libraryLoading: false,
+    );
+
+    expect(state.primaryAction, InstallationPrimaryAction.download);
+    expect(state.receipt, isNull);
+  });
+
   test('SAF states map to conservative actions', () {
     final expected = {
       InstallationVerificationStatus.missing:

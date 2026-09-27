@@ -343,6 +343,7 @@ const _kVersions = <_VersionData>[
           'Dynos and touch controls now use the same WorkManager download+install pipeline as regular mods — previously a separate file downloader path with no background recovery. Cancelled downloads now properly stop WorkManager jobs.',
           'SafZipExtractor shared object — single source of truth for ZIP extraction to SAF document trees with delete-before-create (prevents duplicate files on reinstall) and explicit failure when SAF permissions are lost mid-operation.',
           'Background install state now persisted to SharedPreferences — survives process death. WorkManager-resumed workers have full context on app restart. Uses putIfAbsent to never overwrite fresher live events with stale stored data.',
+          'Library discovery can now find untracked Lua mods already present in the selected folders, using bounded native SAF scanning without treating them as confirmed catalog installations.',
         ],
       ),
       _ChangeGroupData(

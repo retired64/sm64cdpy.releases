@@ -78,5 +78,26 @@ void main() {
       InstallationVerificationStatus.present,
     );
     expect(restored.history, isEmpty);
+    expect(restored.discoveries, isEmpty);
+  });
+
+  test('parses conservative external discovery without catalog identity', () {
+    final discovery = DiscoveredInstallation.fromMap({
+      'schemaVersion': 1,
+      'discoveryKey': 'external-1',
+      'destination': 'dynos',
+      'entryPath': 'shared/main.lua',
+      'displayName': 'Shared Folder',
+      'versionLabel': null,
+      'category': null,
+      'author': null,
+      'sourceType': 'folder',
+      'confidence': 'probable',
+      'detectedAt': '2026-09-26T18:00:00Z',
+    });
+
+    expect(discovery.destination, 'dynos');
+    expect(discovery.confidence, InstallationDiscoveryConfidence.probable);
+    expect(discovery.detectedAt.isUtc, isTrue);
   });
 }

@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado contra `1.7.0+18` el 2026-09-24.
+Revisado contra `1.7.0+18` el 2026-09-26.
 
 ## Alcance
 
@@ -83,6 +83,17 @@ principal mediante un bus de invalidación que no conserva autoridad; el
 `floaty_chatheads`. El segundo engine mantiene únicamente la última respuesta
 válida según `requestId`. Recibos nativos, SAF y WorkManager continúan siendo
 las fuentes de verdad.
+
+El descubrimiento de contenido previo o copiado por fuera de SM64CDPY vive en
+una fuente separada. `InstallationDiscoveryScanner` recorre SAF únicamente al
+abrir Biblioteca, al cambiar una carpeta o mediante refresco manual; nunca
+durante cada render. El recorrido y la lectura de encabezados Lua están
+acotados y se ejecutan fuera del hilo principal. Su caché nativa no es un
+recibo: los hallazgos carecen deliberadamente de identidad de catálogo y solo
+alimentan la vista Detectados de la proyección Hive v3. Un marcador Lua y sus
+metadatos pueden elevar la confianza estructural, pero no autorizan a mostrar
+Instalado ni Actualizar. DynOS y Touch Controls siguen siendo indistinguibles
+por su carpeta física compartida.
 
 ## Navegación y estado
 

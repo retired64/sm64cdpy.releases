@@ -165,6 +165,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "cancelModOperation" -> cancelModOperation(call, result)
             "reconcileBackgroundOperations" -> reconcileBackgroundOperations(call, result)
             "getInstallationLibrary" -> getInstallationLibrary(result)
+            "discoverInstallationLibrary" -> discoverInstallationLibrary(call, result)
             "verifyInstallationLibrary" -> verifyInstallationLibrary(call, result)
             "clearInstallationHistory" -> clearInstallationHistory(result)
             "isDirectorySelected" -> isDirectorySelected(result)
@@ -186,11 +187,33 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private fun getInstallationLibrary(result: Result) {
         try {
-            result.success(InstallationReceiptStore.readSnapshot(applicationContext))
+            result.success(readInstallationLibrarySnapshot())
         } catch (error: Exception) {
             result.error("LIBRARY_READ_ERROR", error.message, null)
         }
     }
+
+    private fun discoverInstallationLibrary(call: MethodCall, result: Result) {
+        val force = call.argument<Boolean>("force") == true
+        thread(name = "installation-library-discovery") {
+            try {
+                val discovery = InstallationDiscoveryScanner.scan(applicationContext, force)
+                val receipts = InstallationReceiptStore.readSnapshot(applicationContext)
+                val snapshot = InstallationDiscoveryScanner.attachToSnapshot(receipts, discovery)
+                Handler(Looper.getMainLooper()).post { result.success(snapshot) }
+            } catch (error: Exception) {
+                Handler(Looper.getMainLooper()).post {
+                    result.error("LIBRARY_DISCOVERY_ERROR", error.message, null)
+                }
+            }
+        }
+    }
+
+    private fun readInstallationLibrarySnapshot(): Map<String, Any?> =
+        InstallationDiscoveryScanner.attachToSnapshot(
+            InstallationReceiptStore.readSnapshot(applicationContext),
+            InstallationDiscoveryScanner.readCached(applicationContext)
+        )
 
     private fun clearInstallationHistory(result: Result) {
         try {

@@ -10,6 +10,7 @@ import '../../services/mod_installer.dart';
 
 abstract interface class InstallationLibraryNativeGateway {
   Future<Map<String, dynamic>> read();
+  Future<Map<String, dynamic>> discover({bool force = false});
   Future<Map<String, dynamic>> verify({List<String>? artifactKeys});
   Future<void> clearHistory();
 }
@@ -23,6 +24,10 @@ class MethodChannelInstallationLibraryGateway
 
   @override
   Future<Map<String, dynamic>> read() => _installer.getInstallationLibrary();
+
+  @override
+  Future<Map<String, dynamic>> discover({bool force = false}) =>
+      _installer.discoverInstallationLibrary(force: force);
 
   @override
   Future<Map<String, dynamic>> verify({List<String>? artifactKeys}) =>
@@ -40,7 +45,7 @@ class InstallationLibraryRepositoryImpl
   }) : _gateway = gateway ?? MethodChannelInstallationLibraryGateway(),
        _projection = projection;
 
-  static const projectionSchemaVersion = 2;
+  static const projectionSchemaVersion = 3;
   static const _schemaKey = 'schemaVersion';
   static const _snapshotKey = 'snapshot';
   static Future<void> _operationTail = Future<void>.value();
@@ -62,6 +67,10 @@ class InstallationLibraryRepositoryImpl
     final raw = await _gateway.read();
     return _store(raw);
   }
+
+  @override
+  Future<InstallationLibrarySnapshot> discover({bool force = false}) =>
+      _serialized(() async => _store(await _gateway.discover(force: force)));
 
   @override
   Future<InstallationLibrarySnapshot> verifyAll() => _serialized(_verify);
@@ -252,12 +261,61 @@ class InstallationLibraryRepositoryImpl
       return records;
     }
 
+    final receipts = parseRecords('receipts', 'artifactKey');
+    final history = parseRecords('history', 'installWorkerId');
+    final discoveries = _parseDiscoveries(raw, issues);
+    final discoveryScannedAt = _parseDiscoveryDate(raw, issues);
     return InstallationLibrarySnapshot(
-      receipts: parseRecords('receipts', 'artifactKey'),
-      history: parseRecords('history', 'installWorkerId'),
+      receipts: receipts,
+      history: history,
       issues: List.unmodifiable(issues),
       verifications: Map.unmodifiable(verifications),
+      discoveries: discoveries,
+      discoveryScannedAt: discoveryScannedAt,
+      discoveryTruncated: raw['discoveryTruncated'] == true,
     );
+  }
+
+  List<DiscoveredInstallation> _parseDiscoveries(
+    Map<String, dynamic> raw,
+    List<InstallationLibraryIssue> issues,
+  ) {
+    final unique = <String, DiscoveredInstallation>{};
+    for (final value in (raw['discoveries'] as List? ?? const [])) {
+      try {
+        if (value is! Map) {
+          throw const FormatException('Discovery is not a map');
+        }
+        final discovery = DiscoveredInstallation.fromMap(value);
+        unique[discovery.discoveryKey] = discovery;
+      } catch (error) {
+        issues.add(
+          InstallationLibraryIssue(file: 'discovery', reason: error.toString()),
+        );
+      }
+    }
+    final discoveries = unique.values.toList()
+      ..sort(
+        (a, b) =>
+            a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
+      );
+    return List.unmodifiable(discoveries);
+  }
+
+  DateTime? _parseDiscoveryDate(
+    Map<String, dynamic> raw,
+    List<InstallationLibraryIssue> issues,
+  ) {
+    final value = raw['discoveryScannedAt'];
+    if (value == null) return null;
+    try {
+      return DateTime.parse(value as String).toUtc();
+    } catch (error) {
+      issues.add(
+        InstallationLibraryIssue(file: 'discovery', reason: error.toString()),
+      );
+      return null;
+    }
   }
 
   InstallationLibrarySnapshot _withIssue(
@@ -268,5 +326,8 @@ class InstallationLibraryRepositoryImpl
     history: snapshot.history,
     issues: [...snapshot.issues, issue],
     verifications: snapshot.verifications,
+    discoveries: snapshot.discoveries,
+    discoveryScannedAt: snapshot.discoveryScannedAt,
+    discoveryTruncated: snapshot.discoveryTruncated,
   );
 }

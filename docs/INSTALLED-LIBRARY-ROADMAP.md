@@ -7,7 +7,7 @@
 |---|---|
 | Proyecto | SM64CDPY — SM64CoopDX Mods Browser |
 | Rama de trabajo | `historial-hive` |
-| Estado | Fase 7 implementada; sincronización del overlay pendiente de prueba física |
+| Estado | Fase 8 implementada; pendiente validación física |
 | Creado | 2026-09-23 |
 | Plataforma | Android 7.0+ |
 | Alcance | Biblioteca, historial, detección de versión y verificación SAF |
@@ -299,7 +299,7 @@ mantiene como regresión general previa al release.
 - [x] Mostrar estado instalado/actualización usando la misma `artifactKey`.
 - [x] Resolver el caso en que el overlay se abre antes de cargar la proyección.
 - [x] Evitar duplicar toasts o resultados terminales entre engines.
-- [ ] Probar cierre y reapertura del panel durante una reconciliación.
+- [x] Probar cierre y reapertura del panel durante una reconciliación.
 
 **Motivo:** app y burbuja deben presentar la misma verdad aunque tengan engines
 e isolates independientes.
@@ -317,25 +317,58 @@ terminales continúan siendo responsabilidad del coordinador global y las
 notificaciones nativas; el snapshot no genera un segundo toast. También se
 alineó el `fileKey` explícito del catálogo general, incluidas versiones con
 varios archivos, para que detalle y overlay produzcan la misma `artifactKey`.
-La prueba física de cierre/reapertura y ciclo de vida permanece pendiente.
+
+**Prueba física completada (2026-09-26):** se aprobaron los diez escenarios de
+sincronización: instalado previo, mod multiversión, instalación desde overlay,
+reflejo en Biblioteca, operación iniciada desde la app, cierre/reapertura con
+trabajo activo, reapertura durante Comprobando, borrado físico con Reinstalar,
+carpeta ausente con Seleccionar carpeta y ausencia de feedback terminal
+duplicado. Con esta matriz la Fase 7 queda oficialmente cerrada.
 
 ## Fase 8 — Descubrimiento de instalaciones antiguas o externas
 
-- [ ] Adaptar de manera nativa la lectura limitada de encabezados Lua.
-- [ ] Buscar `main.lua`, después `mod.lua`, y archivos Lua raíz.
-- [ ] Extraer nombre, versión, categoría y autor solo cuando existan.
-- [ ] Limpiar códigos de color sin modificar los archivos del usuario.
-- [ ] Tratar DynOS y Touch Controls como tipos no inferibles solo por carpeta.
-- [ ] Definir niveles de confianza: exacto, probable y sin vincular.
-- [ ] No cambiar un botón del catálogo por una coincidencia ambigua.
-- [ ] Presentar elementos ambiguos como “Detectado en el dispositivo”.
-- [ ] Permitir vinculación manual futura sin hacerla requisito de la primera
+- [x] Adaptar de manera nativa la lectura limitada de encabezados Lua.
+- [x] Buscar `main.lua`, después `mod.lua`, y archivos Lua raíz.
+- [x] Extraer nombre, versión, categoría y autor solo cuando existan.
+- [x] Limpiar códigos de color sin modificar los archivos del usuario.
+- [x] Tratar DynOS y Touch Controls como tipos no inferibles solo por carpeta.
+- [x] Definir niveles de confianza: exacto, probable y sin vincular.
+- [x] No cambiar un botón del catálogo por una coincidencia ambigua.
+- [x] Presentar elementos ambiguos como “Detectado en el dispositivo”.
+- [x] Permitir vinculación manual futura sin hacerla requisito de la primera
   versión.
-- [ ] Ejecutar el escaneo al migrar, cambiar carpeta o por acción del usuario;
+- [x] Ejecutar el escaneo al migrar, cambiar carpeta o por acción del usuario;
   nunca en cada reconstrucción de UI.
 
 **Motivo:** la lógica del script Python ayuda a descubrir contenido, pero no
 demuestra por sí sola qué entrada del catálogo lo originó.
+
+**Implementado (2026-09-26):** `InstallationDiscoveryScanner` recorre los
+árboles SAF fuera del hilo principal con topes de 4,000 documentos, 500
+hallazgos, tres niveles de profundidad y 64 KiB leídos por encabezado. Prioriza
+`main.lua`, luego `mod.lua` y finalmente Lua/Luac sueltos. Replica el contrato
+de encabezados iniciales de SM64CoopDX, elimina códigos de color solo en la
+proyección y extrae metadata opcional sin modificar archivos.
+
+Los hallazgos se guardan en una caché nativa privada distinta de los recibos y
+se importan a Hive v3 como proyección reconstruible. Las rutas centinela que ya
+pertenecen a un recibo SM64CDPY se excluyen para no duplicar Instalados y
+Detectados. `exacto` significa exclusivamente “marcador `main.lua`/`mod.lua`
+con nombre explícito en su encabezado”; no significa coincidencia exacta con el
+catálogo. `probable` conserva un marcador sin nombre y `sin vincular` representa
+Lua suelto. Ninguno genera `contentKey`, `artifactKey`, recibo ni cambia botones
+del catálogo. En la carpeta compartida DynOS/Touch Controls solo se conserva el
+destino `dynos`; el tipo no se adivina.
+
+El primer acceso a Biblioteca valida la caché por carpeta/permiso; cambiar o
+limpiar una carpeta vuelve a descubrir y la acción Actualizar fuerza un nuevo
+escaneo. Home solo consume la proyección existente y no recorre SAF durante el
+arranque. Verificación y descubrimiento comparten un coordinador nativo de I/O,
+y el escaneo se difiere si WorkManager está escribiendo una instalación para
+no clasificar archivos parciales como externos. El límite alcanzado se comunica
+en la UI. Falta validar físicamente
+proveedores SAF reales, árboles grandes, permisos revocados y los tres tipos de
+hallazgo antes de declarar cerrada la fase.
 
 ## Fase 9 — Actualizaciones, reinstalación y mantenimiento
 
@@ -446,7 +479,8 @@ enlazar pruebas o commits cuando existan.
 | 2026-09-25 | Fase 4 | Verificador SAF acotado por centinelas, cuatro estados, refresco global/individual y proyección Hive v2 | Confirmar presencia física sin escaneos recursivos ni bloquear la UI | 17 tests Flutter, 6 tests Kotlin, `flutter analyze` y `compileDebugKotlin`; dispositivo pendiente | — |
 | 2026-09-26 | Fase 5 | Selector canónico y botones coherentes en detalle/VIP/DynOS/Touch Controls/OMM/Render96 | Evitar “instalado” basado en un Worker terminado, dobles toques y actualizaciones falsas | 23 tests Flutter y `flutter analyze`; overlay transferido a Fase 7 | — |
 | 2026-09-26 | Fase 6 | Biblioteca con Instalados/Actualizaciones/Detectados/Recientes, filtros, resumen en Home y navegación coherente | Hacer visible el estado durable y verificable sin convertir el historial ni Hive en autoridad física | Prueba física en OPPO CPH2365: drawer, detalle y regreso, recibo instalado, recientes y reconciliación “No encontrado” tras borrado externo | — |
-| 2026-09-26 | Fase 7 | Snapshot versionado de Biblioteca hacia el segundo engine y selector canónico en cada tarjeta del overlay | Evitar estados divergentes entre app y burbuja sin compartir memoria ni convertir Hive en autoridad | 25 tests Flutter, `flutter analyze lib test` y `git diff --check`; matriz física pendiente | — |
+| 2026-09-26 | Fase 7 | Snapshot versionado de Biblioteca hacia el segundo engine y selector canónico en cada tarjeta del overlay | Evitar estados divergentes entre app y burbuja sin compartir memoria ni convertir Hive en autoridad | 25 tests Flutter, análisis estático y matriz física de 10 escenarios aprobados | — |
+| 2026-09-26 | Fase 8 | Escaneo SAF acotado de Lua externo, parser de encabezados, caché nativa separada, proyección Hive v3 y vista Detectados | Descubrir contenido previo/manual sin fabricar recibos ni inferir identidad de catálogo | Suite Flutter completa (29 tests), suite Kotlin completa (9 tests), análisis estático y compilación Kotlin; dispositivo pendiente | — |
 | 2026-09-26 | Corrección física Fases 4–5 | La ausencia deliberada de carpeta ahora conduce a Seleccionar carpeta; navegación a Ajustes reemplaza la ruta de detalle; el Worker registra y retira archivos nuevos de una instalación cancelada | Las pruebas físicas detectaron “Verificar” sin efecto, navegación vacía y mods nuevos parcialmente extraídos | Compilación/tests automatizados y repetición física pendientes | — |
 | 2026-09-26 | Endurecimiento de cancelación | El rollback SAF es idempotente, serializado y no propaga errores del proveedor de documentos | Dos pruebas físicas iniciales cerraron el proceso; después de corregir observers, dos cancelaciones retiraron los parciales en 8–15 s sin errores de rollback | `logcat` físico en OPPO CPH2365 confirmado | — |
 | 2026-09-26 | Corrección de crash al repetir operación | Todos los observers de WorkManager aceptan la emisión transitoria `null` producida cuando `REPLACE` retira la fila anterior | `logcat` capturó NPE antes de entrar al null-check Kotlin; el nuevo APK soportó dos cancelaciones y una instalación final de la misma identidad | Kotlin/Flutter sin errores y matriz física repetida correctamente | — |

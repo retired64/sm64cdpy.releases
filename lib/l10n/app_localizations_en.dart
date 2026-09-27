@@ -1375,7 +1375,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryDetectedEmptyBody =>
-      'Device discovery will be added in a later phase. This view never guesses from folder names.';
+      'No untracked Lua content was found in the selected folders. Refresh after making external changes.';
+
+  @override
+  String get libraryDetectedOnDevice =>
+      'Detected on device — not linked to the catalog';
+
+  @override
+  String get libraryDiscoveryHeaderIdentified => 'Header identified';
+
+  @override
+  String get libraryDiscoveryProbable => 'Probable mod';
+
+  @override
+  String get libraryDiscoveryUnlinked => 'Unlinked Lua';
+
+  @override
+  String get libraryDetectedPath => 'Entry file';
+
+  @override
+  String get libraryDetectedScanLimit =>
+      'The safety scan limit was reached. Some content may not be shown.';
 
   @override
   String get libraryErrorTitle => 'LIBRARY UNAVAILABLE';

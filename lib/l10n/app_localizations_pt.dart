@@ -1385,7 +1385,27 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get libraryDetectedEmptyBody =>
-      'A descoberta no dispositivo será adicionada em uma fase futura. Esta tela não adivinha por nomes de pastas.';
+      'Nenhum conteúdo Lua não registrado foi encontrado nas pastas selecionadas. Atualize após fazer alterações externas.';
+
+  @override
+  String get libraryDetectedOnDevice =>
+      'Detectado no dispositivo — não vinculado ao catálogo';
+
+  @override
+  String get libraryDiscoveryHeaderIdentified => 'Cabeçalho identificado';
+
+  @override
+  String get libraryDiscoveryProbable => 'Mod provável';
+
+  @override
+  String get libraryDiscoveryUnlinked => 'Lua não vinculado';
+
+  @override
+  String get libraryDetectedPath => 'Arquivo de entrada';
+
+  @override
+  String get libraryDetectedScanLimit =>
+      'O limite seguro de verificação foi atingido. Parte do conteúdo pode não aparecer.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA INDISPONÍVEL';
@@ -2780,7 +2800,27 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get libraryDetectedEmptyBody =>
-      'A descoberta no dispositivo será adicionada em uma fase futura. Esta tela não adivinha por nomes de pastas.';
+      'Nenhum conteúdo Lua não registrado foi encontrado nas pastas selecionadas. Atualize após fazer alterações externas.';
+
+  @override
+  String get libraryDetectedOnDevice =>
+      'Detectado no dispositivo — não vinculado ao catálogo';
+
+  @override
+  String get libraryDiscoveryHeaderIdentified => 'Cabeçalho identificado';
+
+  @override
+  String get libraryDiscoveryProbable => 'Mod provável';
+
+  @override
+  String get libraryDiscoveryUnlinked => 'Lua não vinculado';
+
+  @override
+  String get libraryDetectedPath => 'Arquivo de entrada';
+
+  @override
+  String get libraryDetectedScanLimit =>
+      'O limite seguro de verificação foi atingido. Parte do conteúdo pode não aparecer.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA INDISPONÍVEL';
