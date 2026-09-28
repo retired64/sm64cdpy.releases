@@ -12,14 +12,17 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/vip_mod_entity.dart';
+import '../../domain/entities/install_identity.dart';
+import '../../domain/entities/installation_action.dart';
 import '../../services/background_install_service.dart';
-import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
-import '../providers/mod_providers.dart';
+import '../providers/installation_action_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../../l10n/app_localizations.dart';
+import '../widgets/installation_action_presentation.dart';
+import '../widgets/dynos_install_flow.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -42,10 +45,24 @@ class _VipModsScreenState extends ConsumerState<VipModsScreen> {
   @override
   Widget build(BuildContext context) {
     final vipAsync = ref.watch(allVipModsProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final title = Text(
+      l10n.vipTitle,
+      style: retro.heading(size: 16, color: retro.amber),
+    );
 
     return vipAsync.when(
-      loading: () => const _VipSkeleton(),
-      error: (e, _) => _VipError(message: e.toString()),
+      loading: () => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.amber,
+        child: const _VipSkeleton(),
+      ),
+      error: (e, _) => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.amber,
+        child: _VipError(message: e.toString()),
+      ),
       data: (mods) => _VipBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
@@ -71,15 +88,8 @@ class _VipBody extends StatelessWidget {
       ),
       slivers: [
         // ── App bar ───────────────────────────────────────────
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: DrawerMenuButton(color: retro.amber),
+        RetroPinnedAppBar(
+          leadingColor: retro.amber,
           title: Text(
             l10n.vipTitle,
             style: retro.heading(size: 16, color: retro.amber),
@@ -161,8 +171,14 @@ class _VipModCardState extends ConsumerState<VipModCard>
   bool _downloading = false;
   double _progress = 0.0;
 
-  String get _operationName =>
-      sanitizeModTitle('vip-${widget.mod.id}-${widget.mod.title}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.vip,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+    versionLabel: widget.mod.version,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   @override
   void initState() {
@@ -283,42 +299,9 @@ class _VipModCardState extends ConsumerState<VipModCard>
       final autoInstall =
           prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
       if (autoInstall && mounted) {
-        final l10n = AppLocalizations.of(context);
-        final goToSettings = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            icon: Icon(
-              Icons.folder_open_rounded,
-              color: RetroTheme.of(ctx).accent,
-              size: 28,
-            ),
-            title: Text(
-              l10n.detailModsFolderNotSelected,
-              style: TextStyle(color: RetroTheme.of(ctx).ink),
-            ),
-            content: Text(
-              l10n.detailModsFolderBody,
-              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(
-                  l10n.detailCancel,
-                  style: TextStyle(color: RetroTheme.of(ctx).ink),
-                ),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                icon: const Icon(Icons.settings, size: 16),
-                label: Text(l10n.detailGoToSettings),
-              ),
-            ],
-          ),
-        );
-        if (goToSettings == true && mounted) {
-          GoRouter.of(context).push('/settings');
+        final goToSettings = await showModsFolderRequiredDialog(context);
+        if (goToSettings && mounted) {
+          GoRouter.of(context).go('/settings');
         }
         return;
       }
@@ -337,6 +320,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
             modName: rawName,
             fileName: filename,
             displayTitle: widget.mod.title,
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain != null) {
@@ -462,23 +446,10 @@ class _VipModCardState extends ConsumerState<VipModCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(vipFavouritesProvider).contains(widget.mod.id);
-    final backgroundInfo = ref.watch(bgInstallStateProvider)[_operationName];
-    final backgroundBusy =
-        backgroundInfo != null &&
-        (backgroundInfo.status == BgInstallStatus.pending ||
-            backgroundInfo.status == BgInstallStatus.downloading ||
-            backgroundInfo.status == BgInstallStatus.installing);
-    final isDownloading = _downloading || backgroundBusy;
-    final visibleProgress = _downloading
-        ? _progress
-        : backgroundInfo?.status == BgInstallStatus.downloading
-        ? (backgroundInfo?.downloadProgress ?? 0) / 100
-        : backgroundInfo?.status == BgInstallStatus.installing &&
-              backgroundInfo?.current != null &&
-              backgroundInfo?.total != null &&
-              backgroundInfo!.total! > 0
-        ? backgroundInfo.current! / backgroundInfo.total!
-        : null;
+    final actionState = ref.watch(installationActionProvider(_identity));
+    final action = actionState.primaryAction;
+    final isDownloading = _downloading || actionState.isOperationActive;
+    final visibleProgress = _downloading ? _progress : actionState.progress;
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
         ? 140.0
@@ -694,7 +665,19 @@ class _VipModCardState extends ConsumerState<VipModCard>
                               : retro.hardShadow(dx: 4, dy: 4),
                         ),
                         child: ElevatedButton(
-                          onPressed: isDownloading ? null : _download,
+                          onPressed:
+                              (_downloading &&
+                                      !actionState.isOperationActive) ||
+                                  action ==
+                                      InstallationPrimaryAction.checking ||
+                                  action == InstallationPrimaryAction.installed
+                              ? null
+                              : () => runCanonicalInstallationAction(
+                                  context: context,
+                                  ref: ref,
+                                  state: actionState,
+                                  onTransfer: _download,
+                                ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.amber,
                             foregroundColor: retro.onAmber,
@@ -724,8 +707,8 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                       const SizedBox(height: 4),
                                       Text(
                                         visibleProgress == null
-                                            ? l10n.detailInstalling
-                                            : '${(visibleProgress * 100).toStringAsFixed(0)}%',
+                                            ? action.label(l10n)
+                                            : '${(visibleProgress * 100).toStringAsFixed(0)}% · ${action.label(l10n)}',
                                         style: TextStyle(
                                           color: retro.onAmber,
                                           fontSize: 11,
@@ -743,13 +726,13 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
-                                        Icons.download_rounded,
+                                        action.icon,
                                         color: retro.onAmber,
                                         size: 20,
                                       ),
                                       const SizedBox(width: 10),
                                       Text(
-                                        l10n.sharedDownload,
+                                        action.label(l10n),
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w900,
@@ -762,6 +745,15 @@ class _VipModCardState extends ConsumerState<VipModCard>
                         ),
                       ),
                     ),
+                    if (actionState.canReinstall)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: _download,
+                          icon: const Icon(Icons.refresh_rounded, size: 15),
+                          label: Text(l10n.installationReinstall),
+                        ),
+                      ),
                   ],
                 ),
               ),

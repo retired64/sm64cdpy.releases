@@ -12,69 +12,68 @@ class LinksResourceScreen extends StatelessWidget {
   const LinksResourceScreen({super.key});
 
   List<_LinkData> _buildOfficialLinks(AppLocalizations l10n) => [
-        _LinkData(
-          title: l10n.linksWebsite,
-          url: AppConstants.officialweb,
-          subtitle: l10n.linksWebsiteUrl,
-          icon: Icons.public_rounded,
-          kind: l10n.linksKindWeb,
-        ),
-        _LinkData(
-          title: l10n.linksDiscordServer,
-          url: AppConstants.discordPortAndroid,
-          subtitle: l10n.linksDiscordOfficial,
-          icon: Icons.chat_rounded,
-          kind: l10n.linksKindDiscord,
-        ),
-        _LinkData(
-          title: l10n.linksGithubRepo,
-          url: AppConstants.maniscat2Github,
-          subtitle: l10n.linksGithubDesc,
-          icon: Icons.code_rounded,
-          kind: l10n.linksKindGithub,
-        ),
-      ];
+    _LinkData(
+      title: l10n.linksWebsite,
+      url: AppConstants.officialweb,
+      subtitle: l10n.linksWebsiteUrl,
+      icon: Icons.public_rounded,
+    ),
+    _LinkData(
+      title: l10n.linksDiscordServer,
+      url: AppConstants.discordPortAndroid,
+      subtitle: l10n.linksDiscordOfficial,
+      icon: Icons.chat_rounded,
+    ),
+    _LinkData(
+      title: l10n.linksGithubRepo,
+      url: AppConstants.maniscat2Github,
+      subtitle: l10n.linksGithubDesc,
+      icon: Icons.code_rounded,
+    ),
+  ];
 
   List<_LinkData> _buildAppLinks(AppLocalizations l10n) => [
-        _LinkData(
-          title: l10n.linksGithubReleases,
-          url: AppConstants.githubReleasesUrl,
-          subtitle: l10n.linksGithubReleasesDesc,
-          icon: Icons.system_update_rounded,
-          kind: l10n.linksKindDownload,
-        ),
-        _LinkData(
-          title: l10n.linksYoutubeChannel,
-          url: AppConstants.youtubeUrl,
-          subtitle: l10n.linksYoutubeHandle,
-          icon: Icons.play_circle_rounded,
-          kind: l10n.linksKindYoutube,
-        ),
-      ];
+    _LinkData(
+      title: l10n.linksAppWebsite,
+      url: AppConstants.appWebsiteUrl,
+      subtitle: l10n.linksAppWebsiteDesc,
+      icon: Icons.language_rounded,
+      isPrimary: true,
+    ),
+    _LinkData(
+      title: l10n.linksGithubReleases,
+      url: AppConstants.githubReleasesUrl,
+      subtitle: l10n.linksGithubReleasesDesc,
+      icon: Icons.system_update_rounded,
+    ),
+    _LinkData(
+      title: l10n.linksYoutubeChannel,
+      url: AppConstants.youtubeUrl,
+      subtitle: l10n.linksYoutubeHandle,
+      icon: Icons.play_circle_rounded,
+    ),
+  ];
 
   List<_LinkData> _buildResourceLinks(AppLocalizations l10n) => [
-        _LinkData(
-          title: l10n.linksDiscordServer,
-          url: AppConstants.discordPort,
-          subtitle: l10n.linksDiscordCommunity,
-          icon: Icons.chat_rounded,
-          kind: l10n.linksKindDiscord,
-        ),
-        _LinkData(
-          title: l10n.linksWiki,
-          url: AppConstants.wikiUrl,
-          subtitle: l10n.linksWikiDesc,
-          icon: Icons.menu_book_rounded,
-          kind: l10n.linksKindWiki,
-        ),
-        _LinkData(
-          title: l10n.linksTools,
-          url: AppConstants.toolsAndAddonsUrl,
-          subtitle: l10n.linksToolsDesc,
-          icon: Icons.build_rounded,
-          kind: l10n.linksKindTools,
-        ),
-      ];
+    _LinkData(
+      title: l10n.linksDiscordServer,
+      url: AppConstants.discordPort,
+      subtitle: l10n.linksDiscordCommunity,
+      icon: Icons.chat_rounded,
+    ),
+    _LinkData(
+      title: l10n.linksWiki,
+      url: AppConstants.wikiUrl,
+      subtitle: l10n.linksWikiDesc,
+      icon: Icons.menu_book_rounded,
+    ),
+    _LinkData(
+      title: l10n.linksTools,
+      url: AppConstants.toolsAndAddonsUrl,
+      subtitle: l10n.linksToolsDesc,
+      icon: Icons.build_rounded,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -86,15 +85,7 @@ class LinksResourceScreen extends StatelessWidget {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: const DrawerMenuButton(),
+        RetroPinnedAppBar(
           title: RichText(
             text: TextSpan(
               children: [
@@ -186,8 +177,10 @@ class _HubHero extends StatelessWidget {
             children: [
               Icon(Icons.link_rounded, size: 18, color: retro.accent),
               const SizedBox(width: 8),
-              Text(l10n.linksHeroTitle,
-                  style: retro.heading(size: 13, color: retro.accent)),
+              Text(
+                l10n.linksHeroTitle,
+                style: retro.heading(size: 13, color: retro.accent),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -228,14 +221,14 @@ class _LinkData {
     required this.url,
     required this.subtitle,
     required this.icon,
-    required this.kind,
+    this.isPrimary = false,
   });
 
   final String title;
   final String url;
   final String subtitle;
   final IconData icon;
-  final String kind;
+  final bool isPrimary;
 }
 
 // ── Section ──────────────────────────────────────────────────────────────────
@@ -315,10 +308,13 @@ class _LinkCardState extends State<_LinkCard>
   }
 
   Future<void> _open(BuildContext context) async {
-    HapticFeedback.selectionClick();
+    await HapticFeedback.selectionClick();
     final uri = Uri.parse(widget.link.url);
     try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (opened || !context.mounted) return;
+      final l10n = AppLocalizations.of(context);
+      AppSnackbar.error(context, message: l10n.linksCouldNotOpen);
     } catch (_) {
       if (!context.mounted) return;
       final l10n = AppLocalizations.of(context);
@@ -327,7 +323,7 @@ class _LinkCardState extends State<_LinkCard>
   }
 
   Future<void> _copy(BuildContext context) async {
-    HapticFeedback.mediumImpact();
+    await HapticFeedback.mediumImpact();
     await Clipboard.setData(ClipboardData(text: widget.link.url));
     if (!context.mounted) return;
     final l10n = AppLocalizations.of(context);
@@ -338,90 +334,100 @@ class _LinkCardState extends State<_LinkCard>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
 
-    return GestureDetector(
-      onTapDown: (_) => _pressCtrl.forward(),
-      onTapUp: (_) => _pressCtrl.reverse(),
-      onTapCancel: () => _pressCtrl.reverse(),
+    return Semantics(
+      button: true,
+      label: '${widget.link.title}. ${widget.link.subtitle}',
       onTap: () => _open(context),
       onLongPress: () => _copy(context),
-      child: AnimatedBuilder(
-        animation: _pressCtrl,
-        builder: (context, child) {
-          final offset = 3.0 * _pressCtrl.value;
-          return Transform.translate(
-            offset: Offset(offset, offset),
-            child: Container(
-              decoration: BoxDecoration(
-                color: retro.surface,
-                border: Border.all(color: retro.border, width: 2),
-                boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
-              ),
-              child: child,
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                alignment: Alignment.center,
+      child: GestureDetector(
+        excludeFromSemantics: true,
+        onTapDown: (_) => _pressCtrl.forward(),
+        onTapUp: (_) => _pressCtrl.reverse(),
+        onTapCancel: () => _pressCtrl.reverse(),
+        onTap: () => _open(context),
+        onLongPress: () => _copy(context),
+        child: AnimatedBuilder(
+          animation: _pressCtrl,
+          builder: (context, child) {
+            final offset = 3.0 * _pressCtrl.value;
+            return Transform.translate(
+              offset: Offset(offset, offset),
+              child: Container(
                 decoration: BoxDecoration(
-                  color: widget.accent.withValues(alpha: 0.18),
-                  border: Border.all(color: widget.accent, width: 2),
+                  color: retro.surface,
+                  border: Border.all(color: retro.border, width: 2),
+                  boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
                 ),
-                child: Icon(widget.link.icon, size: 20, color: widget.accent),
+                child: child,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            widget.link.title,
-                            style: retro.heading(size: 14, letterSpacing: -0.1),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 1.5,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: retro.inkDim, width: 1),
-                          ),
-                          child: Text(
-                            widget.link.kind,
-                            style: retro.heading(
-                              size: 8,
-                              color: retro.inkDim,
-                              letterSpacing: 0.3,
-                            ),
-                          ),
-                        ),
-                      ],
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(12, 13, 10, 13),
+            decoration: widget.link.isPrimary
+                ? BoxDecoration(
+                    color: widget.accent.withValues(alpha: 0.08),
+                    border: Border(
+                      left: BorderSide(color: widget.accent, width: 4),
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      widget.link.subtitle,
-                      style: retro.body(size: 11.5),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                  )
+                : null,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 46,
+                  height: 46,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: widget.accent.withValues(alpha: 0.18),
+                    border: Border.all(color: widget.accent, width: 2),
+                  ),
+                  child: Icon(widget.link.icon, size: 22, color: widget.accent),
                 ),
-              ),
-              const SizedBox(width: 6),
-              Icon(Icons.chevron_right_rounded, size: 20, color: retro.inkDim),
-            ],
+                const SizedBox(width: 13),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.link.title,
+                        style: retro.heading(
+                          size: 14,
+                          color: widget.link.isPrimary
+                              ? widget.accent
+                              : retro.ink,
+                          letterSpacing: -0.1,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.link.subtitle,
+                        style: retro.body(size: 11.5, color: retro.inkDim),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Container(
+                  width: 32,
+                  height: 32,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: retro.border, width: 1.5),
+                  ),
+                  child: Icon(
+                    Icons.north_east_rounded,
+                    size: 17,
+                    color: widget.link.isPrimary ? widget.accent : retro.inkDim,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

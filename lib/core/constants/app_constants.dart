@@ -8,6 +8,7 @@ class AppConstants {
   static const String ommRebirthAssetPath = 'assets/db/omm.json';
   static const String render96AssetPath = 'assets/db/render96.json';
   static const String settingsBoxKey = 'settings';
+  static const String installationLibraryBoxKey = 'installation_library_v1';
 
   static const int pageSize = 6;
   static const int descriptionMaxLen = 200;
@@ -23,6 +24,7 @@ class AppConstants {
       'https://github.com/retired64/sm64cdpy.releases/releases/latest';
   static const String dataSourceUrl = 'https://mods.sm64coopdx.com';
   static const String officialweb = 'https://sm64coopdx.com';
+  static const String appWebsiteUrl = 'https://sm64cdpy.org/';
 
   // ── Remote JSON URLs for extra sections ──────────────────────────────────
   static const String vipModsRemoteUrl =

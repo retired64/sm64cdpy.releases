@@ -8,8 +8,8 @@ integration, and catalogue updates into a single mobile interface instead of
 requiring users to move repeatedly between a browser, file manager, and the
 game.
 
-The project is currently returning to active maintenance. Its declared version
-is **1.7.0+18**. The floating overlay introduced for the 1.7 line is implemented
+The project is under active maintenance. Its declared version is **1.8.0+19**.
+The floating overlay introduced for the 1.7 line is implemented
 but remains experimental until it completes broader testing on real Android
 devices and across process recreation scenarios.
 
@@ -49,6 +49,8 @@ in-game mod workflow.
 - Browse dedicated VIP, DynOS, Touch Controls, OMM Rebirth, and Render96
   sections.
 - Save favourites locally and import or export them as JSON.
+- Review installed, recently changed, externally detected, and updateable
+  content in the local Library.
 - Use English, Spanish, or Brazilian Portuguese with light and dark themes.
 - Refresh bundled catalogues from their remote JSON sources.
 - Select persistent destination folders with Android's system folder picker.

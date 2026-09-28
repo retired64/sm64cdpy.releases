@@ -43,13 +43,7 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
 
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          pinned: true,
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: const DrawerMenuButton(),
+        RetroPinnedAppBar(
           title: Text(l10n.favouritesTitle, style: retro.heading(size: 18)),
           bottom: TabBar(
             controller: _tabController,
@@ -240,11 +234,16 @@ class _EmptyFavourites extends StatelessWidget {
 
     String emptyTitle() {
       switch (type) {
-        case 'mods': return l10n.favEmptyMods;
-        case 'VIP mods': return l10n.favEmptyVip;
-        case 'DynOS': return l10n.favEmptyDynos;
-        case 'Touch Controls': return l10n.favEmptyTouch;
-        default: return 'No $type favourited yet';
+        case 'mods':
+          return l10n.favEmptyMods;
+        case 'VIP mods':
+          return l10n.favEmptyVip;
+        case 'DynOS':
+          return l10n.favEmptyDynos;
+        case 'Touch Controls':
+          return l10n.favEmptyTouch;
+        default:
+          return 'No $type favourited yet';
       }
     }
 
@@ -265,10 +264,7 @@ class _EmptyFavourites extends StatelessWidget {
           const SizedBox(height: 16),
           Text(emptyTitle(), style: retro.heading(size: 18)),
           const SizedBox(height: 8),
-          Text(
-            l10n.favEmptyHint(type),
-            style: retro.body(size: 13),
-          ),
+          Text(l10n.favEmptyHint(type), style: retro.body(size: 13)),
           const SizedBox(height: 24),
           GestureDetector(
             onTap: () => context.go(

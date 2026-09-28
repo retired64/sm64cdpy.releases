@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../domain/entities/install_identity.dart';
 import 'mod_installer.dart';
 
 enum BgInstallStatus {
@@ -99,6 +100,7 @@ class BgInstallInfo {
     this.downloadWorkId,
     this.installWorkId,
     this.installDestination,
+    this.identity,
   });
 
   final String modName;
@@ -115,6 +117,7 @@ class BgInstallInfo {
   final String? downloadWorkId;
   final String? installWorkId;
   final String? installDestination;
+  final InstallIdentity? identity;
 }
 
 class BackgroundInstallService {
@@ -158,6 +161,14 @@ class BackgroundInstallService {
       final list = jsonDecode(raw) as List<dynamic>;
       for (final entry in list) {
         if (entry is! Map<String, dynamic>) continue;
+        InstallIdentity? identity;
+        try {
+          if (entry['identitySchemaVersion'] != null) {
+            identity = InstallIdentity.fromMap(entry);
+          }
+        } catch (error) {
+          debugPrint('Ignoring invalid persisted install identity: $error');
+        }
         final statusStr = entry['status'] as String? ?? 'pending';
         _infoMap.putIfAbsent(
           entry['modName'] as String,
@@ -176,6 +187,7 @@ class BackgroundInstallService {
             downloadWorkId: entry['downloadWorkId'] as String?,
             installWorkId: entry['installWorkId'] as String?,
             installDestination: entry['installDestination'] as String?,
+            identity: identity,
           ),
         );
       }
@@ -185,12 +197,16 @@ class BackgroundInstallService {
             (info) => info.downloadWorkId != null || info.installWorkId != null,
           )
           .map(
-            (info) => <String, String>{
+            (info) => <String, dynamic>{
               'modName': info.modName,
               if (info.downloadWorkId != null)
                 'downloadWorkId': info.downloadWorkId!,
               if (info.installWorkId != null)
                 'installWorkId': info.installWorkId!,
+              if (info.displayTitle != null) 'displayTitle': info.displayTitle!,
+              if (info.installDestination != null)
+                'installDestination': info.installDestination!,
+              if (info.identity != null) ...info.identity!.toMap(),
             },
           )
           .toList();
@@ -299,6 +315,7 @@ class BackgroundInstallService {
               'installDestination': e.value.installDestination,
             if (e.value.displayTitle != null)
               'displayTitle': e.value.displayTitle,
+            if (e.value.identity != null) ...e.value.identity!.toMap(),
           },
         )
         .toList();
@@ -339,6 +356,7 @@ class BackgroundInstallService {
       downloadWorkId: previous?.downloadWorkId,
       installWorkId: previous?.installWorkId,
       installDestination: previous?.installDestination,
+      identity: previous?.identity,
     );
     _infoMap[modName] = info;
     _controller.add(BgOperationCancelled(modName: modName, workId: ''));
@@ -354,6 +372,7 @@ class BackgroundInstallService {
     String? displayTitle,
     String? notificationTitle,
     String installDestination = 'mods',
+    InstallIdentity? identity,
   }) async {
     final installer = ModInstaller();
 
@@ -365,6 +384,7 @@ class BackgroundInstallService {
         displayTitle: displayTitle,
         notificationTitle: notificationTitle,
         installDestination: installDestination,
+        identity: identity,
       );
 
       if (chainResult == null) return null;
@@ -379,6 +399,7 @@ class BackgroundInstallService {
         downloadWorkId: chainResult.downloadWorkId,
         installWorkId: chainResult.installWorkId,
         installDestination: installDestination,
+        identity: identity,
       );
       _infoMap[modName] = info;
 
@@ -396,6 +417,7 @@ class BackgroundInstallService {
         error: e.toString(),
         displayTitle: displayTitle,
         installDestination: installDestination,
+        identity: identity,
       );
       _controller.add(
         BgInstallError(modName: modName, workId: '', error: e.toString()),
@@ -457,6 +479,16 @@ class BackgroundInstallService {
 
     if (modName == null) return;
     final previousInfo = _infoMap[modName];
+    final eventDisplayTitle = map['displayTitle'] as String?;
+    final eventDestination = map['installDestination'] as String?;
+    InstallIdentity? eventIdentity;
+    try {
+      if (map['identitySchemaVersion'] != null) {
+        eventIdentity = InstallIdentity.fromMap(map);
+      }
+    } catch (error) {
+      debugPrint('Ignoring invalid native install identity: $error');
+    }
 
     switch (type) {
       case 'download_progress':
@@ -629,12 +661,35 @@ class BackgroundInstallService {
         fileCount: currentInfo.fileCount,
         targetDir: currentInfo.targetDir,
         error: currentInfo.error,
-        displayTitle: currentInfo.displayTitle ?? previousInfo.displayTitle,
+        displayTitle:
+            currentInfo.displayTitle ??
+            eventDisplayTitle ??
+            previousInfo.displayTitle,
         downloadWorkId:
             currentInfo.downloadWorkId ?? previousInfo.downloadWorkId,
         installWorkId: currentInfo.installWorkId ?? previousInfo.installWorkId,
         installDestination:
-            currentInfo.installDestination ?? previousInfo.installDestination,
+            currentInfo.installDestination ??
+            eventDestination ??
+            previousInfo.installDestination,
+        identity:
+            currentInfo.identity ?? eventIdentity ?? previousInfo.identity,
+      );
+    } else if (currentInfo != null && eventIdentity != null) {
+      _infoMap[modName] = BgInstallInfo(
+        modName: currentInfo.modName,
+        status: currentInfo.status,
+        phase: currentInfo.phase,
+        workId: currentInfo.workId,
+        downloadProgress: currentInfo.downloadProgress,
+        current: currentInfo.current,
+        total: currentInfo.total,
+        fileCount: currentInfo.fileCount,
+        targetDir: currentInfo.targetDir,
+        error: currentInfo.error,
+        displayTitle: eventDisplayTitle,
+        installDestination: eventDestination,
+        identity: eventIdentity,
       );
     }
     unawaited(_persistToPrefs());

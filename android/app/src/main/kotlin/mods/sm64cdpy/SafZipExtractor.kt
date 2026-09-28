@@ -35,10 +35,173 @@ import org.apache.commons.compress.archivers.sevenz.SevenZFile
  * (ruta sincrónica installMod / installModToDynosFolder).
  */
 object SafZipExtractor {
+    const val MAX_SENTINELS = 32
+
+    enum class PackageShape(val wireValue: String) {
+        LOOSE_FILE("loose_file"),
+        SINGLE_ROOT("single_root"),
+        MULTIPLE_ROOTS("multiple_roots"),
+        ROOT_FILES("root_files")
+    }
+
+    data class WrittenEntry(
+        val relativePath: String,
+        val kind: String = "file"
+    )
+
+    data class WriteManifest(
+        val fileCount: Int,
+        val packageShape: PackageShape,
+        val sentinels: List<WrittenEntry>
+    )
+
+    /** Tracks newly-created SAF entries so an interrupted install can remove
+     * its partial files without deleting files that existed beforehand. */
+    class WriteJournal {
+        private val newFiles = linkedSetOf<String>()
+        private val newDirectories = linkedSetOf<String>()
+        private var rolledBack = false
+
+        @Synchronized
+        internal fun recordFile(path: String, existedBefore: Boolean) {
+            if (rolledBack) return
+            if (!existedBefore) newFiles += sanitizeEntryName(path)
+        }
+
+        @Synchronized
+        internal fun recordDirectory(path: String, existedBefore: Boolean) {
+            if (rolledBack) return
+            if (!existedBefore) newDirectories += sanitizeEntryName(path)
+        }
+
+        /**
+         * Rollback is deliberately non-throwing. A DocumentsProvider may
+         * disappear, revoke access or reject list/delete while WorkManager is
+         * already cancelling; cleanup failure must never crash the process.
+         */
+        @Synchronized
+        fun rollback(root: DocumentFile) {
+            if (rolledBack) return
+            rolledBack = true
+            val files = newFiles.toList().asReversed()
+            val directories = newDirectories
+                .sortedByDescending { it.count { char -> char == '/' } }
+            files.forEach { safeDeletePath(root, it, false) }
+            directories.forEach { safeDeletePath(root, it, true) }
+            newFiles.clear()
+            newDirectories.clear()
+        }
+
+        private fun safeDeletePath(root: DocumentFile, path: String, directory: Boolean) {
+            try {
+                val segments = path.split('/').filter(String::isNotEmpty)
+                if (segments.isEmpty()) return
+                var parent = root
+                for (segment in segments.dropLast(1)) {
+                    parent = parent.findFile(segment)?.takeIf { it.isDirectory } ?: return
+                }
+                val target = parent.findFile(segments.last()) ?: return
+                if (!directory || (target.isDirectory && target.listFiles().isEmpty())) {
+                    target.delete()
+                }
+            } catch (error: Exception) {
+                Log.w("ModInstall", "Could not roll back SAF entry: $path", error)
+            }
+        }
+    }
+
+    /**
+     * Keeps only the information needed to verify an installation later.
+     * Memory use is bounded even for archives containing thousands of files.
+     */
+    private class ManifestBuilder(
+        private val looseFile: Boolean = false
+    ) {
+        private var fileCount = 0
+        private var hasRootFiles = false
+        private var rootCountForShape = 0
+        private var firstRoot: String? = null
+        private val luaEntrypoints = sortedSetOf<String>()
+        private val firstPathByRoot = sortedMapOf<String, String>()
+        private val lexicographicPaths = sortedSetOf<String>()
+
+        val currentFileCount: Int
+            get() = fileCount
+
+        fun record(relativePath: String) {
+            val path = sanitizeEntryName(relativePath)
+            if (path.isEmpty()) return
+
+            fileCount++
+            val slash = path.indexOf('/')
+            if (slash < 0) {
+                hasRootFiles = true
+            } else {
+                val root = path.substring(0, slash)
+                if (firstRoot == null) {
+                    firstRoot = root
+                    rootCountForShape = 1
+                } else if (firstRoot != root) {
+                    rootCountForShape = 2
+                }
+                val previous = firstPathByRoot[root]
+                if (previous == null || path < previous) firstPathByRoot[root] = path
+                while (firstPathByRoot.size > MAX_SENTINELS) {
+                    firstPathByRoot.remove(firstPathByRoot.lastKey())
+                }
+            }
+
+            val basename = path.substringAfterLast('/')
+            if (basename == "main.lua" || basename == "mod.lua") {
+                keepSmallest(luaEntrypoints, path)
+            }
+            keepSmallest(lexicographicPaths, path)
+        }
+
+        fun build(): WriteManifest {
+            val selected = linkedSetOf<String>()
+            fun add(paths: Iterable<String>) {
+                for (path in paths) {
+                    if (selected.size >= MAX_SENTINELS) break
+                    selected += path
+                }
+            }
+
+            add(luaEntrypoints)
+            if (looseFile) add(lexicographicPaths)
+            add(firstPathByRoot.values)
+            add(lexicographicPaths)
+
+            val shape = when {
+                looseFile -> PackageShape.LOOSE_FILE
+                hasRootFiles -> PackageShape.ROOT_FILES
+                rootCountForShape == 1 -> PackageShape.SINGLE_ROOT
+                else -> PackageShape.MULTIPLE_ROOTS
+            }
+            return WriteManifest(
+                fileCount = fileCount,
+                packageShape = shape,
+                sentinels = selected.map(::WrittenEntry)
+            )
+        }
+
+        private fun keepSmallest(paths: java.util.SortedSet<String>, path: String) {
+            paths += path
+            if (paths.size > MAX_SENTINELS) paths.remove(paths.last())
+        }
+    }
+
+    internal fun buildManifestForPaths(
+        paths: Iterable<String>,
+        looseFile: Boolean = false
+    ): WriteManifest = ManifestBuilder(looseFile).apply {
+        paths.forEach(::record)
+    }.build()
 
     /**
      * Extrae el contenido de [zipFile] dentro de [targetDir] (raíz del árbol SAF).
-     * Retorna el número de archivos extraídos.
+     * Retorna el conteo, forma del paquete y una huella acotada de rutas
+     * escritas que podrá verificarse más adelante contra el árbol SAF.
      *
      * [onProgress] (opcional, suspend) se invoca tras cada archivo escrito con
      * el conteo acumulado — el caller decide el throttling de progreso y
@@ -51,9 +214,10 @@ object SafZipExtractor {
         zipFile: File,
         targetDir: DocumentFile,
         context: Context,
+        journal: WriteJournal? = null,
         onProgress: (suspend (fileCount: Int) -> Unit)? = null
-    ): Int {
-        var fileCount = 0
+    ): WriteManifest {
+        val manifest = ManifestBuilder()
         val createdDirs = mutableMapOf<String, DocumentFile>()
 
         ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
@@ -69,7 +233,7 @@ object SafZipExtractor {
                         if (slashIdx > 0) {
                             val dirPath = entryName.substring(0, slashIdx)
                             val simpleName = entryName.substring(slashIdx + 1)
-                            parentDir = getOrCreateDir(createdDirs, targetDir, dirPath)
+                            parentDir = getOrCreateDir(createdDirs, targetDir, dirPath, journal)
                             fileName = simpleName
                         } else {
                             parentDir = targetDir
@@ -77,13 +241,16 @@ object SafZipExtractor {
                         }
 
                         if (parentDir == targetDir || (parentDir.exists() && parentDir.isDirectory)) {
-                            parentDir.findFile(fileName)?.delete()
+                            val existing = parentDir.findFile(fileName)
+                            val existedBefore = existing != null
+                            existing?.delete()
 
                             val outputFile = parentDir.createFile(
                                 "application/octet-stream", fileName
                             ) ?: throw SecurityException(
                                 "Lost SAF access during extraction: cannot create $fileName"
                             )
+                            journal?.recordFile(entryName, existedBefore)
 
                             context.contentResolver
                                 .openOutputStream(outputFile.uri)?.use { os ->
@@ -94,8 +261,8 @@ object SafZipExtractor {
                                     "Lost SAF access during extraction: cannot open $fileName"
                                 )
 
-                            fileCount++
-                            onProgress?.invoke(fileCount)
+                            manifest.record(entryName)
+                            onProgress?.invoke(manifest.currentFileCount)
                         }
                     }
                 }
@@ -103,7 +270,7 @@ object SafZipExtractor {
             }
         }
 
-        return fileCount
+        return manifest.build()
     }
 
     /**
@@ -112,31 +279,35 @@ object SafZipExtractor {
      * del archivo (que ya trae la extensión correcta, ver ModDownloadWorker /
      * capa Dart que arma el fileName).
      *
-     * Retorna false si no se pudo crear o escribir el archivo destino — el
+     * Retorna null si no se pudo crear o escribir el archivo destino — el
      * caller decide cómo reportar el fallo (ModInstallWorker lo convierte en
      * Result.failure, así que el error no es silencioso).
      */
     fun copyFileToTree(
         sourceFile: File,
         targetDir: DocumentFile,
-        context: Context
-    ): Boolean {
+        context: Context,
+        journal: WriteJournal? = null
+    ): WriteManifest? {
         return try {
             val mimeType = guessMimeType(sourceFile.name)
-            targetDir.findFile(sourceFile.name)?.delete()
+            val existing = targetDir.findFile(sourceFile.name)
+            val existedBefore = existing != null
+            existing?.delete()
             val outputFile = targetDir.createFile(mimeType, sourceFile.name)
-                ?: return false
+                ?: return null
+            journal?.recordFile(sourceFile.name, existedBefore)
 
             context.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
                 FileInputStream(sourceFile).use { input ->
                     input.copyTo(os)
                 }
                 os.flush()
-            } ?: return false
+            } ?: return null
 
-            true
+            ManifestBuilder(looseFile = true).apply { record(sourceFile.name) }.build()
         } catch (_: Exception) {
-            false
+            null
         }
     }
 
@@ -238,7 +409,8 @@ object SafZipExtractor {
     private fun getOrCreateDir(
         cache: MutableMap<String, DocumentFile>,
         root: DocumentFile,
-        path: String
+        path: String,
+        journal: WriteJournal? = null
     ): DocumentFile {
         val cached = cache[path]
         if (cached != null) return cached
@@ -257,11 +429,16 @@ object SafZipExtractor {
             }
 
             val existing = current.findFile(part)
+            val existedBefore = existing != null && existing.isDirectory
             current = if (existing != null && existing.isDirectory) {
                 existing
             } else {
-                current.createDirectory(part) ?: current
+                current.createDirectory(part) ?: throw SecurityException(
+                    "Lost SAF access during extraction: cannot create directory $currentPath"
+                )
             }
+
+            journal?.recordDirectory(currentPath, existedBefore)
 
             cache[currentPath] = current
         }
@@ -289,7 +466,8 @@ object SafZipExtractor {
      *
      * [totalBytes]: suma total de bytes de todas las entradas del archivo,
      * obtenida de antemano con [countSevenZTotalBytes] (mismo patrón que
-     * [countZipEntries] para el path de ZIP). Con esto, [onProgress] reporta
+     * [countZipEntries] para el path de ZIP). Retorna el mismo manifiesto
+     * verificable y acotado que la ruta ZIP. Con esto, [onProgress] reporta
      * el porcentaje sobre TODO el archivo, no sobre la entrada individual
      * que se está copiando — ese era el bug real detrás de la notificación
      * y la barra de progreso quedándose "congeladas": antes el porcentaje
@@ -313,9 +491,10 @@ object SafZipExtractor {
         targetDir: DocumentFile,
         context: Context,
         totalBytes: Long = 0L,
+        journal: WriteJournal? = null,
         onProgress: (suspend (percent: Int) -> Unit)? = null
-    ): Int {
-        var fileCount = 0
+    ): WriteManifest {
+        val manifest = ManifestBuilder()
         var bytesReadSoFar = 0L
         val createdDirs = mutableMapOf<String, DocumentFile>()
 
@@ -332,7 +511,7 @@ object SafZipExtractor {
                         if (slashIdx > 0) {
                             val dirPath = entryName.substring(0, slashIdx)
                             val simpleName = entryName.substring(slashIdx + 1)
-                            parentDir = getOrCreateDir(createdDirs, targetDir, dirPath)
+                            parentDir = getOrCreateDir(createdDirs, targetDir, dirPath, journal)
                             fileName = simpleName
                         } else {
                             parentDir = targetDir
@@ -340,13 +519,16 @@ object SafZipExtractor {
                         }
 
                         if (parentDir == targetDir || (parentDir.exists() && parentDir.isDirectory)) {
-                            parentDir.findFile(fileName)?.delete()
+                            val existing = parentDir.findFile(fileName)
+                            val existedBefore = existing != null
+                            existing?.delete()
 
                             val outputFile = parentDir.createFile(
                                 "application/octet-stream", fileName
                             ) ?: throw SecurityException(
                                 "Lost SAF access during 7z extraction: cannot create $fileName"
                             )
+                            journal?.recordFile(entryName, existedBefore)
 
                             context.contentResolver
                                 .openOutputStream(outputFile.uri)?.use { os ->
@@ -380,7 +562,7 @@ object SafZipExtractor {
                                     "Lost SAF access during 7z extraction: cannot open $fileName"
                                 )
 
-                            fileCount++
+                            manifest.record(entryName)
                         }
                     }
                 }
@@ -388,6 +570,6 @@ object SafZipExtractor {
             }
         }
 
-        return fileCount
+        return manifest.build()
     }
 }

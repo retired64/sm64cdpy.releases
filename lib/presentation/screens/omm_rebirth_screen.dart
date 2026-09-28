@@ -12,15 +12,18 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/omm_rebirth_entity.dart';
+import '../../domain/entities/install_identity.dart';
+import '../../domain/entities/installation_action.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
-import '../providers/mod_providers.dart';
+import '../providers/installation_action_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/dynos_install_flow.dart';
 import '../../l10n/app_localizations.dart';
+import '../widgets/installation_action_presentation.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -43,10 +46,24 @@ class _OmmRebirthScreenState extends ConsumerState<OmmRebirthScreen> {
   @override
   Widget build(BuildContext context) {
     final ommAsync = ref.watch(allOmmRebirthProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final title = Text(
+      l10n.ommTitle,
+      style: retro.heading(size: 16, color: retro.accent),
+    );
 
     return ommAsync.when(
-      loading: () => const _OmmSkeleton(),
-      error: (e, _) => _OmmError(message: e.toString()),
+      loading: () => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.accent,
+        child: const _OmmSkeleton(),
+      ),
+      error: (e, _) => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.accent,
+        child: _OmmError(message: e.toString()),
+      ),
       data: (mods) => _OmmBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
@@ -71,15 +88,8 @@ class _OmmBody extends StatelessWidget {
       ),
       slivers: [
         // ── App bar ───────────────────────────────────────────
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: DrawerMenuButton(color: retro.accent),
+        RetroPinnedAppBar(
+          leadingColor: retro.accent,
           title: Text(
             l10n.ommTitle,
             style: retro.heading(size: 16, color: retro.accent),
@@ -158,8 +168,14 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   bool _downloading = false;
   double _progress = 0.0;
 
-  String get _operationName =>
-      sanitizeModTitle('omm-${widget.mod.id}-${widget.mod.title}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.omm,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+    versionLabel: widget.mod.version,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   @override
   void initState() {
@@ -229,45 +245,12 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
       if (isDynosMod) {
         if (!mounted) return;
         final goToSettings = await showDynosFolderRequiredDialog(context);
-        if (goToSettings && mounted) GoRouter.of(context).push('/settings');
+        if (goToSettings && mounted) GoRouter.of(context).go('/settings');
         return;
       } else if (mounted) {
-        final l10n = AppLocalizations.of(context);
-        final goToSettings = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-            icon: Icon(
-              Icons.folder_open_rounded,
-              color: RetroTheme.of(ctx).accent,
-              size: 28,
-            ),
-            title: Text(
-              l10n.detailModsFolderNotSelected,
-              style: TextStyle(color: RetroTheme.of(ctx).ink),
-            ),
-            content: Text(
-              l10n.detailModsFolderBody,
-              style: TextStyle(color: RetroTheme.of(ctx).inkDim),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(
-                  l10n.detailCancel,
-                  style: TextStyle(color: RetroTheme.of(ctx).ink),
-                ),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                icon: const Icon(Icons.settings, size: 16),
-                label: Text(l10n.detailGoToSettings),
-              ),
-            ],
-          ),
-        );
-        if (goToSettings == true && mounted) {
-          GoRouter.of(context).push('/settings');
+        final goToSettings = await showModsFolderRequiredDialog(context);
+        if (goToSettings && mounted) {
+          GoRouter.of(context).go('/settings');
         }
         return;
       }
@@ -301,6 +284,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
               fileName: filename,
               displayTitle: widget.mod.title,
               installDestination: 'dynos',
+              identity: _identity,
             );
         if (!mounted) return;
         if (chain == null) {
@@ -334,6 +318,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
             modName: rawName,
             fileName: filename,
             displayTitle: widget.mod.title,
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain != null) {
@@ -414,7 +399,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                   context,
                 );
                 if (goToSettings && mounted) {
-                  GoRouter.of(context).push('/settings');
+                  GoRouter.of(context).go('/settings');
                 }
                 if (mounted) {
                   setState(() {
@@ -508,23 +493,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(ommFavouritesProvider).contains(widget.mod.id);
-    final backgroundInfo = ref.watch(bgInstallStateProvider)[_operationName];
-    final backgroundBusy =
-        backgroundInfo != null &&
-        (backgroundInfo.status == BgInstallStatus.pending ||
-            backgroundInfo.status == BgInstallStatus.downloading ||
-            backgroundInfo.status == BgInstallStatus.installing);
-    final isDownloading = _downloading || backgroundBusy;
-    final visibleProgress = _downloading
-        ? _progress
-        : backgroundInfo?.status == BgInstallStatus.downloading
-        ? (backgroundInfo?.downloadProgress ?? 0) / 100
-        : backgroundInfo?.status == BgInstallStatus.installing &&
-              backgroundInfo?.current != null &&
-              backgroundInfo?.total != null &&
-              backgroundInfo!.total! > 0
-        ? backgroundInfo.current! / backgroundInfo.total!
-        : null;
+    final actionState = ref.watch(installationActionProvider(_identity));
+    final action = actionState.primaryAction;
+    final isDownloading = _downloading || actionState.isOperationActive;
+    final visibleProgress = _downloading ? _progress : actionState.progress;
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
         ? 140.0
@@ -706,7 +678,19 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                               : retro.hardShadow(dx: 4, dy: 4),
                         ),
                         child: ElevatedButton(
-                          onPressed: isDownloading ? null : _download,
+                          onPressed:
+                              (_downloading &&
+                                      !actionState.isOperationActive) ||
+                                  action ==
+                                      InstallationPrimaryAction.checking ||
+                                  action == InstallationPrimaryAction.installed
+                              ? null
+                              : () => runCanonicalInstallationAction(
+                                  context: context,
+                                  ref: ref,
+                                  state: actionState,
+                                  onTransfer: _download,
+                                ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.red,
                             foregroundColor: Colors.white,
@@ -736,8 +720,8 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                       const SizedBox(height: 4),
                                       Text(
                                         visibleProgress == null
-                                            ? l10n.detailInstalling
-                                            : '${(visibleProgress * 100).toStringAsFixed(0)}%',
+                                            ? action.label(l10n)
+                                            : '${(visibleProgress * 100).toStringAsFixed(0)}% · ${action.label(l10n)}',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 11,
@@ -750,10 +734,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                               : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.download_rounded, size: 18),
+                                    Icon(action.icon, size: 18),
                                     SizedBox(width: 8),
                                     Text(
-                                      l10n.sharedDownload,
+                                      action.label(l10n),
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900,
@@ -765,6 +749,15 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                         ),
                       ),
                     ),
+                    if (actionState.canReinstall)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: _download,
+                          icon: const Icon(Icons.refresh_rounded, size: 15),
+                          label: Text(l10n.installationReinstall),
+                        ),
+                      ),
                   ],
                 ),
               ),

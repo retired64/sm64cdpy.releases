@@ -66,6 +66,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.9.1")
     implementation("org.apache.commons:commons-compress:1.26.2")
     implementation("org.tukaani:xz:1.9")
+    testImplementation("junit:junit:4.13.2")
 }
 
 val abiCodes = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86_64" to 3)

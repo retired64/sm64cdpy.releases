@@ -51,6 +51,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sectionExclusive => 'EXCLUSIVO';
 
   @override
+  String get sectionNavigation => 'NAVEGACIÓN';
+
+  @override
   String get sectionExplore => 'EXPLORAR';
 
   @override
@@ -478,6 +481,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sharedDownload => 'DESCARGAR';
+
+  @override
+  String get installationChecking => 'COMPROBANDO...';
+
+  @override
+  String get installationCancel => 'CANCELAR';
+
+  @override
+  String get installationInstalled => 'INSTALADO';
+
+  @override
+  String get installationUpdate => 'ACTUALIZAR';
+
+  @override
+  String get installationInstall => 'INSTALAR';
+
+  @override
+  String get installationReinstall => 'REINSTALAR';
+
+  @override
+  String get installationVerify => 'VERIFICAR';
+
+  @override
+  String get installationSelectFolder => 'SELECCIONAR CARPETA';
 
   @override
   String get sharedReadMore => 'LEER MÁS';
@@ -1028,6 +1055,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get linksWebsiteUrl => 'sm64coopdx.com';
 
   @override
+  String get linksAppWebsite => 'Sitio oficial de SM64CDPY';
+
+  @override
+  String get linksAppWebsiteDesc =>
+      'Novedades, descargas e información del proyecto';
+
+  @override
   String get linksKindWeb => 'WEB';
 
   @override
@@ -1119,47 +1153,61 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get disclaimerWarningBody =>
-      'Esta app es un proyecto personal. Cualquier problema relacionado con ella (Funcionalidad, errores, etc.) es responsabilidad exclusiva del desarrollador. Los desarrolladores de SM64CoopDX y los creadores de mods no tienen ninguna responsabilidad sobre esta aplicación.';
+      'SM64CDPY es software independiente. Las preguntas, problemas técnicos y solicitudes relacionadas con esta aplicación deben dirigirse al desarrollador de SM64CDPY, no a Nintendo, al equipo de SM64CoopDX ni a los autores de los mods listados.';
 
   @override
   String get disclaimerCouldNotOpenLink => 'No se pudo abrir el enlace';
 
   @override
-  String get disclaimerSectionPersonalPurpose => 'Propósito personal';
+  String get disclaimerSectionPersonalPurpose => 'Acerca de esta aplicación';
 
   @override
   String get disclaimerBodyPersonalPurpose =>
-      'Esta aplicación fue desarrollada de forma independiente como un proyecto personal. Su único objetivo es facilitarme el acceso, organización y descarga de mods que uso para mi propio entretenimiento. No es una aplicación respaldada por el equipo de SM64CoopDX ni un servicio oficial de ningún tipo.';
+      'SM64CDPY es un catálogo y gestor independiente para Android de mods de SM64CoopDX creados por la comunidad. Permite explorar, descargar, organizar e instalar contenido compatible en carpetas elegidas por el usuario. La aplicación no distribuye ni instala Super Mario 64, archivos ROM, SM64CoopDX ni versiones de SM64CoopDX para Android. Tampoco solicita, verifica ni ofrece instrucciones para obtener archivos del juego.';
 
   @override
   String get disclaimerSectionNoAffiliation => 'Sin afiliación oficial';
 
   @override
   String get disclaimerBodyNoAffiliation =>
-      'Este proyecto no está asociado, respaldado ni aprobado por los desarrolladores de SM64CoopDX, Super Mario 64, Nintendo, ni por ninguno de los creadores de los mods listados. Los nombres, imágenes y contenido mostrados pertenecen a sus respectivos autores.';
+      'Este proyecto no está asociado, respaldado ni aprobado por Nintendo, el equipo de SM64CoopDX ni los autores de los mods listados. Los nombres de productos y las marcas solo identifican compatibilidad. Los títulos, descripciones, imágenes, archivos y demás material acreditado pertenecen a sus respectivos autores o titulares.';
 
   @override
   String get disclaimerSectionDataSource => 'Fuente de datos';
 
   @override
   String get disclaimerBodyDataSource =>
-      'La información de los mods proviene del catálogo público de mods.sm64coopdx.com. Esta app únicamente presenta esa información de manera más accesible; no aloja, modifica ni redistribuye ningún archivo de mod.';
+      'El catálogo principal presenta publicaciones comunitarias públicas de Coop DX Mods (mods.sm64coopdx.com) y conserva el autor, título, fechas, versiones y fuente publicados. SM64CDPY proporciona una interfaz móvil y obtiene las descargas desde la fuente ofrecida para cada recurso; aparecer en el catálogo no implica propiedad ni respaldo oficial de SM64CDPY.';
 
   @override
   String get disclaimerSectionExclusive =>
-      'Secciones exclusivas (VIP · DynOS · Touch Controls)';
+      'Secciones curadas (VIP · DynOS · Touch Controls)';
 
   @override
   String disclaimerBodyExclusive(Object version) {
-    return 'A partir de la v$version, la app incluye secciones curadas con contenido que no está listado oficialmente en el sitio de SM64CoopDX. Estas secciones (VIP Mods, packs de DynOS y layouts de Touch Controls) son mantenidas de forma independiente por el desarrollador y no tienen ninguna afiliación con ninguna fuente oficial. Todo el crédito pertenece a los creadores originales.';
+    return 'En la v$version, VIP Mods, paquetes DynOS, controles táctiles, OMM Rebirth y Render96 pueden usar fuentes curadas de forma independiente. Cuando el contenido no fue creado por el desarrollador de SM64CDPY, su creador acreditado conserva la autoría. Estas secciones son independientes del catálogo principal de Coop DX Mods y no son servicios oficiales de Nintendo ni de SM64CoopDX.';
   }
 
   @override
-  String get disclaimerSectionBugs => 'Errores, sugerencias o solicitudes';
+  String get disclaimerSectionLocalData => 'Cuentas y datos locales';
+
+  @override
+  String get disclaimerBodyLocalData =>
+      'Actualmente SM64CDPY no crea cuentas de usuario. Los favoritos, el historial de instalaciones, las carpetas seleccionadas y las preferencias se guardan localmente en el dispositivo. Desinstalar la aplicación o borrar sus datos puede eliminar esta información.';
+
+  @override
+  String get disclaimerSectionExternalServices => 'Servicios externos';
+
+  @override
+  String get disclaimerBodyExternalServices =>
+      'Explorar contenido, actualizar catálogos, abrir enlaces y descargar archivos puede conectar con servicios como Coop DX Mods, GitHub, Google Drive, Dropbox o GameBanana. Esos servicios funcionan bajo sus propios términos y prácticas de privacidad, que SM64CDPY no controla.';
+
+  @override
+  String get disclaimerSectionBugs => 'Soporte y correcciones de contenido';
 
   @override
   String get disclaimerBodyBugs =>
-      'Si encuentras algún problema con esta app, tienes una sugerencia o quieres pedir algo, contáctame directamente a través de mis redes sociales. Por favor, no contactes a los desarrolladores oficiales de SM64CoopDX ni a los creadores de mods por asuntos relacionados con esta aplicación.';
+      'Contacta al desarrollador de SM64CDPY si encuentras un problema de la aplicación, una atribución incorrecta, información desactualizada o contenido que deba corregirse o retirarse. Cuando corresponda, incluye el título y la fuente del mod. Las solicitudes sobre la aplicación no deben dirigirse a Nintendo, al equipo de SM64CoopDX ni a los autores de mods.';
 
   @override
   String get vipSectionHeader => 'CONTENIDO EXCLUSIVO';
@@ -1299,6 +1347,166 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get render96FailedToLoad => 'ERROR AL CARGAR';
+
+  @override
+  String get navLibrary => 'Biblioteca';
+
+  @override
+  String get libraryTitle => 'BIBLIOTECA';
+
+  @override
+  String get libraryInstalled => 'Instalados';
+
+  @override
+  String get libraryUpdates => 'Actualizaciones';
+
+  @override
+  String get libraryDetected => 'Detectados';
+
+  @override
+  String get libraryRecent => 'Recientes';
+
+  @override
+  String get libraryViewAll => 'Ver todo';
+
+  @override
+  String get libraryRefresh => 'Actualizar biblioteca';
+
+  @override
+  String get libraryAllSections => 'Todas las secciones';
+
+  @override
+  String get libraryAllDestinations => 'Todas las carpetas';
+
+  @override
+  String get libraryModsDestination => 'Carpeta de mods';
+
+  @override
+  String get libraryDynosDestination => 'Carpeta DynOS';
+
+  @override
+  String get libraryPresent => 'Instalado';
+
+  @override
+  String get libraryMissing => 'No encontrado';
+
+  @override
+  String get libraryPermissionRevoked => 'Permiso requerido';
+
+  @override
+  String get libraryFolderNotSelected => 'Carpeta requerida';
+
+  @override
+  String get libraryNotVerified => 'Sin verificar';
+
+  @override
+  String get libraryOpenSource => 'ABRIR CONTENIDO';
+
+  @override
+  String get libraryEmptyTitle => 'AÚN NO HAY INSTALACIONES';
+
+  @override
+  String get libraryEmptyBody =>
+      'Los mods instalados por SM64CDPY aparecerán aquí.';
+
+  @override
+  String get libraryUpdatesEmptyTitle => 'NO HAY ACTUALIZACIONES CONOCIDAS';
+
+  @override
+  String get libraryUpdatesEmptyBody =>
+      'Aquí aparecerán las actualizaciones confirmadas por el catálogo. También puedes revisar cada sección.';
+
+  @override
+  String get libraryDetectedEmptyTitle => 'NO HAY CONTENIDO EXTERNO DETECTADO';
+
+  @override
+  String get libraryDetectedEmptyBody =>
+      'No se encontró contenido Lua sin registrar en las carpetas seleccionadas. Actualiza después de hacer cambios externos.';
+
+  @override
+  String get libraryDetectedOnDevice =>
+      'Detectado en el dispositivo — sin vincular al catálogo';
+
+  @override
+  String get libraryDiscoveryHeaderIdentified => 'Encabezado identificado';
+
+  @override
+  String get libraryDiscoveryProbable => 'Mod probable';
+
+  @override
+  String get libraryDiscoveryUnlinked => 'Lua sin vincular';
+
+  @override
+  String get libraryDetectedPath => 'Archivo de entrada';
+
+  @override
+  String get libraryDetectedScanLimit =>
+      'Se alcanzó el límite seguro de escaneo. Puede que parte del contenido no aparezca.';
+
+  @override
+  String get libraryErrorTitle => 'BIBLIOTECA NO DISPONIBLE';
+
+  @override
+  String get libraryErrorBody =>
+      'No se pudo leer el historial de instalaciones. Reintenta sin modificar los archivos del juego.';
+
+  @override
+  String get libraryPartialWarning =>
+      'Algunos registros no se pudieron leer. Las instalaciones válidas siguen visibles.';
+
+  @override
+  String get libraryCatalogLoading => 'Comprobando el catálogo actual…';
+
+  @override
+  String get libraryCatalogError =>
+      'No se pudo comprobar el catálogo. El contenido instalado sigue disponible.';
+
+  @override
+  String libraryUpdateVersions(String installed, String available) {
+    return '$installed → $available';
+  }
+
+  @override
+  String get libraryEventInstall => 'Instalado';
+
+  @override
+  String get libraryEventUpdate => 'Actualizado';
+
+  @override
+  String get libraryEventReinstall => 'Reinstalado';
+
+  @override
+  String get libraryEventReplaced => 'Reemplazado por una versión más reciente';
+
+  @override
+  String get libraryForgetAction => 'OLVIDAR INSTALACIÓN';
+
+  @override
+  String get libraryForgetTitle => '¿OLVIDAR ESTA INSTALACIÓN?';
+
+  @override
+  String get libraryForgetBody =>
+      'SM64CDPY retirará este elemento de la Biblioteca, pero no borrará ningún archivo del juego.';
+
+  @override
+  String get libraryForgetConfirm => 'OLVIDAR';
+
+  @override
+  String get libraryRemoveHistoryAction => 'QUITAR DEL HISTORIAL';
+
+  @override
+  String get libraryRemoveHistoryTitle => '¿QUITAR ESTE EVENTO?';
+
+  @override
+  String get libraryRemoveHistoryBody =>
+      'Solo se quitará esta entrada del historial. La instalación actual y los archivos del juego no cambiarán.';
+
+  @override
+  String get libraryRemoveHistoryConfirm => 'QUITAR';
+
+  @override
+  String get libraryMaintenanceError =>
+      'No se pudo actualizar la Biblioteca. Inténtalo de nuevo.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -1348,6 +1556,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get sectionExclusive => 'EXCLUSIVO';
 
   @override
+  String get sectionNavigation => 'NAVEGACIÓN';
+
+  @override
   String get sectionExplore => 'EXPLORAR';
 
   @override
@@ -1775,6 +1986,30 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get sharedDownload => 'DESCARGAR';
+
+  @override
+  String get installationChecking => 'COMPROBANDO...';
+
+  @override
+  String get installationCancel => 'CANCELAR';
+
+  @override
+  String get installationInstalled => 'INSTALADO';
+
+  @override
+  String get installationUpdate => 'ACTUALIZAR';
+
+  @override
+  String get installationInstall => 'INSTALAR';
+
+  @override
+  String get installationReinstall => 'REINSTALAR';
+
+  @override
+  String get installationVerify => 'VERIFICAR';
+
+  @override
+  String get installationSelectFolder => 'SELECCIONAR CARPETA';
 
   @override
   String get sharedReadMore => 'LEER MÁS';
@@ -2325,6 +2560,13 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get linksWebsiteUrl => 'sm64coopdx.com';
 
   @override
+  String get linksAppWebsite => 'Sitio oficial de SM64CDPY';
+
+  @override
+  String get linksAppWebsiteDesc =>
+      'Novedades, descargas e información del proyecto';
+
+  @override
   String get linksKindWeb => 'WEB';
 
   @override
@@ -2416,47 +2658,61 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get disclaimerWarningBody =>
-      'Esta app es un proyecto personal. Cualquier problema relacionado con ella (Funcionalidad, errores, etc.) es responsabilidad exclusiva del desarrollador. Los desarrolladores de SM64CoopDX y los creadores de mods no tienen ninguna responsabilidad sobre esta aplicación.';
+      'SM64CDPY es software independiente. Las preguntas, problemas técnicos y solicitudes relacionadas con esta aplicación deben dirigirse al desarrollador de SM64CDPY, no a Nintendo, al equipo de SM64CoopDX ni a los autores de los mods listados.';
 
   @override
   String get disclaimerCouldNotOpenLink => 'No se pudo abrir el enlace';
 
   @override
-  String get disclaimerSectionPersonalPurpose => 'Propósito personal';
+  String get disclaimerSectionPersonalPurpose => 'Acerca de esta aplicación';
 
   @override
   String get disclaimerBodyPersonalPurpose =>
-      'Esta aplicación fue desarrollada de forma independiente como un proyecto personal. Su único objetivo es facilitarme el acceso, organización y descarga de mods que uso para mi propio entretenimiento. No es una aplicación respaldada por el equipo de SM64CoopDX ni un servicio oficial de ningún tipo.';
+      'SM64CDPY es un catálogo y gestor independiente para Android de mods de SM64CoopDX creados por la comunidad. Permite explorar, descargar, organizar e instalar contenido compatible en carpetas elegidas por el usuario. La aplicación no distribuye ni instala Super Mario 64, archivos ROM, SM64CoopDX ni versiones de SM64CoopDX para Android. Tampoco solicita, verifica ni ofrece instrucciones para obtener archivos del juego.';
 
   @override
   String get disclaimerSectionNoAffiliation => 'Sin afiliación oficial';
 
   @override
   String get disclaimerBodyNoAffiliation =>
-      'Este proyecto no está asociado, respaldado ni aprobado por los desarrolladores de SM64CoopDX, Super Mario 64, Nintendo, ni por ninguno de los creadores de los mods listados. Los nombres, imágenes y contenido mostrados pertenecen a sus respectivos autores.';
+      'Este proyecto no está asociado, respaldado ni aprobado por Nintendo, el equipo de SM64CoopDX ni los autores de los mods listados. Los nombres de productos y las marcas solo identifican compatibilidad. Los títulos, descripciones, imágenes, archivos y demás material acreditado pertenecen a sus respectivos autores o titulares.';
 
   @override
   String get disclaimerSectionDataSource => 'Fuente de datos';
 
   @override
   String get disclaimerBodyDataSource =>
-      'La información de los mods proviene del catálogo público de mods.sm64coopdx.com. Esta app únicamente presenta esa información de manera más accesible; no aloja, modifica ni redistribuye ningún archivo de mod.';
+      'El catálogo principal presenta publicaciones comunitarias públicas de Coop DX Mods (mods.sm64coopdx.com) y conserva el autor, título, fechas, versiones y fuente publicados. SM64CDPY proporciona una interfaz móvil y obtiene las descargas desde la fuente ofrecida para cada recurso; aparecer en el catálogo no implica propiedad ni respaldo oficial de SM64CDPY.';
 
   @override
   String get disclaimerSectionExclusive =>
-      'Secciones exclusivas (VIP · DynOS · Touch Controls)';
+      'Secciones curadas (VIP · DynOS · Touch Controls)';
 
   @override
   String disclaimerBodyExclusive(Object version) {
-    return 'A partir de la v$version, la app incluye secciones curadas con contenido que no está listado oficialmente en el sitio de SM64CoopDX. Estas secciones (VIP Mods, packs de DynOS y layouts de Touch Controls) son mantenidas de forma independiente por el desarrollador y no tienen ninguna afiliación con ninguna fuente oficial. Todo el crédito pertenece a los creadores originales.';
+    return 'En la v$version, VIP Mods, paquetes DynOS, controles táctiles, OMM Rebirth y Render96 pueden usar fuentes curadas de forma independiente. Cuando el contenido no fue creado por el desarrollador de SM64CDPY, su creador acreditado conserva la autoría. Estas secciones son independientes del catálogo principal de Coop DX Mods y no son servicios oficiales de Nintendo ni de SM64CoopDX.';
   }
 
   @override
-  String get disclaimerSectionBugs => 'Errores, sugerencias y solicitudes';
+  String get disclaimerSectionLocalData => 'Cuentas y datos locales';
+
+  @override
+  String get disclaimerBodyLocalData =>
+      'Actualmente SM64CDPY no crea cuentas de usuario. Los favoritos, el historial de instalaciones, las carpetas seleccionadas y las preferencias se guardan localmente en el dispositivo. Desinstalar la aplicación o borrar sus datos puede eliminar esta información.';
+
+  @override
+  String get disclaimerSectionExternalServices => 'Servicios externos';
+
+  @override
+  String get disclaimerBodyExternalServices =>
+      'Explorar contenido, actualizar catálogos, abrir enlaces y descargar archivos puede conectar con servicios como Coop DX Mods, GitHub, Google Drive, Dropbox o GameBanana. Esos servicios funcionan bajo sus propios términos y prácticas de privacidad, que SM64CDPY no controla.';
+
+  @override
+  String get disclaimerSectionBugs => 'Soporte y correcciones de contenido';
 
   @override
   String get disclaimerBodyBugs =>
-      'Si encuentras algún problema con esta app, tienes una sugerencia o quieres pedir algo, contáctame directamente a través de mis redes sociales. Por favor, no contactes a los desarrolladores oficiales de SM64CoopDX ni a los creadores de mods por asuntos relacionados con esta aplicación.';
+      'Contacta al desarrollador de SM64CDPY si encuentras un problema de la aplicación, una atribución incorrecta, información desactualizada o contenido que deba corregirse o retirarse. Cuando corresponda, incluye el título y la fuente del mod. Las solicitudes sobre la aplicación no deben dirigirse a Nintendo, al equipo de SM64CoopDX ni a los autores de mods.';
 
   @override
   String get vipSectionHeader => 'CONTENIDO EXCLUSIVO';
@@ -2596,4 +2852,164 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get render96FailedToLoad => 'ERROR AL CARGAR';
+
+  @override
+  String get navLibrary => 'Biblioteca';
+
+  @override
+  String get libraryTitle => 'BIBLIOTECA';
+
+  @override
+  String get libraryInstalled => 'Instalados';
+
+  @override
+  String get libraryUpdates => 'Actualizaciones';
+
+  @override
+  String get libraryDetected => 'Detectados';
+
+  @override
+  String get libraryRecent => 'Recientes';
+
+  @override
+  String get libraryViewAll => 'Ver todo';
+
+  @override
+  String get libraryRefresh => 'Actualizar biblioteca';
+
+  @override
+  String get libraryAllSections => 'Todas las secciones';
+
+  @override
+  String get libraryAllDestinations => 'Todas las carpetas';
+
+  @override
+  String get libraryModsDestination => 'Carpeta de mods';
+
+  @override
+  String get libraryDynosDestination => 'Carpeta DynOS';
+
+  @override
+  String get libraryPresent => 'Instalado';
+
+  @override
+  String get libraryMissing => 'No encontrado';
+
+  @override
+  String get libraryPermissionRevoked => 'Permiso requerido';
+
+  @override
+  String get libraryFolderNotSelected => 'Carpeta requerida';
+
+  @override
+  String get libraryNotVerified => 'Sin verificar';
+
+  @override
+  String get libraryOpenSource => 'ABRIR CONTENIDO';
+
+  @override
+  String get libraryEmptyTitle => 'AÚN NO HAY INSTALACIONES';
+
+  @override
+  String get libraryEmptyBody =>
+      'Los mods instalados por SM64CDPY aparecerán aquí.';
+
+  @override
+  String get libraryUpdatesEmptyTitle => 'NO HAY ACTUALIZACIONES CONOCIDAS';
+
+  @override
+  String get libraryUpdatesEmptyBody =>
+      'Aquí aparecerán las actualizaciones confirmadas por el catálogo. También puedes revisar cada sección.';
+
+  @override
+  String get libraryDetectedEmptyTitle => 'NO HAY CONTENIDO EXTERNO DETECTADO';
+
+  @override
+  String get libraryDetectedEmptyBody =>
+      'No se encontró contenido Lua sin registrar en las carpetas seleccionadas. Actualiza después de hacer cambios externos.';
+
+  @override
+  String get libraryDetectedOnDevice =>
+      'Detectado en el dispositivo — sin vincular al catálogo';
+
+  @override
+  String get libraryDiscoveryHeaderIdentified => 'Encabezado identificado';
+
+  @override
+  String get libraryDiscoveryProbable => 'Mod probable';
+
+  @override
+  String get libraryDiscoveryUnlinked => 'Lua sin vincular';
+
+  @override
+  String get libraryDetectedPath => 'Archivo de entrada';
+
+  @override
+  String get libraryDetectedScanLimit =>
+      'Se alcanzó el límite seguro de escaneo. Puede que parte del contenido no aparezca.';
+
+  @override
+  String get libraryErrorTitle => 'BIBLIOTECA NO DISPONIBLE';
+
+  @override
+  String get libraryErrorBody =>
+      'No se pudo leer el historial de instalaciones. Reintenta sin modificar los archivos del juego.';
+
+  @override
+  String get libraryPartialWarning =>
+      'Algunos registros no se pudieron leer. Las instalaciones válidas siguen visibles.';
+
+  @override
+  String get libraryCatalogLoading => 'Comprobando el catálogo actual…';
+
+  @override
+  String get libraryCatalogError =>
+      'No se pudo comprobar el catálogo. El contenido instalado sigue disponible.';
+
+  @override
+  String libraryUpdateVersions(String installed, String available) {
+    return '$installed → $available';
+  }
+
+  @override
+  String get libraryEventInstall => 'Instalado';
+
+  @override
+  String get libraryEventUpdate => 'Actualizado';
+
+  @override
+  String get libraryEventReinstall => 'Reinstalado';
+
+  @override
+  String get libraryEventReplaced => 'Reemplazado por una versión más reciente';
+
+  @override
+  String get libraryForgetAction => 'OLVIDAR INSTALACIÓN';
+
+  @override
+  String get libraryForgetTitle => '¿OLVIDAR ESTA INSTALACIÓN?';
+
+  @override
+  String get libraryForgetBody =>
+      'SM64CDPY retirará este elemento de la Biblioteca, pero no borrará ningún archivo del juego.';
+
+  @override
+  String get libraryForgetConfirm => 'OLVIDAR';
+
+  @override
+  String get libraryRemoveHistoryAction => 'QUITAR DEL HISTORIAL';
+
+  @override
+  String get libraryRemoveHistoryTitle => '¿QUITAR ESTE EVENTO?';
+
+  @override
+  String get libraryRemoveHistoryBody =>
+      'Solo se quitará esta entrada del historial. La instalación actual y los archivos del juego no cambiarán.';
+
+  @override
+  String get libraryRemoveHistoryConfirm => 'QUITAR';
+
+  @override
+  String get libraryMaintenanceError =>
+      'No se pudo actualizar la Biblioteca. Inténtalo de nuevo.';
 }

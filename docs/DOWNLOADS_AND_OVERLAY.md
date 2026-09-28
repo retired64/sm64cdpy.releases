@@ -1,6 +1,6 @@
 # Descargas, instalación y overlay
 
-Revisado contra `1.7.0+18` el 2026-09-20.
+Revisado contra `1.8.0+19` el 2026-09-27.
 
 ## Flujo de instalación
 
@@ -10,18 +10,60 @@ Revisado contra `1.7.0+18` el 2026-09-20.
 4. `ModInstallerPlugin` crea una cadena única de WorkManager: primero `ModDownloadWorker`, después `ModInstallWorker`.
 5. El downloader sigue redirects, limita reintentos, verifica el tamaño cuando el servidor lo informa y publica porcentaje mediante `setProgress`.
 6. El instalador copia archivos sueltos o extrae ZIP/7z hacia el árbol SAF.
-7. El EventChannel `mods.sm64cdpy/mod_install_events` actualiza un provider global, la UI y el overlay; ambos workers muestran notificaciones de primer plano cancelables.
-8. Al terminar, un coordinador global muestra el resultado aunque el usuario haya cambiado de pantalla. Android conserva una notificación de instalación completa en un canal de resultados independiente y visible, mientras los canales de progreso siguen siendo silenciosos.
+7. Tras completar todas las escrituras, el instalador guarda atómicamente un
+   recibo privado con la identidad y hasta 32 rutas centinela; solo entonces
+   puede devolver `SUCCEEDED`.
+8. El EventChannel `mods.sm64cdpy/mod_install_events` actualiza un provider global, la UI y el overlay; ambos workers muestran notificaciones de primer plano cancelables.
+9. Al terminar, un coordinador global muestra el resultado aunque el usuario haya cambiado de pantalla. Android conserva una notificación de instalación completa en un canal de resultados independiente y visible, mientras los canales de progreso siguen siendo silenciosos.
 
 Al recrear el proceso, Flutter carga los UUID persistidos, solicita una instantánea a WorkManager y vuelve a registrar los observers nativos. Los trabajos inexistentes se descartan; RUNNING, ENQUEUED, SUCCEEDED, FAILED y CANCELLED se traducen de nuevo al estado compartido.
 
-Las cadenas usan una clave canónica derivada de sección, ID del contenido y archivo con política `REPLACE`. Repetir exactamente la misma instalación reemplaza la anterior; archivos o mods distintos pueden avanzar en paralelo. Los IDs de notificación se derivan del UUID de cada Worker.
+El recibo se escribe desde Kotlin, de modo que una instalación confirmada
+persiste incluso si ambos engines estaban cerrados y ningún consumidor recibió
+el evento. Si guardar el recibo falla después de copiar los archivos, el Worker
+termina en error y no publica la notificación final; una fase posterior importa
+estos recibos en la Biblioteca Flutter/Hive. Esa importación ya se realiza al
+arrancar y tras cada instalación confirmada: Kotlin sigue siendo la autoridad y
+Hive es solo una proyección versionada que puede reconstruirse.
+
+La proyección también incorpora verificación física SAF. Kotlin comprueba
+solamente las rutas centinela registradas (máximo 32 por recibo), en un hilo de
+trabajo y con lotes serializados. Abrir/refrescar Biblioteca verifica el lote;
+el provider también ofrece verificación individual por `artifactKey`. Cambiar
+o limpiar una carpeta invalida esta proyección, pero nunca borra recibos,
+historial ni archivos del juego.
+
+Los botones del engine principal consumen un selector canónico por
+`InstallIdentity`. Puede producir Comprobar, Descargar, Cancelar, Instalado,
+Actualizar, Reinstalar, Verificar o Seleccionar carpeta. Un estado terminal de
+WorkManager por sí solo nunca produce Instalado. El overlay usa la misma
+política sobre un snapshot compacto y versionado que `OverlayBridge` envía
+entre engines; no lee el provider/Hive del engine principal como memoria
+compartida.
+
+Las cadenas usan `operationKey = v1|section|contentId|artifactId` con política
+`REPLACE`. El artefacto usa IDs de versión/archivo de la fuente cuando están
+disponibles y un SHA-256 determinista como respaldo; nunca usa el título ni el
+índice mutable de una lista. Repetir exactamente la misma instalación reemplaza
+la anterior; archivos o mods distintos pueden avanzar en paralelo. Sección,
+IDs, versión, filename y destino viajan hasta ambos Workers y regresan en los
+eventos. Los IDs de notificación se derivan del UUID de cada Worker.
 
 El catálogo general resuelve una versión actual canónica antes de presentar descargas: prioriza la fecha de publicación válida, usa los componentes numéricos de versión como respaldo y conserva el orden de la fuente para empates. Las versiones sin archivos descargables se ignoran. Detalle y overlay consumen el mismo resolvedor, por lo que una descarga directa nunca selecciona accidentalmente un archivo histórico. Si la versión actual contiene varios archivos, el overlay ofrece un selector compacto.
 
 ## Burbuja flotante
 
-`floaty_chatheads` inicia `overlayMain()` en un engine Flutter separado. El panel puede buscar el catálogo y solicitar descarga/cancelación. `OverlayBridge` vive en el engine principal, recibe mensajes, inicia WorkManager y reenvía progreso al panel. Ambos lados intercambian la misma clave canónica; la cancelación permanece en estado "cancelando" hasta que WorkManager la confirma.
+`floaty_chatheads` inicia `overlayMain()` en un engine Flutter separado. El panel puede buscar el catálogo y solicitar descarga/cancelación. `OverlayBridge` vive en el engine principal, recibe mensajes, inicia WorkManager y reenvía progreso al panel. Ambos lados derivan e intercambian el mismo contrato de identidad. El estado local del panel se indexa por `contentKey`, por lo que dos títulos iguales no se pisan; la cancelación permanece en estado "cancelando" hasta que WorkManager la confirma.
+
+Al abrir el panel, el bridge envía primero un estado de carga y verifica los
+recibos contra SAF. La respuesta lleva un `requestId`, recibos validados y
+resultados de presencia, pero omite el historial porque no participa en la
+decisión de cada tarjeta. El overlay descarta respuestas antiguas y ejecuta
+`InstallationActionSelector` localmente para mostrar Comprobando, Descargar,
+Instalado, Actualizar, Reinstalar, Verificar o Seleccionar carpeta. Al completar
+una instalación, verificar un artefacto o cambiar una carpeta se publica una
+nueva proyección. El estado `done` de WorkManager es transitorio y se retira al
+llegar el recibo durable, evitando confundir finalización con presencia física.
 
 La pantalla de detalle presenta únicamente la versión actual expandida. El historial se abre bajo demanda en una hoja inferior con `ListView.builder`, evitando que decenas o cientos de versiones aumenten el alto inicial o se construyan simultáneamente.
 

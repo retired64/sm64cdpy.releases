@@ -8,7 +8,10 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.DocumentsContract
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
@@ -57,6 +60,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val PREF_NAME = "mod_installer_prefs"
         const val KEY_TREE_URI = "tree_uri"
         const val KEY_DYNOS_TREE_URI = "dynos_tree_uri"
+        const val KEY_TREE_PERMISSION_REVOKED = "tree_permission_revoked"
+        const val KEY_DYNOS_TREE_PERMISSION_REVOKED = "dynos_tree_permission_revoked"
         const val REQUEST_CODE_TREE = 9001
         const val REQUEST_CODE_DYNOS_TREE = 9003
         const val REQUEST_CODE_NOTIFICATION_PERMISSION = 9002
@@ -64,6 +69,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private lateinit var channel: MethodChannel
+    private lateinit var applicationContext: Context
     private var eventChannel: EventChannel? = null
     private val eventSinks = mutableListOf<EventChannel.EventSink>()
     private var activity: Activity? = null
@@ -71,9 +77,13 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var pendingDynosPickerResult: Result? = null
     private var pendingPermissionResult: Result? = null
 
-    private val workObservers = mutableMapOf<UUID, Observer<WorkInfo>>()
+    // WorkManager may emit null when REPLACE prunes the previous row for the
+    // same unique work. The observer type must therefore be nullable; a
+    // non-null Kotlin lambda crashes before its own null check can execute.
+    private val workObservers = mutableMapOf<UUID, Observer<WorkInfo?>>()
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        applicationContext = binding.applicationContext
         channel = MethodChannel(binding.binaryMessenger, CHANNEL)
         channel.setMethodCallHandler(this)
 
@@ -154,6 +164,12 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "downloadAndInstallMod" -> downloadAndInstallMod(call, result)
             "cancelModOperation" -> cancelModOperation(call, result)
             "reconcileBackgroundOperations" -> reconcileBackgroundOperations(call, result)
+            "getInstallationLibrary" -> getInstallationLibrary(result)
+            "discoverInstallationLibrary" -> discoverInstallationLibrary(call, result)
+            "verifyInstallationLibrary" -> verifyInstallationLibrary(call, result)
+            "clearInstallationHistory" -> clearInstallationHistory(result)
+            "forgetInstallationContent" -> forgetInstallationContent(call, result)
+            "removeInstallationHistoryEvent" -> removeInstallationHistoryEvent(call, result)
             "isDirectorySelected" -> isDirectorySelected(result)
             "clearDirectorySelection" -> clearDirectorySelection(result)
             "hasNotificationPermission" -> hasNotificationPermission(result)
@@ -170,6 +186,94 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     // ── Métodos expuestos ──────────────────────────────────────────────────
+
+    private fun getInstallationLibrary(result: Result) {
+        try {
+            result.success(readInstallationLibrarySnapshot())
+        } catch (error: Exception) {
+            result.error("LIBRARY_READ_ERROR", error.message, null)
+        }
+    }
+
+    private fun discoverInstallationLibrary(call: MethodCall, result: Result) {
+        val force = call.argument<Boolean>("force") == true
+        thread(name = "installation-library-discovery") {
+            try {
+                val discovery = InstallationDiscoveryScanner.scan(applicationContext, force)
+                val receipts = InstallationReceiptStore.readSnapshot(applicationContext)
+                val snapshot = InstallationDiscoveryScanner.attachToSnapshot(receipts, discovery)
+                Handler(Looper.getMainLooper()).post { result.success(snapshot) }
+            } catch (error: Exception) {
+                Handler(Looper.getMainLooper()).post {
+                    result.error("LIBRARY_DISCOVERY_ERROR", error.message, null)
+                }
+            }
+        }
+    }
+
+    private fun readInstallationLibrarySnapshot(): Map<String, Any?> =
+        InstallationDiscoveryScanner.attachToSnapshot(
+            InstallationReceiptStore.readSnapshot(applicationContext),
+            InstallationDiscoveryScanner.readCached(applicationContext)
+        )
+
+    private fun clearInstallationHistory(result: Result) {
+        try {
+            InstallationReceiptStore.clearHistory(applicationContext)
+            result.success(true)
+        } catch (error: Exception) {
+            result.error("LIBRARY_CLEAR_ERROR", error.message, null)
+        }
+    }
+
+    private fun forgetInstallationContent(call: MethodCall, result: Result) {
+        val contentKey = call.argument<String>("contentKey")
+        if (contentKey.isNullOrBlank()) {
+            result.error("LIBRARY_FORGET_ERROR", "Missing contentKey", null)
+            return
+        }
+        try {
+            result.success(InstallationReceiptStore.forgetContent(applicationContext, contentKey))
+        } catch (error: Exception) {
+            result.error("LIBRARY_FORGET_ERROR", error.message, null)
+        }
+    }
+
+    private fun removeInstallationHistoryEvent(call: MethodCall, result: Result) {
+        val workerId = call.argument<String>("installWorkerId")
+        if (workerId.isNullOrBlank()) {
+            result.error("LIBRARY_HISTORY_REMOVE_ERROR", "Missing installWorkerId", null)
+            return
+        }
+        try {
+            result.success(
+                InstallationReceiptStore.removeHistoryEvent(applicationContext, workerId)
+            )
+        } catch (error: Exception) {
+            result.error("LIBRARY_HISTORY_REMOVE_ERROR", error.message, null)
+        }
+    }
+
+    private fun verifyInstallationLibrary(call: MethodCall, result: Result) {
+        val requestedKeys = call.argument<List<String>>("artifactKeys")?.toSet()
+        thread(name = "installation-library-verifier") {
+            try {
+                val snapshot = InstallationReceiptStore.readSnapshot(applicationContext)
+                @Suppress("UNCHECKED_CAST")
+                val receipts = snapshot["receipts"] as? List<Map<String, Any?>> ?: emptyList()
+                val verification = InstallationSafVerifier.verify(
+                    applicationContext,
+                    receipts,
+                    requestedKeys
+                )
+                Handler(Looper.getMainLooper()).post { result.success(verification) }
+            } catch (error: Exception) {
+                Handler(Looper.getMainLooper()).post {
+                    result.error("LIBRARY_VERIFY_ERROR", error.message, null)
+                }
+            }
+        }
+    }
 
     /**
      * Abre el picker de directorios del sistema (ACTION_OPEN_DOCUMENT_TREE).
@@ -210,7 +314,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             if (isTreeAccessible(uri)) {
                 result.success(uriString)
             } else {
-                prefs.edit().remove(KEY_TREE_URI).apply()
+                markTreePermissionRevoked(prefs, "mods")
                 result.success(null)
             }
         } else {
@@ -246,7 +350,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 activity?.contentResolver?.releasePersistableUriPermission(uri, flags)
             } catch (_: Exception) { }
         }
-        prefs.edit().remove(KEY_TREE_URI).apply()
+        prefs.edit()
+            .remove(KEY_TREE_URI)
+            .remove(KEY_TREE_PERMISSION_REVOKED)
+            .apply()
         result.success(true)
     }
 
@@ -332,7 +439,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "mods")
             result.error(
                 "DIR_NOT_ACCESSIBLE",
                 "The selected directory is no longer accessible.",
@@ -395,7 +502,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "mods")
             result.error(
                 "DIR_NOT_ACCESSIBLE",
                 "The selected directory is no longer accessible. Please select it again in Settings.",
@@ -428,7 +535,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
-                val fileCount = runBlocking {
+                val manifest = runBlocking {
                     SafZipExtractor.extractZipToTree(zipFile, treeDoc, act)
                 }
                 val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
@@ -439,7 +546,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     result.success(mapOf(
                         "success" to true,
                         "targetDir" to displayDir,
-                        "fileCount" to fileCount
+                        "fileCount" to manifest.fileCount
                     ))
                 }
             } catch (e: Exception) {
@@ -471,7 +578,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "dynos")
             result.error(
                 "DIR_NOT_ACCESSIBLE",
                 "The selected DynOS directory is no longer accessible. Please select it again in Settings.",
@@ -504,7 +611,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
-                val fileCount = runBlocking {
+                val manifest = runBlocking {
                     SafZipExtractor.extractZipToTree(zipFile, treeDoc, act)
                 }
                 val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
@@ -515,7 +622,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     result.success(mapOf(
                         "success" to true,
                         "targetDir" to displayDir,
-                        "fileCount" to fileCount
+                        "fileCount" to manifest.fileCount
                     ))
                 }
             } catch (e: Exception) {
@@ -550,7 +657,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "mods")
             result.error(
                 "DIR_NOT_ACCESSIBLE",
                 "The selected directory is no longer accessible. Please select it again in Settings.",
@@ -589,7 +696,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val workId = request.id
 
-        val observer = Observer<WorkInfo> { workInfo ->
+        val observer = Observer<WorkInfo?> { workInfo ->
             if (workInfo != null) {
                 val eventData = mutableMapOf<String, Any?>(
                     "workId" to workId.toString(),
@@ -686,13 +793,25 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         val url = call.argument<String>("url")
-        val modName = call.argument<String>("modName")
-        val displayTitle = call.argument<String>("displayTitle") ?: modName
+        val requestedModName = call.argument<String>("modName")
+        val displayTitle = call.argument<String>("displayTitle") ?: requestedModName
         val notificationTitle = call.argument<String>("notificationTitle") ?: displayTitle
         val fileName = call.argument<String>("fileName")
 
-        if (url == null || modName == null || fileName == null) {
+        if (url == null || requestedModName == null || fileName == null) {
             result.error("INVALID_ARGS", "url, modName and fileName are required", null)
+            return
+        }
+
+        val identityMetadata = try {
+            InstallIdentityMetadata.fromMap(call.arguments as? Map<*, *> ?: emptyMap<Any?, Any?>())
+        } catch (e: IllegalArgumentException) {
+            result.error("INVALID_IDENTITY", e.message, null)
+            return
+        }
+        val modName = identityMetadata?.operationKey ?: requestedModName
+        if (identityMetadata != null && requestedModName != modName) {
+            result.error("INVALID_IDENTITY", "modName must match operationKey", null)
             return
         }
 
@@ -703,7 +822,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 ModDownloadWorker.KEY_URL to url,
                 ModDownloadWorker.KEY_MOD_NAME to modName,
                 ModDownloadWorker.KEY_DISPLAY_TITLE to displayTitle,
-                ModDownloadWorker.KEY_FILE_NAME to fileName
+                ModDownloadWorker.KEY_FILE_NAME to fileName,
+                ModDownloadWorker.KEY_INSTALL_DESTINATION to destination,
+                *(identityMetadata?.toWorkDataPairs() ?: emptyArray())
             ))
             // Antes no había Constraints: sin internet, el Worker arrancaba
             // igual, fallaba al conectar, y consumía uno de sus reintentos
@@ -725,7 +846,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 ModInstallWorker.KEY_MOD_NAME to modName,
                 ModInstallWorker.KEY_DISPLAY_TITLE to displayTitle,
                 ModInstallWorker.KEY_NOTIFICATION_TITLE to notificationTitle,
-                ModInstallWorker.KEY_TREE_URI to treeUriString
+                ModInstallWorker.KEY_TREE_URI to treeUriString,
+                ModInstallWorker.KEY_INSTALL_DESTINATION to destination,
+                *(identityMetadata?.toWorkDataPairs() ?: emptyArray())
             ))
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .addTag("mod_install_$modName")
@@ -735,7 +858,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         val downloadId = downloadRequest.id
         val installId = installRequest.id
 
-        val dlObserver = Observer<WorkInfo> { workInfo ->
+        val dlObserver = Observer<WorkInfo?> { workInfo ->
             if (workInfo != null) {
                 val eventData = mutableMapOf<String, Any?>(
                     "workId" to downloadId.toString(),
@@ -743,6 +866,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     "phase" to "downloading",
                     "state" to workInfo.state.name
                 )
+                identityMetadata?.addToEvent(eventData)
+                eventData["displayTitle"] = displayTitle
+                eventData["installDestination"] = destination
 
                 val progress = workInfo.progress
                 eventData["progress"] = progress.getInt(ModDownloadWorker.PROGRESS, 0)
@@ -774,7 +900,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
         }
 
-        val instObserver = Observer<WorkInfo> { workInfo ->
+        val instObserver = Observer<WorkInfo?> { workInfo ->
             if (workInfo != null) {
                 val eventData = mutableMapOf<String, Any?>(
                     "workId" to installId.toString(),
@@ -782,6 +908,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     "phase" to "installing",
                     "state" to workInfo.state.name
                 )
+                identityMetadata?.addToEvent(eventData)
+                eventData["displayTitle"] = displayTitle
+                eventData["installDestination"] = destination
 
                 val progress = workInfo.progress
                 eventData["current"] = progress.getInt(
@@ -893,35 +1022,73 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * el engine. SharedPreferences de Flutter conserva la identidad y los dos
      * UUID; WorkManager sigue siendo la autoridad sobre el estado real.
      */
+    private data class ReconciledOperation(
+        val id: UUID,
+        val modName: String,
+        val phase: String,
+        val identity: InstallIdentityMetadata?,
+        val displayTitle: String?,
+        val destination: String?
+    )
+
     private fun reconcileBackgroundOperations(call: MethodCall, result: Result) {
         val act = activity
         if (act == null) {
             result.error("NO_ACTIVITY", "Activity not available", null)
             return
         }
-        val operations = call.argument<List<Map<String, String>>>("operations") ?: emptyList()
+        val operations = call.argument<List<Map<String, Any?>>>("operations") ?: emptyList()
         val wm = WorkManager.getInstance(act)
 
         thread(name = "reconcile-mod-workers") {
             try {
                 val snapshots = mutableListOf<Map<String, Any?>>()
-                val observed = mutableListOf<Triple<UUID, String, String>>()
+                val observed = mutableListOf<ReconciledOperation>()
 
                 for (operation in operations) {
-                    val modName = operation["modName"] ?: continue
+                    val modName = operation["modName"] as? String ?: continue
+                    val identity = try {
+                        InstallIdentityMetadata.fromMap(operation)
+                    } catch (e: IllegalArgumentException) {
+                        Log.w("ModInstall", "Ignoring invalid reconciled identity", e)
+                        null
+                    }
+                    val displayTitle = operation["displayTitle"] as? String
+                    val destination = operation["installDestination"] as? String
                     for (phase in listOf("downloading", "installing")) {
-                        val idValue = operation[if (phase == "downloading") "downloadWorkId" else "installWorkId"]
+                        val idValue = operation[
+                            if (phase == "downloading") "downloadWorkId" else "installWorkId"
+                        ] as? String
                             ?: continue
                         val id = try { UUID.fromString(idValue) } catch (_: Exception) { continue }
                         val info = wm.getWorkInfoById(id).get() ?: continue
                         snapshots.add(workInfoSnapshot(id, info))
-                        if (!info.state.isFinished) observed.add(Triple(id, modName, phase))
+                        if (!info.state.isFinished) {
+                            observed.add(
+                                ReconciledOperation(
+                                    id,
+                                    modName,
+                                    phase,
+                                    identity,
+                                    displayTitle,
+                                    destination
+                                )
+                            )
+                        }
                     }
                 }
 
                 act.runOnUiThread {
-                    for ((id, modName, phase) in observed) {
-                        observeReconciledWork(wm, id, modName, phase)
+                    for (operation in observed) {
+                        observeReconciledWork(
+                            wm,
+                            operation.id,
+                            operation.modName,
+                            operation.phase,
+                            operation.identity,
+                            operation.displayTitle,
+                            operation.destination
+                        )
                     }
                     result.success(snapshots)
                 }
@@ -950,16 +1117,23 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         wm: WorkManager,
         workId: UUID,
         modName: String,
-        phase: String
+        phase: String,
+        identity: InstallIdentityMetadata?,
+        displayTitle: String?,
+        destination: String?
     ) {
         if (workObservers.containsKey(workId)) return
-        val observer = Observer<WorkInfo> { info ->
+        val observer = Observer<WorkInfo?> { info ->
+            if (info == null) return@Observer
             val eventData = mutableMapOf<String, Any?>(
                 "workId" to workId.toString(),
                 "modName" to modName,
                 "phase" to phase,
                 "state" to info.state.name
             )
+            identity?.addToEvent(eventData)
+            displayTitle?.let { eventData["displayTitle"] = it }
+            destination?.let { eventData["installDestination"] = it }
             if (phase == "downloading") {
                 eventData["progress"] = info.progress.getInt(ModDownloadWorker.PROGRESS, 0)
                 eventData["type"] = when (info.state) {
@@ -1041,7 +1215,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             if (isTreeAccessible(uri)) {
                 result.success(uriString)
             } else {
-                prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+                markTreePermissionRevoked(prefs, "dynos")
                 result.success(null)
             }
         } else {
@@ -1082,7 +1256,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         val treeUri = Uri.parse(treeUriString)
         if (!isTreeAccessible(treeUri)) {
-            prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+            markTreePermissionRevoked(prefs, "dynos")
             result.error("DIR_NOT_ACCESSIBLE", "The selected DynOS directory is no longer accessible.", null)
             return
         }
@@ -1135,7 +1309,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 activity?.contentResolver?.releasePersistableUriPermission(uri, flags)
             } catch (_: Exception) { }
         }
-        prefs.edit().remove(KEY_DYNOS_TREE_URI).apply()
+        prefs.edit()
+            .remove(KEY_DYNOS_TREE_URI)
+            .remove(KEY_DYNOS_TREE_PERMISSION_REVOKED)
+            .apply()
         result.success(true)
     }
 
@@ -1158,7 +1335,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             activity?.contentResolver?.takePersistableUriPermission(treeUri, takeFlags)
 
-            getPrefs().edit().putString(KEY_DYNOS_TREE_URI, treeUri.toString()).apply()
+            getPrefs().edit()
+                .putString(KEY_DYNOS_TREE_URI, treeUri.toString())
+                .remove(KEY_DYNOS_TREE_PERMISSION_REVOKED)
+                .apply()
 
             result.success(treeUri.toString())
         } catch (e: Exception) {
@@ -1197,6 +1377,15 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             ?: throw IllegalStateException("Activity not available")
     }
 
+    private fun markTreePermissionRevoked(prefs: SharedPreferences, destination: String) {
+        val (uriKey, markerKey) = if (destination == "dynos") {
+            KEY_DYNOS_TREE_URI to KEY_DYNOS_TREE_PERMISSION_REVOKED
+        } else {
+            KEY_TREE_URI to KEY_TREE_PERMISSION_REVOKED
+        }
+        prefs.edit().remove(uriKey).putBoolean(markerKey, true).apply()
+    }
+
     /**
      * Procesa el resultado del picker de directorios.
      */
@@ -1216,7 +1405,10 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             activity?.contentResolver?.takePersistableUriPermission(treeUri, takeFlags)
 
-            getPrefs().edit().putString(KEY_TREE_URI, treeUri.toString()).apply()
+            getPrefs().edit()
+                .putString(KEY_TREE_URI, treeUri.toString())
+                .remove(KEY_TREE_PERMISSION_REVOKED)
+                .apply()
 
             val doc = DocumentFile.fromTreeUri(activity!!, treeUri)
             val displayName = doc?.name ?: treeUri.lastPathSegment ?: "Unknown"

@@ -7,13 +7,16 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/render96_entity.dart';
+import '../../domain/entities/install_identity.dart';
+import '../../domain/entities/installation_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../providers/extra_providers.dart';
-import '../providers/mod_providers.dart';
+import '../providers/installation_action_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/installation_action_presentation.dart';
 
 class Render96Screen extends ConsumerStatefulWidget {
   const Render96Screen({super.key});
@@ -74,12 +77,7 @@ class _Render96Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: const DrawerMenuButton(),
+        RetroPinnedAppBar(
           title: Text(l10n.render96Title, style: retro.heading(size: 18)),
         ),
         // ── Hero Banner ────────────────────────────────────────────────────────
@@ -247,8 +245,14 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
   bool _isExpanded = false;
   bool _downloading = false;
 
-  String get _operationName =>
-      sanitizeModTitle('render96-${widget.mod.id}-${widget.mod.name}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.render96,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+    versionLabel: widget.mod.version,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   Color get _accentColor {
     switch (widget.mod.category) {
@@ -315,6 +319,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
         fileName: filename,
         displayTitle: widget.mod.name,
         installDestination: widget.mod.installDestination,
+        identity: _identity,
       );
     } catch (e) {
       if (mounted) {
@@ -341,24 +346,10 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
   @override
   Widget build(BuildContext context) {
     final desc = widget.mod.description;
-    final info = ref.watch(bgInstallStateProvider)[_operationName];
-    final isBusy =
-        _downloading ||
-        info?.status == BgInstallStatus.pending ||
-        info?.status == BgInstallStatus.downloading ||
-        info?.status == BgInstallStatus.installing;
-    final isInstalled = info?.status == BgInstallStatus.completed;
-    final isActive = isBusy || isInstalled;
-    final progress = info?.status == BgInstallStatus.downloading
-        ? (info?.downloadProgress == null
-              ? null
-              : info!.downloadProgress! / 100)
-        : info?.status == BgInstallStatus.installing &&
-              info?.current != null &&
-              info?.total != null &&
-              info!.total! > 0
-        ? info.current! / info.total!
-        : null;
+    final actionState = ref.watch(installationActionProvider(_identity));
+    final action = actionState.primaryAction;
+    final isBusy = _downloading || actionState.isOperationActive;
+    final progress = actionState.progress;
 
     return Container(
       decoration: BoxDecoration(
@@ -552,7 +543,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 ],
 
                 // Progress bar
-                if (isActive) ...[
+                if (isBusy) ...[
                   const SizedBox(height: 12),
                   LinearProgressIndicator(
                     value: progress,
@@ -580,24 +571,37 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                     Expanded(
                       child: _ActionButton(
                         retro: widget.retro,
-                        label: isBusy
-                            ? 'DOWNLOADING...'
-                            : isInstalled
-                            ? 'INSTALLED'
-                            : widget.l10n.sharedDownload,
-                        icon: isInstalled
-                            ? Icons.check_circle_rounded
-                            : Icons.download_rounded,
+                        label: action.label(widget.l10n),
+                        icon: action.icon,
                         loading: isBusy,
-                        color: isInstalled
+                        color: action == InstallationPrimaryAction.installed
                             ? widget.retro.changelogAdded
                             : _accentColor,
                         filled: true,
-                        onTap: isActive ? null : _download,
+                        onTap:
+                            (_downloading && !actionState.isOperationActive) ||
+                                action == InstallationPrimaryAction.checking ||
+                                action == InstallationPrimaryAction.installed
+                            ? null
+                            : () => runCanonicalInstallationAction(
+                                context: context,
+                                ref: ref,
+                                state: actionState,
+                                onTransfer: _download,
+                              ),
                       ),
                     ),
                   ],
                 ),
+                if (actionState.canReinstall)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: _download,
+                      icon: const Icon(Icons.refresh_rounded, size: 15),
+                      label: Text(widget.l10n.installationReinstall),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -702,12 +706,7 @@ class _Render96Skeleton extends StatelessWidget {
     final retro = RetroTheme.of(context);
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          backgroundColor: retro.background,
-          elevation: 0,
-          leading: const DrawerMenuButton(),
-          title: _Bone(width: 110, height: 20, retro: retro),
-        ),
+        RetroPinnedAppBar(title: _Bone(width: 110, height: 20, retro: retro)),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(16),

@@ -186,6 +186,12 @@ abstract class AppLocalizations {
   /// **'EXCLUSIVE'**
   String get sectionExclusive;
 
+  /// Section header for the primary navigation items in the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'NAVIGATION'**
+  String get sectionNavigation;
+
   /// Section header in the drawer for category browsing
   ///
   /// In en, this message translates to:
@@ -917,6 +923,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'DOWNLOAD'**
   String get sharedDownload;
+
+  /// No description provided for @installationChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'CHECKING...'**
+  String get installationChecking;
+
+  /// No description provided for @installationCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get installationCancel;
+
+  /// No description provided for @installationInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTALLED'**
+  String get installationInstalled;
+
+  /// No description provided for @installationUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'UPDATE'**
+  String get installationUpdate;
+
+  /// No description provided for @installationInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTALL'**
+  String get installationInstall;
+
+  /// No description provided for @installationReinstall.
+  ///
+  /// In en, this message translates to:
+  /// **'REINSTALL'**
+  String get installationReinstall;
+
+  /// No description provided for @installationVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'VERIFY'**
+  String get installationVerify;
+
+  /// No description provided for @installationSelectFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'SELECT FOLDER'**
+  String get installationSelectFolder;
 
   /// Shared button label to expand text
   ///
@@ -1848,6 +1902,18 @@ abstract class AppLocalizations {
   /// **'sm64coopdx.com'**
   String get linksWebsiteUrl;
 
+  /// Link item title for the official SM64CDPY website
+  ///
+  /// In en, this message translates to:
+  /// **'Official SM64CDPY Website'**
+  String get linksAppWebsite;
+
+  /// Link item subtitle for the official SM64CDPY website
+  ///
+  /// In en, this message translates to:
+  /// **'News, downloads, and project information'**
+  String get linksAppWebsiteDesc;
+
   /// Link kind badge label for web links
   ///
   /// In en, this message translates to:
@@ -2025,7 +2091,7 @@ abstract class AppLocalizations {
   /// Disclaimer screen warning banner body text
   ///
   /// In en, this message translates to:
-  /// **'This app is a personal project. Any issues related to it (functionality, bugs, etc.) are the sole responsibility of the developer. The SM64CoopDX developers and mod creators bear no responsibility whatsoever for this application.'**
+  /// **'SM64CDPY is independent software. Questions, technical issues, and requests concerning this app must be directed to the SM64CDPY developer, not to Nintendo, the SM64CoopDX team, or the listed mod authors.'**
   String get disclaimerWarningBody;
 
   /// Disclaimer screen error message when a link cannot be opened
@@ -2037,13 +2103,13 @@ abstract class AppLocalizations {
   /// Disclaimer screen section header for personal purpose
   ///
   /// In en, this message translates to:
-  /// **'Personal purpose'**
+  /// **'About this app'**
   String get disclaimerSectionPersonalPurpose;
 
   /// Disclaimer screen body text for the personal purpose section
   ///
   /// In en, this message translates to:
-  /// **'This application was independently developed as a personal project. Its sole purpose is to give me faster access, organization, and download management for mods I use for my own entertainment. It is not an application supported by the SM64CoopDX team or an official service of any kind.'**
+  /// **'SM64CDPY is an independent Android catalog and manager for community-created SM64CoopDX mods. It helps users browse, download, organize, and install compatible content in folders selected by the user. The app does not distribute or install Super Mario 64, ROM files, SM64CoopDX, or Android builds of SM64CoopDX. It does not request, verify, or provide instructions for obtaining any game file.'**
   String get disclaimerBodyPersonalPurpose;
 
   /// Disclaimer screen section header for no official affiliation
@@ -2055,7 +2121,7 @@ abstract class AppLocalizations {
   /// Disclaimer screen body text for the no affiliation section
   ///
   /// In en, this message translates to:
-  /// **'This project is not associated with, endorsed by, or approved by the developers of SM64CoopDX, Super Mario 64, Nintendo, or any of the mod creators listed. All names, images, and content displayed belong to their respective authors.'**
+  /// **'This project is not associated with, endorsed by, or approved by Nintendo, the SM64CoopDX team, or the listed mod authors. Product names and trademarks identify compatibility only. Mod titles, descriptions, images, files, and other credited material remain the property of their respective authors or rights holders.'**
   String get disclaimerBodyNoAffiliation;
 
   /// Disclaimer screen section header for data source
@@ -2067,31 +2133,55 @@ abstract class AppLocalizations {
   /// Disclaimer screen body text for the data source section
   ///
   /// In en, this message translates to:
-  /// **'Mod information comes from the public catalog at mods.sm64coopdx.com. This app only presents that information in a more accessible way; it does not host, modify, or redistribute any mod files.'**
+  /// **'The main catalog presents public community listings from Coop DX Mods (mods.sm64coopdx.com) while preserving the published author, title, dates, versions, and source. SM64CDPY provides a mobile interface and retrieves downloads from the source made available for each resource; catalog inclusion does not imply ownership or official endorsement by SM64CDPY.'**
   String get disclaimerBodyDataSource;
 
   /// Disclaimer screen section header for exclusive sections
   ///
   /// In en, this message translates to:
-  /// **'Exclusive sections (VIP · DynOS · Touch Controls)'**
+  /// **'Curated sections (VIP · DynOS · Touch Controls)'**
   String get disclaimerSectionExclusive;
 
   /// Disclaimer screen body text for the exclusive sections
   ///
   /// In en, this message translates to:
-  /// **'Starting with v{version}, the app includes curated sections with content not officially listed on the SM64CoopDX website. These sections (VIP Mods, DynOS packs, and Touch Control layouts) are maintained independently by the developer and are not affiliated with any official source. All credit goes to the original creators.'**
+  /// **'In v{version}, VIP Mods, DynOS packs, Touch Control layouts, OMM Rebirth, and Render96 may use independently curated sources. Whenever content was not created by the SM64CDPY developer, its credited creator retains authorship. These sections are separate from the main Coop DX Mods catalog and are not official Nintendo or SM64CoopDX services.'**
   String disclaimerBodyExclusive(Object version);
+
+  /// Disclaimer section header for accounts and locally stored app data
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts and local data'**
+  String get disclaimerSectionLocalData;
+
+  /// Disclaimer body explaining the current absence of accounts and local storage
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CDPY currently does not create user accounts. Favorites, installation history, selected folders, and app preferences are stored locally on the device. Removing the app or clearing its data may remove this information.'**
+  String get disclaimerBodyLocalData;
+
+  /// Disclaimer section header for third-party network services
+  ///
+  /// In en, this message translates to:
+  /// **'External services'**
+  String get disclaimerSectionExternalServices;
+
+  /// Disclaimer body describing external content and download services
+  ///
+  /// In en, this message translates to:
+  /// **'Browsing, refreshing catalogs, opening links, and downloading content may connect to services such as Coop DX Mods, GitHub, Google Drive, Dropbox, or GameBanana. Those services operate under their own terms and privacy practices, which SM64CDPY does not control.'**
+  String get disclaimerBodyExternalServices;
 
   /// Disclaimer screen section header for bugs and suggestions
   ///
   /// In en, this message translates to:
-  /// **'Bugs, suggestions & requests'**
+  /// **'Support and content corrections'**
   String get disclaimerSectionBugs;
 
   /// Disclaimer screen body text for the bugs and suggestions section
   ///
   /// In en, this message translates to:
-  /// **'If you find an issue with this app, have a suggestion, or want to request something, contact me directly through my social media. Please do not contact the official SM64CoopDX developers or mod creators about anything related to this application.'**
+  /// **'Contact the SM64CDPY developer if you find an app issue, incorrect attribution, outdated information, or content that should be corrected or removed. Please include the mod title and source when applicable. App-related requests should not be directed to Nintendo, the SM64CoopDX team, or mod authors.'**
   String get disclaimerBodyBugs;
 
   /// Section header for the VIP mods list
@@ -2333,6 +2423,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'FAILED TO LOAD'**
   String get render96FailedToLoad;
+
+  /// No description provided for @navLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get navLibrary;
+
+  /// No description provided for @libraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LIBRARY'**
+  String get libraryTitle;
+
+  /// No description provided for @libraryInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get libraryInstalled;
+
+  /// No description provided for @libraryUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates'**
+  String get libraryUpdates;
+
+  /// No description provided for @libraryDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected'**
+  String get libraryDetected;
+
+  /// No description provided for @libraryRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get libraryRecent;
+
+  /// No description provided for @libraryViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get libraryViewAll;
+
+  /// No description provided for @libraryRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh library'**
+  String get libraryRefresh;
+
+  /// No description provided for @libraryAllSections.
+  ///
+  /// In en, this message translates to:
+  /// **'All sections'**
+  String get libraryAllSections;
+
+  /// No description provided for @libraryAllDestinations.
+  ///
+  /// In en, this message translates to:
+  /// **'All folders'**
+  String get libraryAllDestinations;
+
+  /// No description provided for @libraryModsDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods folder'**
+  String get libraryModsDestination;
+
+  /// No description provided for @libraryDynosDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'DynOS folder'**
+  String get libraryDynosDestination;
+
+  /// No description provided for @libraryPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get libraryPresent;
+
+  /// No description provided for @libraryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing'**
+  String get libraryMissing;
+
+  /// No description provided for @libraryPermissionRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission required'**
+  String get libraryPermissionRevoked;
+
+  /// No description provided for @libraryFolderNotSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder required'**
+  String get libraryFolderNotSelected;
+
+  /// No description provided for @libraryNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not verified'**
+  String get libraryNotVerified;
+
+  /// No description provided for @libraryOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN CONTENT'**
+  String get libraryOpenSource;
+
+  /// No description provided for @libraryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NO INSTALLATIONS YET'**
+  String get libraryEmptyTitle;
+
+  /// No description provided for @libraryEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods installed by SM64CDPY will appear here.'**
+  String get libraryEmptyBody;
+
+  /// No description provided for @libraryUpdatesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NO KNOWN UPDATES'**
+  String get libraryUpdatesEmptyTitle;
+
+  /// No description provided for @libraryUpdatesEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates confirmed by the catalog will appear here. You can still check each content section.'**
+  String get libraryUpdatesEmptyBody;
+
+  /// No description provided for @libraryDetectedEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NO EXTERNAL CONTENT DETECTED'**
+  String get libraryDetectedEmptyTitle;
+
+  /// No description provided for @libraryDetectedEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No untracked Lua content was found in the selected folders. Refresh after making external changes.'**
+  String get libraryDetectedEmptyBody;
+
+  /// No description provided for @libraryDetectedOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected on device — not linked to the catalog'**
+  String get libraryDetectedOnDevice;
+
+  /// No description provided for @libraryDiscoveryHeaderIdentified.
+  ///
+  /// In en, this message translates to:
+  /// **'Header identified'**
+  String get libraryDiscoveryHeaderIdentified;
+
+  /// No description provided for @libraryDiscoveryProbable.
+  ///
+  /// In en, this message translates to:
+  /// **'Probable mod'**
+  String get libraryDiscoveryProbable;
+
+  /// No description provided for @libraryDiscoveryUnlinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlinked Lua'**
+  String get libraryDiscoveryUnlinked;
+
+  /// No description provided for @libraryDetectedPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry file'**
+  String get libraryDetectedPath;
+
+  /// No description provided for @libraryDetectedScanLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'The safety scan limit was reached. Some content may not be shown.'**
+  String get libraryDetectedScanLimit;
+
+  /// No description provided for @libraryErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LIBRARY UNAVAILABLE'**
+  String get libraryErrorTitle;
+
+  /// No description provided for @libraryErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The installation history could not be read. Try again without changing your game files.'**
+  String get libraryErrorBody;
+
+  /// No description provided for @libraryPartialWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Some records could not be read. Valid installations are still shown.'**
+  String get libraryPartialWarning;
+
+  /// No description provided for @libraryCatalogLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking the current catalog…'**
+  String get libraryCatalogLoading;
+
+  /// No description provided for @libraryCatalogError.
+  ///
+  /// In en, this message translates to:
+  /// **'The catalog could not be checked. Installed content is still available.'**
+  String get libraryCatalogError;
+
+  /// Installed and available versions shown on a Library update card
+  ///
+  /// In en, this message translates to:
+  /// **'{installed} → {available}'**
+  String libraryUpdateVersions(String installed, String available);
+
+  /// No description provided for @libraryEventInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get libraryEventInstall;
+
+  /// No description provided for @libraryEventUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get libraryEventUpdate;
+
+  /// No description provided for @libraryEventReinstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Reinstalled'**
+  String get libraryEventReinstall;
+
+  /// No description provided for @libraryEventReplaced.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaced by a newer version'**
+  String get libraryEventReplaced;
+
+  /// No description provided for @libraryForgetAction.
+  ///
+  /// In en, this message translates to:
+  /// **'FORGET INSTALLATION'**
+  String get libraryForgetAction;
+
+  /// No description provided for @libraryForgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FORGET THIS INSTALLATION?'**
+  String get libraryForgetTitle;
+
+  /// No description provided for @libraryForgetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CDPY will remove this item from the Library, but it will not delete any game files.'**
+  String get libraryForgetBody;
+
+  /// No description provided for @libraryForgetConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'FORGET'**
+  String get libraryForgetConfirm;
+
+  /// No description provided for @libraryRemoveHistoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE FROM HISTORY'**
+  String get libraryRemoveHistoryAction;
+
+  /// No description provided for @libraryRemoveHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE THIS EVENT?'**
+  String get libraryRemoveHistoryTitle;
+
+  /// No description provided for @libraryRemoveHistoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only this history entry will be removed. The current installation and game files will not change.'**
+  String get libraryRemoveHistoryBody;
+
+  /// No description provided for @libraryRemoveHistoryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE'**
+  String get libraryRemoveHistoryConfirm;
+
+  /// No description provided for @libraryMaintenanceError.
+  ///
+  /// In en, this message translates to:
+  /// **'The Library could not be updated. Try again.'**
+  String get libraryMaintenanceError;
 }
 
 class _AppLocalizationsDelegate

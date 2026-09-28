@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/entities/dynos_entity.dart';
+import '../domain/entities/install_identity.dart';
 import '../domain/entities/mod_entity.dart';
 import '../domain/entities/mod_version_resolver.dart';
 import '../domain/entities/omm_rebirth_entity.dart';
@@ -39,6 +40,26 @@ class OverlayModItem {
   final String? imageUrl;
   final OverlaySection section;
   final String installDestination;
+
+  InstallIdentity identityFor(OverlayDownloadOption option) =>
+      InstallIdentity.forCatalogArtifact(
+        section: switch (section) {
+          OverlaySection.all => InstallSection.mods,
+          OverlaySection.vip => InstallSection.vip,
+          OverlaySection.dynos => InstallSection.dynos,
+          OverlaySection.touchControls => InstallSection.touchControls,
+          OverlaySection.omm => InstallSection.omm,
+          OverlaySection.render96 => InstallSection.render96,
+        },
+        contentId: id,
+        downloadUrl: option.url,
+        versionLabel: option.versionLabel,
+        fileName: option.filename,
+        // General catalog details use the resolver's stable
+        // version-{index}-file-{index} key. Passing the same key here is what
+        // lets receipts created from the main engine match the overlay.
+        explicitFileId: section == OverlaySection.all ? option.fileKey : null,
+      );
 
   factory OverlayModItem.fromModEntity(ModEntity m) {
     final latest = resolveLatestDownloadableVersion(m.versions);
@@ -107,7 +128,7 @@ class OverlayModItem {
   factory OverlayModItem.fromOmm(OmmRebirthEntity m) => OverlayModItem(
     id: m.id,
     title: m.title,
-    downloadOptions: [OverlayDownloadOption.primary(m.downloadUrl, '')],
+    downloadOptions: [OverlayDownloadOption.primary(m.downloadUrl, m.version)],
     imageUrl: m.imageUrl,
     section: OverlaySection.omm,
     installDestination: m.id == 'cappy-bros-dynos' ? 'dynos' : 'mods',

@@ -12,14 +12,17 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/touch_control_entity.dart';
+import '../../domain/entities/install_identity.dart';
+import '../../domain/entities/installation_action.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
-import '../providers/mod_providers.dart';
+import '../providers/installation_action_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/dynos_install_flow.dart';
+import '../widgets/installation_action_presentation.dart';
 import '../../l10n/app_localizations.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -44,10 +47,24 @@ class _TouchControlsScreenState extends ConsumerState<TouchControlsScreen> {
   @override
   Widget build(BuildContext context) {
     final touchAsync = ref.watch(allTouchControlsProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final title = Text(
+      l10n.touchTitle,
+      style: retro.heading(size: 16, color: retro.accent),
+    );
 
     return touchAsync.when(
-      loading: () => const _TouchSkeleton(),
-      error: (e, _) => _TouchError(message: e.toString()),
+      loading: () => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.accent,
+        child: const _TouchSkeleton(),
+      ),
+      error: (e, _) => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.accent,
+        child: _TouchError(message: e.toString()),
+      ),
       data: (mods) => _TouchBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
@@ -73,15 +90,8 @@ class _TouchBody extends StatelessWidget {
       ),
       slivers: [
         // ── App bar ───────────────────────────────────────────
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: DrawerMenuButton(color: retro.accent),
+        RetroPinnedAppBar(
+          leadingColor: retro.accent,
           title: Text(
             l10n.touchTitle,
             style: retro.heading(size: 16, color: retro.accent),
@@ -161,8 +171,13 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   bool _downloading = false;
   double _progress = 0.0;
 
-  String get _operationName =>
-      sanitizeModTitle('touch-${widget.mod.id}-${widget.mod.title}');
+  InstallIdentity get _identity => InstallIdentity.forCatalogArtifact(
+    section: InstallSection.touchControls,
+    contentId: widget.mod.id,
+    downloadUrl: widget.mod.downloadUrl,
+  );
+
+  String get _operationName => _identity.operationKey;
 
   @override
   void initState() {
@@ -234,7 +249,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
       if (!hasFolder) {
         if (!mounted) return;
         final goToSettings = await showDynosFolderRequiredDialog(context);
-        if (goToSettings && mounted) GoRouter.of(context).push('/settings');
+        if (goToSettings && mounted) GoRouter.of(context).go('/settings');
         return;
       }
 
@@ -256,6 +271,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
             fileName: filename,
             displayTitle: widget.mod.title,
             installDestination: 'dynos',
+            identity: _identity,
           );
       if (!mounted) return;
       if (chain == null) {
@@ -311,7 +327,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
           if (!await installer.isDynosDirectorySelected()) {
             if (!mounted) return;
             final goToSettings = await showDynosFolderRequiredDialog(context);
-            if (goToSettings && mounted) GoRouter.of(context).push('/settings');
+            if (goToSettings && mounted) GoRouter.of(context).go('/settings');
             if (mounted) {
               AppSnackbar.info(
                 context,
@@ -385,21 +401,10 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final isFav = ref.watch(touchFavouritesProvider).contains(widget.mod.id);
-    final backgroundInfo = ref.watch(bgInstallStateProvider)[_operationName];
-    final backgroundBusy =
-        backgroundInfo != null &&
-        (backgroundInfo.status == BgInstallStatus.pending ||
-            backgroundInfo.status == BgInstallStatus.downloading ||
-            backgroundInfo.status == BgInstallStatus.installing);
-    final isDownloading = _downloading || backgroundBusy;
-    final backgroundProgress = backgroundInfo?.downloadProgress != null
-        ? backgroundInfo!.downloadProgress! / 100
-        : (backgroundInfo?.current != null &&
-              backgroundInfo?.total != null &&
-              backgroundInfo!.total! > 0)
-        ? backgroundInfo.current! / backgroundInfo.total!
-        : null;
-    final visibleProgress = _downloading ? _progress : backgroundProgress;
+    final actionState = ref.watch(installationActionProvider(_identity));
+    final action = actionState.primaryAction;
+    final isDownloading = _downloading || actionState.isOperationActive;
+    final visibleProgress = _downloading ? _progress : actionState.progress;
     final cardImageHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
         ? 140.0
@@ -553,7 +558,19 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                               : retro.hardShadow(dx: 4, dy: 4),
                         ),
                         child: ElevatedButton(
-                          onPressed: isDownloading ? null : _download,
+                          onPressed:
+                              (_downloading &&
+                                      !actionState.isOperationActive) ||
+                                  action ==
+                                      InstallationPrimaryAction.checking ||
+                                  action == InstallationPrimaryAction.installed
+                              ? null
+                              : () => runCanonicalInstallationAction(
+                                  context: context,
+                                  ref: ref,
+                                  state: actionState,
+                                  onTransfer: _download,
+                                ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.accent,
                             foregroundColor: retro.background,
@@ -583,8 +600,8 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                                       const SizedBox(height: 4),
                                       Text(
                                         visibleProgress == null
-                                            ? l10n.detailInstalling
-                                            : '${(visibleProgress * 100).toStringAsFixed(0)}%',
+                                            ? action.label(l10n)
+                                            : '${(visibleProgress * 100).toStringAsFixed(0)}% · ${action.label(l10n)}',
                                         style: TextStyle(
                                           color: retro.background,
                                           fontSize: 11,
@@ -597,10 +614,10 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                               : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.download_rounded, size: 18),
+                                    Icon(action.icon, size: 18),
                                     SizedBox(width: 8),
                                     Text(
-                                      l10n.sharedDownload,
+                                      action.label(l10n),
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900,
@@ -612,6 +629,15 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                         ),
                       ),
                     ),
+                    if (actionState.canReinstall)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: _download,
+                          icon: const Icon(Icons.refresh_rounded, size: 15),
+                          label: Text(l10n.installationReinstall),
+                        ),
+                      ),
                   ],
                 ),
               ),

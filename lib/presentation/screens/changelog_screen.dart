@@ -24,12 +24,7 @@ class ChangelogScreen extends StatelessWidget {
 
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: const DrawerMenuButton(),
+        RetroPinnedAppBar(
           title: Text(l10n.changelogTitle, style: retro.heading(size: 18)),
         ),
         SliverPadding(
@@ -332,9 +327,37 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.7.0',
+    version: '1.8.0',
     date: 'September 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'New Library with Installed, Updates, Detected, and Recent views, backed by a durable local installation history.',
+          'Installed content can now be verified against the selected game folders, reopened from its source, reinstalled, updated, or removed from the app history without deleting game files.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Dark mode now uses a deeper, more comfortable near-black palette with softer borders and dividers.',
+          'Navigation has been rebuilt around a stable top bar and a faster, clearer drawer that remains available while scrolling.',
+          'The Legal Notice and Links & Resources screens now explain the app scope more clearly and prioritize official project destinations.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Installation status now stays consistent across the catalogue, Library, detail screens, and floating overlay; missing content shows Install while Reinstall is reserved for a version that is still present.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.7.0',
+    date: 'September 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,
@@ -343,11 +366,19 @@ const _kVersions = <_VersionData>[
           'Dynos and touch controls now use the same WorkManager download+install pipeline as regular mods — previously a separate file downloader path with no background recovery. Cancelled downloads now properly stop WorkManager jobs.',
           'SafZipExtractor shared object — single source of truth for ZIP extraction to SAF document trees with delete-before-create (prevents duplicate files on reinstall) and explicit failure when SAF permissions are lost mid-operation.',
           'Background install state now persisted to SharedPreferences — survives process death. WorkManager-resumed workers have full context on app restart. Uses putIfAbsent to never overwrite fresher live events with stale stored data.',
+          'Library discovery can now find untracked Lua mods already present in the selected folders, using bounded native SAF scanning without treating them as confirmed catalog installations.',
+          'Library maintenance now distinguishes installs, updates, and reinstalls, lists verified catalog updates, and lets users forget records without deleting game files.',
         ],
       ),
       _ChangeGroupData(
         type: _ChangeType.improved,
         items: [
+          'Root navigation now uses one compact pinned app bar across every section, keeping the drawer button stable during scrolling, loading, and error states. The drawer opens faster, starts at the top, groups primary destinations clearly, and leaves catalog filters inside the catalog.',
+          'Dark mode now uses a deeper GitHub-inspired near-black palette with layered surfaces and a subtler halftone texture, reducing perceived brightness while preserving the retro identity.',
+          'Dark-mode borders and dividers now use a muted intermediate gray instead of bright cream, reducing glare across cards, panels, menus, and section separators.',
+          'The legal notice now clearly explains the unofficial app scope, community catalog provenance and attribution, curated sources, local-only user data, external services, and the correction or removal contact path.',
+          'Links & Resources now prioritizes readable names and purposes instead of redundant provider badges, supports longer localized text, and places the official SM64CDPY website first among app resources.',
+          'The Library now shares the catalog visual language with skewed views, contextual filters that only appear when useful, retro filter sheets, useful counters, and clearer installed or externally detected cards.',
           'DynOS and Touch Controls now follow the global auto-install setting consistently: automatic mode uses the shared background pipeline, while manual mode asks before installing a completed download.',
           'Broken Touch Controls and DynOS links now show a friendly unavailable/download error while keeping technical details available through the copy action.',
           'Settings now identifies the shared destination as the DynOS and Touch Controls folder, making it clear that both content types are installed there.',
@@ -362,6 +393,7 @@ const _kVersions = <_VersionData>[
           'Canonical operation keys now include section, content ID, and file ID; overlay and main screens address the same chain without title collisions.',
           'Render96, VIP, OMM, regular mods, DynOS, and Touch Controls now consume the same shared background state instead of declaring success when work is only queued.',
           'Multi-version mods now resolve one canonical latest downloadable release in both the detail screen and floating overlay; multiple files in that release remain explicitly selectable.',
+          'The floating overlay now receives a verified installation-library snapshot and uses the same canonical action policy as the main app, keeping Installed, Update, Verify, Reinstall, and folder states coherent across both Flutter engines.',
           'The latest release stays visible in mod details while older releases move to an on-demand, virtualized bottom sheet instead of filling the entire screen.',
           'Completed installations now use a separate visible Android notification channel, a custom status icon, and the readable mod title.',
         ],

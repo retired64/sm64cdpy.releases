@@ -35,8 +35,8 @@ class RetroTheme {
   /// Flutter vía `overlayMain()`, sin acceso al `Theme` de la app principal).
   /// Siempre oscura por diseño: un overlay sobre gameplay en vivo necesita
   /// contraste alto y no debe competir visualmente con el juego, sin
-  /// importar la preferencia claro/oscuro del usuario en la app. Navy más
-  /// profundo que el `isDark` normal + el mismo acento teal real del
+  /// importar la preferencia claro/oscuro del usuario en la app. Conserva su
+  /// propia escala navy de baja distracción + el mismo acento teal real del
   /// sistema (antes el overlay usaba 0xFF00D9C0 hardcodeado, divergente de
   /// `accent` — corregido acá porque ya no hace falta overridearlo).
   factory RetroTheme.overlay() => RetroTheme(
@@ -54,24 +54,24 @@ class RetroTheme {
   final Color? _borderOverride;
   final Color? _shadowColorOverride;
 
-  // El modo oscuro es la identidad "real" de la referencia (navy + crema).
-  // El modo claro reinterpreta la misma paleta sobre papel cálido para no
-  // perder el carácter cuando el sistema pide light mode.
+  // El modo oscuro usa una escala casi negra inspirada en GitHub Dark para
+  // reducir luminancia sin perder separación entre lienzo, panel y superficie
+  // elevada. El modo claro reinterpreta la identidad sobre papel cálido.
   Color get background =>
       _backgroundOverride ??
-      (isDark ? const Color(0xFF262A38) : const Color(0xFFF5F2E9));
+      (isDark ? const Color(0xFF0D1117) : const Color(0xFFF5F2E9));
   Color get surface =>
       _surfaceOverride ??
-      (isDark ? const Color(0xFF2B2F3E) : const Color(0xFFFFFFFF));
+      (isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF));
   Color get surfaceAlt =>
       _surfaceAltOverride ??
-      (isDark ? const Color(0xFF333849) : const Color(0xFFEDE8DA));
+      (isDark ? const Color(0xFF21262D) : const Color(0xFFEDE8DA));
   Color get border =>
       _borderOverride ??
-      (isDark ? const Color(0xFFF2EFE4) : const Color(0xFF262A38));
+      (isDark ? const Color(0xFF6E7681) : const Color(0xFF262A38));
   Color get shadowColor =>
       _shadowColorOverride ??
-      (isDark ? const Color(0xFF14161F) : const Color(0xFF262A38));
+      (isDark ? const Color(0xFF010409) : const Color(0xFF262A38));
   Color get ink => isDark ? const Color(0xFFF2EFE4) : const Color(0xFF20232E);
   Color get inkDim =>
       isDark ? const Color(0xFF9096A3) : const Color(0xFF696E7C);

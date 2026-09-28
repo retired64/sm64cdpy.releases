@@ -48,10 +48,24 @@ class _PopularScreenState extends ConsumerState<PopularScreen> {
   @override
   Widget build(BuildContext context) {
     final popularAsync = ref.watch(popularModsProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final title = RichText(
+      text: TextSpan(
+        children: [
+          const TextSpan(text: '🔥 '),
+          TextSpan(text: l10n.popularTitle, style: retro.heading(size: 16)),
+        ],
+      ),
+    );
 
     return popularAsync.when(
-      loading: () => const _PopularSkeleton(),
-      error: (e, _) => _PopularError(message: e.toString()),
+      loading: () =>
+          RetroFixedHeaderView(title: title, child: const _PopularSkeleton()),
+      error: (e, _) => RetroFixedHeaderView(
+        title: title,
+        child: _PopularError(message: e.toString()),
+      ),
       data: (mods) => _PopularBody(
         mods: mods,
         page: _page,
@@ -98,20 +112,15 @@ class _PopularBody extends StatelessWidget {
       ),
       slivers: [
         // ── App bar ───────────────────────────────────────────
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: const DrawerMenuButton(),
+        RetroPinnedAppBar(
           title: RichText(
             text: TextSpan(
               children: [
                 const TextSpan(text: '🔥 '),
-                TextSpan(text: l10n.popularTitle, style: retro.heading(size: 16)),
+                TextSpan(
+                  text: l10n.popularTitle,
+                  style: retro.heading(size: 16),
+                ),
               ],
             ),
           ),
@@ -144,7 +153,9 @@ class _PopularBody extends StatelessWidget {
                 Expanded(
                   child: SectionKicker(
                     retro: retro,
-                    label: showPodium ? l10n.popularMoreRankings : l10n.popularRankings,
+                    label: showPodium
+                        ? l10n.popularMoreRankings
+                        : l10n.popularRankings,
                     japanese: '人気ランキング',
                   ),
                 ),
@@ -223,7 +234,11 @@ class _Podium extends StatelessWidget {
         child: Column(
           children: [
             // Label
-            SectionKicker(retro: retro, label: l10n.popularTop3, japanese: '殿堂'),
+            SectionKicker(
+              retro: retro,
+              label: l10n.popularTop3,
+              japanese: '殿堂',
+            ),
             const SizedBox(height: 18),
 
             // Podium columns: silver | gold | bronze
@@ -329,7 +344,10 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
         animation: _pressCtrl,
         builder: (context, child) {
           final offset = 2.0 * _pressCtrl.value;
-          return Transform.translate(offset: Offset(offset, offset), child: child);
+          return Transform.translate(
+            offset: Offset(offset, offset),
+            child: child,
+          );
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -341,7 +359,9 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Icon(
-                  isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  isFav
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
                   size: 14,
                   color: isFav ? retro.red : retro.inkDim,
                 ),
@@ -357,7 +377,10 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
                 decoration: BoxDecoration(
                   border: Border.all(color: widget.color, width: 2.5),
                   boxShadow: [
-                    BoxShadow(color: widget.color.withValues(alpha: 0.35), offset: const Offset(2, 2)),
+                    BoxShadow(
+                      color: widget.color.withValues(alpha: 0.35),
+                      offset: const Offset(2, 2),
+                    ),
                   ],
                 ),
                 child: _PodiumThumb(mod: widget.mod, retro: retro),
@@ -613,7 +636,9 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                 child: Padding(
                   padding: const EdgeInsets.all(6),
                   child: Icon(
-                    isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                    isFav
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
                     size: 17,
                     color: isFav ? retro.red : retro.inkDim,
                   ),
@@ -751,7 +776,10 @@ class _PagePills extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: isActive ? retro.accent : retro.surface,
-              border: Border.all(color: retro.border, width: isActive ? 2 : 1.5),
+              border: Border.all(
+                color: retro.border,
+                width: isActive ? 2 : 1.5,
+              ),
               boxShadow: isActive ? retro.hardShadow(dx: 2, dy: 2) : null,
             ),
             child: Text(
@@ -890,7 +918,11 @@ class _PopularError extends StatelessWidget {
                   border: Border.all(color: retro.red, width: 3),
                   boxShadow: retro.hardShadow(),
                 ),
-                child: Icon(Icons.error_outline_rounded, size: 28, color: retro.red),
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  size: 28,
+                  color: retro.red,
+                ),
               ),
               const SizedBox(height: 20),
               Text(

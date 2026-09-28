@@ -504,6 +504,9 @@ class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
       installDestination: BackgroundInstallService.instance
           .getInfo(event.modName)
           ?.installDestination,
+      identity: BackgroundInstallService.instance
+          .getInfo(event.modName)
+          ?.identity,
     );
 
     state = {...state, event.modName: info};

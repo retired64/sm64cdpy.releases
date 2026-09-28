@@ -212,15 +212,7 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
       orElse: () => null,
     );
 
-    return SliverAppBar(
-      backgroundColor: retro.background,
-      surfaceTintColor: Colors.transparent,
-      scrolledUnderElevation: 0,
-      floating: true,
-      snap: true,
-      elevation: 0,
-      shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-      leading: const DrawerMenuButton(),
+    return RetroPinnedAppBar(
       title: RichText(
         text: TextSpan(
           children: [
@@ -523,7 +515,11 @@ class _SortSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final options = [
-      (order: SortOrder.none, icon: Icons.list_rounded, label: l10n.catalogueSortDefault),
+      (
+        order: SortOrder.none,
+        icon: Icons.list_rounded,
+        label: l10n.catalogueSortDefault,
+      ),
       (
         order: SortOrder.ratingDesc,
         icon: Icons.star_rounded,
@@ -966,7 +962,9 @@ class _EmptyView extends ConsumerWidget {
             ),
             const SizedBox(height: 22),
             Text(
-              hasFilters ? l10n.catalogueNoModsFound : l10n.catalogueNothingHere,
+              hasFilters
+                  ? l10n.catalogueNoModsFound
+                  : l10n.catalogueNothingHere,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: retro.ink,
@@ -977,9 +975,7 @@ class _EmptyView extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              hasFilters
-? l10n.catalogueEmptyHint1
-                    : l10n.catalogueEmptyHint2,
+              hasFilters ? l10n.catalogueEmptyHint1 : l10n.catalogueEmptyHint2,
               style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
             ),
