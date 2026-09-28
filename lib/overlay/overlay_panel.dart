@@ -225,6 +225,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   void _runLibraryAction(OverlayModItem mod, InstallationActionState action) {
     switch (action.primaryAction) {
       case InstallationPrimaryAction.download:
+      case InstallationPrimaryAction.install:
       case InstallationPrimaryAction.update:
       case InstallationPrimaryAction.reinstall:
         unawaited(_requestDownload(mod));
@@ -467,8 +468,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     InstallationPrimaryAction.selectFolder => 3,
     InstallationPrimaryAction.verify => 4,
     InstallationPrimaryAction.reinstall => 5,
-    InstallationPrimaryAction.download => 6,
-    InstallationPrimaryAction.checking => 7,
+    InstallationPrimaryAction.install => 6,
+    InstallationPrimaryAction.download => 7,
+    InstallationPrimaryAction.checking => 8,
   };
 
   @override
@@ -869,9 +871,17 @@ class _ModTileState extends ConsumerState<_ModTile> {
             children: [
               Expanded(child: _titleRow()),
               const SizedBox(width: 6),
-              if (_isDone ||
-                  _canonicalAction == InstallationPrimaryAction.installed)
+              if (_isDone)
                 Icon(Icons.check_circle, size: 19, color: _statusColor)
+              else if (_canonicalAction == InstallationPrimaryAction.installed)
+                Tooltip(
+                  message: AppLocalizations.of(context).installationReinstall,
+                  child: _RoundIconButton(
+                    icon: Icons.refresh_rounded,
+                    color: _statusColor,
+                    onTap: widget.onDownload,
+                  ),
+                )
               else if (!_hasDownloads)
                 Icon(
                   Icons.block,
@@ -976,6 +986,7 @@ class _ModTileState extends ConsumerState<_ModTile> {
     final l10n = AppLocalizations.of(context);
     final canonicalLabel = switch (_canonicalAction) {
       InstallationPrimaryAction.installed ||
+      InstallationPrimaryAction.install ||
       InstallationPrimaryAction.update ||
       InstallationPrimaryAction.reinstall ||
       InstallationPrimaryAction.verify ||

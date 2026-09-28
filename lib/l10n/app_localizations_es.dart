@@ -495,6 +495,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get installationUpdate => 'ACTUALIZAR';
 
   @override
+  String get installationInstall => 'INSTALAR';
+
+  @override
   String get installationReinstall => 'REINSTALAR';
 
   @override
@@ -1995,6 +1998,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get installationUpdate => 'ACTUALIZAR';
+
+  @override
+  String get installationInstall => 'INSTALAR';
 
   @override
   String get installationReinstall => 'REINSTALAR';

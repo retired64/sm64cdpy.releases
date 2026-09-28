@@ -493,6 +493,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get installationUpdate => 'ATUALIZAR';
 
   @override
+  String get installationInstall => 'INSTALAR';
+
+  @override
   String get installationReinstall => 'REINSTALAR';
 
   @override
@@ -1984,6 +1987,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get installationUpdate => 'ATUALIZAR';
+
+  @override
+  String get installationInstall => 'INSTALAR';
 
   @override
   String get installationReinstall => 'REINSTALAR';

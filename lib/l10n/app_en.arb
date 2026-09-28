@@ -616,6 +616,7 @@
   "installationCancel": "CANCEL",
   "installationInstalled": "INSTALLED",
   "installationUpdate": "UPDATE",
+  "installationInstall": "INSTALL",
   "installationReinstall": "REINSTALL",
   "installationVerify": "VERIFY",
   "installationSelectFolder": "SELECT FOLDER",

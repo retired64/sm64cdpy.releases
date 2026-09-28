@@ -349,7 +349,7 @@ const _kVersions = <_VersionData>[
       _ChangeGroupData(
         type: _ChangeType.fixed,
         items: [
-          'Installation status now stays consistent across the catalogue, Library, detail screens, and floating overlay, including cancellation and app restarts.',
+          'Installation status now stays consistent across the catalogue, Library, detail screens, and floating overlay; missing content shows Install while Reinstall is reserved for a version that is still present.',
         ],
       ),
     ],

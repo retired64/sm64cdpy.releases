@@ -5,6 +5,7 @@ import 'installation_library.dart';
 enum InstallationPrimaryAction {
   checking,
   download,
+  install,
   cancel,
   installed,
   update,
@@ -97,9 +98,9 @@ class InstallationActionSelector {
             ? InstallationPrimaryAction.update
             : exactReceipt != null
             ? InstallationPrimaryAction.installed
-            : InstallationPrimaryAction.download,
+            : InstallationPrimaryAction.install,
       InstallationVerificationStatus.missing =>
-        InstallationPrimaryAction.reinstall,
+        InstallationPrimaryAction.install,
       InstallationVerificationStatus.permissionRevoked =>
         InstallationPrimaryAction.selectFolder,
       InstallationVerificationStatus.folderNotSelected =>

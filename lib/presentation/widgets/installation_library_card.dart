@@ -273,13 +273,13 @@ class InstallationLibraryCard extends ConsumerWidget {
       },
       icon: Icon(
         status == InstallationVerificationStatus.missing
-            ? Icons.refresh_rounded
+            ? Icons.install_mobile_rounded
             : Icons.open_in_new_rounded,
         size: 18,
       ),
       label: Text(
         status == InstallationVerificationStatus.missing
-            ? l10n.installationReinstall
+            ? l10n.installationInstall
             : l10n.libraryOpenSource,
       ),
     );

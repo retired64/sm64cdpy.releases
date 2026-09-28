@@ -105,8 +105,7 @@ void main() {
 
   test('SAF states map to conservative actions', () {
     final expected = {
-      InstallationVerificationStatus.missing:
-          InstallationPrimaryAction.reinstall,
+      InstallationVerificationStatus.missing: InstallationPrimaryAction.install,
       InstallationVerificationStatus.unknown: InstallationPrimaryAction.verify,
       InstallationVerificationStatus.folderNotSelected:
           InstallationPrimaryAction.selectFolder,
@@ -188,6 +187,48 @@ void main() {
     expect(state.primaryAction, InstallationPrimaryAction.update);
     expect(state.verification?.artifactKey, olderIdentity.artifactKey);
   });
+
+  test(
+    'older selected version is install, not reinstall, while content exists',
+    () {
+      final newerIdentity = InstallIdentity.forCatalogArtifact(
+        section: InstallSection.mods,
+        contentId: 'content-1',
+        downloadUrl: 'https://example.test/version/3?file=1',
+        versionLabel: 'v3.0',
+        explicitVersionId: '3',
+        explicitFileId: '1',
+      );
+      final value = installationReceiptFixture(
+        artifactKey: newerIdentity.artifactKey,
+      );
+      (value['displaySnapshot'] as Map<String, dynamic>)['versionLabel'] =
+          'v3.0';
+      final newerReceipt = InstallationRecord.fromMap(value);
+      final snapshot = InstallationLibrarySnapshot(
+        receipts: [newerReceipt],
+        history: const [],
+        issues: const [],
+        verifications: {
+          newerIdentity.artifactKey: InstallationVerification(
+            artifactKey: newerIdentity.artifactKey,
+            status: InstallationVerificationStatus.present,
+            verifiedAt: DateTime.utc(2026, 9, 27),
+          ),
+        },
+      );
+
+      final state = InstallationActionSelector.select(
+        identity: identity,
+        operation: null,
+        library: snapshot,
+        libraryLoading: false,
+      );
+
+      expect(state.primaryAction, InstallationPrimaryAction.install);
+      expect(state.canReinstall, isFalse);
+    },
+  );
 
   test('version policy orders numeric versions and only equates prose', () {
     expect(InstallationVersionPolicy.compare('v1.9', 'v2.0'), greaterThan(0));

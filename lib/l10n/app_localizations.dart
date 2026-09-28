@@ -948,6 +948,12 @@ abstract class AppLocalizations {
   /// **'UPDATE'**
   String get installationUpdate;
 
+  /// No description provided for @installationInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTALL'**
+  String get installationInstall;
+
   /// No description provided for @installationReinstall.
   ///
   /// In en, this message translates to:

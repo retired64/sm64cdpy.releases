@@ -431,7 +431,7 @@ declarar cerrada la fase.
 
 ### Matriz física para cerrar la fase 9
 
-- [ ] Instalar una versión anterior y confirmar que aparece en
+- [x] Instalar una versión anterior y confirmar que aparece en
   **Actualizaciones** cuando el catálogo ofrece una versión numérica posterior.
 - [ ] Abrir la actualización desde Biblioteca y completar el flujo desde la
   pantalla de origen.
@@ -456,6 +456,14 @@ declarar cerrada la fase.
   no propone una variante arbitraria.
 - [ ] Comprobar que **Olvidar instalación** queda bloqueado mientras ese mismo
   contenido tiene una operación activa.
+
+**Evidencia física parcial (2026-09-27):** Day Night Cycle DX se instaló en una
+versión anterior (`2.5.1`) y Biblioteca ofreció correctamente la actualización
+canónica `2.6.2`. La acción **Olvidar instalación** refrescó la proyección y
+retiró el elemento de Actualizaciones. La prueba también detectó que un recibo
+con archivos eliminados se presentaba como **Reinstalar** en todas las
+versiones; la política se corrigió para mostrar **Instalar** cuando el contenido
+ya no está físicamente y reservar **Reinstalar** para la misma versión presente.
 
 ## Pruebas automatizadas requeridas
 
@@ -496,6 +504,9 @@ declarar cerrada la fase.
 - [ ] Sincronización cloud del historial.
 - [ ] Compartir historial entre dispositivos.
 - [ ] Desinstalación recursiva basada solamente en nombres.
+- [ ] Desinstalación segura basada en un manifiesto completo de archivos con
+  propiedad demostrable; los centinelas acotados actuales solo verifican
+  presencia y no autorizan una eliminación completa.
 - [ ] Hash de todos los archivos de paquetes masivos.
 - [ ] Escaneo continuo de las carpetas en segundo plano.
 - [ ] Afirmar coincidencias de catálogo con baja confianza.

@@ -490,6 +490,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get installationUpdate => 'UPDATE';
 
   @override
+  String get installationInstall => 'INSTALL';
+
+  @override
   String get installationReinstall => 'REINSTALL';
 
   @override
