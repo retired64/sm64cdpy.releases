@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado contra `1.7.0+18` el 2026-09-26.
+Revisado contra `1.8.0+19` el 2026-09-27.
 
 ## Alcance
 

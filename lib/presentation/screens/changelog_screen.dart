@@ -327,9 +327,37 @@ class _ChangeGroupData {
 // ─────────────────────────────────────────────────────────────────────────────
 const _kVersions = <_VersionData>[
   _VersionData(
-    version: '1.7.0',
+    version: '1.8.0',
     date: 'September 2026',
     tag: 'Latest',
+    groups: [
+      _ChangeGroupData(
+        type: _ChangeType.added,
+        items: [
+          'New Library with Installed, Updates, Detected, and Recent views, backed by a durable local installation history.',
+          'Installed content can now be verified against the selected game folders, reopened from its source, reinstalled, updated, or removed from the app history without deleting game files.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.improved,
+        items: [
+          'Dark mode now uses a deeper, more comfortable near-black palette with softer borders and dividers.',
+          'Navigation has been rebuilt around a stable top bar and a faster, clearer drawer that remains available while scrolling.',
+          'The Legal Notice and Links & Resources screens now explain the app scope more clearly and prioritize official project destinations.',
+        ],
+      ),
+      _ChangeGroupData(
+        type: _ChangeType.fixed,
+        items: [
+          'Installation status now stays consistent across the catalogue, Library, detail screens, and floating overlay, including cancellation and app restarts.',
+        ],
+      ),
+    ],
+  ),
+  _VersionData(
+    version: '1.7.0',
+    date: 'September 2026',
+    tag: null,
     groups: [
       _ChangeGroupData(
         type: _ChangeType.added,

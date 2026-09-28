@@ -502,7 +502,7 @@ declarar cerrada la fase.
 
 ## Gates antes de integrar en `main`
 
-- [ ] La rama está actualizada con `main` y no contiene ejemplos/repos externos.
+- [x] La rama está actualizada con `main` y no contiene ejemplos/repos externos.
 - [ ] No hay falsos éxitos: solo `install_completed` genera recibo.
 - [ ] Una descarga sin auto-install no aparece como instalada.
 - [ ] Proceso muerto y reapertura conservan el resultado.
@@ -510,11 +510,11 @@ declarar cerrada la fase.
 - [ ] App y overlay presentan estados coherentes.
 - [ ] No hay colisiones de identidad, recibos, temporales o notificaciones.
 - [ ] Migraciones y rollback de datos están documentados.
-- [ ] `flutter gen-l10n` pasa cuando se añadan strings.
-- [ ] `flutter analyze lib` pasa sin incidencias.
-- [ ] `android/gradlew -p android :app:compileDebugKotlin` pasa.
-- [ ] Tests automatizados aplicables pasan.
-- [ ] `git diff --check` pasa.
+- [x] `flutter gen-l10n` pasa cuando se añadan strings.
+- [x] `flutter analyze lib` pasa sin incidencias.
+- [x] `android/gradlew -p android :app:compileDebugKotlin` pasa.
+- [x] Tests automatizados aplicables pasan.
+- [x] `git diff --check` pasa.
 - [ ] La matriz manual mínima queda registrada en este documento.
 - [ ] Arquitectura, descargas/overlay, estado del proyecto y changelog se
   actualizan antes del merge.
