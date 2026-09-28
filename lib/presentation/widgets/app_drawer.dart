@@ -203,16 +203,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               ),
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/changelogs.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navChangelog,
-                route: '/changelog',
-                isActive: currentRoute == '/changelog',
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
                   'assets/icons/menu/settings.svg',
                   width: 19,
                   height: 19,

@@ -168,12 +168,6 @@ abstract class AppLocalizations {
   /// **'Disclaimer'**
   String get navDisclaimer;
 
-  /// Drawer navigation label for the changelog screen
-  ///
-  /// In en, this message translates to:
-  /// **'Changelog'**
-  String get navChangelog;
-
   /// Drawer navigation label for the settings screen
   ///
   /// In en, this message translates to:
@@ -335,18 +329,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Size: {size} MB'**
   String updateSize(String size);
-
-  /// Label before the changelog text in the update dialog
-  ///
-  /// In en, this message translates to:
-  /// **'What\'s new:'**
-  String get updateWhatIsNew;
-
-  /// Fallback text shown when no changelog is available in the update dialog
-  ///
-  /// In en, this message translates to:
-  /// **'Minor improvements and bug fixes.'**
-  String get updateGenericDescription;
 
   /// Progress text shown while downloading the update
   ///
@@ -1763,48 +1745,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Checking...'**
   String get settingsChecking;
-
-  /// Changelog screen title
-  ///
-  /// In en, this message translates to:
-  /// **'Changelog'**
-  String get changelogTitle;
-
-  /// Changelog screen section header for new features
-  ///
-  /// In en, this message translates to:
-  /// **'New'**
-  String get changelogNew;
-
-  /// Changelog screen section header for improvements
-  ///
-  /// In en, this message translates to:
-  /// **'Improved'**
-  String get changelogImproved;
-
-  /// Changelog screen section header for bug fixes
-  ///
-  /// In en, this message translates to:
-  /// **'Fixed'**
-  String get changelogFixed;
-
-  /// Changelog screen section header for removed items
-  ///
-  /// In en, this message translates to:
-  /// **'Removed'**
-  String get changelogRemoved;
-
-  /// Changelog screen section header for changes
-  ///
-  /// In en, this message translates to:
-  /// **'Changed'**
-  String get changelogChanged;
-
-  /// Changelog screen badge label for the latest release
-  ///
-  /// In en, this message translates to:
-  /// **'Latest'**
-  String get changelogLatest;
 
   /// Generic settings label used in navigation and headers
   ///

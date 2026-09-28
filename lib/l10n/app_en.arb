@@ -44,10 +44,6 @@
   "@navDisclaimer": {
     "description": "Drawer navigation label for the disclaimer screen"
   },
-  "navChangelog": "Changelog",
-  "@navChangelog": {
-    "description": "Drawer navigation label for the changelog screen"
-  },
   "navSettings": "Settings",
   "@navSettings": {
     "description": "Drawer navigation label for the settings screen"
@@ -167,14 +163,6 @@
     "placeholders": {
       "size": {"type": "String", "example": "24.3"}
     }
-  },
-  "updateWhatIsNew": "What's new:",
-  "@updateWhatIsNew": {
-    "description": "Label before the changelog text in the update dialog"
-  },
-  "updateGenericDescription": "Minor improvements and bug fixes.",
-  "@updateGenericDescription": {
-    "description": "Fallback text shown when no changelog is available in the update dialog"
   },
   "updateDownloading": "Downloading... {pct}%",
   "@updateDownloading": {
@@ -1189,37 +1177,6 @@
   "@settingsChecking": {
     "description": "Settings screen message while checking for updates"
   },
-
-
-  "changelogTitle": "Changelog",
-  "@changelogTitle": {
-    "description": "Changelog screen title"
-  },
-  "changelogNew": "New",
-  "@changelogNew": {
-    "description": "Changelog screen section header for new features"
-  },
-  "changelogImproved": "Improved",
-  "@changelogImproved": {
-    "description": "Changelog screen section header for improvements"
-  },
-  "changelogFixed": "Fixed",
-  "@changelogFixed": {
-    "description": "Changelog screen section header for bug fixes"
-  },
-  "changelogRemoved": "Removed",
-  "@changelogRemoved": {
-    "description": "Changelog screen section header for removed items"
-  },
-  "changelogChanged": "Changed",
-  "@changelogChanged": {
-    "description": "Changelog screen section header for changes"
-  },
-  "changelogLatest": "Latest",
-  "@changelogLatest": {
-    "description": "Changelog screen badge label for the latest release"
-  },
-
   "generalSettings": "Settings",
   "@generalSettings": {
     "description": "Generic settings label used in navigation and headers"

@@ -5,7 +5,7 @@ import '../../core/theme/retro_theme.dart';
 import '../providers/extra_providers.dart';
 import 'app_drawer.dart';
 
-const _noHalftoneRoutes = {'/', '/favourites', '/changelog', '/disclaimer'};
+const _noHalftoneRoutes = {'/', '/favourites', '/disclaimer'};
 
 class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key, required this.currentRoute, required this.child});

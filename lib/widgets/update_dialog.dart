@@ -217,24 +217,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         style: retro.body(size: 12),
                       ),
                     ],
-                    if (widget.config.changelog != null &&
-                        widget.config.changelog!.isNotEmpty) ...[
-                      const SizedBox(height: 14),
-                      Text(_l10n.updateWhatIsNew, style: retro.heading(size: 13)),
-                      const SizedBox(height: 4),
-                      Text(
-                        widget.config.changelog!,
-                        style: retro.body(size: 13),
-                        maxLines: 6,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ] else ...[
-                      const SizedBox(height: 14),
-                      Text(
-                        _l10n.updateGenericDescription,
-                        style: retro.body(size: 13),
-                      ),
-                    ],
                     if (_downloading) ...[
                       const SizedBox(height: 18),
                       LinearProgressIndicator(

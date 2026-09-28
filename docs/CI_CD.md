@@ -1,6 +1,12 @@
 # GitHub Actions y releases
 
-Revisado el 2026-09-20.
+Revisado el 2026-09-28.
+
+> **Fuente canónica:** la aplicación ya no incluye una pantalla de changelog ni
+> muestra el cuerpo del GitHub Release. Cada lanzamiento tiene un manifiesto
+> localizado en `release-manifests/v<version>.json`. GitHub Releases, Discord y
+> el sitio Astro consumen ese mismo documento; Flutter solo conserva la
+> detección OTA y de actualización forzada.
 
 ## Workflows actuales
 
@@ -18,8 +24,13 @@ Revisado el 2026-09-20.
 - Lee `versionName`/`versionCode` de `pubspec.yaml`.
 - Verifica que no exista el tag `v<versionName>`.
 - Ejecuta análisis, compila arm64/arm32/x86_64 y guarda un artifact temporal.
-- Renombra APK, calcula SHA-256, genera notas desde `lib/presentation/screens/changelog_screen.dart` y publica el release.
-- Notifica releases estables por Discord.
+- Exige que `release-manifests/v<version>.json` sea válido y coincida
+  exactamente con `versionName` y `versionCode`; no publica notas genéricas.
+- Ejecuta `flutter test`, renombra APK, calcula SHA-256 y publica las notas en
+  inglés generadas desde el manifiesto.
+- Notifica releases estables por Discord usando la variante española.
+- Para releases estables envía `repository_dispatch` al sitio Astro, que genera
+  EN/ES/PT-BR y abre un PR de actualización.
 
 ## Secretos necesarios
 
@@ -28,15 +39,24 @@ Revisado el 2026-09-20.
 - `KEY_PASSWORD`
 - `KEY_ALIAS`
 - `DISCORD_WEBHOOK_URL` (solo notificación estable)
+- `WEBSITE_DISPATCH_TOKEN` (solo release estable): token de acceso limitado al
+  repositorio `retired64/sm64cdpy.website`, con permiso **Contents: Read and
+  write**. Se usa para verificar acceso y enviar `repository_dispatch`.
 
 `GITHUB_TOKEN` lo proporciona GitHub Actions con permiso `contents: write` en el workflow de release.
 
 ## Observaciones de auditoría
 
 - Los workflows están alineados con Java 17, Flutter 3.41.7 y los nombres de APK que consume la selección OTA.
-- No hay suite de tests; ambos dependen de análisis estático y éxito del build.
-- El workflow de release dice que se debe subir `versionCode` si el tag existe, pero el tag solo usa `versionName`: para otro release hay que cambiar la parte anterior al `+` (y normalmente también incrementar el build number).
-- El release extrae el changelog con `grep`/`awk`; un cambio de formato en el archivo Dart puede producir notas genéricas aunque la compilación funcione.
+- La suite de tests se ejecuta antes del build y publicación.
+- Si el tag ya existe, el workflow indica correctamente que hay que incrementar
+  `versionName` y `versionCode`; cambiar solo el build no crea un tag nuevo.
+- `scripts/release_manifest.py` valida estructura, localizaciones y
+  correspondencia con `pubspec.yaml`. Un manifiesto ausente, vacío, incompleto
+  o de otra versión detiene el workflow antes de compilar.
+- `forceUpdate: true` añade una línea exacta `[FORCE]` al cuerpo de GitHub para
+  conservar el contrato OTA. Debe utilizarse solo cuando continuar con una
+  versión anterior resulte inseguro o incompatible.
 - La notificación de Discord depende de un role ID escrito en el workflow y de la disponibilidad del webhook.
 - Las acciones externas usan tags mayores (`@v2`, `@v4`), no SHA inmutables. Es práctico, pero menos estricto frente a cambios de terceros.
 - No hay trigger de `pull_request`; la calidad de una PR depende de ejecución local o manual.
@@ -44,8 +64,11 @@ Revisado el 2026-09-20.
 
 ## Checklist de release
 
-1. Actualizar `version:` en `pubspec.yaml` y crear la entrada equivalente en el changelog de la app.
-2. Ejecutar `flutter pub get` y `flutter analyze --no-fatal-infos`.
-3. Probar instalación/descarga/overlay en un Android real.
-4. Confirmar secretos y ejecutar primero el workflow de testing.
-5. Ejecutar el workflow de release y comprobar APK, hashes y OTA por ABI.
+1. Actualizar `version:` en `pubspec.yaml` y crear
+   `release-manifests/v<version>.json` con el mismo build y los tres idiomas.
+2. Ejecutar `python3 scripts/release_manifest.py <manifest> --pubspec pubspec.yaml`.
+3. Ejecutar `flutter pub get`, `flutter analyze --no-fatal-infos` y `flutter test`.
+4. Probar instalación/descarga/overlay en un Android real.
+5. Confirmar secretos y ejecutar primero el workflow de testing.
+6. Ejecutar el workflow de release y comprobar APK, hashes, evento hacia la
+   web, PR generado y OTA por ABI.

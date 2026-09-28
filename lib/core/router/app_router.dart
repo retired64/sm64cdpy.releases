@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../presentation/screens/catalogue_screen.dart';
-import '../../presentation/screens/changelog_screen.dart';
 import '../../presentation/screens/disclaimer_screen.dart';
 import '../../presentation/screens/dynos_screen.dart';
 import '../../presentation/screens/favourites_screen.dart';
@@ -45,10 +44,6 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/settings',
           pageBuilder: (_, s) => _page(const SettingsScreen(), s),
-        ),
-        GoRoute(
-          path: '/changelog',
-          pageBuilder: (_, s) => _page(const ChangelogScreen(), s),
         ),
         GoRoute(
           path: '/links-resource',

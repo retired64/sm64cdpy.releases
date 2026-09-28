@@ -62,13 +62,51 @@ jobs:
           echo "  versionCode : $VERSION_CODE"
           echo "──────────────────────────────────"
 
+      # El manifiesto es una compuerta de release: no hay fallback genérico.
+      - name: Validar manifiesto y preparar notas localizadas
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          MANIFEST="release-manifests/v${V}.json"
+          python3 scripts/release_manifest.py "$MANIFEST" \
+            --pubspec pubspec.yaml \
+            --github-output /tmp/release_notes.txt \
+            --discord-output /tmp/discord_notes.txt
+
+          echo "── Notas verificadas para GitHub ────────────"
+          cat /tmp/release_notes.txt
+          echo "─────────────────────────────────────────────"
+
+      # Un release estable debe poder avisar al repositorio web. Se comprueba
+      # antes de compilar/publicar para evitar una release parcialmente
+      # automatizada por un secreto ausente o sin permisos.
+      - name: Verificar acceso al repositorio web
+        if: inputs.prerelease == 'false'
+        env:
+          WEBSITE_DISPATCH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
+          WEBSITE_REPOSITORY: retired64/sm64cdpy.website
+        run: |
+          if [ -z "$WEBSITE_DISPATCH_TOKEN" ]; then
+            echo "::error::Falta el secreto WEBSITE_DISPATCH_TOKEN."
+            exit 1
+          fi
+          curl --fail-with-body --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $WEBSITE_DISPATCH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${WEBSITE_REPOSITORY}" > /tmp/website-repository.json
+
+          if [ "$(jq -r '.permissions.push // false' /tmp/website-repository.json)" != "true" ]; then
+            echo "::error::WEBSITE_DISPATCH_TOKEN no tiene permiso de escritura en ${WEBSITE_REPOSITORY}."
+            exit 1
+          fi
+
       # ── 5. Verificar que el tag no exista ya ─────────────────────────────
       - name: Verificar que el tag v${{ steps.version.outputs.version }} no existe
         run: |
           TAG="v${{ steps.version.outputs.version }}"
           if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
             echo "ERROR: El tag $TAG ya existe en el repositorio."
-            echo "   Sube el versionCode en pubspec.yaml antes de hacer release."
+            echo "   Incrementa versionName y versionCode en pubspec.yaml antes de publicar otra release."
             exit 1
           fi
           echo "Tag $TAG disponible"
@@ -95,6 +133,12 @@ jobs:
       - name: flutter analyze
         run: flutter analyze --no-fatal-infos
         continue-on-error: false
+
+      - name: flutter test
+        run: flutter test
+
+      - name: Probar contrato de manifiestos
+        run: python3 -m unittest discover -s test/scripts -p '*_test.py' -v
 
       # ── 9. Build APKs split por ABI ─────────────────────────────────────
       - name: Build APKs (arm64-v8a, armeabi-v7a, x86_64)
@@ -159,77 +203,10 @@ jobs:
           echo "arm32=$APK_DIR/$ARM32_NAME"   >> $GITHUB_OUTPUT
           echo "x86_64=$APK_DIR/$X86_NAME"    >> $GITHUB_OUTPUT
 
-      # ── 13. Extraer changelog desde changelog_screen.dart ─────────────────
-      # Única fuente de changelogs: lib/presentation/screens/changelog_screen.dart
-      # Extrae los ítems agrupados por tipo (Added / Improved / Removed)
-      # para la versión que se está publicando
-      - name: Preparar release notes
-        id: notes
+      # ── 13. Completar notas validadas con las variantes APK ───────────────
+      - name: Agregar guía de descargas a las notas
         run: |
-          V="${{ steps.version.outputs.version }}"
-          CHANGELOG_FILE="lib/presentation/screens/changelog_screen.dart"
           NOTES_FILE="/tmp/release_notes.txt"
-
-          {
-            echo "## Sm64CDPY v${V}"
-            echo ""
-          } > "$NOTES_FILE"
-
-          # ── Buscar la versión en el archivo Dart ──────────────
-          START_LINE=$(grep -n "version: '$V'" "$CHANGELOG_FILE" | head -1 | cut -d: -f1)
-
-          if [ -n "$START_LINE" ]; then
-            # Buscar dónde termina este bloque (siguiente _VersionData o EOF)
-            END_OFFSET=$(tail -n +$((START_LINE + 1)) "$CHANGELOG_FILE" \
-              | grep -n "^  _VersionData(" | head -1 | cut -d: -f1)
-
-            if [ -n "$END_OFFSET" ]; then
-              END_LINE=$((START_LINE + END_OFFSET - 1))
-              SECTION=$(sed -n "${START_LINE},${END_LINE}p" "$CHANGELOG_FILE")
-            else
-              SECTION=$(tail -n +"$START_LINE" "$CHANGELOG_FILE")
-            fi
-
-            # ── Parsear ítems agrupados por _ChangeType ──────
-            echo "$SECTION" | awk '
-              BEGIN { in_items = 0; cur_type = ""; first = 1 }
-
-              /type: _ChangeType\./ {
-                if ($0 ~ /added/)    cur_type = "Added"
-                else if ($0 ~ /improved/) cur_type = "Improved"
-                else if ($0 ~ /removed/)  cur_type = "Removed"
-                first = 1
-              }
-
-              /items: \[/ { in_items = 1; next }
-
-              # Cierra el array de items (8 espacios de indent)
-              in_items && /^        \]/ { in_items = 0 }
-
-              # Captura cada ítem entre comillas simples
-              in_items && /'"'"'/ {
-                line = $0
-                sub(/^[[:space:]]*'"'"'/, "", line)
-                sub(/'"'"',?[[:space:]]*$/, "", line)
-                if (length(line) > 0) {
-                  if (first) {
-                    printf "\n### %s\n", cur_type
-                    first = 0
-                  }
-                  printf "- %s\n", line
-                }
-              }
-            ' >> "$NOTES_FILE"
-          fi
-
-          # ── Fallback si no se extrajo nada ─────────────────
-          LINE_COUNT=$(wc -l < "$NOTES_FILE")
-          if [ "$LINE_COUNT" -le 2 ]; then
-            echo "No se encontraron ítems de changelog para v${V}. Usando mensaje genérico."
-            echo "Nueva versión disponible." >> "$NOTES_FILE"
-          fi
-
-          # ── Sección de descargas (siempre presente) ────────
           cat >> "$NOTES_FILE" << 'DOWNLOADS'
 
           ---
@@ -239,10 +216,6 @@ jobs:
           - **arm32** → dispositivos antiguos 32-bit
           - **x86_64** → emuladores
           DOWNLOADS
-
-          echo "── Contenido del release notes ──────────────"
-          cat "$NOTES_FILE"
-          echo "─────────────────────────────────────────────"
 
       # ── 14. Calcular SHA-256 de los APKs ─────────────────────────────────
       - name: Calcular checksums SHA-256
@@ -304,15 +277,14 @@ jobs:
           ARM32_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPYv${V}-arm32.apk"
           X86_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPYv${V}-x86_64.apk"
 
-          # Extraer changelog del release notes
-          CHANGELOG=$(awk '/^## Sm64CDPY/{flag=1; next} /^---$/{exit} flag' /tmp/release_notes.txt | sed '/^[[:space:]]*$/d')
+          CHANGELOG=$(cat /tmp/discord_notes.txt)
 
           # Discord hard limit: 2000 chars. Budget para changelog = 2000 - skeleton (~450 chars) - 30 de margen
           SKELETON_LEN=450
           MAX_CHANGELOG=$((1520 - SKELETON_LEN))
           if [ "${#CHANGELOG}" -gt "$MAX_CHANGELOG" ]; then
             CHANGELOG="$(printf '%s' "$CHANGELOG" | head -c "$MAX_CHANGELOG")
-          … (ver changelog completo en el release)"
+          … (consulta las notas completas en sm64cdpy.org)"
           fi
 
           # Armar mensaje con printf (sin heredoc, sin espacios de YAML)
@@ -327,8 +299,7 @@ jobs:
 
           # Garantía final: cortar a 1990 caracteres máximo
           if [ "${#MESSAGE}" -gt 1990 ]; then
-            MESSAGE="$(printf '%s' "$MESSAGE" | head -c 1990)
-          …"
+            MESSAGE="$(printf '%s' "$MESSAGE" | head -c 1986)…"
           fi
 
           echo "Largo final del mensaje: ${#MESSAGE} caracteres"
@@ -348,6 +319,42 @@ jobs:
           if [ "$HTTP_STATUS" -ge 300 ]; then
             echo "::warning::No se pudo enviar la notificación a Discord (status $HTTP_STATUS)"
           fi
+
+      # El sitio genera las tres notas localizadas desde el manifiesto exacto
+      # de este commit y abre un PR. Las pre-releases no cambian la web pública.
+      - name: Solicitar actualización del sitio web
+        if: success() && inputs.prerelease == 'false'
+        env:
+          WEBSITE_DISPATCH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
+          WEBSITE_REPOSITORY: retired64/sm64cdpy.website
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          VC="${{ steps.version.outputs.version_code }}"
+          PAYLOAD=$(jq -n \
+            --arg version "$V" \
+            --arg build "$VC" \
+            --arg tag "v${V}" \
+            --arg release_url "https://github.com/${{ github.repository }}/releases/tag/v${V}" \
+            --arg source_repository "${{ github.repository }}" \
+            --arg source_sha "${{ github.sha }}" \
+            --arg manifest_path "release-manifests/v${V}.json" \
+            '{event_type: "app_release_published", client_payload: {
+              version: $version,
+              build: $build,
+              tag: $tag,
+              release_url: $release_url,
+              source_repository: $source_repository,
+              source_sha: $source_sha,
+              manifest_path: $manifest_path
+            }}')
+
+          curl --fail-with-body --silent --show-error \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $WEBSITE_DISPATCH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${WEBSITE_REPOSITORY}/dispatches" \
+            -d "$PAYLOAD"
 
       # ── 17. Resumen en el job summary ─────────────────────────────────────
       - name: Resumen del release

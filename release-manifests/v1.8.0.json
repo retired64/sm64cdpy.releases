@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.0",
+  "build": 19,
+  "publishedAt": "2026-09-27T12:00:00-07:00",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "The new Library and a refreshed interface",
+      "summary": "Version 1.8.0 adds a durable installation history, a deeper dark mode, rebuilt navigation, and consistent installation status across the app.",
+      "highlights": [
+        "New Library with Installed, Updates, Detected, and Recent views.",
+        "Installed content can be verified, reopened, reinstalled, updated, or removed from history without deleting game files.",
+        "Deeper dark mode and rebuilt navigation with a stable top bar and a faster drawer."
+      ],
+      "sections": [
+        {
+          "heading": "New Library",
+          "items": [
+            "Manage installed, updateable, detected, and recent content from one durable local history.",
+            "Verify content against the selected game folders, reopen its source, reinstall it, update it, or remove only its history entry."
+          ]
+        },
+        {
+          "heading": "Interface improvements",
+          "items": [
+            "Dark mode now uses a deeper near-black palette with softer borders and dividers.",
+            "Navigation now uses a stable top bar and a faster drawer that remains available while scrolling.",
+            "Legal Notice and Links & Resources explain the app scope and official destinations more clearly."
+          ]
+        },
+        {
+          "heading": "Fixes",
+          "items": [
+            "Installation status is consistent across the catalog, Library, detail screens, and floating overlay.",
+            "Install is shown when content is missing; Reinstall is reserved for a version that is still present."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "La nueva Biblioteca y una interfaz renovada",
+      "summary": "La versión 1.8.0 añade un historial de instalaciones duradero, un modo oscuro más profundo, navegación rediseñada y un estado de instalación coherente en toda la app.",
+      "highlights": [
+        "Nueva Biblioteca con vistas de Instalados, Actualizaciones, Detectados y Recientes.",
+        "El contenido instalado se puede verificar, reabrir, reinstalar, actualizar o quitar del historial sin borrar archivos del juego.",
+        "Modo oscuro más profundo y navegación rediseñada con barra superior estable y drawer más rápido."
+      ],
+      "sections": [
+        {
+          "heading": "Nueva Biblioteca",
+          "items": [
+            "Administra contenido instalado, actualizable, detectado y reciente desde un historial local duradero.",
+            "Verifica contenido contra las carpetas seleccionadas, abre su fuente, reinstálalo, actualízalo o elimina solamente su entrada del historial."
+          ]
+        },
+        {
+          "heading": "Mejoras de interfaz",
+          "items": [
+            "El modo oscuro usa una paleta casi negra más profunda, con bordes y divisores más suaves.",
+            "La navegación usa una barra superior estable y un drawer más rápido que permanece disponible al desplazarse.",
+            "Aviso Legal y Enlaces y Recursos explican con mayor claridad el alcance de la app y sus destinos oficiales."
+          ]
+        },
+        {
+          "heading": "Correcciones",
+          "items": [
+            "El estado de instalación es coherente en el catálogo, la Biblioteca, los detalles y el overlay flotante.",
+            "Instalar aparece cuando falta el contenido; Reinstalar se reserva para una versión que todavía está presente."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "A nova Biblioteca e uma interface renovada",
+      "summary": "A versão 1.8.0 adiciona um histórico de instalações durável, um modo escuro mais profundo, navegação redesenhada e status de instalação consistente em todo o app.",
+      "highlights": [
+        "Nova Biblioteca com as visualizações Instalados, Atualizações, Detectados e Recentes.",
+        "O conteúdo instalado pode ser verificado, reaberto, reinstalado, atualizado ou removido do histórico sem apagar arquivos do jogo.",
+        "Modo escuro mais profundo e navegação redesenhada com barra superior estável e drawer mais rápido."
+      ],
+      "sections": [
+        {
+          "heading": "Nova Biblioteca",
+          "items": [
+            "Gerencie conteúdo instalado, atualizável, detectado e recente a partir de um histórico local durável.",
+            "Verifique o conteúdo nas pastas selecionadas, abra sua origem, reinstale, atualize ou remova somente a entrada do histórico."
+          ]
+        },
+        {
+          "heading": "Melhorias na interface",
+          "items": [
+            "O modo escuro usa uma paleta quase preta mais profunda, com bordas e divisores mais suaves.",
+            "A navegação usa uma barra superior estável e um drawer mais rápido que permanece disponível durante a rolagem.",
+            "Aviso Legal e Links e Recursos explicam com mais clareza o escopo do app e seus destinos oficiais."
+          ]
+        },
+        {
+          "heading": "Correções",
+          "items": [
+            "O status de instalação é consistente no catálogo, na Biblioteca, nos detalhes e no overlay flutuante.",
+            "Instalar aparece quando o conteúdo está ausente; Reinstalar fica reservado para uma versão que ainda está presente."
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -13,7 +13,6 @@
   "navOmmRebirth": "OMMR PACK",
   "navLinksResource": "Links & Recursos",
   "navDisclaimer": "Aviso Legal",
-  "navChangelog": "Registro de Mudanças",
   "navSettings": "Configurações",
 
   "sectionExclusive": "EXCLUSIVO",
@@ -47,8 +46,6 @@
   "updateAvailable": "NOVA VERSÃO DISPONÍVEL",
   "updateVersion": "Versão {version}",
   "updateSize": "Tamanho: {size} MB",
-  "updateWhatIsNew": "Novidades:",
-  "updateGenericDescription": "Pequenas melhorias e correções de bugs.",
   "updateDownloading": "Baixando... {pct}%",
   "updateAlreadyDownloading": "Um download já está em andamento. Aguarde ou reinicie o app.",
   "updatePermissionDenied": "Permissão de instalação negada.\nVá em Configurações → Apps → este app → Instalar apps desconhecidos.",
@@ -307,13 +304,6 @@
   "settingsChecking": "Verificando...",
 
 
-  "changelogTitle": "Registro de Mudanças",
-  "changelogNew": "Novo",
-  "changelogImproved": "Melhorado",
-  "changelogFixed": "Corrigido",
-  "changelogRemoved": "Removido",
-  "changelogChanged": "Alterado",
-  "changelogLatest": "Mais Recente",
 
   "generalSettings": "Configurações",
   "generalRetry": "Tentar novamente",

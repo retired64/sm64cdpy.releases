@@ -42,9 +42,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navDisclaimer => 'Disclaimer';
 
   @override
-  String get navChangelog => 'Changelog';
-
-  @override
   String get navSettings => 'Settings';
 
   @override
@@ -128,12 +125,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String updateSize(String size) {
     return 'Size: $size MB';
   }
-
-  @override
-  String get updateWhatIsNew => 'What\'s new:';
-
-  @override
-  String get updateGenericDescription => 'Minor improvements and bug fixes.';
 
   @override
   String updateDownloading(String pct) {
@@ -968,27 +959,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsChecking => 'Checking...';
-
-  @override
-  String get changelogTitle => 'Changelog';
-
-  @override
-  String get changelogNew => 'New';
-
-  @override
-  String get changelogImproved => 'Improved';
-
-  @override
-  String get changelogFixed => 'Fixed';
-
-  @override
-  String get changelogRemoved => 'Removed';
-
-  @override
-  String get changelogChanged => 'Changed';
-
-  @override
-  String get changelogLatest => 'Latest';
 
   @override
   String get generalSettings => 'Settings';

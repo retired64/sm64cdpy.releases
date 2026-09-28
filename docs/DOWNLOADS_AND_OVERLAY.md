@@ -1,6 +1,6 @@
 # Descargas, instalación y overlay
 
-Revisado contra `1.8.0+19` el 2026-09-27.
+Revisado contra `1.8.1+20` el 2026-09-28.
 
 ## Flujo de instalación
 

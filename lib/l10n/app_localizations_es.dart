@@ -42,9 +42,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navDisclaimer => 'Aviso Legal';
 
   @override
-  String get navChangelog => 'Registro de Cambios';
-
-  @override
   String get navSettings => 'Ajustes';
 
   @override
@@ -128,13 +125,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String updateSize(String size) {
     return 'Tamaño: $size MB';
   }
-
-  @override
-  String get updateWhatIsNew => 'Novedades:';
-
-  @override
-  String get updateGenericDescription =>
-      'Mejoras menores y corrección de errores.';
 
   @override
   String updateDownloading(String pct) {
@@ -981,27 +971,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsChecking => 'Verificando...';
-
-  @override
-  String get changelogTitle => 'Registro de Cambios';
-
-  @override
-  String get changelogNew => 'Nuevo';
-
-  @override
-  String get changelogImproved => 'Mejorado';
-
-  @override
-  String get changelogFixed => 'Corregido';
-
-  @override
-  String get changelogRemoved => 'Eliminado';
-
-  @override
-  String get changelogChanged => 'Cambiado';
-
-  @override
-  String get changelogLatest => 'Más Reciente';
 
   @override
   String get generalSettings => 'Ajustes';
@@ -1557,9 +1526,6 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get navDisclaimer => 'Aviso Legal';
 
   @override
-  String get navChangelog => 'Registro de Cambios';
-
-  @override
   String get navSettings => 'Ajustes';
 
   @override
@@ -1643,13 +1609,6 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String updateSize(String size) {
     return 'Tamaño: $size MB';
   }
-
-  @override
-  String get updateWhatIsNew => 'Novedades:';
-
-  @override
-  String get updateGenericDescription =>
-      'Mejoras menores y corrección de errores.';
 
   @override
   String updateDownloading(String pct) {
@@ -2496,27 +2455,6 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get settingsChecking => 'Verificando...';
-
-  @override
-  String get changelogTitle => 'Registro de Cambios';
-
-  @override
-  String get changelogNew => 'Nuevo';
-
-  @override
-  String get changelogImproved => 'Mejorado';
-
-  @override
-  String get changelogFixed => 'Corregido';
-
-  @override
-  String get changelogRemoved => 'Eliminado';
-
-  @override
-  String get changelogChanged => 'Cambiado';
-
-  @override
-  String get changelogLatest => 'Más Reciente';
 
   @override
   String get generalSettings => 'Ajustes';

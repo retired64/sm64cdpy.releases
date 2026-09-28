@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.1",
+  "build": 20,
+  "publishedAt": "2026-09-28T12:00:00-07:00",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "Safer catalog updates and focused release notes",
+      "summary": "Version 1.8.1 strengthens remote catalog compatibility and recovery, while moving detailed release notes to the official website.",
+      "highlights": [
+        "Safer validation and recovery for remote catalog updates.",
+        "Improved support for stable catalog identities and resolved download metadata.",
+        "Localized release notes now live on the official website instead of growing inside the app."
+      ],
+      "sections": [
+        {
+          "heading": "Catalog reliability",
+          "items": [
+            "Remote catalog candidates are validated before replacing the last known-good local copy.",
+            "The app accepts the current structured catalog while preserving a safe compatibility path for legacy data.",
+            "Stable content, version, and file identities keep installation history coherent between catalog refreshes."
+          ]
+        },
+        {
+          "heading": "Downloads",
+          "items": [
+            "Resolved provider metadata can be used without making the app depend on a single scraper execution.",
+            "Unresolved or malformed entries fail safely instead of corrupting the active catalog."
+          ]
+        },
+        {
+          "heading": "Release experience",
+          "items": [
+            "The in-app update prompt now stays focused on downloading and installing the update.",
+            "Detailed notes are published in English, Spanish, and Brazilian Portuguese on the official website from one validated release manifest."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Actualizaciones de catálogo más seguras y notas enfocadas",
+      "summary": "La versión 1.8.1 refuerza la compatibilidad y recuperación del catálogo remoto, mientras traslada las notas detalladas al sitio web oficial.",
+      "highlights": [
+        "Validación y recuperación más seguras para las actualizaciones del catálogo remoto.",
+        "Mejor soporte para identidades estables y metadatos de descarga resueltos.",
+        "Las notas localizadas ahora viven en el sitio oficial en lugar de crecer dentro de la app."
+      ],
+      "sections": [
+        {
+          "heading": "Fiabilidad del catálogo",
+          "items": [
+            "Los catálogos remotos se validan antes de sustituir la última copia local conocida como válida.",
+            "La app acepta el catálogo estructurado actual y conserva una ruta segura de compatibilidad con datos anteriores.",
+            "Las identidades estables de contenido, versión y archivo mantienen coherente el historial entre actualizaciones."
+          ]
+        },
+        {
+          "heading": "Descargas",
+          "items": [
+            "Los metadatos resueltos de proveedores se aprovechan sin hacer que la app dependa de una sola ejecución del scraper.",
+            "Las entradas sin resolver o malformadas fallan de forma segura sin corromper el catálogo activo."
+          ]
+        },
+        {
+          "heading": "Experiencia de actualización",
+          "items": [
+            "El aviso de actualización dentro de la app se concentra ahora en descargar e instalar.",
+            "Las notas detalladas se publican en inglés, español y portugués brasileño en el sitio oficial desde un único manifiesto validado."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Atualizações de catálogo mais seguras e notas objetivas",
+      "summary": "A versão 1.8.1 reforça a compatibilidade e a recuperação do catálogo remoto, enquanto transfere as notas detalhadas para o site oficial.",
+      "highlights": [
+        "Validação e recuperação mais seguras para atualizações do catálogo remoto.",
+        "Melhor suporte a identidades estáveis e metadados de download resolvidos.",
+        "As notas localizadas agora ficam no site oficial, em vez de crescerem dentro do app."
+      ],
+      "sections": [
+        {
+          "heading": "Confiabilidade do catálogo",
+          "items": [
+            "Os catálogos remotos são validados antes de substituir a última cópia local válida.",
+            "O app aceita o catálogo estruturado atual e mantém um caminho seguro de compatibilidade com dados antigos.",
+            "Identidades estáveis de conteúdo, versão e arquivo mantêm o histórico coerente entre atualizações."
+          ]
+        },
+        {
+          "heading": "Downloads",
+          "items": [
+            "Os metadados resolvidos dos provedores são aproveitados sem tornar o app dependente de uma única execução do scraper.",
+            "Entradas não resolvidas ou malformadas falham com segurança sem corromper o catálogo ativo."
+          ]
+        },
+        {
+          "heading": "Experiência de atualização",
+          "items": [
+            "O aviso de atualização dentro do app agora se concentra em baixar e instalar.",
+            "As notas detalhadas são publicadas em inglês, espanhol e português brasileiro no site oficial a partir de um único manifesto validado."
+          ]
+        }
+      ]
+    }
+  }
+}
