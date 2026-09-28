@@ -57,7 +57,6 @@
         {
           "heading": "Descargas",
           "items": [
-            "Los metadatos resueltos de proveedores se aprovechan sin hacer que la app dependa de una sola ejecución del scraper.",
             "Las entradas sin resolver o malformadas fallan de forma segura sin corromper el catálogo activo."
           ]
         },
@@ -90,7 +89,6 @@
         {
           "heading": "Downloads",
           "items": [
-            "Os metadados resolvidos dos provedores são aproveitados sem tornar o app dependente de uma única execução do scraper.",
             "Entradas não resolvidas ou malformadas falham com segurança sem corromper o catálogo ativo."
           ]
         },
