@@ -1890,6 +1890,18 @@ abstract class AppLocalizations {
   /// **'sm64coopdx.com'**
   String get linksWebsiteUrl;
 
+  /// Link item title for the official SM64CDPY website
+  ///
+  /// In en, this message translates to:
+  /// **'Official SM64CDPY Website'**
+  String get linksAppWebsite;
+
+  /// Link item subtitle for the official SM64CDPY website
+  ///
+  /// In en, this message translates to:
+  /// **'News, downloads, and project information'**
+  String get linksAppWebsiteDesc;
+
   /// Link kind badge label for web links
   ///
   /// In en, this message translates to:

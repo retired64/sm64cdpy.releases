@@ -1280,6 +1280,14 @@
   "@linksWebsiteUrl": {
     "description": "Link item subtitle showing the website URL"
   },
+  "linksAppWebsite": "Official SM64CDPY Website",
+  "@linksAppWebsite": {
+    "description": "Link item title for the official SM64CDPY website"
+  },
+  "linksAppWebsiteDesc": "News, downloads, and project information",
+  "@linksAppWebsiteDesc": {
+    "description": "Link item subtitle for the official SM64CDPY website"
+  },
   "linksKindWeb": "WEB",
   "@linksKindWeb": {
     "description": "Link kind badge label for web links"

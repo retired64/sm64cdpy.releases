@@ -1049,6 +1049,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get linksWebsiteUrl => 'sm64coopdx.com';
 
   @override
+  String get linksAppWebsite => 'Sitio oficial de SM64CDPY';
+
+  @override
+  String get linksAppWebsiteDesc =>
+      'Novedades, descargas e información del proyecto';
+
+  @override
   String get linksKindWeb => 'WEB';
 
   @override
@@ -2539,6 +2546,13 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get linksWebsiteUrl => 'sm64coopdx.com';
+
+  @override
+  String get linksAppWebsite => 'Sitio oficial de SM64CDPY';
+
+  @override
+  String get linksAppWebsiteDesc =>
+      'Novedades, descargas e información del proyecto';
 
   @override
   String get linksKindWeb => 'WEB';

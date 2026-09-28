@@ -24,6 +24,7 @@ class AppConstants {
       'https://github.com/retired64/sm64cdpy.releases/releases/latest';
   static const String dataSourceUrl = 'https://mods.sm64coopdx.com';
   static const String officialweb = 'https://sm64coopdx.com';
+  static const String appWebsiteUrl = 'https://sm64cdpy.org/';
 
   // ── Remote JSON URLs for extra sections ──────────────────────────────────
   static const String vipModsRemoteUrl =

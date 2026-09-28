@@ -1036,6 +1036,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get linksWebsiteUrl => 'sm64coopdx.com';
 
   @override
+  String get linksAppWebsite => 'Official SM64CDPY Website';
+
+  @override
+  String get linksAppWebsiteDesc => 'News, downloads, and project information';
+
+  @override
   String get linksKindWeb => 'WEB';
 
   @override
