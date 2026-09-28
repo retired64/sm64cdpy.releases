@@ -77,6 +77,15 @@ Revisado contra `1.8.0+19` el 2026-09-27.
 5. Revisar la restauración de `_infoMap` desde WorkManager tras process death.
 6. Añadir una comprobación CI ligera para pull requests cuando el repositorio vuelva a tener una estrategia de ramas estable.
 
+## Posterior a 1.8.0
+
+La desinstalación física queda planificada para `1.9.0` en tres fases:
+manifiesto completo de propiedad, Worker SAF conservador y sincronización de la
+experiencia entre Biblioteca, catálogo y overlay. El plan está en
+[SAFE-UNINSTALL-v1.9.0-ROADMAP.md](SAFE-UNINSTALL-v1.9.0-ROADMAP.md). Los
+centinelas actuales verifican presencia, pero no se usarán como autorización
+para borrar archivos.
+
 ## Fuera del estado vigente
 
 `floating-check-list.md`, `revision-app.md` y `.opencode/plans/` son fotografías de análisis anteriores a/durante 1.7.0. Contienen puntos ya resueltos y otros no revalidados; no deben usarse como backlog sin contrastarlos con el código. El inventario completo está en [archive/README.md](archive/README.md).
