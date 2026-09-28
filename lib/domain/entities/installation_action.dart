@@ -66,7 +66,9 @@ class InstallationActionSelector {
     }
 
     final exactReceipt = library?.receipts
-        .where((candidate) => candidate.artifactKey == identity.artifactKey)
+        .where(
+          (candidate) => identity.matchesArtifactKey(candidate.artifactKey),
+        )
         .firstOrNull;
     final receipt =
         exactReceipt ??

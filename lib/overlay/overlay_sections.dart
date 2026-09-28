@@ -55,10 +55,13 @@ class OverlayModItem {
         downloadUrl: option.url,
         versionLabel: option.versionLabel,
         fileName: option.filename,
-        // General catalog details use the resolver's stable
-        // version-{index}-file-{index} key. Passing the same key here is what
-        // lets receipts created from the main engine match the overlay.
+        explicitVersionId: section == OverlaySection.all
+            ? option.versionId
+            : null,
         explicitFileId: section == OverlaySection.all ? option.fileKey : null,
+        legacyExplicitFileIds: section == OverlaySection.all
+            ? option.legacyFileKeys
+            : const <String>[],
       );
 
   factory OverlayModItem.fromModEntity(ModEntity m) {
@@ -71,6 +74,8 @@ class OverlayModItem {
                   filename: file.file.filename,
                   fileKey: file.operationFileKey,
                   versionLabel: latest.version.version,
+                  versionId: file.operationVersionKey,
+                  legacyFileKeys: [file.legacyOperationFileKey],
                 ),
               )
               .toList(growable: false)
@@ -85,6 +90,8 @@ class OverlayModItem {
                   filename: '',
                   fileKey: entry.key == 0 ? 'primary' : 'file-${entry.key}',
                   versionLabel: m.version,
+                  versionId: '',
+                  legacyFileKeys: const <String>[],
                 ),
               )
               .toList(growable: false);
@@ -152,6 +159,8 @@ class OverlayDownloadOption {
     required this.filename,
     required this.fileKey,
     required this.versionLabel,
+    this.versionId = '',
+    this.legacyFileKeys = const <String>[],
   });
 
   factory OverlayDownloadOption.primary(String url, String versionLabel) =>
@@ -160,12 +169,16 @@ class OverlayDownloadOption {
         filename: '',
         fileKey: 'primary',
         versionLabel: versionLabel,
+        versionId: '',
+        legacyFileKeys: const <String>[],
       );
 
   final String url;
   final String filename;
   final String fileKey;
   final String versionLabel;
+  final String versionId;
+  final List<String> legacyFileKeys;
 }
 
 final overlaySectionProvider =

@@ -1487,4 +1487,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get libraryMaintenanceError =>
       'The Library could not be updated. Try again.';
+
+  @override
+  String get detailOpenExternalFolder => 'OPEN SOURCE FOLDER';
+
+  @override
+  String get detailSourceUnavailable =>
+      'This version has no downloadable file available right now.';
+
+  @override
+  String get detailViewDiscussion => 'VIEW COMMUNITY DISCUSSION';
 }

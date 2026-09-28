@@ -2717,6 +2717,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The Library could not be updated. Try again.'**
   String get libraryMaintenanceError;
+
+  /// No description provided for @detailOpenExternalFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN SOURCE FOLDER'**
+  String get detailOpenExternalFolder;
+
+  /// No description provided for @detailSourceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This version has no downloadable file available right now.'**
+  String get detailSourceUnavailable;
+
+  /// No description provided for @detailViewDiscussion.
+  ///
+  /// In en, this message translates to:
+  /// **'VIEW COMMUNITY DISCUSSION'**
+  String get detailViewDiscussion;
 }
 
 class _AppLocalizationsDelegate

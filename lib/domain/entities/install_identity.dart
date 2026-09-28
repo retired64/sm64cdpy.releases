@@ -36,6 +36,7 @@ class InstallIdentity {
     required this.operationKey,
     required this.versionLabel,
     required this.fileName,
+    this.legacyArtifactKeys = const <String>{},
   });
 
   static const schemaVersion = 1;
@@ -49,6 +50,7 @@ class InstallIdentity {
     String? fileName,
     String? explicitVersionId,
     String? explicitFileId,
+    Iterable<String> legacyExplicitFileIds = const <String>[],
   }) {
     final normalizedContentId = contentId.toString().trim();
     if (normalizedContentId.isEmpty) {
@@ -70,6 +72,10 @@ class InstallIdentity {
       _encodeComponent(normalizedContentId),
     ].join('|');
     final artifactKey = '$contentKey|${_encodeComponent(artifactId)}';
+    final legacyArtifactKeys = <String>{
+      for (final legacyFileId in legacyExplicitFileIds)
+        '$contentKey|${_encodeComponent(_resolveArtifactId(downloadUrl: downloadUrl, versionLabel: normalizedVersion, fileName: normalizedFileName, explicitVersionId: null, explicitFileId: legacyFileId))}',
+    }..remove(artifactKey);
 
     return InstallIdentity._(
       section: section,
@@ -80,6 +86,7 @@ class InstallIdentity {
       operationKey: artifactKey,
       versionLabel: normalizedVersion,
       fileName: normalizedFileName,
+      legacyArtifactKeys: Set.unmodifiable(legacyArtifactKeys),
     );
   }
 
@@ -131,6 +138,16 @@ class InstallIdentity {
   final String operationKey;
   final String? versionLabel;
   final String? fileName;
+
+  /// Previous catalogue keys that still identify this exact artifact.
+  ///
+  /// They are intentionally not persisted as part of the native identity:
+  /// new work always uses the stable key, while the aliases only reconcile
+  /// receipts created by app versions that used array positions.
+  final Set<String> legacyArtifactKeys;
+
+  bool matchesArtifactKey(String value) =>
+      value == artifactKey || legacyArtifactKeys.contains(value);
 
   @override
   bool operator ==(Object other) =>

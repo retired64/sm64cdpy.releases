@@ -46,6 +46,15 @@ Revisado contra `1.8.0+19` el 2026-09-27.
   drawer permanece disponible durante scroll, carga y error. El drawer vuelve
   al inicio al abrirse, navega sin retraso artificial y ya no duplica los
   filtros y el ordenamiento propios del Catálogo.
+- Contrato de catálogo v2 con identidades estables de versión/archivo,
+  compatibilidad temporal con recibos posicionales de 1.8.0 y aprovechamiento
+  de metadata de resolución/procedencia del scraper.
+- Actualización remota transaccional: validación integral previa, control de
+  esquema y conteo, barrera contra reducciones anómalas, reemplazo atómico,
+  copia `last-good`, cuarentena y fallback a la base incluida en el APK.
+- Resolución en tiempo de descarga para páginas estables de MediaFire,
+  GameBanana y archivos de Google Drive; las carpetas Drive no resolubles se
+  presentan como enlace de origen sin afirmar que fueron instaladas.
 
 ## Experimental o pendiente de validación
 

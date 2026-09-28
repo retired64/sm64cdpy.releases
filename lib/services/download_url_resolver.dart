@@ -2,7 +2,20 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-const _kValidExtensions = {'.zip', '.lua', '.rar', '.7z'};
+const _kValidExtensions = {'.zip', '.lua', '.luac', '.rar', '.7z'};
+
+final _mediaFirePageRe = RegExp(
+  r'^https?://(?:www\.)?mediafire\.com/(?:file|file_premium|download)/',
+  caseSensitive: false,
+);
+final _gameBananaItemRe = RegExp(
+  r'gamebanana\.com/(mods|sounds|wips|tools|skins)/(?:download/)?(\d+)',
+  caseSensitive: false,
+);
+final _googleDriveFileRe = RegExp(
+  r'drive\.google\.com/file/d/([A-Za-z0-9_-]+)',
+  caseSensitive: false,
+);
 
 // ── Resolución de URL (no solo filename) — ver resolveDownloadUrl() ────────
 //
@@ -202,6 +215,38 @@ class DownloadUrlResolver {
       return rawUrl;
     }
 
+    final mediaFire = _mediaFirePageRe.firstMatch(url);
+    if (mediaFire != null) {
+      final resolved = await _resolveMediaFirePage(url);
+      if (resolved != null) {
+        _urlCache[url] = resolved;
+        return resolved;
+      }
+      return url;
+    }
+
+    final gameBanana = _gameBananaItemRe.firstMatch(url);
+    if (gameBanana != null) {
+      final resolved = await _resolveGameBananaItem(
+        gameBanana.group(1)!.toLowerCase(),
+        gameBanana.group(2)!,
+      );
+      if (resolved != null) {
+        _urlCache[url] = resolved;
+        return resolved;
+      }
+      return url;
+    }
+
+    final googleDrive = _googleDriveFileRe.firstMatch(url);
+    if (googleDrive != null) {
+      final resolved =
+          'https://drive.usercontent.google.com/download?id='
+          '${googleDrive.group(1)}&export=download&confirm=t';
+      _urlCache[url] = resolved;
+      return resolved;
+    }
+
     // Caso 2: página de GitHub Releases → resolver vía API
     final match = _githubReleasesPageRe.firstMatch(url);
     if (match == null) return url; // no es un patrón conocido → passthrough
@@ -248,6 +293,90 @@ class DownloadUrlResolver {
     } catch (_) {
       return url; // red/timeout/JSON inesperado → passthrough
     }
+  }
+
+  Future<String?> _resolveMediaFirePage(String url) async {
+    try {
+      final response = await http
+          .get(Uri.parse(url), headers: const {'Accept': 'text/html'})
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) return null;
+      final anchors = RegExp(
+        r'<a\b[^>]*>',
+        caseSensitive: false,
+      ).allMatches(response.body);
+      for (final match in anchors) {
+        final anchor = match.group(0)!;
+        if (!RegExp(
+          r'''\bid\s*=\s*['"]downloadButton['"]''',
+          caseSensitive: false,
+        ).hasMatch(anchor)) {
+          continue;
+        }
+        final href = RegExp(
+          r'''\bhref\s*=\s*['"]([^'"]+)['"]''',
+          caseSensitive: false,
+        ).firstMatch(anchor)?.group(1);
+        final decoded = href?.replaceAll('&amp;', '&').trim() ?? '';
+        final uri = Uri.tryParse(decoded);
+        if (uri != null &&
+            uri.scheme == 'https' &&
+            uri.host.toLowerCase().endsWith('.mediafire.com')) {
+          return decoded;
+        }
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
+  }
+
+  Future<String?> _resolveGameBananaItem(String segment, String itemId) async {
+    const itemTypes = {
+      'mods': 'Mod',
+      'sounds': 'Sound',
+      'wips': 'Wip',
+      'tools': 'Tool',
+      'skins': 'Skin',
+    };
+    final uri = Uri.https('api.gamebanana.com', '/Core/Item/Data', {
+      'itemtype': itemTypes[segment] ?? 'Mod',
+      'itemid': itemId,
+      'fields':
+          'Trash().bIsTrashed(),Withhold().bIsWithheld(),Files().aFiles()',
+      'return_keys': '1',
+      'format': 'json_min',
+    });
+    try {
+      final response = await http
+          .get(uri, headers: const {'Accept': 'application/json'})
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) return null;
+      final data = jsonDecode(response.body);
+      if (data is! Map ||
+          data['Trash().bIsTrashed()'] == true ||
+          data['Withhold().bIsWithheld()'] == true) {
+        return null;
+      }
+      final files = data['Files().aFiles()'];
+      if (files is! Map) return null;
+      for (final value in files.values) {
+        if (value is! Map) continue;
+        final name = value['_sFile']?.toString() ?? '';
+        final downloadUrl = value['_sDownloadUrl']?.toString() ?? '';
+        final parsed = Uri.tryParse(downloadUrl);
+        if (_validFileExtension(name).isNotEmpty &&
+            parsed != null &&
+            parsed.scheme == 'https' &&
+            (parsed.host == 'gamebanana.com' ||
+                parsed.host.endsWith('.gamebanana.com'))) {
+          return downloadUrl;
+        }
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
   }
 
   /// Resuelve el nombre de archivo para una URL de descarga.

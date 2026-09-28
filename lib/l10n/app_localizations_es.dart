@@ -1507,6 +1507,16 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get libraryMaintenanceError =>
       'No se pudo actualizar la Biblioteca. Inténtalo de nuevo.';
+
+  @override
+  String get detailOpenExternalFolder => 'ABRIR CARPETA DE ORIGEN';
+
+  @override
+  String get detailSourceUnavailable =>
+      'Esta versión no tiene un archivo descargable disponible por ahora.';
+
+  @override
+  String get detailViewDiscussion => 'VER CONVERSACIÓN DE LA COMUNIDAD';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -3012,4 +3022,14 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get libraryMaintenanceError =>
       'No se pudo actualizar la Biblioteca. Inténtalo de nuevo.';
+
+  @override
+  String get detailOpenExternalFolder => 'ABRIR CARPETA DE ORIGEN';
+
+  @override
+  String get detailSourceUnavailable =>
+      'Esta versión no tiene un archivo descargable disponible por ahora.';
+
+  @override
+  String get detailViewDiscussion => 'VER CONVERSACIÓN DE LA COMUNIDAD';
 }

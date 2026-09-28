@@ -464,5 +464,8 @@
   "libraryRemoveHistoryTitle": "¿QUITAR ESTE EVENTO?",
   "libraryRemoveHistoryBody": "Solo se quitará esta entrada del historial. La instalación actual y los archivos del juego no cambiarán.",
   "libraryRemoveHistoryConfirm": "QUITAR",
-  "libraryMaintenanceError": "No se pudo actualizar la Biblioteca. Inténtalo de nuevo."
+  "libraryMaintenanceError": "No se pudo actualizar la Biblioteca. Inténtalo de nuevo.",
+  "detailOpenExternalFolder": "ABRIR CARPETA DE ORIGEN",
+  "detailSourceUnavailable": "Esta versión no tiene un archivo descargable disponible por ahora.",
+  "detailViewDiscussion": "VER CONVERSACIÓN DE LA COMUNIDAD"
 }

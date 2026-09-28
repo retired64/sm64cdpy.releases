@@ -7,13 +7,17 @@ class ResolvedModFile {
     required this.versionIndex,
     required this.fileIndex,
     required this.file,
+    required this.version,
   });
 
   final int versionIndex;
   final int fileIndex;
   final ModFileEntity file;
+  final ModVersionEntity version;
 
-  String get operationFileKey => 'version-$versionIndex-file-$fileIndex';
+  String get operationVersionKey => version.id;
+  String get operationFileKey => file.id;
+  String get legacyOperationFileKey => 'version-$versionIndex-file-$fileIndex';
 }
 
 /// The canonical current release shown by both the detail screen and overlay.
@@ -49,6 +53,7 @@ ResolvedModVersion? resolveLatestDownloadableVersion(
             versionIndex: entry.key,
             fileIndex: file.key,
             file: file.value,
+            version: entry.value,
           ),
         )
         .toList(growable: false);

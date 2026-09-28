@@ -4,6 +4,26 @@ import 'package:sm64cdpy/domain/entities/dynos_entity.dart';
 import 'package:sm64cdpy/overlay/overlay_sections.dart';
 
 void main() {
+  test('stable identity recognizes the previous positional artifact key', () {
+    final identity = InstallIdentity.forCatalogArtifact(
+      section: InstallSection.mods,
+      contentId: '42',
+      downloadUrl: 'https://example.test/mod.zip',
+      explicitVersionId: 'source:100',
+      explicitFileId: 'source:900',
+      legacyExplicitFileIds: const ['version-2-file-0'],
+    );
+    final legacy = InstallIdentity.forCatalogArtifact(
+      section: InstallSection.mods,
+      contentId: '42',
+      downloadUrl: 'https://example.test/mod.zip',
+      explicitFileId: 'version-2-file-0',
+    );
+
+    expect(identity.matchesArtifactKey(legacy.artifactKey), isTrue);
+    expect(identity.artifactKey, isNot(legacy.artifactKey));
+  });
+
   test('equivalent identities are stable Riverpod family arguments', () {
     final first = InstallIdentity.forCatalogArtifact(
       section: InstallSection.mods,

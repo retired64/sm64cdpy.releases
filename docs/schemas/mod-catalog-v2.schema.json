@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sm64cdpy.org/schemas/mod-catalog-v2.schema.json",
+  "title": "SM64CDPY mod catalog v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "catalog_id",
+    "catalog_status",
+    "generated_at",
+    "source",
+    "mod_count",
+    "resolution_summary",
+    "mods"
+  ],
+  "properties": {
+    "schema_version": { "const": 2 },
+    "catalog_id": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "catalog_status": { "enum": ["complete", "partial"] },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "source": { "type": "string", "format": "uri" },
+    "mod_count": { "type": "integer", "minimum": 0 },
+    "resolution_summary": {
+      "type": "object",
+      "required": ["versions_total", "versions_resolved", "versions_unresolved", "mods_failed"],
+      "properties": {
+        "versions_total": { "type": "integer", "minimum": 0 },
+        "versions_resolved": { "type": "integer", "minimum": 0 },
+        "versions_unresolved": { "type": "integer", "minimum": 0 },
+        "mods_failed": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "mods": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/mod" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "file": {
+      "type": "object",
+      "required": ["file_id", "filename", "download_url", "source_url", "resolution_source"],
+      "properties": {
+        "file_id": { "type": "string", "minLength": 1 },
+        "filename": { "type": "string", "minLength": 1 },
+        "download_url": { "type": "string", "format": "uri" },
+        "source_url": { "type": "string", "format": "uri" },
+        "resolution_source": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "version": {
+      "type": "object",
+      "required": [
+        "version_id", "version", "release_date", "downloads", "rating",
+        "rating_count", "version_page_url", "download_url", "filename",
+        "files", "resolution_source", "resolved", "folder_url", "reason"
+      ],
+      "properties": {
+        "version_id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "release_date": { "type": "string" },
+        "downloads": { "type": "integer", "minimum": 0 },
+        "rating": { "type": "string" },
+        "rating_count": { "type": "string" },
+        "version_page_url": { "type": "string", "format": "uri" },
+        "download_url": { "type": "string" },
+        "filename": { "type": "string" },
+        "files": { "type": "array", "items": { "$ref": "#/$defs/file" } },
+        "resolution_source": { "type": "string" },
+        "resolved": { "type": "boolean" },
+        "folder_url": { "type": "string" },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "mod": {
+      "type": "object",
+      "required": [
+        "mod_page_url", "slug", "id", "name", "version", "author",
+        "author_url", "category", "tags", "description", "icon_url",
+        "downloads", "views", "rating_value", "rating_count",
+        "first_release", "last_update", "featured", "thread_url",
+        "download_domain_hint", "updates_count", "reviews_count", "versions"
+      ],
+      "properties": {
+        "mod_page_url": { "type": "string", "format": "uri" },
+        "slug": { "type": "string" },
+        "id": { "type": "integer", "minimum": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "author": { "type": "string" },
+        "author_url": { "type": "string" },
+        "category": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "icon_url": { "type": "string" },
+        "downloads": { "type": "integer", "minimum": 0 },
+        "views": { "type": "integer", "minimum": 0 },
+        "rating_value": { "type": ["number", "null"] },
+        "rating_count": { "type": "integer", "minimum": 0 },
+        "first_release": { "type": "string" },
+        "last_update": { "type": "string" },
+        "featured": { "type": "boolean" },
+        "thread_url": { "type": "string" },
+        "download_domain_hint": { "type": "string" },
+        "updates_count": { "type": "integer", "minimum": 0 },
+        "reviews_count": { "type": "integer", "minimum": 0 },
+        "versions": { "type": "array", "items": { "$ref": "#/$defs/version" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

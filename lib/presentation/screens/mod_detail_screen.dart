@@ -444,6 +444,21 @@ class _ContentCard extends StatelessWidget {
                   const SizedBox(height: 28),
                 ],
 
+                if (mod.threadUrl.isNotEmpty) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => launchUrl(
+                        Uri.parse(mod.threadUrl),
+                        mode: LaunchMode.externalApplication,
+                      ),
+                      icon: const Icon(Icons.forum_outlined, size: 18),
+                      label: Text(l10n.detailViewDiscussion),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                ],
+
                 // ── Release info ───────────────────────────────
                 if (mod.firstRelease != null || mod.lastUpdate != null) ...[
                   _ReleaseDates(
@@ -507,15 +522,23 @@ class _TitleSection extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                mod.author,
-                style: retro.body(
-                  size: 14,
-                  weight: FontWeight.w700,
-                  color: retro.ink,
+              child: InkWell(
+                onTap: mod.authorUrl.isEmpty
+                    ? null
+                    : () => launchUrl(
+                        Uri.parse(mod.authorUrl),
+                        mode: LaunchMode.externalApplication,
+                      ),
+                child: Text(
+                  mod.author,
+                  style: retro.body(
+                    size: 14,
+                    weight: FontWeight.w700,
+                    color: retro.ink,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: 10),
@@ -525,6 +548,10 @@ class _TitleSection extends StatelessWidget {
             ),
           ],
         ),
+        if (mod.category.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          RetroTag(retro: retro, label: mod.category.toUpperCase()),
+        ],
       ],
     );
   }
@@ -720,9 +747,21 @@ class _VersionAccordionState extends State<_VersionAccordion> {
   Widget _buildVersionList(RetroTheme retro) {
     final latest = resolveLatestDownloadableVersion(widget.versions);
     if (latest == null) {
-      return Text(
-        _l10n!.detailNoDownloadFiles,
-        style: retro.body(size: 12, color: retro.inkDim),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _SectionTitle(label: _l10n!.detailVersions(widget.versions.length)),
+          const SizedBox(height: 10),
+          ...widget.versions.asMap().entries.map(
+            (entry) => _VersionCard(
+              modId: widget.modId,
+              modTitle: widget.modTitle,
+              versionIndex: entry.key,
+              version: entry.value,
+              initiallyExpanded: entry.key == 0,
+            ),
+          ),
+        ],
       );
     }
     final previous = widget.versions
@@ -731,9 +770,10 @@ class _VersionAccordionState extends State<_VersionAccordion> {
         .where(
           (entry) =>
               entry.key != latest.versionIndex &&
-              entry.value.files.any(
-                (file) => file.downloadUrl.trim().isNotEmpty,
-              ),
+              (entry.value.files.any(
+                    (file) => file.downloadUrl.trim().isNotEmpty,
+                  ) ||
+                  entry.value.folderUrl.trim().isNotEmpty),
         )
         .toList(growable: false);
 
@@ -884,6 +924,7 @@ class _VersionCardState extends State<_VersionCard> {
     final files = widget.version.files.asMap().entries.where(
       (entry) => entry.value.downloadUrl.trim().isNotEmpty,
     );
+    final folderUrl = widget.version.folderUrl.trim();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -937,6 +978,15 @@ class _VersionCardState extends State<_VersionCard> {
                       style: retro.body(size: 11, weight: FontWeight.w700),
                     ),
                   ],
+                  if (widget.version.rating != null) ...[
+                    const SizedBox(width: 8),
+                    Icon(Icons.star_rounded, size: 13, color: retro.amber),
+                    const SizedBox(width: 3),
+                    Text(
+                      widget.version.rating!.toStringAsFixed(1),
+                      style: retro.body(size: 11, weight: FontWeight.w700),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -948,13 +998,39 @@ class _VersionCardState extends State<_VersionCard> {
                 child: _PrimaryDownloadButton(
                   url: fileEntry.value.downloadUrl,
                   modId: widget.modId,
-                  fileKey:
-                      'version-${widget.versionIndex}-file-${fileEntry.key}',
+                  fileKey: fileEntry.value.id,
+                  versionId: widget.version.id,
+                  legacyFileKeys: [
+                    'version-${widget.versionIndex}-file-${fileEntry.key}',
+                  ],
                   modTitle: widget.modTitle,
                   filename: fileEntry.value.filename,
                   versionLabel: widget.version.version,
                   retro: retro,
                 ),
+              ),
+            ),
+          if (_expanded && folderUrl.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => launchUrl(
+                    Uri.parse(folderUrl),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  icon: const Icon(Icons.open_in_new_rounded, size: 17),
+                  label: Text(l10n.detailOpenExternalFolder),
+                ),
+              ),
+            ),
+          if (_expanded && files.isEmpty && folderUrl.isEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+              child: Text(
+                l10n.detailSourceUnavailable,
+                style: retro.body(size: 11, color: retro.inkDim),
               ),
             ),
         ],
@@ -1050,8 +1126,11 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
     }
 
     final modName = _operationName;
-    final filename = await DownloadUrlResolver.instance.resolveDownloadFilename(
+    final resolvedUrl = await DownloadUrlResolver.instance.resolveDownloadUrl(
       widget.url,
+    );
+    final filename = await DownloadUrlResolver.instance.resolveDownloadFilename(
+      resolvedUrl,
       widget.modTitle,
     );
 
@@ -1071,7 +1150,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
       }
 
       if (!mounted) return;
-      await _downloadWithFileDownloader(widget.url, filename);
+      await _downloadWithFileDownloader(resolvedUrl, filename);
       return;
     }
 
@@ -1081,7 +1160,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
     if (autoInstall && mounted) {
       final chain = await BackgroundInstallService.instance
           .startDownloadAndInstall(
-            url: widget.url,
+            url: resolvedUrl,
             modName: modName,
             fileName: filename,
             displayTitle: widget.modTitle,
@@ -1095,14 +1174,14 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
         // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
         await _downloadToModsFolder(
           _installer,
-          widget.url,
+          resolvedUrl,
           filename,
           extract: true,
           modName: modName,
         );
       }
     } else if (mounted) {
-      await _downloadToModsFolder(_installer, widget.url, filename);
+      await _downloadToModsFolder(_installer, resolvedUrl, filename);
     }
   }
 
@@ -1348,6 +1427,8 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
     required this.retro,
     this.filename,
     this.versionLabel,
+    this.versionId,
+    this.legacyFileKeys = const <String>[],
   });
 
   final String url;
@@ -1357,6 +1438,8 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
   final RetroTheme retro;
   final String? filename;
   final String? versionLabel;
+  final String? versionId;
+  final List<String> legacyFileKeys;
 
   @override
   ConsumerState<_PrimaryDownloadButton> createState() =>
@@ -1378,7 +1461,9 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     downloadUrl: widget.url,
     versionLabel: widget.versionLabel,
     fileName: widget.filename,
+    explicitVersionId: widget.versionId,
     explicitFileId: widget.fileKey,
+    legacyExplicitFileIds: widget.legacyFileKeys,
   );
 
   String get _operationName => _identity.operationKey;
@@ -1454,10 +1539,13 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     }
 
     final modName = _operationName;
+    final resolvedUrl = await DownloadUrlResolver.instance.resolveDownloadUrl(
+      widget.url,
+    );
     final filename =
         widget.filename ??
         await DownloadUrlResolver.instance.resolveDownloadFilename(
-          widget.url,
+          resolvedUrl,
           widget.modTitle,
         );
 
@@ -1477,7 +1565,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       }
 
       if (!mounted) return;
-      await _downloadWithFileDownloader(widget.url, filename);
+      await _downloadWithFileDownloader(resolvedUrl, filename);
       return;
     }
 
@@ -1487,7 +1575,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     if (autoInstall && mounted) {
       final chain = await BackgroundInstallService.instance
           .startDownloadAndInstall(
-            url: widget.url,
+            url: resolvedUrl,
             modName: modName,
             fileName: filename,
             displayTitle: widget.modTitle,
@@ -1505,14 +1593,14 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
         await _downloadToModsFolder(
           installer,
-          widget.url,
+          resolvedUrl,
           filename,
           extract: true,
           modName: modName,
         );
       }
     } else if (mounted) {
-      await _downloadToModsFolder(installer, widget.url, filename);
+      await _downloadToModsFolder(installer, resolvedUrl, filename);
     }
   }
 

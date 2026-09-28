@@ -93,6 +93,18 @@ class ModInstallWorker(
         val writeJournal = SafZipExtractor.WriteJournal()
 
         try {
+            // RAR is intentionally rejected instead of being copied as a
+            // loose file and recorded as a successful installation. Apache
+            // Commons Compress in this project extracts ZIP/7z only.
+            if (zipFile.extension.equals("rar", ignoreCase = true)) {
+                deleteSource(zipFile)
+                return Result.failure(
+                    workDataOf(
+                        "error" to "RAR archives are not supported yet. Download this version manually or choose a ZIP/7z release."
+                    )
+                )
+            }
+
             // El archivo descargado no siempre es un ZIP (ej. mods sueltos en .lua,
             // o .7z para packs de texturas grandes como Render96 HD).
             if (!isZipFile(zipFile) && !SafZipExtractor.isSevenZipFile(zipFile)) {

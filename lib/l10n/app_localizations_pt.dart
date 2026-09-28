@@ -1498,6 +1498,16 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get libraryMaintenanceError =>
       'Não foi possível atualizar a Biblioteca. Tente novamente.';
+
+  @override
+  String get detailOpenExternalFolder => 'ABRIR PASTA DE ORIGEM';
+
+  @override
+  String get detailSourceUnavailable =>
+      'Esta versão não tem um arquivo disponível para download no momento.';
+
+  @override
+  String get detailViewDiscussion => 'VER CONVERSA DA COMUNIDADE';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2994,4 +3004,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get libraryMaintenanceError =>
       'Não foi possível atualizar a Biblioteca. Tente novamente.';
+
+  @override
+  String get detailOpenExternalFolder => 'ABRIR PASTA DE ORIGEM';
+
+  @override
+  String get detailSourceUnavailable =>
+      'Esta versão não tem um arquivo disponível para download no momento.';
+
+  @override
+  String get detailViewDiscussion => 'VER CONVERSA DA COMUNIDADE';
 }

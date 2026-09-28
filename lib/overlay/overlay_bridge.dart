@@ -126,8 +126,11 @@ class OverlayBridge {
       return;
     }
 
-    final filename = await DownloadUrlResolver.instance.resolveDownloadFilename(
+    final resolvedUrl = await DownloadUrlResolver.instance.resolveDownloadUrl(
       url,
+    );
+    final filename = await DownloadUrlResolver.instance.resolveDownloadFilename(
+      resolvedUrl,
       modTitle,
     );
     final modName =
@@ -135,7 +138,7 @@ class OverlayBridge {
 
     final chain = await BackgroundInstallService.instance
         .startDownloadAndInstall(
-          url: url,
+          url: resolvedUrl,
           modName: modName,
           identity: identity,
           fileName: filename,

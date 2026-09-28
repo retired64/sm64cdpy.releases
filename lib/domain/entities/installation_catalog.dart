@@ -83,7 +83,7 @@ class InstallationCatalogMatcher {
     List<InstallationCatalogTarget> candidates,
   ) {
     for (final candidate in candidates) {
-      if (candidate.identity.artifactKey == installed.artifactKey) {
+      if (candidate.identity.matchesArtifactKey(installed.artifactKey)) {
         return candidate;
       }
     }
