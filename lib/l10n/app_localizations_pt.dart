@@ -51,6 +51,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get sectionExclusive => 'EXCLUSIVO';
 
   @override
+  String get sectionNavigation => 'NAVEGAÇÃO';
+
+  @override
   String get sectionExplore => 'EXPLORAR';
 
   @override
@@ -1539,6 +1542,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get sectionExclusive => 'EXCLUSIVO';
+
+  @override
+  String get sectionNavigation => 'NAVEGAÇÃO';
 
   @override
   String get sectionExplore => 'EXPLORAR';

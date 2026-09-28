@@ -46,10 +46,24 @@ class _OmmRebirthScreenState extends ConsumerState<OmmRebirthScreen> {
   @override
   Widget build(BuildContext context) {
     final ommAsync = ref.watch(allOmmRebirthProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final title = Text(
+      l10n.ommTitle,
+      style: retro.heading(size: 16, color: retro.accent),
+    );
 
     return ommAsync.when(
-      loading: () => const _OmmSkeleton(),
-      error: (e, _) => _OmmError(message: e.toString()),
+      loading: () => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.accent,
+        child: const _OmmSkeleton(),
+      ),
+      error: (e, _) => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.accent,
+        child: _OmmError(message: e.toString()),
+      ),
       data: (mods) => _OmmBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
@@ -74,15 +88,8 @@ class _OmmBody extends StatelessWidget {
       ),
       slivers: [
         // ── App bar ───────────────────────────────────────────
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: DrawerMenuButton(color: retro.accent),
+        RetroPinnedAppBar(
+          leadingColor: retro.accent,
           title: Text(
             l10n.ommTitle,
             style: retro.heading(size: 16, color: retro.accent),

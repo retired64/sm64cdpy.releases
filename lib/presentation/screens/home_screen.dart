@@ -157,14 +157,7 @@ class _HomeAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
 
-    return SliverAppBar(
-      backgroundColor: retro.background,
-      surfaceTintColor: Colors.transparent,
-      floating: true,
-      snap: true,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      leading: const DrawerMenuButton(icon: Icons.menu),
+    return RetroPinnedAppBar(
       title: Text('SM64CoopDX', style: retro.heading(size: 17)),
       actions: [
         IconButton(

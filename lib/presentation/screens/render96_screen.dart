@@ -77,12 +77,7 @@ class _Render96Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: const DrawerMenuButton(),
+        RetroPinnedAppBar(
           title: Text(l10n.render96Title, style: retro.heading(size: 18)),
         ),
         // ── Hero Banner ────────────────────────────────────────────────────────
@@ -711,12 +706,7 @@ class _Render96Skeleton extends StatelessWidget {
     final retro = RetroTheme.of(context);
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          backgroundColor: retro.background,
-          elevation: 0,
-          leading: const DrawerMenuButton(),
-          title: _Bone(width: 110, height: 20, retro: retro),
-        ),
+        RetroPinnedAppBar(title: _Bone(width: 110, height: 20, retro: retro)),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(16),

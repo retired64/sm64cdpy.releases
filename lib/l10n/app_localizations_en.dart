@@ -51,6 +51,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionExclusive => 'EXCLUSIVE';
 
   @override
+  String get sectionNavigation => 'NAVIGATION';
+
+  @override
   String get sectionExplore => 'EXPLORE';
 
   @override

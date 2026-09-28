@@ -54,6 +54,10 @@
   },
 
   "sectionExclusive": "EXCLUSIVE",
+  "sectionNavigation": "NAVIGATION",
+  "@sectionNavigation": {
+    "description": "Section header for the primary navigation items in the drawer"
+  },
   "@sectionExclusive": {
     "description": "Section header in the drawer for exclusive content items"
   },

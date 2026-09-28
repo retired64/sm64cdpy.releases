@@ -75,15 +75,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           parent: BouncingScrollPhysics(),
         ),
         slivers: [
-          SliverAppBar(
-            backgroundColor: retro.background,
-            surfaceTintColor: Colors.transparent,
-            floating: true,
-            snap: true,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-            leading: const DrawerMenuButton(),
+          RetroPinnedAppBar(
             title: Text(
               l10n.libraryTitle,
               style: retro.heading(size: 18, color: retro.accent),

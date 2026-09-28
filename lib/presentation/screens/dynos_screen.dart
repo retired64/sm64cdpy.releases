@@ -46,10 +46,24 @@ class _DynosScreenState extends ConsumerState<DynosScreen> {
   @override
   Widget build(BuildContext context) {
     final dynosAsync = ref.watch(allDynosProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final title = Text(
+      l10n.dynosTitle,
+      style: retro.heading(size: 16, color: retro.blue),
+    );
 
     return dynosAsync.when(
-      loading: () => const _DynosSkeleton(),
-      error: (e, _) => _DynosError(message: e.toString()),
+      loading: () => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.blue,
+        child: const _DynosSkeleton(),
+      ),
+      error: (e, _) => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.blue,
+        child: _DynosError(message: e.toString()),
+      ),
       data: (mods) => _DynosBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
@@ -75,15 +89,8 @@ class _DynosBody extends StatelessWidget {
       ),
       slivers: [
         // ── App bar ───────────────────────────────────────────
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: DrawerMenuButton(color: retro.blue),
+        RetroPinnedAppBar(
+          leadingColor: retro.blue,
           title: Text(
             l10n.dynosTitle,
             style: retro.heading(size: 16, color: retro.blue),

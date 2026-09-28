@@ -47,10 +47,24 @@ class _TouchControlsScreenState extends ConsumerState<TouchControlsScreen> {
   @override
   Widget build(BuildContext context) {
     final touchAsync = ref.watch(allTouchControlsProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final title = Text(
+      l10n.touchTitle,
+      style: retro.heading(size: 16, color: retro.accent),
+    );
 
     return touchAsync.when(
-      loading: () => const _TouchSkeleton(),
-      error: (e, _) => _TouchError(message: e.toString()),
+      loading: () => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.accent,
+        child: const _TouchSkeleton(),
+      ),
+      error: (e, _) => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.accent,
+        child: _TouchError(message: e.toString()),
+      ),
       data: (mods) => _TouchBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
@@ -76,15 +90,8 @@ class _TouchBody extends StatelessWidget {
       ),
       slivers: [
         // ── App bar ───────────────────────────────────────────
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: DrawerMenuButton(color: retro.accent),
+        RetroPinnedAppBar(
+          leadingColor: retro.accent,
           title: Text(
             l10n.touchTitle,
             style: retro.heading(size: 16, color: retro.accent),

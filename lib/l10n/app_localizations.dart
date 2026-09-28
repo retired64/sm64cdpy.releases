@@ -186,6 +186,12 @@ abstract class AppLocalizations {
   /// **'EXCLUSIVE'**
   String get sectionExclusive;
 
+  /// Section header for the primary navigation items in the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'NAVIGATION'**
+  String get sectionNavigation;
+
   /// Section header in the drawer for category browsing
   ///
   /// In en, this message translates to:

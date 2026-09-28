@@ -51,6 +51,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sectionExclusive => 'EXCLUSIVO';
 
   @override
+  String get sectionNavigation => 'NAVEGACIÓN';
+
+  @override
   String get sectionExplore => 'EXPLORAR';
 
   @override
@@ -1548,6 +1551,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get sectionExclusive => 'EXCLUSIVO';
+
+  @override
+  String get sectionNavigation => 'NAVEGACIÓN';
 
   @override
   String get sectionExplore => 'EXPLORAR';

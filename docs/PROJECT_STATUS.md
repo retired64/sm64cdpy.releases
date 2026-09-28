@@ -42,6 +42,10 @@ Revisado contra `1.7.0+18` el 2026-09-27.
   GitHub Dark; conserva el acento cyan, usa bordes gris intermedio y reduce la
   trama de fondo para evitar una apariencia gris, deslumbrante o excesivamente
   luminosa.
+- Navegación raíz unificada con barra superior compacta y fija: el botón del
+  drawer permanece disponible durante scroll, carga y error. El drawer vuelve
+  al inicio al abrirse, navega sin retraso artificial y ya no duplica los
+  filtros y el ordenamiento propios del Catálogo.
 
 ## Experimental o pendiente de validación
 

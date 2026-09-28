@@ -13,21 +13,21 @@ import '../../presentation/providers/extra_providers.dart';
 import '../../services/update_service.dart';
 
 const Duration _kItemDuration = Duration(milliseconds: 150);
-const Duration _kNavDelay = Duration(milliseconds: 260);
+const Duration _kNavDelay = Duration.zero;
 const Curve _kCurve = Curves.easeOutCubic;
 
 void _navigateTo(BuildContext context, String route) {
   Navigator.of(context).pop();
-  Future.delayed(_kNavDelay, () {
-    if (context.mounted) context.go(route);
-  });
+  if (context.mounted) context.go(route);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AppDrawer
 // ─────────────────────────────────────────────────────────────────────────────
 class AppDrawer extends ConsumerStatefulWidget {
-  const AppDrawer({super.key});
+  const AppDrawer({super.key, required this.scrollController});
+
+  final ScrollController scrollController;
 
   @override
   ConsumerState<AppDrawer> createState() => _AppDrawerState();
@@ -41,11 +41,13 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
     final currentRoute = ref.watch(currentRouteProvider);
 
     return Drawer(
+      width: (MediaQuery.sizeOf(context).width * 0.86).clamp(280.0, 340.0),
       backgroundColor: retro.background,
       elevation: 0,
-      shape: Border(right: BorderSide(color: retro.border, width: 3)),
+      shape: Border(right: BorderSide(color: retro.border, width: 2)),
       child: SafeArea(
         child: SingleChildScrollView(
+          controller: widget.scrollController,
           physics: const ClampingScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 16),
           child: Column(
@@ -53,7 +55,13 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
             children: [
               const _DrawerHeader(),
               _RetroDivider(retro: retro),
-              const SizedBox(height: 4),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
+                child: SectionKicker(
+                  retro: retro,
+                  label: l10n.sectionNavigation,
+                ),
+              ),
 
               _NavItem(
                 iconBuilder: (color) => SvgPicture.asset(
@@ -169,17 +177,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 accentColor: retro.red,
               ),
 
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                child: _RetroDivider(retro: retro),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                child: SectionKicker(retro: retro, label: l10n.sectionExplore),
-              ),
-              _CategoryList(),
-              _SortOptions(),
-
               // Footer
               _RetroDivider(retro: retro),
               const _SocialLinks(),
@@ -267,12 +264,12 @@ class _DrawerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+      padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
       child: Row(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 44,
+            height: 44,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: retro.surface,
@@ -282,8 +279,8 @@ class _DrawerHeader extends StatelessWidget {
             child: RepaintBoundary(
               child: SvgPicture.asset(
                 'assets/icons/logo.svg',
-                width: 32,
-                height: 32,
+                width: 27,
+                height: 27,
               ),
             ),
           ),
@@ -301,6 +298,12 @@ class _DrawerHeader extends StatelessWidget {
                 Text('モッド・カタログ', style: retro.body(size: 10.5)),
               ],
             ),
+          ),
+          IconButton(
+            tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+            constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+            icon: Icon(Icons.close_rounded, color: retro.inkDim, size: 22),
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ],
       ),

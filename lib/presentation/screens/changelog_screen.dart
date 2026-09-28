@@ -24,12 +24,7 @@ class ChangelogScreen extends StatelessWidget {
 
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: const DrawerMenuButton(),
+        RetroPinnedAppBar(
           title: Text(l10n.changelogTitle, style: retro.heading(size: 18)),
         ),
         SliverPadding(
@@ -350,6 +345,7 @@ const _kVersions = <_VersionData>[
       _ChangeGroupData(
         type: _ChangeType.improved,
         items: [
+          'Root navigation now uses one compact pinned app bar across every section, keeping the drawer button stable during scrolling, loading, and error states. The drawer opens faster, starts at the top, groups primary destinations clearly, and leaves catalog filters inside the catalog.',
           'Dark mode now uses a deeper GitHub-inspired near-black palette with layered surfaces and a subtler halftone texture, reducing perceived brightness while preserving the retro identity.',
           'Dark-mode borders and dividers now use a muted intermediate gray instead of bright cream, reducing glare across cards, panels, menus, and section separators.',
           'The legal notice now clearly explains the unofficial app scope, community catalog provenance and attribution, curated sources, local-only user data, external services, and the correction or removal contact path.',

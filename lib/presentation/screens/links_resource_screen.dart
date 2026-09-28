@@ -85,15 +85,7 @@ class LinksResourceScreen extends StatelessWidget {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: const DrawerMenuButton(),
+        RetroPinnedAppBar(
           title: RichText(
             text: TextSpan(
               children: [

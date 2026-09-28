@@ -48,6 +48,8 @@
 - [x] Installation results use a visible notification channel and a user-facing mod title.
 - [x] DynOS and Touch Controls share one destination and respect the global auto-install preference in the drawer flow.
 - [x] DynOS and Touch Controls use friendly download errors while retaining copyable technical details.
+- [x] Root screens use a pinned shared app bar so the navigation drawer remains reachable while scrolling, loading or showing an error.
+- [x] Catalogue category and sort controls live in the catalogue rather than being duplicated in global navigation.
 - [x] `flutter analyze lib` completed with no issues on 2026-09-20.
 - [ ] Verify every item above at runtime on a clean physical device.
 
@@ -88,6 +90,8 @@ Result:
 - [ ] Bundled catalogue loads without a network connection.
 - [ ] Remote database refresh succeeds.
 - [ ] Search, category filters, ordering and pagination work.
+- [ ] Scroll every root section in both directions and confirm the drawer button remains visible and responds to the first tap.
+- [ ] Open the drawer by button, edge swipe and Android Back; confirm each interaction closes or opens it once without stale animation.
 - [ ] A favourite survives closing and reopening the app.
 - [ ] Favourite export and import work with UTF-8 content.
 - [ ] Theme selection survives restart.

@@ -45,10 +45,24 @@ class _VipModsScreenState extends ConsumerState<VipModsScreen> {
   @override
   Widget build(BuildContext context) {
     final vipAsync = ref.watch(allVipModsProvider);
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final title = Text(
+      l10n.vipTitle,
+      style: retro.heading(size: 16, color: retro.amber),
+    );
 
     return vipAsync.when(
-      loading: () => const _VipSkeleton(),
-      error: (e, _) => _VipError(message: e.toString()),
+      loading: () => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.amber,
+        child: const _VipSkeleton(),
+      ),
+      error: (e, _) => RetroFixedHeaderView(
+        title: title,
+        leadingColor: retro.amber,
+        child: _VipError(message: e.toString()),
+      ),
       data: (mods) => _VipBody(mods: mods, scrollCtrl: _scrollCtrl),
     );
   }
@@ -74,15 +88,8 @@ class _VipBody extends StatelessWidget {
       ),
       slivers: [
         // ── App bar ───────────────────────────────────────────
-        SliverAppBar(
-          backgroundColor: retro.background,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          floating: true,
-          snap: true,
-          elevation: 0,
-          shape: Border(bottom: BorderSide(color: retro.border, width: 3)),
-          leading: DrawerMenuButton(color: retro.amber),
+        RetroPinnedAppBar(
+          leadingColor: retro.amber,
           title: Text(
             l10n.vipTitle,
             style: retro.heading(size: 16, color: retro.amber),
