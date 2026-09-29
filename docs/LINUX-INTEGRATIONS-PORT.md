@@ -7,7 +7,7 @@
 |---|---|
 | Proyecto | SM64CDPY — SM64CoopDX Mods Browser |
 | Rama de trabajo | `linux-port` |
-| Estado | Planificación creada; Fase 0 pendiente |
+| Estado | Fase 0 completa; Fase 1 pendiente |
 | Creado | 2026-09-28 |
 | Plataforma nueva | Linux desktop x64, inicialmente |
 | Base estable | Android `1.8.2+21` |
@@ -412,18 +412,18 @@ impacto en Android y el lockfile.
 
 **Objetivo:** conocer el estado real antes de cambiar producción.
 
-- [ ] Ejecutar y registrar `flutter doctor -v` para Linux.
-- [ ] Ejecutar `flutter pub get` y regenerar plugins sin editar generados a mano.
-- [ ] Intentar build Linux inicial y clasificar todos los fallos.
-- [ ] Ejecutar baseline Android: análisis, tests y build de prueba.
-- [ ] Inventariar imports, plugins y servicios Android-only.
-- [ ] Inventariar todas las llamadas directas a `ModInstaller` y
+- [x] Ejecutar y registrar `flutter doctor -v` para Linux.
+- [x] Ejecutar `flutter pub get` y regenerar plugins sin editar generados a mano.
+- [x] Intentar build Linux inicial y clasificar todos los fallos.
+- [x] Ejecutar baseline Android: análisis, tests y build de prueba.
+- [x] Inventariar imports, plugins y servicios Android-only.
+- [x] Inventariar todas las llamadas directas a `ModInstaller` y
   `BackgroundInstallService`.
-- [ ] Inventariar lectores/escritores de ajustes de carpetas, recibos e Hive.
-- [ ] Documentar el contrato de capacidades y backend.
-- [ ] Crear tests de contrato que puedan ejecutarse con un backend falso.
-- [ ] Decidir directorio privado de SM64CDPY para cache, diario y recibos.
-- [ ] Registrar riesgos y decisiones sin implementar aún instalación real.
+- [x] Inventariar lectores/escritores de ajustes de carpetas, recibos e Hive.
+- [x] Documentar el contrato de capacidades y backend.
+- [x] Crear tests de contrato que puedan ejecutarse con un backend falso.
+- [x] Decidir directorio privado de SM64CDPY para cache, diario y recibos.
+- [x] Registrar riesgos y decisiones sin implementar aún instalación real.
 
 **Criterios de salida:**
 
@@ -739,7 +739,8 @@ El MVP Linux estará terminado cuando:
 
 | Fecha | Fase | Resultado | Evidencia / pendiente |
 |---|---|---|---|
-| 2026-09-28 | Preparación | Rama `linux-port` y roadmap creados | Fase 0 pendiente de autorización |
+| 2026-09-28 | Preparación | Rama `linux-port` y roadmap creados | Fase 0 autorizada |
+| 2026-09-28 | Fase 0 | Baseline, inventario, contratos y pruebas completados | Runtime Linux confirma canales Android ausentes; Fase 1 debe separar bootstrap |
 
 Al completar cada fase se añadirá una entrada. Los checkboxes se actualizan con
 evidencia real; compilar no equivale a haber realizado pruebas físicas.

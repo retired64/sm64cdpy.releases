@@ -11,7 +11,8 @@ Este directorio es el punto de entrada técnico del proyecto. Los documentos de 
 | [Task Checklist v1.7.0](SM64CDPY-v1.7.0-TASK-CHECKLIST.md) | Registro del plan de estabilización de la línea 1.7 | Referencia histórica |
 | [Roadmap de Biblioteca e historial](INSTALLED-LIBRARY-ROADMAP.md) | Plan aislado para recibos, Hive, verificación SAF, overlay, descubrimiento y mantenimiento | Fases 0–8 completas; Fase 9 implementada y pendiente de validación física |
 | [Roadmap de desinstalación segura 1.9.0](SAFE-UNINSTALL-v1.9.0-ROADMAP.md) | Manifiesto de propiedad, Worker SAF y experiencia de desinstalación | Futuro; fuera de 1.8.0 |
-| [Roadmap del port e integraciones Linux](LINUX-INTEGRATIONS-PORT.md) | Contratos, fases, seguridad, pruebas, CI y criterios del MVP Linux | Planificación creada en `linux-port`; Fase 0 pendiente |
+| [Roadmap del port e integraciones Linux](LINUX-INTEGRATIONS-PORT.md) | Contratos, fases, seguridad, pruebas, CI y criterios del MVP Linux | Fase 0 completa; Fase 1 pendiente |
+| [Linux Port — Fase 0](LINUX-PORT-PHASE-0.md) | Baseline, plugins, acoplamientos Android, persistencia, contratos y riesgos confirmados | Completa en `linux-port` |
 | [Biblioteca — investigación y contratos](INSTALLED-LIBRARY-PHASE-0.md) | Auditoría de catálogos/instalador, identidad canónica, recibo v1 y fixtures legales | Vigente para la rama `historial-hive` |
 | [Checklist de propiedad intelectual y contenido](IP-CONTENT-RISK-CHECKLIST.md) | Evaluación preventiva, procedencia, permisos, retiradas y decisiones para app/web | Planificación; requiere criterio y revisión jurídica |
 | [CI/CD](CI_CD.md) | Workflows, secretos y publicación | Vigente |
