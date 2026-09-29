@@ -4,21 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
-import 'package:floaty_chatheads/floaty_chatheads.dart';
 
-import 'overlay/overlay_panel.dart';
-import 'overlay/overlay_bridge.dart';
+import 'bootstrap/android_overlay_entrypoint.dart';
+import 'bootstrap/main_app_bootstrap.dart';
 import 'l10n/app_localizations.dart';
-import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/retro_theme.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'presentation/widgets/background_operation_coordinator.dart';
-import 'services/background_install_service.dart';
-import 'services/installation_library_projection_service.dart';
-import 'services/update_service.dart';
 
 /// Instala manejo de errores global para el engine actual.
 ///
@@ -32,7 +25,7 @@ import 'services/update_service.dart';
 void _installErrorHandling(String engineLabel) {
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
-    debugPrint('[$engineLabel] FlutterError: ${details.exceptionAsString()}');
+    debugPrint('[$engineLabel] FlutterError details:\n$details');
   };
   PlatformDispatcher.instance.onError = (error, stack) {
     debugPrint('[$engineLabel] Uncaught error: $error\n$stack');
@@ -45,56 +38,13 @@ Future<void> main() async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       _installErrorHandling('main');
-      await _bootstrapMainApp();
+      await bootstrapMainApp();
       runApp(const ProviderScope(child: SM64CoopDXApp()));
     },
     (error, stack) {
       debugPrint('[main] Zone error: $error\n$stack');
     },
   );
-}
-
-Future<void> _bootstrapMainApp() async {
-  // Lock to portrait + landscape (phone only)
-  // Android 16+ (API 36): screenOrientation constraints are ignored
-  // on devices with smallestWidth >= 600dp (tablets, foldables).
-  // This is documented platform behavior, not a bug.
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
-
-  // Configure file downloader
-  FileDownloader.setLogEnabled(kDebugMode); // Enable logs for debugging
-  FileDownloader.setMaximumParallelDownloads(3); // Limit concurrent downloads
-
-  // Transparent status bar (will be set dynamically based on theme)
-  // SystemChrome.setSystemUIOverlayStyle will be configured in SM64CoopDXApp
-
-  // Hive (favourites persistence)
-  try {
-    await Hive.initFlutter();
-    await Hive.openBox<String>(AppConstants.settingsBoxKey);
-    await Hive.openBox<dynamic>(AppConstants.installationLibraryBoxKey);
-  } catch (e) {
-    debugPrint('Hive initialization failed: $e');
-    // Continue without Hive (favourites won't persist)
-  }
-
-  // OTA — Obtiene versión instalada para comparar con GitHub Releases
-  await UpdateService.init();
-
-  // Background install service — EventChannel listener
-  BackgroundInstallService.instance.init();
-
-  // Keep the optional Hive projection synchronized even before Library UI is
-  // opened. Native durable receipts remain the authority.
-  await InstallationLibraryProjectionService.instance.init();
-
-  // Overlay ↔ app download bridge
-  OverlayBridge.init();
 }
 
 class SM64CoopDXApp extends ConsumerStatefulWidget {
@@ -157,36 +107,5 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
 
 @pragma('vm:entry-point')
 void overlayMain() {
-  runZonedGuarded(
-    () {
-      _installErrorHandling('overlay');
-      FloatyOverlayApp.run(
-        ProviderScope(
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            // locale: null → usa el locale del sistema.
-            // SharedPreferences NO se lee acá: este engine no tiene
-            // acceso seguro a todos los plugins nativos que el engine
-            // principal sí tiene inicializados, y llamar a
-            // SharedPreferences.getInstance() desde el overlay causaba
-            // crash nativo intermitente (el channel del plugin no está
-            // del todo listo en el momento en que floaty_chatheads
-            // arranca este segundo engine).
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            theme: RetroTheme.materialTheme(true).copyWith(
-              scaffoldBackgroundColor: RetroTheme.overlay().background,
-              colorScheme: RetroTheme.materialTheme(
-                true,
-              ).colorScheme.copyWith(surface: RetroTheme.overlay().surface),
-            ),
-            home: const OverlayPanel(),
-          ),
-        ),
-      );
-    },
-    (error, stack) {
-      debugPrint('[overlay] Zone error: $error\n$stack');
-    },
-  );
+  runAndroidOverlayApp();
 }

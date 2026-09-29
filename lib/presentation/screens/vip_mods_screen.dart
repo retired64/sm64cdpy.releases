@@ -231,6 +231,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
   }
 
   Future<void> _download() async {
+    if (!ensureInstallationAvailable(context, ref)) return;
     if (_downloading ||
         BackgroundInstallService.instance.isInstalling(_operationName)) {
       return;

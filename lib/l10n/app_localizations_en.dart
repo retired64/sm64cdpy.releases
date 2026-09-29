@@ -1467,4 +1467,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailViewDiscussion => 'VIEW COMMUNITY DISCUSSION';
+
+  @override
+  String get linuxReadOnlyNotice =>
+      'Linux preview: browse the full catalogue and manage favourites. Downloads and installation will be enabled in a later port phase.';
+
+  @override
+  String get linuxReadOnlyInstallUnavailable =>
+      'Downloads and installation are not available in this Linux preview yet.';
 }

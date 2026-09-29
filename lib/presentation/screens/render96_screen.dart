@@ -292,6 +292,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
   }
 
   Future<void> _download() async {
+    if (!ensureInstallationAvailable(context, ref)) return;
     if (_downloading) return;
     setState(() => _downloading = true);
     HapticFeedback.mediumImpact();

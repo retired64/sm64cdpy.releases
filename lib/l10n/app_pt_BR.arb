@@ -457,5 +457,7 @@
   "libraryMaintenanceError": "Não foi possível atualizar a Biblioteca. Tente novamente.",
   "detailOpenExternalFolder": "ABRIR PASTA DE ORIGEM",
   "detailSourceUnavailable": "Esta versão não tem um arquivo disponível para download no momento.",
-  "detailViewDiscussion": "VER CONVERSA DA COMUNIDADE"
+  "detailViewDiscussion": "VER CONVERSA DA COMUNIDADE",
+  "linuxReadOnlyNotice": "Prévia para Linux: explore todo o catálogo e gerencie favoritos. Downloads e instalação serão habilitados em uma fase posterior do port.",
+  "linuxReadOnlyInstallUnavailable": "Downloads e instalação ainda não estão disponíveis nesta prévia para Linux."
 }

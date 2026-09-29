@@ -226,6 +226,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   }
 
   Future<void> _download() async {
+    if (!ensureInstallationAvailable(context, ref)) return;
     if (_downloading ||
         BackgroundInstallService.instance.isInstalling(_operationName)) {
       return;

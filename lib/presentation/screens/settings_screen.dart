@@ -16,6 +16,7 @@ import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
 import '../providers/theme_provider.dart';
+import '../providers/platform_capabilities_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 
@@ -26,6 +27,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    final capabilities = ref.watch(platformCapabilitiesProvider);
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
@@ -72,18 +74,31 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () => _importFavourites(context, ref),
               ),
 
-              const SizedBox(height: 20),
-              _RetroSectionKicker(
-                retro: retro,
-                label: l10n.settingsGameIntegration,
-                japanese: 'ゲーム連携',
-              ),
-              const SizedBox(height: 10),
-              _ModsFolderTile(),
-              _RetroGap(height: 6),
-              _DynosFolderTile(),
-              _AutoInstallToggle(),
-              _OverlayToggle(),
+              if (capabilities.usesSaf) ...[
+                const SizedBox(height: 20),
+                _RetroSectionKicker(
+                  retro: retro,
+                  label: l10n.settingsGameIntegration,
+                  japanese: 'ゲーム連携',
+                ),
+                const SizedBox(height: 10),
+                _ModsFolderTile(),
+                _RetroGap(height: 6),
+                _DynosFolderTile(),
+                _AutoInstallToggle(),
+                if (capabilities.supportsFloatingOverlay) _OverlayToggle(),
+              ] else ...[
+                const SizedBox(height: 20),
+                _RetroTileShell(
+                  retro: retro,
+                  leading: _RetroIconBox(
+                    retro: retro,
+                    icon: Icons.desktop_windows_outlined,
+                  ),
+                  title: 'LINUX · READ ONLY',
+                  subtitle: l10n.linuxReadOnlyNotice,
+                ),
+              ],
 
               const SizedBox(height: 20),
               _RetroSectionKicker(
@@ -103,7 +118,7 @@ class SettingsScreen extends ConsumerWidget {
                 japanese: '概要',
               ),
               const SizedBox(height: 10),
-              _CheckUpdateTile(),
+              if (capabilities.supportsApkOta) _CheckUpdateTile(),
               _SettingsTile(
                 icon: Icons.open_in_browser_rounded,
                 title: l10n.settingsGoToReleases,

@@ -457,5 +457,7 @@
   "libraryMaintenanceError": "No se pudo actualizar la Biblioteca. Inténtalo de nuevo.",
   "detailOpenExternalFolder": "ABRIR CARPETA DE ORIGEN",
   "detailSourceUnavailable": "Esta versión no tiene un archivo descargable disponible por ahora.",
-  "detailViewDiscussion": "VER CONVERSACIÓN DE LA COMUNIDAD"
+  "detailViewDiscussion": "VER CONVERSACIÓN DE LA COMUNIDAD",
+  "linuxReadOnlyNotice": "Vista previa para Linux: explora el catálogo completo y administra favoritos. Las descargas y la instalación se habilitarán en una fase posterior del port.",
+  "linuxReadOnlyInstallUnavailable": "Las descargas y la instalación todavía no están disponibles en esta vista previa para Linux."
 }

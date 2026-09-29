@@ -1486,6 +1486,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSACIÓN DE LA COMUNIDAD';
+
+  @override
+  String get linuxReadOnlyNotice =>
+      'Vista previa para Linux: explora el catálogo completo y administra favoritos. Las descargas y la instalación se habilitarán en una fase posterior del port.';
+
+  @override
+  String get linuxReadOnlyInstallUnavailable =>
+      'Las descargas y la instalación todavía no están disponibles en esta vista previa para Linux.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2970,4 +2978,12 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSACIÓN DE LA COMUNIDAD';
+
+  @override
+  String get linuxReadOnlyNotice =>
+      'Vista previa para Linux: explora el catálogo completo y administra favoritos. Las descargas y la instalación se habilitarán en una fase posterior del port.';
+
+  @override
+  String get linuxReadOnlyInstallUnavailable =>
+      'Las descargas y la instalación todavía no están disponibles en esta vista previa para Linux.';
 }

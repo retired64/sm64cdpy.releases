@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/installation_library_repository_impl.dart';
+import '../../data/repositories/read_only_installation_library_repository.dart';
 import '../../domain/entities/installation_library.dart';
 import '../../domain/repositories/installation_library_repository.dart';
 import '../../services/background_install_service.dart';
 import '../../services/mod_installer.dart';
+import 'platform_capabilities_provider.dart';
 
 enum InstallationLibraryLoadStatus { ready, partial }
 
@@ -22,7 +24,9 @@ class InstallationLibraryState {
 
 final installationLibraryRepositoryProvider =
     Provider<InstallationLibraryRepository>(
-      (ref) => InstallationLibraryRepositoryImpl(),
+      (ref) => ref.watch(platformCapabilitiesProvider).usesSaf
+          ? InstallationLibraryRepositoryImpl()
+          : ReadOnlyInstallationLibraryRepository(),
     );
 
 class InstallationLibraryNotifier
@@ -36,6 +40,10 @@ class InstallationLibraryNotifier
 
   @override
   Future<InstallationLibraryState> build() async {
+    final capabilities = ref.watch(platformCapabilitiesProvider);
+    if (!capabilities.usesSaf) {
+      return _load();
+    }
     _installSubscription = BackgroundInstallService.instance.events.listen((
       event,
     ) {
@@ -76,7 +84,13 @@ class InstallationLibraryNotifier
     // Scanning while WorkManager is writing could misclassify a partial mod as
     // external. Receipt reconciliation after completion is authoritative, so
     // defer discovery until no installation is active.
-    if (discover && BackgroundInstallService.instance.activeInstalls.isEmpty) {
+    final capabilities = ref.read(platformCapabilitiesProvider);
+    if (discover && !capabilities.usesSaf) {
+      await ref
+          .read(installationLibraryRepositoryProvider)
+          .discover(force: forceDiscovery);
+    } else if (discover &&
+        BackgroundInstallService.instance.activeInstalls.isEmpty) {
       await ref
           .read(installationLibraryRepositoryProvider)
           .discover(force: forceDiscovery);

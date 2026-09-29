@@ -45,14 +45,17 @@ static void my_application_activate(GApplication* application) {
   if (use_header_bar) {
     GtkHeaderBar* header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
     gtk_widget_show(GTK_WIDGET(header_bar));
-    gtk_header_bar_set_title(header_bar, "sm64cdpy");
+    gtk_header_bar_set_title(header_bar, "SM64CDPY");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
   } else {
-    gtk_window_set_title(window, "sm64cdpy");
+    gtk_window_set_title(window, "SM64CDPY");
   }
 
-  gtk_window_set_default_size(window, 1280, 720);
+  // Phase 1 keeps the proven mobile layout while making it comfortable as a
+  // resizable desktop window. Wider adaptive layouts are evaluated later.
+  gtk_window_set_default_size(window, 480, 820);
+  gtk_widget_set_size_request(GTK_WIDGET(window), 360, 600);
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
   fl_dart_project_set_dart_entrypoint_arguments(

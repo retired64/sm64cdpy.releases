@@ -1477,6 +1477,14 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSA DA COMUNIDADE';
+
+  @override
+  String get linuxReadOnlyNotice =>
+      'Prévia para Linux: explore todo o catálogo e gerencie favoritos. Downloads e instalação serão habilitados em uma fase posterior do port.';
+
+  @override
+  String get linuxReadOnlyInstallUnavailable =>
+      'Downloads e instalação ainda não estão disponíveis nesta prévia para Linux.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2952,4 +2960,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSA DA COMUNIDADE';
+
+  @override
+  String get linuxReadOnlyNotice =>
+      'Prévia para Linux: explore todo o catálogo e gerencie favoritos. Downloads e instalação serão habilitados em uma fase posterior do port.';
+
+  @override
+  String get linuxReadOnlyInstallUnavailable =>
+      'Downloads e instalação ainda não estão disponíveis nesta prévia para Linux.';
 }

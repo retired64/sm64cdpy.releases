@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/background_install_service.dart';
 import '../providers/mod_providers.dart';
+import '../providers/platform_capabilities_provider.dart';
 import 'app_snackbar.dart';
 
 /// Punto único de feedback para operaciones WorkManager.
@@ -28,6 +29,8 @@ class _BackgroundOperationCoordinatorState
 
   @override
   Widget build(BuildContext context) {
+    final capabilities = ref.watch(platformCapabilitiesProvider);
+    if (!capabilities.supportsOsBackgroundExecution) return widget.child;
     ref.listen<Map<String, BgInstallInfo>>(bgInstallStateProvider, (
       previous,
       next,

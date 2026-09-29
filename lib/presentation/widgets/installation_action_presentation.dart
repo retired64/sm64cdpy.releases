@@ -6,6 +6,8 @@ import '../../domain/entities/installation_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/background_install_service.dart';
 import '../providers/installation_library_provider.dart';
+import '../providers/platform_capabilities_provider.dart';
+import 'app_snackbar.dart';
 
 extension InstallationActionPresentation on InstallationPrimaryAction {
   String label(AppLocalizations l10n) => switch (this) {
@@ -39,6 +41,7 @@ Future<void> runCanonicalInstallationAction({
   required InstallationActionState state,
   required Future<void> Function() onTransfer,
 }) async {
+  if (!ensureInstallationAvailable(context, ref)) return;
   switch (state.primaryAction) {
     case InstallationPrimaryAction.cancel:
       await BackgroundInstallService.instance.cancelMod(
@@ -59,4 +62,20 @@ Future<void> runCanonicalInstallationAction({
     case InstallationPrimaryAction.installed:
       break;
   }
+}
+
+/// Phase-aware guard shared by every catalogue family.
+///
+/// Linux Phase 1 remains useful as a read-only catalogue and explains why a
+/// transfer is unavailable instead of invoking an Android-only plugin.
+bool ensureInstallationAvailable(BuildContext context, WidgetRef ref) {
+  final supported = ref
+      .read(platformCapabilitiesProvider)
+      .supportsContentTransfers;
+  if (supported) return true;
+  AppSnackbar.info(
+    context,
+    message: AppLocalizations.of(context).linuxReadOnlyInstallUnavailable,
+  );
+  return false;
 }

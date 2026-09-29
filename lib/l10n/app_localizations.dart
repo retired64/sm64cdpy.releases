@@ -2675,6 +2675,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'VIEW COMMUNITY DISCUSSION'**
   String get detailViewDiscussion;
+
+  /// No description provided for @linuxReadOnlyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Linux preview: browse the full catalogue and manage favourites. Downloads and installation will be enabled in a later port phase.'**
+  String get linuxReadOnlyNotice;
+
+  /// No description provided for @linuxReadOnlyInstallUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads and installation are not available in this Linux preview yet.'**
+  String get linuxReadOnlyInstallUnavailable;
 }
 
 class _AppLocalizationsDelegate

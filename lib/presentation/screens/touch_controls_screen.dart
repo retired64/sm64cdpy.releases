@@ -228,6 +228,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
   }
 
   Future<void> _download() async {
+    if (!ensureInstallationAvailable(context, ref)) return;
     if (_downloading) return;
     HapticFeedback.mediumImpact();
 

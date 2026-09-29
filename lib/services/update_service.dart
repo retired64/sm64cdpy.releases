@@ -5,10 +5,10 @@ import 'package:collection/collection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'update_config.dart';
+import 'app_version_service.dart';
 
 /// Servicio central de actualizaciones OTA.
 /// Consulta la GitHub Releases API y compara versiones.
@@ -22,16 +22,15 @@ class UpdateService {
   static const _cacheKeyTimestamp = 'ota_last_check_ms';
   static const _cacheMaxAge = Duration(hours: 6);
 
-  static String _currentVersion = '';
-
   /// Debe llamarse en main() antes de runApp().
   static Future<void> init() async {
-    final info = await PackageInfo.fromPlatform();
-    _currentVersion = info.version;
-    debugPrint('[UpdateService] Versión instalada: $_currentVersion');
+    if (AppVersionService.current.isEmpty) await AppVersionService.init();
+    debugPrint(
+      '[UpdateService] Versión instalada: ${AppVersionService.current}',
+    );
   }
 
-  static String get currentVersion => _currentVersion;
+  static String get currentVersion => AppVersionService.current;
 
   /// Consulta la GitHub Releases API y retorna la configuración
   /// de actualización si hay una versión más nueva disponible.
@@ -72,8 +71,8 @@ class UpdateService {
         return null;
       }
 
-      final json = jsonDecode(utf8.decode(response.bodyBytes))
-          as Map<String, dynamic>;
+      final json =
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
 
       await _writeCache(json);
 
@@ -88,7 +87,7 @@ class UpdateService {
         return null;
       }
 
-      if (isVersionLower(_currentVersion, config.latestVersion)) {
+      if (isVersionLower(currentVersion, config.latestVersion)) {
         debugPrint('[UpdateService] Actualización disponible');
         return config;
       }
@@ -111,8 +110,8 @@ class UpdateService {
       debugPrint('[UpdateService] ABIs soportadas: $abis');
       for (final abi in abis) {
         final match = AbiType.values.firstWhereOrNull(
-        (t) => abi == t.androidAbi,
-      );
+          (t) => abi == t.androidAbi,
+        );
         if (match != null) return match;
       }
       return AbiType.arm64;
@@ -145,11 +144,7 @@ class UpdateService {
   /// Extrae los componentes numéricos X.Y.Z de una versión, descartando
   /// sufijos como -beta, -rc1, +5, etc.
   static List<int> _parseVersion(String version) {
-    final clean = version
-        .split('-')
-        .first
-        .split('+')
-        .first;
+    final clean = version.split('-').first.split('+').first;
     return clean.split('.').map(int.parse).toList();
   }
 
@@ -168,7 +163,7 @@ class UpdateService {
       final config = UpdateConfig.fromGithubRelease(json, abi);
 
       if (config.updateUrl.isEmpty) return null;
-      if (isVersionLower(_currentVersion, config.latestVersion)) {
+      if (isVersionLower(currentVersion, config.latestVersion)) {
         debugPrint('[UpdateService] Actualización desde caché');
         return config;
       }
@@ -193,4 +188,3 @@ class UpdateService {
     }
   }
 }
-

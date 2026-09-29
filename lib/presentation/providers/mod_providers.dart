@@ -15,6 +15,7 @@ import '../../data/repositories/mod_repository_impl.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../../domain/repositories/mod_repository.dart';
 import '../../services/background_install_service.dart';
+import 'platform_capabilities_provider.dart';
 
 // ── State Providers (Notifier-based replacements for StateProvider) ──────────
 
@@ -446,6 +447,8 @@ class BgInstallStateNotifier extends Notifier<Map<String, BgInstallInfo>> {
 
   @override
   Map<String, BgInstallInfo> build() {
+    final capabilities = ref.watch(platformCapabilitiesProvider);
+    if (!capabilities.supportsOsBackgroundExecution) return {};
     _sub = BackgroundInstallService.instance.events.listen(_onEvent);
     ref.onDispose(() => _sub?.cancel());
     unawaited(_loadRestoredState());

@@ -1078,6 +1078,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
   String get _operationName => _identity.operationKey;
 
   Future<void> _download() async {
+    if (!ensureInstallationAvailable(context, ref)) return;
     HapticFeedback.lightImpact();
 
     final hasPermission = await _installer.hasNotificationPermission();
@@ -1489,6 +1490,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
   }
 
   Future<void> _download() async {
+    if (!ensureInstallationAvailable(context, ref)) return;
     HapticFeedback.mediumImpact();
 
     final installer = ModInstaller();

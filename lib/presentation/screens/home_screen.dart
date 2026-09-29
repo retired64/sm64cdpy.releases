@@ -11,6 +11,7 @@ import '../../services/game_launcher_service.dart';
 import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
 import '../providers/installation_library_provider.dart';
+import '../providers/platform_capabilities_provider.dart';
 import '../widgets/installation_library_card.dart';
 import '../widgets/app_shell.dart';
 import '../../l10n/app_localizations.dart';
@@ -69,8 +70,10 @@ class _HomeBody extends ConsumerWidget {
         const SliverToBoxAdapter(child: _BrowseCarousel()),
 
         // ── Launch game ─────────────────────────────────────
-        const SliverToBoxAdapter(child: SizedBox(height: 12)),
-        const SliverToBoxAdapter(child: _LaunchGameButton()),
+        if (ref.watch(platformCapabilitiesProvider).supportsGameLaunch) ...[
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+          const SliverToBoxAdapter(child: _LaunchGameButton()),
+        ],
 
         const SliverToBoxAdapter(child: _RecentInstallations()),
 

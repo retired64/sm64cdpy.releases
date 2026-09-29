@@ -19,6 +19,7 @@ docs/*
 !docs/CATALOG_DATABASE_CONTRACT.md
 !docs/LINUX-INTEGRATIONS-PORT.md
 !docs/LINUX-PORT-PHASE-0.md
+!docs/LINUX-PORT-PHASE-1.md
 !docs/schemas/
 !docs/schemas/mod-catalog-v2.schema.json
 !docs/archive/

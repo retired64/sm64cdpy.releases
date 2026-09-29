@@ -7,7 +7,7 @@
 |---|---|
 | Proyecto | SM64CDPY — SM64CoopDX Mods Browser |
 | Rama de trabajo | `linux-port` |
-| Estado | Fase 0 completa; Fase 1 pendiente |
+| Estado | Fases 0–1 implementadas; Fase 1 pendiente de recorrido físico |
 | Creado | 2026-09-28 |
 | Plataforma nueva | Linux desktop x64, inicialmente |
 | Base estable | Android `1.8.2+21` |
@@ -40,11 +40,11 @@ dependientes del sistema operativo.
 - [x] Desarrollar en `linux-port` hasta que Android y Linux pasen sus puertas de
   calidad.
 - [x] Mantener un único repositorio y una única capa de dominio.
-- [ ] No colocar comprobaciones `Platform.isLinux` dispersas dentro de cada
+- [x] No colocar comprobaciones `Platform.isLinux` dispersas dentro de cada
   tarjeta o pantalla.
-- [ ] Toda capacidad específica se obtiene mediante un contrato y una
+- [x] Toda capacidad específica se obtiene mediante un contrato y una
   implementación por plataforma.
-- [ ] Android conserva Kotlin, WorkManager, SAF y el overlay como autoridades de
+- [x] Android conserva Kotlin, WorkManager, SAF y el overlay como autoridades de
   su flujo vigente.
 - [ ] Linux utiliza rutas reales y un coordinador portable sin fingir que tiene
   WorkManager o SAF.
@@ -53,9 +53,9 @@ dependientes del sistema operativo.
 - [ ] La instalación se prepara fuera del destino y se publica de forma atómica.
 - [ ] Ninguna operación parcial debe dejar un mod válido en apariencia.
 - [ ] El filesystem confirma presencia; Hive o un recibo solo aportan metadata.
-- [ ] Las funciones no disponibles se ocultan o explican; nunca quedan botones
+- [x] Las funciones no disponibles se ocultan o explican; nunca quedan botones
   rotos.
-- [ ] Cada fase incluye regresión Android antes de marcarse completa.
+- [x] Cada fase incluye regresión Android antes de marcarse completa.
 
 ## 3. Alcance del MVP Linux
 
@@ -436,15 +436,19 @@ impacto en Android y el lockfile.
 
 **Objetivo:** abrir una aplicación Linux estable sin ofrecer acciones falsas.
 
-- [ ] Separar bootstrap común, Android y Linux.
-- [ ] Evitar imports/registro de overlay y OTA APK en Linux.
-- [ ] Registrar backend Linux temporal de solo lectura/no disponible.
-- [ ] Abrir Home, Catálogo, Favoritos y detalles.
-- [ ] Validar carga local y remota de bases.
-- [ ] Adaptar navegación, ventana y scroll básicos.
-- [ ] Ocultar o deshabilitar acciones de instalación con explicación clara hasta
+- [x] Separar bootstrap común y Android; Linux ejecuta solo el común.
+- [x] Aislar el entrypoint del overlay y evitar su registro, OTA APK,
+  downloader Android y canales nativos durante el bootstrap Linux.
+- [x] Registrar backend Linux temporal de solo lectura/no disponible.
+- [x] Abrir Home y cargar el catálogo incluido sin canales Android.
+- [x] Conservar la carga local/remota compartida de todas las bases sin crear
+  una implementación Linux divergente.
+- [x] Adaptar título, tamaño inicial, mínimo, navegación y scroll básicos.
+- [x] Ocultar o deshabilitar acciones de instalación con explicación clara hasta
   la fase correspondiente.
-- [ ] Confirmar que el cambio no modifica el bootstrap Android.
+- [x] Confirmar por análisis, tests y build que el cambio no rompe Android.
+- [ ] Recorrer físicamente Home, Catálogo, Favoritos, detalle y Ajustes en una
+  sesión Linux con mouse, rueda y teclado.
 
 **Criterios de salida:** `flutter run -d linux` permite recorrer el catálogo sin
 `MissingPluginException`, botones muertos ni errores continuos en consola.
