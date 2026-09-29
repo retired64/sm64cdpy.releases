@@ -176,18 +176,17 @@ jobs:
             build/app/outputs/flutter-apk/app-x86_64-release.apk
           retention-days: 7
 
-      # ── 12. Renombrar APKs al formato OTA ────────────────────────────────
-      # Formato requerido por UpdateConfig.fromGithubRelease():
-      # el nombre DEBE contener las keywords: arm64, arm32, x86_64
+      # ── 12. Renombrar APKs al contrato canónico ──────────────────────────
+      # El tag define la versión. Los nombres fijos permiten que GitHub sirva
+      # /releases/latest/download/<asset> sin resolver la URL mediante API.
       - name: Renombrar APKs con sufijo de arquitectura
         id: apks
         run: |
-          V="${{ steps.version.outputs.version }}"
           APK_DIR="build/app/outputs/flutter-apk"
 
-          ARM64_NAME="Sm64CDPYv${V}-arm64.apk"
-          ARM32_NAME="Sm64CDPYv${V}-arm32.apk"
-          X86_NAME="Sm64CDPYv${V}-x86_64.apk"
+          ARM64_NAME="Sm64CDPY-arm64.apk"
+          ARM32_NAME="Sm64CDPY-arm32.apk"
+          X86_NAME="Sm64CDPY-x86_64.apk"
 
           mv "$APK_DIR/app-arm64-v8a-release.apk"   "$APK_DIR/$ARM64_NAME"
           mv "$APK_DIR/app-armeabi-v7a-release.apk"  "$APK_DIR/$ARM32_NAME"
@@ -233,9 +232,9 @@ jobs:
           } >> "$NOTES_FILE"
 
           for APK in \
-            "Sm64CDPYv${V}-arm64.apk" \
-            "Sm64CDPYv${V}-arm32.apk" \
-            "Sm64CDPYv${V}-x86_64.apk"
+            "Sm64CDPY-arm64.apk" \
+            "Sm64CDPY-arm32.apk" \
+            "Sm64CDPY-x86_64.apk"
           do
             HASH=$(sha256sum "$APK_DIR/$APK" | awk '{print $1}')
             echo "sha256:${HASH}  $APK" >> "$NOTES_FILE"
@@ -261,6 +260,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verificar contrato de assets publicado
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          EXPECTED=$(printf '%s\n' \
+            'Sm64CDPY-arm32.apk' \
+            'Sm64CDPY-arm64.apk' \
+            'Sm64CDPY-x86_64.apk')
+          ACTUAL=$(gh api "repos/${{ github.repository }}/releases/tags/v${V}" \
+            --jq '.assets[].name | select(endswith(".apk"))' | sort)
+
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::Los assets APK publicados no cumplen el contrato canónico."
+            diff -u <(printf '%s\n' "$EXPECTED") <(printf '%s\n' "$ACTUAL") || true
+            exit 1
+          fi
+
+          if [ "${{ inputs.prerelease }}" = "false" ]; then
+            curl --fail --silent --show-error --location --head \
+              --retry 4 --retry-delay 3 --retry-all-errors \
+              "https://github.com/${{ github.repository }}/releases/latest/download/Sm64CDPY-arm64.apk" \
+              > /dev/null
+          fi
+
       # ── 16. Notificar la nueva release en Discord ─────────────────────────
       # Requiere el secreto DISCORD_WEBHOOK_URL (webhook creado en el canal destino)
       - name: Notificar release en Discord
@@ -273,9 +297,9 @@ jobs:
           REPO="${{ github.repository }}"
           TAG="v${V}"
 
-          ARM64_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPYv${V}-arm64.apk"
-          ARM32_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPYv${V}-arm32.apk"
-          X86_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPYv${V}-x86_64.apk"
+          ARM64_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPY-arm64.apk"
+          ARM32_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPY-arm32.apk"
+          X86_URL="https://github.com/${REPO}/releases/download/${TAG}/Sm64CDPY-x86_64.apk"
 
           CHANGELOG=$(cat /tmp/discord_notes.txt)
 
@@ -364,18 +388,18 @@ jobs:
           VC="${{ steps.version.outputs.version_code }}"
           APK_DIR="build/app/outputs/flutter-apk"
 
-          ARM64_SIZE=$(du -h "$APK_DIR/Sm64CDPYv${V}-arm64.apk" | cut -f1)
-          ARM32_SIZE=$(du -h "$APK_DIR/Sm64CDPYv${V}-arm32.apk" | cut -f1)
-          X86_SIZE=$(du -h   "$APK_DIR/Sm64CDPYv${V}-x86_64.apk" | cut -f1)
+          ARM64_SIZE=$(du -h "$APK_DIR/Sm64CDPY-arm64.apk" | cut -f1)
+          ARM32_SIZE=$(du -h "$APK_DIR/Sm64CDPY-arm32.apk" | cut -f1)
+          X86_SIZE=$(du -h   "$APK_DIR/Sm64CDPY-x86_64.apk" | cut -f1)
 
           cat >> $GITHUB_STEP_SUMMARY << EOF
           ## Release publicado: Sm64CDPY v${V}
 
           | Archivo | Arquitectura | Tamaño |
           |---|---|---|
-          | Sm64CDPYv${V}-arm64.apk | arm64-v8a (recomendado) | ${ARM64_SIZE} |
-          | Sm64CDPYv${V}-arm32.apk | armeabi-v7a | ${ARM32_SIZE} |
-          | Sm64CDPYv${V}-x86_64.apk | x86_64 (emuladores) | ${X86_SIZE} |
+          | Sm64CDPY-arm64.apk | arm64-v8a (recomendado) | ${ARM64_SIZE} |
+          | Sm64CDPY-arm32.apk | armeabi-v7a | ${ARM32_SIZE} |
+          | Sm64CDPY-x86_64.apk | x86_64 (emuladores) | ${X86_SIZE} |
 
           - **Tag:** \`v${V}\`
           - **versionCode:** \`${VC}\`

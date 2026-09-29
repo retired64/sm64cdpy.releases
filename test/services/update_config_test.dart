@@ -9,7 +9,7 @@ void main() {
         'body': 'Public release notes live on the website.\n\n[FORCE]',
         'assets': [
           {
-            'name': 'Sm64CDPYv1.8.1-arm64.apk',
+            'name': 'Sm64CDPY-arm64.apk',
             'browser_download_url': 'https://example.test/arm64.apk',
             'size': 42,
           },
@@ -20,6 +20,37 @@ void main() {
       expect(config.updateUrl, 'https://example.test/arm64.apk');
       expect(config.apkSize, 42);
       expect(config.forceUpdate, isTrue);
+    });
+
+    test('keeps compatibility with legacy versioned APK names', () {
+      final config = UpdateConfig.fromGithubRelease({
+        'tag_name': 'v1.8.1',
+        'assets': [
+          {
+            'name': 'Sm64CDPYv1.8.1-arm32.apk',
+            'browser_download_url': 'https://example.test/arm32.apk',
+            'size': 84,
+          },
+        ],
+      }, AbiType.arm32);
+
+      expect(config.updateUrl, 'https://example.test/arm32.apk');
+      expect(config.apkSize, 84);
+    });
+
+    test('never falls back to an APK for another ABI', () {
+      final config = UpdateConfig.fromGithubRelease({
+        'tag_name': 'v1.8.2',
+        'assets': [
+          {
+            'name': 'Sm64CDPY-arm64.apk',
+            'browser_download_url': 'https://example.test/arm64.apk',
+          },
+        ],
+      }, AbiType.x8664);
+
+      expect(config.updateUrl, isEmpty);
+      expect(config.apkSize, isNull);
     });
 
     test('does not force a regular release', () {

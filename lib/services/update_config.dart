@@ -67,24 +67,18 @@ class UpdateConfig {
   }
 
   static Map<String, dynamic>? _findAsset(List<dynamic> assets, AbiType abi) {
-    final abiKey = abi.key;
-    return assets
-        .cast<Map<String, dynamic>>()
-        .firstWhereOrNull(
-          (a) =>
-              (a['name'] as String).toLowerCase().contains(abiKey) &&
-              (a['name'] as String).endsWith('.apk'),
-        ) ??
-        assets
-            .cast<Map<String, dynamic>>()
-            .firstWhereOrNull(
-              (a) => (a['name'] as String).endsWith('.apk'),
-            );
+    final expectedSuffix = RegExp(
+      '-${RegExp.escape(abi.key)}\\.apk\$',
+      caseSensitive: false,
+    );
+    return assets.whereType<Map<String, dynamic>>().firstWhereOrNull((asset) {
+      final name = asset['name'];
+      return name is String && expectedSuffix.hasMatch(name);
+    });
   }
 
   static String _selectApkUrl(List<dynamic> assets, AbiType abi) {
     final asset = _findAsset(assets, abi);
     return asset?['browser_download_url'] as String? ?? '';
   }
-
 }

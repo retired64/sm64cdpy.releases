@@ -1,6 +1,6 @@
 # Documentación de SM64CDPY
 
-Este directorio es el punto de entrada técnico del proyecto. Los documentos de la tabla siguiente se contrastaron con el código de la versión `1.8.1+20`.
+Este directorio es el punto de entrada técnico del proyecto. Los documentos de la tabla siguiente se contrastaron con el código de la versión `1.8.2+21`.
 
 | Documento | Propósito | Estado |
 |---|---|---|

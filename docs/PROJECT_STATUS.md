@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado contra `1.8.1+20` el 2026-09-28.
+Revisado contra `1.8.2+21` el 2026-09-28.
 
 ## Implementado
 

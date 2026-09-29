@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.2",
+  "build": 21,
+  "publishedAt": "2026-09-28T15:30:00-07:00",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "More reliable app downloads",
+      "summary": "Version 1.8.2 simplifies direct downloads and makes OTA architecture selection safer.",
+      "highlights": [
+        "Stable direct-download links no longer depend on resolving versioned asset names.",
+        "OTA updates select only the APK built for the device architecture.",
+        "Legacy versioned release assets remain compatible with the updater."
+      ],
+      "sections": [
+        {
+          "heading": "Reliable downloads",
+          "items": [
+            "Release APKs now use stable names for arm64, arm32, and x86_64.",
+            "The official website can redirect directly to the latest stable arm64 package."
+          ]
+        },
+        {
+          "heading": "Safer OTA updates",
+          "items": [
+            "The updater no longer falls back to an APK for a different architecture when the correct package is missing.",
+            "Existing versioned APK names remain supported for previous releases."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Descargas de la aplicación más confiables",
+      "summary": "La versión 1.8.2 simplifica las descargas directas y hace más segura la selección de arquitectura en las actualizaciones OTA.",
+      "highlights": [
+        "Los enlaces estables de descarga directa ya no dependen de resolver nombres con versión.",
+        "Las actualizaciones OTA seleccionan únicamente el APK creado para la arquitectura del dispositivo.",
+        "Los assets históricos con versión siguen siendo compatibles con el actualizador."
+      ],
+      "sections": [
+        {
+          "heading": "Descargas confiables",
+          "items": [
+            "Los APK de cada release ahora usan nombres estables para arm64, arm32 y x86_64.",
+            "El sitio oficial puede redirigir directamente al paquete arm64 de la última versión estable."
+          ]
+        },
+        {
+          "heading": "Actualizaciones OTA más seguras",
+          "items": [
+            "El actualizador ya no elige un APK de otra arquitectura cuando falta el paquete correcto.",
+            "Los nombres de APK con versión permanecen compatibles para releases anteriores."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Downloads do aplicativo mais confiáveis",
+      "summary": "A versão 1.8.2 simplifica os downloads diretos e torna mais segura a seleção de arquitetura nas atualizações OTA.",
+      "highlights": [
+        "Os links estáveis de download direto não dependem mais da resolução de nomes com versão.",
+        "As atualizações OTA selecionam somente o APK criado para a arquitetura do dispositivo.",
+        "Os assets históricos com versão continuam compatíveis com o atualizador."
+      ],
+      "sections": [
+        {
+          "heading": "Downloads confiáveis",
+          "items": [
+            "Os APKs de cada release agora usam nomes estáveis para arm64, arm32 e x86_64.",
+            "O site oficial pode redirecionar diretamente ao pacote arm64 da versão estável mais recente."
+          ]
+        },
+        {
+          "heading": "Atualizações OTA mais seguras",
+          "items": [
+            "O atualizador não escolhe mais um APK de outra arquitetura quando o pacote correto está ausente.",
+            "Os nomes de APK com versão permanecem compatíveis com releases anteriores."
+          ]
+        }
+      ]
+    }
+  }
+}

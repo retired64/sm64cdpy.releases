@@ -8,7 +8,7 @@ integration, and catalogue updates into a single mobile interface instead of
 requiring users to move repeatedly between a browser, file manager, and the
 game.
 
-The project is under active maintenance. Its declared version is **1.8.1+20**.
+The project is under active maintenance. Its declared version is **1.8.2+21**.
 The floating overlay introduced for the 1.7 line is implemented
 but remains experimental until it completes broader testing on real Android
 devices and across process recreation scenarios.

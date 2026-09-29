@@ -47,7 +47,10 @@ Revisado el 2026-09-28.
 
 ## Observaciones de auditoría
 
-- Los workflows están alineados con Java 17, Flutter 3.41.7 y los nombres de APK que consume la selección OTA.
+- Los workflows están alineados con Java 17 y Flutter 3.41.7. Las releases
+  nuevas publican `Sm64CDPY-arm64.apk`, `Sm64CDPY-arm32.apk` y
+  `Sm64CDPY-x86_64.apk`; el tag conserva la versión. La OTA acepta además los
+  nombres versionados históricos, pero nunca selecciona otra ABI como fallback.
 - La suite de tests se ejecuta antes del build y publicación.
 - Si el tag ya existe, el workflow indica correctamente que hay que incrementar
   `versionName` y `versionCode`; cambiar solo el build no crea un tag nuevo.
@@ -70,5 +73,6 @@ Revisado el 2026-09-28.
 3. Ejecutar `flutter pub get`, `flutter analyze --no-fatal-infos` y `flutter test`.
 4. Probar instalación/descarga/overlay en un Android real.
 5. Confirmar secretos y ejecutar primero el workflow de testing.
-6. Ejecutar el workflow de release y comprobar APK, hashes, evento hacia la
-   web, PR generado y OTA por ABI.
+6. Ejecutar el workflow de release y comprobar APK, hashes, enlace estable
+   `releases/latest/download/Sm64CDPY-arm64.apk`, evento hacia la web, PR
+   generado y OTA por ABI.
