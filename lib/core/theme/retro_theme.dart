@@ -342,14 +342,18 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       ButtonStyle originalControl(ButtonStyle? base, {bool filled = false}) =>
           (base ?? const ButtonStyle()).copyWith(
             backgroundColor: isIntro && filled
-                ? WidgetStateProperty.resolveWith((states) =>
-                    states.contains(WidgetState.disabled)
+                ? WidgetStateProperty.resolveWith(
+                    (states) => states.contains(WidgetState.disabled)
                         ? surfaceAlt
-                        : const Color(0xFF24479B))
+                        : const Color(0xFF24479B),
+                  )
                 : null,
             foregroundColor: isIntro && filled
-                ? WidgetStateProperty.resolveWith((states) =>
-                    states.contains(WidgetState.disabled) ? inkDim : Colors.white)
+                ? WidgetStateProperty.resolveWith(
+                    (states) => states.contains(WidgetState.disabled)
+                        ? inkDim
+                        : Colors.white,
+                  )
                 : null,
             textStyle: WidgetStatePropertyAll(
               (theme.textTheme.labelLarge ??

@@ -21,7 +21,10 @@ void main() {
       final button = intro.toMaterialTheme().filledButtonTheme.style!;
       expect(button.backgroundColor!.resolve({}), const Color(0xFF24479B));
       expect(button.foregroundColor!.resolve({}), Colors.white);
-      expect(button.backgroundColor!.resolve({WidgetState.disabled}), intro.surfaceAlt);
+      expect(
+        button.backgroundColor!.resolve({WidgetState.disabled}),
+        intro.surfaceAlt,
+      );
       expect(intro.surfaceDecoration().image, isNull);
       expect(intro.surfaceDecoration().color, intro.surface);
       expect(intro.copyWith().isIntro, isTrue);
