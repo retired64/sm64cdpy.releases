@@ -60,3 +60,5 @@ acciones de instalación. Flutter/Dart no están instalados en Termux; formato,
 análisis, generación l10n si procede y tests se ejecutan en Actions. Pendiente
 prueba física: claro/oscuro, todas las versiones, imagen ausente/fallida,
 expandir descripción, galería, favoritos y transferencia desde la ficha.
+
+Validado en [Testing #213](https://github.com/retired64/sm64cdpy.releases/actions/runs/38641643668): formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas completados correctamente. Los commits posteriores sincronizan formato probado y documentación. Pendiente revisión visual física de la ficha en claro/oscuro.

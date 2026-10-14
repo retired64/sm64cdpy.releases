@@ -492,3 +492,5 @@ Validación: [Testing #206](https://github.com/retired64/sm64cdpy.releases/actio
 Portada sin banner, navegación sin solapamientos, paneles y estadísticas
 adaptables. Mario eleva texto mínimo a 16 y descripción a 18 puntos.
 Plan técnico: `docs/MOD_DETAIL_DESIGN.md`. Testing pendiente.
+
+Validado en [Testing #213](https://github.com/retired64/sm64cdpy.releases/actions/runs/38641643668): formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas completados correctamente. Los commits posteriores sincronizan formato probado y documentación. Pendiente revisión visual física de la ficha en claro/oscuro.
