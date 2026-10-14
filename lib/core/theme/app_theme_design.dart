@@ -16,6 +16,14 @@ enum AppThemeId {
   }
 }
 
+/// Code-native backdrop families. They intentionally describe a visual
+/// treatment instead of a product/theme ID so shared widgets never need to
+/// branch on `mario64`.
+enum AppBackdropStyle { none, halftone, n64Sky }
+
+/// Surface language shared by cards, chips, buttons and settings panels.
+enum AppSurfaceTreatment { flat, beveled }
+
 /// Every surface has an explicit text role. Semantic and brand colors remain
 /// separate from the selected interface accent.
 @immutable
@@ -31,6 +39,9 @@ class AppThemePalette {
     required this.accent,
     required this.onAccent,
     required this.accentText,
+    this.secondaryAccent,
+    this.surfaceHighlight,
+    this.surfaceShade,
   });
 
   final Color background;
@@ -43,23 +54,38 @@ class AppThemePalette {
   final Color accent;
   final Color onAccent;
   final Color accentText;
+  final Color? secondaryAccent;
+  final Color? surfaceHighlight;
+  final Color? surfaceShade;
 
-  static AppThemePalette lerp(
-    AppThemePalette a,
-    AppThemePalette b,
-    double t,
-  ) => AppThemePalette(
-    background: Color.lerp(a.background, b.background, t)!,
-    surface: Color.lerp(a.surface, b.surface, t)!,
-    surfaceAlt: Color.lerp(a.surfaceAlt, b.surfaceAlt, t)!,
-    border: Color.lerp(a.border, b.border, t)!,
-    shadow: Color.lerp(a.shadow, b.shadow, t)!,
-    ink: Color.lerp(a.ink, b.ink, t)!,
-    inkDim: Color.lerp(a.inkDim, b.inkDim, t)!,
-    accent: Color.lerp(a.accent, b.accent, t)!,
-    onAccent: Color.lerp(a.onAccent, b.onAccent, t)!,
-    accentText: Color.lerp(a.accentText, b.accentText, t)!,
-  );
+  static AppThemePalette lerp(AppThemePalette a, AppThemePalette b, double t) =>
+      AppThemePalette(
+        background: Color.lerp(a.background, b.background, t)!,
+        surface: Color.lerp(a.surface, b.surface, t)!,
+        surfaceAlt: Color.lerp(a.surfaceAlt, b.surfaceAlt, t)!,
+        border: Color.lerp(a.border, b.border, t)!,
+        shadow: Color.lerp(a.shadow, b.shadow, t)!,
+        ink: Color.lerp(a.ink, b.ink, t)!,
+        inkDim: Color.lerp(a.inkDim, b.inkDim, t)!,
+        accent: Color.lerp(a.accent, b.accent, t)!,
+        onAccent: Color.lerp(a.onAccent, b.onAccent, t)!,
+        accentText: Color.lerp(a.accentText, b.accentText, t)!,
+        secondaryAccent: Color.lerp(
+          a.secondaryAccent ?? a.accent,
+          b.secondaryAccent ?? b.accent,
+          t,
+        ),
+        surfaceHighlight: Color.lerp(
+          a.surfaceHighlight ?? a.surface,
+          b.surfaceHighlight ?? b.surface,
+          t,
+        ),
+        surfaceShade: Color.lerp(
+          a.surfaceShade ?? a.shadow,
+          b.surfaceShade ?? b.shadow,
+          t,
+        ),
+      );
 }
 
 /// Shared visual contract. Screens render roles, never branch on a theme ID.
@@ -82,6 +108,9 @@ class AppThemeDesign {
     this.stripes = true,
     this.uppercaseLabels = true,
     this.softSettingsPanels = false,
+    this.backdropStyle = AppBackdropStyle.halftone,
+    this.surfaceTreatment = AppSurfaceTreatment.flat,
+    this.playfulSelection = false,
   });
 
   final AppThemeId id;
@@ -100,6 +129,9 @@ class AppThemeDesign {
   final bool stripes;
   final bool uppercaseLabels;
   final bool softSettingsPanels;
+  final AppBackdropStyle backdropStyle;
+  final AppSurfaceTreatment surfaceTreatment;
+  final bool playfulSelection;
 
   AppThemePalette palette(bool isDark) => isDark ? dark : light;
 }

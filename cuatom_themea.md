@@ -11,7 +11,7 @@ Son primeras interpretaciones visuales propias, creadas con colores y geometría
 | ID persistido | Definición | Configuración inicial |
 |---|---|---|
 | `retro_manga` | `lib/core/theme/themes/retro_manga_theme.dart` | Formas rectas, sombra dura, inclinación, puntos y franjas; conserva el diseño anterior con ajustes de contraste del texto secundario y acento textual claros |
-| `mario64` | `lib/core/theme/themes/mario64_theme.dart` | Superficies azules, acento rojo/rosado según brillo, radio 12, sombra dura, sin inclinación ni decoraciones manga |
+| `mario64` | `lib/core/theme/themes/mario64_theme.dart` | Interpretación N64: cielo y colinas dibujados en Flutter, superficies crema/azules biseladas, acentos rojo y dorado, radio 14 y selección con estrella; sin assets extraídos |
 
 El cambio no reinicia `ProviderScope`, no altera la ruta actual, no borra favoritos y no cancela descargas. La selección cambia presentación; contenido, identidad de operaciones y destino de instalación conservan su lógica existente.
 
@@ -37,7 +37,7 @@ Contiene `AppThemeId`, `AppThemePalette` y `AppThemeDesign`.
 - `fromStorage()` devuelve Retro Manga ante ausencia o ID desconocido. Así una instalación anterior conserva su modo y tiene un diseño válido.
 - Cada diseño contiene una paleta clara y otra oscura.
 - Cada paleta define fondo, superficie, superficie alternativa, borde, sombra, tinta principal/secundaria, acento, texto sobre acento y acento legible para texto sobre superficies.
-- El diseño define radio, escala de borde, blur y escala de desplazamiento de sombra, inclinación de chip, peso/tracking de títulos, familias tipográficas, tratamiento de mayúsculas, activación de puntos/franjas y suavizado específico de paneles de Ajustes (`softSettingsPanels`).
+- El diseño define radio, escala de borde, blur y escala de desplazamiento de sombra, inclinación de chip, peso/tracking de títulos, familias tipográficas, tratamiento de mayúsculas, fondo semántico (`none`, `halftone` o `n64Sky`), tratamiento de superficies (`flat` o `beveled`), selección expresiva y suavizado específico de paneles de Ajustes (`softSettingsPanels`).
 
 Los diseños actuales no agregan fuentes. Las familias son opcionales; si más adelante las usas, incluye sus archivos en assets y decláralos en `pubspec.yaml`.
 
@@ -54,6 +54,7 @@ La misma instancia produce `toMaterialTheme()`: ColorScheme, fondo de Scaffold, 
 - `radius` dejó de ser una constante estática: es una propiedad del diseño activo.
 - `borderWidth(valorRetro)` conserva el énfasis relativo del borde multiplicándolo por la escala del diseño.
 - `hardShadow()` conserva su API, pero aplica blur y escala de offset del diseño.
+- `surfaceDecoration()` concentra relleno, borde, radio y relieve. En el diseño N64 añade una luz superior izquierda y una sombra inferior derecha; las pantallas no preguntan si el ID es `mario64`.
 - `heading()` y `body()` aceptan las familias del diseño. Los encabezados dibujados con TextStyle local también consumen peso/familia central.
 - `onColor(color)` usa el foreground explícito del acento y compara contraste entre negro y blanco para otros rellenos. `accentText` evita usar un acento claro como texto sobre papel claro; las etiquetas respetan mayúsculas solo cuando el diseño lo solicita.
 - `copyWith()` conserva overrides; `lerp()` interpola paleta y propiedades numéricas y conserva extremos.
@@ -62,6 +63,13 @@ La misma instancia produce `toMaterialTheme()`: ColorScheme, fondo de Scaffold, 
 Los colores de estado, categorías, medallas y Discord mantienen su semántica. Blanco sobre fotografías, scrims y geometría circular de badges siguen cumpliendo su función. El pequeño radio del tirador de sheet también es geometría estructural. No se transformaron indiscriminadamente en el acento del tema.
 
 Los componentes de trama y franjas consultan el diseño del contexto. Desactivarlos funciona tanto en `AppShell` como en los banners locales de Render96 y tarjetas. Los chips, tags y badges obtienen el foreground adecuado de sus rellenos.
+
+`ThemeBackdrop` es el fondo compartido de las rutas del shell. Para Mario 64,
+`_N64SkyPainter` compone gradiente de cielo, nubes o estrellas y colinas lejanas
+con primitivas Flutter dentro de un `RepaintBoundary`; no carga texturas, no hace
+I/O y queda detrás del contenido con `IgnorePointer`. Claro y oscuro se derivan
+de los mismos roles semánticos. Esto aporta identidad global sin añadir lógica
+condicional a cada pantalla ni reutilizar material gráfico del juego.
 
 ## 4. Fuente de verdad y flujo exacto
 
@@ -149,12 +157,12 @@ locale: Hive y la réplica SharedPreferences continúan en el setter original,
 incluido su manejo de errores mediante logging. No se añadieron mensajes de
 locale hacia la burbuja ni lectores en el segundo engine.
 
-Mario 64 habilita `softSettingsPanels`: fondos existentes con bordes finos,
-sombra suave tenue, iconos y thumb del toggle redondeados, y cabeceras limpias
-sin los kickers japoneses del estilo manga. Las tarjetas, toggles y diálogos de
-Ajustes comparten el helper `settingsPanel`; estados semánticos mantienen sus
-colores. Retro conserva sus bordes y sombras originales. La política queda
-limitada a Ajustes y no cambia las tarjetas de catálogo ni el overlay.
+Mario 64 habilita paneles limpios con relieve, iconos y thumb redondeados,
+cabeceras sin los kickers japoneses del estilo manga y estrellas doradas para
+secciones y opciones seleccionadas. Las tarjetas, botones y paneles obtienen el
+tratamiento biselado desde helpers compartidos; estados semánticos mantienen sus
+colores. Retro conserva sus bordes, puntos y sombras originales. El overlay no
+participa en ninguna de estas variantes.
 
 Prueba añadida: `test/presentation/locale_selector_test.dart`, que revisa los
 tres grupos, duración de animaciones, selección de español, persistencia Hive y

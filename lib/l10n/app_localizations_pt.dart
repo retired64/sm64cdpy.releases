@@ -935,7 +935,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Você será perguntado após cada download';
 
   @override
-  String get settingsThemeMode => 'MODO DE TEMA';
+  String get settingsThemeMode => 'Modo do tema';
 
   @override
   String settingsDatabaseUpdated(int count, String date) {
@@ -1221,7 +1221,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsDynosFolderCleared => 'Seleção da pasta DynOS removida.';
 
   @override
-  String get settingsLanguageMode => 'IDIOMA';
+  String get settingsLanguageMode => 'Idioma';
 
   @override
   String get languageFollowSystem => 'Seguir sistema';
@@ -1477,6 +1477,35 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSA DA COMUNIDADE';
+
+  @override
+  String get settingsInterfaceTheme => 'Tema da interface';
+
+  @override
+  String get settingsInterfaceThemeDesc =>
+      'Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.';
+
+  @override
+  String get themeRetroManga => 'Retro Manga';
+
+  @override
+  String get themeMario64 => 'Mario 64';
+
+  @override
+  String get themeModeLight => 'Claro';
+
+  @override
+  String get themeModeDark => 'Escuro';
+
+  @override
+  String get themeModeSystem => 'Seguir o sistema';
+
+  @override
+  String get themeSaveFailed =>
+      'Não foi possível salvar a aparência. Tente novamente.';
+
+  @override
+  String get themeSaving => 'Salvando aparência';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2410,7 +2439,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Você será perguntado após cada download';
 
   @override
-  String get settingsThemeMode => 'MODO DE TEMA';
+  String get settingsThemeMode => 'Modo do tema';
 
   @override
   String settingsDatabaseUpdated(int count, String date) {
@@ -2696,7 +2725,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get settingsDynosFolderCleared => 'Seleção da pasta DynOS removida.';
 
   @override
-  String get settingsLanguageMode => 'IDIOMA';
+  String get settingsLanguageMode => 'Idioma';
 
   @override
   String get languageFollowSystem => 'Seguir sistema';
@@ -2952,4 +2981,33 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSA DA COMUNIDADE';
+
+  @override
+  String get settingsInterfaceTheme => 'Tema da interface';
+
+  @override
+  String get settingsInterfaceThemeDesc =>
+      'Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.';
+
+  @override
+  String get themeRetroManga => 'Retro Manga';
+
+  @override
+  String get themeMario64 => 'Mario 64';
+
+  @override
+  String get themeModeLight => 'Claro';
+
+  @override
+  String get themeModeDark => 'Escuro';
+
+  @override
+  String get themeModeSystem => 'Seguir o sistema';
+
+  @override
+  String get themeSaveFailed =>
+      'Não foi possível salvar a aparência. Tente novamente.';
+
+  @override
+  String get themeSaving => 'Salvando aparência';
 }

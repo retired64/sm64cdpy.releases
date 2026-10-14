@@ -123,8 +123,11 @@ claro/oscuro/sistema. `AppearanceNotifier` es el único escritor de `theme_id` y
 `theme_mode` en Hive y publica una selección confirmada solo tras guardar.
 
 `AppThemeDesign` y `AppThemeCatalog` definen paletas, formas, tipografía y
-activación de decoración. `RetroTheme` conserva la API de acceso y ahora es una
-ThemeExtension; los widgets Material y los personalizados comparten tokens.
+tratamientos semánticos de fondo, superficie y selección. `RetroTheme` conserva
+la API de acceso y ahora es una ThemeExtension; los widgets Material y los
+personalizados comparten tokens. `ThemeBackdrop` y `surfaceDecoration()` aplican
+la interpretación N64 en puntos centrales, sin condicionales por ID en las
+pantallas ni assets extraídos del juego.
 MaterialApp y las barras leen la variante efectiva. No se recrean router ni
 providers de operaciones por cambiar de diseño.
 

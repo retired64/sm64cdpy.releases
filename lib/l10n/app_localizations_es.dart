@@ -942,7 +942,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Se te preguntará después de cada descarga';
 
   @override
-  String get settingsThemeMode => 'MODO TEMA';
+  String get settingsThemeMode => 'Modo de tema';
 
   @override
   String settingsDatabaseUpdated(int count, String date) {
@@ -1231,7 +1231,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Selección de carpeta DynOS eliminada.';
 
   @override
-  String get settingsLanguageMode => 'IDIOMA';
+  String get settingsLanguageMode => 'Idioma';
 
   @override
   String get languageFollowSystem => 'Seguir sistema';
@@ -1486,6 +1486,35 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSACIÓN DE LA COMUNIDAD';
+
+  @override
+  String get settingsInterfaceTheme => 'Tema de interfaz';
+
+  @override
+  String get settingsInterfaceThemeDesc =>
+      'Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.';
+
+  @override
+  String get themeRetroManga => 'Retro Manga';
+
+  @override
+  String get themeMario64 => 'Mario 64';
+
+  @override
+  String get themeModeLight => 'Claro';
+
+  @override
+  String get themeModeDark => 'Oscuro';
+
+  @override
+  String get themeModeSystem => 'Seguir el sistema';
+
+  @override
+  String get themeSaveFailed =>
+      'No se pudo guardar la apariencia. Inténtalo de nuevo.';
+
+  @override
+  String get themeSaving => 'Guardando apariencia';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2426,7 +2455,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
       'Se te preguntará después de cada descarga';
 
   @override
-  String get settingsThemeMode => 'MODO TEMA';
+  String get settingsThemeMode => 'Modo de tema';
 
   @override
   String settingsDatabaseUpdated(int count, String date) {
@@ -2715,7 +2744,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
       'Selección de carpeta DynOS eliminada.';
 
   @override
-  String get settingsLanguageMode => 'IDIOMA';
+  String get settingsLanguageMode => 'Idioma';
 
   @override
   String get languageFollowSystem => 'Seguir sistema';
@@ -2970,4 +2999,33 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSACIÓN DE LA COMUNIDAD';
+
+  @override
+  String get settingsInterfaceTheme => 'Tema de interfaz';
+
+  @override
+  String get settingsInterfaceThemeDesc =>
+      'Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.';
+
+  @override
+  String get themeRetroManga => 'Retro Manga';
+
+  @override
+  String get themeMario64 => 'Mario 64';
+
+  @override
+  String get themeModeLight => 'Claro';
+
+  @override
+  String get themeModeDark => 'Oscuro';
+
+  @override
+  String get themeModeSystem => 'Seguir el sistema';
+
+  @override
+  String get themeSaveFailed =>
+      'No se pudo guardar la apariencia. Inténtalo de nuevo.';
+
+  @override
+  String get themeSaving => 'Guardando apariencia';
 }

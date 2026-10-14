@@ -1695,7 +1695,7 @@ abstract class AppLocalizations {
   /// Settings screen section header for theme mode selection
   ///
   /// In en, this message translates to:
-  /// **'THEME MODE'**
+  /// **'Theme mode'**
   String get settingsThemeMode;
 
   /// Settings screen message when the mod database is updated
@@ -2205,7 +2205,7 @@ abstract class AppLocalizations {
   /// Settings tile label for the language selector
   ///
   /// In en, this message translates to:
-  /// **'LANGUAGE'**
+  /// **'Language'**
   String get settingsLanguageMode;
 
   /// Language option to follow the device's system language
@@ -2675,6 +2675,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'VIEW COMMUNITY DISCUSSION'**
   String get detailViewDiscussion;
+
+  /// No description provided for @settingsInterfaceTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface theme'**
+  String get settingsInterfaceTheme;
+
+  /// No description provided for @settingsInterfaceThemeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an included design. Applies to the app; the floating panel keeps its dark design.'**
+  String get settingsInterfaceThemeDesc;
+
+  /// No description provided for @themeRetroManga.
+  ///
+  /// In en, this message translates to:
+  /// **'Retro Manga'**
+  String get themeRetroManga;
+
+  /// No description provided for @themeMario64.
+  ///
+  /// In en, this message translates to:
+  /// **'Mario 64'**
+  String get themeMario64;
+
+  /// No description provided for @themeModeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeModeLight;
+
+  /// No description provided for @themeModeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeModeDark;
+
+  /// No description provided for @themeModeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system'**
+  String get themeModeSystem;
+
+  /// No description provided for @themeSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the appearance. Try again.'**
+  String get themeSaveFailed;
+
+  /// No description provided for @themeSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving appearance'**
+  String get themeSaving;
 }
 
 class _AppLocalizationsDelegate

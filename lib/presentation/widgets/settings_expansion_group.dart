@@ -12,6 +12,14 @@ extension SettingsSurfaces on RetroTheme {
     double dy = 2,
   }) {
     final soft = design.softSettingsPanels;
+    if (usesBeveledSurfaces) {
+      return surfaceDecoration(
+        borderColor: border.withValues(alpha: 0.75),
+        border: 1.5,
+        shadowDx: dx,
+        shadowDy: dy,
+      );
+    }
     return BoxDecoration(
       color: surface,
       borderRadius: radius,
@@ -20,11 +28,13 @@ extension SettingsSurfaces on RetroTheme {
         width: borderWidth(soft ? 1 : width),
       ),
       boxShadow: soft
-          ? [BoxShadow(
-              color: shadowColor.withValues(alpha: isDark ? 0.2 : 0.08),
-              offset: const Offset(0, 2),
-              blurRadius: 8,
-            )]
+          ? [
+              BoxShadow(
+                color: shadowColor.withValues(alpha: isDark ? 0.2 : 0.08),
+                offset: const Offset(0, 2),
+                blurRadius: 8,
+              ),
+            ]
           : hardShadow(dx: dx, dy: dy),
     );
   }
@@ -107,7 +117,10 @@ class _SettingsExpansionGroupState extends State<SettingsExpansionGroup> {
                     turns: expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeOutCubic,
-                    child: Icon(Icons.expand_more, color: expanded ? retro.accentText : retro.inkDim),
+                    child: Icon(
+                      Icons.expand_more,
+                      color: expanded ? retro.accentText : retro.inkDim,
+                    ),
                   ),
                 ],
               ),
@@ -178,7 +191,15 @@ class SettingsSelectionOption extends StatelessWidget {
               leading,
               const SizedBox(width: 12),
               Expanded(child: Text(label, style: retro.heading(size: 14))),
-              if (selected) Icon(Icons.check_circle, color: retro.accentText),
+              if (selected)
+                Icon(
+                  retro.design.playfulSelection
+                      ? Icons.star_rounded
+                      : Icons.check_circle,
+                  color: retro.design.playfulSelection
+                      ? retro.secondaryAccent
+                      : retro.accentText,
+                ),
             ],
           ),
         ),

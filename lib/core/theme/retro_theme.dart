@@ -57,6 +57,12 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   Color get accent => _palette.accent;
   Color get inkOnAccent => _palette.onAccent;
   Color get accentText => _palette.accentText;
+  Color get secondaryAccent => _palette.secondaryAccent ?? amber;
+  Color get surfaceHighlight =>
+      _palette.surfaceHighlight ??
+      Color.lerp(surface, Colors.white, isDark ? 0.12 : 0.45)!;
+  Color get surfaceShade =>
+      _palette.surfaceShade ?? Color.lerp(surface, shadowColor, 0.7)!;
   String displayLabel(String value) =>
       design.uppercaseLabels ? value.toUpperCase() : value;
 
@@ -82,20 +88,30 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     const darkInk = Colors.black;
     final luminance = color.computeLuminance();
     final whiteContrast = 1.05 / (luminance + 0.05);
-    final darkContrast = (luminance + 0.05) /
-        (darkInk.computeLuminance() + 0.05);
+    final darkContrast =
+        (luminance + 0.05) / (darkInk.computeLuminance() + 0.05);
     return whiteContrast >= darkContrast ? Colors.white : darkInk;
   }
 
   BorderRadius get radius => BorderRadius.circular(design.cornerRadius);
   double borderWidth(double retroWidth) => retroWidth * design.borderScale;
   double get chipSkew => design.chipSkew;
-  bool get showHalftone => design.halftone;
+  bool get showHalftone =>
+      design.halftone && design.backdropStyle == AppBackdropStyle.halftone;
   bool get showStripes => design.stripes;
+  bool get showN64Backdrop => design.backdropStyle == AppBackdropStyle.n64Sky;
+  bool get usesBeveledSurfaces =>
+      design.surfaceTreatment == AppSurfaceTreatment.beveled;
 
   List<BoxShadow> hardShadow({double dx = 4, double dy = 4}) => [
+    if (usesBeveledSurfaces)
+      BoxShadow(
+        color: surfaceHighlight.withValues(alpha: isDark ? 0.2 : 0.7),
+        offset: Offset(-dx * 0.35, -dy * 0.35),
+        blurRadius: design.shadowBlur,
+      ),
     BoxShadow(
-      color: shadowColor,
+      color: shadowColor.withValues(alpha: usesBeveledSurfaces ? 0.72 : 1),
       offset: Offset(
         dx * design.shadowOffsetScale,
         dy * design.shadowOffsetScale,
@@ -103,6 +119,23 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       blurRadius: design.shadowBlur,
     ),
   ];
+
+  BoxDecoration surfaceDecoration({
+    Color? color,
+    Color? borderColor,
+    double border = 2,
+    double shadowDx = 4,
+    double shadowDy = 4,
+  }) => BoxDecoration(
+    color: color ?? surface,
+    borderRadius: radius,
+    border: Border.all(
+      color:
+          borderColor ?? (usesBeveledSurfaces ? surfaceHighlight : this.border),
+      width: borderWidth(border),
+    ),
+    boxShadow: hardShadow(dx: shadowDx, dy: shadowDy),
+  );
 
   TextStyle heading({
     required double size,
@@ -136,7 +169,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
     systemNavigationBarColor: background,
-    systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    systemNavigationBarIconBrightness: isDark
+        ? Brightness.light
+        : Brightness.dark,
   );
 
   ThemeData toMaterialTheme() {
@@ -162,10 +197,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         foregroundColor: ink,
         systemOverlayStyle: systemUiStyle,
       ),
-      dialogTheme: DialogThemeData(
-        backgroundColor: surface,
-        shape: shape,
-      ),
+      dialogTheme: DialogThemeData(backgroundColor: surface, shape: shape),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
@@ -174,16 +206,34 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(shape: shape),
+        style: ElevatedButton.styleFrom(
+          shape: shape,
+          elevation: 0,
+          side: usesBeveledSurfaces
+              ? BorderSide(color: surfaceHighlight, width: borderWidth(1.5))
+              : null,
+        ),
       ),
       filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(shape: shape),
+        style: FilledButton.styleFrom(
+          shape: shape,
+          elevation: 0,
+          side: usesBeveledSurfaces
+              ? BorderSide(
+                  color: inkOnAccent.withValues(alpha: 0.65),
+                  width: borderWidth(1.5),
+                )
+              : null,
+        ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(foregroundColor: accentText),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(shape: shape, foregroundColor: accentText),
+        style: OutlinedButton.styleFrom(
+          shape: shape,
+          foregroundColor: accentText,
+        ),
       ),
     );
   }
@@ -225,19 +275,46 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         id: selected.design.id,
         light: palette,
         dark: palette,
-        cornerRadius: ui.lerpDouble(design.cornerRadius, other.design.cornerRadius, t)!,
-        borderScale: ui.lerpDouble(design.borderScale, other.design.borderScale, t)!,
-        shadowBlur: ui.lerpDouble(design.shadowBlur, other.design.shadowBlur, t)!,
-        shadowOffsetScale: ui.lerpDouble(design.shadowOffsetScale, other.design.shadowOffsetScale, t)!,
+        cornerRadius: ui.lerpDouble(
+          design.cornerRadius,
+          other.design.cornerRadius,
+          t,
+        )!,
+        borderScale: ui.lerpDouble(
+          design.borderScale,
+          other.design.borderScale,
+          t,
+        )!,
+        shadowBlur: ui.lerpDouble(
+          design.shadowBlur,
+          other.design.shadowBlur,
+          t,
+        )!,
+        shadowOffsetScale: ui.lerpDouble(
+          design.shadowOffsetScale,
+          other.design.shadowOffsetScale,
+          t,
+        )!,
         chipSkew: ui.lerpDouble(chipSkew, other.chipSkew, t)!,
-        headingWeight: FontWeight.lerp(design.headingWeight, other.design.headingWeight, t)!,
-        headingTracking: ui.lerpDouble(design.headingTracking, other.design.headingTracking, t)!,
+        headingWeight: FontWeight.lerp(
+          design.headingWeight,
+          other.design.headingWeight,
+          t,
+        )!,
+        headingTracking: ui.lerpDouble(
+          design.headingTracking,
+          other.design.headingTracking,
+          t,
+        )!,
         headingFontFamily: selected.design.headingFontFamily,
         bodyFontFamily: selected.design.bodyFontFamily,
         halftone: selected.showHalftone,
         stripes: selected.showStripes,
         uppercaseLabels: selected.design.uppercaseLabels,
         softSettingsPanels: selected.design.softSettingsPanels,
+        backdropStyle: selected.design.backdropStyle,
+        surfaceTreatment: selected.design.surfaceTreatment,
+        playfulSelection: selected.design.playfulSelection,
       ),
       backgroundOverride: Color.lerp(background, other.background, t),
       surfaceOverride: Color.lerp(surface, other.surface, t),
@@ -246,6 +323,124 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       shadowColorOverride: Color.lerp(shadowColor, other.shadowColor, t),
     );
   }
+}
+
+/// Shared scenic canvas used by [AppShell]. The painter is intentionally
+/// abstract: sky, clouds, distant polygonal hills and stars evoke the N64 era
+/// without bundling or reconstructing proprietary game artwork.
+class ThemeBackdrop extends StatelessWidget {
+  const ThemeBackdrop({super.key, this.allowHalftone = true});
+
+  final bool allowHalftone;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    if (retro.showN64Backdrop) {
+      return IgnorePointer(
+        child: RepaintBoundary(
+          child: CustomPaint(
+            size: Size.infinite,
+            painter: _N64SkyPainter(retro: retro),
+          ),
+        ),
+      );
+    }
+    if (allowHalftone && retro.showHalftone) {
+      return HalftoneBackground(
+        color: retro.ink.withValues(alpha: retro.isDark ? 0.035 : 0.08),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+}
+
+class _N64SkyPainter extends CustomPainter {
+  const _N64SkyPainter({required this.retro});
+
+  final RetroTheme retro;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bounds = Offset.zero & size;
+    final top = retro.isDark
+        ? const Color(0xFF10172E)
+        : const Color(0xFF67BDF2);
+    final bottom = retro.isDark
+        ? const Color(0xFF2A315B)
+        : const Color(0xFFDDF6FF);
+    canvas.drawRect(
+      bounds,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [top, bottom],
+        ).createShader(bounds),
+    );
+
+    if (retro.isDark) {
+      final starPaint = Paint()
+        ..color = const Color(0xFFFFE79A).withValues(alpha: 0.5);
+      final stars = <Offset>[];
+      for (var y = 22.0; y < size.height * 0.72; y += 58) {
+        final row = (y / 58).round();
+        for (var x = 18.0 + (row.isEven ? 0 : 31); x < size.width; x += 79) {
+          stars.add(Offset(x, y));
+        }
+      }
+      canvas.drawPoints(
+        ui.PointMode.points,
+        stars,
+        starPaint..strokeWidth = 2.2,
+      );
+    } else {
+      final cloud = Paint()..color = Colors.white.withValues(alpha: 0.34);
+      for (final center in [
+        Offset(size.width * 0.16, size.height * 0.13),
+        Offset(size.width * 0.78, size.height * 0.3),
+        Offset(size.width * 0.34, size.height * 0.57),
+      ]) {
+        canvas.drawOval(
+          Rect.fromCenter(center: center, width: 82, height: 24),
+          cloud,
+        );
+        canvas.drawCircle(center.translate(-20, -7), 17, cloud);
+        canvas.drawCircle(center.translate(10, -10), 22, cloud);
+      }
+    }
+
+    final horizon = size.height * 0.78;
+    final farHill = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(0, horizon + 18)
+      ..quadraticBezierTo(
+        size.width * 0.22,
+        horizon - 42,
+        size.width * 0.48,
+        horizon + 10,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.76,
+        horizon - 55,
+        size.width,
+        horizon + 5,
+      )
+      ..lineTo(size.width, size.height)
+      ..close();
+    canvas.drawPath(
+      farHill,
+      Paint()
+        ..color =
+            (retro.isDark ? const Color(0xFF253B4F) : const Color(0xFF63B96C))
+                .withValues(alpha: 0.2),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _N64SkyPainter oldDelegate) =>
+      oldDelegate.retro.isDark != retro.isDark ||
+      oldDelegate.retro.design != retro.design;
 }
 
 // ── Halftone background ────────────────────────────────────────────────────
@@ -346,11 +541,14 @@ class SectionKicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.skewX(retro.chipSkew == 0 ? 0 : -0.5),
-          child: Container(width: 5, height: 18, color: retro.accent),
-        ),
+        if (retro.design.playfulSelection)
+          Icon(Icons.star_rounded, size: 20, color: retro.secondaryAccent)
+        else
+          Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.skewX(retro.chipSkew == 0 ? 0 : -0.5),
+            child: Container(width: 5, height: 18, color: retro.accent),
+          ),
         const SizedBox(width: 10),
         Text(label, style: retro.heading(size: 17)),
         if (japanese != null) ...[
@@ -359,7 +557,10 @@ class SectionKicker extends StatelessWidget {
         ],
         const SizedBox(width: 10),
         Expanded(
-          child: Container(height: 1.5, color: retro.inkDim.withValues(alpha: 0.35)),
+          child: Container(
+            height: 1.5,
+            color: retro.inkDim.withValues(alpha: 0.35),
+          ),
         ),
       ],
     );
@@ -404,9 +605,7 @@ class SkewChip extends StatelessWidget {
     // de qué tan clara u oscura sea ESA tarjeta de color puntual, no del
     // tema global — un azul marino oscuro necesita texto blanco, no la
     // tinta oscura por defecto que usaríamos sobre el teal claro.
-    final fg = selected
-        ? retro.onColor(accent)
-        : retro.ink;
+    final fg = selected ? retro.onColor(accent) : retro.ink;
 
     final chip = Transform(
       alignment: Alignment.center,
@@ -528,7 +727,12 @@ class _DiagonalStripePainter extends CustomPainter {
     canvas.translate(size.width / 2, size.height / 2);
     canvas.rotate(angle);
     canvas.translate(-size.width / 2, -size.height / 2);
-    canvas.drawPath(path, Paint()..color = stripeColor..isAntiAlias = false);
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = stripeColor
+        ..isAntiAlias = false,
+    );
     canvas.restore();
   }
 
@@ -575,7 +779,11 @@ class RetroTag extends StatelessWidget {
         horizontal: dense ? 8 : 11,
         vertical: dense ? 4 : 6,
       ),
-      decoration: BoxDecoration(borderRadius: retro.radius, color: bg, border: Border.all(color: c, width: retro.borderWidth(1.5))),
+      decoration: BoxDecoration(
+        borderRadius: retro.radius,
+        color: bg,
+        border: Border.all(color: c, width: retro.borderWidth(1.5)),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -666,7 +874,10 @@ class RetroBadgeDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: c,
         shape: BoxShape.circle,
-        border: Border.all(color: retro.background, width: retro.borderWidth(2)),
+        border: Border.all(
+          color: retro.background,
+          width: retro.borderWidth(2),
+        ),
       ),
       child: Icon(icon, size: size * 0.58, color: retro.onColor(c)),
     );

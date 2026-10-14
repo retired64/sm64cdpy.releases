@@ -930,7 +930,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAutoInstallOff => 'You will be asked after each download';
 
   @override
-  String get settingsThemeMode => 'THEME MODE';
+  String get settingsThemeMode => 'Theme mode';
 
   @override
   String settingsDatabaseUpdated(int count, String date) {
@@ -1215,7 +1215,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDynosFolderCleared => 'DynOS folder selection cleared.';
 
   @override
-  String get settingsLanguageMode => 'LANGUAGE';
+  String get settingsLanguageMode => 'Language';
 
   @override
   String get languageFollowSystem => 'Follow system';
@@ -1467,4 +1467,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailViewDiscussion => 'VIEW COMMUNITY DISCUSSION';
+
+  @override
+  String get settingsInterfaceTheme => 'Interface theme';
+
+  @override
+  String get settingsInterfaceThemeDesc =>
+      'Choose an included design. Applies to the app; the floating panel keeps its dark design.';
+
+  @override
+  String get themeRetroManga => 'Retro Manga';
+
+  @override
+  String get themeMario64 => 'Mario 64';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
+  String get themeModeDark => 'Dark';
+
+  @override
+  String get themeModeSystem => 'Follow system';
+
+  @override
+  String get themeSaveFailed => 'Could not save the appearance. Try again.';
+
+  @override
+  String get themeSaving => 'Saving appearance';
 }

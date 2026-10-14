@@ -14,53 +14,87 @@ void main() {
   test('unknown/absent IDs preserve Retro for old installations', () {
     expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);
     expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);
-    expect(AppThemeCatalog.designs.map((d) => d.id).toSet().length,
-        AppThemeId.values.length);
+    expect(
+      AppThemeCatalog.designs.map((d) => d.id).toSet().length,
+      AppThemeId.values.length,
+    );
   });
 
   for (final design in AppThemeCatalog.designs) {
     for (final dark in [false, true]) {
-      test('${design.id.storageKey} $dark has readable surface and fill roles', () {
-        final r = RetroTheme(dark, design: design);
-        for (final surface in [r.background, r.surface, r.surfaceAlt]) {
-          expect(contrast(r.ink, surface), greaterThanOrEqualTo(4.5));
-          expect(contrast(r.inkDim, surface), greaterThanOrEqualTo(4.5));
-          expect(contrast(r.accentText, surface), greaterThanOrEqualTo(4.5));
-        }
-        expect(contrast(r.accent, r.inkOnAccent), greaterThanOrEqualTo(4.5));
-        final material = r.toMaterialTheme();
-        expect(material.extension<RetroTheme>(), same(r));
-        expect(material.colorScheme.primary, r.accent);
-        expect(material.colorScheme.onPrimary, r.inkOnAccent);
-        expect(material.scaffoldBackgroundColor, r.background);
-      });
+      test(
+        '${design.id.storageKey} $dark has readable surface and fill roles',
+        () {
+          final r = RetroTheme(dark, design: design);
+          for (final surface in [r.background, r.surface, r.surfaceAlt]) {
+            expect(contrast(r.ink, surface), greaterThanOrEqualTo(4.5));
+            expect(contrast(r.inkDim, surface), greaterThanOrEqualTo(4.5));
+            expect(contrast(r.accentText, surface), greaterThanOrEqualTo(4.5));
+          }
+          expect(contrast(r.accent, r.inkOnAccent), greaterThanOrEqualTo(4.5));
+          final material = r.toMaterialTheme();
+          expect(material.extension<RetroTheme>(), same(r));
+          expect(material.colorScheme.primary, r.accent);
+          expect(material.colorScheme.onPrimary, r.inkOnAccent);
+          expect(material.scaffoldBackgroundColor, r.background);
+        },
+      );
     }
   }
 
-  test('contrast for custom filled categories does not depend on canvas color', () {
-    for (final design in AppThemeCatalog.designs) {
-      final r = RetroTheme(false, design: design);
-      for (final color in [Colors.yellow, Colors.indigo, r.red, r.blue, r.amber, r.medalGold]) {
-        expect(contrast(color, r.onColor(color)), greaterThanOrEqualTo(4.5));
+  test(
+    'contrast for custom filled categories does not depend on canvas color',
+    () {
+      for (final design in AppThemeCatalog.designs) {
+        final r = RetroTheme(false, design: design);
+        for (final color in [
+          Colors.yellow,
+          Colors.indigo,
+          r.red,
+          r.blue,
+          r.amber,
+          r.medalGold,
+        ]) {
+          expect(contrast(color, r.onColor(color)), greaterThanOrEqualTo(4.5));
+        }
       }
-    }
-  });
+    },
+  );
 
   test('labels preserve authored case outside the manga design', () {
     expect(const RetroTheme(false).displayLabel('New release'), 'NEW RELEASE');
-    final rounded = RetroTheme(false,
-        design: AppThemeCatalog.resolve(AppThemeId.mario64));
+    final rounded = RetroTheme(
+      false,
+      design: AppThemeCatalog.resolve(AppThemeId.mario64),
+    );
     expect(rounded.displayLabel('New release'), 'New release');
     expect(rounded.systemUiStyle.systemNavigationBarColor, rounded.background);
   });
 
   test('settings softness is confined to the selected design', () {
     expect(const RetroTheme(false).design.softSettingsPanels, isFalse);
-    final mario = RetroTheme(false,
-        design: AppThemeCatalog.resolve(AppThemeId.mario64));
+    final mario = RetroTheme(
+      false,
+      design: AppThemeCatalog.resolve(AppThemeId.mario64),
+    );
     expect(mario.design.softSettingsPanels, isTrue);
-    expect(mario.design.shadowBlur, 0); // Catalogue cards keep their own style.
+    expect(mario.design.shadowBlur, 2);
+    expect(mario.design.backdropStyle, AppBackdropStyle.n64Sky);
+    expect(mario.design.surfaceTreatment, AppSurfaceTreatment.beveled);
+    expect(mario.design.playfulSelection, isTrue);
+    expect(mario.showN64Backdrop, isTrue);
+    expect(mario.usesBeveledSurfaces, isTrue);
+    expect(mario.showHalftone, isFalse);
     expect(mario.copyWith().design.softSettingsPanels, isTrue);
+  });
+
+  test('retro manga retains its original decoration policy', () {
+    const retro = RetroTheme(false);
+    expect(retro.design.backdropStyle, AppBackdropStyle.halftone);
+    expect(retro.design.surfaceTreatment, AppSurfaceTreatment.flat);
+    expect(retro.design.playfulSelection, isFalse);
+    expect(retro.showHalftone, isTrue);
+    expect(retro.showN64Backdrop, isFalse);
   });
 
   test('overlay keeps its fixed palette regardless of catalogue selection', () {
@@ -72,40 +106,55 @@ void main() {
     expect(overlay.toMaterialTheme().extension<RetroTheme>(), same(overlay));
   });
 
-  test('extension interpolation supports overrides and preserves endpoints', () {
-    final a = RetroTheme.overlay();
-    final b = RetroTheme(false,
-        design: AppThemeCatalog.resolve(AppThemeId.mario64));
-    expect(a.lerp(b, 0), same(a));
-    expect(a.lerp(b, 1), same(b));
-    expect(a.lerp(b, 0.5).background, Color.lerp(a.background, b.background, 0.5));
-    expect(a.copyWith().background, a.background);
-  });
+  test(
+    'extension interpolation supports overrides and preserves endpoints',
+    () {
+      final a = RetroTheme.overlay();
+      final b = RetroTheme(
+        false,
+        design: AppThemeCatalog.resolve(AppThemeId.mario64),
+      );
+      expect(a.lerp(b, 0), same(a));
+      expect(a.lerp(b, 1), same(b));
+      expect(
+        a.lerp(b, 0.5).background,
+        Color.lerp(a.background, b.background, 0.5),
+      );
+      expect(a.copyWith().background, a.background);
+    },
+  );
 
-  testWidgets('changing design removes manga decorations through context', (tester) async {
+  testWidgets('changing design removes manga decorations through context', (
+    tester,
+  ) async {
     const halftoneKey = ValueKey('halftone-under-test');
     const stripesKey = ValueKey('stripes-under-test');
     final halftone = find.byKey(halftoneKey);
     final stripes = find.byKey(stripesKey);
 
     Future<void> render(AppThemeId id) async {
-      await tester.pumpWidget(MaterialApp(
-        theme: RetroTheme.materialTheme(false, design: AppThemeCatalog.resolve(id)),
-        themeAnimationDuration: Duration.zero,
-        home: const SizedBox.expand(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              HalftoneBackground(key: halftoneKey, color: Colors.black),
-              DiagonalStripeBanner(
-                key: stripesKey,
-                baseColor: Colors.white,
-                stripeColor: Colors.black,
-              ),
-            ],
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: RetroTheme.materialTheme(
+            false,
+            design: AppThemeCatalog.resolve(id),
+          ),
+          themeAnimationDuration: Duration.zero,
+          home: const SizedBox.expand(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                HalftoneBackground(key: halftoneKey, color: Colors.black),
+                DiagonalStripeBanner(
+                  key: stripesKey,
+                  baseColor: Colors.white,
+                  stripeColor: Colors.black,
+                ),
+              ],
+            ),
           ),
         ),
-      ));
+      );
       // AnimatedTheme/Navigator can schedule an extra frame even when the
       // theme transition duration is zero. Assert the settled selected design.
       await tester.pumpAndSettle();
@@ -114,8 +163,14 @@ void main() {
 
     Future<void> expectManga() async {
       await render(AppThemeId.retroManga);
-      expect(find.descendant(of: halftone, matching: find.byType(CustomPaint)), findsOneWidget);
-      expect(find.descendant(of: stripes, matching: find.byType(CustomPaint)), findsOneWidget);
+      expect(
+        find.descendant(of: halftone, matching: find.byType(CustomPaint)),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: stripes, matching: find.byType(CustomPaint)),
+        findsOneWidget,
+      );
     }
 
     await expectManga();
@@ -123,9 +178,18 @@ void main() {
       await render(id);
       // Restrict finders to our components: MaterialApp may also paint its
       // own surfaces, which are not manga decorations.
-      expect(find.descendant(of: halftone, matching: find.byType(CustomPaint)), findsNothing);
-      expect(find.descendant(of: stripes, matching: find.byType(CustomPaint)), findsNothing);
-      final fill = find.descendant(of: stripes, matching: find.byType(ColoredBox));
+      expect(
+        find.descendant(of: halftone, matching: find.byType(CustomPaint)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(of: stripes, matching: find.byType(CustomPaint)),
+        findsNothing,
+      );
+      final fill = find.descendant(
+        of: stripes,
+        matching: find.byType(ColoredBox),
+      );
       expect(fill, findsOneWidget);
       expect(tester.widget<ColoredBox>(fill).color, Colors.white);
     }

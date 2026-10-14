@@ -66,9 +66,11 @@ class AppearanceSelector extends ConsumerWidget {
                 label: _name(l10n, design.id),
                 leading: _ThemePreview(design: design, isDark: retro.isDark),
                 selected: design.id == settings.themeId,
-                onPressed: settings.isSaving ? null : () async {
-                  await _select(context, ref, id: design.id);
-                },
+                onPressed: settings.isSaving
+                    ? null
+                    : () async {
+                        await _select(context, ref, id: design.id);
+                      },
               ),
           ],
         ),
@@ -85,9 +87,11 @@ class AppearanceSelector extends ConsumerWidget {
                 label: label,
                 leading: Icon(icon, color: retro.accentText),
                 selected: settings.mode == mode,
-                onPressed: settings.isSaving ? null : () async {
-                  await _select(context, ref, mode: mode);
-                },
+                onPressed: settings.isSaving
+                    ? null
+                    : () async {
+                        await _select(context, ref, mode: mode);
+                      },
               ),
           ],
         ),
@@ -117,21 +121,31 @@ class _ThemePreview extends StatelessWidget {
         width: 64,
         height: 48,
         child: DecoratedBox(
-          decoration: BoxDecoration(color: preview.background, borderRadius: preview.radius),
+          decoration: BoxDecoration(
+            color: preview.background,
+            borderRadius: preview.radius,
+          ),
           child: Padding(
             padding: const EdgeInsets.all(7),
             child: Transform(
               alignment: Alignment.center,
               transform: Matrix4.skewX(-preview.chipSkew),
               child: Container(
-                decoration: BoxDecoration(
-                  color: preview.surface,
-                  borderRadius: preview.radius,
-                  border: Border.all(color: preview.border, width: preview.borderWidth(2)),
-                  boxShadow: preview.hardShadow(dx: 2, dy: 2),
+                decoration: preview.surfaceDecoration(
+                  border: 2,
+                  shadowDx: 2,
+                  shadowDy: 2,
                 ),
                 child: Center(
-                  child: Icon(Icons.star, color: preview.accentText, size: 18),
+                  child: Icon(
+                    preview.design.playfulSelection
+                        ? Icons.star_rounded
+                        : Icons.star,
+                    color: preview.design.playfulSelection
+                        ? preview.secondaryAccent
+                        : preview.accentText,
+                    size: 18,
+                  ),
                 ),
               ),
             ),

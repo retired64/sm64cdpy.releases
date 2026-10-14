@@ -15,7 +15,6 @@ import '../../services/update_service.dart';
 import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
-import '../providers/theme_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/appearance_selector.dart';
@@ -344,15 +343,25 @@ class _RetroSectionKicker extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
         child: Row(
           children: [
-            Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(color: retro.accentText, shape: BoxShape.circle),
+            Icon(
+              retro.design.playfulSelection ? Icons.star_rounded : Icons.circle,
+              size: retro.design.playfulSelection ? 18 : 6,
+              color: retro.design.playfulSelection
+                  ? retro.secondaryAccent
+                  : retro.accentText,
             ),
             const SizedBox(width: 10),
-            Expanded(child: Text(label, style: retro.heading(
-              size: 13, weight: FontWeight.w800, color: retro.inkDim, letterSpacing: 0.3,
-            ))),
+            Expanded(
+              child: Text(
+                label,
+                style: retro.heading(
+                  size: 13,
+                  weight: FontWeight.w800,
+                  color: retro.inkDim,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
           ],
         ),
       );

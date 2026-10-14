@@ -39,8 +39,10 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final showHalftone = retro.showHalftone &&
-        !_noHalftoneRoutes.contains(widget.currentRoute);
+    final showBackdrop =
+        retro.showN64Backdrop ||
+        (retro.showHalftone &&
+            !_noHalftoneRoutes.contains(widget.currentRoute));
 
     return Scaffold(
       backgroundColor: retro.background,
@@ -56,13 +58,13 @@ class _AppShellState extends ConsumerState<AppShell> {
           }
         });
       },
-      body: showHalftone
+      body: showBackdrop
           ? Stack(
               children: [
                 Positioned.fill(
-                  child: HalftoneBackground(
-                    color: retro.ink.withValues(
-                      alpha: retro.isDark ? 0.035 : 0.08,
+                  child: ThemeBackdrop(
+                    allowHalftone: !_noHalftoneRoutes.contains(
+                      widget.currentRoute,
                     ),
                   ),
                 ),
@@ -137,7 +139,12 @@ class RetroPinnedAppBar extends StatelessWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       shape: showBottomBorder
-          ? Border(bottom: BorderSide(color: retro.border, width: retro.borderWidth(2)))
+          ? Border(
+              bottom: BorderSide(
+                color: retro.border,
+                width: retro.borderWidth(2),
+              ),
+            )
           : null,
       leadingWidth: 56,
       leading: DrawerMenuButton(color: leadingColor),
@@ -175,7 +182,12 @@ class RetroFixedHeaderView extends StatelessWidget {
             height: 56,
             decoration: BoxDecoration(
               color: retro.background,
-              border: Border(bottom: BorderSide(color: retro.border, width: retro.borderWidth(2))),
+              border: Border(
+                bottom: BorderSide(
+                  color: retro.border,
+                  width: retro.borderWidth(2),
+                ),
+              ),
             ),
             child: Row(
               children: [
