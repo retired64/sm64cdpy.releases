@@ -351,3 +351,10 @@ Use this section as the checklist is executed.
 No se instaló SDK ni se afirmó compilación local. Registro de cambios de
 esta rama y guía: [cuatom_themea.md](../cuatom_themea.md). La versión/manifiestos
 publicados permanecen sin cambios.
+
+### Primera build de custom-themes — corrección del análisis
+
+El log recibido detuvo `flutter analyze` por un inicializador autorreferente
+(`final retro = retro`) en Home. Corregido a `RetroTheme.of(context)` y revisado
+el mismo patrón en todos los Dart de lib/test. La nueva ejecución de Actions,
+tests y APK sigue pendiente; no se marca el release gate como completado.

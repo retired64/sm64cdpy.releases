@@ -215,7 +215,7 @@ El artifact `flutter-source-sync` contiene `flutter-source-sync.patch`: cambios 
 
 El workflow de publicación también genera localizaciones y formatea antes de analizar, pero no fue ejecutado ni está autorizado como parte de esta tarea. La versión y los manifiestos de release no se cambiaron.
 
-## 10. Registro de cambios de esta rama (sin publicar)
+## 10. Registro de cambios de desarrollo de esta rama
 
 - Menú de diseños propios incluidos y modo de brillo independiente.
 - Contrato visual, catálogo y cuatro definiciones.
@@ -223,7 +223,11 @@ El workflow de publicación también genera localizaciones y formatea antes de a
 - Integración transversal de formas, contraste y decoración; brillo efectivo en barras.
 - Conservación explícita del overlay fijo desde la misma clase compartida.
 - Localizaciones ARB, pruebas y generación/formato en Actions.
-- Pendientes: ejecución de Actions, incorporación opcional de su parche y matriz física.
+- Primera ejecución de Actions: análisis detenido por `final retro = retro` en
+  `_BrowseCardState.build()`. Corregido para resolver `RetroTheme.of(context)`.
+  Revisados todos los inicializadores autorreferentes en `lib/` y `test/`;
+  no se encontró otro caso. Pendiente repetir análisis/tests/build en Actions.
+- Pendientes: ejecución completa de Actions, incorporación opcional de su parche y matriz física.
 
 Este registro es el changelog de desarrollo. No crea un manifiesto de lanzamiento para una versión todavía no elegida ni altera notas de una release ya publicada.
 

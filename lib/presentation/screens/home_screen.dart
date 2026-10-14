@@ -656,7 +656,7 @@ class _BrowseCardState extends State<_BrowseCard>
 
   @override
   Widget build(BuildContext context) {
-    final retro = retro;
+    final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
 
     return Padding(
