@@ -339,8 +339,18 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       ),
     );
     if (isMario) {
-      ButtonStyle originalControl(ButtonStyle? base) =>
+      ButtonStyle originalControl(ButtonStyle? base, {bool filled = false}) =>
           (base ?? const ButtonStyle()).copyWith(
+            backgroundColor: isIntro && filled
+                ? WidgetStateProperty.resolveWith((states) =>
+                    states.contains(WidgetState.disabled)
+                        ? surfaceAlt
+                        : const Color(0xFF24479B))
+                : null,
+            foregroundColor: isIntro && filled
+                ? WidgetStateProperty.resolveWith((states) =>
+                    states.contains(WidgetState.disabled) ? inkDim : Colors.white)
+                : null,
             textStyle: WidgetStatePropertyAll(
               (theme.textTheme.labelLarge ??
                       const TextStyle(inherit: false, fontSize: 14))
@@ -375,7 +385,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
                                 filterQuality: FilterQuality.none,
                                 colorFilter: isIntro
                                     ? ColorFilter.mode(
-                                        const Color(0xFF244BC0).withValues(alpha: 0.7),
+                                        const Color(
+                                          0xFF244BC0,
+                                        ).withValues(alpha: 0.7),
                                         BlendMode.srcATop,
                                       )
                                     : null,
@@ -396,10 +408,10 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
           );
       theme = theme.copyWith(
         filledButtonTheme: FilledButtonThemeData(
-          style: originalControl(theme.filledButtonTheme.style),
+          style: originalControl(theme.filledButtonTheme.style, filled: true),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
-          style: originalControl(theme.elevatedButtonTheme.style),
+          style: originalControl(theme.elevatedButtonTheme.style, filled: true),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: originalControl(theme.outlinedButtonTheme.style),
@@ -565,8 +577,16 @@ class ThemeBackdrop extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: retro.isDark
-                  ? const [Color(0xFF172F6A), Color(0xFF080F25), Color(0xFF203F79)]
-                  : const [Color(0xFFDA9900), Color(0xFFFFD329), Color(0xFFE6A700)],
+                  ? const [
+                      Color(0xFF172F6A),
+                      Color(0xFF080F25),
+                      Color(0xFF203F79),
+                    ]
+                  : const [
+                      Color(0xFFDA9900),
+                      Color(0xFFFFD329),
+                      Color(0xFFE6A700),
+                    ],
             ),
           ),
         ),
@@ -1470,7 +1490,9 @@ class MarioGameToggle extends StatelessWidget {
               alignment: Alignment.center,
               decoration: retro.surfaceDecoration(
                 color: retro.isIntro
-                    ? (value ? const Color(0xFF087B1A) : const Color(0xFF41473B))
+                    ? (value
+                          ? const Color(0xFF087B1A)
+                          : const Color(0xFF41473B))
                     : null,
                 borderColor: value ? retro.accent : retro.border,
                 shadowDx: 2,
@@ -1479,10 +1501,26 @@ class MarioGameToggle extends StatelessWidget {
               child: ColorFiltered(
                 colorFilter: retro.isIntro && !value
                     ? const ColorFilter.matrix([
-                        0.2126, 0.7152, 0.0722, 0, 0,
-                        0.2126, 0.7152, 0.0722, 0, 0,
-                        0.2126, 0.7152, 0.0722, 0, 0,
-                        0, 0, 0, 1, 0,
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
                       ])
                     : const ColorFilter.mode(Colors.transparent, BlendMode.dst),
                 child: MarioMenuGlyph(

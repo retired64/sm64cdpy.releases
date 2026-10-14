@@ -9,7 +9,8 @@ void main() {
   test('Intro persists independently and reuses prepared ROM fonts', () {
     expect(AppThemeId.fromStorage('sm64_intro'), AppThemeId.sm64Intro);
     for (final dark in [false, true]) {
-      final intro = RetroTheme(dark,
+      final intro = RetroTheme(
+        dark,
         design: AppThemeCatalog.resolve(AppThemeId.sm64Intro),
         marioAssets: completeMarioFixture(),
       );
@@ -17,6 +18,10 @@ void main() {
       expect(intro.headingFamily, 'MarioRomHudV2');
       expect(intro.bodyFamily, 'MarioRomDialogV2');
       expect(intro.menuFamily, 'MarioRomMenuV2');
+      final button = intro.toMaterialTheme().filledButtonTheme.style!;
+      expect(button.backgroundColor!.resolve({}), const Color(0xFF24479B));
+      expect(button.foregroundColor!.resolve({}), Colors.white);
+      expect(button.backgroundColor!.resolve({WidgetState.disabled}), intro.surfaceAlt);
       expect(intro.surfaceDecoration().image, isNull);
       expect(intro.surfaceDecoration().color, intro.surface);
       expect(intro.copyWith().isIntro, isTrue);
@@ -25,12 +30,25 @@ void main() {
     expect(RetroTheme.overlay().marioAsset('mario_save'), isNull);
   });
 
-  testWidgets('Intro slot requests a change without claiming it was saved', (tester) async {
+  testWidgets('Intro slot requests a change without claiming it was saved', (
+    tester,
+  ) async {
     bool? requested;
-    final intro = RetroTheme(false, design: AppThemeCatalog.resolve(AppThemeId.sm64Intro));
-    await tester.pumpWidget(MaterialApp(theme: intro.toMaterialTheme(), home: Scaffold(
-      body: MarioGameToggle(value: false, onChanged: (value) => requested = value),
-    )));
+    final intro = RetroTheme(
+      false,
+      design: AppThemeCatalog.resolve(AppThemeId.sm64Intro),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: intro.toMaterialTheme(),
+        home: Scaffold(
+          body: MarioGameToggle(
+            value: false,
+            onChanged: (value) => requested = value,
+          ),
+        ),
+      ),
+    );
     final glyph = tester.widget<MarioMenuGlyph>(find.byType(MarioMenuGlyph));
     expect(glyph.asset, 'mario_new');
     expect(glyph.size, 40);
@@ -38,7 +56,10 @@ void main() {
     await tester.tap(find.byType(InkWell));
     await tester.pump();
     expect(requested, isTrue);
-    expect(tester.widget<MarioGameToggle>(find.byType(MarioGameToggle)).value, isFalse);
+    expect(
+      tester.widget<MarioGameToggle>(find.byType(MarioGameToggle)).value,
+      isFalse,
+    );
     expect(tester.takeException(), isNull);
   });
 }

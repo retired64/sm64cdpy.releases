@@ -1461,6 +1461,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeMario64 => 'Mario 64';
 
   @override
+  String get themeSm64Intro => 'SM64 Intro';
+
+  @override
   String get themeModeLight => 'Light';
 
   @override

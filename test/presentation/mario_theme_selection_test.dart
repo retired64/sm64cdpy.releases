@@ -27,8 +27,10 @@ void main() {
       await Hive.openBox<String>(AppConstants.settingsBoxKey);
       try {
         for (final scenario in [
-          (AppThemeId.mario64, true), (AppThemeId.mario64, false),
-          (AppThemeId.sm64Intro, true), (AppThemeId.sm64Intro, false),
+          (AppThemeId.mario64, true),
+          (AppThemeId.mario64, false),
+          (AppThemeId.sm64Intro, true),
+          (AppThemeId.sm64Intro, false),
         ]) {
           final (id, cancel) = scenario;
           final service = PendingRom();

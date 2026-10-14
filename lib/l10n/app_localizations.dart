@@ -2664,6 +2664,12 @@ abstract class AppLocalizations {
   /// **'Mario 64'**
   String get themeMario64;
 
+  /// No description provided for @themeSm64Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64 Intro'**
+  String get themeSm64Intro;
+
   /// No description provided for @themeModeLight.
   ///
   /// In en, this message translates to:

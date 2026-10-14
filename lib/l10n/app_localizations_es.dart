@@ -1480,6 +1480,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get themeMario64 => 'Mario 64';
 
   @override
+  String get themeSm64Intro => 'SM64 Intro';
+
+  @override
   String get themeModeLight => 'Claro';
 
   @override
@@ -3129,6 +3132,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get themeMario64 => 'Mario 64';
+
+  @override
+  String get themeSm64Intro => 'SM64 Intro';
 
   @override
   String get themeModeLight => 'Claro';
