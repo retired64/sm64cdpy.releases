@@ -1118,9 +1118,9 @@ class RetroTag extends StatelessWidget {
             label,
             style: TextStyle(
               color: fg,
-              fontSize: dense ? 10 : 11.5,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.4,
+              fontSize: retro.isMario ? 16 : (dense ? 10 : 11.5),
+              fontWeight: retro.isMario ? FontWeight.w400 : FontWeight.w800,
+              letterSpacing: retro.isMario ? 0 : 0.4,
             ),
           ),
         ],

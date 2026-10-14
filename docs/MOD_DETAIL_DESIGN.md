@@ -32,7 +32,8 @@ Los datos de texto de 10–14 puntos tenían menor legibilidad con las fuentes R
   Ajustes y Biblioteca. El estilo común de botones usa diálogo de 16 para
   textos extensos; menú/HUD permanece en encabezados. Retro conserva su escala.
 - Botón principal crece con el texto; etiquetas largas y progreso no se
-  desbordan de una fila rígida. Fechas, descargas y valoración de cada versión
+  desbordan de una fila rígida. Las etiquetas de versión/categoría de Mario también suben a 16.
+  Fechas, descargas y valoración de cada versión
   se distribuyen con Wrap para evitar cortar la fecha por falta de ancho.
 
 ## Comportamiento preservado
