@@ -672,15 +672,7 @@ class _BrowseCardState extends State<_BrowseCard>
           scale: _scale,
           child: Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: retro.surface,
-              borderRadius: retro.radius,
-              border: Border.all(
-                color: retro.border,
-                width: retro.borderWidth(2),
-              ),
-              boxShadow: retro.hardShadow(dx: 3, dy: 3),
-            ),
+            decoration: retro.surfaceDecoration(borderColor: retro.border, shadowDx: 3, shadowDy: 3),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1298,15 +1290,7 @@ class _TopModRowState extends ConsumerState<_TopModRow>
         scale: _scale,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: retro.surface,
-            borderRadius: retro.radius,
-            border: Border.all(
-              color: retro.border,
-              width: retro.borderWidth(2),
-            ),
-            boxShadow: retro.hardShadow(dx: 2, dy: 2),
-          ),
+          decoration: retro.surfaceDecoration(borderColor: retro.border, shadowDx: 2, shadowDy: 2),
           child: Row(
             children: [
               SizedBox(
@@ -1335,9 +1319,11 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                 tag: 'mod_img_${widget.mod.id}',
                 child: ClipRRect(
                   borderRadius: retro.radius,
-                  child: SizedBox(
+                  child: Container(
                     width: 46,
                     height: 46,
+                    padding: retro.isMario ? const EdgeInsets.all(3) : EdgeInsets.zero,
+                    decoration: retro.isMario ? retro.surfaceDecoration(color: retro.secondaryAccent, borderColor: retro.border, shadowDx: 0, shadowDy: 0) : null,
                     child:
                         widget.mod.imageUrl != null &&
                             widget.mod.imageUrl!.isNotEmpty

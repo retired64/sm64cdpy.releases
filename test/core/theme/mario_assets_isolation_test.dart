@@ -40,4 +40,13 @@ void main() {
     );
     expect(MarioThemeAssets.fromMap(null).available, isFalse);
   });
+  test('custom filled surfaces preserve their contrast color without texture or highlight', () {
+    final mario = RetroTheme(false, design: AppThemeCatalog.resolve(AppThemeId.mario64));
+    final filled = mario.surfaceDecoration(color: mario.accent);
+    expect(filled.color, mario.accent);
+    expect(filled.gradient, isNull);
+    expect(filled.image, isNull);
+    expect(mario.surfaceDecoration().gradient, isNotNull);
+  });
+
 }

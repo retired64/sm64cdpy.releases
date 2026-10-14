@@ -10,7 +10,9 @@ archivos del juego. Retro Manga y el engine del overlay conservan sus diseños.
    opacidad para conservar legibilidad; nunca sustituye el color de contraste.
 2. Composición: Home/catálogos conservan cielo; Biblioteca y Ajustes usan un
    fondo de menú. Catálogo, fichas de Biblioteca, paneles y diálogos que emplean
-   `surfaceDecoration` comparten el mismo tratamiento.
+   `surfaceDecoration` comparten el mismo tratamiento. Home, Top downloads y
+   catálogo presentan las portadas con marco; el avatar del detalle conserva
+   ese marco al navegar mediante Hero.
 3. Selección: opciones de Ajustes y ruta activa del drawer muestran la mano
    original cuando está importada. Biblioteca utiliza sus dos estados; los
    encabezados usan la estrella y el contador de Biblioteca usa dígitos HUD.
@@ -78,12 +80,14 @@ Cada importación escribe una generación UUID distinta en
 `filesDir/mario_theme_v1/<UUID>/`. Cada PNG se sincroniza, decodifica y verifica
 por dimensiones antes de cambiar la referencia `generation` en SharedPreferences
 `mario_theme`. La cancelación y el commit se serializan en el hilo principal;
-un fallo anterior no cambia la referencia. La ROM no se guarda ni se sube.
+un fallo anterior no cambia la referencia. Si commit devuelve false o la lectura
+final falla, también se restaura la referencia anterior en memoria/persistencia;
+no se deja activo el directorio fallido. La ROM no se guarda ni se sube.
 
 Las generaciones anteriores permanecen hasta el siguiente arranque del plugin;
 así ImageCache no apunta a archivos eliminados durante un cambio visible. En
 ese arranque se eliminan directorios de generaciones inactivas y restos de una
-extracción interrumpida. Si falta una imagen o su tamaño es inválido, `read`
+extracción interrumpida. Si falta una imagen, su tamaño o sus dimensiones PNG son inválidos, `read`
 retira la referencia. Las imágenes Flutter tienen fallback si no se decodifican.
 Retirar recursos desactiva su uso inmediato; limpia sus archivos al reabrir.
 

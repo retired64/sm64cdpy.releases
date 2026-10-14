@@ -31,7 +31,7 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
     private var attached = false
     private var pending: MethodChannel.Result? = null
     private var picking = false
-    private val root get() = File(context.filesDir, "mario_theme_v1")
+    private val root get() = File(context.filesDir, "mario_theme_v${MarioRomDecoder.VERSION}")
     private val preferences get() = context.getSharedPreferences("mario_theme", Context.MODE_PRIVATE)
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -42,7 +42,12 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
             when (call.method) {
                 "read" -> runOperation(result) { snapshot() }
                 "remove" -> runOperation(result) {
-                    check(preferences.edit().remove("generation").commit())
+                    val previous = preferences.getString("generation", null)
+                    if (!preferences.edit().remove("generation").commit()) {
+                        // commit(false) can still change SharedPreferences' in-memory map.
+                        preferences.edit().putString("generation", previous).commit()
+                        error("Could not remove resources")
+                    }
                     emptyMap<String, Any>() // Old immutable files cleaned at next startup, after engine image caches disappear.
                 }
                 "import" -> {
@@ -164,12 +169,18 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
                 }
                 // Final commit on main serializes cancellation with the visibility switch.
                 main.post {
+                    val previous = preferences.getString("generation", null)
+                    var attemptedCommit = false
                     try {
                         checkCancelled()
                         check(attached)
+                        attemptedCommit = true
                         check(preferences.edit().putString("generation", directory.name).commit())
-                        finish(snapshot())
+                        val confirmed = snapshot()
+                        check(confirmed.isNotEmpty())
+                        finish(confirmed)
                     } catch (error: Exception) {
+                        if (attemptedCommit) preferences.edit().putString("generation", previous).commit()
                         directory.deleteRecursively() // At most 15 tiny files, including after executor teardown.
                         finishError(if (cancelled.get()) "cancelled" else "storage", error)
                     }
