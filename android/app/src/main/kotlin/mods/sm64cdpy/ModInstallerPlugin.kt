@@ -550,13 +550,14 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         try {
+            synchronized(InstallationSafAccessCoordinator.lock) {
             val treeDoc = GameFolderAccess.resolve(act, treeUri)
                 ?: throw java.io.IOException("Could not access the selected directory tree.")
 
             val outputFile = treeDoc.createFile("application/octet-stream", targetName)
                 ?: throw java.io.IOException("Failed to create file in SAF directory.")
 
-            act.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
+            act.contentResolver.openOutputStream(outputFile.uri).let { checkNotNull(it) { "Could not open destination" } }.use { os ->
                 sourceFile.inputStream().use { input ->
                     input.copyTo(os)
                 }
@@ -565,6 +566,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             sourceFile.delete()
             result.success(true)
+            }
         } catch (e: Exception) {
             result.error("COPY_ERROR", e.message ?: "Failed to copy file to mods folder", null)
         }
@@ -614,6 +616,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         Thread {
+            synchronized(InstallationSafAccessCoordinator.lock) {
             try {
                 val treeDoc = GameFolderAccess.resolve(act, treeUri)
                 if (treeDoc == null) {
@@ -641,6 +644,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 act.runOnUiThread {
                     result.error("INSTALL_ERROR", e.message ?: "Unknown error during installation", null)
                 }
+            }
             }
         }.start()
     }
@@ -690,6 +694,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         Thread {
+            synchronized(InstallationSafAccessCoordinator.lock) {
             try {
                 val treeDoc = GameFolderAccess.resolve(act, treeUri)
                 if (treeDoc == null) {
@@ -717,6 +722,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 act.runOnUiThread {
                     result.error("INSTALL_ERROR", e.message ?: "Unknown error during installation", null)
                 }
+            }
             }
         }.start()
     }
@@ -1363,13 +1369,14 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         try {
+            synchronized(InstallationSafAccessCoordinator.lock) {
             val treeDoc = GameFolderAccess.resolve(act, treeUri)
                 ?: throw java.io.IOException("Could not access the selected DynOS directory tree.")
 
             val outputFile = treeDoc.createFile("application/octet-stream", targetName)
                 ?: throw java.io.IOException("Failed to create file in DynOS SAF directory.")
 
-            act.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
+            act.contentResolver.openOutputStream(outputFile.uri).let { checkNotNull(it) { "Could not open destination" } }.use { os ->
                 sourceFile.inputStream().use { input ->
                     input.copyTo(os)
                 }
@@ -1378,6 +1385,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             sourceFile.delete()
             result.success(true)
+            }
         } catch (e: Exception) {
             result.error("COPY_ERROR", e.message ?: "Failed to copy file to DynOS folder", null)
         }
@@ -1512,7 +1520,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private fun isTreeAccessible(treeUri: Uri): Boolean {
         return try {
             val doc = GameFolderAccess.resolve(applicationContext, treeUri)
-            doc != null && doc.exists() && doc.canWrite() && GameFolderAccess.hasGrant(applicationContext, treeUri, write = true)
+            doc != null && doc.name != "user" && doc.exists() && doc.canWrite() && GameFolderAccess.hasGrant(applicationContext, treeUri, write = true)
         } catch (_: Exception) {
             false
         }

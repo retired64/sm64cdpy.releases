@@ -35,7 +35,7 @@ internal object GameFolderStore {
                 root.findFile("dynos") != null || root.listFiles().any { it.isFile && it.name?.endsWith(".z64", true) == true }) { "folder" }
             fun directory(parent: DocumentFile, name: String): DocumentFile {
                 val child = parent.findFile(name) ?: parent.createDirectory(name) ?: error("access")
-                require(child.isDirectory && child.canRead() && child.canWrite()) { "folder" }
+                require(child.isDirectory && child.name == name && child.canRead() && child.canWrite()) { "folder" }
                 return child
             }
             val mods = directory(root, "mods")

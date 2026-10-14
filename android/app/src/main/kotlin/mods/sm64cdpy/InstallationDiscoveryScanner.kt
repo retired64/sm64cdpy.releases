@@ -291,7 +291,7 @@ object InstallationDiscoveryScanner {
         val uri = Uri.parse(uriString)
         val granted = GameFolderAccess.hasGrant(context, uri)
         if (!granted) return null
-        return GameFolderAccess.resolve(context, uri)?.takeIf { it.exists() && it.canRead() }
+        return GameFolderAccess.resolve(context, uri)?.takeIf { it.name != "user" && it.exists() && it.canRead() }
     }
 
     private fun rootFingerprint(context: Context, uriString: String?): String? {

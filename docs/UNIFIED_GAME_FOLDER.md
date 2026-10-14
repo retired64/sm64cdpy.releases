@@ -119,3 +119,8 @@ reconcilia los destinos desde user; se pospone mientras haya trabajos activos.
 El snapshot distingue conexión completa de migración en espera. El provider usa
 una revisión por petición para descartar lecturas anteriores a un cambio confirmado.
 Prueba adicional: respuesta de refresh vieja recibida después de conectar.
+
+Las instalaciones rechazan explícitamente user como destino. Las copias y
+extracciones manuales legacy se serializan con cambios de conexión usando el
+coordinador SAF existente; los Workers conservan su paralelismo. Una apertura
+de stream nula es fallo, nunca copia exitosa ni motivo para borrar el origen.

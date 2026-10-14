@@ -86,7 +86,7 @@ object InstallationSafVerifier {
             val root = GameFolderAccess.resolve(context, uri)
                 ?: return RootAccess.Unavailable
             if (!root.exists() || !root.canRead()) RootAccess.PermissionRevoked
-            else RootAccess.Available(root)
+            else if (root.name == "user") RootAccess.Unavailable else RootAccess.Available(root)
         } catch (_: SecurityException) {
             RootAccess.PermissionRevoked
         } catch (_: Exception) {
