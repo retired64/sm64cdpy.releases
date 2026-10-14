@@ -120,7 +120,18 @@ jobs:
           exit 1
 
       - name: Pruebas Flutter
-        run: flutter test
+        run: |
+          set -o pipefail
+          flutter test --reporter expanded 2>&1 | tee flutter-test.log
+
+      - name: Subir log de pruebas Flutter
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-test-log
+          path: flutter-test.log
+          if-no-files-found: ignore
+          retention-days: 7
 
       # ── 8. Build APK solo arm64 ───────────────────────────────────────────
       - name: Build APK (arm64-v8a)

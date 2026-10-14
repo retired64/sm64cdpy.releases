@@ -17,7 +17,8 @@ Revisado el 2026-09-28.
 - Genera traducciones (`flutter gen-l10n`), formatea Dart en el runner y guarda
   un parche `flutter-source-sync` para desarrollo Termux sin SDK.
 - Firma el APK con secretos, ejecuta `flutter analyze`, conserva el log y ejecuta
-  `flutter test` antes de compilar.
+  `flutter test --reporter expanded` antes de compilar; conserva `flutter-test-log`
+  incluso cuando una prueba falla, y el fallo continúa bloqueando el APK.
 - Compila solo arm64 y publica un artifact durante 7 días.
 - No crea tag ni GitHub Release.
 

@@ -227,6 +227,12 @@ El workflow de publicación también genera localizaciones y formatea antes de a
   `_BrowseCardState.build()`. Corregido para resolver `RetroTheme.of(context)`.
   Revisados todos los inicializadores autorreferentes en `lib/` y `test/`;
   no se encontró otro caso. Pendiente repetir análisis/tests/build en Actions.
+- Segunda ejecución (#173): análisis sin incidencias; 63 tests pasaron y uno
+  de decoración falló. Se ajustó su harness para esperar el árbol estabilizado,
+  acotar búsquedas a cada decoración y verificar desactivación/reactivación en
+  todos los diseños. El resumen recibido no incluye la excepción concreta;
+  no se certifica la causa exacta ni el resultado del cambio sin repetir Actions.
+  Testing conserva ahora el log expandido completo como `flutter-test-log`.
 - Pendientes: ejecución completa de Actions, incorporación opcional de su parche y matriz física.
 
 Este registro es el changelog de desarrollo. No crea un manifiesto de lanzamiento para una versión todavía no elegida ni altera notas de una release ya publicada.

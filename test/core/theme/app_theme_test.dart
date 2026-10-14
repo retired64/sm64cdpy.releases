@@ -74,18 +74,53 @@ void main() {
   });
 
   testWidgets('changing design removes manga decorations through context', (tester) async {
-    Future<void> render(AppThemeId id) => tester.pumpWidget(MaterialApp(
-      theme: RetroTheme.materialTheme(false, design: AppThemeCatalog.resolve(id)),
-      themeAnimationDuration: Duration.zero,
-      home: const Stack(children: [
-        HalftoneBackground(color: Colors.black),
-        DiagonalStripeBanner(baseColor: Colors.white, stripeColor: Colors.black),
-      ]),
-    ));
-    await render(AppThemeId.retroManga);
-    expect(find.byType(CustomPaint), findsWidgets);
-    await render(AppThemeId.gamecube);
-    expect(find.byType(CustomPaint), findsNothing);
-    expect(find.byType(ColoredBox), findsWidgets);
+    const halftoneKey = ValueKey('halftone-under-test');
+    const stripesKey = ValueKey('stripes-under-test');
+    final halftone = find.byKey(halftoneKey);
+    final stripes = find.byKey(stripesKey);
+
+    Future<void> render(AppThemeId id) async {
+      await tester.pumpWidget(MaterialApp(
+        theme: RetroTheme.materialTheme(false, design: AppThemeCatalog.resolve(id)),
+        themeAnimationDuration: Duration.zero,
+        home: const SizedBox.expand(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              HalftoneBackground(key: halftoneKey, color: Colors.black),
+              DiagonalStripeBanner(
+                key: stripesKey,
+                baseColor: Colors.white,
+                stripeColor: Colors.black,
+              ),
+            ],
+          ),
+        ),
+      ));
+      // AnimatedTheme/Navigator can schedule an extra frame even when the
+      // theme transition duration is zero. Assert the settled selected design.
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    }
+
+    Future<void> expectManga() async {
+      await render(AppThemeId.retroManga);
+      expect(find.descendant(of: halftone, matching: find.byType(CustomPaint)), findsOneWidget);
+      expect(find.descendant(of: stripes, matching: find.byType(CustomPaint)), findsOneWidget);
+    }
+
+    await expectManga();
+    for (final id in [AppThemeId.mario64, AppThemeId.odyssey, AppThemeId.gamecube]) {
+      await render(id);
+      // Restrict finders to our components: MaterialApp may also paint its
+      // own surfaces, which are not manga decorations.
+      expect(find.descendant(of: halftone, matching: find.byType(CustomPaint)), findsNothing);
+      expect(find.descendant(of: stripes, matching: find.byType(CustomPaint)), findsNothing);
+      final fill = find.descendant(of: stripes, matching: find.byType(ColoredBox));
+      expect(fill, findsOneWidget);
+      expect(tester.widget<ColoredBox>(fill).color, Colors.white);
+    }
+    // Re-enabling decorations is part of switching designs too.
+    await expectManga();
   });
 }

@@ -358,3 +358,12 @@ El log recibido detuvo `flutter analyze` por un inicializador autorreferente
 (`final retro = retro`) en Home. Corregido a `RetroTheme.of(context)` y revisado
 el mismo patrón en todos los Dart de lib/test. La nueva ejecución de Actions,
 tests y APK sigue pendiente; no se marca el release gate como completado.
+
+### Build #173 — regresión de decoración
+
+Análisis sin incidencias, 63 tests aprobados y una prueba de decoración fallida.
+Se corrigió el harness para esperar frames pendientes y limitar los finders a
+los componentes examinados; se añadió cobertura de los tres diseños sin manga
+y retorno a Retro. Testing adjunta ahora el log expandido de pruebas, conserva
+el exit code y no permite construir APK si los tests fallan. Pendiente repetir
+Actions: el resumen recibido no muestra la excepción/assertion original.
