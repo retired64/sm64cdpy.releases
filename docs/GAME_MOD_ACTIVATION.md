@@ -180,7 +180,7 @@ refrescos de eventos/ciclo de vida usan `unawaited` con captura interna de error
 
 En Termux no hay Flutter/Dart ni toolchain Android funcional: no se afirma una
 compilación local. CI ejecuta `flutter gen-l10n`, formato, análisis, tests Flutter,
-`:app:testDebugUnitTest` y compilación APK. Mantiene logs/patch de fuentes.
+`:app:testReleaseUnitTest` y compilación APK. Mantiene logs/patch de fuentes.
 
 Pruebas automáticas nuevas: comparación exacta, espacios, comentarios, CRLF,
 última línea sin salto, entradas repetidas, conservación de ajustes/packs,
@@ -213,3 +213,11 @@ Matriz física pendiente antes de release:
   de suscripción como patrón existente; escrituras y confirmaciones se esperan.
 - Hermanos: catálogo/recibos externos y propios convergen en unidades Lua;
   DynOS/Touch no usan este contrato; overlay sigue instalando con WorkManager.
+
+## Evidencia CI inicial
+
+La prueba #180 confirmó análisis Flutter y 68 tests Flutter. El nuevo paso
+nativo detectó que el wrapper no está versionado y aún no existía antes del
+build. Se corrigió el orden: Flutter prepara wrapper/local.properties y compila;
+luego `:app:testReleaseUnitTest` reutiliza la variante release y bloquea la
+subida/publicación si falla. No se añadió una compilación debug redundante.

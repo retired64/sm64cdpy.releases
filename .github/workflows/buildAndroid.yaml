@@ -157,12 +157,14 @@ jobs:
         run: python3 -m unittest discover -s test/scripts -p '*_test.py' -v
 
       # ── 9. Build APKs split por ABI ─────────────────────────────────────
-      - name: Pruebas nativas de configuración y biblioteca
-        working-directory: android
-        run: ./gradlew :app:testDebugUnitTest
-
       - name: Build APKs (arm64-v8a, armeabi-v7a, x86_64)
         run: flutter build apk --release --split-per-abi
+
+      # Flutter installs the wrapper and prepares local.properties during build.
+      # Reuse release compilation, and gate artifact upload/publication on tests.
+      - name: Pruebas nativas de configuración y biblioteca
+        working-directory: android
+        run: ./gradlew :app:testReleaseUnitTest
 
       # ── 10. Verificar que los 3 APKs se generaron ────────────────────────
       - name: Verificar APKs generados

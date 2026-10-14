@@ -416,4 +416,4 @@ para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajuste
 comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
 DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
 Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
-Ambos workflows ejecutan también `:app:testDebugUnitTest`. No hay merge ni release.
+Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.

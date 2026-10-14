@@ -160,10 +160,6 @@ jobs:
           retention-days: 7
 
       # ── 8. Build APK arm64 por defecto / todas las ABI manualmente ───────────────────────────────────────────
-      - name: Pruebas nativas de configuración y biblioteca
-        working-directory: android
-        run: ./gradlew :app:testDebugUnitTest
-
       - name: Build APKs de prueba
         env:
           ALL_ABIS: ${{ inputs.all_abis }}
@@ -173,6 +169,12 @@ jobs:
           else
             flutter build apk --release --target-platform=android-arm64 --split-per-abi
           fi
+
+      # Flutter installs the wrapper and prepares local.properties during build.
+      # Reuse release compilation, and gate artifact upload/publication on tests.
+      - name: Pruebas nativas de configuración y biblioteca
+        working-directory: android
+        run: ./gradlew :app:testReleaseUnitTest
 
       # ── 8.5. Renombrar APK con short commit SHA ──────────────────────────
       - name: Renombrar APK con short commit SHA
