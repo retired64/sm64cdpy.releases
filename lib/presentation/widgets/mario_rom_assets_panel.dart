@@ -1,3 +1,5 @@
+import '../providers/game_folder_provider.dart';
+import 'game_folder_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/retro_theme.dart';
@@ -41,6 +43,11 @@ class MarioRomAssetsPanel extends ConsumerWidget {
           ] else ...[
             FilledButton.icon(
               onPressed: () async {
+                await ref.read(gameFolderProvider.notifier).initialize();
+                if (!context.mounted) return;
+                if (!ref.read(gameFolderProvider).connection.connected) {
+                  if (!await connectGameFolder(context, ref) || !context.mounted) return;
+                }
                 await notifier.perform('import');
               },
               icon: const MarioGameIcon(Icons.file_open_outlined),
@@ -61,6 +68,8 @@ class MarioRomAssetsPanel extends ConsumerWidget {
               child: Text(
                 state.error == 'unsupported'
                     ? l10n.marioRomUnsupported
+                    : state.error == 'rom_missing' ? l10n.gameFolderRomMissing
+                    : state.error == 'game_folder' ? l10n.gameFolderAccessLost
                     : l10n.marioRomFailed,
                 style: retro.body(size: 13, color: retro.red),
               ),

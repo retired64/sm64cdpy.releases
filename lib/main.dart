@@ -1,3 +1,4 @@
+import 'presentation/providers/game_folder_provider.dart';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -112,6 +113,7 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
     super.initState();
     // Owner survives navigation; initialize catches platform errors internally.
     unawaited(ref.read(marioThemeAssetsProvider.notifier).initialize());
+    unawaited(ref.read(gameFolderProvider.notifier).initialize());
   }
 
   @override

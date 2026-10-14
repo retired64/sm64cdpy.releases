@@ -9,6 +9,7 @@ Version 1.8.3 brings verified game mod activation to Library, unifies local mod 
 - Select the game’s user folder once to grant persistent access to sm64config.txt. Close the game before editing: selections apply to its next start, and DynOS/Touch Controls retain their separate configuration.
 - Saving checks known local incompatibilities and the game’s size limit, preserves unrelated configuration lines, creates a private backup and verifies the written result. Previous configuration can be restored with confirmation.
 - Cards, controls, progress, dialogs and save feedback follow the selected interface theme. The retired discovery view no longer triggers a second automatic scan; installation receipts, update checks and history keep their distinct roles.
+- One game user folder connects the Library, mods, DynOS/Touch Controls and ROM detection for Mario themes. Guided setup explains the folder picker; prepared themes reuse their private resources.
 
 ### Retro Manga and Mario 64 themes
 

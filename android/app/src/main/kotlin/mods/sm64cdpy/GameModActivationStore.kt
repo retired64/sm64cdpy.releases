@@ -21,40 +21,24 @@ internal object GameModActivationStore {
         DocumentsContract.getDocumentId(a) == DocumentsContract.getDocumentId(b)
 
     private fun root(context: Context, uri: Uri): DocumentFile {
-        val granted = context.contentResolver.persistedUriPermissions.any { it.uri == uri && it.isReadPermission && it.isWritePermission }
+        val granted = GameFolderAccess.hasGrant(context, uri, write = true)
         if (!granted) {
             if (prefs(context).getString(KEY, null) == uri.toString()) prefs(context).edit().remove(KEY).commit()
             throw SecurityException("access")
         }
-        val root = DocumentFile.fromTreeUri(context, uri) ?: error("access")
+        val root = GameFolderAccess.resolve(context, uri) ?: error("access")
         require(root.name == "user" && root.canRead() && root.canWrite()) { "folder" }
         val mods = root.findFile("mods") ?: error("folder")
         require(mods.isDirectory) { "folder" }
         val selected = prefs(context).getString(ModInstallerPlugin.KEY_TREE_URI, null)
         if (selected != null) {
-            val existing = DocumentFile.fromTreeUri(context, Uri.parse(selected)) ?: error("folder")
+            val existing = GameFolderAccess.resolve(context, Uri.parse(selected)) ?: error("folder")
             require(sameDocument(existing.uri, mods.uri)) { "mismatch" }
         }
         return root
     }
 
-    fun select(context: Context, uri: Uri, flags: Int) = synchronized(InstallationSafAccessCoordinator.lock) {
-        val grant = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        require(grant == (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)) { "access" }
-        context.contentResolver.takePersistableUriPermission(uri, grant)
-        try {
-            val directory = root(context, uri)
-            val config = directory.findFile("sm64config.txt") ?: error("missing")
-            require(config.isFile && config.canRead() && config.canWrite()) { "access" }
-            read(context, config)
-            val old = prefs(context).getString(KEY, null)
-            require(prefs(context).edit().putString(KEY, uri.toString()).commit()) { "access" }
-            if (old != null && old != uri.toString()) release(context, Uri.parse(old))
-        } catch (error: Exception) {
-            if (prefs(context).getString(KEY, null) != uri.toString()) release(context, uri)
-            throw error
-        }
-    }
+    fun select(context: Context, uri: Uri, flags: Int) = GameFolderStore.connect(context, uri, flags)
 
     private fun release(context: Context, uri: Uri) {
         // Do not release a grant also owned by an installation folder preference.
@@ -64,11 +48,7 @@ internal object GameModActivationStore {
             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION) } catch (_: Exception) { }
     }
 
-    fun clear(context: Context) = synchronized(InstallationSafAccessCoordinator.lock) {
-        val old = prefs(context).getString(KEY, null)
-        require(prefs(context).edit().remove(KEY).commit()) { "access" }
-        if (old != null) release(context, Uri.parse(old))
-    }
+    fun clear(context: Context) = GameFolderStore.disconnect(context)
 
     private fun requireNoInstall(context: Context) {
         val query = androidx.work.WorkQuery.Builder.fromStates(listOf(

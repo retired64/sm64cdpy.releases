@@ -289,11 +289,9 @@ object InstallationDiscoveryScanner {
     private fun resolveRoot(context: Context, uriString: String?): DocumentFile? {
         if (uriString == null) return null
         val uri = Uri.parse(uriString)
-        val granted = context.contentResolver.persistedUriPermissions.any {
-            it.uri == uri && it.isReadPermission
-        }
+        val granted = GameFolderAccess.hasGrant(context, uri)
         if (!granted) return null
-        return DocumentFile.fromTreeUri(context, uri)?.takeIf { it.exists() && it.canRead() }
+        return GameFolderAccess.resolve(context, uri)?.takeIf { it.exists() && it.canRead() }
     }
 
     private fun rootFingerprint(context: Context, uriString: String?): String? {
@@ -303,9 +301,7 @@ object InstallationDiscoveryScanner {
         } catch (_: Exception) {
             return sha256("invalid|$uriString")
         }
-        val readable = context.contentResolver.persistedUriPermissions.any {
-            it.uri == uri && it.isReadPermission
-        }
+        val readable = GameFolderAccess.hasGrant(context, uri)
         return sha256("$uriString|read=$readable")
     }
 

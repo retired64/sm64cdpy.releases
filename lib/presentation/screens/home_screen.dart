@@ -1,3 +1,4 @@
+import '../widgets/game_folder_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,6 +49,8 @@ class _HomeBody extends ConsumerWidget {
       slivers: [
         // ── Custom app bar ────────────────────────────────────
         const _HomeAppBar(),
+        const SliverToBoxAdapter(child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 12, 16, 0), child: GameFolderCard(optional: true))),
 
         // ── Featured carousel ─────────────────────────────────
         SliverToBoxAdapter(

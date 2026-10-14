@@ -82,8 +82,8 @@ class ModInstallWorker(
             )
         }
 
-        val treeDoc = DocumentFile.fromTreeUri(applicationContext, treeUri)
-        if (treeDoc == null) {
+        val treeDoc = GameFolderAccess.resolve(applicationContext, treeUri)
+        if (treeDoc == null || !treeDoc.canWrite() || !GameFolderAccess.hasGrant(applicationContext, treeUri, write = true)) {
             deleteSource(zipFile)
             return Result.failure(
                 workDataOf("error" to "Could not access the selected directory tree.")

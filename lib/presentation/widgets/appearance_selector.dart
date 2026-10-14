@@ -1,3 +1,5 @@
+import '../providers/game_folder_provider.dart';
+import 'game_folder_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,6 +30,21 @@ class AppearanceSelector extends ConsumerWidget {
     AppThemeId? id,
     ThemeMode? mode,
   }) async {
+    if ((id == AppThemeId.mario64 || id == AppThemeId.sm64Intro) &&
+        !ref.read(marioThemeAssetsProvider).assets.complete) {
+      await ref.read(gameFolderProvider.notifier).initialize();
+      if (!context.mounted) return;
+      if (!ref.read(gameFolderProvider).connection.connected) {
+        if (!await connectGameFolder(context, ref) || !context.mounted) return;
+      } else {
+        final l10n = AppLocalizations.of(context);
+        final accepted = await showDialog<bool>(context: context, builder: (dialogContext) => AlertDialog(scrollable: true,
+          title: Text(l10n.gameFolderPrepareTitle), content: Text(l10n.gameFolderPrepareBody, style: RetroTheme.of(dialogContext).body(size: 16)),
+          actions: [TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(l10n.gameFolderLater)),
+            FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(l10n.gameFolderPrepare))]));
+        if (!context.mounted || accepted != true) return;
+      }
+    }
     final notifier = ref.read(appearanceProvider.notifier);
     final saved = id != null
         ? await notifier.selectThemeWithRom(id)

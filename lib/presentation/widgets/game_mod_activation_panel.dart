@@ -1,3 +1,4 @@
+import 'game_folder_card.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -225,6 +226,22 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
         (!await _confirm(restore: true) || !mounted))
       return;
     _closedGameConfirmed = false;
+    if (action == _AccessAction.select) {
+      await _run(() async {
+        if (await connectGameFolder(context, ref)) {
+          await ref.read(gameModActivationProvider.notifier).refresh();
+        }
+      });
+      return;
+    }
+    if (action == _AccessAction.disconnect) {
+      await _run(() async {
+        if (await disconnectGameFolder(context, ref)) {
+          await ref.read(gameModActivationProvider.notifier).refresh();
+        }
+      });
+      return;
+    }
     final method = switch (action) {
       _AccessAction.select => 'selectGameUserFolder',
       _AccessAction.disconnect => 'clearGameUserFolder',

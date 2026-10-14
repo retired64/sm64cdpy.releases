@@ -9,6 +9,7 @@ La versión 1.8.3 incorpora activación verificada de mods desde Biblioteca, re�
 - Selecciona una vez la carpeta user del juego para conceder acceso persistente a sm64config.txt. Cierra el juego antes de editar: la selección se aplica en el próximo inicio, y DynOS/Touch Controls mantienen su configuración independiente.
 - El guardado comprueba incompatibilidades locales conocidas y el límite de tamaño del juego, conserva las demás líneas de configuración, crea un respaldo privado y verifica el resultado escrito. La configuración anterior puede restaurarse con confirmación.
 - Tarjetas, controles, progreso, diálogos y avisos de guardado siguen el tema elegido. La vista retirada ya no provoca otro escaneo automático; recibos de instalación, comprobación de actualizaciones e historial conservan sus funciones propias.
+- Una sola carpeta user del juego conecta Biblioteca, mods, DynOS/Touch Controls y detección de ROM para temas Mario. La guía explica el selector; los temas preparados reutilizan sus recursos privados.
 
 ### Temas Retro Manga y Mario 64
 

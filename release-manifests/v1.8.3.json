@@ -22,7 +22,8 @@
             "Activation uses the real folder or Lua filename. Local search, enabled/disabled filters, counters and read-only details include author, category, version labels and descriptions when available.",
             "Select the game’s user folder once to grant persistent access to sm64config.txt. Close the game before editing: selections apply to its next start, and DynOS/Touch Controls retain their separate configuration.",
             "Saving checks known local incompatibilities and the game’s size limit, preserves unrelated configuration lines, creates a private backup and verifies the written result. Previous configuration can be restored with confirmation.",
-            "Cards, controls, progress, dialogs and save feedback follow the selected interface theme. The retired discovery view no longer triggers a second automatic scan; installation receipts, update checks and history keep their distinct roles."
+            "Cards, controls, progress, dialogs and save feedback follow the selected interface theme. The retired discovery view no longer triggers a second automatic scan; installation receipts, update checks and history keep their distinct roles.",
+            "One game user folder connects the Library, mods, DynOS/Touch Controls and ROM detection for Mario themes. Guided setup explains the folder picker; prepared themes reuse their private resources."
           ]
         },
         {
@@ -79,7 +80,8 @@
             "La activación usa el nombre real de la carpeta o archivo Lua. Búsqueda local, filtros de activados/desactivados, contadores y detalles de solo lectura incluyen autor, categoría, versión informativa y descripción cuando existen.",
             "Selecciona una vez la carpeta user del juego para conceder acceso persistente a sm64config.txt. Cierra el juego antes de editar: la selección se aplica en el próximo inicio, y DynOS/Touch Controls mantienen su configuración independiente.",
             "El guardado comprueba incompatibilidades locales conocidas y el límite de tamaño del juego, conserva las demás líneas de configuración, crea un respaldo privado y verifica el resultado escrito. La configuración anterior puede restaurarse con confirmación.",
-            "Tarjetas, controles, progreso, diálogos y avisos de guardado siguen el tema elegido. La vista retirada ya no provoca otro escaneo automático; recibos de instalación, comprobación de actualizaciones e historial conservan sus funciones propias."
+            "Tarjetas, controles, progreso, diálogos y avisos de guardado siguen el tema elegido. La vista retirada ya no provoca otro escaneo automático; recibos de instalación, comprobación de actualizaciones e historial conservan sus funciones propias.",
+            "Una sola carpeta user del juego conecta Biblioteca, mods, DynOS/Touch Controls y detección de ROM para temas Mario. La guía explica el selector; los temas preparados reutilizan sus recursos privados."
           ]
         },
         {
@@ -136,7 +138,8 @@
             "A ativação usa o nome real da pasta ou arquivo Lua. Busca local, filtros de ativados/desativados, contadores e detalhes somente para leitura incluem autor, categoria, versão informativa e descrição quando disponíveis.",
             "Selecione uma vez a pasta user do jogo para conceder acesso persistente a sm64config.txt. Feche o jogo antes de editar: a seleção vale para a próxima abertura, e DynOS/Touch Controls mantêm sua configuração separada.",
             "A gravação verifica incompatibilidades locais conhecidas e o limite de tamanho do jogo, preserva as demais linhas de configuração, cria um backup privado e confirma o resultado gravado. A configuração anterior pode ser restaurada com confirmação.",
-            "Cartões, controles, progresso, diálogos e avisos de gravação acompanham o tema escolhido. A aba removida não dispara outra busca automática; recibos de instalação, verificação de atualizações e histórico mantêm suas funções próprias."
+            "Cartões, controles, progresso, diálogos e avisos de gravação acompanham o tema escolhido. A aba removida não dispara outra busca automática; recibos de instalação, verificação de atualizações e histórico mantêm suas funções próprias.",
+            "Uma única pasta user do jogo conecta a Biblioteca, mods, DynOS/Touch Controls e detecção de ROM dos temas Mario. A orientação explica o seletor; temas preparados reutilizam seus recursos privados."
           ]
         },
         {

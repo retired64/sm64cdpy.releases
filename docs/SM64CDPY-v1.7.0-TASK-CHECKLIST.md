@@ -494,3 +494,10 @@ adaptables. Mario eleva texto mínimo a 16 y descripción a 18 puntos.
 Plan técnico: `docs/MOD_DETAIL_DESIGN.md`. Testing pendiente.
 
 Validado en [Testing #213](https://github.com/retired64/sm64cdpy.releases/actions/runs/38641643668): formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas completados correctamente. Los commits posteriores sincronizan formato probado y documentación. Pendiente revisión visual física de la ficha en claro/oscuro.
+
+## Conexión unificada del juego
+
+Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada,
+mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
+migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+Validación Actions pendiente; revisión física requerida.

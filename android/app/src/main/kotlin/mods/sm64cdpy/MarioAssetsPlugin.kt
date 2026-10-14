@@ -52,6 +52,14 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
                 }
                 "import" -> {
                     if (pending != null) result.error("busy", "Import already pending", null)
+                    else {
+                        pending = result
+                        cancelled.set(false)
+                        importFromUser()
+                    }
+                }
+                "importFile" -> {
+                    if (pending != null) result.error("busy", "Import already pending", null)
                     else if (this.binding == null) result.error("unavailable", "No activity", null)
                     else {
                         pending = result
@@ -159,26 +167,52 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
         if (resultCode != Activity.RESULT_OK || uri == null || cancelled.get()) {
             finish(null); return true
         }
+        importResources { readRom(uri) }
+        return true
+    }
+
+    private fun readRom(uri: android.net.Uri): ByteArray {
+        val bytes = ByteArray(MarioRomDecoder.ROM_SIZE)
+        context.contentResolver.openInputStream(uri).use { stream ->
+            checkNotNull(stream)
+            reader.set(stream)
+            try {
+                var offset = 0
+                while (offset < bytes.size) {
+                    checkCancelled()
+                    val count = stream.read(bytes, offset, minOf(8192, bytes.size - offset))
+                    require(count > 0) { "Invalid ROM size" }
+                    offset += count
+                }
+                require(stream.read() == -1) { "Invalid ROM size" }
+            } finally { reader.set(null) }
+        }
+        val hash = MessageDigest.getInstance("MD5").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 255) }
+        require(hash == MarioRomDecoder.ROM_MD5) { "Unsupported ROM" }
+        return bytes
+    }
+
+    private fun importFromUser() = importResources {
+        val user = GameFolderStore.root(context) ?: throw IllegalStateException("game_folder")
+        val preferred = user.findFile("baserom.us.z64")
+        val candidates = (listOfNotNull(preferred) + user.listFiles().filter {
+            it.isFile && it.name?.endsWith(".z64", true) == true
+        }).distinctBy { it.uri }.take(8)
+        if (candidates.isEmpty()) throw IllegalStateException("rom_missing")
+        var valid: ByteArray? = null
+        for (candidate in candidates) {
+            checkCancelled()
+            try { valid = readRom(candidate.uri); break }
+            catch (_: IllegalArgumentException) { /* Check the next direct child, never recurse. */ }
+        }
+        valid ?: throw IllegalArgumentException("Unsupported ROM")
+    }
+
+    private fun importResources(load: () -> ByteArray) {
         executor.execute {
             var staging: File? = null
             try {
-                val bytes = ByteArray(MarioRomDecoder.ROM_SIZE)
-                context.contentResolver.openInputStream(uri).use { stream ->
-                    checkNotNull(stream)
-                    reader.set(stream)
-                    checkCancelled()
-                    var offset = 0
-                    while (offset < bytes.size) {
-                        checkCancelled()
-                        val count = stream.read(bytes, offset, minOf(8192, bytes.size - offset))
-                        require(count > 0) { "Invalid ROM size" }
-                        offset += count
-                    }
-                    require(stream.read() == -1) { "Invalid ROM size" }
-                }
-                reader.set(null)
-                val hash = MessageDigest.getInstance("MD5").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 255) }
-                require(hash == MarioRomDecoder.ROM_MD5) { "Unsupported ROM" }
+                val bytes = load()
                 val directory = File(root, UUID.randomUUID().toString())
                 staging = directory
                 check(directory.mkdirs())
@@ -239,10 +273,9 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
             } catch (error: Exception) {
                 reader.set(null)
                 staging?.deleteRecursively()
-                main.post { finishError(if (cancelled.get()) "cancelled" else if (error is IllegalArgumentException) "unsupported" else "storage", error) }
+                main.post { finishError(if (cancelled.get()) "cancelled" else if (error.message in setOf("game_folder", "rom_missing")) error.message!! else if (error is IllegalArgumentException) "unsupported" else "storage", error) }
             }
         }
-        return true
     }
 
     private fun requestCancellation() {

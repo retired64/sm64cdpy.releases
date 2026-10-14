@@ -124,3 +124,10 @@ y renombrado consumen el mismo valor; el marcador no crea tags, releases, avisos
 ni dispatch al sitio. Sin input/marcador, testing sigue produciendo solo arm64.
 La candidata de merge incorpora la generación y formato del runner #187; la
 comprobación definitiva corresponde al commit consolidado, no a un APK anterior.
+
+## Conexión unificada del juego
+
+Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada,
+mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
+migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+Validación Actions pendiente; revisión física requerida.

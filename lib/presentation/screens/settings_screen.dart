@@ -1,3 +1,4 @@
+import '../widgets/game_folder_card.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -10,7 +11,6 @@ import '../../core/constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../overlay/overlay_bridge.dart';
 import '../../core/theme/retro_theme.dart';
-import '../../services/mod_installer.dart';
 import '../../services/update_service.dart';
 import '../../widgets/update_dialog.dart';
 
@@ -81,9 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                 japanese: 'ゲーム連携',
               ),
               const SizedBox(height: 10),
-              _ModsFolderTile(),
-              _RetroGap(height: 6),
-              _DynosFolderTile(),
+              const GameFolderCard(),
               _AutoInstallToggle(),
               _OverlayToggle(),
 
@@ -438,250 +436,6 @@ class _RetroSwitch extends StatelessWidget {
 
 // ── Mods folder tile ───────────────────────────────────────────────────────
 
-class _ModsFolderTile extends ConsumerStatefulWidget {
-  const _ModsFolderTile();
-
-  @override
-  ConsumerState<_ModsFolderTile> createState() => _ModsFolderTileState();
-}
-
-class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
-  bool _loading = false;
-  bool _hasFolder = false;
-  String? _folderUri;
-
-  final _installer = ModInstaller();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkFolder();
-  }
-
-  Future<void> _checkFolder() async {
-    try {
-      final uri = await _installer.getSavedDirectoryUri();
-      final has = await _installer.isDirectorySelected();
-      if (mounted) {
-        setState(() {
-          _hasFolder = has;
-          _folderUri = uri;
-        });
-      }
-    } catch (e) {
-      debugPrint('_ModsFolderTile._checkFolder: $e');
-    }
-  }
-
-  Future<void> _selectFolder() async {
-    setState(() => _loading = true);
-    try {
-      final uri = await _installer.openDirectoryPicker();
-      if (!mounted) return;
-      if (uri != null) {
-        setState(() {
-          _hasFolder = true;
-          _folderUri = uri;
-        });
-        if (!mounted) return;
-        final l10n = AppLocalizations.of(context);
-        AppSnackbar.success(context, message: l10n.settingsModsFolderSelected);
-      }
-    } on ModInstallerException catch (e) {
-      if (mounted) {
-        AppSnackbar.error(context, message: e.message);
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _confirmClear() async {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => _RetroDialog(
-        retro: retro,
-        title: l10n.settingsClearModsFolderTitle,
-        message: l10n.settingsClearModsFolderBody,
-        confirmLabel: l10n.settingsClearButton,
-        confirmColor: retro.red,
-        onConfirm: () => Navigator.of(ctx).pop(true),
-      ),
-    );
-
-    if (confirmed == true) {
-      await _installer.clearDirectorySelection();
-      if (mounted) {
-        setState(() {
-          _hasFolder = false;
-          _folderUri = null;
-        });
-        AppSnackbar.info(context, message: l10n.settingsModsFolderCleared);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return _RetroTileShell(
-      retro: retro,
-      onTap: _loading ? null : _selectFolder,
-      onLongPress: _hasFolder ? _confirmClear : null,
-      accentColor: _hasFolder ? retro.accent : null,
-      leading: _loading
-          ? _RetroSpinner(retro: retro)
-          : _RetroIconBox(
-              retro: retro,
-              icon: _hasFolder
-                  ? Icons.folder_special_rounded
-                  : Icons.folder_open_rounded,
-              accentColor: _hasFolder ? retro.accent : null,
-            ),
-      title: _hasFolder
-          ? l10n.settingsModsFolder
-          : l10n.settingsSelectModsFolder,
-      titleColor: _hasFolder ? retro.accent : retro.ink,
-      subtitle: _hasFolder
-          ? l10n.settingsModsFolderHint
-          : l10n.settingsModsFolderDesc,
-      pathHint: _folderUri != null ? _displayPath(_folderUri!) : null,
-      trailing: MarioGameIcon(
-        Icons.chevron_right_rounded,
-        color: retro.inkDim,
-        size: 20,
-      ),
-    );
-  }
-}
-
-// ── DynOS folder tile ────────────────────────────────────────────────────────
-
-class _DynosFolderTile extends ConsumerStatefulWidget {
-  const _DynosFolderTile();
-
-  @override
-  ConsumerState<_DynosFolderTile> createState() => _DynosFolderTileState();
-}
-
-class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
-  bool _loading = false;
-  bool _hasFolder = false;
-  String? _folderUri;
-
-  final _installer = ModInstaller();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkFolder();
-  }
-
-  Future<void> _checkFolder() async {
-    try {
-      final uri = await _installer.getSavedDynosUri();
-      final has = await _installer.isDynosDirectorySelected();
-      if (mounted) {
-        setState(() {
-          _hasFolder = has;
-          _folderUri = uri;
-        });
-      }
-    } catch (e) {
-      debugPrint('_DynosFolderTile._checkFolder: $e');
-    }
-  }
-
-  Future<void> _selectFolder() async {
-    setState(() => _loading = true);
-    try {
-      final uri = await _installer.openDynosPicker();
-      if (!mounted) return;
-      if (uri != null) {
-        setState(() {
-          _hasFolder = true;
-          _folderUri = uri;
-        });
-        if (!mounted) return;
-        final l10n = AppLocalizations.of(context);
-        AppSnackbar.success(context, message: l10n.settingsDynosFolderSelected);
-      }
-    } on ModInstallerException catch (e) {
-      if (mounted) {
-        AppSnackbar.error(context, message: e.message);
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _confirmClear() async {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => _RetroDialog(
-        retro: retro,
-        title: l10n.settingsClearDynosFolderTitle,
-        message: l10n.settingsClearDynosFolderBody,
-        confirmLabel: l10n.settingsClearButton,
-        confirmColor: retro.red,
-        onConfirm: () => Navigator.of(ctx).pop(true),
-      ),
-    );
-
-    if (confirmed == true) {
-      await _installer.clearDynosSelection();
-      if (mounted) {
-        setState(() {
-          _hasFolder = false;
-          _folderUri = null;
-        });
-        AppSnackbar.info(context, message: l10n.settingsDynosFolderCleared);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return _RetroTileShell(
-      retro: retro,
-      onTap: _loading ? null : _selectFolder,
-      onLongPress: _hasFolder ? _confirmClear : null,
-      accentColor: _hasFolder ? retro.blue : null,
-      leading: _loading
-          ? _RetroSpinner(retro: retro)
-          : _RetroIconBox(
-              retro: retro,
-              icon: _hasFolder
-                  ? Icons.auto_awesome_rounded
-                  : Icons.auto_awesome_outlined,
-              accentColor: _hasFolder ? retro.blue : null,
-            ),
-      title: _hasFolder
-          ? l10n.settingsDynosFolder
-          : l10n.settingsSelectDynosFolder,
-      titleColor: _hasFolder ? retro.blue : retro.ink,
-      subtitle: _hasFolder
-          ? l10n.settingsDynosFolderHint
-          : l10n.settingsDynosFolderDesc,
-      pathHint: _folderUri != null ? _displayPath(_folderUri!) : null,
-      trailing: MarioGameIcon(
-        Icons.chevron_right_rounded,
-        color: retro.inkDim,
-        size: 20,
-      ),
-    );
-  }
-}
-
 // ── Auto-install toggle ────────────────────────────────────────────────────
 
 class _AutoInstallToggle extends ConsumerStatefulWidget {
@@ -746,13 +500,6 @@ class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
 // ── Shared tile shell ─────────────────────────────────────────────────────────
 // Contenedor común para todos los tiles de settings: borde duro, sombra
 // desplazada suave, caja de ícono a la izquierda, título/subtítulo, trailing.
-
-String _displayPath(String uri) {
-  final parts = uri.split('/tree/');
-  if (parts.length < 2) return uri;
-  final decoded = Uri.decodeComponent(parts.last);
-  return decoded.replaceFirst('primary:', '/');
-}
 
 class _RetroTileShell extends StatelessWidget {
   const _RetroTileShell({
@@ -1083,14 +830,6 @@ class _CheckUpdateTileState extends State<_CheckUpdateTile> {
 
 // ── Shared helpers ──────────────────────────────────────────────────────────
 
-class _RetroGap extends StatelessWidget {
-  const _RetroGap({required this.height});
-  final double height;
-  @override
-  Widget build(BuildContext context) => SizedBox(height: height);
-}
-
-// ── Overlay toggle ──────────────────────────────────────────────────────────
 
 class _OverlayToggle extends ConsumerStatefulWidget {
   const _OverlayToggle();

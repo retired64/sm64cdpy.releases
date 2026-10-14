@@ -18,6 +18,8 @@ class MarioAssetsCoordinator extends ConsumerWidget {
           context,
           message: next.error == 'unsupported'
               ? l10n.marioRomUnsupported
+              : next.error == 'rom_missing' ? l10n.gameFolderRomMissing
+              : next.error == 'game_folder' ? l10n.gameFolderAccessLost
               : l10n.marioRomFailed,
         );
       } else if (next.imported > (previous?.imported ?? 0)) {
