@@ -28,3 +28,13 @@ Cuando cambien versión mínima, dependencias, workers, canales de plataforma, p
 - [Activación de mods desde Biblioteca](GAME_MOD_ACTIVATION.md): contrato del juego, SAF, edición verificada, recuperación y pruebas.
 
 - [Preparación de merge/release 1.8.3](RELEASE_1.8.3.md): alcance final, previews EN/ES/PT-BR, evidencia, checklist y publicación autorizada.
+
+
+## Mario 64: recursos locales y menú original
+
+Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
+usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
+selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
+overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
+de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validación de este cambio pendiente de Actions y dispositivo; la evidencia
+anterior de 1.8.3 no valida el importador nuevo.

@@ -1,4 +1,7 @@
 import 'dart:ui' as ui;
+import 'dart:io';
+
+import '../../domain/entities/mario_theme_assets.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +16,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   const RetroTheme(
     this.isDark, {
     this.design = retroMangaTheme,
+    this.marioAssets = const MarioThemeAssets(),
     Color? backgroundOverride,
     Color? surfaceOverride,
     Color? surfaceAltOverride,
@@ -40,6 +44,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
 
   final bool isDark;
   final AppThemeDesign design;
+  final MarioThemeAssets marioAssets;
+  bool get isMario => design.id == AppThemeId.mario64;
+  String? marioAsset(String id) => isMario ? marioAssets.files[id] : null;
   final Color? _backgroundOverride;
   final Color? _surfaceOverride;
   final Color? _surfaceAltOverride;
@@ -128,6 +135,20 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     double shadowDy = 4,
   }) => BoxDecoration(
     color: color ?? surface,
+    image: marioAsset(isDark ? 'stone_dark' : 'stone') == null ? null : DecorationImage(
+      image: FileImage(File(marioAsset(isDark ? 'stone_dark' : 'stone')!)),
+      repeat: ImageRepeat.repeat,
+      scale: 1,
+      opacity: isDark ? 0.09 : 0.13,
+      filterQuality: FilterQuality.none,
+      onError: (error, stack) { /* Keep the solid, readable surface. */ },
+    ),
+    gradient: usesBeveledSurfaces ? LinearGradient(
+      begin: Alignment.topLeft, end: Alignment.bottomRight,
+      colors: [Color.alphaBlend(surfaceHighlight.withValues(alpha: 0.2), color ?? surface), color ?? surface,
+        Color.alphaBlend(surfaceShade.withValues(alpha: 0.15), color ?? surface)],
+      stops: const [0, 0.12, 1],
+    ) : null,
     borderRadius: radius,
     border: Border.all(
       color:
@@ -151,6 +172,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     fontWeight: weight ?? design.headingWeight,
     letterSpacing: letterSpacing ?? design.headingTracking,
     height: height,
+    shadows: isMario ? [Shadow(color: shadowColor.withValues(alpha: 0.24), offset: const Offset(0, 1))] : null,
   );
 
   TextStyle body({
@@ -265,12 +287,14 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   static ThemeData materialTheme(
     bool isDark, {
     AppThemeDesign design = retroMangaTheme,
-  }) => RetroTheme(isDark, design: design).toMaterialTheme();
+    MarioThemeAssets marioAssets = const MarioThemeAssets(),
+  }) => RetroTheme(isDark, design: design, marioAssets: marioAssets).toMaterialTheme();
 
   @override
   RetroTheme copyWith({
     bool? isDark,
     AppThemeDesign? design,
+    MarioThemeAssets? marioAssets,
     Color? backgroundOverride,
     Color? surfaceOverride,
     Color? surfaceAltOverride,
@@ -279,6 +303,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   }) => RetroTheme(
     isDark ?? this.isDark,
     design: design ?? this.design,
+    marioAssets: marioAssets ?? this.marioAssets,
     backgroundOverride: backgroundOverride ?? _backgroundOverride,
     surfaceOverride: surfaceOverride ?? _surfaceOverride,
     surfaceAltOverride: surfaceAltOverride ?? _surfaceAltOverride,
@@ -295,6 +320,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     final palette = AppThemePalette.lerp(_palette, other._palette, t);
     return RetroTheme(
       selected.isDark,
+      marioAssets: selected.marioAssets,
       design: AppThemeDesign(
         id: selected.design.id,
         light: palette,
@@ -354,13 +380,24 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
 /// abstract: sky, clouds, distant polygonal hills and stars evoke the N64 era
 /// without bundling or reconstructing proprietary game artwork.
 class ThemeBackdrop extends StatelessWidget {
-  const ThemeBackdrop({super.key, this.allowHalftone = true});
+  const ThemeBackdrop({super.key, this.allowHalftone = true, this.menuSurface = false});
 
   final bool allowHalftone;
+  final bool menuSurface;
 
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    if (retro.isMario && menuSurface) {
+      final texture = retro.marioAsset(retro.isDark ? 'stone_dark' : 'stone');
+      return IgnorePointer(child: DecoratedBox(decoration: BoxDecoration(
+        gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          colors: [retro.surfaceAlt, retro.background]),
+        image: texture == null ? null : DecorationImage(
+          image: FileImage(File(texture)), repeat: ImageRepeat.repeat, opacity: 0.16,
+          filterQuality: FilterQuality.none, onError: (error, stack) {}),
+      )));
+    }
     if (retro.showN64Backdrop) {
       return IgnorePointer(
         child: RepaintBoundary(
@@ -567,7 +604,7 @@ class SectionKicker extends StatelessWidget {
     return Row(
       children: [
         if (retro.design.playfulSelection)
-          Icon(Icons.star_rounded, size: 20, color: retro.secondaryAccent)
+          MarioMenuGlyph(retro: retro, asset: 'star', fallback: Icons.star_rounded, size: 20, color: retro.secondaryAccent)
         else
           Transform(
             alignment: Alignment.center,
@@ -906,5 +943,47 @@ class RetroBadgeDot extends StatelessWidget {
       ),
       child: Icon(icon, size: size * 0.58, color: retro.onColor(c)),
     );
+  }
+}
+
+/// Original texture when locally imported; themed vector fallback otherwise.
+/// Decorative images never replace an action's accessible label.
+class MarioMenuGlyph extends StatelessWidget {
+  const MarioMenuGlyph({super.key, required this.retro, required this.asset,
+    required this.fallback, this.size = 24, this.color});
+  final RetroTheme retro;
+  final String asset;
+  final IconData fallback;
+  final double size;
+  final Color? color;
+  @override
+  Widget build(BuildContext context) {
+    final path = retro.marioAsset(asset);
+    final icon = Icon(fallback, size: size, color: color ?? retro.secondaryAccent);
+    if (path == null) return icon;
+    return ExcludeSemantics(child: Image.file(File(path), width: size, height: size,
+      filterQuality: FilterQuality.none,
+      errorBuilder: (_, error, stack) => icon));
+  }
+}
+
+/// Compact HUD numerals; the complete value is announced once, not digit by digit.
+class MarioHudNumber extends StatelessWidget {
+  const MarioHudNumber({super.key, required this.value, required this.retro, this.size = 16});
+  final int value;
+  final RetroTheme retro;
+  final double size;
+  @override
+  Widget build(BuildContext context) {
+    final text = value.toString();
+    if (!retro.isMario || !retro.marioAssets.available || value < 0 || text.length > 6) {
+      return Text(text, style: retro.heading(size: size));
+    }
+    return Semantics(label: text, child: ExcludeSemantics(child: Row(mainAxisSize: MainAxisSize.min,
+      children: [for (final digit in text.split(''))
+        Image.file(File(retro.marioAsset('digit_$digit')!), width: size, height: size,
+          filterQuality: FilterQuality.none,
+          errorBuilder: (_, error, stack) => Text(digit, style: retro.heading(size: size))),
+      ])));
   }
 }

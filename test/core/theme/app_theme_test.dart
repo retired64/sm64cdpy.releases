@@ -78,7 +78,7 @@ void main() {
       design: AppThemeCatalog.resolve(AppThemeId.mario64),
     );
     expect(mario.design.softSettingsPanels, isTrue);
-    expect(mario.design.shadowBlur, 2);
+    expect(mario.design.shadowBlur, 0);
     expect(mario.design.backdropStyle, AppBackdropStyle.n64Sky);
     expect(mario.design.surfaceTreatment, AppSurfaceTreatment.beveled);
     expect(mario.design.playfulSelection, isTrue);

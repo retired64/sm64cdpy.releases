@@ -1707,5 +1707,16 @@
   },
   "gameModsClearSearch": "Clear search",
   "gameModsDetails": "Mod details",
-  "gameModsCloseDetails": "Close"
+  "gameModsCloseDetails": "Close",
+  "marioRomTitle": "Original game resources",
+  "marioRomBuiltIn": "Built-in design",
+  "marioRomReady": "Original resources ready",
+  "marioRomDescription": "Choose your unmodified US Super Mario 64 ROM (.z64) to use its menu textures, cursor and HUD icons. Everything stays on this device; the game and ROM are never modified.",
+  "marioRomImport": "Choose my ROM",
+  "marioRomPreparing": "Preparing game resources…",
+  "marioRomCancel": "Cancel import",
+  "marioRomRemove": "Use built-in design",
+  "marioRomUnsupported": "This ROM is not supported. Select an unmodified US .z64 ROM. Your previous design is still available.",
+  "marioRomFailed": "Could not read or save the resources. Select the file again and check available storage. Your previous design is still available.",
+  "marioRomSuccess": "Original game resources are ready."
 }

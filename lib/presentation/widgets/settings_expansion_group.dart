@@ -192,13 +192,11 @@ class SettingsSelectionOption extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(child: Text(label, style: retro.heading(size: 14))),
               if (selected)
-                Icon(
-                  retro.design.playfulSelection
-                      ? Icons.star_rounded
-                      : Icons.check_circle,
-                  color: retro.design.playfulSelection
-                      ? retro.secondaryAccent
-                      : retro.accentText,
+                MarioMenuGlyph(
+                  retro: retro,
+                  asset: 'hand',
+                  fallback: retro.isMario ? Icons.pan_tool_alt_rounded : Icons.check_circle,
+                  color: retro.design.playfulSelection ? retro.secondaryAccent : retro.accentText,
                 ),
             ],
           ),

@@ -419,3 +419,13 @@ sus familias predeterminadas. La fuente se empaqueta localmente, sin descarga.
 
 Los títulos de mods del ranking Top downloads de Home usan también la familia
 y respaldo de títulos del diseño; los datos de descargas/rating siguen siendo cuerpo.
+
+
+## Mario 64: recursos locales y menú original
+
+Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
+usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
+selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
+overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
+de pruebas en [MARIO_ROM_THEME.md](docs/MARIO_ROM_THEME.md). Validación de este cambio pendiente de Actions y dispositivo; la evidencia
+anterior de 1.8.3 no valida el importador nuevo.

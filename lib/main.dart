@@ -15,7 +15,9 @@ import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/retro_theme.dart';
 import 'presentation/providers/theme_provider.dart';
+import 'presentation/providers/mario_theme_assets_provider.dart';
 import 'presentation/widgets/background_operation_coordinator.dart';
+import 'presentation/widgets/mario_assets_coordinator.dart';
 import 'services/background_install_service.dart';
 import 'services/installation_library_projection_service.dart';
 import 'services/update_service.dart';
@@ -106,9 +108,17 @@ class SM64CoopDXApp extends ConsumerStatefulWidget {
 
 class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
   @override
+  void initState() {
+    super.initState();
+    // Owner survives navigation; initialize catches platform errors internally.
+    unawaited(ref.read(marioThemeAssetsProvider.notifier).initialize());
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final design = ref.watch(themeDesignProvider);
+    final marioAssets = ref.watch(marioThemeAssetsProvider).assets;
     final localeTag = ref.watch(localeNotifierProvider);
     final locale = localeTag != null
         ? LocaleNotifier.localeFromTag(localeTag)
@@ -120,16 +130,18 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      theme: RetroTheme.materialTheme(false, design: design),
-      darkTheme: RetroTheme.materialTheme(true, design: design),
+      theme: RetroTheme.materialTheme(false, design: design, marioAssets: marioAssets),
+      darkTheme: RetroTheme.materialTheme(true, design: design, marioAssets: marioAssets),
       themeMode: themeMode,
       // Apply the complete design at once; avoid mixed contrast during a morph.
       themeAnimationDuration: Duration.zero,
       routerConfig: appRouter,
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: RetroTheme.of(context).systemUiStyle,
-        child: BackgroundOperationCoordinator(
-          child: child ?? const SizedBox.shrink(),
+        child: MarioAssetsCoordinator(
+          child: BackgroundOperationCoordinator(
+            child: child ?? const SizedBox.shrink(),
+          ),
         ),
       ),
     );

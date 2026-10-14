@@ -58,14 +58,11 @@ class _ModCardState extends ConsumerState<ModCard>
           return Transform.translate(
             offset: Offset(offset, offset),
             child: Container(
-              decoration: BoxDecoration(
-                color: retro.surface,
-                borderRadius: retro.radius,
-                border: Border.all(
-                  color: retro.border,
-                  width: retro.borderWidth(2.5),
-                ),
-                boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
+              decoration: retro.surfaceDecoration(
+                borderColor: retro.border,
+                border: 2.5,
+                shadowDx: 4 - offset,
+                shadowDy: 4 - offset,
               ),
               child: child,
             ),

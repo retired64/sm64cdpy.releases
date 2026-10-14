@@ -6,10 +6,10 @@ import '../app_theme_design.dart';
 /// late-1990s 3D platform game. It uses bundled typography supplied for this design.
 const mario64Theme = AppThemeDesign(
   id: AppThemeId.mario64,
-  cornerRadius: 14,
+  cornerRadius: 8,
   borderScale: 0.8,
-  shadowBlur: 2,
-  shadowOffsetScale: 0.8,
+  shadowBlur: 0,
+  shadowOffsetScale: 1.0,
   chipSkew: 0,
   headingTracking: 0,
   headingWeight: FontWeight.w400,

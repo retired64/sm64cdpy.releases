@@ -17,12 +17,13 @@ A versão 1.8.3 traz ativação verificada de mods na Biblioteca, reúne informa
 - Retro Manga continua como padrão. Mario 64 inclui paletas clara e escura, superfícies com relevo, fundos inspirados em céus e detalhes de estrelas no app principal.
 - Os temas vêm incluídos offline, são lembrados ao reabrir o app e podem ser escolhidos independentemente do modo claro, escuro ou do sistema.
 - Mario 64 usa TypefaceMario64 em títulos e cabeçalhos grandes, incluindo nomes de mods em Top downloads na Home. As descrições mantêm a fonte padrão e Roboto fornece os caracteres acentuados ausentes na fonte dos títulos.
+- Mario 64 permite importar a pedra do menu, cursores, estrelas e dígitos do HUD de uma ROM americana sem modificações escolhida pelo usuário. Os recursos ficam privados no dispositivo; falhas ou cancelamento preservam o visual anterior. Nenhuma ROM ou imagem extraída é incluída.
 
 ### Configurações consistentes
 
 - Tema de interface, modo de aparência e idioma mostram a seleção atual e expandem suas opções com o mesmo visual.
 - O seletor de idioma mantém as animações da seta e da expansão e fecha depois de salvar a seleção.
-- Mario 64 adapta as Configurações com painéis do tema, bordas mais finas, controles e ícones arredondados e sombras suaves.
+- Mario 64 traz superfícies de menu, molduras com relevo e indicadores de seleção consistentes aos Ajustes.
 
 ### Recuperação de aparência e legibilidade
 

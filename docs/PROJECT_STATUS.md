@@ -147,3 +147,13 @@ las descripciones mantienen la tipografía predeterminada; Roboto sirve de respa
 para los acentos ausentes en la fuente de títulos. Roles Material y helpers
 comparten esa definición. CI carga la fuente real para probar ancho estrecho y
 texto ampliado. Pendiente la revisión visual en dispositivo.
+
+
+## Mario 64: recursos locales y menú original
+
+Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
+usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
+selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
+overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
+de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validación de este cambio pendiente de Actions y dispositivo; la evidencia
+anterior de 1.8.3 no valida el importador nuevo.

@@ -409,7 +409,9 @@ class _NavItemState extends State<_NavItem>
                         // el scroll del drawer solo se recompone (barato) en
                         // vez de volver a ejecutar los draw calls vectoriales
                         // en cada frame (caro, sobre todo en gama baja).
-                        child: RepaintBoundary(child: widget.iconBuilder(fg)),
+                        child: RepaintBoundary(child: widget.isActive && retro.isMario
+                            ? MarioMenuGlyph(retro: retro, asset: 'hand', fallback: Icons.pan_tool_alt_rounded, size: 19, color: fg)
+                            : widget.iconBuilder(fg)),
                       ),
                       const SizedBox(width: 12),
                       AnimatedDefaultTextStyle(

@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../providers/theme_provider.dart';
 import 'app_snackbar.dart';
 import 'settings_expansion_group.dart';
+import 'mario_rom_assets_panel.dart';
 
 /// Bundled designs and brightness are independent choices. Saving is owned by
 /// the provider, so rebuilding/navigating never creates a second writer.
@@ -95,6 +96,7 @@ class AppearanceSelector extends ConsumerWidget {
               ),
           ],
         ),
+        const MarioRomAssetsPanel(),
         if (settings.isSaving) ...[
           const SizedBox(height: 12),
           LinearProgressIndicator(
