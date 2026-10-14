@@ -66,7 +66,3 @@ flutter:
       fonts:
         - asset: fonts/TypefaceMario64.otf
           weight: 400
-    - family: SuperMario286
-      fonts:
-        - asset: fonts/3.ttf
-          weight: 400

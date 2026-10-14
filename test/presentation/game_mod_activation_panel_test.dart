@@ -42,8 +42,7 @@ Future<void> _loadBundledFonts(WidgetTester tester) async {
   if (_fontsLoaded) return;
   await tester.runAsync(() async {
     final headings = FontLoader('TypefaceMario64')..addFont(rootBundle.load('fonts/TypefaceMario64.otf'));
-    final body = FontLoader('SuperMario286')..addFont(rootBundle.load('fonts/3.ttf'));
-    await Future.wait([headings.load(), body.load()]);
+    await headings.load();
   });
   _fontsLoaded = true;
 }

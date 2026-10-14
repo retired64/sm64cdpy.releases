@@ -9,13 +9,13 @@ void main() {
     test('Mario fonts follow heading/body roles in $dark appearance', () {
       final mario = RetroTheme(dark, design: AppThemeCatalog.resolve(AppThemeId.mario64));
       expect(mario.heading(size: 24).fontFamily, 'TypefaceMario64');
-      expect(mario.heading(size: 24).fontFamilyFallback, ['SuperMario286']);
-      expect(mario.body(size: 14).fontFamily, 'SuperMario286');
+      expect(mario.heading(size: 24).fontFamilyFallback, ['Roboto']);
+      expect(mario.body(size: 14).fontFamily, isNull);
       final material = mario.toMaterialTheme();
       expect(material.textTheme.displayLarge!.fontFamily, 'TypefaceMario64');
       expect(material.textTheme.titleLarge!.fontFamily, 'TypefaceMario64');
       expect(material.primaryTextTheme.headlineSmall!.fontFamily, 'TypefaceMario64');
-      expect(material.textTheme.bodyMedium!.fontFamily, 'SuperMario286');
+      expect(material.textTheme.bodyMedium!.fontFamily, const RetroTheme(false).toMaterialTheme().textTheme.bodyMedium!.fontFamily);
       expect(material.textTheme.titleLarge!.fontWeight, FontWeight.w400);
     });
   }
@@ -25,7 +25,7 @@ void main() {
     expect(retro.heading(size: 24).fontFamily, isNull);
     expect(retro.body(size: 14).fontFamily, isNull);
     expect(RetroTheme.overlay().heading(size: 24).fontFamily, isNull);
-    expect(mario.lerp(retro, 0).heading(size: 24).fontFamilyFallback, ['SuperMario286']);
+    expect(mario.lerp(retro, 0).heading(size: 24).fontFamilyFallback, ['Roboto']);
     expect(mario.lerp(retro, 1).heading(size: 24).fontFamily, isNull);
   });
 }

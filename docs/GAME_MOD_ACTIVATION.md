@@ -312,7 +312,7 @@ los recibos de SM64CDPY y puede abrirse explícitamente con `?view=installed`.
 
 ## Tipografía Mario 64
 
-La vista y los detalles utilizan roles de `RetroTheme`: TypefaceMario64 para
-encabezados y SuperMario286 (`fonts/3.ttf`) para texto descriptivo, solo en Mario 64.
+La vista y los detalles utilizan roles de `RetroTheme`: TypefaceMario64 solo para
+encabezados de Mario 64; el texto descriptivo conserva la fuente predeterminada.
 Los tests de pantalla estrecha/texto ampliado cargan los archivos de fuente reales,
 en lugar de comprobar únicamente la tipografía de prueba del runner.

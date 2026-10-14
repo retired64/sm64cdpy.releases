@@ -406,15 +406,13 @@ widget se retiraron; no hay una segunda presentación visual del mismo archivo.
 
 ## Fuentes incluidas — exclusivamente Mario 64
 
-`pubspec.yaml` registra TypefaceMario64 (`fonts/TypefaceMario64.otf`) y
-SuperMario286 (`fonts/3.ttf`) como caras Regular, peso 400. `mario64_theme.dart`
-selecciona la primera para títulos y la segunda para cuerpo/descripciones.
-`RetroTheme.heading/body` y los roles display/headline/title de TextTheme consumen
-esa selección, incluidas pantallas, tarjetas, diálogos y encabezados de Material.
+`pubspec.yaml` registra únicamente TypefaceMario64 (`fonts/TypefaceMario64.otf`),
+Regular de peso 400. `mario64_theme.dart` la selecciona para títulos; el cuerpo y
+las descripciones conservan la tipografía predeterminada. La fuente secundaria
+se retiró del repositorio y del registro de assets.
 
-TypefaceMario64 carece de los acentos de español/portugués: el contrato
-`headingFontFamilyFallback` utiliza SuperMario286 para esos caracteres. La
-configuración viaja con la definición e interpolación del tema, no con preferencias
-nuevas. Los estilos explícitos de títulos heredan también el respaldo del tema.
-Retro Manga y el overlay mantienen sus familias predeterminadas. Son assets
-locales empaquetados, sin descarga, permisos nuevos ni dependencia de red.
+`RetroTheme.heading` y los roles display/headline/title de TextTheme consumen
+la fuente de títulos. `headingFontFamilyFallback` utiliza Roboto para los acentos
+que TypefaceMario64 no incluye. La definición e interpolación del tema contienen
+esa configuración, sin preferencias nuevas. Retro Manga y el overlay conservan
+sus familias predeterminadas. La fuente se empaqueta localmente, sin descarga.
