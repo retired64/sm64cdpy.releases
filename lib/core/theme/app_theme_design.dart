@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 /// Persisted IDs are independent from localized names and catalogue ordering.
 enum AppThemeId {
   retroManga('retro_manga'),
-  mario64('mario64');
+  mario64('mario64'),
+  sm64Intro('sm64_intro');
 
   const AppThemeId(this.storageKey);
   final String storageKey;
@@ -19,7 +20,7 @@ enum AppThemeId {
 /// Code-native backdrop families. They intentionally describe a visual
 /// treatment instead of a product/theme ID so shared widgets never need to
 /// branch on `mario64`.
-enum AppBackdropStyle { none, halftone, n64Sky }
+enum AppBackdropStyle { none, halftone, n64Sky, introMenu }
 
 /// Surface language shared by cards, chips, buttons and settings panels.
 enum AppSurfaceTreatment { flat, beveled }

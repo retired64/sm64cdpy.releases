@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme/app_theme_design.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/mario_theme_assets_provider.dart';
@@ -11,7 +10,7 @@ class MarioRomAssetsPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
-    if (retro.design.id != AppThemeId.mario64) return const SizedBox.shrink();
+    if (!retro.isMario) return const SizedBox.shrink();
     final state = ref.watch(marioThemeAssetsProvider);
     final notifier = ref.read(marioThemeAssetsProvider.notifier);
     final l10n = AppLocalizations.of(context);

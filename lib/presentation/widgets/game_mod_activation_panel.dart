@@ -768,6 +768,9 @@ class _GameModCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(14),
       decoration: retro.surfaceDecoration(
+        color: retro.isIntro && mod.enabled
+            ? Color.lerp(retro.surface, const Color(0xFF087B1A), 0.2)
+            : null,
         borderColor: mod.enabled
             ? retro.accent
             : retro.border.withValues(alpha: 0.45),

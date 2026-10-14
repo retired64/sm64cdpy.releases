@@ -16,6 +16,7 @@ La versión 1.8.3 incorpora activación verificada de mods desde Biblioteca, re�
 - Los temas se recuerdan al reabrir. Elegir Mario 64 pide la ROM una vez si falta su conjunto local completo; cancelar conserva el tema anterior. El brillo sigue siendo independiente.
 - Mario 64 utiliza fuentes de menú, diálogo y HUD generadas privadamente desde la ROM. Los encabezados a color usan glifos originales; caracteres ausentes de la ROM US conservan un fallback legible para el idioma.
 - Una ROM US .z64 sin modificar proporciona 151 imágenes y tres fuentes generadas, incluidos materiales, cursores, iconos y cielos Clouds/BBH. Los recursos quedan privados y fuera del backup Android; no se incluye ROM ni arte extraído en el APK. Las importaciones antiguas de 15 texturas pueden actualizarse sin perderlas al cancelar.
+- SM64 Intro añade un menú dorado de día y azul nocturno, con paneles oscuros, letras de la ROM y controles de ranura Mario para mods activos/inactivos confirmados. Reutiliza la importación de ROM de Mario 64.
 
 ### Ajustes coherentes
 

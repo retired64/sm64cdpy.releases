@@ -45,7 +45,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   final bool isDark;
   final AppThemeDesign design;
   final MarioThemeAssets marioAssets;
-  bool get isMario => design.id == AppThemeId.mario64;
+  bool get isIntro => design.id == AppThemeId.sm64Intro;
+  bool get isMario => design.id == AppThemeId.mario64 || isIntro;
   String? marioAsset(String id) => isMario ? marioAssets.files[id] : null;
   String? get headingFamily => isMario && marioAssets.complete
       ? 'MarioRomHudV2'
@@ -73,6 +74,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         color != Colors.white &&
         color != Colors.black)
       return value;
+    if (isIntro) return value;
     final id = marioAssets.complete
         ? (isDark ? 'panel_dark' : 'panel_light')
         : (isDark ? 'stone_dark' : 'stone');
@@ -371,6 +373,12 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
                                 image: FileImage(File(texture)),
                                 repeat: ImageRepeat.repeat,
                                 filterQuality: FilterQuality.none,
+                                colorFilter: isIntro
+                                    ? ColorFilter.mode(
+                                        const Color(0xFF244BC0).withValues(alpha: 0.7),
+                                        BlendMode.srcATop,
+                                      )
+                                    : null,
                                 opacity: states.contains(WidgetState.disabled)
                                     ? 0.5
                                     : 1,
@@ -549,6 +557,21 @@ class ThemeBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    if (retro.isIntro) {
+      return IgnorePointer(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: retro.isDark
+                  ? const [Color(0xFF172F6A), Color(0xFF080F25), Color(0xFF203F79)]
+                  : const [Color(0xFFDA9900), Color(0xFFFFD329), Color(0xFFE6A700)],
+            ),
+          ),
+        ),
+      );
+    }
     if (retro.isMario && retro.marioAssets.complete) {
       final sky = retro.marioAsset(retro.isDark ? 'sky_night' : 'sky_day')!;
       return IgnorePointer(
@@ -1186,6 +1209,7 @@ class MarioMenuGlyph extends StatelessWidget {
         File(path),
         width: size,
         height: size,
+        fit: BoxFit.contain,
         filterQuality: FilterQuality.none,
         errorBuilder: (_, error, stack) => icon,
       ),
@@ -1441,19 +1465,34 @@ class MarioGameToggle extends StatelessWidget {
           child: Opacity(
             opacity: onChanged == null ? 0.5 : 1,
             child: Container(
-              width: 56,
-              height: 44,
+              width: retro.isIntro ? 64 : 56,
+              height: retro.isIntro ? 48 : 44,
               alignment: Alignment.center,
               decoration: retro.surfaceDecoration(
+                color: retro.isIntro
+                    ? (value ? const Color(0xFF087B1A) : const Color(0xFF41473B))
+                    : null,
                 borderColor: value ? retro.accent : retro.border,
                 shadowDx: 2,
                 shadowDy: 2,
               ),
-              child: MarioMenuGlyph(
-                retro: retro,
-                asset: value ? 'star' : 'hand',
-                fallback: value ? Icons.check : Icons.pan_tool_alt_rounded,
-                size: 24,
+              child: ColorFiltered(
+                colorFilter: retro.isIntro && !value
+                    ? const ColorFilter.matrix([
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0, 0, 0, 1, 0,
+                      ])
+                    : const ColorFilter.mode(Colors.transparent, BlendMode.dst),
+                child: MarioMenuGlyph(
+                  retro: retro,
+                  asset: retro.isIntro
+                      ? (value ? 'mario_save' : 'mario_new')
+                      : (value ? 'star' : 'hand'),
+                  fallback: value ? Icons.check : Icons.pan_tool_alt_rounded,
+                  size: retro.isIntro ? 40 : 24,
+                ),
               ),
             ),
           ),

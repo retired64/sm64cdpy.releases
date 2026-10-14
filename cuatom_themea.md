@@ -490,3 +490,10 @@ Roboto de 14 para lectura precisa. Retro Manga conserva su escala. No cambia
 la importación, el formato v2, preferencias, workers ni el engine del overlay.
 Las capturas no se incluyen en el commit. Validación visual física pendiente
 para el nuevo ajuste, incluidos claro/oscuro y escala de texto aumentada.
+
+## SM64 Intro
+
+Nuevo diseño `sm64_intro` con ambiente dorado en claro y azul nocturno en oscuro,
+paneles de menú y ranuras Mario activas/inactivas. Comparte el conjunto ROM v2
+con Mario 64, sin reimportación si ya está preparado. Plan, inventario de
+integración y validación: `docs/SM64_INTRO_THEME.md`. Testing pendiente.

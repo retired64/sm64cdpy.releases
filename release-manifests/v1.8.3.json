@@ -31,7 +31,8 @@
             "Retro Manga remains the default. Mario 64 rebuilds the main interface around original file-select materials, square frames, game skies and HUD accents in light and dark modes.",
             "Themes are remembered after reopening. Choosing Mario 64 requests the ROM once when its complete local resource set is missing; cancellation preserves the previous theme. Brightness remains independent.",
             "Mario 64 uses menu, dialog and HUD typography generated privately from the ROM. Colored headings use original glyphs; characters missing from the US ROM retain readable language fallbacks.",
-            "An unmodified US .z64 ROM supplies 151 images and three generated fonts, including menu materials, cursors, icons and Clouds/BBH skies. Resources stay private outside Android backup, and no ROM or extracted artwork is bundled. Older 15-texture imports can be reimported without losing the previous set on cancellation."
+            "An unmodified US .z64 ROM supplies 151 images and three generated fonts, including menu materials, cursors, icons and Clouds/BBH skies. Resources stay private outside Android backup, and no ROM or extracted artwork is bundled. Older 15-texture imports can be reimported without losing the previous set on cancellation.",
+            "SM64 Intro adds a golden day menu and a blue night menu with dark panels, ROM lettering and Mario save-slot controls for confirmed active/inactive game mods. It reuses an existing Mario 64 ROM import."
           ]
         },
         {
@@ -86,7 +87,8 @@
             "Retro Manga sigue como tema por defecto. Mario 64 reconstruye la interfaz principal con materiales del selector original, marcos cuadrados, cielos del juego y HUD en modos claro y oscuro.",
             "Los temas se recuerdan al reabrir. Elegir Mario 64 pide la ROM una vez si falta su conjunto local completo; cancelar conserva el tema anterior. El brillo sigue siendo independiente.",
             "Mario 64 utiliza fuentes de menú, diálogo y HUD generadas privadamente desde la ROM. Los encabezados a color usan glifos originales; caracteres ausentes de la ROM US conservan un fallback legible para el idioma.",
-            "Una ROM US .z64 sin modificar proporciona 151 imágenes y tres fuentes generadas, incluidos materiales, cursores, iconos y cielos Clouds/BBH. Los recursos quedan privados y fuera del backup Android; no se incluye ROM ni arte extraído en el APK. Las importaciones antiguas de 15 texturas pueden actualizarse sin perderlas al cancelar."
+            "Una ROM US .z64 sin modificar proporciona 151 imágenes y tres fuentes generadas, incluidos materiales, cursores, iconos y cielos Clouds/BBH. Los recursos quedan privados y fuera del backup Android; no se incluye ROM ni arte extraído en el APK. Las importaciones antiguas de 15 texturas pueden actualizarse sin perderlas al cancelar.",
+            "SM64 Intro añade un menú dorado de día y azul nocturno, con paneles oscuros, letras de la ROM y controles de ranura Mario para mods activos/inactivos confirmados. Reutiliza la importación de ROM de Mario 64."
           ]
         },
         {
@@ -141,7 +143,8 @@
             "Retro Manga continua como visual padrão. Mario 64 reconstrói a interface principal com materiais do seletor original, molduras quadradas, céus do jogo e HUD nos modos claro e escuro.",
             "Os temas são lembrados ao reabrir. Escolher Mario 64 pede a ROM uma vez se faltar o conjunto local completo; cancelar mantém o tema anterior. O brilho continua independente.",
             "Mario 64 usa fontes de menu, diálogo e HUD geradas privadamente da ROM. Cabeçalhos coloridos usam glifos originais; caracteres ausentes na ROM US mantêm um fallback legível para o idioma.",
-            "Uma ROM US .z64 sem modificações fornece 151 imagens e três fontes geradas, com materiais, cursores, ícones e céus Clouds/BBH. Os recursos ficam privados e fora do backup Android; nenhuma ROM ou arte extraída é incluída no APK. Importações antigas de 15 texturas podem ser atualizadas sem perdê-las ao cancelar."
+            "Uma ROM US .z64 sem modificações fornece 151 imagens e três fontes geradas, com materiais, cursores, ícones e céus Clouds/BBH. Os recursos ficam privados e fora do backup Android; nenhuma ROM ou arte extraída é incluída no APK. Importações antigas de 15 texturas podem ser atualizadas sem perdê-las ao cancelar.",
+            "SM64 Intro traz um menu dourado de dia e azul à noite, com painéis escuros, letras da ROM e controles de slot Mario para mods ativos/inativos confirmados. Reutiliza a importação de ROM do Mario 64."
           ]
         },
         {

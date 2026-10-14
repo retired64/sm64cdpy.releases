@@ -19,6 +19,7 @@ class AppearanceSelector extends ConsumerWidget {
   String _name(AppLocalizations l10n, AppThemeId id) => switch (id) {
     AppThemeId.retroManga => l10n.themeRetroManga,
     AppThemeId.mario64 => l10n.themeMario64,
+    AppThemeId.sm64Intro => l10n.themeSm64Intro,
   };
 
   Future<void> _select(

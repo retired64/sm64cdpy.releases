@@ -26,7 +26,11 @@ void main() {
       Hive.init(dir.path);
       await Hive.openBox<String>(AppConstants.settingsBoxKey);
       try {
-        for (final cancel in [true, false]) {
+        for (final scenario in [
+          (AppThemeId.mario64, true), (AppThemeId.mario64, false),
+          (AppThemeId.sm64Intro, true), (AppThemeId.sm64Intro, false),
+        ]) {
+          final (id, cancel) = scenario;
           final service = PendingRom();
           final container = ProviderContainer(
             overrides: [
@@ -35,7 +39,7 @@ void main() {
           );
           final notifier = container.read(appearanceProvider.notifier);
           await notifier.setTheme(AppThemeId.retroManga);
-          final selection = notifier.selectThemeWithRom(AppThemeId.mario64);
+          final selection = notifier.selectThemeWithRom(id);
           await Future<void>.delayed(Duration.zero);
           expect(
             container.read(appearanceProvider).themeId,
@@ -50,7 +54,7 @@ void main() {
           expect(await selection, cancel ? isNull : isTrue);
           expect(
             container.read(appearanceProvider).themeId,
-            cancel ? AppThemeId.retroManga : AppThemeId.mario64,
+            cancel ? AppThemeId.retroManga : id,
           );
           expect(container.read(appearanceProvider).isSaving, isFalse);
           container.dispose();
