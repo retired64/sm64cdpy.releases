@@ -175,3 +175,5 @@ Nuevo diseño `sm64_intro` con ambiente dorado en claro y azul nocturno en oscur
 paneles de menú y ranuras Mario activas/inactivas. Comparte el conjunto ROM v2
 con Mario 64, sin reimportación si ya está preparado. Plan, inventario de
 integración y validación: `docs/SM64_INTRO_THEME.md`. Testing pendiente.
+
+Validación: [Testing #206](https://github.com/retired64/sm64cdpy.releases/actions/runs/38636988190) completado correctamente: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas. Los commits posteriores solo sincronizan formato probado y documentación. Pendiente prueba visual física de SM64 Intro.

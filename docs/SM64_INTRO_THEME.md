@@ -60,3 +60,5 @@ pruebas se ejecutan en Actions. Pendiente revisión física: menú de temas,
 claro/oscuro/sistema, drawer, catálogo, detalle, Ajustes, Biblioteca, cambio de
 mod, fallo de escritura y escala de texto aumentada. Las capturas permanecen
 locales. No se fusiona main ni se publica una release.
+
+Validación: [Testing #206](https://github.com/retired64/sm64cdpy.releases/actions/runs/38636988190) completado correctamente: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas. Los commits posteriores solo sincronizan formato probado y documentación. Pendiente prueba visual física de SM64 Intro.
