@@ -491,5 +491,24 @@
   "gameModsDisabled": "Desactivado para el próximo inicio",
   "gameModsMore": "Mostrar más",
   "gameModsSize": "Este mod alcanza el límite de 35 MiB del juego y no se puede activar.",
-  "gameModsSaved": "Selección guardada y verificada para el próximo inicio del juego."
+  "gameModsSaved": "Selección guardada y verificada para el próximo inicio del juego.",
+  "gameModsManage": "Gestionar carpeta del juego",
+  "gameModsCount": "{enabled} de {total} activados",
+  "gameModsSearch": "Buscar mods del juego…",
+  "gameModsAll": "Todos",
+  "gameModsEnabledFilter": "Activados",
+  "gameModsDisabledFilter": "Desactivados",
+  "gameModsNoResults": "No hay mods que coincidan con la búsqueda o el filtro.",
+  "@gameModsCount": {
+    "description": "Confirmed enabled game mods versus all controllable mods",
+    "placeholders": {
+      "enabled": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "gameModsClearSearch": "Borrar búsqueda"
 }

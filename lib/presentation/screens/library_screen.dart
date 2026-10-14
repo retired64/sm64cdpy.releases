@@ -17,7 +17,7 @@ import '../widgets/game_mod_activation_panel.dart';
 import '../providers/game_mod_activation_provider.dart';
 import '../widgets/installation_library_card.dart';
 
-enum _LibraryView { installed, updates, detected, recent }
+enum _LibraryView { installed, gameMods, updates, detected, recent }
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -32,7 +32,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   bool _initialViewApplied = false;
 
   Future<void> _refresh() async {
-    try { await ref.read(gameModActivationProvider.notifier).refresh(); } catch (_) { /* Panel exposes access state on next read. */ }
+    try { await ref.read(gameModActivationProvider.notifier).refresh(); } catch (_) { /* Provider exposes the access error. */ }
+    if (_view == _LibraryView.gameMods) return;
     ref.invalidate(allModsProvider);
     ref.invalidate(allVipModsProvider);
     ref.invalidate(allDynosProvider);
@@ -61,6 +62,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     if (!_initialViewApplied &&
         GoRouterState.of(context).uri.queryParameters['view'] == 'recent') {
       _view = _LibraryView.recent;
+    } else if (!_initialViewApplied &&
+        GoRouterState.of(context).uri.queryParameters['view'] == 'game-mods') {
+      _view = _LibraryView.gameMods;
     }
     _initialViewApplied = true;
   }
@@ -88,13 +92,26 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 padding: const EdgeInsetsDirectional.only(end: 14),
                 child: _RetroIconButton(
                   tooltip: l10n.libraryRefresh,
-                  onPressed: value.isLoading ? null : _refresh,
+                  onPressed: value.isLoading && _view != _LibraryView.gameMods ? null : _refresh,
                   icon: Icons.refresh_rounded,
-                  busy: value.isLoading,
+                  busy: value.isLoading && _view != _LibraryView.gameMods,
                 ),
               ),
             ],
           ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            sliver: SliverToBoxAdapter(child: Column(children: [
+              Padding(padding: const EdgeInsets.only(bottom: 12), child: SectionKicker(
+                retro: retro, label: l10n.libraryTitle, japanese: 'ライブラリ')),
+              _viewSelector(l10n, retro, value.asData?.value.snapshot, updates),
+              const SizedBox(height: 18),
+            ])),
+          ),
+          if (_view == _LibraryView.gameMods)
+            const SliverPadding(padding: EdgeInsets.fromLTRB(16, 0, 16, 40),
+              sliver: SliverToBoxAdapter(child: GameModActivationPanel()))
+          else
           value.when(
             loading: () => SliverFillRemaining(
               hasScrollBody: false,
@@ -121,17 +138,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       text: l10n.libraryPartialWarning,
                       color: retro.amber,
                     ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: SectionKicker(
-                      retro: retro,
-                      label: l10n.libraryTitle,
-                      japanese: 'ライブラリ',
-                    ),
-                  ),
-                  const GameModActivationPanel(),
-                  _viewSelector(l10n, retro, state.snapshot, updates),
-                  const SizedBox(height: 14),
                   _filters(l10n, retro, state.snapshot, updates),
                   const SizedBox(height: 18),
                   if (_view == _LibraryView.detected &&
@@ -153,26 +159,29 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   Widget _viewSelector(
     AppLocalizations l10n,
     RetroTheme retro,
-    InstallationLibrarySnapshot snapshot,
+    InstallationLibrarySnapshot? snapshot,
     AsyncValue<List<InstallationUpdateCandidate>> updates,
   ) {
     final labels = [
       l10n.libraryInstalled,
+      l10n.gameModsTitle,
       l10n.libraryUpdates,
       l10n.libraryDetected,
       l10n.libraryRecent,
     ];
     final icons = [
       Icons.inventory_2_outlined,
+      Icons.sports_esports_rounded,
       Icons.system_update_alt_rounded,
       Icons.manage_search_rounded,
       Icons.history_rounded,
     ];
     final counts = <int?>[
-      snapshot.receipts.length,
+      snapshot?.receipts.length,
+      ref.watch(gameModActivationProvider).asData?.value.mods.length,
       updates.asData?.value.length,
-      snapshot.discoveries.length,
-      snapshot.history.length,
+      snapshot?.discoveries.length,
+      snapshot?.history.length,
     ];
     return SizedBox(
       height: 44,
@@ -218,7 +227,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             <String>{},
       _LibraryView.recent =>
         snapshot.history.map((item) => item.section).toSet(),
-      _LibraryView.detected => <String>{},
+      _LibraryView.detected || _LibraryView.gameMods => <String>{},
     }.toList()..sort();
     final destinations = switch (_view) {
       _LibraryView.installed =>
@@ -232,6 +241,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         snapshot.discoveries.map((item) => item.destination).toSet(),
       _LibraryView.recent =>
         snapshot.history.map((item) => item.destination).toSet(),
+      _LibraryView.gameMods => <String>{},
     }.toList()..sort();
     final showSection = sections.length > 1;
     final showDestination = destinations.length > 1;

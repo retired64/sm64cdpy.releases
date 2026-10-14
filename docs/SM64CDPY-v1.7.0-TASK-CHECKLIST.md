@@ -417,3 +417,9 @@ comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la es
 DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
 Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
 Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
+
+Biblioteca integra Mods del juego como pestaña nativa del sistema visual, con
+búsqueda y filtros locales, contador de activados, tarjetas adaptadas a cada
+diseño y confirmación de juego cerrado por visita (reiniciada al reanudar).
+Restaurar continúa exigiendo confirmación; cada escritura conserva la autoridad
+nativa. Ver [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md), integración visual.

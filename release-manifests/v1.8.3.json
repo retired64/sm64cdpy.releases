@@ -20,7 +20,8 @@
           "items": [
             "Enable or disable compatible local Lua mods from Library for the next game start.",
             "Select the game user folder with persistent document access; edits preserve other settings and create a private recovery backup.",
-            "Selections are checked for incompatible mods, size limits and successful saving. Close the game before editing; DynOS packs use their separate configuration."
+            "Selections are checked for incompatible mods, size limits and successful saving. Close the game before editing; DynOS packs use their separate configuration.",
+            "Game mods have their own Library tab with themed cards, local search, activation filters and verified save feedback."
           ]
         },
         {
@@ -71,7 +72,8 @@
           "items": [
             "Activa o desactiva mods Lua locales compatibles desde Biblioteca para el próximo inicio del juego.",
             "Selecciona la carpeta user del juego con acceso persistente; las ediciones conservan otros ajustes y crean un respaldo privado de recuperación.",
-            "Las selecciones comprueban incompatibilidades, límites de tamaño y guardado correcto. Cierra el juego antes de editar; los packs DynOS utilizan su configuración independiente."
+            "Las selecciones comprueban incompatibilidades, límites de tamaño y guardado correcto. Cierra el juego antes de editar; los packs DynOS utilizan su configuración independiente.",
+            "Mods del juego tiene su propia pestaña en Biblioteca, con tarjetas adaptadas al tema, búsqueda local, filtros de activación y avisos de guardado verificado."
           ]
         },
         {
@@ -122,7 +124,8 @@
           "items": [
             "Ative ou desative mods Lua locais compatíveis na Biblioteca para a próxima abertura do jogo.",
             "Selecione a pasta user do jogo com acesso persistente; as edições preservam outras opções e criam um backup privado para recuperação.",
-            "As seleções verificam incompatibilidades, limites de tamanho e gravação correta. Feche o jogo antes de editar; os pacotes DynOS usam sua configuração separada."
+            "As seleções verificam incompatibilidades, limites de tamanho e gravação correta. Feche o jogo antes de editar; os pacotes DynOS usam sua configuração separada.",
+            "Mods do jogo têm sua própria aba na Biblioteca, com cartões adaptados ao tema, busca local, filtros de ativação e avisos de gravação verificada."
           ]
         },
         {

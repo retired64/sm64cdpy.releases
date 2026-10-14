@@ -1,0 +1,127 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:sm64cdpy/core/theme/app_theme_design.dart';
+import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
+import 'package:sm64cdpy/core/theme/retro_theme.dart';
+import 'package:sm64cdpy/l10n/app_localizations.dart';
+import 'package:sm64cdpy/presentation/providers/game_mod_activation_provider.dart';
+import 'package:sm64cdpy/presentation/widgets/game_mod_activation_panel.dart';
+import 'package:sm64cdpy/services/game_mod_activation.dart';
+
+class _Gateway extends GameModActivation {
+  GameModSnapshot current = const GameModSnapshot(status: 'ready', mods: [
+    GameModEntry(name: 'alpha', title: 'Alpha adventure with a long descriptive name', enabled: false, selectable: true),
+    GameModEntry(name: 'beta.lua', title: 'Beta', enabled: false, selectable: true),
+  ]);
+  int writes = 0;
+  Completer<void>? gate;
+  @override
+  Future<GameModSnapshot> read() async => current;
+  @override
+  Future<GameModSnapshot?> call(String method, [Map<String, Object>? arguments]) async {
+    if (method != 'setGameModActivation') return current;
+    writes++;
+    if (gate != null) await gate!.future;
+    final values = arguments!;
+    current = GameModSnapshot(status: 'ready', mods: current.mods.map((mod) => GameModEntry(
+      name: mod.name, title: mod.title, selectable: mod.selectable,
+      enabled: mod.name == values['name'] ? values['enabled'] == true : mod.enabled,
+    )).toList());
+    return current;
+  }
+}
+
+Future<void> _mount(WidgetTester tester, _Gateway gateway, AppThemeId design, {bool dark = false, double scale = 1}) async {
+  await tester.pumpWidget(ProviderScope(overrides: [gameModGatewayProvider.overrideWithValue(gateway)],
+    child: MaterialApp(
+      theme: RetroTheme.materialTheme(dark, design: AppThemeCatalog.resolve(design)),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'),
+      builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)), child: child!),
+      home: const Scaffold(body: SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: GameModActivationPanel()))),
+    ),
+  ));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _toggle(WidgetTester tester, String name) async {
+  final toggle = find.byKey(ValueKey('game-mod-switch-$name'));
+  await tester.ensureVisible(toggle);
+  await tester.tap(toggle);
+  await tester.pumpAndSettle();
+}
+
+Future<void> _apply(WidgetTester tester) async {
+  final apply = find.descendant(of: find.byType(Dialog), matching: find.byIcon(Icons.check_rounded));
+  await tester.ensureVisible(apply);
+  await tester.tap(apply);
+  await tester.pump();
+}
+
+void main() {
+  for (final design in AppThemeId.values) {
+    for (final dark in [false, true]) {
+      testWidgets('${design.name} $dark supports narrow screens, large text and local filtering', (tester) async {
+        tester.view.physicalSize = const Size(320, 700);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final gateway = _Gateway();
+        await _mount(tester, gateway, design, dark: dark, scale: 1.6);
+        expect(tester.takeException(), isNull);
+        final search = find.byKey(const ValueKey('game-mods-search'));
+        await tester.ensureVisible(search);
+        await tester.enterText(search, 'beta');
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('game-mod-card-alpha')), findsNothing);
+        expect(find.byKey(const ValueKey('game-mod-card-beta.lua')), findsOneWidget);
+        final enabled = find.byKey(const ValueKey('game-mod-filter-enabled'));
+        await tester.ensureVisible(enabled);
+        await tester.tap(enabled);
+        await tester.pumpAndSettle();
+        expect(find.byType(Switch), findsNothing);
+        expect(gateway.writes, 0);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
+  testWidgets('confirmation covers the visit, saves remain confirmed and resume asks again', (tester) async {
+    final gateway = _Gateway();
+    await _mount(tester, gateway, AppThemeId.mario64);
+    await _toggle(tester, 'alpha');
+    expect(find.byType(Dialog), findsOneWidget);
+    gateway.gate = Completer<void>();
+    await _apply(tester);
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(gateway.writes, 1);
+    expect(gateway.current.mods.first.enabled, isFalse);
+    expect(find.byKey(const ValueKey('game-mod-switch-alpha')), findsNothing);
+    gateway.gate!.complete();
+    await tester.pumpAndSettle();
+    expect(tester.widget<Switch>(find.byKey(const ValueKey('game-mod-switch-alpha'))).value, isTrue);
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+    await _toggle(tester, 'beta.lua');
+    expect(find.byType(Dialog), findsNothing);
+    expect(gateway.writes, 2);
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+    await _toggle(tester, 'alpha');
+    expect(find.byType(Dialog), findsOneWidget);
+    final cancel = find.descendant(of: find.byType(Dialog), matching: find.byIcon(Icons.close_rounded));
+    await tester.ensureVisible(cancel);
+    await tester.tap(cancel);
+    await tester.pumpAndSettle();
+    expect(gateway.writes, 2);
+    expect(gateway.current.mods.first.enabled, isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+}

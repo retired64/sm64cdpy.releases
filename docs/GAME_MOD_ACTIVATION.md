@@ -158,7 +158,7 @@ la ejecución Lua, generación DynOS, validación de partida ni carga del juego.
 
 Toda consulta SAF, metadata, respaldo y escritura corre en un thread nativo.
 No hay lectura de configuración por cada tarjeta/render, ni polling continuo.
-La proyección se actualiza al abrir la sección, volver al primer plano,
+La proyección se actualiza al entrar en la pestaña, volver al primer plano,
 completar una instalación o refrescar Biblioteca. Encabezados limitados a 64 KiB
 se dejan de leer al terminar los comentarios; cada línea tiene límite de 800
 caracteres. La lista admite hasta 500 entradas y presenta 20 controles por página.
@@ -221,3 +221,45 @@ nativo detectó que el wrapper no está versionado y aún no existía antes del
 build. Se corrigió el orden: Flutter prepara wrapper/local.properties y compila;
 luego `:app:testReleaseUnitTest` reutiliza la variante release y bloquea la
 subida/publicación si falla. No se añadió una compilación debug redundante.
+
+## Integración visual de Biblioteca
+
+`Mods del juego` es ahora una pestaña propia, inmediatamente después de
+Instalados, con el mismo selector horizontal y contador que las otras vistas.
+El selector queda accesible incluso si falla la lectura de recibos; la edición
+del juego depende de su propia instantánea. `?view=game-mods` abre esa vista.
+Al refrescarla no se fuerza una actualización de catálogos ni otro escaneo de
+recibos. Entrar en la vista solicita una lectura actual de la configuración.
+
+El encabezado resume activados/total. La búsqueda local utiliza título e
+identidad, sin nuevas consultas SAF ni llamadas de red. Los filtros Todos,
+Activados y Desactivados reutilizan `SkewChip`; la búsqueda/filtro devuelve un
+estado vacío contextual. La paginación conserva veinte tarjetas por incremento.
+
+Las tarjetas, acciones, avisos, diálogos y switches consumen los roles de
+`RetroTheme`, sin comparar IDs concretos. Manga utiliza bordes duros, sombra
+desplazada y etiquetas en mayúsculas. Mario utiliza sus radios, tratamiento
+biselado, sombras y selección con estrella. Los colores de texto sobre fondos
+rellenos usan `inkOnAccent`; las superficies usan `ink`/`inkDim`. No hay un
+ExpansionTile genérico antes de las pestañas ni nombres de archivo como texto
+principal repetido. Selección, desconexión y respaldo viven en el menú del
+encabezado; la primera configuración y los errores ofrecen acciones visibles.
+
+La confirmación de juego cerrado se solicita antes de la primera edición de
+la visita. Se recuerda solo en el State de la vista, se pierde al salir y se
+reinicia al volver al primer plano o gestionar el acceso. No es una preferencia
+persistente y nunca sustituye la verificación nativa de cada escritura. La
+restauración continúa pidiendo confirmación siempre. La tarjeta solicitada
+muestra progreso y todos los switches se bloquean hasta recibir confirmación.
+El éxito usa `AppSnackbar`; ante fallo se mantiene el estado confirmado y se
+conservan las opciones de recuperación.
+
+Las acciones ofrecen objetivo táctil mínimo de 48 dp, texto flexible, nombres
+semánticos para switches y títulos de diálogo anunciables. Tests de widget
+comprueban ambos diseños en claro/oscuro, ancho de 320 px, escala de texto 1.6,
+filtrado sin escrituras, espera del guardado y confirmación de nuevo al reanudar.
+
+Validación física pendiente: aspecto de ambas variantes, teclado/búsqueda,
+navegación entre pestañas, lectores de pantalla y cambio en el menú del juego.
+La funcionalidad anterior fue confirmada por el usuario y la prueba #181
+compiló APK y pasó tests Flutter/Kotlin. Esta revisión visual se valida aparte.

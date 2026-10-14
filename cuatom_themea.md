@@ -389,3 +389,13 @@ Total: 86 archivos Dart en `lib/` enumerados. Esta es una auditoría temática, 
 ## 13. Referencias técnicas
 
 El contrato utiliza las APIs oficiales [ThemeExtension](https://api.flutter.dev/flutter/material/ThemeExtension-class.html), [AnnotatedRegion](https://api.flutter.dev/flutter/widgets/AnnotatedRegion-class.html) y [Ref.mounted](https://pub.dev/documentation/riverpod/latest/riverpod/Ref/mounted.html). La versión objetivo de compilación sigue siendo Flutter 3.41.7 con el lockfile del repositorio, no la última versión de esas páginas.
+
+## Biblioteca: interfaz de activación de mods
+
+`game_mod_activation_panel.dart` y `library_screen.dart` integran la pestaña
+Mods del juego con `RetroTheme.surfaceDecoration`, `SkewChip`, roles de texto,
+radios, sombras y `playfulSelection`. No ramifican por ID de tema ni definen
+paletas locales. La presentación incluye búsqueda/filtros locales, estados
+de acceso/error/vacío/guardado, acciones y diálogos propios y `AppSnackbar`.
+Añadir otro diseño al catálogo actualiza estos elementos mediante sus roles.
+Plan técnico y ciclo de vida: `docs/GAME_MOD_ACTIVATION.md`.
