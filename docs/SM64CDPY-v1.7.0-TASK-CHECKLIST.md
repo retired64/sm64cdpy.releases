@@ -367,3 +367,15 @@ los componentes examinados; se añadió cobertura de los tres diseños sin manga
 y retorno a Retro. Testing adjunta ahora el log expandido de pruebas, conserva
 el exit code y no permite construir APK si los tests fallan. Pendiente repetir
 Actions: el resumen recibido no muestra la excepción/assertion original.
+
+### Simplificación de temas y coherencia de Ajustes
+
+El usuario confirmó la prueba anterior como funcional. Se retiraron Odyssey y
+GameCube del enum, catálogo, definiciones y ARB. Los IDs persistidos retirados
+recuperan Retro Manga sin perder modo; su siguiente confirmación guarda el ID
+válido incluso si visualmente ya coincide con el fallback.
+
+Tema de interfaz y modo usan el mismo componente expandible y opciones con
+marca de selección. Se adaptaron pruebas de persistencia, decoración y UI para
+los dos diseños y abrir/cerrar/cambiar modo. Pendiente nueva ejecución de Actions
+y revisión física de este ajuste; no se modificó overlay ni Android nativo.

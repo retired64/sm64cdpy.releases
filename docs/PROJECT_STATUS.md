@@ -58,8 +58,8 @@ Revisado contra `1.8.2+21` el 2026-09-28.
 
 ## Temas incluidos en custom-themes (2026-10-13)
 
-- Menú de diseños propios en Ajustes y modo de brillo independiente.
-- Cuatro definiciones incluidas; contraste, radios, bordes, sombras y decoración
+- Menú de diseños propios y menú de modo de brillo independientes, ambos expandibles en Ajustes.
+- Dos definiciones incluidas (Retro Manga y Mario 64); contraste, radios, bordes, sombras y decoración
   adaptados en las pantallas y widgets de la app.
 - Persistencia confirmada y recuperación legacy; overlay mantiene diseño fijo.
 - ARB y pruebas preparados; generación, análisis, tests y APK pendientes en

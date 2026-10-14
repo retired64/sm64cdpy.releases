@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 /// Persisted IDs are independent from localized names and catalogue ordering.
 enum AppThemeId {
   retroManga('retro_manga'),
-  mario64('mario64'),
-  odyssey('odyssey'),
-  gamecube('gamecube');
+  mario64('mario64');
 
   const AppThemeId(this.storageKey);
   final String storageKey;

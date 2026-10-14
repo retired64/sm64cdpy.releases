@@ -59,25 +59,52 @@ void main() {
       await tester.tap(find.text('Interface theme'));
       await tester.pumpAndSettle();
 
-      final gamecube = find.byKey(const ValueKey('theme-gamecube'));
-      await tester.ensureVisible(gamecube);
+      final mario = find.byKey(const ValueKey('theme-mario64'));
+      await tester.ensureVisible(mario);
       await tester.runAsync(() async {
-        await tester.tap(gamecube);
+        await tester.tap(mario);
         // Await the actual Hive write instead of a timing-based UI assertion.
         await Hive.box<String>(AppConstants.settingsBoxKey).flush();
       });
       await tester.pumpAndSettle();
-      expect(container.read(themeDesignProvider).id, AppThemeId.gamecube);
+      expect(container.read(themeDesignProvider).id, AppThemeId.mario64);
       var theme = Theme.of(tester.element(find.byKey(const ValueKey('theme-probe'))));
-      expect(theme.extension<RetroTheme>()!.design.id, AppThemeId.gamecube);
-      expect(theme.extension<RetroTheme>()!.radius, BorderRadius.circular(6));
-      expect(theme.colorScheme.primary, const Color(0xFF59409C));
+      expect(theme.extension<RetroTheme>()!.design.id, AppThemeId.mario64);
+      expect(theme.extension<RetroTheme>()!.radius, BorderRadius.circular(12));
+      expect(theme.colorScheme.primary, const Color(0xFFC62828));
 
       tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
       await tester.pumpAndSettle();
       theme = Theme.of(tester.element(find.byKey(const ValueKey('theme-probe'))));
       expect(theme.brightness, Brightness.dark);
-      expect(theme.colorScheme.primary, const Color(0xFFC5ADFF));
+      expect(theme.colorScheme.primary, const Color(0xFFFFB6AE));
+      expect(find.byKey(const ValueKey('theme-odyssey')), findsNothing);
+      expect(find.byKey(const ValueKey('theme-gamecube')), findsNothing);
+      final modeHeader = find.text(AppLocalizations.of(
+        tester.element(find.byKey(const ValueKey('theme-probe'))),
+      ).settingsThemeMode);
+      expect(find.byKey(const ValueKey('theme-mode-light')), findsNothing);
+      await tester.ensureVisible(modeHeader);
+      await tester.tap(modeHeader);
+      await tester.pumpAndSettle();
+      for (final mode in ThemeMode.values) {
+        expect(find.byKey(ValueKey('theme-mode-${mode.name}')), findsOneWidget);
+      }
+      final light = find.byKey(const ValueKey('theme-mode-light'));
+      await tester.ensureVisible(light);
+      await tester.runAsync(() async {
+        await tester.tap(light);
+        await Hive.box<String>(AppConstants.settingsBoxKey).flush();
+      });
+      await tester.pumpAndSettle();
+      expect(container.read(themeModeProvider), ThemeMode.light);
+      expect(container.read(themeDesignProvider).id, AppThemeId.mario64);
+      theme = Theme.of(tester.element(find.byKey(const ValueKey('theme-probe'))));
+      expect(theme.brightness, Brightness.light);
+      await tester.ensureVisible(modeHeader);
+      await tester.tap(modeHeader);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('theme-mode-light')), findsNothing);
       expect(tester.takeException(), isNull);
     } finally {
       tester.platformDispatcher.clearPlatformBrightnessTestValue();

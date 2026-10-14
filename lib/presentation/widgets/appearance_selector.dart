@@ -16,8 +16,6 @@ class AppearanceSelector extends ConsumerWidget {
   String _name(AppLocalizations l10n, AppThemeId id) => switch (id) {
     AppThemeId.retroManga => l10n.themeRetroManga,
     AppThemeId.mario64 => l10n.themeMario64,
-    AppThemeId.odyssey => l10n.themeOdyssey,
-    AppThemeId.gamecube => l10n.themeGameCube,
   };
 
   Future<void> _select(
@@ -53,12 +51,11 @@ class AppearanceSelector extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ExpansionTile(
+        _AppearanceGroup(
           key: const PageStorageKey('bundled-theme-selector'),
-          title: Text(l10n.settingsInterfaceTheme, style: retro.heading(size: 14)),
-          subtitle: Text(_name(l10n, settings.themeId), style: retro.body(size: 12)),
-          leading: Icon(Icons.palette_outlined, color: retro.accentText),
-          childrenPadding: const EdgeInsets.all(12),
+          title: l10n.settingsInterfaceTheme,
+          subtitle: _name(l10n, settings.themeId),
+          icon: Icons.palette_outlined,
           children: [
             Text(l10n.settingsInterfaceThemeDesc, style: retro.body(size: 12)),
             const SizedBox(height: 12),
@@ -100,58 +97,81 @@ class AppearanceSelector extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: retro.surface,
-            borderRadius: retro.radius,
-            border: Border.all(color: retro.border, width: retro.borderWidth(2.5)),
-            boxShadow: retro.hardShadow(dx: 3, dy: 3),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.settingsThemeMode, style: retro.heading(size: 13)),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final (mode, label, icon) in modes)
-                    ChoiceChip(
-                      key: ValueKey('theme-mode-${mode.name}'),
-                      avatar: Icon(icon, size: 18),
-                      label: Text(label),
-                      selected: settings.mode == mode,
-                      onSelected: settings.isSaving
-                          ? null
-                          : (_) async {
-                              await _select(context, ref, mode: mode);
-                            },
-                      selectedColor: retro.accent,
-                      labelStyle: retro.body(
-                        size: 12,
-                        color: settings.mode == mode ? retro.inkOnAccent : retro.ink,
+        _AppearanceGroup(
+          key: const PageStorageKey('theme-mode-selector'),
+          title: l10n.settingsThemeMode,
+          subtitle: modes.firstWhere((option) => option.$1 == settings.mode).$2,
+          icon: Icons.brightness_auto_outlined,
+          children: [
+            for (final (mode, label, icon) in modes)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Semantics(
+                  selected: settings.mode == mode,
+                  child: OutlinedButton(
+                    key: ValueKey('theme-mode-${mode.name}'),
+                    onPressed: settings.isSaving
+                        ? null
+                        : () async {
+                            await _select(context, ref, mode: mode);
+                          },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.all(12),
+                      side: BorderSide(
+                        color: settings.mode == mode ? retro.accent : retro.border,
+                        width: retro.borderWidth(2),
                       ),
-                      iconTheme: IconThemeData(
-                        color: settings.mode == mode ? retro.inkOnAccent : retro.ink,
-                      ),
-                      checkmarkColor: retro.inkOnAccent,
-                      shape: RoundedRectangleBorder(borderRadius: retro.radius),
                     ),
-                ],
-              ),
-              if (settings.isSaving) ...[
-                const SizedBox(height: 12),
-                LinearProgressIndicator(
-                  semanticsLabel: l10n.themeSaving,
-                  color: retro.accent,
+                    child: Row(
+                      children: [
+                        Icon(icon, color: retro.accentText),
+                        const SizedBox(width: 12),
+                        Expanded(child: Text(label, style: retro.heading(size: 14))),
+                        if (settings.mode == mode)
+                          Icon(Icons.check_circle, color: retro.accentText),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            ],
-          ),
+              ),
+          ],
         ),
+        if (settings.isSaving) ...[
+          const SizedBox(height: 12),
+          LinearProgressIndicator(
+            semanticsLabel: l10n.themeSaving,
+            color: retro.accent,
+          ),
+        ],
       ],
+    );
+  }
+}
+
+/// Both controls share their header, spacing and expansion behavior.
+class _AppearanceGroup extends StatelessWidget {
+  const _AppearanceGroup({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.children,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    return ExpansionTile(
+      title: Text(title, style: retro.heading(size: 14)),
+      subtitle: Text(subtitle, style: retro.body(size: 12)),
+      leading: Icon(icon, color: retro.accentText),
+      childrenPadding: const EdgeInsets.all(12),
+      children: children,
     );
   }
 }

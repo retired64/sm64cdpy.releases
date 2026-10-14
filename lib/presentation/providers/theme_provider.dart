@@ -54,7 +54,17 @@ class AppearanceNotifier extends Notifier<AppearanceSettings> {
     final previous = state;
     final nextId = themeId ?? previous.themeId;
     final nextMode = mode ?? previous.mode;
-    if (nextId == previous.themeId && nextMode == previous.mode) return true;
+    final storedMode = switch (nextMode) {
+      ThemeMode.light => 'light',
+      ThemeMode.dark => 'dark',
+      ThemeMode.system => 'system',
+    };
+    if (nextId == previous.themeId &&
+        nextMode == previous.mode &&
+        _readSetting(_themeIdKey) == nextId.storageKey &&
+        _readSetting(_themeModeKey) == storedMode) {
+      return true;
+    }
     state = AppearanceSettings(
       themeId: previous.themeId,
       mode: previous.mode,
@@ -63,11 +73,7 @@ class AppearanceNotifier extends Notifier<AppearanceSettings> {
     try {
       await Hive.box<String>(AppConstants.settingsBoxKey).putAll({
         _themeIdKey: nextId.storageKey,
-        _themeModeKey: switch (nextMode) {
-          ThemeMode.light => 'light',
-          ThemeMode.dark => 'dark',
-          ThemeMode.system => 'system',
-        },
+        _themeModeKey: storedMode,
       });
       if (ref.mounted) {
         state = AppearanceSettings(themeId: nextId, mode: nextMode);

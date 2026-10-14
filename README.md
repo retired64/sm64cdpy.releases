@@ -51,7 +51,7 @@ in-game mod workflow.
 - Save favourites locally and import or export them as JSON.
 - Review installed, recently changed, externally detected, and updateable
   content in the local Library.
-- Use English, Spanish, or Brazilian Portuguese; select a bundled interface design (Retro Manga, Mario 64, Odyssey, or GameCube) independently from light, dark, or system appearance. The floating panel keeps its fixed dark design.
+- Use English, Spanish, or Brazilian Portuguese; select a bundled interface design (Retro Manga or Mario 64) independently from light, dark, or system appearance. The floating panel keeps its fixed dark design.
 - Refresh bundled catalogues from their remote JSON sources.
 - Select persistent destination folders with Android's system folder picker.
 - Resolve download links, including GitHub Release assets.

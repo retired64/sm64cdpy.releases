@@ -49,7 +49,7 @@ void main() {
   test('labels preserve authored case outside the manga design', () {
     expect(const RetroTheme(false).displayLabel('New release'), 'NEW RELEASE');
     final rounded = RetroTheme(false,
-        design: AppThemeCatalog.resolve(AppThemeId.odyssey));
+        design: AppThemeCatalog.resolve(AppThemeId.mario64));
     expect(rounded.displayLabel('New release'), 'New release');
     expect(rounded.systemUiStyle.systemNavigationBarColor, rounded.background);
   });
@@ -66,7 +66,7 @@ void main() {
   test('extension interpolation supports overrides and preserves endpoints', () {
     final a = RetroTheme.overlay();
     final b = RetroTheme(false,
-        design: AppThemeCatalog.resolve(AppThemeId.gamecube));
+        design: AppThemeCatalog.resolve(AppThemeId.mario64));
     expect(a.lerp(b, 0), same(a));
     expect(a.lerp(b, 1), same(b));
     expect(a.lerp(b, 0.5).background, Color.lerp(a.background, b.background, 0.5));
@@ -110,7 +110,7 @@ void main() {
     }
 
     await expectManga();
-    for (final id in [AppThemeId.mario64, AppThemeId.odyssey, AppThemeId.gamecube]) {
+    for (final id in [AppThemeId.mario64]) {
       await render(id);
       // Restrict finders to our components: MaterialApp may also paint its
       // own surfaces, which are not manga decorations.

@@ -118,7 +118,7 @@ GoRouter define un `ShellRoute` para las pantallas principales y una ruta de det
 ## Temas incluidos — rama custom-themes
 
 Implementado el 2026-10-13; pendiente de Actions y matriz física. Ajustes separa
-el diseño incluido (Retro Manga, Mario 64, Odyssey o GameCube) del modo
+el diseño incluido (Retro Manga o Mario 64) del modo
 claro/oscuro/sistema. `AppearanceNotifier` es el único escritor de `theme_id` y
 `theme_mode` en Hive y publica una selección confirmada solo tras guardar.
 

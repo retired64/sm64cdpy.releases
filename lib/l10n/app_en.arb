@@ -1134,7 +1134,7 @@
   "@settingsAutoInstallOff": {
     "description": "Settings screen message when auto-install is off"
   },
-  "settingsThemeMode": "THEME MODE",
+  "settingsThemeMode": "Theme mode",
   "@settingsThemeMode": {
     "description": "Settings screen section header for theme mode selection"
   },
@@ -1664,11 +1664,9 @@
   "settingsInterfaceThemeDesc": "Choose an included design. Applies to the app; the floating panel keeps its dark design.",
   "themeRetroManga": "Retro Manga",
   "themeMario64": "Mario 64",
-  "themeOdyssey": "Odyssey",
-  "themeGameCube": "GameCube",
   "themeModeLight": "Light",
   "themeModeDark": "Dark",
-  "themeModeSystem": "Follow phone",
+  "themeModeSystem": "Follow system",
   "themeSaveFailed": "Could not save the appearance. Try again.",
   "themeSaving": "Saving appearance"
 }

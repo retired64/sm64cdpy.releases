@@ -1,10 +1,10 @@
 # Temas propios incluidos: implementación y flujo de trabajo Android
 
-Actualizado: 2026-10-13. Rama local: `custom-themes`, creada desde el `main` local (`8bdc996`). Versión de la app conservada: `1.8.2+21`. Estado: código integrado, pendiente de generación, análisis, tests y APK en GitHub Actions y de prueba física. No es una función certificada ni una release publicada.
+Actualizado: 2026-10-13. Rama local: `custom-themes`, creada desde el `main` local (`8bdc996`). Versión de la app conservada: `1.8.2+21`. Estado: el usuario confirmó que la build y prueba anteriores funcionaron. La reducción a dos temas y los menús coherentes requieren una nueva ejecución de Actions y revisión física. No es una release publicada.
 
 ## 1. Qué se implementó
 
-Ajustes → Apariencia contiene un menú expandible **Tema de interfaz**. Ofrece cuatro diseños incluidos en el código: Retro Manga, Mario 64, Odyssey y GameCube. El usuario elige uno; tú mantienes sus definiciones. Un segundo control independiente permite claro, oscuro o seguir el teléfono.
+Ajustes → Apariencia contiene un menú expandible **Tema de interfaz**. Ofrece dos diseños incluidos en el código: Retro Manga y Mario 64. El usuario elige uno; tú mantienes sus definiciones. Un segundo menú expandible, con el mismo estilo, permite claro, oscuro o seguir el sistema. Cada encabezado muestra la selección actual y despliega sus opciones al pulsarlo.
 
 Son primeras interpretaciones visuales propias, creadas con colores y geometría Flutter. No incluyen imágenes, fuentes o interfaces extraídas de juegos ni pretenden reproducir exactamente sus menús. Puedes ajustar cada diseño sin rehacer los flujos del catálogo. Todas las definiciones están incluidas en el APK y no requieren red.
 
@@ -12,8 +12,6 @@ Son primeras interpretaciones visuales propias, creadas con colores y geometría
 |---|---|---|
 | `retro_manga` | `lib/core/theme/themes/retro_manga_theme.dart` | Formas rectas, sombra dura, inclinación, puntos y franjas; conserva el diseño anterior con ajustes de contraste del texto secundario y acento textual claros |
 | `mario64` | `lib/core/theme/themes/mario64_theme.dart` | Superficies azules, acento rojo/rosado según brillo, radio 12, sombra dura, sin inclinación ni decoraciones manga |
-| `odyssey` | `lib/core/theme/themes/odyssey_theme.dart` | Superficies cálidas, rojo/rosado, radio 18, bordes reducidos y sombra suave |
-| `gamecube` | `lib/core/theme/themes/gamecube_theme.dart` | Morados, radio 6, bordes reducidos, sombra suave y títulos menos pesados |
 
 El cambio no reinicia `ProviderScope`, no altera la ruta actual, no borra favoritos y no cancela descargas. La selección cambia presentación; contenido, identidad de operaciones y destino de instalación conservan su lógica existente.
 
@@ -85,6 +83,12 @@ ThemeExtension RetroTheme + ColorScheme
 3. Sin ID o con ID desconocido, selecciona Retro Manga. Un modo existente claro/oscuro se conserva; un modo inválido cae en sistema.
 4. Si la caja no está abierta, usa Retro Manga/sistema en memoria. También se protegió la lectura inicial de locale para que el mismo árbol no falle por esa caja ausente.
 5. No se borra ni recrea la caja de Ajustes. Una selección guardada posterior escribe claves válidas.
+
+Las preferencias guardadas de `odyssey` o `gamecube` se interpretan como Retro
+Manga al arrancar y conservan su `theme_mode`. No hay diseños retirados en enum,
+registro o menú. Al confirmar una selección (incluso el fallback ya visible),
+el escritor compara también las claves persistidas y sustituye el ID retirado;
+no considera ese caso un guardado innecesario.
 
 ### Selección
 
@@ -165,7 +169,7 @@ Si necesitas una propiedad nueva —por ejemplo textura de fondo o iconografía 
 
 ## 7. Localización y generación pendiente
 
-Se agregaron 11 claves en los cinco ARB: título/descripción del menú, cuatro nombres, tres modos, fallo de guardado y estado de guardado. El selector anterior tenía modos en inglés fijo; ahora son localizados.
+Se conservan 9 claves en los cinco ARB: título/descripción del menú, dos nombres, tres modos, fallo de guardado y estado de guardado. El selector anterior tenía modos en inglés fijo; ahora son localizados.
 
 En Termux no hay `flutter` ni `dart` en PATH. Los cuatro archivos `app_localizations*.dart` existentes permanecen sin editar manualmente: el checkout contiene las nuevas referencias de UI y las definiciones ARB, y **necesita ejecutar `flutter gen-l10n` antes del análisis** para generar esos getters. Ambos workflows ahora hacen esa generación explícita antes de analizar.
 
@@ -175,11 +179,11 @@ En Termux no hay `flutter` ni `dart` en PATH. Los cuatro archivos `app_localizat
 |---|---|
 | `test/core/theme/app_theme_test.dart` | Catálogo/IDs, contraste de textos y rellenos, coherencia Material/tokens, interpolación, overlay fijo y eliminación de decoración manga |
 | `test/presentation/appearance_provider_test.dart` | Preferencia legacy, persistencia entre containers, solicitudes simultáneas, error de almacenamiento y arranque sin caja |
-| `test/presentation/appearance_selector_test.dart` | Selección real desde menú, tokens y forma GameCube, cambio de brillo del sistema y ausencia de excepciones de widgets |
+| `test/presentation/appearance_selector_test.dart` | Selección real desde menú, tokens y forma Mario 64, apertura/cierre y selección del modo, cambio de brillo del sistema y ausencia de excepciones de widgets |
 
 Se prepararon para ejecutarse en GitHub Actions; no se afirma que hayan pasado en este dispositivo. Las pruebas existentes de dominio, identidad e instalación siguen incluidas en `flutter test`.
 
-Comprobaciones locales realizadas con las herramientas disponibles: `git diff --check`, carga JSON/paridad de claves de ARB, carga YAML/orden de generación en workflows, revisión de delimitadores/strings Dart y cálculo independiente de contraste de 80 parejas de texto/fondo y acento/foreground. Esas comprobaciones **no equivalen a `flutter analyze`, Dart format, Flutter tests ni un APK compilado**.
+Comprobaciones locales realizadas con las herramientas disponibles: `git diff --check`, carga JSON/paridad de claves de ARB, carga YAML/orden de generación en workflows, revisión de delimitadores/strings Dart y cálculo independiente de contraste de 40 parejas de texto/fondo y acento/foreground. Esas comprobaciones **no equivalen a `flutter analyze`, Dart format, Flutter tests ni un APK compilado**.
 
 ### Matriz física pendiente
 
@@ -217,8 +221,9 @@ El workflow de publicación también genera localizaciones y formatea antes de a
 
 ## 10. Registro de cambios de desarrollo de esta rama
 
-- Menú de diseños propios incluidos y modo de brillo independiente.
-- Contrato visual, catálogo y cuatro definiciones.
+- Menú de diseños propios incluidos y menú de modo de brillo independiente; ambos usan el mismo componente expandible y opciones verticales.
+- Retirados Odyssey y GameCube por decisión del usuario; fallback y confirmación de preferencias antiguas cubiertos por pruebas.
+- Contrato visual, catálogo y dos definiciones.
 - Persistencia confirmada, protección contra solicitudes simultáneas y fallback.
 - Integración transversal de formas, contraste y decoración; brillo efectivo en barras.
 - Conservación explícita del overlay fijo desde la misma clase compartida.
@@ -260,9 +265,7 @@ La tabla siguiente deja explícito qué participa y qué queda ajeno al tema. Re
 | `lib/core/theme/app_theme_catalog.dart` | Nuevo: contrato/registro/definición incluida |
 | `lib/core/theme/app_theme_design.dart` | Nuevo: contrato/registro/definición incluida |
 | `lib/core/theme/retro_theme.dart` | Adaptado: extensión/fachada y componentes comunes |
-| `lib/core/theme/themes/gamecube_theme.dart` | Nuevo: contrato/registro/definición incluida |
 | `lib/core/theme/themes/mario64_theme.dart` | Nuevo: contrato/registro/definición incluida |
-| `lib/core/theme/themes/odyssey_theme.dart` | Nuevo: contrato/registro/definición incluida |
 | `lib/core/theme/themes/retro_manga_theme.dart` | Nuevo: contrato/registro/definición incluida |
 | `lib/core/utils/extensions.dart` | Revisado; constantes/utilidades ajenas al contrato visual |
 | `lib/data/datasource/dynos_datasource.dart` | Inventariado y revisado para dependencias visuales; capa de datos/dominio sin tema |
@@ -341,7 +344,7 @@ La tabla siguiente deja explícito qué participa y qué queda ajeno al tema. Re
 | `lib/services/update_service.dart` | Revisado en la frontera de presentación; sin cambios en operaciones/plataforma/OTA |
 | `lib/widgets/update_dialog.dart` | Adaptado: consumidor visual; formas/contraste/decoración según su función |
 
-Total: 86 archivos Dart en `lib/` enumerados. Esta es una auditoría temática, no una certificación exhaustiva de cada método de descarga/SAF.
+Total: 84 archivos Dart en `lib/` enumerados. Esta es una auditoría temática, no una certificación exhaustiva de cada método de descarga/SAF.
 
 ## 13. Referencias técnicas
 

@@ -293,7 +293,7 @@
   "settingsAutoInstall": "Auto-instalar después de descargar",
   "settingsAutoInstallOn": "Las descargas se instalarán automáticamente en la carpeta del juego configurada",
   "settingsAutoInstallOff": "Se te preguntará después de cada descarga",
-  "settingsThemeMode": "MODO TEMA",
+  "settingsThemeMode": "Modo de tema",
   "settingsDatabaseUpdated": "Base de datos actualizada · {count} mods{date}",
   "settingsUnknownError": "Error desconocido",
   "settingsReloadDatabase": "Recargar base de datos",
@@ -463,11 +463,9 @@
   "settingsInterfaceThemeDesc": "Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.",
   "themeRetroManga": "Retro Manga",
   "themeMario64": "Mario 64",
-  "themeOdyssey": "Odyssey",
-  "themeGameCube": "GameCube",
   "themeModeLight": "Claro",
   "themeModeDark": "Oscuro",
-  "themeModeSystem": "Seguir el teléfono",
+  "themeModeSystem": "Seguir el sistema",
   "themeSaveFailed": "No se pudo guardar la apariencia. Inténtalo de nuevo.",
   "themeSaving": "Guardando apariencia"
 }

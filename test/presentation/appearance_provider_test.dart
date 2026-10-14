@@ -33,13 +33,25 @@ void main() {
     expect(container.read(themeDesignProvider).id, AppThemeId.retroManga);
   });
 
+  for (final removed in ['odyssey', 'gamecube']) {
+    test('removed $removed falls back and can persist the default selection', () async {
+      final box = Hive.box<String>(AppConstants.settingsBoxKey);
+      await box.putAll({'theme_id': removed, 'theme_mode': 'dark'});
+      expect(container.read(themeDesignProvider).id, AppThemeId.retroManga);
+      expect(container.read(themeModeProvider), ThemeMode.dark);
+      expect(await container.read(appearanceProvider.notifier).setTheme(AppThemeId.retroManga), isTrue);
+      expect(box.get('theme_id'), 'retro_manga');
+      expect(box.get('theme_mode'), 'dark');
+    });
+  }
+
   test('theme and brightness persist independently across containers', () async {
     final writer = container.read(appearanceProvider.notifier);
-    expect(await writer.setTheme(AppThemeId.gamecube), isTrue);
+    expect(await writer.setTheme(AppThemeId.mario64), isTrue);
     expect(await writer.setThemeMode(ThemeMode.light), isTrue);
     final restored = ProviderContainer();
     try {
-      expect(restored.read(themeDesignProvider).id, AppThemeId.gamecube);
+      expect(restored.read(themeDesignProvider).id, AppThemeId.mario64);
       expect(restored.read(themeModeProvider), ThemeMode.light);
     } finally {
       restored.dispose();
@@ -48,20 +60,20 @@ void main() {
 
   test('rapid selections cannot produce out-of-order confirmed state', () async {
     final writer = container.read(appearanceProvider.notifier);
-    final saving = writer.setTheme(AppThemeId.odyssey);
+    final saving = writer.setTheme(AppThemeId.mario64);
     expect(container.read(appearanceProvider).isSaving, isTrue);
-    expect(await writer.setTheme(AppThemeId.mario64), isFalse);
+    expect(await writer.setTheme(AppThemeId.retroManga), isFalse);
     expect(await saving, isTrue);
-    expect(container.read(themeDesignProvider).id, AppThemeId.odyssey);
+    expect(container.read(themeDesignProvider).id, AppThemeId.mario64);
     expect(container.read(appearanceProvider).isSaving, isFalse);
-    expect(Hive.box<String>(AppConstants.settingsBoxKey).get('theme_id'), 'odyssey');
+    expect(Hive.box<String>(AppConstants.settingsBoxKey).get('theme_id'), 'mario64');
   });
 
   test('unavailable persistence preserves selection and releases saving state', () async {
     final writer = container.read(appearanceProvider.notifier);
     final previous = container.read(appearanceProvider);
     await Hive.close();
-    expect(await writer.setTheme(AppThemeId.mario64), isFalse);
+    expect(await writer.setTheme(AppThemeId.retroManga), isFalse);
     expect(container.read(appearanceProvider), same(previous));
     expect(container.read(appearanceProvider).isSaving, isFalse);
   });
