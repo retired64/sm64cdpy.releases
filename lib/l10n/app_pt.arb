@@ -376,7 +376,7 @@
   "ommSectionHeader": "MODS OMM REBIRTH",
   "sharedModCount": "{count, plural, =1{{count} MOD} other{{count} MODS}}",
 
-  "settingsLanguageMode": "IDIOMA",
+  "settingsLanguageMode": "Idioma",
   "languageFollowSystem": "Seguir sistema",
   "languageEnglish": "English",
   "languageSpanish": "Español",

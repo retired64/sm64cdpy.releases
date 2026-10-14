@@ -7,6 +7,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/theme_provider.dart';
 import 'app_snackbar.dart';
+import 'settings_expansion_group.dart';
 
 /// Bundled designs and brightness are independent choices. Saving is owned by
 /// the provider, so rebuilding/navigating never creates a second writer.
@@ -51,7 +52,7 @@ class AppearanceSelector extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _AppearanceGroup(
+        SettingsExpansionGroup(
           key: const PageStorageKey('bundled-theme-selector'),
           title: l10n.settingsInterfaceTheme,
           subtitle: _name(l10n, settings.themeId),
@@ -60,79 +61,33 @@ class AppearanceSelector extends ConsumerWidget {
             Text(l10n.settingsInterfaceThemeDesc, style: retro.body(size: 12)),
             const SizedBox(height: 12),
             for (final design in AppThemeCatalog.designs)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Semantics(
-                  selected: design.id == settings.themeId,
-                  child: OutlinedButton(
-                    key: ValueKey('theme-${design.id.storageKey}'),
-                    onPressed: settings.isSaving
-                        ? null
-                        : () async {
-                            await _select(context, ref, id: design.id);
-                          },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.all(12),
-                      side: BorderSide(
-                        color: design.id == settings.themeId
-                            ? retro.accent
-                            : retro.border,
-                        width: retro.borderWidth(2),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        _ThemePreview(design: design, isDark: retro.isDark),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(_name(l10n, design.id), style: retro.heading(size: 14)),
-                        ),
-                        if (design.id == settings.themeId)
-                          Icon(Icons.check_circle, color: retro.accentText),
-                      ],
-                    ),
-                  ),
-                ),
+              SettingsSelectionOption(
+                key: ValueKey('theme-${design.id.storageKey}'),
+                label: _name(l10n, design.id),
+                leading: _ThemePreview(design: design, isDark: retro.isDark),
+                selected: design.id == settings.themeId,
+                onPressed: settings.isSaving ? null : () async {
+                  await _select(context, ref, id: design.id);
+                },
               ),
           ],
         ),
         const SizedBox(height: 12),
-        _AppearanceGroup(
+        SettingsExpansionGroup(
           key: const PageStorageKey('theme-mode-selector'),
           title: l10n.settingsThemeMode,
           subtitle: modes.firstWhere((option) => option.$1 == settings.mode).$2,
           icon: Icons.brightness_auto_outlined,
           children: [
             for (final (mode, label, icon) in modes)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Semantics(
-                  selected: settings.mode == mode,
-                  child: OutlinedButton(
-                    key: ValueKey('theme-mode-${mode.name}'),
-                    onPressed: settings.isSaving
-                        ? null
-                        : () async {
-                            await _select(context, ref, mode: mode);
-                          },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.all(12),
-                      side: BorderSide(
-                        color: settings.mode == mode ? retro.accent : retro.border,
-                        width: retro.borderWidth(2),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(icon, color: retro.accentText),
-                        const SizedBox(width: 12),
-                        Expanded(child: Text(label, style: retro.heading(size: 14))),
-                        if (settings.mode == mode)
-                          Icon(Icons.check_circle, color: retro.accentText),
-                      ],
-                    ),
-                  ),
-                ),
+              SettingsSelectionOption(
+                key: ValueKey('theme-mode-${mode.name}'),
+                label: label,
+                leading: Icon(icon, color: retro.accentText),
+                selected: settings.mode == mode,
+                onPressed: settings.isSaving ? null : () async {
+                  await _select(context, ref, mode: mode);
+                },
               ),
           ],
         ),
@@ -144,34 +99,6 @@ class AppearanceSelector extends ConsumerWidget {
           ),
         ],
       ],
-    );
-  }
-}
-
-/// Both controls share their header, spacing and expansion behavior.
-class _AppearanceGroup extends StatelessWidget {
-  const _AppearanceGroup({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.children,
-  });
-
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    return ExpansionTile(
-      title: Text(title, style: retro.heading(size: 14)),
-      subtitle: Text(subtitle, style: retro.body(size: 12)),
-      leading: Icon(icon, color: retro.accentText),
-      childrenPadding: const EdgeInsets.all(12),
-      children: children,
     );
   }
 }

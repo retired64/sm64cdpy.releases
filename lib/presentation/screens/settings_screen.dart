@@ -19,6 +19,8 @@ import '../providers/theme_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/appearance_selector.dart';
+import '../widgets/locale_selector.dart';
+import '../widgets/settings_expansion_group.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -95,7 +97,7 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(height: 10),
               const AppearanceSelector(),
               const SizedBox(height: 12),
-              _LocaleSelector(),
+              const LocaleSelector(),
 
               const SizedBox(height: 20),
               _RetroSectionKicker(
@@ -254,15 +256,7 @@ class _RetroDialog extends StatelessWidget {
       elevation: 0,
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          borderRadius: retro.radius,
-          color: retro.surface,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(3),
-          ),
-          boxShadow: retro.hardShadow(dx: 5, dy: 5),
-        ),
+        decoration: retro.settingsPanel(width: 3, dx: 5, dy: 5),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,6 +339,24 @@ class _RetroSectionKicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    if (retro.design.softSettingsPanels) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
+        child: Row(
+          children: [
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(color: retro.accentText, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 10),
+            Expanded(child: Text(label, style: retro.heading(
+              size: 13, weight: FontWeight.w800, color: retro.inkDim, letterSpacing: 0.3,
+            ))),
+          ],
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Column(
@@ -390,14 +402,19 @@ class _RetroSwitch extends StatelessWidget {
           color: value ? retro.accent : retro.surfaceAlt,
           border: Border.all(
             color: retro.border,
-            width: retro.borderWidth(2),
+            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
           ),
         ),
         alignment: value ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           width: 16,
           height: 16,
-          color: value ? retro.inkOnAccent : retro.inkDim,
+          decoration: BoxDecoration(
+            color: value ? retro.inkOnAccent : retro.inkDim,
+            borderRadius: retro.design.softSettingsPanels
+                ? BorderRadius.circular(8)
+                : BorderRadius.zero,
+          ),
         ),
       ),
     );
@@ -756,15 +773,10 @@ class _RetroTileShell extends StatelessWidget {
         onTap: onTap,
         onLongPress: onLongPress,
         child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: retro.radius,
-            color: retro.surface,
-            border: Border.all(
-              color: accentColor ?? retro.border,
-              width: retro.borderWidth(accentColor != null ? 2.5 : 2),
-            ),
-            boxShadow: retro.hardShadow(dx: 2, dy: 2),
+          padding: EdgeInsets.all(retro.design.softSettingsPanels ? 14 : 12),
+          decoration: retro.settingsPanel(
+            borderColor: accentColor,
+            width: accentColor != null ? 2.5 : 2,
           ),
           child: Row(
             children: [
@@ -835,10 +847,12 @@ class _RetroIconBox extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: retro.radius,
-        color: retro.surfaceAlt,
+        color: retro.design.softSettingsPanels
+            ? retro.accent.withValues(alpha: 0.08)
+            : retro.surfaceAlt,
         border: Border.all(
           color: c,
-          width: retro.borderWidth(2),
+          width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
         ),
       ),
       child: Icon(icon, color: c, size: 18),
@@ -860,10 +874,12 @@ class _RetroSpinner extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: retro.radius,
-        color: retro.surfaceAlt,
+        color: retro.design.softSettingsPanels
+            ? retro.accent.withValues(alpha: 0.08)
+            : retro.surfaceAlt,
         border: Border.all(
           color: retro.accent,
-          width: retro.borderWidth(2),
+          width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
         ),
       ),
       child: SizedBox(
@@ -908,185 +924,6 @@ class _SettingsTile extends StatelessWidget {
         size: 20,
       ),
     );
-  }
-}
-
-// ── Language selector ─────────────────────────────────────────────────────────
-
-class _LocaleSelector extends ConsumerStatefulWidget {
-  const _LocaleSelector();
-
-  @override
-  ConsumerState<_LocaleSelector> createState() => _LocaleSelectorState();
-}
-
-class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
-  bool _expanded = false;
-
-  String _flag(String? tag) => switch (tag) {
-    null => '🌐',
-    'en_US' => '🇺🇸',
-    'es_419' => '🇲🇽',
-    'pt_BR' => '🇧🇷',
-    _ => '🌐',
-  };
-
-  String _currentLabel(AppLocalizations l10n, String? tag) => switch (tag) {
-    null => l10n.languageFollowSystem,
-    'en_US' => l10n.languageEnglish,
-    'es_419' => l10n.languageSpanish,
-    'pt_BR' => l10n.languagePortuguese,
-    _ => l10n.languageFollowSystem,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final localeTag = ref.watch(localeNotifierProvider);
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        borderRadius: retro.radius,
-        color: retro.surface,
-        border: Border.all(
-          color: retro.border,
-          width: retro.borderWidth(2.5),
-        ),
-        boxShadow: retro.hardShadow(dx: 3, dy: 3),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () => setState(() => _expanded = !_expanded),
-            behavior: HitTestBehavior.opaque,
-            child: Row(
-              children: [
-                Icon(Icons.translate_rounded, size: 14, color: retro.accentText),
-                const SizedBox(width: 6),
-                Text(
-                  l10n.settingsLanguageMode,
-                  style: TextStyle(
-                    color: retro.inkDim,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-                const Spacer(),
-                Text(_flag(localeTag), style: const TextStyle(fontSize: 15)),
-                const SizedBox(width: 6),
-                Text(
-                  _currentLabel(l10n, localeTag),
-                  style: TextStyle(
-                    color: retro.ink,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                AnimatedRotation(
-                  turns: _expanded ? 0.5 : 0.0,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOutCubic,
-                  child: Icon(
-                    Icons.expand_more,
-                    size: 20,
-                    color: _expanded ? retro.accentText : retro.inkDim,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 220),
-            curve: Curves.easeOutCubic,
-            alignment: Alignment.topCenter,
-            clipBehavior: Clip.hardEdge,
-            child: _expanded
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: _options(l10n).map((opt) {
-                        final isSelected = localeTag == opt.tag;
-                        return GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(localeNotifierProvider.notifier)
-                                .setLocale(opt.tag);
-                            setState(() => _expanded = false);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 4),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: retro.radius,
-                              color: isSelected
-                                  ? retro.accent
-                                  : retro.surfaceAlt,
-                              border: Border.all(
-                                color: isSelected
-                                    ? retro.border
-                                    : retro.border.withValues(alpha: 0.4),
-                                width: retro.borderWidth(isSelected ? 2 : 1.5),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  opt.flag,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    opt.label,
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? retro.inkOnAccent
-                                          : retro.ink,
-                                      fontSize: 13,
-                                      fontWeight: isSelected
-                                          ? FontWeight.w800
-                                          : FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                if (isSelected)
-                                  Icon(
-                                    Icons.check,
-                                    size: 16,
-                                    color: retro.inkOnAccent,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<({String? tag, String label, String flag})> _options(
-    AppLocalizations l10n,
-  ) {
-    return [
-      (tag: null, label: l10n.languageFollowSystem, flag: '🌐'),
-      (tag: 'en_US', label: l10n.languageEnglish, flag: '🇺🇸'),
-      (tag: 'es_419', label: l10n.languageSpanish, flag: '🇲🇽'),
-      (tag: 'pt_BR', label: l10n.languagePortuguese, flag: '🇧🇷'),
-    ];
   }
 }
 

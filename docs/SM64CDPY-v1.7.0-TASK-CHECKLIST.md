@@ -379,3 +379,13 @@ Tema de interfaz y modo usan el mismo componente expandible y opciones con
 marca de selección. Se adaptaron pruebas de persistencia, decoración y UI para
 los dos diseños y abrir/cerrar/cambiar modo. Pendiente nueva ejecución de Actions
 y revisión física de este ajuste; no se modificó overlay ni Android nativo.
+
+### Idioma y superficies de Ajustes Mario 64
+
+- [x] Reutilizar encabezado y opciones en tema, modo e idioma.
+- [x] Conservar giro 200 ms y expansión 220 ms del selector de idioma.
+- [x] Esperar setter existente y bloquear doble toque hasta finalizar.
+- [x] Aplicar suavizado local de tarjetas, diálogos, iconos y switches Mario.
+- [x] Mantener Retro y los flujos de SAF/WorkManager/overlay.
+- [x] Preparar prueba de UI de idioma y réplica de preferencias.
+- [ ] Ejecutar nueva Actions y verificar idioma/texto grande en dispositivo.

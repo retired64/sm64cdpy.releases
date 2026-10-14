@@ -11,6 +11,7 @@ const mario64Theme = AppThemeDesign(
   halftone: false,
   stripes: false,
   uppercaseLabels: false,
+  softSettingsPanels: true,
   light: AppThemePalette(
     background: Color(0xFFEAF5FF),
     surface: Color(0xFFFFFFFF),

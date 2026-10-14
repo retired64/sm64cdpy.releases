@@ -108,3 +108,10 @@ para borrar archivos.
 ## Fuera del estado vigente
 
 `floating-check-list.md`, `revision-app.md` y `.opencode/plans/` son fotografías de análisis anteriores a/durante 1.7.0. Contienen puntos ya resueltos y otros no revalidados; no deben usarse como backlog sin contrastarlos con el código. El inventario completo está en [archive/README.md](archive/README.md).
+
+### Ajustes visuales posteriores a la prueba aprobada
+
+Selector de idioma alineado con los dos selectores de apariencia, manteniendo
+animaciones. Mario 64 usa paneles discretos, iconos/toggles redondeados y
+cabeceras limpias en Ajustes. Código y pruebas añadidos; nueva Actions y matriz
+física de idioma/tamaño de texto pendientes.

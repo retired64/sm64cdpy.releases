@@ -37,7 +37,7 @@ Contiene `AppThemeId`, `AppThemePalette` y `AppThemeDesign`.
 - `fromStorage()` devuelve Retro Manga ante ausencia o ID desconocido. Así una instalación anterior conserva su modo y tiene un diseño válido.
 - Cada diseño contiene una paleta clara y otra oscura.
 - Cada paleta define fondo, superficie, superficie alternativa, borde, sombra, tinta principal/secundaria, acento, texto sobre acento y acento legible para texto sobre superficies.
-- El diseño define radio, escala de borde, blur y escala de desplazamiento de sombra, inclinación de chip, peso/tracking de títulos, familias tipográficas, tratamiento de mayúsculas y activación de puntos/franjas.
+- El diseño define radio, escala de borde, blur y escala de desplazamiento de sombra, inclinación de chip, peso/tracking de títulos, familias tipográficas, tratamiento de mayúsculas, activación de puntos/franjas y suavizado específico de paneles de Ajustes (`softSettingsPanels`).
 
 Los diseños actuales no agregan fuentes. Las familias son opcionales; si más adelante las usas, incluye sus archivos en assets y decláralos en `pubspec.yaml`.
 
@@ -133,6 +133,35 @@ Se revisaron las 14 pantallas de la app y sus componentes compartidos, incluidos
 
 Bordes parciales usados como líneas o barras laterales conservan su geometría. No se les aplican radios incompatibles con el pintado de bordes no uniformes de Flutter. Las formas de tarjetas que contienen esas líneas sí pueden responder al tema.
 
+### Selectores y superficies de Ajustes
+
+Tema de interfaz, modo e idioma usan `SettingsExpansionGroup` y
+`SettingsSelectionOption`. Los encabezados contienen título, selección actual,
+ícono y flecha; sus opciones comparten bordes y marca de selección. Se conserva
+el giro de 200 ms y expansión de 220 ms, con curva easeOutCubic. El componente
+controla apertura local o recibe un valor controlado; el estado de apertura
+sin controlador se guarda en PageStorage de la ruta. No es cache de preferencias.
+
+`LocaleSelector` mantiene sus cuatro opciones y flags. Espera el setter existente
+de `LocaleNotifier`, bloquea doble toque mientras espera, comprueba mounted y
+cierra mediante la misma animación. No cambió el contrato de persistencia de
+locale: Hive y la réplica SharedPreferences continúan en el setter original,
+incluido su manejo de errores mediante logging. No se añadieron mensajes de
+locale hacia la burbuja ni lectores en el segundo engine.
+
+Mario 64 habilita `softSettingsPanels`: fondos existentes con bordes finos,
+sombra suave tenue, iconos y thumb del toggle redondeados, y cabeceras limpias
+sin los kickers japoneses del estilo manga. Las tarjetas, toggles y diálogos de
+Ajustes comparten el helper `settingsPanel`; estados semánticos mantienen sus
+colores. Retro conserva sus bordes y sombras originales. La política queda
+limitada a Ajustes y no cambia las tarjetas de catálogo ni el overlay.
+
+Prueba añadida: `test/presentation/locale_selector_test.dart`, que revisa los
+tres grupos, duración de animaciones, selección de español, persistencia Hive y
+réplica SharedPreferences, cierre y retorno a idioma del sistema. Ejecución
+pendiente de la nueva Actions; las pruebas anteriores fueron confirmadas por el
+usuario, no validan automáticamente este ajuste.
+
 ## 6. Añadir tu siguiente tema, sin copiar pantallas
 
 1. Añadir un miembro a `AppThemeId`, con `storageKey` estable.
@@ -222,6 +251,7 @@ El workflow de publicación también genera localizaciones y formatea antes de a
 ## 10. Registro de cambios de desarrollo de esta rama
 
 - Menú de diseños propios incluidos y menú de modo de brillo independiente; ambos usan el mismo componente expandible y opciones verticales.
+- Selector de idioma alineado con tema/modo, conservando animaciones; superficies suaves de Ajustes solo para Mario 64.
 - Retirados Odyssey y GameCube por decisión del usuario; fallback y confirmación de preferencias antiguas cubiertos por pruebas.
 - Contrato visual, catálogo y dos definiciones.
 - Persistencia confirmada, protección contra solicitudes simultáneas y fallback.
@@ -248,7 +278,7 @@ Este registro es el changelog de desarrollo. No crea un manifiesto de lanzamient
 - **Lectores:** providers derivados, `SM64CoopDXApp`, la extensión contextual y todas las superficies de presentación. Locale conserva su contrato separado.
 - **Fuente de verdad:** Hive para recuperación; Riverpod proyecta la selección confirmada. En modo sistema, MaterialApp resuelve brillo del teléfono.
 - **Sincronización:** código conectado de extremo a extremo en el engine principal; ejecución y comportamiento físico pendientes. Overlay tiene una política fija independiente y no replica estas preferencias.
-- **Caches:** no se añadió un cache mutable de paleta, timer ni lector nativo. Providers derivados observan valores y ThemeData reemplaza sus tokens al cambiar ID/modo.
+- **Caches:** no se añadió cache mutable de paleta, timer ni lector nativo. La apertura de grupos sin controlador vive en PageStorage de la ruta y se descarta con su bucket; idioma controla apertura/loading en su State. Providers derivados observan valores y ThemeData reemplaza sus tokens al cambiar ID/modo.
 - **Futures:** selección y persistencia se esperan; callbacks async esperan sus operaciones y comprueban mounted. No se introdujeron `unawaited` ni `.then` para guardar apariencia. El diálogo posterior a instalación ahora espera su cierre desde el helper.
 - **Limpieza/ciclo de vida:** no se crean subscriptions/observers nuevos. Ref desmontado no recibe estado tras guardar. Providers de operaciones y router no se recrean por cambiar tema.
 - **Hermanos:** General, VIP, DynOS, Touch Controls, OMM, Render96, detalle, Biblioteca, Home, Popular, Favoritos, Ajustes, Links, Disclaimer, tarjetas, snackbars, diálogos y OTA. Se revisó la dependencia compartida del overlay y se preservó su aislamiento.
@@ -332,6 +362,8 @@ La tabla siguiente deja explícito qué participa y qué queda ajeno al tema. Re
 | `lib/presentation/widgets/dynos_install_flow.dart` | Adaptado: consumidor visual; formas/contraste/decoración según su función |
 | `lib/presentation/widgets/installation_action_presentation.dart` | Revisado; labels/iconos/acciones de instalación, no almacena estilos de tema |
 | `lib/presentation/widgets/installation_library_card.dart` | Adaptado: consumidor visual; formas/contraste/decoración según su función |
+| `lib/presentation/widgets/locale_selector.dart` | Selector de idioma extraído, opciones compartidas y cierre animado tras esperar el setter existente |
+| `lib/presentation/widgets/settings_expansion_group.dart` | Encabezado/opciones compartidos, animación 200/220 ms y superficies de Ajustes según diseño |
 | `lib/presentation/widgets/mod_card.dart` | Adaptado: consumidor visual; formas/contraste/decoración según su función |
 | `lib/presentation/widgets/post_install_dialog.dart` | Adaptado: consumidor visual; formas/contraste/decoración según su función |
 | `lib/services/background_install_service.dart` | Revisado en la frontera de presentación; sin cambios en operaciones/plataforma/OTA |
@@ -344,7 +376,7 @@ La tabla siguiente deja explícito qué participa y qué queda ajeno al tema. Re
 | `lib/services/update_service.dart` | Revisado en la frontera de presentación; sin cambios en operaciones/plataforma/OTA |
 | `lib/widgets/update_dialog.dart` | Adaptado: consumidor visual; formas/contraste/decoración según su función |
 
-Total: 84 archivos Dart en `lib/` enumerados. Esta es una auditoría temática, no una certificación exhaustiva de cada método de descarga/SAF.
+Total: 86 archivos Dart en `lib/` enumerados. Esta es una auditoría temática, no una certificación exhaustiva de cada método de descarga/SAF.
 
 ## 13. Referencias técnicas
 

@@ -1492,7 +1492,7 @@
   "@settingsDynosFolderCleared": {
     "description": "Snackbar message shown after the DynOS folder selection is cleared"
   },
-  "settingsLanguageMode": "LANGUAGE",
+  "settingsLanguageMode": "Language",
   "@settingsLanguageMode": {
     "description": "Settings tile label for the language selector"
   },

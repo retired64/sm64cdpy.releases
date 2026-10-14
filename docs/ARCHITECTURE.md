@@ -142,3 +142,11 @@ cada Dart, el flujo y el procedimiento para añadir diseños están en
 5. Los eventos en memoria no sustituyen el estado persistido de WorkManager.
 
 El checklist obligatorio para cambios de estado compartido está en [`../AGENTS.md`](../AGENTS.md).
+
+### Presentación compartida de Ajustes
+
+Los selectores de tema, modo e idioma reutilizan `SettingsExpansionGroup` y
+`SettingsSelectionOption`, con animaciones de giro/expansión 200/220 ms. Mario 64
+habilita superficies suaves únicamente en Ajustes mediante `softSettingsPanels`;
+Retro mantiene su estilo. `LocaleSelector` espera el setter de idioma existente
+antes de cerrar y controla loading local sin crear otra fuente persistente.

@@ -237,6 +237,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         halftone: selected.showHalftone,
         stripes: selected.showStripes,
         uppercaseLabels: selected.design.uppercaseLabels,
+        softSettingsPanels: selected.design.softSettingsPanels,
       ),
       backgroundOverride: Color.lerp(background, other.background, t),
       surfaceOverride: Color.lerp(surface, other.surface, t),

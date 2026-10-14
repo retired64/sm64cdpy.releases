@@ -54,6 +54,15 @@ void main() {
     expect(rounded.systemUiStyle.systemNavigationBarColor, rounded.background);
   });
 
+  test('settings softness is confined to the selected design', () {
+    expect(const RetroTheme(false).design.softSettingsPanels, isFalse);
+    final mario = RetroTheme(false,
+        design: AppThemeCatalog.resolve(AppThemeId.mario64));
+    expect(mario.design.softSettingsPanels, isTrue);
+    expect(mario.design.shadowBlur, 0); // Catalogue cards keep their own style.
+    expect(mario.copyWith().design.softSettingsPanels, isTrue);
+  });
+
   test('overlay keeps its fixed palette regardless of catalogue selection', () {
     final overlay = RetroTheme.overlay();
     expect(overlay.design.id, AppThemeId.retroManga);

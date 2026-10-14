@@ -81,6 +81,7 @@ class AppThemeDesign {
     this.halftone = true,
     this.stripes = true,
     this.uppercaseLabels = true,
+    this.softSettingsPanels = false,
   });
 
   final AppThemeId id;
@@ -98,6 +99,7 @@ class AppThemeDesign {
   final bool halftone;
   final bool stripes;
   final bool uppercaseLabels;
+  final bool softSettingsPanels;
 
   AppThemePalette palette(bool isDark) => isDark ? dark : light;
 }
