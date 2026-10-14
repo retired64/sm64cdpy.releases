@@ -20,6 +20,7 @@ class GameFolderState {
 /// Native SharedPreferences/SAF is authority. This is only the main-engine projection.
 class GameFolderNotifier extends Notifier<GameFolderState> {
   Future<void>? _startup;
+  int _revision = 0;
   @override
   GameFolderState build() {
     ref.listen(bgInstallStateProvider, (previous, next) {
@@ -33,21 +34,23 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
   Future<void> initialize() => _startup ??= refresh();
   Future<void> refresh() async {
     if (state.busy) return;
+    final revision = ++_revision;
     try {
       final value = await ref.read(gameFolderServiceProvider).call('getGameFolder');
-      if (ref.mounted && !state.busy && value != null) {
+      if (ref.mounted && !state.busy && revision == _revision && value != null) {
         final changed = state.connection.connected != value.connected || state.connection.unified != value.unified;
         state = GameFolderState(initialized: true, connection: value);
         if (changed) ModInstaller.invalidateInstallationLibrary('gameFolderAccessChanged');
       }
     } catch (_) {
-      if (ref.mounted && !state.busy) state = GameFolderState(initialized: true, connection: state.connection, error: 'access');
+      if (ref.mounted && !state.busy && revision == _revision) state = GameFolderState(initialized: true, connection: state.connection, error: 'access');
     }
   }
   Future<bool> perform(String method) async {
     await initialize();
     if (!ref.mounted || state.busy) return false;
     final previous = state.connection;
+    ++_revision;
     state = GameFolderState(initialized: true, connection: previous, busy: true);
     try {
       final value = await ref.read(gameFolderServiceProvider).call(method);

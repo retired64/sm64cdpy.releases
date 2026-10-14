@@ -109,3 +109,13 @@ user con/sin config y ROM; ROM inválida y válida con nombre alternativo; permi
 revocados; cambio de carpeta con Worker activo; mods/DynOS/Touch Controls/OMM
 normal y DynOS/VIP/Render96; app y overlay; reinicio/rotación/cierre; dos
 operaciones paralelas y cancelar una. Confirmar destino físico y recibos reales.
+
+## Recuperación y respuestas tardías
+
+Un fallo de commit restaura también esquema y marcadores, no solo las URI.
+Desconectar no libera el permiso hasta confirmar la eliminación de preferencias.
+Si el juego vuelve a crear mods o packs con otro ID, el siguiente snapshot
+reconcilia los destinos desde user; se pospone mientras haya trabajos activos.
+El snapshot distingue conexión completa de migración en espera. El provider usa
+una revisión por petición para descartar lecturas anteriores a un cambio confirmado.
+Prueba adicional: respuesta de refresh vieja recibida después de conectar.

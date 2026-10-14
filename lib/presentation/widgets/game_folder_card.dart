@@ -73,7 +73,8 @@ class _GameFolderCardState extends ConsumerState<GameFolderCard> with WidgetsBin
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Text(folder.connected ? l10n.gameFolderConnected : l10n.gameFolderTitle, style: retro.heading(size: 16)),
         const SizedBox(height: 10),
-        Text(folder.connected ? l10n.gameFolderResolved : l10n.gameFolderSummary, style: retro.body(size: 16)),
+        Text(folder.connected && folder.unified ? l10n.gameFolderResolved : l10n.gameFolderSummary, style: retro.body(size: 16)),
+        if (folder.status == 'installing') Text(l10n.gameFolderBusy, style: retro.body(size: 16)),
         if (folder.status == 'access') Text(l10n.gameFolderAccessLost, style: retro.body(size: 16, color: retro.red)),
         if (folder.connected) ...[
           const SizedBox(height: 8),

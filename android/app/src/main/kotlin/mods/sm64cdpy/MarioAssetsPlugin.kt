@@ -194,7 +194,7 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
 
     private fun importFromUser() = importResources {
         val user = GameFolderStore.root(context) ?: throw IllegalStateException("game_folder")
-        val preferred = user.findFile("baserom.us.z64")
+        val preferred = user.findFile("baserom.us.z64")?.takeIf { it.isFile }
         val candidates = (listOfNotNull(preferred) + user.listFiles().filter {
             it.isFile && it.name?.endsWith(".z64", true) == true
         }).distinctBy { it.uri }.take(8)

@@ -40,8 +40,9 @@ internal object GameFolderStore {
             }
             val mods = directory(root, "mods")
             val packs = directory(directory(root, "dynos"), "packs")
-            val keys = listOf(KEY, ModInstallerPlugin.KEY_TREE_URI, ModInstallerPlugin.KEY_DYNOS_TREE_URI)
-            val previous = keys.associateWith { preferences.getString(it, null) }
+            val keys = listOf(KEY, ModInstallerPlugin.KEY_TREE_URI, ModInstallerPlugin.KEY_DYNOS_TREE_URI,
+                "unified_game_folder_version", ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED)
+            val previous = keys.associateWith { preferences.all[it] }
             val editor = preferences.edit().putString(KEY, grant.toString())
                 .putString(ModInstallerPlugin.KEY_TREE_URI, mods.uri.toString())
                 .putString(ModInstallerPlugin.KEY_DYNOS_TREE_URI, packs.uri.toString())
@@ -50,7 +51,12 @@ internal object GameFolderStore {
                 .remove(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED)
             if (!editor.commit()) {
                 val rollback = preferences.edit()
-                previous.forEach { (key, value) -> if (value == null) rollback.remove(key) else rollback.putString(key, value) }
+                previous.forEach { (key, value) -> when (value) {
+                    is String -> rollback.putString(key, value)
+                    is Boolean -> rollback.putBoolean(key, value)
+                    is Int -> rollback.putInt(key, value)
+                    else -> rollback.remove(key)
+                } }
                 rollback.commit()
                 error("access")
             }
@@ -86,7 +92,11 @@ internal object GameFolderStore {
             }
         }
         val root = root(context)
-        if (root != null && preferences.getInt("unified_game_folder_version", 0) != 1) {
+        val actualMods = root?.findFile("mods")?.uri?.toString()
+        val actualPacks = root?.findFile("dynos")?.takeIf { it.isDirectory }?.findFile("packs")?.uri?.toString()
+        if (root != null && (preferences.getInt("unified_game_folder_version", 0) != 1 ||
+            actualMods != preferences.getString(ModInstallerPlugin.KEY_TREE_URI, null) ||
+            actualPacks != preferences.getString(ModInstallerPlugin.KEY_DYNOS_TREE_URI, null) || actualMods == null || actualPacks == null)) {
             try { connect(context, Uri.parse(saved!!), Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION) }
             catch (error: Exception) { if (error.message != "installing") throw error }
         }
@@ -95,9 +105,14 @@ internal object GameFolderStore {
                 .putBoolean(ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, true)
                 .putBoolean(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED, true).commit()
         }
-        mapOf("unified" to (preferences.getInt("unified_game_folder_version", 0) == 1), "dismissed" to preferences.getBoolean("game_setup_dismissed", false), "connected" to (root != null), "status" to (if (root != null) "ready" else if (saved != null || preferences.getBoolean(ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, false) || preferences.getBoolean(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED, false)) "access" else "unselected"),
-            "mods" to (root?.findFile("mods")?.isDirectory == true),
-            "dynos" to (root?.findFile("dynos")?.findFile("packs")?.isDirectory == true),
+        val mods = root?.findFile("mods")?.takeIf { it.isDirectory }
+        val packs = root?.findFile("dynos")?.takeIf { it.isDirectory }?.findFile("packs")?.takeIf { it.isDirectory }
+        val unified = root != null && mods != null && packs != null &&
+            preferences.getString(ModInstallerPlugin.KEY_TREE_URI, null) == mods.uri.toString() &&
+            preferences.getString(ModInstallerPlugin.KEY_DYNOS_TREE_URI, null) == packs.uri.toString()
+        mapOf("unified" to unified, "dismissed" to preferences.getBoolean("game_setup_dismissed", false), "connected" to (root != null), "status" to (if (root != null && !unified) "installing" else if (root != null) "ready" else if (saved != null || preferences.getBoolean(ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, false) || preferences.getBoolean(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED, false)) "access" else "unselected"),
+            "mods" to (mods != null),
+            "dynos" to (packs != null),
             "config" to (root?.findFile("sm64config.txt")?.isFile == true),
             "rom" to (root?.listFiles()?.any { it.isFile && it.name?.endsWith(".z64", true) == true } == true),
             "modsUri" to preferences.getString(ModInstallerPlugin.KEY_TREE_URI, null),
@@ -108,7 +123,18 @@ internal object GameFolderStore {
         requireIdle(context)
         val preferences = prefs(context)
         val saved = preferences.getString(KEY, null)
-        check(preferences.edit().remove(KEY).remove(ModInstallerPlugin.KEY_TREE_URI).remove(ModInstallerPlugin.KEY_DYNOS_TREE_URI).remove("unified_game_folder_version").commit())
+        val keys = listOf(KEY, ModInstallerPlugin.KEY_TREE_URI, ModInstallerPlugin.KEY_DYNOS_TREE_URI, "unified_game_folder_version")
+        val previous = keys.associateWith { preferences.all[it] }
+        if (!preferences.edit().remove(KEY).remove(ModInstallerPlugin.KEY_TREE_URI).remove(ModInstallerPlugin.KEY_DYNOS_TREE_URI).remove("unified_game_folder_version").commit()) {
+            val restore = preferences.edit()
+            previous.forEach { (key, value) -> when (value) {
+                is String -> restore.putString(key, value)
+                is Int -> restore.putInt(key, value)
+                else -> restore.remove(key)
+            } }
+            restore.commit()
+            error("access")
+        }
         if (saved != null) runCatching { context.contentResolver.releasePersistableUriPermission(Uri.parse(saved),
             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION) }
         // No resources, config, installation receipts or game files are deleted.

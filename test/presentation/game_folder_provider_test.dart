@@ -17,8 +17,35 @@ class FolderFake extends GameFolderService {
     return pending.future;
   }
 }
+class DelayedFolderRead extends GameFolderService {
+  final stale = Completer<GameFolderConnection?>();
+  int reads = 0;
+  @override
+  Future<GameFolderConnection?> call(String method) async {
+    if (method == 'getGameFolder') {
+      reads++;
+      return reads == 1 ? const GameFolderConnection() : stale.future;
+    }
+    return const GameFolderConnection(connected: true, unified: true, mods: true, dynos: true);
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test('a stale refresh cannot overwrite a confirmed connection', () async {
+    final service = DelayedFolderRead();
+    final container = ProviderContainer(overrides: [gameFolderServiceProvider.overrideWithValue(service)]);
+    final notifier = container.read(gameFolderProvider.notifier);
+    await notifier.initialize();
+    final oldRefresh = notifier.refresh();
+    expect(await notifier.perform('connectGameFolder'), isTrue);
+    service.stale.complete(const GameFolderConnection());
+    await oldRefresh;
+    expect(container.read(gameFolderProvider).connection.connected, isTrue);
+    expect(container.read(gameFolderProvider).connection.unified, isTrue);
+    expect(container.read(gameFolderProvider).busy, isFalse);
+    container.dispose();
+  });
   test('one pending selection blocks duplicates and cancellation releases UI', () async {
     final service = FolderFake();
     final container = ProviderContainer(overrides: [gameFolderServiceProvider.overrideWithValue(service)]);
