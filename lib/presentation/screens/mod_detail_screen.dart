@@ -855,7 +855,7 @@ class _VersionAccordionState extends State<_VersionAccordion> {
             Container(
               width: 42,
               height: 4,
-              decoration: retro.gameDecoration(BoxDecoration(
+              decoration: RetroTheme.of(context).gameDecoration(BoxDecoration(
                 color: RetroTheme.of(context).inkDim.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(2),
               )),

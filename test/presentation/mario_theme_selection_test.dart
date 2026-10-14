@@ -14,33 +14,51 @@ import 'mario_rom_fixture.dart';
 class PendingRom extends MarioThemeAssetsService {
   final result = Completer<MarioThemeAssets?>();
   @override
-  Future<MarioThemeAssets?> call(String method) async => method == 'read' ? const MarioThemeAssets() : result.future;
+  Future<MarioThemeAssets?> call(String method) async =>
+      method == 'read' ? const MarioThemeAssets() : result.future;
 }
+
 void main() {
-  test('Mario is selected only after a complete ROM import; cancelling keeps the previous theme', () async {
-    final dir = await Directory.systemTemp.createTemp('rom-theme-select-');
-    Hive.init(dir.path);
-    await Hive.openBox<String>(AppConstants.settingsBoxKey);
-    try {
-      for (final cancel in [true, false]) {
-        final service = PendingRom();
-        final container = ProviderContainer(overrides: [marioThemeAssetsServiceProvider.overrideWithValue(service)]);
-        final notifier = container.read(appearanceProvider.notifier);
-        await notifier.setTheme(AppThemeId.retroManga);
-        final selection = notifier.selectThemeWithRom(AppThemeId.mario64);
-        await Future<void>.delayed(Duration.zero);
-        expect(container.read(appearanceProvider).themeId, AppThemeId.retroManga);
-        expect(container.read(appearanceProvider).isSaving, isTrue);
-        expect(await notifier.selectThemeWithRom(AppThemeId.retroManga), isNull);
-        service.result.complete(cancel ? null : completeMarioFixture());
-        expect(await selection, cancel ? isNull : isTrue);
-        expect(container.read(appearanceProvider).themeId, cancel ? AppThemeId.retroManga : AppThemeId.mario64);
-        expect(container.read(appearanceProvider).isSaving, isFalse);
-        container.dispose();
+  test(
+    'Mario is selected only after a complete ROM import; cancelling keeps the previous theme',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('rom-theme-select-');
+      Hive.init(dir.path);
+      await Hive.openBox<String>(AppConstants.settingsBoxKey);
+      try {
+        for (final cancel in [true, false]) {
+          final service = PendingRom();
+          final container = ProviderContainer(
+            overrides: [
+              marioThemeAssetsServiceProvider.overrideWithValue(service),
+            ],
+          );
+          final notifier = container.read(appearanceProvider.notifier);
+          await notifier.setTheme(AppThemeId.retroManga);
+          final selection = notifier.selectThemeWithRom(AppThemeId.mario64);
+          await Future<void>.delayed(Duration.zero);
+          expect(
+            container.read(appearanceProvider).themeId,
+            AppThemeId.retroManga,
+          );
+          expect(container.read(appearanceProvider).isSaving, isTrue);
+          expect(
+            await notifier.selectThemeWithRom(AppThemeId.retroManga),
+            isNull,
+          );
+          service.result.complete(cancel ? null : completeMarioFixture());
+          expect(await selection, cancel ? isNull : isTrue);
+          expect(
+            container.read(appearanceProvider).themeId,
+            cancel ? AppThemeId.retroManga : AppThemeId.mario64,
+          );
+          expect(container.read(appearanceProvider).isSaving, isFalse);
+          container.dispose();
+        }
+      } finally {
+        await Hive.close();
+        await dir.delete(recursive: true);
       }
-    } finally {
-      await Hive.close();
-      await dir.delete(recursive: true);
-    }
-  });
+    },
+  );
 }

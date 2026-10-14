@@ -40,15 +40,17 @@ Future<bool> _showFolderRequiredDialog(
             backgroundColor: Colors.transparent,
             child: Container(
               padding: const EdgeInsets.all(20),
-              decoration: retro.gameDecoration(BoxDecoration(
-                borderRadius: retro.radius,
-                color: retro.surfaceAlt,
-                border: Border.all(
-                  color: retro.accent,
-                  width: retro.borderWidth(2),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surfaceAlt,
+                  border: Border.all(
+                    color: retro.accent,
+                    width: retro.borderWidth(2),
+                  ),
+                  boxShadow: retro.hardShadow(dx: 5, dy: 5),
                 ),
-                boxShadow: retro.hardShadow(dx: 5, dy: 5),
-              )),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -293,14 +293,16 @@ class _RetroDialog extends StatelessWidget {
                       horizontal: 16,
                       vertical: 10,
                     ),
-                    decoration: retro.gameDecoration(BoxDecoration(
-                      borderRadius: retro.radius,
-                      color: accent,
-                      border: Border.all(
-                        color: retro.border,
-                        width: retro.borderWidth(2),
+                    decoration: retro.gameDecoration(
+                      BoxDecoration(
+                        borderRadius: retro.radius,
+                        color: accent,
+                        border: Border.all(
+                          color: retro.border,
+                          width: retro.borderWidth(2),
+                        ),
                       ),
-                    )),
+                    ),
                     child: Text(
                       confirmLabel,
                       style: TextStyle(
@@ -406,24 +408,28 @@ class _RetroSwitch extends StatelessWidget {
         width: 46,
         height: 26,
         padding: const EdgeInsets.all(3),
-        decoration: retro.gameDecoration(BoxDecoration(
-          borderRadius: retro.radius,
-          color: value ? retro.accent : retro.surfaceAlt,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: value ? retro.accent : retro.surfaceAlt,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+            ),
           ),
-        )),
+        ),
         alignment: value ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           width: 16,
           height: 16,
-          decoration: retro.gameDecoration(BoxDecoration(
-            color: value ? retro.inkOnAccent : retro.inkDim,
-            borderRadius: retro.design.softSettingsPanels
-                ? BorderRadius.circular(8)
-                : BorderRadius.zero,
-          )),
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              color: value ? retro.inkOnAccent : retro.inkDim,
+              borderRadius: retro.design.softSettingsPanels
+                  ? BorderRadius.circular(8)
+                  : BorderRadius.zero,
+            ),
+          ),
         ),
       ),
     );
@@ -854,16 +860,18 @@ class _RetroIconBox extends StatelessWidget {
       width: 38,
       height: 38,
       alignment: Alignment.center,
-      decoration: retro.gameDecoration(BoxDecoration(
-        borderRadius: retro.radius,
-        color: retro.design.softSettingsPanels
-            ? retro.accent.withValues(alpha: 0.08)
-            : retro.surfaceAlt,
-        border: Border.all(
-          color: c,
-          width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.design.softSettingsPanels
+              ? retro.accent.withValues(alpha: 0.08)
+              : retro.surfaceAlt,
+          border: Border.all(
+            color: c,
+            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+          ),
         ),
-      )),
+      ),
       child: MarioGameIcon(icon, color: c, size: 18),
     );
   }
@@ -881,16 +889,18 @@ class _RetroSpinner extends StatelessWidget {
       width: 38,
       height: 38,
       alignment: Alignment.center,
-      decoration: retro.gameDecoration(BoxDecoration(
-        borderRadius: retro.radius,
-        color: retro.design.softSettingsPanels
-            ? retro.accent.withValues(alpha: 0.08)
-            : retro.surfaceAlt,
-        border: Border.all(
-          color: retro.accent,
-          width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.design.softSettingsPanels
+              ? retro.accent.withValues(alpha: 0.08)
+              : retro.surfaceAlt,
+          border: Border.all(
+            color: retro.accent,
+            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+          ),
         ),
-      )),
+      ),
       child: SizedBox(
         width: 16,
         height: 16,

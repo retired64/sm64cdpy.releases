@@ -257,14 +257,16 @@ class _EmptyFavourites extends StatelessWidget {
           Container(
             width: 72,
             height: 72,
-            decoration: retro.gameDecoration(BoxDecoration(
-              color: retro.surfaceAlt,
-              borderRadius: retro.radius,
-              border: Border.all(
-                color: retro.accent,
-                width: retro.borderWidth(2),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                color: retro.surfaceAlt,
+                borderRadius: retro.radius,
+                border: Border.all(
+                  color: retro.accent,
+                  width: retro.borderWidth(2),
+                ),
               ),
-            )),
+            ),
             child: MarioGameIcon(
               Icons.favorite_border,
               size: 36,
@@ -288,15 +290,21 @@ class _EmptyFavourites extends StatelessWidget {
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
-              decoration: retro.gameDecoration(BoxDecoration(
-                color: retro.accent,
-                borderRadius: retro.radius,
-                boxShadow: retro.hardShadow(dx: 3, dy: 3),
-              )),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  color: retro.accent,
+                  borderRadius: retro.radius,
+                  boxShadow: retro.hardShadow(dx: 3, dy: 3),
+                ),
+              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  MarioGameIcon(Icons.explore, size: 18, color: retro.inkOnAccent),
+                  MarioGameIcon(
+                    Icons.explore,
+                    size: 18,
+                    color: retro.inkOnAccent,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.favBrowse,

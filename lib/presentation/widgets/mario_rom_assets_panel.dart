@@ -22,7 +22,9 @@ class MarioRomAssetsPanel extends ConsumerWidget {
         title: l10n.marioRomTitle,
         subtitle: state.assets.complete
             ? l10n.marioRomReady
-            : state.assets.available ? l10n.marioRomUpgrade : l10n.marioRomBuiltIn,
+            : state.assets.available
+            ? l10n.marioRomUpgrade
+            : l10n.marioRomBuiltIn,
         icon: Icons.videogame_asset_outlined,
         children: [
           Text(l10n.marioRomDescription, style: retro.body(size: 13)),

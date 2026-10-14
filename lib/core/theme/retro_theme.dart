@@ -1127,19 +1127,7 @@ class MarioGameTitle extends StatelessWidget {
 
 /// Shared icon vocabulary; unavailable game symbols retain their action's familiar icon.
 class MarioGameIcon extends StatelessWidget {
-  const MarioGameIcon(this.icon, {super.key, this.size, this.color, this.semanticLabel,
-    this.textDirection, this.fill, this.weight, this.grade, this.opticalSize, this.shadows, this.applyTextScaling});
-  final IconData? icon;
-  final double? size, fill, weight, grade, opticalSize;
-  final Color? color;
-  final String? semanticLabel;
-  final TextDirection? textDirection;
-  final List<Shadow>? shadows;
-  final bool? applyTextScaling;
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final asset = const <IconData, String>{
+  static final Map<IconData, String> _sprites = Map.unmodifiable(<IconData, String>{
       Icons.star_rounded: 'star', Icons.star: 'star', Icons.favorite: 'star', Icons.favorite_rounded: 'star',
       Icons.extension: 'mario_save', Icons.extension_rounded: 'mario_save',
       Icons.menu_rounded: 'menu_file', Icons.folder_rounded: 'menu_file', Icons.folder_open: 'menu_file',
@@ -1152,7 +1140,21 @@ class MarioGameIcon extends StatelessWidget {
       Icons.play_arrow_rounded: 'mario_save', Icons.sports_esports_rounded: 'mario_save',
       Icons.expand_more: 'arrow_down', Icons.expand_less: 'arrow_up',
       Icons.keyboard_arrow_down: 'arrow_down', Icons.keyboard_arrow_up: 'arrow_up',
-    }[icon];
+    });
+
+  const MarioGameIcon(this.icon, {super.key, this.size, this.color, this.semanticLabel,
+    this.textDirection, this.fill, this.weight, this.grade, this.opticalSize, this.shadows, this.applyTextScaling});
+  final IconData? icon;
+  final double? size, fill, weight, grade, opticalSize;
+  final Color? color;
+  final String? semanticLabel;
+  final TextDirection? textDirection;
+  final List<Shadow>? shadows;
+  final bool? applyTextScaling;
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final asset = _sprites[icon];
     final path = asset == null ? null : retro.marioAsset(asset);
     if (path == null) return Icon(icon, size: size, color: color, semanticLabel: semanticLabel,
       textDirection: textDirection, fill: fill, weight: weight, grade: grade, opticalSize: opticalSize,
@@ -1161,5 +1163,26 @@ class MarioGameIcon extends StatelessWidget {
     final image = Image.file(File(path), width: dimension, height: dimension, fit: BoxFit.contain,
       filterQuality: FilterQuality.none, errorBuilder: (_, error, stack) => Icon(icon, size: dimension, color: color));
     return Semantics(label: semanticLabel, child: ExcludeSemantics(child: image));
+  }
+}
+
+/// Confirmed on/off selection rendered as an original menu tile, without owning state.
+class MarioGameToggle extends StatelessWidget {
+  const MarioGameToggle({super.key, required this.value, required this.onChanged});
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    return Semantics(toggled: value, enabled: onChanged != null, button: true,
+      child: Material(color: Colors.transparent, child: InkWell(
+        onTap: onChanged == null ? null : () => onChanged!(!value),
+        child: Opacity(opacity: onChanged == null ? 0.5 : 1,
+          child: Container(width: 56, height: 44, alignment: Alignment.center,
+            decoration: retro.surfaceDecoration(borderColor: value ? retro.accent : retro.border, shadowDx: 2, shadowDy: 2),
+            child: MarioMenuGlyph(retro: retro, asset: value ? 'star' : 'hand', fallback: value ? Icons.check : Icons.pan_tool_alt_rounded, size: 24)),
+        ),
+      )),
+    );
   }
 }

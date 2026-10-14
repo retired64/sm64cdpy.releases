@@ -1618,14 +1618,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get marioRomTitle => 'Recursos del juego original';
 
   @override
-  String get marioRomBuiltIn => 'Diseño incluido';
+  String get marioRomBuiltIn => 'ROM sin seleccionar';
 
   @override
-  String get marioRomReady => 'Recursos originales listos';
+  String get marioRomReady => 'Interfaz original lista';
 
   @override
   String get marioRomDescription =>
-      'Elige tu ROM estadounidense sin modificar de Super Mario 64 (.z64) para usar sus texturas de menú, cursor e iconos del HUD. Todo permanece en este dispositivo; el juego y la ROM no se modifican.';
+      'Selecciona una vez tu ROM estadounidense original de Super Mario 64 (.z64) para activar materiales de menú, cielos del juego, cursores, HUD y tipografías de la ROM. Los recursos quedan privados en este dispositivo. La ROM y el juego no se modifican.';
 
   @override
   String get marioRomImport => 'Elegir mi ROM';
@@ -1649,6 +1649,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get marioRomSuccess => 'Los recursos del juego original están listos.';
+
+  @override
+  String get marioRomUpgrade =>
+      'Elige la ROM de nuevo para actualizar la interfaz original';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -3265,14 +3269,14 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get marioRomTitle => 'Recursos del juego original';
 
   @override
-  String get marioRomBuiltIn => 'Diseño incluido';
+  String get marioRomBuiltIn => 'ROM sin seleccionar';
 
   @override
-  String get marioRomReady => 'Recursos originales listos';
+  String get marioRomReady => 'Interfaz original lista';
 
   @override
   String get marioRomDescription =>
-      'Elige tu ROM estadounidense sin modificar de Super Mario 64 (.z64) para usar sus texturas de menú, cursor e iconos del HUD. Todo permanece en este dispositivo; el juego y la ROM no se modifican.';
+      'Selecciona una vez tu ROM estadounidense original de Super Mario 64 (.z64) para activar materiales de menú, cielos del juego, cursores, HUD y tipografías de la ROM. Los recursos quedan privados en este dispositivo. La ROM y el juego no se modifican.';
 
   @override
   String get marioRomImport => 'Elegir mi ROM';
@@ -3296,4 +3300,8 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get marioRomSuccess => 'Los recursos del juego original están listos.';
+
+  @override
+  String get marioRomUpgrade =>
+      'Elige la ROM de nuevo para actualizar la interfaz original';
 }

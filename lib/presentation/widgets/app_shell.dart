@@ -183,15 +183,17 @@ class RetroFixedHeaderView extends StatelessWidget {
           bottom: false,
           child: Container(
             height: 56,
-            decoration: retro.gameDecoration(BoxDecoration(
-              color: retro.background,
-              border: Border(
-                bottom: BorderSide(
-                  color: retro.border,
-                  width: retro.borderWidth(2),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                color: retro.background,
+                border: Border(
+                  bottom: BorderSide(
+                    color: retro.border,
+                    width: retro.borderWidth(2),
+                  ),
                 ),
               ),
-            )),
+            ),
             child: Row(
               children: [
                 DrawerMenuButton(color: leadingColor),

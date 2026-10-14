@@ -55,20 +55,29 @@ void main() {
       expect(mario.surfaceDecoration().gradient, isNull);
     },
   );
-  test('full Mario scenes use opaque ROM materials and original font roles in both modes', () {
-    final assets = completeMarioFixture();
-    for (final dark in [false, true]) {
-      final mario = RetroTheme(dark, design: AppThemeCatalog.resolve(AppThemeId.mario64), marioAssets: assets);
-      expect(mario.headingFamily, 'MarioRomHudV2');
-      expect(mario.bodyFamily, 'MarioRomDialogV2');
-      expect(mario.menuFamily, 'MarioRomMenuV2');
-      expect(mario.surfaceDecoration().image!.opacity, 1);
-      expect(mario.toMaterialTheme().filledButtonTheme.style!.backgroundBuilder, isNotNull);
-      expect(mario.surfaceDecoration(color: mario.accent).image, isNull);
-      expect(mario.marioAsset(dark ? 'sky_night' : 'sky_day'), isNotNull);
-    }
-    expect(RetroTheme.overlay().bodyFamily, isNull);
-    expect(const RetroTheme(false).surfaceDecoration().image, isNull);
-  });
-
+  test(
+    'full Mario scenes use opaque ROM materials and original font roles in both modes',
+    () {
+      final assets = completeMarioFixture();
+      for (final dark in [false, true]) {
+        final mario = RetroTheme(
+          dark,
+          design: AppThemeCatalog.resolve(AppThemeId.mario64),
+          marioAssets: assets,
+        );
+        expect(mario.headingFamily, 'MarioRomHudV2');
+        expect(mario.bodyFamily, 'MarioRomDialogV2');
+        expect(mario.menuFamily, 'MarioRomMenuV2');
+        expect(mario.surfaceDecoration().image!.opacity, 1);
+        expect(
+          mario.toMaterialTheme().filledButtonTheme.style!.backgroundBuilder,
+          isNotNull,
+        );
+        expect(mario.surfaceDecoration(color: mario.accent).image, isNull);
+        expect(mario.marioAsset(dark ? 'sky_night' : 'sky_day'), isNotNull);
+      }
+      expect(RetroTheme.overlay().bodyFamily, isNull);
+      expect(const RetroTheme(false).surfaceDecoration().image, isNull);
+    },
+  );
 }

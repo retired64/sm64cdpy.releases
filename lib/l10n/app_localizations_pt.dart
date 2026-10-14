@@ -1609,14 +1609,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get marioRomTitle => 'Recursos do jogo original';
 
   @override
-  String get marioRomBuiltIn => 'Visual incluído';
+  String get marioRomBuiltIn => 'ROM não selecionada';
 
   @override
-  String get marioRomReady => 'Recursos originais prontos';
+  String get marioRomReady => 'Interface original pronta';
 
   @override
   String get marioRomDescription =>
-      'Escolha sua ROM americana original de Super Mario 64 (.z64) para usar as texturas do menu, o cursor e os ícones do HUD. Tudo fica neste dispositivo; o jogo e a ROM não são modificados.';
+      'Selecione uma vez sua ROM americana original de Super Mario 64 (.z64) para ativar os materiais do menu, céus do jogo, cursores, HUD e fontes da ROM. Os recursos ficam privados neste dispositivo. A ROM e o jogo não são alterados.';
 
   @override
   String get marioRomImport => 'Escolher minha ROM';
@@ -1640,6 +1640,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get marioRomSuccess => 'Os recursos do jogo original estão prontos.';
+
+  @override
+  String get marioRomUpgrade =>
+      'Escolha a ROM novamente para atualizar a interface original';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3247,14 +3251,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get marioRomTitle => 'Recursos do jogo original';
 
   @override
-  String get marioRomBuiltIn => 'Visual incluído';
+  String get marioRomBuiltIn => 'ROM não selecionada';
 
   @override
-  String get marioRomReady => 'Recursos originais prontos';
+  String get marioRomReady => 'Interface original pronta';
 
   @override
   String get marioRomDescription =>
-      'Escolha sua ROM americana original de Super Mario 64 (.z64) para usar as texturas do menu, o cursor e os ícones do HUD. Tudo fica neste dispositivo; o jogo e a ROM não são modificados.';
+      'Selecione uma vez sua ROM americana original de Super Mario 64 (.z64) para ativar os materiais do menu, céus do jogo, cursores, HUD e fontes da ROM. Os recursos ficam privados neste dispositivo. A ROM e o jogo não são alterados.';
 
   @override
   String get marioRomImport => 'Escolher minha ROM';
@@ -3278,4 +3282,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get marioRomSuccess => 'Os recursos do jogo original estão prontos.';
+
+  @override
+  String get marioRomUpgrade =>
+      'Escolha a ROM novamente para atualizar a interface original';
 }

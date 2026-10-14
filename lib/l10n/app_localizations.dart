@@ -2907,19 +2907,19 @@ abstract class AppLocalizations {
   /// No description provided for @marioRomBuiltIn.
   ///
   /// In en, this message translates to:
-  /// **'Built-in design'**
+  /// **'ROM not selected'**
   String get marioRomBuiltIn;
 
   /// No description provided for @marioRomReady.
   ///
   /// In en, this message translates to:
-  /// **'Original resources ready'**
+  /// **'Original interface ready'**
   String get marioRomReady;
 
   /// No description provided for @marioRomDescription.
   ///
   /// In en, this message translates to:
-  /// **'Choose your unmodified US Super Mario 64 ROM (.z64) to use its menu textures, cursor and HUD icons. Everything stays on this device; the game and ROM are never modified.'**
+  /// **'Select your unmodified US Super Mario 64 ROM (.z64) once to activate the original menu materials, game skies, cursors, HUD and ROM typography. Resources stay private on this device. The ROM and game are never changed.'**
   String get marioRomDescription;
 
   /// No description provided for @marioRomImport.
@@ -2963,6 +2963,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Original game resources are ready.'**
   String get marioRomSuccess;
+
+  /// No description provided for @marioRomUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the ROM again to upgrade the original interface'**
+  String get marioRomUpgrade;
 }
 
 class _AppLocalizationsDelegate

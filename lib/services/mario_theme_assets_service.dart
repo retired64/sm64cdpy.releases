@@ -11,7 +11,11 @@ class MarioThemeAssetsService {
     if (data == null) return null;
     final assets = MarioThemeAssets.fromMap(data);
     if (assets.complete && !_fontsLoaded) {
-      for (final entry in const {'font_menu': 'MarioRomMenuV2', 'font_dialog': 'MarioRomDialogV2', 'font_hud': 'MarioRomHudV2'}.entries) {
+      for (final entry in const {
+        'font_menu': 'MarioRomMenuV2',
+        'font_dialog': 'MarioRomDialogV2',
+        'font_hud': 'MarioRomHudV2',
+      }.entries) {
         final bytes = await File(assets.files[entry.key]!).readAsBytes();
         final loader = FontLoader(entry.value);
         loader.addFont(Future.value(ByteData.sublistView(bytes)));

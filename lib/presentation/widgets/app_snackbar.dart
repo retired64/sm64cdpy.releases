@@ -125,15 +125,17 @@ class AppSnackbar {
             final accent = accentOf(retro);
             return _BouncyToast(
               child: Container(
-                decoration: retro.gameDecoration(BoxDecoration(
-                  borderRadius: retro.radius,
-                  color: retro.surface,
-                  border: Border.all(
-                    color: retro.border,
-                    width: retro.borderWidth(2.5),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surface,
+                    border: Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(2.5),
+                    ),
+                    boxShadow: retro.hardShadow(dx: 4, dy: 4),
                   ),
-                  boxShadow: retro.hardShadow(dx: 4, dy: 4),
-                )),
+                ),
                 child: IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

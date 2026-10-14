@@ -155,16 +155,22 @@ class _HeroBadge extends StatelessWidget {
         Container(
           width: 80,
           height: 80,
-          decoration: retro.gameDecoration(BoxDecoration(
-            color: retro.surface,
-            borderRadius: retro.radius,
-            border: Border.all(
-              color: retro.border,
-              width: retro.borderWidth(2.5),
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              color: retro.surface,
+              borderRadius: retro.radius,
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2.5),
+              ),
+              boxShadow: retro.hardShadow(),
             ),
-            boxShadow: retro.hardShadow(),
-          )),
-          child: MarioGameIcon(Icons.info_outline, size: 38, color: retro.accentText),
+          ),
+          child: MarioGameIcon(
+            Icons.info_outline,
+            size: 38,
+            color: retro.accentText,
+          ),
         ),
         const SizedBox(height: 16),
         Text(l10n.disclaimerUnofficialBanner, style: retro.heading(size: 22)),
@@ -178,14 +184,16 @@ class _HeroBadge extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-          decoration: retro.gameDecoration(BoxDecoration(
-            color: retro.surface,
-            borderRadius: retro.radius,
-            border: Border.all(
-              color: retro.border,
-              width: retro.borderWidth(1),
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              color: retro.surface,
+              borderRadius: retro.radius,
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(1),
+              ),
             ),
-          )),
+          ),
           child: Text(
             'v${UpdateService.currentVersion}',
             style: retro.body(size: 11),
@@ -211,26 +219,30 @@ class _DisclaimerSection extends StatelessWidget {
     final retro = RetroTheme.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-      decoration: retro.gameDecoration(BoxDecoration(
-        color: retro.surface,
-        borderRadius: retro.radius,
-        border: Border.all(color: retro.border, width: retro.borderWidth(2)),
-        boxShadow: retro.hardShadow(dx: 2, dy: 2),
-      )),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          color: retro.surface,
+          borderRadius: retro.radius,
+          border: Border.all(color: retro.border, width: retro.borderWidth(2)),
+          boxShadow: retro.hardShadow(dx: 2, dy: 2),
+        ),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 36,
             height: 36,
-            decoration: retro.gameDecoration(BoxDecoration(
-              color: retro.surfaceAlt,
-              borderRadius: retro.radius,
-              border: Border.all(
-                color: retro.accent,
-                width: retro.borderWidth(1.5),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                color: retro.surfaceAlt,
+                borderRadius: retro.radius,
+                border: Border.all(
+                  color: retro.accent,
+                  width: retro.borderWidth(1.5),
+                ),
               ),
-            )),
+            ),
             child: MarioGameIcon(icon, size: 18, color: retro.accentText),
           ),
           const SizedBox(width: 13),
@@ -259,12 +271,14 @@ class _WarningBanner extends StatelessWidget {
     final retro = RetroTheme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: retro.gameDecoration(BoxDecoration(
-        color: retro.surface,
-        borderRadius: retro.radius,
-        border: Border.all(color: retro.red, width: retro.borderWidth(2)),
-        boxShadow: retro.hardShadow(dx: 3, dy: 3),
-      )),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          color: retro.surface,
+          borderRadius: retro.radius,
+          border: Border.all(color: retro.red, width: retro.borderWidth(2)),
+          boxShadow: retro.hardShadow(dx: 3, dy: 3),
+        ),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -389,19 +403,25 @@ class _ContactButtonState extends State<_ContactButton>
             const SizedBox(height: 12),
             Container(
               width: double.infinity,
-              decoration: retro.gameDecoration(BoxDecoration(
-                color: retro.discordBrand,
-                borderRadius: retro.radius,
-                border: Border.all(
-                  color: retro.border,
-                  width: retro.borderWidth(2.5),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  color: retro.discordBrand,
+                  borderRadius: retro.radius,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(2.5),
+                  ),
+                  boxShadow: retro.hardShadow(dx: 4, dy: 4),
                 ),
-                boxShadow: retro.hardShadow(dx: 4, dy: 4),
-              )),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
                 children: [
-                  const MarioGameIcon(Icons.discord, color: Colors.white, size: 18),
+                  const MarioGameIcon(
+                    Icons.discord,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -418,14 +438,16 @@ class _ContactButtonState extends State<_ContactButton>
                   Container(
                     width: 30,
                     height: 30,
-                    decoration: retro.gameDecoration(BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: retro.radius,
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.22),
-                        width: retro.borderWidth(0.8),
+                    decoration: retro.gameDecoration(
+                      BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: retro.radius,
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.22),
+                          width: retro.borderWidth(0.8),
+                        ),
                       ),
-                    )),
+                    ),
                     child: const MarioGameIcon(
                       Icons.arrow_forward_ios,
                       size: 13,

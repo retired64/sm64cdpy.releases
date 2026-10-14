@@ -234,12 +234,14 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   width: _current == i ? 20 : 6,
                   height: 6,
-                  decoration: retro.gameDecoration(BoxDecoration(
-                    color: _current == i
-                        ? retro.accent
-                        : retro.inkDim.withValues(alpha: 0.3),
-                    borderRadius: retro.radius,
-                  )),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      color: _current == i
+                          ? retro.accent
+                          : retro.inkDim.withValues(alpha: 0.3),
+                      borderRadius: retro.radius,
+                    ),
+                  ),
                 );
               }),
             ),
@@ -328,20 +330,22 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
 
                 Positioned.fill(
                   child: DecoratedBox(
-                    decoration: retro.gameDecoration(BoxDecoration(
-                      borderRadius: retro.radius,
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.55),
-                          Colors.black.withValues(alpha: 0.82),
-                        ],
-                        stops: const [0.0, 0.4, 0.75, 1.0],
+                    decoration: retro.gameDecoration(
+                      BoxDecoration(
+                        borderRadius: retro.radius,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.55),
+                            Colors.black.withValues(alpha: 0.82),
+                          ],
+                          stops: const [0.0, 0.4, 0.75, 1.0],
+                        ),
                       ),
-                    )),
+                    ),
                   ),
                 ),
 
@@ -431,14 +435,16 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                         child: Container(
                           width: 36,
                           height: 36,
-                          decoration: retro.gameDecoration(BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            borderRadius: retro.radius,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              width: retro.borderWidth(1.5),
+                          decoration: retro.gameDecoration(
+                            BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              borderRadius: retro.radius,
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                width: retro.borderWidth(1.5),
+                              ),
                             ),
-                          )),
+                          ),
                           child: MarioGameIcon(
                             isFav ? Icons.favorite : Icons.favorite_border,
                             size: 17,
@@ -589,12 +595,14 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   width: _current == i ? 20 : 6,
                   height: 6,
-                  decoration: retro.gameDecoration(BoxDecoration(
-                    color: _current == i
-                        ? retro.accent
-                        : retro.inkDim.withValues(alpha: 0.3),
-                    borderRadius: retro.radius,
-                  )),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      color: _current == i
+                          ? retro.accent
+                          : retro.inkDim.withValues(alpha: 0.3),
+                      borderRadius: retro.radius,
+                    ),
+                  ),
                 );
               }),
             ),
@@ -689,14 +697,16 @@ class _BrowseCardState extends State<_BrowseCard>
                         width: 56,
                         height: 56,
                         alignment: Alignment.center,
-                        decoration: retro.gameDecoration(BoxDecoration(
-                          borderRadius: retro.radius,
-                          color: widget.accent.withValues(alpha: 0.22),
-                          border: Border.all(
-                            color: retro.border,
-                            width: retro.borderWidth(1.5),
+                        decoration: retro.gameDecoration(
+                          BoxDecoration(
+                            borderRadius: retro.radius,
+                            color: widget.accent.withValues(alpha: 0.22),
+                            border: Border.all(
+                              color: retro.border,
+                              width: retro.borderWidth(1.5),
+                            ),
                           ),
-                        )),
+                        ),
                         child:
                             widget.imageUrl != null &&
                                 widget.imageUrl!.isNotEmpty
@@ -716,7 +726,11 @@ class _BrowseCardState extends State<_BrowseCard>
                                   color: widget.accent,
                                 ),
                               )
-                            : MarioGameIcon(widget.icon, size: 26, color: widget.accent),
+                            : MarioGameIcon(
+                                widget.icon,
+                                size: 26,
+                                color: widget.accent,
+                              ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -897,15 +911,17 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
           transform: Matrix4.skewX(-retro.chipSkew),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: retro.gameDecoration(BoxDecoration(
-              color: retro.surface,
-              borderRadius: retro.radius,
-              border: Border.all(
-                color: retro.border,
-                width: retro.borderWidth(2),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                color: retro.surface,
+                borderRadius: retro.radius,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(2),
+                ),
+                boxShadow: retro.hardShadow(dx: 3, dy: 3),
               ),
-              boxShadow: retro.hardShadow(dx: 3, dy: 3),
-            )),
+            ),
             child: Transform(
               alignment: Alignment.center,
               transform: Matrix4.skewX(retro.chipSkew),
@@ -915,15 +931,21 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
                     width: 42,
                     height: 42,
                     alignment: Alignment.center,
-                    decoration: retro.gameDecoration(BoxDecoration(
-                      borderRadius: retro.radius,
-                      color: widget.accent.withValues(alpha: 0.18),
-                      border: Border.all(
-                        color: widget.accent,
-                        width: retro.borderWidth(2),
+                    decoration: retro.gameDecoration(
+                      BoxDecoration(
+                        borderRadius: retro.radius,
+                        color: widget.accent.withValues(alpha: 0.18),
+                        border: Border.all(
+                          color: widget.accent,
+                          width: retro.borderWidth(2),
+                        ),
                       ),
-                    )),
-                    child: MarioGameIcon(widget.icon, size: 20, color: widget.accent),
+                    ),
+                    child: MarioGameIcon(
+                      widget.icon,
+                      size: 20,
+                      color: widget.accent,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -1055,15 +1077,17 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                   horizontal: 16,
                   vertical: 12,
                 ),
-                decoration: retro.gameDecoration(BoxDecoration(
-                  borderRadius: retro.radius,
-                  color: retro.surfaceAlt,
-                  border: Border.all(
-                    color: retro.border,
-                    width: retro.borderWidth(2),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surfaceAlt,
+                    border: Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(2),
+                    ),
+                    boxShadow: retro.hardShadow(dx: 3, dy: 3),
                   ),
-                  boxShadow: retro.hardShadow(dx: 3, dy: 3),
-                )),
+                ),
                 child: Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.skewX(retro.chipSkew),
@@ -1104,14 +1128,16 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                       horizontal: 7,
                       vertical: 2,
                     ),
-                    decoration: retro.gameDecoration(BoxDecoration(
-                      borderRadius: retro.radius,
-                      color: retro.amber,
-                      border: Border.all(
-                        color: retro.border,
-                        width: retro.borderWidth(1.5),
+                    decoration: retro.gameDecoration(
+                      BoxDecoration(
+                        borderRadius: retro.radius,
+                        color: retro.amber,
+                        border: Border.all(
+                          color: retro.border,
+                          width: retro.borderWidth(1.5),
+                        ),
                       ),
-                    )),
+                    ),
                     child: Transform(
                       alignment: Alignment.center,
                       transform: Matrix4.skewX(retro.chipSkew),
@@ -1139,14 +1165,16 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: Container(
           height: 54,
-          decoration: retro.gameDecoration(BoxDecoration(
-            borderRadius: retro.radius,
-            color: retro.surface,
-            border: Border.all(
-              color: retro.border,
-              width: retro.borderWidth(2),
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              borderRadius: retro.radius,
+              color: retro.surface,
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2),
+              ),
             ),
-          )),
+          ),
           child: Center(
             child: SizedBox(
               width: 18,
@@ -1170,15 +1198,17 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
           transform: Matrix4.skewX(-retro.chipSkew),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: retro.gameDecoration(BoxDecoration(
-              borderRadius: retro.radius,
-              color: retro.accent,
-              border: Border.all(
-                color: retro.border,
-                width: retro.borderWidth(2),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                borderRadius: retro.radius,
+                color: retro.accent,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(2),
+                ),
+                boxShadow: retro.hardShadow(dx: 3, dy: 3),
               ),
-              boxShadow: retro.hardShadow(dx: 3, dy: 3),
-            )),
+            ),
             child: Transform(
               alignment: Alignment.center,
               transform: Matrix4.skewX(retro.chipSkew),
@@ -1201,7 +1231,11 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                       letterSpacing: 0.5,
                     ),
                   ),
-                  MarioGameIcon(Icons.arrow_forward, size: 18, color: retro.inkOnAccent),
+                  MarioGameIcon(
+                    Icons.arrow_forward,
+                    size: 18,
+                    color: retro.inkOnAccent,
+                  ),
                 ],
               ),
             ),
@@ -1392,7 +1426,11 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                     const SizedBox(height: 3),
                     Row(
                       children: [
-                        MarioGameIcon(Icons.download, size: 11, color: retro.inkDim),
+                        MarioGameIcon(
+                          Icons.download,
+                          size: 11,
+                          color: retro.inkDim,
+                        ),
                         const SizedBox(width: 3),
                         Text(
                           widget.mod.downloads.compact,
@@ -1400,7 +1438,11 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                         ),
                         if (widget.mod.rating != null) ...[
                           const SizedBox(width: 8),
-                          MarioGameIcon(Icons.star, size: 11, color: retro.amber),
+                          MarioGameIcon(
+                            Icons.star,
+                            size: 11,
+                            color: retro.amber,
+                          ),
                           const SizedBox(width: 3),
                           Text(
                             widget.mod.rating!.star,
@@ -1538,10 +1580,9 @@ class _Bone extends StatelessWidget {
       child: Container(
         width: width ?? double.infinity,
         height: height,
-        decoration: retro.gameDecoration(BoxDecoration(
-          color: retro.surface,
-          borderRadius: retro.radius,
-        )),
+        decoration: retro.gameDecoration(
+          BoxDecoration(color: retro.surface, borderRadius: retro.radius),
+        ),
       ),
     );
   }
@@ -1569,15 +1610,21 @@ class _HomeError extends StatelessWidget {
               width: 64,
               height: 64,
               alignment: Alignment.center,
-              decoration: retro.gameDecoration(BoxDecoration(
-                color: retro.surfaceAlt,
-                borderRadius: retro.radius,
-                border: Border.all(
-                  color: retro.red,
-                  width: retro.borderWidth(2),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  color: retro.surfaceAlt,
+                  borderRadius: retro.radius,
+                  border: Border.all(
+                    color: retro.red,
+                    width: retro.borderWidth(2),
+                  ),
                 ),
-              )),
-              child: MarioGameIcon(Icons.error_outline, size: 32, color: retro.red),
+              ),
+              child: MarioGameIcon(
+                Icons.error_outline,
+                size: 32,
+                color: retro.red,
+              ),
             ),
             const SizedBox(height: 16),
             Text(l10n.homeFailedToLoad, style: retro.heading(size: 16)),

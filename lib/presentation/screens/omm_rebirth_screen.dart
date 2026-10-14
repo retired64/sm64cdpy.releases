@@ -525,15 +525,17 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
           return Transform.translate(
             offset: Offset(offset, offset),
             child: Container(
-              decoration: retro.gameDecoration(BoxDecoration(
-                color: retro.surface,
-                borderRadius: retro.radius,
-                border: Border.all(
-                  color: retro.border,
-                  width: retro.borderWidth(3),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  color: retro.surface,
+                  borderRadius: retro.radius,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
                 ),
-                boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
-              )),
+              ),
               child: child,
             ),
           );
@@ -546,14 +548,16 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
               // ── Image banner (solo si hay URL) ────────────────
               if (hasImage)
                 Container(
-                  decoration: retro.gameDecoration(BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: retro.border,
-                        width: retro.borderWidth(3),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: retro.border,
+                          width: retro.borderWidth(3),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                   child: CachedNetworkImage(
                     imageUrl: widget.mod.imageUrl!,
                     width: double.infinity,
@@ -681,16 +685,18 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                       width: double.infinity,
                       height: 50,
                       child: DecoratedBox(
-                        decoration: retro.gameDecoration(BoxDecoration(
-                          borderRadius: retro.radius,
-                          border: Border.all(
-                            color: retro.border,
-                            width: retro.borderWidth(3),
+                        decoration: retro.gameDecoration(
+                          BoxDecoration(
+                            borderRadius: retro.radius,
+                            border: Border.all(
+                              color: retro.border,
+                              width: retro.borderWidth(3),
+                            ),
+                            boxShadow: isDownloading
+                                ? []
+                                : retro.hardShadow(dx: 4, dy: 4),
                           ),
-                          boxShadow: isDownloading
-                              ? []
-                              : retro.hardShadow(dx: 4, dy: 4),
-                        )),
+                        ),
                         child: ElevatedButton(
                           onPressed:
                               (_downloading &&
@@ -770,7 +776,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
                           onPressed: _download,
-                          icon: const MarioGameIcon(Icons.refresh_rounded, size: 15),
+                          icon: const MarioGameIcon(
+                            Icons.refresh_rounded,
+                            size: 15,
+                          ),
                           label: Text(l10n.installationReinstall),
                         ),
                       ),
@@ -832,15 +841,17 @@ class _EmptyView extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: retro.gameDecoration(BoxDecoration(
-                borderRadius: retro.radius,
-                color: retro.surface,
-                border: Border.all(
-                  color: retro.border,
-                  width: retro.borderWidth(3),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surface,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(),
                 ),
-                boxShadow: retro.hardShadow(),
-              )),
+              ),
               child: MarioGameIcon(
                 Icons.auto_awesome_rounded,
                 size: 30,
@@ -911,11 +922,16 @@ class _Bone extends StatelessWidget {
       highlightColor: retro.surfaceAlt,
       child: Container(
         height: height,
-        decoration: retro.gameDecoration(BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: retro.border, width: retro.borderWidth(3)),
-          borderRadius: retro.radius,
-        )),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(3),
+            ),
+            borderRadius: retro.radius,
+          ),
+        ),
       ),
     );
   }
@@ -943,15 +959,17 @@ class _OmmError extends StatelessWidget {
               Container(
                 width: 64,
                 height: 64,
-                decoration: retro.gameDecoration(BoxDecoration(
-                  borderRadius: retro.radius,
-                  color: retro.surface,
-                  border: Border.all(
-                    color: retro.red,
-                    width: retro.borderWidth(3),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surface,
+                    border: Border.all(
+                      color: retro.red,
+                      width: retro.borderWidth(3),
+                    ),
+                    boxShadow: retro.hardShadow(),
                   ),
-                  boxShadow: retro.hardShadow(),
-                )),
+                ),
                 child: MarioGameIcon(
                   Icons.error_outline_rounded,
                   size: 28,

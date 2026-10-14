@@ -47,188 +47,194 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
       shape: Border(
         right: BorderSide(color: retro.border, width: retro.borderWidth(2)),
       ),
-      child: DecoratedBox(decoration: retro.surfaceDecoration(shadowDx: 0, shadowDy: 0), child: SafeArea(
-        child: SingleChildScrollView(
-          controller: widget.scrollController,
-          physics: const ClampingScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _DrawerHeader(),
-              _RetroDivider(retro: retro),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
-                child: SectionKicker(
-                  retro: retro,
-                  label: l10n.sectionNavigation,
-                ),
-              ),
-
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/m64.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navHome,
-                route: '/',
-                isActive: currentRoute == '/',
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/catalog.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navCatalog,
-                route: '/catalogue',
-                isActive: currentRoute == '/catalogue',
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/favorites.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navFavourites,
-                route: '/favourites',
-                isActive: currentRoute == '/favourites',
-              ),
-              _NavItem(
-                iconBuilder: (color) =>
-                    MarioGameIcon(Icons.inventory_2_outlined, size: 19, color: color),
-                label: l10n.navLibrary,
-                route: '/library',
-                isActive: currentRoute == '/library',
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/popular.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navPopular,
-                route: '/popular',
-                isActive: currentRoute == '/popular',
-              ),
-
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
-                child: _RetroDivider(retro: retro),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                child: SectionKicker(
-                  retro: retro,
-                  label: l10n.sectionExclusive,
-                ),
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/render96.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navRender96,
-                route: '/render96',
-                isActive: currentRoute == '/render96',
-                accentColor: retro.amber,
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/vip.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navVIPMods,
-                route: '/vip',
-                isActive: currentRoute == '/vip',
-                accentColor: retro.amber,
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/dynos.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navDynOS,
-                route: '/dynos',
-                isActive: currentRoute == '/dynos',
-                accentColor: retro.blue,
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/controls.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navTouchControls,
-                route: '/touch-controls',
-                isActive: currentRoute == '/touch-controls',
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/omm.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navOmmRebirth,
-                route: '/omm-rebirth',
-                isActive: currentRoute == '/omm-rebirth',
-                accentColor: retro.red,
-              ),
-
-              // Footer
-              _RetroDivider(retro: retro),
-              const _SocialLinks(),
-              _RetroDivider(retro: retro),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/links-resource.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navLinksResource,
-                route: '/links-resource',
-                isActive: currentRoute == '/links-resource',
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/disclaimer.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navDisclaimer,
-                route: '/disclaimer',
-                isActive: currentRoute == '/disclaimer',
-              ),
-              _NavItem(
-                iconBuilder: (color) => SvgPicture.asset(
-                  'assets/icons/menu/settings.svg',
-                  width: 19,
-                  height: 19,
-                ),
-                label: l10n.navSettings,
-                route: '/settings',
-                isActive: currentRoute == '/settings',
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
-                child: Text(
-                  'v${UpdateService.currentVersion}',
-                  style: TextStyle(
-                    color: retro.inkDim,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.8,
+      child: DecoratedBox(
+        decoration: retro.surfaceDecoration(shadowDx: 0, shadowDy: 0),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            controller: widget.scrollController,
+            physics: const ClampingScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const _DrawerHeader(),
+                _RetroDivider(retro: retro),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
+                  child: SectionKicker(
+                    retro: retro,
+                    label: l10n.sectionNavigation,
                   ),
                 ),
-              ),
-            ],
+
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/m64.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navHome,
+                  route: '/',
+                  isActive: currentRoute == '/',
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/catalog.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navCatalog,
+                  route: '/catalogue',
+                  isActive: currentRoute == '/catalogue',
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/favorites.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navFavourites,
+                  route: '/favourites',
+                  isActive: currentRoute == '/favourites',
+                ),
+                _NavItem(
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.inventory_2_outlined,
+                    size: 19,
+                    color: color,
+                  ),
+                  label: l10n.navLibrary,
+                  route: '/library',
+                  isActive: currentRoute == '/library',
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/popular.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navPopular,
+                  route: '/popular',
+                  isActive: currentRoute == '/popular',
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+                  child: _RetroDivider(retro: retro),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
+                  child: SectionKicker(
+                    retro: retro,
+                    label: l10n.sectionExclusive,
+                  ),
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/render96.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navRender96,
+                  route: '/render96',
+                  isActive: currentRoute == '/render96',
+                  accentColor: retro.amber,
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/vip.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navVIPMods,
+                  route: '/vip',
+                  isActive: currentRoute == '/vip',
+                  accentColor: retro.amber,
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/dynos.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navDynOS,
+                  route: '/dynos',
+                  isActive: currentRoute == '/dynos',
+                  accentColor: retro.blue,
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/controls.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navTouchControls,
+                  route: '/touch-controls',
+                  isActive: currentRoute == '/touch-controls',
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/omm.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navOmmRebirth,
+                  route: '/omm-rebirth',
+                  isActive: currentRoute == '/omm-rebirth',
+                  accentColor: retro.red,
+                ),
+
+                // Footer
+                _RetroDivider(retro: retro),
+                const _SocialLinks(),
+                _RetroDivider(retro: retro),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/links-resource.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navLinksResource,
+                  route: '/links-resource',
+                  isActive: currentRoute == '/links-resource',
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/disclaimer.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navDisclaimer,
+                  route: '/disclaimer',
+                  isActive: currentRoute == '/disclaimer',
+                ),
+                _NavItem(
+                  iconBuilder: (color) => SvgPicture.asset(
+                    'assets/icons/menu/settings.svg',
+                    width: 19,
+                    height: 19,
+                  ),
+                  label: l10n.navSettings,
+                  route: '/settings',
+                  isActive: currentRoute == '/settings',
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 8, 0, 14),
+                  child: Text(
+                    'v${UpdateService.currentVersion}',
+                    style: TextStyle(
+                      color: retro.inkDim,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -264,15 +270,17 @@ class _DrawerHeader extends StatelessWidget {
             width: 44,
             height: 44,
             alignment: Alignment.center,
-            decoration: retro.gameDecoration(BoxDecoration(
-              borderRadius: retro.radius,
-              color: retro.surface,
-              border: Border.all(
-                color: retro.border,
-                width: retro.borderWidth(2.5),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                borderRadius: retro.radius,
+                color: retro.surface,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(2.5),
+                ),
+                boxShadow: retro.hardShadow(dx: 3, dy: 3),
               ),
-              boxShadow: retro.hardShadow(dx: 3, dy: 3),
-            )),
+            ),
             child: RepaintBoundary(
               child: SvgPicture.asset(
                 'assets/icons/logo.svg',
@@ -299,7 +307,11 @@ class _DrawerHeader extends StatelessWidget {
           IconButton(
             tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
             constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-            icon: MarioGameIcon(Icons.close_rounded, color: retro.inkDim, size: 22),
+            icon: MarioGameIcon(
+              Icons.close_rounded,
+              color: retro.inkDim,
+              size: 22,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -376,13 +388,15 @@ class _NavItemState extends State<_NavItem>
           duration: _kItemDuration,
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-          decoration: retro.gameDecoration(BoxDecoration(
-            borderRadius: retro.radius,
-            color: widget.isActive ? accent : Colors.transparent,
-            border: widget.isActive
-                ? Border.all(color: retro.border, width: retro.borderWidth(2))
-                : null,
-          )),
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              borderRadius: retro.radius,
+              color: widget.isActive ? accent : Colors.transparent,
+              border: widget.isActive
+                  ? Border.all(color: retro.border, width: retro.borderWidth(2))
+                  : null,
+            ),
+          ),
           child: Row(
             children: [
               AnimatedContainer(
@@ -600,13 +614,18 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: retro.gameDecoration(BoxDecoration(
-            borderRadius: retro.radius,
-            color: isSelected ? catColor : Colors.transparent,
-            border: isSelected
-                ? Border.all(color: retro.border, width: retro.borderWidth(1.5))
-                : null,
-          )),
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              borderRadius: retro.radius,
+              color: isSelected ? catColor : Colors.transparent,
+              border: isSelected
+                  ? Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(1.5),
+                    )
+                  : null,
+            ),
+          ),
           child: Row(
             children: [
               Container(
@@ -801,13 +820,18 @@ class _SortItemState extends ConsumerState<_SortItem>
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: retro.gameDecoration(BoxDecoration(
-            borderRadius: retro.radius,
-            color: isSelected ? retro.accent : Colors.transparent,
-            border: isSelected
-                ? Border.all(color: retro.border, width: retro.borderWidth(1.5))
-                : null,
-          )),
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              borderRadius: retro.radius,
+              color: isSelected ? retro.accent : Colors.transparent,
+              border: isSelected
+                  ? Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(1.5),
+                    )
+                  : null,
+            ),
+          ),
           child: Row(
             children: [
               Expanded(
@@ -825,7 +849,11 @@ class _SortItemState extends ConsumerState<_SortItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: MarioGameIcon(Icons.check, size: 14, color: retro.inkOnAccent),
+                child: MarioGameIcon(
+                  Icons.check,
+                  size: 14,
+                  color: retro.inkOnAccent,
+                ),
               ),
             ],
           ),
@@ -986,14 +1014,16 @@ class _SocialButtonState extends State<_SocialButton>
           child: Container(
             width: 40,
             height: 40,
-            decoration: retro.gameDecoration(BoxDecoration(
-              borderRadius: retro.radius,
-              color: retro.surfaceAlt,
-              border: Border.all(
-                color: retro.border,
-                width: retro.borderWidth(2),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                borderRadius: retro.radius,
+                color: retro.surfaceAlt,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(2),
+                ),
               ),
-            )),
+            ),
             child: Center(
               child: RepaintBoundary(
                 child: SvgPicture.asset(

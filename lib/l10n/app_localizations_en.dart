@@ -1596,14 +1596,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get marioRomTitle => 'Original game resources';
 
   @override
-  String get marioRomBuiltIn => 'Built-in design';
+  String get marioRomBuiltIn => 'ROM not selected';
 
   @override
-  String get marioRomReady => 'Original resources ready';
+  String get marioRomReady => 'Original interface ready';
 
   @override
   String get marioRomDescription =>
-      'Choose your unmodified US Super Mario 64 ROM (.z64) to use its menu textures, cursor and HUD icons. Everything stays on this device; the game and ROM are never modified.';
+      'Select your unmodified US Super Mario 64 ROM (.z64) once to activate the original menu materials, game skies, cursors, HUD and ROM typography. Resources stay private on this device. The ROM and game are never changed.';
 
   @override
   String get marioRomImport => 'Choose my ROM';
@@ -1627,4 +1627,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get marioRomSuccess => 'Original game resources are ready.';
+
+  @override
+  String get marioRomUpgrade =>
+      'Select the ROM again to upgrade the original interface';
 }

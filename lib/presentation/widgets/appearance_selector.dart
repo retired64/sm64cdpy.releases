@@ -102,7 +102,9 @@ class AppearanceSelector extends ConsumerWidget {
         if (settings.isSaving) ...[
           const SizedBox(height: 12),
           LinearProgressIndicator(
-            semanticsLabel: preparingRom ? l10n.marioRomPreparing : l10n.themeSaving,
+            semanticsLabel: preparingRom
+                ? l10n.marioRomPreparing
+                : l10n.themeSaving,
             color: retro.accent,
           ),
         ],

@@ -51,7 +51,13 @@ void main() {
         directory = await Directory.systemTemp.createTemp('theme-menu-test-');
         Hive.init(directory.path);
         await Hive.openBox<String>(AppConstants.settingsBoxKey);
-        container = ProviderContainer(overrides: [marioThemeAssetsServiceProvider.overrideWithValue(ReadyMarioRomService())]);
+        container = ProviderContainer(
+          overrides: [
+            marioThemeAssetsServiceProvider.overrideWithValue(
+              ReadyMarioRomService(),
+            ),
+          ],
+        );
         await container.read(marioThemeAssetsProvider.notifier).initialize();
       });
       tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
@@ -79,10 +85,7 @@ void main() {
           tester.element(find.byKey(const ValueKey('theme-probe'))),
         );
         expect(theme.extension<RetroTheme>()!.design.id, AppThemeId.mario64);
-        expect(
-          theme.extension<RetroTheme>()!.radius,
-          BorderRadius.circular(0),
-        );
+        expect(theme.extension<RetroTheme>()!.radius, BorderRadius.circular(0));
         expect(theme.extension<RetroTheme>()!.showN64Backdrop, isTrue);
         expect(theme.extension<RetroTheme>()!.usesBeveledSurfaces, isTrue);
         expect(theme.colorScheme.primary, const Color(0xFFA82010));

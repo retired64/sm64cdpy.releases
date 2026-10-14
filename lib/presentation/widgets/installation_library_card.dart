@@ -80,15 +80,17 @@ class InstallationLibraryCard extends ConsumerWidget {
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 10),
         padding: EdgeInsets.all(compact ? 12 : 14),
-        decoration: retro.gameDecoration(BoxDecoration(
-          borderRadius: retro.radius,
-          color: retro.surface,
-          border: Border.all(
-            color: retro.border.withValues(alpha: 0.45),
-            width: retro.borderWidth(2),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: retro.surface,
+            border: Border.all(
+              color: retro.border.withValues(alpha: 0.45),
+              width: retro.borderWidth(2),
+            ),
+            boxShadow: retro.hardShadow(dx: 3, dy: 3),
           ),
-          boxShadow: retro.hardShadow(dx: 3, dy: 3),
-        )),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -304,18 +306,23 @@ class InstallationUpdateCard extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
-      decoration: retro.gameDecoration(BoxDecoration(
-        borderRadius: retro.radius,
-        color: retro.surface,
-        border: Border.all(color: retro.accent, width: retro.borderWidth(2)),
-        boxShadow: retro.hardShadow(dx: 3, dy: 3),
-      )),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.surface,
+          border: Border.all(color: retro.accent, width: retro.borderWidth(2)),
+          boxShadow: retro.hardShadow(dx: 3, dy: 3),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              MarioGameIcon(Icons.system_update_alt_rounded, color: retro.accentText),
+              MarioGameIcon(
+                Icons.system_update_alt_rounded,
+                color: retro.accentText,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -343,7 +350,10 @@ class InstallationUpdateCard extends StatelessWidget {
                   context.go(update.available.route);
                 }
               },
-              icon: const MarioGameIcon(Icons.system_update_alt_rounded, size: 18),
+              icon: const MarioGameIcon(
+                Icons.system_update_alt_rounded,
+                size: 18,
+              ),
               label: Text(l10n.installationUpdate),
             ),
           ),

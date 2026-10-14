@@ -275,12 +275,17 @@ class _SearchField extends ConsumerWidget {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      decoration: retro.gameDecoration(BoxDecoration(
-        borderRadius: retro.radius,
-        color: retro.surface,
-        border: Border.all(color: retro.border, width: retro.borderWidth(2.5)),
-        boxShadow: focusNode.hasFocus ? [] : retro.hardShadow(dx: 3, dy: 3),
-      )),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.surface,
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2.5),
+          ),
+          boxShadow: focusNode.hasFocus ? [] : retro.hardShadow(dx: 3, dy: 3),
+        ),
+      ),
       transform: focusNode.hasFocus
           ? Matrix4.translationValues(
               3 * retro.design.shadowOffsetScale,
@@ -317,7 +322,11 @@ class _SearchField extends ConsumerWidget {
             builder: (_, value, _) {
               if (value.text.isEmpty) return const SizedBox.shrink();
               return IconButton(
-                icon: MarioGameIcon(Icons.close_rounded, size: 17, color: retro.inkDim),
+                icon: MarioGameIcon(
+                  Icons.close_rounded,
+                  size: 17,
+                  color: retro.inkDim,
+                ),
                 onPressed: onClear,
                 splashRadius: 16,
               );
@@ -365,17 +374,19 @@ class _FilterBarDelegate extends SliverPersistentHeaderDelegate {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
-      decoration: retro.gameDecoration(BoxDecoration(
-        color: retro.background,
-        border: elevated
-            ? Border(
-                bottom: BorderSide(
-                  color: retro.border,
-                  width: retro.borderWidth(3),
-                ),
-              )
-            : null,
-      )),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          color: retro.background,
+          border: elevated
+              ? Border(
+                  bottom: BorderSide(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                )
+              : null,
+        ),
+      ),
       child: _FilterBar(
         selectedCategory: selectedCategory,
         currentSort: currentSort,
@@ -567,14 +578,16 @@ class _SortSheet extends StatelessWidget {
                     horizontal: 14,
                     vertical: 13,
                   ),
-                  decoration: retro.gameDecoration(BoxDecoration(
-                    borderRadius: retro.radius,
-                    color: isSelected ? retro.accent : retro.surfaceAlt,
-                    border: Border.all(
-                      color: retro.border,
-                      width: retro.borderWidth(2),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      borderRadius: retro.radius,
+                      color: isSelected ? retro.accent : retro.surfaceAlt,
+                      border: Border.all(
+                        color: retro.border,
+                        width: retro.borderWidth(2),
+                      ),
                     ),
-                  )),
+                  ),
                   child: Row(
                     children: [
                       MarioGameIcon(
@@ -742,12 +755,17 @@ class _PaginationBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: retro.gameDecoration(BoxDecoration(
-          borderRadius: retro.radius,
-          color: retro.surface,
-          border: Border.all(color: retro.border, width: retro.borderWidth(3)),
-          boxShadow: retro.hardShadow(),
-        )),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: retro.surface,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(3),
+            ),
+            boxShadow: retro.hardShadow(),
+          ),
+        ),
         child: Row(
           children: [
             _PageButton(
@@ -858,14 +876,16 @@ class _PagePills extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 3),
             width: isActive ? 28 : 24,
             height: 24,
-            decoration: retro.gameDecoration(BoxDecoration(
-              borderRadius: retro.radius,
-              color: isActive ? retro.accent : retro.surfaceAlt,
-              border: Border.all(
-                color: retro.border,
-                width: retro.borderWidth(isActive ? 2 : 1.5),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                borderRadius: retro.radius,
+                color: isActive ? retro.accent : retro.surfaceAlt,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(isActive ? 2 : 1.5),
+                ),
               ),
-            )),
+            ),
             alignment: Alignment.center,
             child: Text(
               '${page + 1}',
@@ -904,14 +924,18 @@ class _PageButton extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         width: 36,
         height: 36,
-        decoration: retro.gameDecoration(BoxDecoration(
-          borderRadius: retro.radius,
-          color: enabled ? retro.accent : retro.surfaceAlt,
-          border: Border.all(
-            color: enabled ? retro.border : retro.border.withValues(alpha: 0.3),
-            width: retro.borderWidth(2),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: enabled ? retro.accent : retro.surfaceAlt,
+            border: Border.all(
+              color: enabled
+                  ? retro.border
+                  : retro.border.withValues(alpha: 0.3),
+              width: retro.borderWidth(2),
+            ),
           ),
-        )),
+        ),
         child: MarioGameIcon(
           icon,
           size: 15,
@@ -962,15 +986,17 @@ class _EmptyView extends ConsumerWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: retro.gameDecoration(BoxDecoration(
-                borderRadius: retro.radius,
-                color: retro.surface,
-                border: Border.all(
-                  color: retro.border,
-                  width: retro.borderWidth(3),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surface,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(),
                 ),
-                boxShadow: retro.hardShadow(),
-              )),
+              ),
               child: MarioGameIcon(
                 hasFilters
                     ? Icons.search_off_rounded
@@ -1014,15 +1040,17 @@ class _EmptyView extends ConsumerWidget {
                     horizontal: 16,
                     vertical: 12,
                   ),
-                  decoration: retro.gameDecoration(BoxDecoration(
-                    borderRadius: retro.radius,
-                    color: retro.accent,
-                    border: Border.all(
-                      color: retro.border,
-                      width: retro.borderWidth(2.5),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      borderRadius: retro.radius,
+                      color: retro.accent,
+                      border: Border.all(
+                        color: retro.border,
+                        width: retro.borderWidth(2.5),
+                      ),
+                      boxShadow: retro.hardShadow(dx: 3, dy: 3),
                     ),
-                    boxShadow: retro.hardShadow(dx: 3, dy: 3),
-                  )),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -1075,15 +1103,17 @@ class _ErrorView extends StatelessWidget {
             Container(
               width: 64,
               height: 64,
-              decoration: retro.gameDecoration(BoxDecoration(
-                borderRadius: retro.radius,
-                color: retro.surface,
-                border: Border.all(
-                  color: retro.red,
-                  width: retro.borderWidth(3),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surface,
+                  border: Border.all(
+                    color: retro.red,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(),
                 ),
-                boxShadow: retro.hardShadow(),
-              )),
+              ),
               child: MarioGameIcon(
                 Icons.error_outline_rounded,
                 size: 28,

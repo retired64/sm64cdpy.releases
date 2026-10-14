@@ -821,7 +821,9 @@ class _GameModCard extends StatelessWidget {
               if (!saving)
                 Semantics(
                   label: mod.title,
-                  child: Switch(
+                  child: retro.isMario && retro.marioAssets.complete
+                    ? MarioGameToggle(key: ValueKey('game-mod-switch-${mod.name}'), value: mod.enabled, onChanged: onChanged)
+                    : Switch(
                     key: ValueKey('game-mod-switch-${mod.name}'),
                     value: mod.enabled,
                     onChanged: onChanged,
@@ -832,7 +834,7 @@ class _GameModCard extends StatelessWidget {
                     trackOutlineColor: WidgetStatePropertyAll(retro.border),
                     thumbIcon: WidgetStateProperty.resolveWith(
                       (states) => states.contains(WidgetState.selected)
-                          ? MarioGameIcon(
+                          ? Icon(
                               retro.design.playfulSelection
                                   ? Icons.star_rounded
                                   : Icons.check_rounded,

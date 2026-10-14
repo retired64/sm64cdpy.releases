@@ -106,7 +106,11 @@ class _SettingsExpansionGroupState extends State<SettingsExpansionGroup> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        MarioGameTitle(text: widget.title, retro: retro, size: 14),
+                        MarioGameTitle(
+                          text: widget.title,
+                          retro: retro,
+                          size: 14,
+                        ),
                         const SizedBox(height: 3),
                         Text(widget.subtitle, style: retro.body(size: 12)),
                       ],
@@ -190,7 +194,9 @@ class SettingsSelectionOption extends StatelessWidget {
             children: [
               leading,
               const SizedBox(width: 12),
-              Expanded(child: MarioGameTitle(text: label, retro: retro, size: 14)),
+              Expanded(
+                child: MarioGameTitle(text: label, retro: retro, size: 14),
+              ),
               if (selected)
                 MarioMenuGlyph(
                   retro: retro,

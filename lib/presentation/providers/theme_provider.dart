@@ -51,12 +51,19 @@ class AppearanceNotifier extends Notifier<AppearanceSettings> {
   /// null means the picker was cancelled/import failed; the ROM coordinator owns feedback.
   Future<bool?> selectThemeWithRom(AppThemeId id) async {
     if (state.isSaving) return null;
-    if (id != AppThemeId.mario64 || ref.read(marioThemeAssetsProvider).assets.complete) return setTheme(id);
+    if (id != AppThemeId.mario64 ||
+        ref.read(marioThemeAssetsProvider).assets.complete)
+      return setTheme(id);
     final previous = state;
-    state = AppearanceSettings(themeId: previous.themeId, mode: previous.mode, isSaving: true);
+    state = AppearanceSettings(
+      themeId: previous.themeId,
+      mode: previous.mode,
+      isSaving: true,
+    );
     try {
       await ref.read(marioThemeAssetsProvider.notifier).perform('import');
-      if (!ref.mounted || !ref.read(marioThemeAssetsProvider).assets.complete) return null;
+      if (!ref.mounted || !ref.read(marioThemeAssetsProvider).assets.complete)
+        return null;
       state = previous;
       return await setTheme(id);
     } finally {

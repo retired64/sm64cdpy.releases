@@ -21,7 +21,11 @@ Future<void> showPostInstallDialog(BuildContext context) async {
         shape: RoundedRectangleBorder(borderRadius: retro.radius),
         title: Row(
           children: [
-            MarioGameIcon(Icons.check_circle, color: retro.accentText, size: 22),
+            MarioGameIcon(
+              Icons.check_circle,
+              color: retro.accentText,
+              size: 22,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
