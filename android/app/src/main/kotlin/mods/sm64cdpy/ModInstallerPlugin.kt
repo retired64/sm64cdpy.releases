@@ -736,6 +736,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * Retorna inmediatamente el workId (UUID string).
      */
     private fun installModBackground(call: MethodCall, result: Result) {
+        synchronized(InstallationSafAccessCoordinator.lock) {
         val act = activity
         if (act == null) {
             result.error("NO_ACTIVITY", "Activity not available", null)
@@ -858,6 +859,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * Retorna inmediatamente un mapa con downloadWorkId e installWorkId.
      */
      private fun downloadAndInstallMod(call: MethodCall, result: Result) {
+        synchronized(InstallationSafAccessCoordinator.lock) {
         val act = activity
         if (act == null) {
             result.error("NO_ACTIVITY", "Activity not available", null)
@@ -1075,7 +1077,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "downloadWorkId" to downloadId.toString(),
             "installWorkId" to installId.toString()
         ))
-    }
+            }
+        }
+}
 
     /**
      * Cancela todas las operaciones asociadas a un mod por nombre.

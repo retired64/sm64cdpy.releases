@@ -124,3 +124,8 @@ Las instalaciones rechazan explícitamente user como destino. Las copias y
 extracciones manuales legacy se serializan con cambios de conexión usando el
 coordinador SAF existente; los Workers conservan su paralelismo. Una apertura
 de stream nula es fallo, nunca copia exitosa ni motivo para borrar el origen.
+
+La captura del destino y el enqueue de instalación también usan ese coordinador:
+una conexión no puede intercalarse entre leer preferencias y registrar el trabajo.
+La consulta de trabajos activos se hace antes de confirmar una conexión. No se
+serializa la transferencia/extracción de Workers independientes.
