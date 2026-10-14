@@ -99,7 +99,7 @@ class DrawerMenuButton extends StatelessWidget {
       builder: (ctx) => IconButton(
         tooltip: MaterialLocalizations.of(ctx).openAppDrawerTooltip,
         constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-        icon: Icon(icon, color: color ?? retro.ink, size: size),
+        icon: MarioGameIcon(icon, color: color ?? retro.ink, size: size),
         onPressed: () => Scaffold.of(ctx).openDrawer(),
       ),
     );
@@ -183,7 +183,7 @@ class RetroFixedHeaderView extends StatelessWidget {
           bottom: false,
           child: Container(
             height: 56,
-            decoration: BoxDecoration(
+            decoration: retro.gameDecoration(BoxDecoration(
               color: retro.background,
               border: Border(
                 bottom: BorderSide(
@@ -191,7 +191,7 @@ class RetroFixedHeaderView extends StatelessWidget {
                   width: retro.borderWidth(2),
                 ),
               ),
-            ),
+            )),
             child: Row(
               children: [
                 DrawerMenuButton(color: leadingColor),

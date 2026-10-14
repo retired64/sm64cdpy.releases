@@ -1,158 +1,170 @@
-# Mario 64: menús y recursos locales de la ROM
+# Mario 64: reconstrucción de menús con la ROM — versión 2
 
-Implementación en `custom-themes`, para Android. No modifica la ROM ni los
-archivos del juego. Retro Manga y el engine del overlay conservan sus diseños.
+Rama `custom-themes`, Android, preparación de 1.8.3+22. El usuario comprobó que
+la importación v1 funcionaba, pero sus 15 imágenes y opacidades 9–16 % dejaban
+muchas superficies genéricas. V2 reemplaza esa política: escenas originales,
+materiales opacos, marcos cuadrados, tipografías derivadas de ROM e iconografía
+compartida en las 14 pantallas principales. No se modifica ni publica el juego.
 
-## Plan y alcance implementado
+## Flujo de selección
 
-1. Materiales: bordes más cuadrados (8 dp), bisel, sombra definida y profundidad
-   suave en las superficies compartidas. La piedra importada se repite con baja
-   opacidad para conservar legibilidad; nunca sustituye el color de contraste.
-2. Composición: Home/catálogos conservan cielo; Biblioteca y Ajustes usan un
-   fondo de menú. Catálogo, fichas de Biblioteca, paneles y diálogos que emplean
-   `surfaceDecoration` comparten el mismo tratamiento. Home, Top downloads y
-   catálogo presentan las portadas con marco; el avatar del detalle conserva
-   ese marco al navegar mediante Hero.
-3. Selección: opciones de Ajustes y ruta activa del drawer muestran la mano
-   original cuando está importada. Biblioteca utiliza sus dos estados; los
-   encabezados usan la estrella y el contador de Biblioteca usa dígitos HUD.
-4. Movimiento: entrada con profundidad en Mario; las transiciones de navegación
-   se omiten con la preferencia de reducir animaciones. Se mantienen las
-   animaciones de expansión de Ajustes y la respuesta de presión existente.
-5. Recursos opcionales: importación de 15 PNG privados desde una ROM válida;
-   sustitución completa, cancelación, retirada y restauración al diseño incluido.
-6. Texto: TypefaceMario64 sigue exclusivo de títulos. Descripciones, errores y
-   nombres de archivo conservan texto normal y soporte de acentos. Los iconos
-   originales son decorativos; no sustituyen etiquetas accesibles ni los estados.
+1. Ajustes → Tema de interfaz → Mario 64.
+2. Sin un conjunto v2 completo, `AppearanceNotifier.selectThemeWithRom` abre la
+   selección directa de ROM. No cambia aún el tema persistido; bloquea otra
+   selección y conserva el diseño anterior mientras prepara recursos.
+3. Android valida ROM, genera y verifica el conjunto privado completo; Flutter
+   carga las fuentes. Solo entonces se confirma el tema en Hive.
+4. Cancelación/error conserva tema y recursos anteriores, libera controles y
+   no genera un falso error de guardado del tema. El coordinador ROM informa
+   errores/éxito, incluso al navegar. La elección de tema pertenece al provider,
+   no a la vida de la pantalla que abrió el selector.
+5. Un conjunto ya preparado se reutiliza al seleccionar Mario; no pide la ROM
+   en cada visita, cambio claro/oscuro o reapertura. La ROM no se guarda.
 
-Sonido original y modelos/escenas 3D quedan como fases posteriores, como en la
-propuesta: no se ha integrado un motor de audio N64 ni un renderizador de modelos.
-No se anuncian como funciones disponibles. No hay recursos de Nintendo en git,
-assets del APK, pruebas ni notas públicas descargables.
+La selección de la carpeta `user` para configurar mods no concede acceso a su
+padre. Se mantiene ACTION_OPEN_DOCUMENT, sin búsqueda automática de ROM,
+MANAGE_EXTERNAL_STORAGE, permiso de escritura ni URI persistente nueva.
 
-## Contrato con el código del juego
+## Recursos y fuente exacta
 
-Referencias de la copia local (no se publica ni se modifica `sm64coopdx/`):
+Se generan **147 imágenes individuales + 4 imágenes compuestas + 3 fuentes**:
+154 archivos privados. No se incluyen estos recursos en git, assets del APK,
+fixtures ni publicaciones. Los manifiestos son direcciones/dimensiones, no arte.
 
-- `src/pc/rom_checker.cpp`: MD5 de la ROM vanilla US habilitada, regiones restantes
-  comentadas; copia a `baserom.us.z64` y carga desde el directorio de usuario.
-- `platform/app/src/main/java/org/libsdl/app/SDLActivity.java`: selección mediante
-  ACTION_OPEN_DOCUMENT y copia privada antes de llamar al código nativo.
-- `src/pc/rom_assets.c`: carga de segmentos y MIO0 en memoria, no exportación PNG.
-- `levels/menu/leveldata.c`: segmento US `0x2a65b0`, longitud comprimida 22255:
-  piedra `0x18`, piedra oscura `0x818`, mano `0x6328`, mano pulsada `0x6b28`.
-  Todas son RGBA16 32×32.
-- `bin/segment2.c`: segmento US `0x108a40`, longitud comprimida 48390:
-  estrella `0x4800`, RGBA16 16×16; dígitos 0–9, desplazamientos `i * 512`.
-- `src/pc/gfx/gfx_pc.c`: expansión RGBA5551 y transparencia de un bit.
-- `src/menu/file_select.c`: crecimiento/retorno del botón y sonidos de menú;
-  `src/pc/djui/djui_theme.c`: temas modernos adicionales de CoopDX. No se confunden
-  los paneles DJUI con el menú original.
+| Recursos | Fuente del clon de referencia | Uso |
+|---|---|---|
+| Piedra clara/oscura, manos, imágenes Mario nuevo/guardado, File/Score/Sound/Copy/Erase y Course | `levels/menu/leveldata.c`, segmento US 0x2a65b0, 22255 bytes comprimidos | Material, cursor, navegación y vocabulario del selector original |
+| 36 caracteres de menú IA8 8×8 | mismo archivo, offsets declarados para 0–9/A–Z | Fuente de controles y alfabeto completo para letras HUD ausentes |
+| 21 letras HUD, 10 dígitos, estrella, moneda, cabeza Mario, flechas | `bin/segment2.c`, 0x108a40, 48390 bytes comprimidos | Encabezados a color, contadores e iconos |
+| 62 caracteres de diálogo IA4 | mismo archivo, 0–9/A–Z/a–z | Fuente de texto general |
+| Cielo Clouds, cielo BBH | `bin/clouds_skybox.c` (0x2c73d0, 35951), `bin/bbh_skybox.c` (0x2fb1b0, 27422) | Escenas clara/oscura 256×256 |
+| panel_light/panel_dark | relieve de piedra de la ROM | Material opaco con luminancia ajustada para legibilidad |
 
-El importador actual acepta **únicamente ROM .z64 big-endian vanilla US de 8 MiB**
-con MD5 `20b854b239203baf6c961b850a4a51a2`. No admite ROM modificada, otras regiones,
-.zip ni archivos .v64/.n64 con otro orden de bytes. El nombre no es la validación;
-los bytes y el hash lo son. Cambiar un offset exige un nuevo manifiesto/versionado.
+Referencia Android del juego: `SDLActivity.java` elige documento y copia ROM para
+`src/pc/rom_checker.cpp`; este habilita MD5 US vanilla. `src/pc/rom_assets.c` lee
+segmentos y MIO0 en memoria. El manager usa un decoder acotado independiente,
+no carga un engine del juego ni presupone que haya PNG exportados.
 
-## Flujo Android → Flutter
+La ROM admitida sigue siendo **US vanilla .z64 big-endian de 8 MiB**, MD5
+`20b854b239203baf6c961b850a4a51a2`. Regiones alternativas, ROM modificada, .v64/.n64
+con otro byte order y ZIP se rechazan. El nombre del archivo no determina validez.
 
-`MainActivity` registra `MarioAssetsPlugin` solo en el engine principal.
-Canal `sm64cdpy/mario_assets`:
+## Reconstrucción de fuentes y fondos
 
-| Método | Resultado |
-|---|---|
-| `read` | conjunto completo verificado o mapa vacío para diseño incluido |
-| `import` | selector → lectura → validación → conversión → verificación → commit; null si se cierra el selector |
-| `cancel` | solicita detener; el Future original confirma el final y libera busy |
-| `remove` | borra la referencia persistente y devuelve mapa vacío |
+`MarioRomDecoder` convierte RGBA5551, IA8 e IA4. Para los diálogos no asume una
+rotación a partir del PNG de extracción: lee el quad `vertex_ia8_char` del propio
+segmento ROM (0x11c88), posiciones y coordenadas S/T big-endian, y muestrea sus
+UV para obtener los glifos 8×16 como los display lists del juego.
 
-No necesita MANAGE_EXTERNAL_STORAGE ni permiso de escritura a la ROM. El usuario
-concede lectura al documento elegido; no se retiene URI persistente porque los
-recursos se consumen una sola vez. La selección de `user` para mods no otorga
-permiso a su padre y no se utiliza para buscar la ROM automáticamente.
+Los skyboxes contienen 41 teselas 32×32. Su tabla tiene diez columnas (ocho reales
+más dos de wrapping) y ocho filas; las tres últimas repiten la tesela 40. El
+importador recompone las ocho columnas reales, conserva orientación y genera
+los panoramas de 256×256. Flutter usa estas imágenes a resolución de pantalla,
+con filtro nearest y sin cargar/renderizar geometría 3D.
 
-Un executor serial lee un máximo de 8 MiB + un byte, calcula MD5, descomprime
-solo dos segmentos y genera 15 imágenes. `MarioRomDecoder` limita salida MIO0 a
-2 MiB, valida controles/literales/backreferences, sus distancias y longitudes,
-y comprueba los rangos de cada textura. No ejecuta código del archivo.
+`MarioPixelFont` crea TrueType desde los píxeles importados: contornos cuadrados,
+cmap Unicode, glyf/loca, métricas, nombres y checksums. No contiene glifos dibujados
+a mano ni bitmap Nintendo compilado. Las familias son:
 
-Cada importación escribe una generación UUID distinta en
-`noBackupFilesDir/mario_theme_v1/<UUID>/`. Cada PNG se sincroniza, decodifica y verifica
-por dimensiones antes de cambiar la referencia `generation` en SharedPreferences
-`mario_theme`. La cancelación y el commit se serializan en el hilo principal;
-un fallo anterior no cambia la referencia. Si commit devuelve false o la lectura
-final falla, también se restaura la referencia anterior en memoria/persistencia;
-no se deja activo el directorio fallido. La ROM no se guarda ni se sube. Las texturas se excluyen del backup de Android;
-si se restaura una preferencia sin el conjunto local, read vuelve al diseño incluido.
+- `MarioRomMenuV2`: letras/dígitos del selector; controles.
+- `MarioRomDialogV2`: texto y descripciones con mayúsculas/minúsculas originales.
+- `MarioRomHudV2`: títulos; las letras que no existen en HUD usan el alfabeto
+  original de menú. También hay encabezados con bitmaps HUD a color.
 
-Las generaciones anteriores permanecen hasta el siguiente arranque del plugin;
-así ImageCache no apunta a archivos eliminados durante un cambio visible. En
-ese arranque se eliminan directorios de generaciones inactivas y restos de una
-extracción interrumpida. Si falta una imagen, su tamaño o sus dimensiones PNG son inválidos, `read`
-retira la referencia. Las imágenes Flutter tienen fallback si no se decodifican.
-Retirar recursos desactiva su uso inmediato; limpia sus archivos al reabrir.
+Acentos y símbolos que la ROM US no contiene usan fallback Roboto, conservando
+idioma y nombres del usuario. TypefaceMario64 queda como reserva para un conjunto
+antiguo/incompleto. No se cambian claves de catálogo ni búsquedas por el aspecto
+del texto. Android analiza las fuentes generadas antes del commit; FontLoader
+las carga antes de publicar el conjunto observable. Se cargan una sola vez por
+engine porque solo se acepta un hash ROM y la versión del generador es fija.
+Una modificación futura del algoritmo requiere subir versión/alias del conjunto.
 
-## Estado, vida útil y recuperación
+## Diseño claro y oscuro
 
-`MarioThemeAssetsNotifier` vive en el ProviderScope principal, no en Ajustes.
-Arranque lee el conjunto una vez; los métodos import/remove devuelven el nuevo
-estado nativo. `busy` bloquea importaciones dobles y retirada simultánea. El
-conjunto anterior sigue visible durante lectura/extracción. Errores y cancelación
-conservan ese conjunto y liberan busy al recibir el resultado terminal.
+El juego no ofrece el selector Android claro/oscuro. Ambas variantes comparten
+materiales originales y lenguaje de File Select/pausa:
 
-Rotación: el plugin retira/reinstala ActivityResultListener y conserva operación.
-Navegación: el notifier conserva operación y el coordinador global informa de
-éxito/error. Engine destruido: marca cancelación, no entrega resultados a un canal
-muerto; el siguiente engine reconcilia desde el pointer durable. Muerte del proceso:
-el siguiente arranque descarta generaciones no confirmadas. No depende de Workers
-de descarga/instalación ni altera su identidad, eventos, destinos o preferencias.
+- Claro: cielo Clouds, piedra gris, bisel blanco/oscuro, tinta oscura, rojo y oro.
+- Oscuro: cielo BBH, piedra oscura, panel de pausa, tinta clara y selección oro.
+- Radio cero, relieve definido y marcos cuadrados; se retiran crema, azul pastel,
+  superficies redondeadas y el cielo procedural para Mario con recursos listos.
+- Piedra de panel a **opacidad 1**. Se remapea luminancia 190–255 en claro y 24–72
+  en oscuro: conserva el relieve de ROM y garantiza lectura. Marcos de botones
+  muestran piedra sin remap. No se usa un overlay casi invisible como en v1.
+- `gameDecoration` centraliza materiales en todas las superficies rectangulares
+  neutras de las pantallas y componentes. Gradientes de fotografías, círculos,
+  transparencia y rellenos semánticos conservan su contrato de contraste.
+- Controles Material tienen marco de piedra, tipografía de menú y forma cuadrada;
+  el fondo de una acción mantiene color/foreground real, incluidas acciones de
+  error/cancelación. Inputs, sheets y diálogos siguen los mismos roles.
+- `MarioGameIcon` cambia símbolos que tienen equivalente ROM. Búsqueda, errores,
+  accesibilidad y marcas sin equivalente original conservan icono comprensible.
+- `MarioGameTitle` dibuja glifos HUD/menu a color, escala de texto y etiquetas
+  accesibles. Body/caption usa fuente de diálogo mediante ThemeData/fachada.
+- Drawer, Home, Top downloads, catálogo, favoritos, Biblioteca, detalle, VIP,
+  DynOS, Touch Controls, OMM, Render96, Popular, enlaces y avisos comparten política.
+  Las imágenes de los mods siguen siendo contenido del catálogo.
+
+El diseño se inspira en la estructura del menú original y la adapta al teléfono;
+no se afirma una reproducción 3D 1:1 de una pantalla 320×240. Modelos, música y
+sonido original no forman parte de esta implementación visual. El overlay sigue
+con su diseño fijo y no lee ni necesita el conjunto.
+
+## Almacenamiento, migración y confirmación
+
+`MarioAssetsPlugin`, registrado solo en MainActivity, conserva canal
+`sm64cdpy/mario_assets`: read/import/cancel/remove. Un executor serial hace lectura,
+MIO0, generación, fsync y verificación de imágenes/fuentes fuera del hilo UI.
+Solo el commit pequeño del pointer se serializa con cancelación en main.
+
+Se escribe `noBackupFilesDir/mario_theme_v2/<UUID>/`; SharedPreferences `mario_theme`
+guarda `generation`. Cada importación crea rutas inmutables nuevas. Commit false
+restaura también la copia en memoria de preferencias. Cancelación, engine destruido
+o error no publica el directorio incompleto. Se cierra el stream al cancelar;
+el Future original confirma el terminal, no el acuse de la orden cancel.
+
+Lectura valida 151 PNG por dimensión y tres TTF por presencia/tamaño. Si hay v1,
+lee sus 15 PNG desde `mario_theme_v1`, conserva apariencia y muestra que debe
+reimportarse para el conjunto nuevo. No puede reconstruir fuentes/cielos sin
+volver a seleccionar la ROM: v1 no retenía sus bytes. Cancelar actualización
+conserva v1. Una vez v2 queda confirmado, un arranque posterior limpia generaciones
+v1/inactivas; remove limpia pointer y el siguiente arranque elimina archivos.
+
+Rotación conserva pendiente y reinstala ActivityResultListener. Navegar no corta
+la operación ni el coordinador. Muerte de proceso conserva el último pointer;
+el próximo arranque descarta staging. Se limita ROM a 8 MiB + un byte, cada segmento
+MIO0 a 2 MiB, PNG a 512 KiB y TTF a 1 MiB. Se verifican controles, referencias,
+rangos, dimensiones y checksum/fuentes; no se ejecuta código de ROM.
 
 ## Verificación de sincronización de estado
 
-- Escritor: importer Kotlin y remove; lectores: read nativo, notifier, ThemeData,
-  componentes Mario y Ajustes.
-- Autoridad: pointer nativo confirmado y conjunto privado completo. Flutter es
-  proyección; el tema elegido en Hive continúa independiente de estos recursos.
-- Cache: archivos de generaciones inmutables e ImageCache identificados por ruta
-  UUID; commit cambia las claves. Archivos inactivos se limpian al arrancar.
-- Futuro no esperado: initialize en main es intencional y captura sus errores.
-  Callbacks de UI esperan perform/cancel. No hay una variable para compartir
-  memoria con el overlay ni nuevos escritores de preferencias del juego.
-- Hermanos: catálogo general, Biblioteca, Ajustes, drawer y transiciones comunes;
-  VIP/DynOS/Touch Controls/OMM/Render96/detalle siguen los roles compartidos;
-  overlay mantiene su ThemeData fija sin recursos ROM.
+- Android escribe conjunto/pointer y read lo verifica; service/provider lo leen.
+  Los PNG/fuentes confirmados son autoridad; Riverpod/ThemeData son proyección.
+- AppearanceNotifier sigue siendo único escritor de tema/modo Hive; coordina
+  importación antes de setTheme. Cancel/error mantiene elección anterior. Modo
+  independiente; los dos engines no comparten variables ni familias por defecto.
+- Cache: fuentes versionadas una vez por engine, ImageCache por ruta UUID. Una
+  nueva generación cambia las claves; archivos viejos se limpian al arrancar.
+- Futures: UI espera selección/importación/cancelación; FontLoader se espera.
+  initialize en main mantiene unawaited intencional con errores capturados.
+- Hermanos: todas las pantallas y widgets principales, diálogos de carpetas,
+  biblioteca/activación, fuentes y fallback de overlay. WorkManager, identidad,
+  configuración del juego y eventos de instalación no se modifican.
 
-## Validación
+## Validación y matriz física
 
-Tests Kotlin sintéticos: literal MIO0, copia solapada, referencia inválida, literal
-truncado, límite de memoria, colores/transparencia y textura fuera de rango.
-Tests Flutter: confirmación antes de sustitución, doble selección, cancelación
-confirmada, error conservando conjunto, retirada y aislamiento de Retro/overlay.
-No contienen una ROM ni texturas originales. Actions ejecuta gen-l10n, format,
-analyze, Flutter tests y unit tests Kotlin. En Termux no hay Flutter/Dart.
+V1: Testing #192 y prueba del usuario correctos. V2: nueva validación CI pendiente.
+Tests sintéticos: MIO0, rangos, RGBA/IA, relieve y conteo único; parser Java AWT y
+checksum de TrueType; selección sólo tras importación confirmada, cancelación,
+conservación de recursos, roles de fuentes, contraste, modos e independencia.
+Fixtures no contienen ROM ni imágenes originales.
 
-Matriz física pendiente: ROM US válida, archivo corrupto/otra región/truncado,
-cancelar selector y extracción, repetir, retirar, tema Retro/Mario claro/oscuro,
-rotar durante selección/extracción, navegar, minimizar/reabrir, matar proceso,
-espacio insuficiente y proveedor de documentos sin acceso. Revisar contraste,
-texto grande, TalkBack y reducción de movimiento. Importar bytes desde un proveedor
-remoto puede depender de su disponibilidad; no se afirma un tiempo fijo.
+En dispositivo: reimportar desde v1; ambas escenas y tipografías; recorrer todas
+las pantallas; texto grande/TalkBack; cancelar selector y extracción; ROM inválida;
+rotar/navegar/reabrir; falta de espacio; retirar recursos y volver a elegir Mario.
+Revisar especialmente orientación del font de diálogo y recorte de skybox en
+portrait/landscape. Rendering correcto con datos reales requiere esa prueba.
 
-
-Fuentes Android: [documentos SAF](https://developer.android.com/training/data-storage/shared/documents-files)
-y [exclusiones de Auto Backup](https://developer.android.com/identity/data/autobackup).
-
-
-### Evidencia de CI del cambio completo
-
-[Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573),
-commit `f23034a`: gen-l10n, formato Dart, análisis, **83 tests Flutter**, APK
-arm64 (24.5 MB) y `:app:testReleaseUnitTest` terminaron correctamente. Artifact:
-`cdpy-f23034a-TESTING`. Se conserva 1.8.3+22; no hubo merge, tag ni release.
-El commit posterior consolida documentación y añade llaves al if de inicialización
-para resolver un aviso de estilo, sin cambiar comportamiento. El APK corresponde
-al código funcional validado en esa ejecución. La prueba física con una ROM real sigue pendiente.
-
-El análisis de #192 informó seis avisos de estilo no fatales (llaves en if), sin
-errores ni warnings. Cinco ya existían en el panel de activación; el aviso nuevo
-del inicializador ROM queda corregido en la consolidación posterior.
+Fuentes Android/Flutter: [SAF](https://developer.android.com/training/data-storage/shared/documents-files),
+[exclusión de backup](https://developer.android.com/identity/data/autobackup),
+[ButtonStyle.backgroundBuilder](https://api.flutter.dev/flutter/material/ButtonStyle/backgroundBuilder.html).

@@ -455,3 +455,13 @@ los roles y el fondo compartidos; overlay no lee el conjunto.
 | `lib/services/game_mod_activation.dart` | DTO y canal del editor; no decide diseño ni importa ROM |
 | `lib/presentation/providers/game_mod_activation_provider.dart` | Proyección de configuración y guardado; independiente de recursos visuales |
 | `lib/presentation/widgets/game_mod_activation_panel.dart` | Vista única de mods, marcos, cursor y contador Mario; conserva reglas de activación |
+
+
+## Reconstrucción Mario 64 v2 — nueva validación pendiente
+
+Se sustituye la interpretación de 15 texturas débiles por 151 imágenes y tres
+fuentes privadas derivadas de ROM: materiales opacos, cielos Clouds/BBH, cursor,
+HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
+principales. La selección de Mario coordina importación antes de guardar tema;
+v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
+[MARIO_ROM_THEME.md](docs/MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.

@@ -79,30 +79,66 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
             root.mkdirs()
             val active = preferences.getString("generation", null)
             root.listFiles()?.filter { it.name != active }?.forEach { it.deleteRecursively() }
+            if (active == null || File(root, active).isDirectory) {
+                File(context.noBackupFilesDir, "mario_theme_v1").listFiles()?.forEach { it.deleteRecursively() }
+            }
         }
     }
 
-    private fun snapshot(): Map<String, Any> {
-        val name = preferences.getString("generation", null) ?: return emptyMap()
+    private fun snapshot(nameOverride: String? = null, clearInvalid: Boolean = true): Map<String, Any> {
+        val name = nameOverride ?: preferences.getString("generation", null) ?: return emptyMap()
         if (!Regex("[a-f0-9-]{36}").matches(name)) {
-            preferences.edit().remove("generation").commit()
+            if (clearInvalid) preferences.edit().remove("generation").commit()
             return emptyMap()
         }
-        val directory = File(root, name)
-        val files = MarioRomDecoder.textures.associate { it.id to File(directory, "${it.id}.png") }
-        if (MarioRomDecoder.textures.any { texture ->
-            val file = files.getValue(texture.id)
+        var directory = File(root, name)
+        val version = if (directory.isDirectory) MarioRomDecoder.VERSION else 1
+        if (version == 1) directory = File(File(context.noBackupFilesDir, "mario_theme_v1"), name)
+        val specs = if (version == 1) MarioRomDecoder.legacyTextures else MarioRomDecoder.textures
+        val dimensions = specs.associate { it.id to (it.width to it.height) }.toMutableMap()
+        if (version == 2) {
+            dimensions["panel_light"] = 32 to 32
+            dimensions["panel_dark"] = 32 to 32
+            MarioRomDecoder.skies.forEach { dimensions[it.id] = 256 to 256 }
+        }
+        val files = dimensions.keys.associateWith { File(directory, "$it.png") }.toMutableMap()
+        if (dimensions.any { (id, size) ->
+            val file = files.getValue(id)
             val options = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            if (!file.isFile || file.length() !in 1..65536) true
+            if (!file.isFile || file.length() !in 1..524288) true
             else {
                 android.graphics.BitmapFactory.decodeFile(file.path, options)
-                options.outWidth != texture.width || options.outHeight != texture.height
+                options.outWidth != size.first || options.outHeight != size.second
             }
         }) {
-            preferences.edit().remove("generation").commit()
+            if (clearInvalid) preferences.edit().remove("generation").commit()
             return emptyMap()
         }
-        return mapOf("generation" to name, "files" to files.mapValues { it.value.absolutePath })
+        if (version == 2) {
+            for (id in MarioRomDecoder.fontIds) {
+                val file = File(directory, "$id.ttf")
+                if (!file.isFile || file.length() !in 1..1048576) {
+                    if (clearInvalid) preferences.edit().remove("generation").commit()
+                    return emptyMap()
+                }
+                files[id] = file
+            }
+        }
+        return mapOf("generation" to name, "version" to version, "files" to files.mapValues { it.value.absolutePath })
+    }
+
+    private fun saveImage(directory: File, id: String, pixels: IntArray, width: Int, height: Int) {
+        checkCancelled()
+        val bitmap = Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888)
+        val file = File(directory, "$id.png")
+        try {
+            file.outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)); it.fd.sync() }
+            check(file.length() in 1..524288)
+            check(android.graphics.BitmapFactory.decodeFile(file.path)?.let { decoded ->
+                val valid = decoded.width == width && decoded.height == height
+                decoded.recycle(); valid
+            } == true)
+        } finally { bitmap.recycle() }
     }
 
     private fun runOperation(result: MethodChannel.Result, operation: () -> Map<String, Any>) {
@@ -147,27 +183,43 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
                 staging = directory
                 check(directory.mkdirs())
                 val segments = mutableMapOf<Int, ByteArray>()
+                val pixelsById = mutableMapOf<String, IntArray>()
+                fun segment(address: Int, length: Int): ByteArray = segments.getOrPut(address) {
+                    require(address.toLong() + length <= bytes.size)
+                    MarioRomDecoder.decompress(bytes.copyOfRange(address, address + length))
+                }
                 for (texture in MarioRomDecoder.textures) {
                     checkCancelled()
-                    val segment = segments.getOrPut(texture.segment) {
-                        require(texture.segment.toLong() + texture.segmentBytes <= bytes.size)
-                        MarioRomDecoder.decompress(bytes.copyOfRange(texture.segment, texture.segment + texture.segmentBytes))
-                    }
-                    val bitmap = Bitmap.createBitmap(MarioRomDecoder.pixels(segment, texture), texture.width, texture.height, Bitmap.Config.ARGB_8888)
-                    try {
-                        File(directory, "${texture.id}.png").outputStream().use {
-                            check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it))
-                            it.fd.sync()
-                        }
-                        val file = File(directory, "${texture.id}.png")
-                        check(file.length() in 1..65536)
-                        check(android.graphics.BitmapFactory.decodeFile(file.path)?.let { decoded ->
-                            val valid = decoded.width == texture.width && decoded.height == texture.height
-                            decoded.recycle(); valid
-                        } == true)
-                    } finally { bitmap.recycle() }
+                    val pixels = MarioRomDecoder.pixels(segment(texture.segment, texture.segmentBytes), texture)
+                    pixelsById[texture.id] = pixels
+                    saveImage(directory, texture.id, pixels, texture.width, texture.height)
                 }
-                // Final commit on main serializes cancellation with the visibility switch.
+                for (sky in MarioRomDecoder.skies) {
+                    saveImage(directory, sky.id, MarioRomDecoder.skyPixels(segment(sky.segment, sky.bytes)), 256, 256)
+                }
+                saveImage(directory, "panel_light", MarioRomDecoder.panelPixels(pixelsById.getValue("stone"), false), 32, 32)
+                saveImage(directory, "panel_dark", MarioRomDecoder.panelPixels(pixelsById.getValue("stone_dark"), true), 32, 32)
+                fun glyphs(prefix: String): MutableMap<Char, MarioPixelFont.Glyph> = MarioRomDecoder.textures
+                    .filter { it.id.startsWith(prefix) }
+                    .associate { it.id.last() to MarioPixelFont.Glyph(pixelsById.getValue(it.id), it.width, it.height) }.toMutableMap()
+                val menu = glyphs("menu_glyph_")
+                ('A'..'Z').forEach { menu[it.lowercaseChar()] = menu.getValue(it) }
+                val dialog = glyphs("dialog_glyph_")
+                val hud = glyphs("hud_glyph_")
+                ('0'..'9').forEach { hud[it] = MarioPixelFont.Glyph(pixelsById.getValue("digit_$it"), 16, 16) }
+                ('A'..'Z').forEach { if (hud[it] == null) hud[it] = menu.getValue(it); hud[it.lowercaseChar()] = hud.getValue(it) }
+                val fonts = listOf("font_menu" to menu, "font_dialog" to dialog, "font_hud" to hud)
+                for ((id, glyphs) in fonts) {
+                    checkCancelled()
+                    val file = File(directory, "$id.ttf")
+                    file.outputStream().use { it.write(MarioPixelFont.build("SM64 ROM ${id.removePrefix("font_")}", glyphs)); it.fd.sync() }
+                    check(file.length() in 1..1048576)
+                    // Parse actual generated TrueType before publishing the generation.
+                    android.graphics.Typeface.createFromFile(file)
+                }
+                val confirmed = snapshot(directory.name, clearInvalid = false)
+                check(confirmed.isNotEmpty())
+                // Disk scans/conversion stay off UI; only the small pointer commit is serialized with cancellation.
                 main.post {
                     val previous = preferences.getString("generation", null)
                     var attemptedCommit = false
@@ -176,8 +228,7 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
                         check(attached)
                         attemptedCommit = true
                         check(preferences.edit().putString("generation", directory.name).commit())
-                        val confirmed = snapshot()
-                        check(confirmed.isNotEmpty())
+                        check(preferences.getString("generation", null) == directory.name)
                         finish(confirmed)
                     } catch (error: Exception) {
                         if (attemptedCommit) preferences.edit().putString("generation", previous).commit()

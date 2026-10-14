@@ -205,3 +205,13 @@ overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matri
 de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validado en [Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573): análisis, 83 tests Flutter,
 APK arm64 y tests Kotlin correctos para `f23034a`. Sigue pendiente la matriz
 física con ROM real; estos tests usan datos sintéticos y no una ROM del usuario.
+
+
+## Reconstrucción Mario 64 v2 — nueva validación pendiente
+
+Se sustituye la interpretación de 15 texturas débiles por 151 imágenes y tres
+fuentes privadas derivadas de ROM: materiales opacos, cielos Clouds/BBH, cursor,
+HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
+principales. La selección de Mario coordina importación antes de guardar tema;
+v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
+[MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.

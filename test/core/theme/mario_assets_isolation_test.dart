@@ -1,3 +1,4 @@
+import '../../presentation/mario_rom_fixture.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
 import 'package:sm64cdpy/core/theme/app_theme_design.dart';
@@ -51,7 +52,23 @@ void main() {
       expect(filled.color, mario.accent);
       expect(filled.gradient, isNull);
       expect(filled.image, isNull);
-      expect(mario.surfaceDecoration().gradient, isNotNull);
+      expect(mario.surfaceDecoration().gradient, isNull);
     },
   );
+  test('full Mario scenes use opaque ROM materials and original font roles in both modes', () {
+    final assets = completeMarioFixture();
+    for (final dark in [false, true]) {
+      final mario = RetroTheme(dark, design: AppThemeCatalog.resolve(AppThemeId.mario64), marioAssets: assets);
+      expect(mario.headingFamily, 'MarioRomHudV2');
+      expect(mario.bodyFamily, 'MarioRomDialogV2');
+      expect(mario.menuFamily, 'MarioRomMenuV2');
+      expect(mario.surfaceDecoration().image!.opacity, 1);
+      expect(mario.toMaterialTheme().filledButtonTheme.style!.backgroundBuilder, isNotNull);
+      expect(mario.surfaceDecoration(color: mario.accent).image, isNull);
+      expect(mario.marioAsset(dark ? 'sky_night' : 'sky_day'), isNotNull);
+    }
+    expect(RetroTheme.overlay().bodyFamily, isNull);
+    expect(const RetroTheme(false).surfaceDecoration().image, isNull);
+  });
+
 }

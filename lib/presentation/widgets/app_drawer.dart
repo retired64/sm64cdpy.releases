@@ -47,7 +47,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
       shape: Border(
         right: BorderSide(color: retro.border, width: retro.borderWidth(2)),
       ),
-      child: SafeArea(
+      child: DecoratedBox(decoration: retro.surfaceDecoration(shadowDx: 0, shadowDy: 0), child: SafeArea(
         child: SingleChildScrollView(
           controller: widget.scrollController,
           physics: const ClampingScrollPhysics(),
@@ -97,7 +97,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               ),
               _NavItem(
                 iconBuilder: (color) =>
-                    Icon(Icons.inventory_2_outlined, size: 19, color: color),
+                    MarioGameIcon(Icons.inventory_2_outlined, size: 19, color: color),
                 label: l10n.navLibrary,
                 route: '/library',
                 isActive: currentRoute == '/library',
@@ -228,7 +228,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }
@@ -264,7 +264,7 @@ class _DrawerHeader extends StatelessWidget {
             width: 44,
             height: 44,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
+            decoration: retro.gameDecoration(BoxDecoration(
               borderRadius: retro.radius,
               color: retro.surface,
               border: Border.all(
@@ -272,7 +272,7 @@ class _DrawerHeader extends StatelessWidget {
                 width: retro.borderWidth(2.5),
               ),
               boxShadow: retro.hardShadow(dx: 3, dy: 3),
-            ),
+            )),
             child: RepaintBoundary(
               child: SvgPicture.asset(
                 'assets/icons/logo.svg',
@@ -299,7 +299,7 @@ class _DrawerHeader extends StatelessWidget {
           IconButton(
             tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
             constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-            icon: Icon(Icons.close_rounded, color: retro.inkDim, size: 22),
+            icon: MarioGameIcon(Icons.close_rounded, color: retro.inkDim, size: 22),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -376,13 +376,13 @@ class _NavItemState extends State<_NavItem>
           duration: _kItemDuration,
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-          decoration: BoxDecoration(
+          decoration: retro.gameDecoration(BoxDecoration(
             borderRadius: retro.radius,
             color: widget.isActive ? accent : Colors.transparent,
             border: widget.isActive
                 ? Border.all(color: retro.border, width: retro.borderWidth(2))
                 : null,
-          ),
+          )),
           child: Row(
             children: [
               AnimatedContainer(
@@ -600,13 +600,13 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
+          decoration: retro.gameDecoration(BoxDecoration(
             borderRadius: retro.radius,
             color: isSelected ? catColor : Colors.transparent,
             border: isSelected
                 ? Border.all(color: retro.border, width: retro.borderWidth(1.5))
                 : null,
-          ),
+          )),
           child: Row(
             children: [
               Container(
@@ -615,7 +615,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
                 color: isSelected ? retro.onColor(catColor) : catColor,
               ),
               const SizedBox(width: 10),
-              Icon(
+              MarioGameIcon(
                 icon,
                 size: 15,
                 color: isSelected ? retro.onColor(catColor) : catColor,
@@ -638,7 +638,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(
+                child: MarioGameIcon(
                   Icons.check,
                   size: 14,
                   color: retro.onColor(catColor),
@@ -688,7 +688,7 @@ class _SortOptionsState extends ConsumerState<_SortOptions> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                Icon(Icons.sort, size: 19, color: retro.inkDim),
+                MarioGameIcon(Icons.sort, size: 19, color: retro.inkDim),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -801,13 +801,13 @@ class _SortItemState extends ConsumerState<_SortItem>
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
+          decoration: retro.gameDecoration(BoxDecoration(
             borderRadius: retro.radius,
             color: isSelected ? retro.accent : Colors.transparent,
             border: isSelected
                 ? Border.all(color: retro.border, width: retro.borderWidth(1.5))
                 : null,
-          ),
+          )),
           child: Row(
             children: [
               Expanded(
@@ -825,7 +825,7 @@ class _SortItemState extends ConsumerState<_SortItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check, size: 14, color: retro.inkOnAccent),
+                child: MarioGameIcon(Icons.check, size: 14, color: retro.inkOnAccent),
               ),
             ],
           ),
@@ -850,7 +850,7 @@ class _ExpandArrow extends StatelessWidget {
       turns: expanded ? 0.5 : 0.0,
       duration: const Duration(milliseconds: 200),
       curve: _kCurve,
-      child: Icon(
+      child: MarioGameIcon(
         Icons.expand_more,
         size: 20,
         color: expanded ? retro.accentText : retro.inkDim,
@@ -986,14 +986,14 @@ class _SocialButtonState extends State<_SocialButton>
           child: Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
+            decoration: retro.gameDecoration(BoxDecoration(
               borderRadius: retro.radius,
               color: retro.surfaceAlt,
               border: Border.all(
                 color: retro.border,
                 width: retro.borderWidth(2),
               ),
-            ),
+            )),
             child: Center(
               child: RepaintBoundary(
                 child: SvgPicture.asset(

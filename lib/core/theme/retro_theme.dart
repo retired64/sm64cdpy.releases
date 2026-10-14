@@ -47,6 +47,27 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   final MarioThemeAssets marioAssets;
   bool get isMario => design.id == AppThemeId.mario64;
   String? marioAsset(String id) => isMario ? marioAssets.files[id] : null;
+  String? get headingFamily => isMario && marioAssets.complete ? 'MarioRomHudV2' : design.headingFontFamily;
+  String? get bodyFamily => isMario && marioAssets.complete ? 'MarioRomDialogV2' : design.bodyFontFamily;
+  String? get menuFamily => isMario && marioAssets.complete ? 'MarioRomMenuV2' : headingFamily;
+
+  /// All main-engine panels use the same full-opacity material. Photo gradients,
+  /// circular badges and semantic colored fills keep their own foreground contract.
+  BoxDecoration gameDecoration(BoxDecoration value) {
+    if (!isMario || value.shape != BoxShape.rectangle || value.image != null || value.gradient != null || value.color == null || value.color!.a < 0.85) return value;
+    final color = value.color!;
+    if (color != surface && color != surfaceAlt && color != background && color != Colors.white && color != Colors.black) return value;
+    final id = marioAssets.complete ? (isDark ? 'panel_dark' : 'panel_light') : (isDark ? 'stone_dark' : 'stone');
+    final path = marioAsset(id);
+    return value.copyWith(
+      borderRadius: value.borderRadius ?? radius,
+      image: path == null ? null : DecorationImage(image: FileImage(File(path)), repeat: ImageRepeat.repeat,
+        filterQuality: FilterQuality.none, opacity: 1,
+        colorFilter: marioAssets.complete ? null : ColorFilter.mode(surface.withValues(alpha: 0.62), BlendMode.srcATop),
+        onError: (error, stack) {}),
+    );
+  }
+
   final Color? _backgroundOverride;
   final Color? _surfaceOverride;
   final Color? _surfaceAltOverride;
@@ -128,57 +149,16 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   ];
 
   BoxDecoration surfaceDecoration({
-    Color? color,
-    Color? borderColor,
-    double border = 2,
-    double shadowDx = 4,
-    double shadowDy = 4,
-  }) => BoxDecoration(
+    Color? color, Color? borderColor, double border = 2, double shadowDx = 4, double shadowDy = 4,
+  }) => gameDecoration(BoxDecoration(
     color: color ?? surface,
-    image:
-        (color != null && color != surface && color != surfaceAlt) ||
-            marioAsset(isDark ? 'stone_dark' : 'stone') == null
-        ? null
-        : DecorationImage(
-            image: FileImage(
-              File(marioAsset(isDark ? 'stone_dark' : 'stone')!),
-            ),
-            repeat: ImageRepeat.repeat,
-            scale: 1,
-            opacity: isDark ? 0.09 : 0.13,
-            filterQuality: FilterQuality.none,
-            onError: (error, stack) {
-              /* Keep the solid, readable surface. */
-            },
-          ),
-    gradient:
-        usesBeveledSurfaces &&
-            (color == null || color == surface || color == surfaceAlt)
-        ? LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.alphaBlend(
-                surfaceHighlight.withValues(alpha: 0.2),
-                color ?? surface,
-              ),
-              color ?? surface,
-              Color.alphaBlend(
-                surfaceShade.withValues(alpha: 0.15),
-                color ?? surface,
-              ),
-            ],
-            stops: const [0, 0.12, 1],
-          )
-        : null,
     borderRadius: radius,
-    border: Border.all(
-      color:
-          borderColor ?? (usesBeveledSurfaces ? surfaceHighlight : this.border),
-      width: borderWidth(border),
-    ),
+    border: Border(top: BorderSide(color: usesBeveledSurfaces ? surfaceHighlight : borderColor ?? this.border, width: borderWidth(border)),
+      left: BorderSide(color: usesBeveledSurfaces ? surfaceHighlight : borderColor ?? this.border, width: borderWidth(border)),
+      bottom: BorderSide(color: borderColor ?? (usesBeveledSurfaces ? surfaceShade : this.border), width: borderWidth(border)),
+      right: BorderSide(color: borderColor ?? (usesBeveledSurfaces ? surfaceShade : this.border), width: borderWidth(border))),
     boxShadow: hardShadow(dx: shadowDx, dy: shadowDy),
-  );
+  ));
 
   TextStyle heading({
     required double size,
@@ -188,7 +168,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     double height = 1.05,
   }) => TextStyle(
     color: color ?? ink,
-    fontFamily: design.headingFontFamily,
+    fontFamily: headingFamily,
     fontFamilyFallback: design.headingFontFamilyFallback,
     fontSize: size,
     fontWeight: weight ?? design.headingWeight,
@@ -211,7 +191,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     double height = 1.35,
   }) => TextStyle(
     color: color ?? inkDim,
-    fontFamily: design.bodyFontFamily,
+    fontFamily: bodyFamily,
+    fontFamilyFallback: const ['Roboto'],
     fontSize: size,
     fontWeight: weight,
     height: height,
@@ -228,10 +209,10 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
 
   ThemeData toMaterialTheme() {
     final shape = RoundedRectangleBorder(borderRadius: radius);
-    final theme = ThemeData(
+    var theme = ThemeData(
       useMaterial3: true,
       extensions: <ThemeExtension<dynamic>>[this],
-      fontFamily: design.bodyFontFamily,
+      fontFamily: bodyFamily,
       fontFamilyFallback: design.headingFontFamilyFallback,
       colorScheme: ColorScheme(
         brightness: isDark ? Brightness.dark : Brightness.light,
@@ -250,7 +231,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         foregroundColor: ink,
         systemOverlayStyle: systemUiStyle,
       ),
-      dialogTheme: DialogThemeData(backgroundColor: surface, shape: shape),
+      dialogTheme: DialogThemeData(backgroundColor: surface, shape: isMario ? RoundedRectangleBorder(borderRadius: radius, side: BorderSide(color: border, width: 3)) : shape),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
@@ -289,9 +270,38 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         ),
       ),
     );
-    if (design.headingFontFamily == null) return theme;
+    if (isMario) {
+      ButtonStyle originalControl(ButtonStyle? base) => (base ?? const ButtonStyle()).copyWith(
+        textStyle: WidgetStatePropertyAll(TextStyle(fontFamily: menuFamily, fontFamilyFallback: const ['Roboto'], fontWeight: FontWeight.w400)),
+        minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+        backgroundBuilder: (context, states, child) {
+          final texture = marioAsset(isDark ? 'stone_dark' : 'stone');
+          return Stack(fit: StackFit.passthrough, children: [
+            if (texture != null) Positioned.fill(child: IgnorePointer(child: ClipPath(
+              clipper: const MarioControlFrameClipper(),
+              child: DecoratedBox(decoration: BoxDecoration(
+                image: DecorationImage(image: FileImage(File(texture)), repeat: ImageRepeat.repeat,
+                  filterQuality: FilterQuality.none, opacity: states.contains(WidgetState.disabled) ? 0.5 : 1,
+                  onError: (error, stack) {}),
+              )),
+            ))),
+            child ?? const SizedBox.shrink(),
+          ]);
+        },
+      );
+      theme = theme.copyWith(
+        filledButtonTheme: FilledButtonThemeData(style: originalControl(theme.filledButtonTheme.style)),
+        elevatedButtonTheme: ElevatedButtonThemeData(style: originalControl(theme.elevatedButtonTheme.style)),
+        outlinedButtonTheme: OutlinedButtonThemeData(style: originalControl(theme.outlinedButtonTheme.style)),
+        textButtonTheme: TextButtonThemeData(style: originalControl(theme.textButtonTheme.style)),
+        inputDecorationTheme: InputDecorationTheme(filled: true, fillColor: surfaceAlt,
+          enabledBorder: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: border, width: 2)),
+          focusedBorder: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: accent, width: 3))),
+      );
+    }
+    if (headingFamily == null) return theme;
     TextStyle? title(TextStyle? base) => base?.copyWith(
-      fontFamily: design.headingFontFamily,
+      fontFamily: headingFamily,
       fontFamilyFallback: design.headingFontFamilyFallback,
       fontWeight: design.headingWeight,
       letterSpacing: design.headingTracking,
@@ -425,28 +435,16 @@ class ThemeBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    if (retro.isMario && menuSurface) {
-      final texture = retro.marioAsset(retro.isDark ? 'stone_dark' : 'stone');
-      return IgnorePointer(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [retro.surfaceAlt, retro.background],
-            ),
-            image: texture == null
-                ? null
-                : DecorationImage(
-                    image: FileImage(File(texture)),
-                    repeat: ImageRepeat.repeat,
-                    opacity: 0.16,
-                    filterQuality: FilterQuality.none,
-                    onError: (error, stack) {},
-                  ),
-          ),
-        ),
-      );
+    if (retro.isMario && retro.marioAssets.complete) {
+      final sky = retro.marioAsset(retro.isDark ? 'sky_night' : 'sky_day')!;
+      return IgnorePointer(child: RepaintBoundary(child: Stack(fit: StackFit.expand, children: [
+        Image.file(File(sky), fit: BoxFit.cover, alignment: Alignment.topCenter, filterQuality: FilterQuality.none,
+          errorBuilder: (_, error, stack) => ColoredBox(color: retro.background)),
+        if (menuSurface) DecoratedBox(decoration: BoxDecoration(color: retro.background.withValues(alpha: retro.isDark ? 0.45 : 0.22))),
+      ])));
+    }
+    if (retro.isMario) {
+      return IgnorePointer(child: DecoratedBox(decoration: retro.surfaceDecoration(shadowDx: 0, shadowDy: 0)));
     }
     if (retro.showN64Backdrop) {
       return IgnorePointer(
@@ -668,7 +666,7 @@ class SectionKicker extends StatelessWidget {
             child: Container(width: 5, height: 18, color: retro.accent),
           ),
         const SizedBox(width: 10),
-        Text(label, style: retro.heading(size: 17)),
+        Flexible(child: MarioGameTitle(text: label, retro: retro, size: 17)),
         if (japanese != null) ...[
           const SizedBox(width: 8),
           Text(japanese!, style: retro.body(size: 13, color: retro.inkDim)),
@@ -1078,5 +1076,90 @@ class MarioHudNumber extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Only the frame uses raw stone, so filled controls keep their semantic contrast.
+class MarioControlFrameClipper extends CustomClipper<Path> {
+  const MarioControlFrameClipper();
+  @override
+  Path getClip(Size size) => Path()
+    ..fillType = PathFillType.evenOdd
+    ..addRect(Offset.zero & size)
+    ..addRect((Offset.zero & size).deflate(4));
+  @override
+  bool shouldReclip(covariant MarioControlFrameClipper oldClipper) => false;
+}
+
+/// Original colored HUD glyphs for prominent menu headings. Missing HUD letters
+/// use the ROM's complete file-select alphabet; unsupported accents use font fallback.
+class MarioGameTitle extends StatelessWidget {
+  const MarioGameTitle({super.key, required this.text, required this.retro, required this.size,
+    this.maxLines, this.overflow = TextOverflow.clip, this.color});
+  final String text;
+  final RetroTheme retro;
+  final double size;
+  final int? maxLines;
+  final TextOverflow overflow;
+  final Color? color;
+  @override
+  Widget build(BuildContext context) {
+    final style = retro.heading(size: size, color: color);
+    if (!retro.isMario || !retro.marioAssets.complete) return Text(text, style: style, maxLines: maxLines, overflow: overflow);
+    final pixels = MediaQuery.textScalerOf(context).scale(size);
+    return Semantics(label: text, child: ExcludeSemantics(child: Text.rich(
+      TextSpan(children: [for (final character in text.split('')) ...[
+        if (character == ' ')
+          WidgetSpan(child: SizedBox(width: pixels * 0.4))
+        else if (retro.marioAsset('hud_glyph_${character.toUpperCase()}') != null ||
+            retro.marioAsset('digit_$character') != null || retro.marioAsset('menu_glyph_${character.toUpperCase()}') != null)
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child: Image.file(
+            File(retro.marioAsset('hud_glyph_${character.toUpperCase()}') ?? retro.marioAsset('digit_$character') ?? retro.marioAsset('menu_glyph_${character.toUpperCase()}')!),
+            width: pixels * 0.88, height: pixels, filterQuality: FilterQuality.none,
+            color: retro.marioAsset('hud_glyph_${character.toUpperCase()}') == null && retro.marioAsset('digit_$character') == null ? color ?? retro.ink : null,
+            errorBuilder: (_, error, stack) => Text(character, style: style),
+          ))
+        else TextSpan(text: character),
+      ]]), style: style, maxLines: maxLines, overflow: overflow,
+    )));
+  }
+}
+
+/// Shared icon vocabulary; unavailable game symbols retain their action's familiar icon.
+class MarioGameIcon extends StatelessWidget {
+  const MarioGameIcon(this.icon, {super.key, this.size, this.color, this.semanticLabel,
+    this.textDirection, this.fill, this.weight, this.grade, this.opticalSize, this.shadows, this.applyTextScaling});
+  final IconData? icon;
+  final double? size, fill, weight, grade, opticalSize;
+  final Color? color;
+  final String? semanticLabel;
+  final TextDirection? textDirection;
+  final List<Shadow>? shadows;
+  final bool? applyTextScaling;
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final asset = const <IconData, String>{
+      Icons.star_rounded: 'star', Icons.star: 'star', Icons.favorite: 'star', Icons.favorite_rounded: 'star',
+      Icons.extension: 'mario_save', Icons.extension_rounded: 'mario_save',
+      Icons.menu_rounded: 'menu_file', Icons.folder_rounded: 'menu_file', Icons.folder_open: 'menu_file',
+      Icons.download_rounded: 'menu_copy', Icons.download: 'menu_copy',
+      Icons.settings: 'menu_sound', Icons.settings_rounded: 'menu_sound',
+      Icons.palette_outlined: 'mario_new', Icons.apps_rounded: 'menu_file',
+      Icons.folder_zip_rounded: 'menu_copy', Icons.person: 'mario_head',
+      Icons.color_lens_rounded: 'menu_score', Icons.touch_app_rounded: 'hand_pressed',
+      Icons.trending_up_rounded: 'menu_score', Icons.workspace_premium_rounded: 'star',
+      Icons.play_arrow_rounded: 'mario_save', Icons.sports_esports_rounded: 'mario_save',
+      Icons.expand_more: 'arrow_down', Icons.expand_less: 'arrow_up',
+      Icons.keyboard_arrow_down: 'arrow_down', Icons.keyboard_arrow_up: 'arrow_up',
+    }[icon];
+    final path = asset == null ? null : retro.marioAsset(asset);
+    if (path == null) return Icon(icon, size: size, color: color, semanticLabel: semanticLabel,
+      textDirection: textDirection, fill: fill, weight: weight, grade: grade, opticalSize: opticalSize,
+      shadows: shadows, applyTextScaling: applyTextScaling);
+    final dimension = size ?? IconTheme.of(context).size ?? 24;
+    final image = Image.file(File(path), width: dimension, height: dimension, fit: BoxFit.contain,
+      filterQuality: FilterQuality.none, errorBuilder: (_, error, stack) => Icon(icon, size: dimension, color: color));
+    return Semantics(label: semanticLabel, child: ExcludeSemantics(child: image));
   }
 }

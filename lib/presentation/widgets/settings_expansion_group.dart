@@ -100,13 +100,13 @@ class _SettingsExpansionGroupState extends State<SettingsExpansionGroup> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Icon(widget.icon, color: retro.accentText),
+                  MarioGameIcon(widget.icon, color: retro.accentText),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.title, style: retro.heading(size: 14)),
+                        MarioGameTitle(text: widget.title, retro: retro, size: 14),
                         const SizedBox(height: 3),
                         Text(widget.subtitle, style: retro.body(size: 12)),
                       ],
@@ -117,7 +117,7 @@ class _SettingsExpansionGroupState extends State<SettingsExpansionGroup> {
                     turns: expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeOutCubic,
-                    child: Icon(
+                    child: MarioGameIcon(
                       Icons.expand_more,
                       color: expanded ? retro.accentText : retro.inkDim,
                     ),
@@ -190,7 +190,7 @@ class SettingsSelectionOption extends StatelessWidget {
             children: [
               leading,
               const SizedBox(width: 12),
-              Expanded(child: Text(label, style: retro.heading(size: 14))),
+              Expanded(child: MarioGameTitle(text: label, retro: retro, size: 14)),
               if (selected)
                 MarioMenuGlyph(
                   retro: retro,

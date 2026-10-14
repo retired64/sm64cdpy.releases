@@ -245,7 +245,7 @@ class _GlassIconButton extends StatelessWidget {
       child: Container(
         width: 40,
         height: 40,
-        decoration: BoxDecoration(
+        decoration: retro.gameDecoration(BoxDecoration(
           borderRadius: retro.radius,
           color: isAppBarSolid
               ? retro.surfaceAlt
@@ -256,8 +256,8 @@ class _GlassIconButton extends StatelessWidget {
                 : Colors.white.withValues(alpha: 0.3),
             width: retro.borderWidth(1.5),
           ),
-        ),
-        child: Icon(icon, size: 18, color: iconColor),
+        )),
+        child: MarioGameIcon(icon, size: 18, color: iconColor),
       ),
     );
   }
@@ -299,14 +299,14 @@ class _CinematicHero extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Container(
                 height: 70,
-                decoration: BoxDecoration(
+                decoration: retro.gameDecoration(BoxDecoration(
                   borderRadius: retro.radius,
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [Colors.transparent, retro.background],
                   ),
-                ),
+                )),
               ),
             ),
 
@@ -369,7 +369,7 @@ class _HeroPlaceholder extends StatelessWidget {
     return Container(
       color: retro.surfaceAlt,
       child: Center(
-        child: Icon(Icons.extension_rounded, size: 32, color: retro.inkDim),
+        child: MarioGameIcon(Icons.extension_rounded, size: 32, color: retro.inkDim),
       ),
     );
   }
@@ -398,12 +398,12 @@ class _ContentCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         color: retro.surface,
         border: Border(
           top: BorderSide(color: retro.border, width: retro.borderWidth(3)),
         ),
-      ),
+      )),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -471,7 +471,7 @@ class _ContentCard extends StatelessWidget {
                         Uri.parse(mod.threadUrl),
                         mode: LaunchMode.externalApplication,
                       ),
-                      icon: const Icon(Icons.forum_outlined, size: 18),
+                      icon: const MarioGameIcon(Icons.forum_outlined, size: 18),
                       label: Text(l10n.detailViewDiscussion),
                     ),
                   ),
@@ -532,11 +532,11 @@ class _TitleSection extends StatelessWidget {
               width: 26,
               height: 26,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 borderRadius: retro.radius,
                 color: retro.accent,
-              ),
-              child: Icon(
+              )),
+              child: MarioGameIcon(
                 Icons.person_rounded,
                 size: 14,
                 color: retro.inkOnAccent,
@@ -593,11 +593,11 @@ class _StatsBar extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         color: retro.surface,
         borderRadius: retro.radius,
         border: Border.all(color: retro.border.withValues(alpha: 0.35)),
-      ),
+      )),
       child: IntrinsicHeight(
         child: Row(
           children: [
@@ -661,7 +661,7 @@ class _StatCell extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 16, color: iconColor),
+          MarioGameIcon(icon, size: 16, color: iconColor),
           const SizedBox(height: 5),
           Text(
             value,
@@ -829,7 +829,7 @@ class _VersionAccordionState extends State<_VersionAccordion> {
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () => _showVersionHistory(previous),
-              icon: const Icon(Icons.history_rounded, size: 18),
+              icon: const MarioGameIcon(Icons.history_rounded, size: 18),
               label: Text(_l10n!.detailViewPreviousVersions(previous.length)),
             ),
           ),
@@ -855,10 +855,10 @@ class _VersionAccordionState extends State<_VersionAccordion> {
             Container(
               width: 42,
               height: 4,
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 color: RetroTheme.of(context).inkDim.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(2),
-              ),
+              )),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(18, 14, 8, 8),
@@ -874,7 +874,7 @@ class _VersionAccordionState extends State<_VersionAccordion> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(sheetContext).pop(),
-                    icon: const Icon(Icons.close),
+                    icon: const MarioGameIcon(Icons.close),
                   ),
                 ],
               ),
@@ -951,11 +951,11 @@ class _VersionCardState extends State<_VersionCard> {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         color: retro.surfaceAlt,
         borderRadius: retro.radius,
         border: Border.all(color: retro.border.withValues(alpha: 0.4)),
-      ),
+      )),
       child: Column(
         children: [
           InkWell(
@@ -968,7 +968,7 @@ class _VersionCardState extends State<_VersionCard> {
               child: Row(
                 children: [
                   if (widget.collapsible) ...[
-                    Icon(
+                    MarioGameIcon(
                       _expanded
                           ? Icons.expand_less_rounded
                           : Icons.expand_more_rounded,
@@ -994,7 +994,7 @@ class _VersionCardState extends State<_VersionCard> {
                   ),
                   if (widget.version.downloads > 0) ...[
                     const SizedBox(width: 10),
-                    Icon(
+                    MarioGameIcon(
                       Icons.download_rounded,
                       size: 13,
                       color: retro.accentText,
@@ -1007,7 +1007,7 @@ class _VersionCardState extends State<_VersionCard> {
                   ],
                   if (widget.version.rating != null) ...[
                     const SizedBox(width: 8),
-                    Icon(Icons.star_rounded, size: 13, color: retro.amber),
+                    MarioGameIcon(Icons.star_rounded, size: 13, color: retro.amber),
                     const SizedBox(width: 3),
                     Text(
                       widget.version.rating!.toStringAsFixed(1),
@@ -1047,7 +1047,7 @@ class _VersionCardState extends State<_VersionCard> {
                     Uri.parse(folderUrl),
                     mode: LaunchMode.externalApplication,
                   ),
-                  icon: const Icon(Icons.open_in_new_rounded, size: 17),
+                  icon: const MarioGameIcon(Icons.open_in_new_rounded, size: 17),
                   label: Text(l10n.detailOpenExternalFolder),
                 ),
               ),
@@ -1369,11 +1369,11 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         color: retro.surface,
         borderRadius: retro.radius,
         border: Border.all(color: retro.border.withValues(alpha: 0.4)),
-      ),
+      )),
       child: Row(
         children: [
           Expanded(
@@ -1391,7 +1391,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
                           color: retro.accent,
                           backgroundColor: retro.border,
                         )
-                      : Icon(
+                      : MarioGameIcon(
                           Icons.insert_drive_file_rounded,
                           size: 28,
                           color: retro.accentText,
@@ -1424,7 +1424,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
                       state: actionState,
                       onTransfer: _download,
                     ),
-              icon: Icon(action.icon, size: 14),
+              icon: MarioGameIcon(action.icon, size: 14),
               label: Text(action.label(_l10n!)),
               style: FilledButton.styleFrom(
                 backgroundColor: retro.accent,
@@ -1813,7 +1813,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
             scale: _scale,
             child: Container(
               height: 54,
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 color: isActive
                     ? retro.accent.withValues(alpha: 0.12)
                     : retro.accent.withValues(alpha: 0.12),
@@ -1822,12 +1822,12 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                   width: retro.borderWidth(2),
                 ),
                 borderRadius: retro.radius,
-              ),
+              )),
               child: Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    MarioGameIcon(
                       isActive ? Icons.downloading_rounded : action.icon,
                       color: retro.accentText,
                       size: 20,
@@ -1849,11 +1849,11 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
+            decoration: retro.gameDecoration(BoxDecoration(
               color: retro.accent.withValues(alpha: 0.08),
               borderRadius: retro.radius,
               border: Border.all(color: retro.accent.withValues(alpha: 0.15)),
-            ),
+            )),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1890,7 +1890,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         if (actionState.canReinstall)
           TextButton.icon(
             onPressed: _download,
-            icon: const Icon(Icons.refresh_rounded, size: 15),
+            icon: const MarioGameIcon(Icons.refresh_rounded, size: 15),
             label: Text(_l10n!.installationReinstall),
           ),
       ],
@@ -1967,7 +1967,7 @@ class _ScreenshotGalleryState extends State<_ScreenshotGallery> {
                       ),
                       errorWidget: (_, _, _) => Container(
                         color: retro.surfaceAlt,
-                        child: Icon(
+                        child: MarioGameIcon(
                           Icons.broken_image_rounded,
                           color: retro.border,
                         ),
@@ -1992,12 +1992,12 @@ class _ScreenshotGalleryState extends State<_ScreenshotGallery> {
                 margin: const EdgeInsets.symmetric(horizontal: 3),
                 width: _activeIndex == i ? 18 : 6,
                 height: 6,
-                decoration: BoxDecoration(
+                decoration: retro.gameDecoration(BoxDecoration(
                   color: _activeIndex == i
                       ? retro.accent
                       : retro.border.withValues(alpha: 0.3),
                   borderRadius: retro.radius,
-                ),
+                )),
               ),
             ),
           ),
@@ -2091,11 +2091,11 @@ class _FullscreenGalleryState extends State<_FullscreenGallery> {
                         child: Container(
                           width: 40,
                           height: 40,
-                          decoration: BoxDecoration(
+                          decoration: retro.gameDecoration(BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.15),
                             borderRadius: retro.radius,
-                          ),
-                          child: const Icon(
+                          )),
+                          child: const MarioGameIcon(
                             Icons.close_rounded,
                             color: Colors.white,
                             size: 18,
@@ -2107,10 +2107,10 @@ class _FullscreenGalleryState extends State<_FullscreenGallery> {
                           horizontal: 12,
                           vertical: 6,
                         ),
-                        decoration: BoxDecoration(
+                        decoration: retro.gameDecoration(BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: retro.radius,
-                        ),
+                        )),
                         child: Text(
                           '${_current + 1} / ${widget.images.length}',
                           style: const TextStyle(
@@ -2149,11 +2149,11 @@ class _TagCloud extends StatelessWidget {
       children: tags.map((tag) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
+          decoration: retro.gameDecoration(BoxDecoration(
             color: retro.surfaceAlt,
             borderRadius: retro.radius,
             border: Border.all(color: retro.border.withValues(alpha: 0.35)),
-          ),
+          )),
           child: Text(
             tag,
             style: TextStyle(
@@ -2225,7 +2225,7 @@ class _ExpandableText extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Icon(
+                MarioGameIcon(
                   expanded
                       ? Icons.keyboard_arrow_up_rounded
                       : Icons.keyboard_arrow_down_rounded,
@@ -2292,11 +2292,11 @@ class _ReleaseDates extends StatelessWidget {
 
         return Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          decoration: retro.gameDecoration(BoxDecoration(
             color: retro.surface,
             borderRadius: retro.radius,
             border: Border.all(color: retro.border.withValues(alpha: 0.35)),
-          ),
+          )),
           child: Row(
             children: [
               if (firstCell != null) Expanded(child: firstCell),
@@ -2340,11 +2340,11 @@ class _DateCell extends StatelessWidget {
         Container(
           width: 32,
           height: 32,
-          decoration: BoxDecoration(
+          decoration: retro.gameDecoration(BoxDecoration(
             color: retro.surfaceAlt,
             borderRadius: retro.radius,
-          ),
-          child: Icon(icon, size: 14, color: retro.inkDim),
+          )),
+          child: MarioGameIcon(icon, size: 14, color: retro.inkDim),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -2382,11 +2382,11 @@ class _DateCell extends StatelessWidget {
     if (!boxed) return content;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         color: retro.surface,
         borderRadius: retro.radius,
         border: Border.all(color: retro.border.withValues(alpha: 0.35)),
-      ),
+      )),
       child: content,
     );
   }
@@ -2423,10 +2423,10 @@ class _ChangelogSection extends StatelessWidget {
             _SectionTitle(label: l10n.detailChangelog),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 color: retro.surfaceAlt,
                 borderRadius: retro.radius,
-              ),
+              )),
               child: Text(
                 '${updates.length}',
                 style: TextStyle(
@@ -2459,11 +2459,11 @@ class _ChangelogSection extends StatelessWidget {
             onTap: onToggle,
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 color: retro.surfaceAlt,
                 borderRadius: retro.radius,
                 border: Border.all(color: retro.border.withValues(alpha: 0.3)),
-              ),
+              )),
               child: Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -2479,7 +2479,7 @@ class _ChangelogSection extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Icon(
+                    MarioGameIcon(
                       expanded
                           ? Icons.keyboard_arrow_up_rounded
                           : Icons.keyboard_arrow_down_rounded,
@@ -2524,13 +2524,13 @@ class _ChangelogEntry extends StatelessWidget {
               Container(
                 width: 28,
                 height: 28,
-                decoration: BoxDecoration(
+                decoration: retro.gameDecoration(BoxDecoration(
                   color: index == 0 ? retro.accent : retro.surfaceAlt,
                   borderRadius: retro.radius,
                   border: index != 0
                       ? Border.all(color: retro.border.withValues(alpha: 0.3))
                       : null,
-                ),
+                )),
                 child: Center(
                   child: Text(
                     '${index + 1}',
@@ -2679,10 +2679,10 @@ class _Shimmer extends StatelessWidget {
       child: Container(
         width: width ?? double.infinity,
         height: height,
-        decoration: BoxDecoration(
+        decoration: retro.gameDecoration(BoxDecoration(
           color: retro.surface,
           borderRadius: retro.radius,
-        ),
+        )),
       ),
     );
   }
@@ -2708,11 +2708,11 @@ class _NotFoundView extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 color: retro.surfaceAlt,
                 borderRadius: retro.radius,
-              ),
-              child: Icon(
+              )),
+              child: MarioGameIcon(
                 Icons.search_off_rounded,
                 size: 36,
                 color: retro.border,
@@ -2735,7 +2735,7 @@ class _NotFoundView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              icon: const Icon(Icons.arrow_back_rounded, size: 16),
+              icon: const MarioGameIcon(Icons.arrow_back_rounded, size: 16),
               label: Text(l10n.detailGoBack),
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -2767,7 +2767,7 @@ class _DetailError extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              MarioGameIcon(
                 Icons.error_outline_rounded,
                 size: 48,
                 color: retro.accentText,

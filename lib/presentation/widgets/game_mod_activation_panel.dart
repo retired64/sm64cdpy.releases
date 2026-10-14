@@ -130,7 +130,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    MarioGameIcon(
                       restore
                           ? Icons.restore_rounded
                           : Icons.sports_esports_rounded,
@@ -338,7 +338,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                       shadowDx: 2,
                       shadowDy: 2,
                     ),
-                    child: Icon(
+                    child: MarioGameIcon(
                       retro.design.playfulSelection
                           ? Icons.star_rounded
                           : Icons.sports_esports_rounded,
@@ -368,7 +368,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                   PopupMenuButton<_AccessAction>(
                     tooltip: l10n.gameModsManage,
                     enabled: !_busy,
-                    icon: Icon(Icons.more_horiz_rounded, color: retro.ink),
+                    icon: MarioGameIcon(Icons.more_horiz_rounded, color: retro.ink),
                     onSelected: _access,
                     itemBuilder: (_) => [
                       PopupMenuItem(
@@ -456,12 +456,12 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
               hintStyle: retro.body(size: 12, color: retro.inkDim),
               filled: true,
               fillColor: retro.surface,
-              prefixIcon: Icon(Icons.search_rounded, color: retro.accentText),
+              prefixIcon: MarioGameIcon(Icons.search_rounded, color: retro.accentText),
               suffixIcon: query.isEmpty
                   ? null
                   : IconButton(
                       tooltip: l10n.gameModsClearSearch,
-                      icon: const Icon(Icons.close_rounded),
+                      icon: const MarioGameIcon(Icons.close_rounded),
                       onPressed: () => setState(() {
                         _search.clear();
                         _visible = 20;
@@ -526,7 +526,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
               padding: const EdgeInsets.all(22),
               child: Column(
                 children: [
-                  Icon(
+                  MarioGameIcon(
                     mods.isEmpty
                         ? Icons.extension_off_rounded
                         : Icons.search_off_rounded,
@@ -579,7 +579,7 @@ class _LibraryNotice extends StatelessWidget {
     final retro = RetroTheme.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         color: retro.surfaceAlt,
         borderRadius: retro.radius,
         border: Border(
@@ -588,11 +588,11 @@ class _LibraryNotice extends StatelessWidget {
             width: retro.borderWidth(3),
           ),
         ),
-      ),
+      )),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: retro.inkDim),
+          MarioGameIcon(icon, size: 18, color: retro.inkDim),
           const SizedBox(width: 10),
           Expanded(
             child: Text(message, style: retro.body(size: 12, height: 1.45)),
@@ -644,7 +644,7 @@ class _LibraryAction extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      MarioGameIcon(
                         icon,
                         color: primary ? retro.inkOnAccent : retro.accentText,
                         size: 18,
@@ -773,10 +773,10 @@ class _GameModCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
+                decoration: retro.gameDecoration(BoxDecoration(
                   color: retro.surfaceAlt,
                   borderRadius: retro.radius,
-                ),
+                )),
                 child: MarioMenuGlyph(
                   retro: retro,
                   asset: mod.enabled ? 'hand_pressed' : 'hand',
@@ -832,7 +832,7 @@ class _GameModCard extends StatelessWidget {
                     trackOutlineColor: WidgetStatePropertyAll(retro.border),
                     thumbIcon: WidgetStateProperty.resolveWith(
                       (states) => states.contains(WidgetState.selected)
-                          ? Icon(
+                          ? MarioGameIcon(
                               retro.design.playfulSelection
                                   ? Icons.star_rounded
                                   : Icons.check_rounded,
@@ -883,7 +883,7 @@ class _GameModCard extends StatelessWidget {
               alignment: AlignmentDirectional.centerEnd,
               child: TextButton.icon(
                 onPressed: () => _showDetails(context),
-                icon: const Icon(Icons.description_outlined, size: 16),
+                icon: const MarioGameIcon(Icons.description_outlined, size: 16),
                 label: Text(l10n.gameModsDetails),
               ),
             ),
@@ -892,7 +892,7 @@ class _GameModCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
+              MarioGameIcon(
                 !mod.selectable
                     ? Icons.lock_outline_rounded
                     : mod.enabled
@@ -930,7 +930,7 @@ class _GameMetadata extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: retro.inkDim),
+        MarioGameIcon(icon, size: 14, color: retro.inkDim),
         const SizedBox(width: 5),
         Flexible(
           child: Text(

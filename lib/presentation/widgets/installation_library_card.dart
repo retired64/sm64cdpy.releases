@@ -80,7 +80,7 @@ class InstallationLibraryCard extends ConsumerWidget {
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 10),
         padding: EdgeInsets.all(compact ? 12 : 14),
-        decoration: BoxDecoration(
+        decoration: retro.gameDecoration(BoxDecoration(
           borderRadius: retro.radius,
           color: retro.surface,
           border: Border.all(
@@ -88,14 +88,14 @@ class InstallationLibraryCard extends ConsumerWidget {
             width: retro.borderWidth(2),
           ),
           boxShadow: retro.hardShadow(dx: 3, dy: 3),
-        ),
+        )),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(displayIcon, color: displayColor, size: 22),
+                MarioGameIcon(displayIcon, color: displayColor, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -250,7 +250,7 @@ class InstallationLibraryCard extends ConsumerWidget {
         status == InstallationVerificationStatus.folderNotSelected) {
       return OutlinedButton.icon(
         onPressed: () => context.go('/settings'),
-        icon: const Icon(Icons.folder_open_rounded, size: 18),
+        icon: const MarioGameIcon(Icons.folder_open_rounded, size: 18),
         label: Text(l10n.installationSelectFolder),
       );
     }
@@ -259,7 +259,7 @@ class InstallationLibraryCard extends ConsumerWidget {
         onPressed: () => ref
             .read(installationLibraryProvider.notifier)
             .verifyArtifact(record.artifactKey),
-        icon: const Icon(Icons.fact_check_outlined, size: 18),
+        icon: const MarioGameIcon(Icons.fact_check_outlined, size: 18),
         label: Text(l10n.installationVerify),
       );
     }
@@ -272,7 +272,7 @@ class InstallationLibraryCard extends ConsumerWidget {
           context.go(route);
         }
       },
-      icon: Icon(
+      icon: MarioGameIcon(
         status == InstallationVerificationStatus.missing
             ? Icons.install_mobile_rounded
             : Icons.open_in_new_rounded,
@@ -304,18 +304,18 @@ class InstallationUpdateCard extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         borderRadius: retro.radius,
         color: retro.surface,
         border: Border.all(color: retro.accent, width: retro.borderWidth(2)),
         boxShadow: retro.hardShadow(dx: 3, dy: 3),
-      ),
+      )),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.system_update_alt_rounded, color: retro.accentText),
+              MarioGameIcon(Icons.system_update_alt_rounded, color: retro.accentText),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -343,7 +343,7 @@ class InstallationUpdateCard extends StatelessWidget {
                   context.go(update.available.route);
                 }
               },
-              icon: const Icon(Icons.system_update_alt_rounded, size: 18),
+              icon: const MarioGameIcon(Icons.system_update_alt_rounded, size: 18),
               label: Text(l10n.installationUpdate),
             ),
           ),
@@ -363,7 +363,7 @@ class _Meta extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: retro.inkDim),
+        MarioGameIcon(icon, size: 14, color: retro.inkDim),
         const SizedBox(width: 4),
         Text(label, style: retro.body(size: 10.5)),
       ],

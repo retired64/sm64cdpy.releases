@@ -125,7 +125,7 @@ class AppSnackbar {
             final accent = accentOf(retro);
             return _BouncyToast(
               child: Container(
-                decoration: BoxDecoration(
+                decoration: retro.gameDecoration(BoxDecoration(
                   borderRadius: retro.radius,
                   color: retro.surface,
                   border: Border.all(
@@ -133,7 +133,7 @@ class AppSnackbar {
                     width: retro.borderWidth(2.5),
                   ),
                   boxShadow: retro.hardShadow(dx: 4, dy: 4),
-                ),
+                )),
                 child: IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -145,7 +145,7 @@ class AppSnackbar {
                           padding: const EdgeInsets.fromLTRB(12, 13, 14, 13),
                           child: Row(
                             children: [
-                              Icon(icon, size: 20, color: accent),
+                              MarioGameIcon(icon, size: 20, color: accent),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(

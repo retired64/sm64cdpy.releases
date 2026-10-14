@@ -6,6 +6,7 @@ import '../../core/theme/app_theme_design.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/theme_provider.dart';
+import '../providers/mario_theme_assets_provider.dart';
 import 'app_snackbar.dart';
 import 'settings_expansion_group.dart';
 import 'mario_rom_assets_panel.dart';
@@ -28,10 +29,10 @@ class AppearanceSelector extends ConsumerWidget {
   }) async {
     final notifier = ref.read(appearanceProvider.notifier);
     final saved = id != null
-        ? await notifier.setTheme(id)
+        ? await notifier.selectThemeWithRom(id)
         : await notifier.setThemeMode(mode!);
     if (!context.mounted) return;
-    if (!saved) {
+    if (saved == false) {
       AppSnackbar.error(
         context,
         message: AppLocalizations.of(context).themeSaveFailed,
@@ -42,6 +43,7 @@ class AppearanceSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(appearanceProvider);
+    final preparingRom = ref.watch(marioThemeAssetsProvider).busy;
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final modes = [
@@ -86,7 +88,7 @@ class AppearanceSelector extends ConsumerWidget {
               SettingsSelectionOption(
                 key: ValueKey('theme-mode-${mode.name}'),
                 label: label,
-                leading: Icon(icon, color: retro.accentText),
+                leading: MarioGameIcon(icon, color: retro.accentText),
                 selected: settings.mode == mode,
                 onPressed: settings.isSaving
                     ? null
@@ -100,7 +102,7 @@ class AppearanceSelector extends ConsumerWidget {
         if (settings.isSaving) ...[
           const SizedBox(height: 12),
           LinearProgressIndicator(
-            semanticsLabel: l10n.themeSaving,
+            semanticsLabel: preparingRom ? l10n.marioRomPreparing : l10n.themeSaving,
             color: retro.accent,
           ),
         ],
@@ -139,7 +141,7 @@ class _ThemePreview extends StatelessWidget {
                   shadowDy: 2,
                 ),
                 child: Center(
-                  child: Icon(
+                  child: MarioGameIcon(
                     preview.design.playfulSelection
                         ? Icons.star_rounded
                         : Icons.star,

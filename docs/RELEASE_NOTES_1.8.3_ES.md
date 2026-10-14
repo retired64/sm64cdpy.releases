@@ -14,10 +14,10 @@ La versión 1.8.3 incorpora activación verificada de mods desde Biblioteca, re�
 
 ### Temas Retro Manga y Mario 64
 
-- Retro Manga sigue siendo el tema predeterminado. Mario 64 incorpora paletas clara y oscura, superficies con relieve, fondos inspirados en cielos y detalles de estrellas en la app principal.
-- Los temas vienen incluidos sin conexión, se recuerdan al volver a abrir y se eligen de forma independiente del modo claro, oscuro o del sistema.
-- Mario 64 utiliza TypefaceMario64 en títulos y encabezados grandes, incluidos los nombres de mods de Top downloads en Home. Las descripciones conservan la fuente predeterminada y Roboto cubre los caracteres acentuados ausentes en la fuente de títulos.
-- Mario 64 permite importar piedra del menú, cursores, estrellas y dígitos del HUD desde una ROM estadounidense sin modificar elegida por el usuario. Los recursos permanecen privados en el dispositivo; fallos o cancelación conservan el diseño anterior. No se incluye una ROM ni imágenes extraídas.
+- Retro Manga sigue como tema por defecto. Mario 64 reconstruye la interfaz principal con materiales del selector original, marcos cuadrados, cielos del juego y HUD en modos claro y oscuro.
+- Los temas se recuerdan al reabrir. Elegir Mario 64 pide la ROM una vez si falta su conjunto local completo; cancelar conserva el tema anterior. El brillo sigue siendo independiente.
+- Mario 64 utiliza fuentes de menú, diálogo y HUD generadas privadamente desde la ROM. Los encabezados a color usan glifos originales; caracteres ausentes de la ROM US conservan un fallback legible para el idioma.
+- Una ROM US .z64 sin modificar proporciona 151 imágenes y tres fuentes generadas, incluidos materiales, cursores, iconos y cielos Clouds/BBH. Los recursos quedan privados y fuera del backup Android; no se incluye ROM ni arte extraído en el APK. Las importaciones antiguas de 15 texturas pueden actualizarse sin perderlas al cancelar.
 
 ### Ajustes coherentes
 

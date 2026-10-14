@@ -1,10 +1,15 @@
 /// Private, immutable generation produced by Android from a user-selected ROM.
 /// No ROM bytes, document URI or game paths cross into presentation.
 class MarioThemeAssets {
-  const MarioThemeAssets({this.generation, this.files = const {}});
+  const MarioThemeAssets({this.generation, this.files = const {}, this.version = 1});
   final String? generation;
+  final int version;
   final Map<String, String> files;
-  bool get available => generation != null && files.length == 15;
+  bool get available => generation != null && files.length >= 15;
+
+  bool get complete => available && version >= 2 &&
+      ['panel_light', 'panel_dark', 'sky_day', 'sky_night', 'font_menu', 'font_dialog', 'font_hud', 'menu_file', 'menu_score', 'mario_save', 'mario_new']
+          .every(files.containsKey);
 
   factory MarioThemeAssets.fromMap(Map<Object?, Object?>? data) {
     if (data == null ||
@@ -25,6 +30,7 @@ class MarioThemeAssets {
     }
     return MarioThemeAssets(
       generation: data['generation'] as String,
+      version: data['version'] is int ? data['version'] as int : 1,
       files: Map.unmodifiable(files),
     );
   }

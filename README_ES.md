@@ -37,7 +37,7 @@ descarga e instalación.
 - Biblioteca local de contenido instalado, reciente, mods del juego y con
   actualizaciones disponibles.
 - Interfaz en inglés, español y portugués brasileño; diseños incluidos Retro Manga y Mario 64, con apariencia clara, oscura o del teléfono. El panel flotante conserva su diseño oscuro fijo.
-- En el tema Mario 64, Ajustes permite importar texturas del menú e iconos del HUD desde tu ROM estadounidense .z64 sin modificar. Los recursos quedan en tu dispositivo; la ROM y el juego no se modifican. [Detalles de importación](docs/MARIO_ROM_THEME.md).
+- Elegir Mario 64 prepara una vez materiales de menú, cielos, HUD y tipografías desde tu ROM estadounidense .z64 sin modificar. Las siguientes selecciones reutilizan los recursos locales privados. Cancelar conserva el tema anterior. [Detalles de importación](docs/MARIO_ROM_THEME.md).
 - Actualización manual de bases JSON remotas.
 - Selección persistente de carpetas con el selector de Android.
 - Resolución de enlaces, incluidos assets de GitHub Releases.

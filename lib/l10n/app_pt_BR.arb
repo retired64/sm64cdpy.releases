@@ -508,14 +508,15 @@
   "gameModsDetails": "Detalhes do mod",
   "gameModsCloseDetails": "Fechar",
   "marioRomTitle": "Recursos do jogo original",
-  "marioRomBuiltIn": "Visual incluído",
-  "marioRomReady": "Recursos originais prontos",
-  "marioRomDescription": "Escolha sua ROM americana original de Super Mario 64 (.z64) para usar as texturas do menu, o cursor e os ícones do HUD. Tudo fica neste dispositivo; o jogo e a ROM não são modificados.",
+  "marioRomBuiltIn": "ROM não selecionada",
+  "marioRomReady": "Interface original pronta",
+  "marioRomDescription": "Selecione uma vez sua ROM americana original de Super Mario 64 (.z64) para ativar os materiais do menu, céus do jogo, cursores, HUD e fontes da ROM. Os recursos ficam privados neste dispositivo. A ROM e o jogo não são alterados.",
   "marioRomImport": "Escolher minha ROM",
   "marioRomPreparing": "Preparando recursos do jogo…",
   "marioRomCancel": "Cancelar importação",
   "marioRomRemove": "Usar visual incluído",
   "marioRomUnsupported": "Esta ROM não é compatível. Selecione uma ROM americana .z64 sem modificações. Seu visual anterior continua disponível.",
   "marioRomFailed": "Não foi possível ler ou salvar os recursos. Escolha o arquivo novamente e confira o espaço disponível. Seu visual anterior continua disponível.",
-  "marioRomSuccess": "Os recursos do jogo original estão prontos."
+  "marioRomSuccess": "Os recursos do jogo original estão prontos.",
+  "marioRomUpgrade": "Escolha a ROM novamente para atualizar a interface original"
 }

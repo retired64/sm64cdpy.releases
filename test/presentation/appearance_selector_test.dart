@@ -1,3 +1,5 @@
+import 'mario_rom_fixture.dart';
+import 'package:sm64cdpy/presentation/providers/mario_theme_assets_provider.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -49,7 +51,8 @@ void main() {
         directory = await Directory.systemTemp.createTemp('theme-menu-test-');
         Hive.init(directory.path);
         await Hive.openBox<String>(AppConstants.settingsBoxKey);
-        container = ProviderContainer();
+        container = ProviderContainer(overrides: [marioThemeAssetsServiceProvider.overrideWithValue(ReadyMarioRomService())]);
+        await container.read(marioThemeAssetsProvider.notifier).initialize();
       });
       tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
       try {
@@ -78,11 +81,11 @@ void main() {
         expect(theme.extension<RetroTheme>()!.design.id, AppThemeId.mario64);
         expect(
           theme.extension<RetroTheme>()!.radius,
-          BorderRadius.circular(8),
+          BorderRadius.circular(0),
         );
         expect(theme.extension<RetroTheme>()!.showN64Backdrop, isTrue);
         expect(theme.extension<RetroTheme>()!.usesBeveledSurfaces, isTrue);
-        expect(theme.colorScheme.primary, const Color(0xFFC62828));
+        expect(theme.colorScheme.primary, const Color(0xFFA82010));
 
         tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
         await tester.pumpAndSettle();

@@ -293,18 +293,18 @@ class _RetroDialog extends StatelessWidget {
                       horizontal: 16,
                       vertical: 10,
                     ),
-                    decoration: BoxDecoration(
+                    decoration: retro.gameDecoration(BoxDecoration(
                       borderRadius: retro.radius,
                       color: accent,
                       border: Border.all(
                         color: retro.border,
                         width: retro.borderWidth(2),
                       ),
-                    ),
+                    )),
                     child: Text(
                       confirmLabel,
                       style: TextStyle(
-                        fontFamily: retro.design.headingFontFamily,
+                        fontFamily: retro.headingFamily,
                         color: retro.onColor(accent),
                         fontSize: 12,
                         fontWeight: retro.design.headingWeight,
@@ -343,7 +343,7 @@ class _RetroSectionKicker extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
         child: Row(
           children: [
-            Icon(
+            MarioGameIcon(
               retro.design.playfulSelection ? Icons.star_rounded : Icons.circle,
               size: retro.design.playfulSelection ? 18 : 6,
               color: retro.design.playfulSelection
@@ -406,24 +406,24 @@ class _RetroSwitch extends StatelessWidget {
         width: 46,
         height: 26,
         padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
+        decoration: retro.gameDecoration(BoxDecoration(
           borderRadius: retro.radius,
           color: value ? retro.accent : retro.surfaceAlt,
           border: Border.all(
             color: retro.border,
             width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
           ),
-        ),
+        )),
         alignment: value ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           width: 16,
           height: 16,
-          decoration: BoxDecoration(
+          decoration: retro.gameDecoration(BoxDecoration(
             color: value ? retro.inkOnAccent : retro.inkDim,
             borderRadius: retro.design.softSettingsPanels
                 ? BorderRadius.circular(8)
                 : BorderRadius.zero,
-          ),
+          )),
         ),
       ),
     );
@@ -544,7 +544,7 @@ class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
           ? l10n.settingsModsFolderHint
           : l10n.settingsModsFolderDesc,
       pathHint: _folderUri != null ? _displayPath(_folderUri!) : null,
-      trailing: Icon(
+      trailing: MarioGameIcon(
         Icons.chevron_right_rounded,
         color: retro.inkDim,
         size: 20,
@@ -667,7 +667,7 @@ class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
           ? l10n.settingsDynosFolderHint
           : l10n.settingsDynosFolderDesc,
       pathHint: _folderUri != null ? _displayPath(_folderUri!) : null,
-      trailing: Icon(
+      trailing: MarioGameIcon(
         Icons.chevron_right_rounded,
         color: retro.inkDim,
         size: 20,
@@ -854,7 +854,7 @@ class _RetroIconBox extends StatelessWidget {
       width: 38,
       height: 38,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         borderRadius: retro.radius,
         color: retro.design.softSettingsPanels
             ? retro.accent.withValues(alpha: 0.08)
@@ -863,8 +863,8 @@ class _RetroIconBox extends StatelessWidget {
           color: c,
           width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
         ),
-      ),
-      child: Icon(icon, color: c, size: 18),
+      )),
+      child: MarioGameIcon(icon, color: c, size: 18),
     );
   }
 }
@@ -881,7 +881,7 @@ class _RetroSpinner extends StatelessWidget {
       width: 38,
       height: 38,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         borderRadius: retro.radius,
         color: retro.design.softSettingsPanels
             ? retro.accent.withValues(alpha: 0.08)
@@ -890,7 +890,7 @@ class _RetroSpinner extends StatelessWidget {
           color: retro.accent,
           width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
         ),
-      ),
+      )),
       child: SizedBox(
         width: 16,
         height: 16,
@@ -927,7 +927,7 @@ class _SettingsTile extends StatelessWidget {
       title: title,
       titleColor: destructive ? retro.red : retro.ink,
       subtitle: subtitle,
-      trailing: Icon(
+      trailing: MarioGameIcon(
         Icons.chevron_right_rounded,
         color: retro.inkDim,
         size: 20,

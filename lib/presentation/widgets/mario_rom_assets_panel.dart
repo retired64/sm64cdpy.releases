@@ -20,9 +20,9 @@ class MarioRomAssetsPanel extends ConsumerWidget {
       child: SettingsExpansionGroup(
         key: const PageStorageKey('mario-rom-assets'),
         title: l10n.marioRomTitle,
-        subtitle: state.assets.available
+        subtitle: state.assets.complete
             ? l10n.marioRomReady
-            : l10n.marioRomBuiltIn,
+            : state.assets.available ? l10n.marioRomUpgrade : l10n.marioRomBuiltIn,
         icon: Icons.videogame_asset_outlined,
         children: [
           Text(l10n.marioRomDescription, style: retro.body(size: 13)),
@@ -42,7 +42,7 @@ class MarioRomAssetsPanel extends ConsumerWidget {
               onPressed: () async {
                 await notifier.perform('import');
               },
-              icon: const Icon(Icons.file_open_outlined),
+              icon: const MarioGameIcon(Icons.file_open_outlined),
               label: Text(l10n.marioRomImport),
             ),
             if (state.assets.available)
@@ -50,7 +50,7 @@ class MarioRomAssetsPanel extends ConsumerWidget {
                 onPressed: () async {
                   await notifier.perform('remove');
                 },
-                icon: const Icon(Icons.restore_rounded),
+                icon: const MarioGameIcon(Icons.restore_rounded),
                 label: Text(l10n.marioRomRemove),
               ),
           ],

@@ -88,12 +88,8 @@ class _ModCardState extends ConsumerState<ModCard>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Title
-                    Text(
-                      widget.mod.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: retro.heading(size: 14.5, letterSpacing: -0.1),
-                    ),
+                    MarioGameTitle(text: widget.mod.title, retro: retro, size: 14.5,
+                      maxLines: 2, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 5),
 
                     // Author
@@ -144,15 +140,15 @@ class _ModCardState extends ConsumerState<ModCard>
                   width: 32,
                   height: 32,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
+                  decoration: retro.gameDecoration(BoxDecoration(
                     borderRadius: retro.radius,
                     color: retro.surfaceAlt,
                     border: Border.all(
                       color: isFav ? retro.red : retro.border,
                       width: retro.borderWidth(isFav ? 2 : 1.5),
                     ),
-                  ),
-                  child: Icon(
+                  )),
+                  child: MarioGameIcon(
                     isFav
                         ? Icons.favorite_rounded
                         : Icons.favorite_border_rounded,
@@ -206,13 +202,13 @@ class _Thumbnail extends StatelessWidget {
                   shadowDx: 0,
                   shadowDy: 0,
                 )
-              : BoxDecoration(
+              : retro.gameDecoration(BoxDecoration(
                   borderRadius: retro.radius,
                   border: Border.all(
                     color: retro.border,
                     width: retro.borderWidth(2),
                   ),
-                ),
+                )),
           child: Hero(
             tag: 'mod_img_$modId',
             child: hasImage
@@ -274,15 +270,15 @@ class _StripedPlaceholder extends StatelessWidget {
               width: 28,
               height: 28,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 borderRadius: retro.radius,
                 color: retro.background,
                 border: Border.all(
                   color: retro.border,
                   width: retro.borderWidth(1.5),
                 ),
-              ),
-              child: Icon(
+              )),
+              child: MarioGameIcon(
                 Icons.extension_rounded,
                 size: 15,
                 color: retro.inkDim,
@@ -307,10 +303,10 @@ class ModCardSkeleton extends StatelessWidget {
       highlightColor: retro.surfaceAlt,
       child: Container(
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
+        decoration: retro.gameDecoration(BoxDecoration(
           borderRadius: retro.radius,
           border: Border.all(color: retro.border, width: retro.borderWidth(2)),
-        ),
+        )),
         child: Row(
           children: [
             _ShimmerBox(width: 78, height: 78),

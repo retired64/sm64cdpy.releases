@@ -275,12 +275,12 @@ class _SearchField extends ConsumerWidget {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         borderRadius: retro.radius,
         color: retro.surface,
         border: Border.all(color: retro.border, width: retro.borderWidth(2.5)),
         boxShadow: focusNode.hasFocus ? [] : retro.hardShadow(dx: 3, dy: 3),
-      ),
+      )),
       transform: focusNode.hasFocus
           ? Matrix4.translationValues(
               3 * retro.design.shadowOffsetScale,
@@ -307,7 +307,7 @@ class _SearchField extends ConsumerWidget {
             fontWeight: FontWeight.w700,
             letterSpacing: 0.2,
           ),
-          prefixIcon: Icon(
+          prefixIcon: MarioGameIcon(
             Icons.search_rounded,
             color: focusNode.hasFocus ? retro.accentText : retro.inkDim,
             size: 20,
@@ -317,7 +317,7 @@ class _SearchField extends ConsumerWidget {
             builder: (_, value, _) {
               if (value.text.isEmpty) return const SizedBox.shrink();
               return IconButton(
-                icon: Icon(Icons.close_rounded, size: 17, color: retro.inkDim),
+                icon: MarioGameIcon(Icons.close_rounded, size: 17, color: retro.inkDim),
                 onPressed: onClear,
                 splashRadius: 16,
               );
@@ -365,7 +365,7 @@ class _FilterBarDelegate extends SliverPersistentHeaderDelegate {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         color: retro.background,
         border: elevated
             ? Border(
@@ -375,7 +375,7 @@ class _FilterBarDelegate extends SliverPersistentHeaderDelegate {
                 ),
               )
             : null,
-      ),
+      )),
       child: _FilterBar(
         selectedCategory: selectedCategory,
         currentSort: currentSort,
@@ -567,17 +567,17 @@ class _SortSheet extends StatelessWidget {
                     horizontal: 14,
                     vertical: 13,
                   ),
-                  decoration: BoxDecoration(
+                  decoration: retro.gameDecoration(BoxDecoration(
                     borderRadius: retro.radius,
                     color: isSelected ? retro.accent : retro.surfaceAlt,
                     border: Border.all(
                       color: retro.border,
                       width: retro.borderWidth(2),
                     ),
-                  ),
+                  )),
                   child: Row(
                     children: [
-                      Icon(
+                      MarioGameIcon(
                         opt.icon,
                         size: 17,
                         color: isSelected ? retro.inkOnAccent : retro.ink,
@@ -595,7 +595,7 @@ class _SortSheet extends StatelessWidget {
                         ),
                       ),
                       if (isSelected)
-                        Icon(
+                        MarioGameIcon(
                           Icons.check_rounded,
                           size: 18,
                           color: retro.inkOnAccent,
@@ -742,12 +742,12 @@ class _PaginationBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
+        decoration: retro.gameDecoration(BoxDecoration(
           borderRadius: retro.radius,
           color: retro.surface,
           border: Border.all(color: retro.border, width: retro.borderWidth(3)),
           boxShadow: retro.hardShadow(),
-        ),
+        )),
         child: Row(
           children: [
             _PageButton(
@@ -858,14 +858,14 @@ class _PagePills extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 3),
             width: isActive ? 28 : 24,
             height: 24,
-            decoration: BoxDecoration(
+            decoration: retro.gameDecoration(BoxDecoration(
               borderRadius: retro.radius,
               color: isActive ? retro.accent : retro.surfaceAlt,
               border: Border.all(
                 color: retro.border,
                 width: retro.borderWidth(isActive ? 2 : 1.5),
               ),
-            ),
+            )),
             alignment: Alignment.center,
             child: Text(
               '${page + 1}',
@@ -904,15 +904,15 @@ class _PageButton extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         width: 36,
         height: 36,
-        decoration: BoxDecoration(
+        decoration: retro.gameDecoration(BoxDecoration(
           borderRadius: retro.radius,
           color: enabled ? retro.accent : retro.surfaceAlt,
           border: Border.all(
             color: enabled ? retro.border : retro.border.withValues(alpha: 0.3),
             width: retro.borderWidth(2),
           ),
-        ),
-        child: Icon(
+        )),
+        child: MarioGameIcon(
           icon,
           size: 15,
           color: enabled
@@ -962,7 +962,7 @@ class _EmptyView extends ConsumerWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 borderRadius: retro.radius,
                 color: retro.surface,
                 border: Border.all(
@@ -970,8 +970,8 @@ class _EmptyView extends ConsumerWidget {
                   width: retro.borderWidth(3),
                 ),
                 boxShadow: retro.hardShadow(),
-              ),
-              child: Icon(
+              )),
+              child: MarioGameIcon(
                 hasFilters
                     ? Icons.search_off_rounded
                     : Icons.extension_off_rounded,
@@ -986,7 +986,7 @@ class _EmptyView extends ConsumerWidget {
                   : l10n.catalogueNothingHere,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: retro.design.headingFontFamily,
+                fontFamily: retro.headingFamily,
                 color: retro.ink,
                 fontSize: 14,
                 fontWeight: retro.design.headingWeight,
@@ -1014,7 +1014,7 @@ class _EmptyView extends ConsumerWidget {
                     horizontal: 16,
                     vertical: 12,
                   ),
-                  decoration: BoxDecoration(
+                  decoration: retro.gameDecoration(BoxDecoration(
                     borderRadius: retro.radius,
                     color: retro.accent,
                     border: Border.all(
@@ -1022,11 +1022,11 @@ class _EmptyView extends ConsumerWidget {
                       width: retro.borderWidth(2.5),
                     ),
                     boxShadow: retro.hardShadow(dx: 3, dy: 3),
-                  ),
+                  )),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      MarioGameIcon(
                         Icons.filter_alt_off_rounded,
                         size: 15,
                         color: retro.inkOnAccent,
@@ -1035,7 +1035,7 @@ class _EmptyView extends ConsumerWidget {
                       Text(
                         l10n.catalogueClearFilters,
                         style: TextStyle(
-                          fontFamily: retro.design.headingFontFamily,
+                          fontFamily: retro.headingFamily,
                           color: retro.inkOnAccent,
                           fontSize: 11.5,
                           fontWeight: retro.design.headingWeight,
@@ -1075,7 +1075,7 @@ class _ErrorView extends StatelessWidget {
             Container(
               width: 64,
               height: 64,
-              decoration: BoxDecoration(
+              decoration: retro.gameDecoration(BoxDecoration(
                 borderRadius: retro.radius,
                 color: retro.surface,
                 border: Border.all(
@@ -1083,8 +1083,8 @@ class _ErrorView extends StatelessWidget {
                   width: retro.borderWidth(3),
                 ),
                 boxShadow: retro.hardShadow(),
-              ),
-              child: Icon(
+              )),
+              child: MarioGameIcon(
                 Icons.error_outline_rounded,
                 size: 28,
                 color: retro.red,
@@ -1095,7 +1095,7 @@ class _ErrorView extends StatelessWidget {
               l10n.catalogueFailedToLoad,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: retro.design.headingFontFamily,
+                fontFamily: retro.headingFamily,
                 color: retro.ink,
                 fontSize: 13,
                 fontWeight: retro.design.headingWeight,

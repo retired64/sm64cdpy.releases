@@ -14,10 +14,10 @@ Version 1.8.3 brings verified game mod activation to Library, unifies local mod 
 
 ### Retro Manga and Mario 64 themes
 
-- Retro Manga remains the default. Mario 64 adds its own light and dark palettes, dimensional surfaces, sky-inspired backgrounds and star accents across the main app.
-- Themes are included offline, remembered after reopening, and selected independently from light, dark or system appearance.
-- Mario 64 uses TypefaceMario64 for titles and large headings, including Home’s Top downloads mod names. Descriptions keep the default font, and Roboto provides accented characters missing from the heading font.
-- Mario 64 can optionally import original menu stone, cursors, stars and HUD digits from a user-selected unmodified US ROM. Resources remain private on the device; failed or cancelled imports preserve the previous design. No ROM or extracted artwork is bundled.
+- Retro Manga remains the default. Mario 64 rebuilds the main interface around original file-select materials, square frames, game skies and HUD accents in light and dark modes.
+- Themes are remembered after reopening. Choosing Mario 64 requests the ROM once when its complete local resource set is missing; cancellation preserves the previous theme. Brightness remains independent.
+- Mario 64 uses menu, dialog and HUD typography generated privately from the ROM. Colored headings use original glyphs; characters missing from the US ROM retain readable language fallbacks.
+- An unmodified US .z64 ROM supplies 151 images and three generated fonts, including menu materials, cursors, icons and Clouds/BBH skies. Resources stay private outside Android backup, and no ROM or extracted artwork is bundled. Older 15-texture imports can be reimported without losing the previous set on cancellation.
 
 ### Consistent Settings
 

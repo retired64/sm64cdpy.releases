@@ -32,4 +32,23 @@ class MarioRomDecoderTest {
         assertArrayEquals(intArrayOf(0xffff0000.toInt(), 0xff00ff00.toInt(), 0xff0000ff.toInt(), 0x00ffffff), MarioRomDecoder.pixels(data, t))
         assertThrows(IllegalArgumentException::class.java) { MarioRomDecoder.pixels(data.copyOf(7), t) }
     }
+    @Test fun intensityFormatsAndFullOpacityPanelContrast() {
+        val ia8 = MarioRomDecoder.Texture("test", 0, 2, 0, 2, 1, "ia8")
+        assertArrayEquals(intArrayOf(-1, 0), MarioRomDecoder.pixels(byteArrayOf(0xff.toByte(), 0), ia8))
+        val ia4 = ia8.copy(format = "ia4")
+        assertArrayEquals(intArrayOf(-1, 0), MarioRomDecoder.pixels(byteArrayOf(0xf0.toByte()), ia4))
+        val light = MarioRomDecoder.panelPixels(intArrayOf(0xff000000.toInt(), -1), false)
+        val dark = MarioRomDecoder.panelPixels(intArrayOf(0xff000000.toInt(), -1), true)
+        assertEquals(190, light[0] and 255); assertEquals(255, light[1] and 255)
+        assertEquals(24, dark[0] and 255); assertEquals(72, dark[1] and 255)
+    }
+    @Test fun manifestIdsAreUniqueAndGeometryAssetsStayBounded() {
+        val ids = MarioRomDecoder.textures.map { it.id }
+        assertEquals(ids.size, ids.toSet().size)
+        assertTrue(ids.containsAll(('A'..'Z').map { "menu_glyph_$it" }))
+        assertTrue(ids.containsAll(('a'..'z').map { "dialog_glyph_$it" }))
+        assertEquals(147, ids.size)
+        assertEquals(4, MarioRomDecoder.generatedImages.size)
+    }
+
 }

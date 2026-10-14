@@ -438,16 +438,16 @@ class _Notice extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         color: retro.surface,
         border: Border(
           left: BorderSide(color: color, width: retro.borderWidth(5)),
         ),
         boxShadow: retro.hardShadow(dx: 3, dy: 3),
-      ),
+      )),
       child: Row(
         children: [
-          Icon(Icons.info_outline_rounded, color: color, size: 19),
+          MarioGameIcon(Icons.info_outline_rounded, color: color, size: 19),
           const SizedBox(width: 10),
           Expanded(child: Text(text, style: retro.body(size: 12))),
         ],
@@ -476,26 +476,26 @@ class _MessageState extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.only(top: 12, bottom: 4),
       padding: const EdgeInsets.symmetric(vertical: 34, horizontal: 22),
-      decoration: BoxDecoration(
+      decoration: retro.gameDecoration(BoxDecoration(
         borderRadius: retro.radius,
         color: retro.surface,
         border: Border.all(color: retro.border, width: retro.borderWidth(2.5)),
         boxShadow: retro.hardShadow(dx: 4, dy: 4),
-      ),
+      )),
       child: Column(
         children: [
           Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(
+            decoration: retro.gameDecoration(BoxDecoration(
               borderRadius: retro.radius,
               color: retro.surfaceAlt,
               border: Border.all(
                 color: retro.border,
                 width: retro.borderWidth(2),
               ),
-            ),
-            child: Icon(icon, size: 34, color: retro.accentText),
+            )),
+            child: MarioGameIcon(icon, size: 34, color: retro.accentText),
           ),
           const SizedBox(height: 18),
           Text(
@@ -548,7 +548,7 @@ class _RetroIconButton extends StatelessWidget {
           child: Container(
             width: 38,
             height: 38,
-            decoration: BoxDecoration(
+            decoration: retro.gameDecoration(BoxDecoration(
               borderRadius: retro.radius,
               color: retro.surface,
               border: Border.all(
@@ -558,7 +558,7 @@ class _RetroIconButton extends StatelessWidget {
               boxShadow: onPressed == null
                   ? null
                   : retro.hardShadow(dx: 2, dy: 2),
-            ),
+            )),
             child: busy
                 ? Padding(
                     padding: const EdgeInsets.all(10),
@@ -567,7 +567,7 @@ class _RetroIconButton extends StatelessWidget {
                       color: retro.accent,
                     ),
                   )
-                : Icon(
+                : MarioGameIcon(
                     icon,
                     size: 20,
                     color: onPressed == null ? retro.inkDim : retro.ink,
@@ -683,14 +683,14 @@ class _LibraryFilterSheetItem extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-        decoration: BoxDecoration(
+        decoration: retro.gameDecoration(BoxDecoration(
           borderRadius: retro.radius,
           color: selected ? retro.accent : retro.surfaceAlt,
           border: Border.all(color: retro.border, width: retro.borderWidth(2)),
-        ),
+        )),
         child: Row(
           children: [
-            Icon(
+            MarioGameIcon(
               option.icon,
               size: 18,
               color: selected ? retro.inkOnAccent : retro.ink,
@@ -706,7 +706,7 @@ class _LibraryFilterSheetItem extends StatelessWidget {
               ),
             ),
             if (selected)
-              Icon(Icons.check_rounded, size: 19, color: retro.inkOnAccent),
+              MarioGameIcon(Icons.check_rounded, size: 19, color: retro.inkOnAccent),
           ],
         ),
       ),
