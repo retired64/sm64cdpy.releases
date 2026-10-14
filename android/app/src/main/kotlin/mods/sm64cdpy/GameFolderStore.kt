@@ -40,6 +40,8 @@ internal object GameFolderStore {
             }
             val mods = directory(root, "mods")
             val packs = directory(directory(root, "dynos"), "packs")
+            synchronized(InstallationSafAccessCoordinator.selectionLock) {
+                requireIdle(context)
             val keys = listOf(KEY, ModInstallerPlugin.KEY_TREE_URI, ModInstallerPlugin.KEY_DYNOS_TREE_URI,
                 "unified_game_folder_version", ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED)
             val previous = keys.associateWith { preferences.all[it] }
@@ -59,6 +61,7 @@ internal object GameFolderStore {
                 } }
                 rollback.commit()
                 error("access")
+            }
             }
             // Retain old grants: queued workers hold immutable URI inputs, not mutable folder prefs.
         } catch (error: Exception) {
@@ -120,6 +123,7 @@ internal object GameFolderStore {
     }
 
     fun disconnect(context: Context) = synchronized(InstallationSafAccessCoordinator.lock) {
+        synchronized(InstallationSafAccessCoordinator.selectionLock) {
         requireIdle(context)
         val preferences = prefs(context)
         val saved = preferences.getString(KEY, null)
@@ -138,5 +142,6 @@ internal object GameFolderStore {
         if (saved != null) runCatching { context.contentResolver.releasePersistableUriPermission(Uri.parse(saved),
             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION) }
         // No resources, config, installation receipts or game files are deleted.
+        }
     }
 }

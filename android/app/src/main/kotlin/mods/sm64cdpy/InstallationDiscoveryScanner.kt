@@ -387,4 +387,6 @@ object InstallationDiscoveryScanner {
 /** Serializes read-heavy SAF library operations across both Flutter engines. */
 internal object InstallationSafAccessCoordinator {
     val lock = Any()
+    // Only preference capture/commit and enqueue; never hold during file I/O.
+    val selectionLock = Any()
 }

@@ -129,3 +129,8 @@ La captura del destino y el enqueue de instalación también usan ese coordinado
 una conexión no puede intercalarse entre leer preferencias y registrar el trabajo.
 La consulta de trabajos activos se hace antes de confirmar una conexión. No se
 serializa la transferencia/extracción de Workers independientes.
+
+Dos ámbitos de coordinación: el lock SAF serializa metadatos y escritura manual;
+selectionLock coordina exclusivamente captura/commit de preferencias y enqueue.
+El enqueue no espera una extracción manual ni un escaneo completo. La selección
+recomprueba WorkManager justo antes del commit, después de validar los directorios.
