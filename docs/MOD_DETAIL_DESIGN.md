@@ -9,6 +9,9 @@ Los datos de texto de 10–14 puntos tenían menor legibilidad con las fuentes R
 ## Estructura y tipografía
 
 - Navegación fija sobre una superficie del tema; no se superpone a la imagen.
+  Los iconos de las barras Android derivan de la luminancia del fondo real: el
+  marrón del modo claro de SM64 Intro necesita iconos claros, igual que el azul
+  nocturno. No se infiere ese contraste solo del nombre claro/oscuro.
 - Una sola ficha de cabecera enmarca la portada a 112×112 sin recortarla, conserva
   el Hero existente y muestra placeholder si falta imagen o falla su carga.
 - En teléfonos: portada, título completo, autor, versión y categoría en una

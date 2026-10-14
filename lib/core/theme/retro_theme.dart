@@ -258,13 +258,15 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     height: height,
   );
 
+  Brightness get systemIconBrightness => background.computeLuminance() > 0.179
+      ? Brightness.dark
+      : Brightness.light;
+
   SystemUiOverlayStyle get systemUiStyle => SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-    statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    statusBarIconBrightness: systemIconBrightness,
     systemNavigationBarColor: background,
-    systemNavigationBarIconBrightness: isDark
-        ? Brightness.light
-        : Brightness.dark,
+    systemNavigationBarIconBrightness: systemIconBrightness,
   );
 
   ThemeData toMaterialTheme() {
