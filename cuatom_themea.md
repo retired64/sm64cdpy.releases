@@ -416,3 +416,6 @@ la fuente de títulos. `headingFontFamilyFallback` utiliza Roboto para los acent
 que TypefaceMario64 no incluye. La definición e interpolación del tema contienen
 esa configuración, sin preferencias nuevas. Retro Manga y el overlay conservan
 sus familias predeterminadas. La fuente se empaqueta localmente, sin descarga.
+
+Los títulos de mods del ranking Top downloads de Home usan también la familia
+y respaldo de títulos del diseño; los datos de descargas/rating siguen siendo cuerpo.

@@ -189,3 +189,6 @@ las descripciones mantienen la tipografía predeterminada; Roboto sirve de respa
 para los acentos ausentes en la fuente de títulos. Roles Material y helpers
 comparten esa definición. CI carga la fuente real para probar ancho estrecho y
 texto ampliado. Pendiente la revisión visual en dispositivo.
+
+Se incluyeron los títulos de mods de Top downloads en Home en el rol tipográfico
+de títulos de Mario 64; las cifras siguen utilizando la tipografía de cuerpo.

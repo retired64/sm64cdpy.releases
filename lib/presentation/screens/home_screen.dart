@@ -1380,8 +1380,12 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: retro.ink,
+                        fontFamily: retro.design.headingFontFamily,
+                        fontFamilyFallback: retro.design.headingFontFamilyFallback,
                         fontSize: 13,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: retro.design.headingFontFamily == null
+                            ? FontWeight.w700
+                            : retro.design.headingWeight,
                       ),
                     ),
                     const SizedBox(height: 3),
