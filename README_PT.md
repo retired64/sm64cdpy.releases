@@ -35,7 +35,7 @@ progresso do download e da instalação.
 - Importação e exportação de favoritos em JSON.
 - Biblioteca local de conteúdo instalado, recente, mods do jogo e com
   atualizações disponíveis.
-- Interface em inglês, espanhol e português brasileiro; visuais incluídos Retro Manga e Mario 64, com aparência clara, escura ou do celular. O painel flutuante mantém seu visual escuro fixo.
+- Interface em inglês, espanhol e português brasileiro; visuais incluídos Retro Manga, Mario 64 e SM64 Intro, com aparência clara, escura ou do celular. O painel flutuante mantém seu visual escuro fixo.
 - Escolher Mario 64 prepara uma vez materiais do menu, céus, HUD e fontes da sua ROM americana .z64 sem modificações. As próximas seleções reutilizam os recursos locais privados. Cancelar mantém o tema anterior. [Detalhes da importação](docs/MARIO_ROM_THEME.md).
 - Atualização manual das bases JSON remotas.
 - Seleção persistente de pastas pelo seletor do Android.
@@ -96,4 +96,4 @@ os autores dos mods. O conteúdo pertence aos respectivos criadores.
 
 A Biblioteca também permite configurar mods Lua locais compatíveis para a próxima abertura do jogo, selecionando a pasta user, com gravação verificada e backup privado. Feche o jogo antes de editar. Os pacotes DynOS são gerenciados separadamente.
 
-A preparação de 1.8.3 inclui controle de mods, Biblioteca unificada e os temas Retro Manga/Mario 64. [Checklist de merge e publicação](docs/RELEASE_1.8.3.md).
+A preparação de 1.8.3 inclui controle de mods, Biblioteca unificada e os temas Retro Manga/Mario 64/SM64 Intro. [Checklist de merge e publicação](docs/RELEASE_1.8.3.md).

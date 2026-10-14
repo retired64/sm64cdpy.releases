@@ -30,7 +30,8 @@ principales conservan glifos HUD. Se preservan acentos mediante fallback.
    Cancelar/fallar conserva el tema anterior; solo la confirmación guarda Hive.
 6. `RetroTheme` comparte fuentes, iconos y tamaños de Mario mediante `isMario`;
    `isIntro` distingue fondos dorados/azules y paneles sin la piedra opaca del
-   tema anterior. Los controles usan el marco de piedra teñido de azul.
+   tema anterior. Los controles usan el marco de piedra teñido de azul. Los botones de acción
+   rellenos son azules con texto blanco; el dorado indica selección.
 7. `ThemeBackdrop` aplica el fondo compartido a las pantallas del engine
    principal. Las tarjetas conservan sus fotos y las superficies semánticas
    conservan su contraste.

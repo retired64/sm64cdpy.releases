@@ -34,7 +34,7 @@ Se conservan identidad del paquete, firma y nombres públicos de assets OTA.
    `sm64config.txt`, incompatibilidades locales conocidas, tamaño, respaldo privado,
    conservación de otras líneas y confirmación por relectura. Restaurar requiere
    confirmación. El usuario debe cerrar el juego: se configura el próximo inicio.
-4. **Temas incluidos:** Retro Manga predeterminado y Mario 64; ambos admiten modo
+4. **Temas incluidos:** Retro Manga predeterminado, Mario 64 y SM64 Intro; todos admiten modo
    claro, oscuro o sistema, independiente de diseño e idioma. Mario utiliza
    superficies con relieve, fondos de cielo y selección con estrellas.
 5. **Tipografía:** TypefaceMario64 exclusivamente en títulos de Mario, incluidos
@@ -154,7 +154,7 @@ activation, local search and mod metadata while keeping installation receipts,
 updates and history separate. Configuration edits preserve other settings and
 provide verified saves and a private recovery backup.
 
-The app includes Retro Manga and Mario 64 with independent appearance modes,
+The app includes Retro Manga, Mario 64 and SM64 Intro with independent appearance modes,
 matching animated Settings selectors and Mario-only heading typography. Mario
 rebuilds its scenes, opaque materials, square frames, controls and typography
 from a private user-selected vanilla US ROM. The initial selection waits for
