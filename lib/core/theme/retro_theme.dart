@@ -248,8 +248,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     color: color ?? inkDim,
     fontFamily: bodyFamily,
     fontFamilyFallback: const ['Roboto'],
-    fontSize: size,
-    fontWeight: weight,
+    fontSize: isMario && marioAssets.complete ? size.clamp(14.0, double.infinity) : size,
+    fontWeight: isMario && marioAssets.complete ? FontWeight.w400 : weight,
+    letterSpacing: isMario ? 0 : null,
     height: height,
   );
 
@@ -801,20 +802,34 @@ class SectionKicker extends StatelessWidget {
             child: Container(width: 5, height: 18, color: retro.accent),
           ),
         const SizedBox(width: 10),
-        Flexible(
-          child: MarioGameTitle(text: label, retro: retro, size: 17),
-        ),
+        if (retro.isMario)
+          Expanded(
+            child: Text(
+              label,
+              style: retro.heading(size: 13.5).copyWith(
+                fontFamily: retro.menuFamily,
+                height: 1.3,
+                letterSpacing: 0,
+              ),
+            ),
+          )
+        else
+          Flexible(
+            child: MarioGameTitle(text: label, retro: retro, size: 17),
+          ),
         if (japanese != null) ...[
           const SizedBox(width: 8),
           Text(japanese!, style: retro.body(size: 13, color: retro.inkDim)),
         ],
-        const SizedBox(width: 10),
-        Expanded(
-          child: Container(
-            height: 1.5,
-            color: retro.inkDim.withValues(alpha: 0.35),
+        if (!retro.isMario) ...[
+          const SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              height: 1.5,
+              color: retro.inkDim.withValues(alpha: 0.35),
+            ),
           ),
-        ),
+        ],
       ],
     );
   }

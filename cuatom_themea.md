@@ -1,6 +1,6 @@
 # Temas propios incluidos: implementación y flujo de trabajo Android
 
-Actualizado: 2026-10-14. Rama `custom-themes`, desde `main` (`8bdc996`). Versión preparada `1.8.3+22`, sin merge ni publicación. Testing #192 validó análisis, 83 tests Flutter, APK arm64 y tests Kotlin. La matriz física de importación ROM permanece pendiente.
+Actualizado: 2026-10-14. Rama `custom-themes`, desde `main` (`8bdc996`), versión 1.8.3+22. Mario v2 reconstruye escenas, materiales opacos y tipografías con la ROM. Testing #197 pasó Flutter; compilación y pruebas Kotlin pendientes al escribir esta revisión. La matriz física sigue pendiente. Sin merge ni publicación.
 
 ## 1. Qué se implementó
 
@@ -11,7 +11,7 @@ Los diseños incluidos utilizan colores, geometría Flutter y la fuente de títu
 | ID persistido | Definición | Configuración inicial |
 |---|---|---|
 | `retro_manga` | `lib/core/theme/themes/retro_manga_theme.dart` | Formas rectas, sombra dura, inclinación, puntos y franjas; conserva el diseño anterior con ajustes de contraste del texto secundario y acento textual claros |
-| `mario64` | `lib/core/theme/themes/mario64_theme.dart` | Interpretación N64: cielo y colinas dibujados en Flutter, superficies crema/azules biseladas, acentos rojo y dorado, radio 8, sombra definida, selección con mano y contadores HUD; recursos originales opcionales importados localmente |
+| `mario64` | `lib/core/theme/themes/mario64_theme.dart` | File Select/pausa: radio cero, piedra opaca, cielos Clouds/BBH, HUD, cursor y fuentes ROM. Requiere conjunto v2 completo antes de confirmar selección nueva. |
 
 El cambio no reinicia `ProviderScope`, no altera la ruta actual, no borra favoritos y no cancela descargas. La selección cambia presentación; contenido, identidad de operaciones y destino de instalación conservan su lógica existente.
 
@@ -465,3 +465,28 @@ HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
 principales. La selección de Mario coordina importación antes de guardar tema;
 v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 [MARIO_ROM_THEME.md](docs/MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.
+
+
+### Fachada visual reconstruida en v2
+
+`headingFamily`, `bodyFamily` y `menuFamily` resuelven fuentes ROM listas, con
+fallback de idioma. `gameDecoration` conecta las superficies de las 14 pantallas;
+`MarioGameIcon`, `MarioGameTitle` y `MarioGameToggle` presentan recursos originales
+sin poseer estado. `AppearanceNotifier.selectThemeWithRom` coordina importación
+antes del único escritor de selección Hive. No se altera la configuración del
+juego para modificar la presentación. Los componentes conservan contenido de
+catálogo, colores semánticos, fotografías y símbolos sin equivalente en la ROM.
+
+## Revisión de tipografía desde capturas — 14 octubre 2026
+
+Testing #198 completó análisis, 85 pruebas Flutter, APK arm64 y pruebas nativas.
+Las capturas locales mostraron encabezados del drawer divididos por letras: el
+separador ocupaba la mitad de la fila y cada sprite era un punto de salto. Mario
+ahora usa la fuente de menú para encabezados de sección, 13.5 puntos y todo el
+ancho disponible; los títulos destacados conservan los recursos HUD. El texto
+de diálogo compartido tiene mínimo 14 puntos, peso normal y tracking cero.
+Ajustes distingue opciones de 16 puntos y descripciones de 14; las rutas usan
+Roboto de 14 para lectura precisa. Retro Manga conserva su escala. No cambia
+la importación, el formato v2, preferencias, workers ni el engine del overlay.
+Las capturas no se incluyen en el commit. Validación visual física pendiente
+para el nuevo ajuste, incluidos claro/oscuro y escala de texto aumentada.

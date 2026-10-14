@@ -803,30 +803,36 @@ class _RetroTileShell extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        color: titleColor ?? retro.ink,
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: retro.isMario
+                          ? retro.body(size: 16, color: titleColor ?? retro.ink)
+                          : TextStyle(
+                              color: titleColor ?? retro.ink,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w800,
+                            ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       subtitle,
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: retro.isMario
+                          ? retro.body(size: 14)
+                          : TextStyle(
+                              color: retro.inkDim,
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w600,
+                            ),
                     ),
                     if (pathHint != null) ...[
                       const SizedBox(height: 3),
                       Text(
                         pathHint!,
-                        style: TextStyle(
-                          color: retro.inkDim,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: retro.isMario
+                            ? retro.body(size: 14).copyWith(fontFamily: 'Roboto')
+                            : TextStyle(
+                                color: retro.inkDim,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
                       ),
                     ],
                   ],

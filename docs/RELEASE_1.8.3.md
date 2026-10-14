@@ -156,9 +156,10 @@ provide verified saves and a private recovery backup.
 
 The app includes Retro Manga and Mario 64 with independent appearance modes,
 matching animated Settings selectors and Mario-only heading typography. Mario
-adds menu materials, framed covers and an optional private import of menu/HUD
-textures from a user-selected vanilla US ROM, with confirmed replacement,
-cancellation and recovery. The APK bundles no extracted game artwork. Version
+rebuilds its scenes, opaque materials, square frames, controls and typography
+from a private user-selected vanilla US ROM. The initial selection waits for
+confirmed import; cancellation preserves the previous theme. Subsequent
+selections reuse the prepared local set. The APK bundles no extracted game artwork. Version
 metadata and localized release notes are aligned to 1.8.3+22. The overlay keeps
 its independent design. Attach the consolidated CI run and device checks before
 approval; this PR does not authorize publishing a release.

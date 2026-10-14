@@ -1,11 +1,32 @@
 import '../../presentation/mario_rom_fixture.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
 import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import 'package:sm64cdpy/domain/entities/mario_theme_assets.dart';
 
 void main() {
+  testWidgets('Mario drawer headings keep their full width and words together', (tester) async {
+    final mario = RetroTheme(false,
+      design: AppThemeCatalog.resolve(AppThemeId.mario64),
+      marioAssets: completeMarioFixture(),
+    );
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(width: 240, child: SectionKicker(retro: mario, label: 'NAVIGATION')),
+    ))));
+    final label = tester.widget<Text>(find.text('NAVIGATION'));
+    expect(label.style!.fontFamily, mario.menuFamily);
+    expect(label.style!.fontSize, 13.5);
+    expect(tester.getSize(find.text('NAVIGATION')).width, 210);
+    expect(find.byType(MarioGameTitle), findsNothing);
+    expect(mario.body(size: 11).fontSize, 14);
+    expect(mario.body(size: 16).fontSize, 16);
+    expect(mario.body(size: 11).letterSpacing, 0);
+    expect(const RetroTheme(false).body(size: 11).fontSize, 11);
+    expect(tester.takeException(), isNull);
+  });
   test(
     'imported files remain exclusive to Mario, including copy and interpolation',
     () {

@@ -463,3 +463,17 @@ HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
 principales. La selección de Mario coordina importación antes de guardar tema;
 v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.
+
+## Revisión de tipografía desde capturas — 14 octubre 2026
+
+Testing #198 completó análisis, 85 pruebas Flutter, APK arm64 y pruebas nativas.
+Las capturas locales mostraron encabezados del drawer divididos por letras: el
+separador ocupaba la mitad de la fila y cada sprite era un punto de salto. Mario
+ahora usa la fuente de menú para encabezados de sección, 13.5 puntos y todo el
+ancho disponible; los títulos destacados conservan los recursos HUD. El texto
+de diálogo compartido tiene mínimo 14 puntos, peso normal y tracking cero.
+Ajustes distingue opciones de 16 puntos y descripciones de 14; las rutas usan
+Roboto de 14 para lectura precisa. Retro Manga conserva su escala. No cambia
+la importación, el formato v2, preferencias, workers ni el engine del overlay.
+Las capturas no se incluyen en el commit. Validación visual física pendiente
+para el nuevo ajuste, incluidos claro/oscuro y escala de texto aumentada.
