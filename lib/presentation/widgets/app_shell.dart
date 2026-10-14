@@ -40,6 +40,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final showBackdrop =
+        retro.isIntro ||
         retro.showN64Backdrop ||
         (retro.showHalftone &&
             !_noHalftoneRoutes.contains(widget.currentRoute));
