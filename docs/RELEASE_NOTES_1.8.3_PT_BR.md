@@ -1,5 +1,3 @@
-<!-- Generated preview from release-manifests/v1.8.3.json; edit that manifest, not this file. -->
-
 ## SM64CDPY v1.8.3 — Controle de mods e a interface Mario 64
 
 A versão 1.8.3 traz ativação verificada de mods na Biblioteca, reúne informações dos mods locais e adiciona a interface Mario 64 ao lado de Retro Manga com seletores consistentes nas Configurações.
@@ -24,6 +22,7 @@ A versão 1.8.3 traz ativação verificada de mods na Biblioteca, reúne informa
 - Tema de interface, modo de aparência e idioma mostram a seleção atual e expandem suas opções com o mesmo visual.
 - O seletor de idioma mantém as animações da seta e da expansão e fecha depois de salvar a seleção.
 - Mario 64 traz superfícies de menu, molduras com relevo e indicadores de seleção consistentes aos Ajustes.
+- Os títulos de seção do Mario 64 aproveitam a largura disponível; as Configurações usam tamanhos legíveis para opções, descrições e caminhos.
 
 ### Recuperação de aparência e legibilidade
 

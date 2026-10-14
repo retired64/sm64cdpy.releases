@@ -1,5 +1,3 @@
-<!-- Generated preview from release-manifests/v1.8.3.json; edit that manifest, not this file. -->
-
 ## SM64CDPY v1.8.3 — Game mod controls and the Mario 64 interface
 
 Version 1.8.3 brings verified game mod activation to Library, unifies local mod information, and adds the Mario 64 interface alongside Retro Manga with consistent Settings selectors.
@@ -24,6 +22,7 @@ Version 1.8.3 brings verified game mod activation to Library, unifies local mod 
 - Interface theme, appearance mode and language show the current choice and reveal their options through matching expandable selectors.
 - The language selector keeps its arrow and expansion animations and closes after the choice is saved.
 - Mario 64 gives Settings themed menu surfaces, beveled frames and consistent selection indicators.
+- Mario 64 section headings use the available width; settings use consistent readable option, description and folder-path sizes.
 
 ### Appearance recovery and readability
 
