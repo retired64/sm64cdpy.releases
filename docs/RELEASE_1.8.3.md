@@ -216,3 +216,10 @@ HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
 principales. La selección de Mario coordina importación antes de guardar tema;
 v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.
+
+## Integración de carpeta única en rama derivada
+
+`unified-game-folder` parte de `custom-themes` y añade selección única de user
+para mods, DynOS/Touch Controls, Biblioteca y ROM de temas. No altera el merge
+ni publica main. Inventario y validación: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+La revisión de esta rama debe completarse antes de incluirla en la release.

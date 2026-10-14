@@ -36,9 +36,9 @@ progresso do download e da instalação.
 - Biblioteca local de conteúdo instalado, recente, mods do jogo e com
   atualizações disponíveis.
 - Interface em inglês, espanhol e português brasileiro; visuais incluídos Retro Manga, Mario 64 e SM64 Intro, com aparência clara, escura ou do celular. O painel flutuante mantém seu visual escuro fixo.
-- Escolher Mario 64 ou SM64 Intro prepara uma vez materiais do menu, céus, HUD e fontes da sua ROM americana .z64 sem modificações. As próximas seleções reutilizam os recursos locais privados. Cancelar mantém o tema anterior. [Detalhes da importação](docs/MARIO_ROM_THEME.md).
+- Escolher Mario 64 ou SM64 Intro prepara uma vez materiais do menu, céus, HUD e fontes da ROM americana .z64 sem modificações na pasta conectada do jogo. As próximas seleções reutilizam os recursos locais privados. Cancelar mantém o tema anterior. [Detalhes da importação](docs/MARIO_ROM_THEME.md).
 - Atualização manual das bases JSON remotas.
-- Seleção persistente de pastas pelo seletor do Android.
+- Conecte uma vez a pasta user do jogo pelo seletor do Android. Mods, DynOS/Touch Controls e detecção da ROM reutilizam essa conexão.
 - Resolução de links, incluindo assets do GitHub Releases.
 - Download e instalação pelo WorkManager com progresso e cancelamento.
 - Cópia de arquivos avulsos e extração de ZIP/7z.
