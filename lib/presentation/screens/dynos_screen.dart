@@ -487,8 +487,11 @@ class _DynosCardState extends ConsumerState<DynosCard>
             child: Container(
               decoration: BoxDecoration(
                 color: retro.surface,
-                borderRadius: RetroTheme.radius,
-                border: Border.all(color: retro.border, width: 3),
+                borderRadius: retro.radius,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(3),
+                ),
                 boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
               ),
               child: child,
@@ -496,7 +499,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
           );
         },
         child: ClipRRect(
-          borderRadius: RetroTheme.radius,
+          borderRadius: retro.radius,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -505,7 +508,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
                 Container(
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: retro.border, width: 3),
+                      bottom: BorderSide(color: retro.border, width: retro.borderWidth(3)),
                     ),
                   ),
                   child: CachedNetworkImage(
@@ -597,13 +600,14 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
+                                  borderRadius: retro.radius,
                                   border: Border.all(
                                     color: retro.blue,
-                                    width: 1.5,
+                                    width: retro.borderWidth(1.5),
                                   ),
                                 ),
                                 child: Text(
-                                  tag.toUpperCase(),
+                                  retro.displayLabel(tag),
                                   style: TextStyle(
                                     color: retro.blue,
                                     fontSize: 9.5,
@@ -638,9 +642,10 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                 ? l10n.sharedShowLess
                                 : l10n.sharedReadMore,
                             style: TextStyle(
+                              fontFamily: retro.design.headingFontFamily,
                               color: retro.blue,
                               fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: retro.design.headingWeight,
                               letterSpacing: 0.6,
                             ),
                           ),
@@ -673,9 +678,12 @@ class _DynosCardState extends ConsumerState<DynosCard>
                         onPressed: _toggleFavorite,
                         style: OutlinedButton.styleFrom(
                           foregroundColor: retro.blue,
-                          side: BorderSide(color: retro.blue, width: 2),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: RetroTheme.radius,
+                          side: BorderSide(
+                            color: retro.blue,
+                            width: retro.borderWidth(2),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: retro.radius,
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -689,7 +697,11 @@ class _DynosCardState extends ConsumerState<DynosCard>
                       height: 50,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          border: Border.all(color: retro.border, width: 3),
+                          borderRadius: retro.radius,
+                          border: Border.all(
+                            color: retro.border,
+                            width: retro.borderWidth(3),
+                          ),
                           boxShadow: isDownloading
                               ? []
                               : retro.hardShadow(dx: 4, dy: 4),
@@ -710,13 +722,13 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                 ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.blue,
-                            foregroundColor: Colors.white,
+                            foregroundColor: retro.onColor(retro.blue),
                             disabledBackgroundColor: retro.blue.withValues(
                               alpha: 0.55,
                             ),
                             elevation: 0,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: retro.radius,
                             ),
                           ),
                           child: isDownloading
@@ -725,9 +737,9 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                   children: [
                                     LinearProgressIndicator(
                                       value: visibleProgress,
-                                      backgroundColor: retro.inkOnAccent
+                                      backgroundColor: retro.onColor(retro.blue)
                                           .withValues(alpha: 0.25),
-                                      color: retro.inkOnAccent,
+                                      color: retro.onColor(retro.blue),
                                       minHeight: 4,
                                     ),
                                     const SizedBox(height: 4),
@@ -736,9 +748,10 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                           ? action.label(l10n)
                                           : '${(visibleProgress * 100).toStringAsFixed(0)}% · ${action.label(l10n)}',
                                       style: TextStyle(
+                                        fontFamily: retro.design.headingFontFamily,
                                         fontSize: 13,
-                                        fontWeight: FontWeight.w900,
-                                        color: retro.inkOnAccent,
+                                        fontWeight: retro.design.headingWeight,
+                                        color: retro.onColor(retro.blue),
                                       ),
                                     ),
                                   ],
@@ -748,16 +761,17 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                   children: [
                                     Icon(
                                       action.icon,
-                                      color: retro.inkOnAccent,
+                                      color: retro.onColor(retro.blue),
                                       size: 20,
                                     ),
                                     const SizedBox(width: 10),
                                     Text(
                                       action.label(l10n),
                                       style: TextStyle(
+                                        fontFamily: retro.design.headingFontFamily,
                                         fontSize: 15,
-                                        fontWeight: FontWeight.w900,
-                                        color: retro.inkOnAccent,
+                                        fontWeight: retro.design.headingWeight,
+                                        color: retro.onColor(retro.blue),
                                       ),
                                     ),
                                   ],
@@ -838,8 +852,12 @@ class _EmptyView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 color: retro.surface,
-                border: Border.all(color: retro.border, width: 3),
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(3),
+                ),
                 boxShadow: retro.hardShadow(),
               ),
               child: Icon(
@@ -853,9 +871,10 @@ class _EmptyView extends StatelessWidget {
               l10n.dynosEmpty,
               textAlign: TextAlign.center,
               style: TextStyle(
+                fontFamily: retro.design.headingFontFamily,
                 color: retro.ink,
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: retro.design.headingWeight,
                 letterSpacing: 0.5,
               ),
             ),
@@ -913,8 +932,11 @@ class _Bone extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: retro.border, width: 3),
-          borderRadius: RetroTheme.radius,
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(3),
+          ),
+          borderRadius: retro.radius,
         ),
       ),
     );
@@ -944,8 +966,12 @@ class _DynosError extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
+                  borderRadius: retro.radius,
                   color: retro.surface,
-                  border: Border.all(color: retro.red, width: 3),
+                  border: Border.all(
+                    color: retro.red,
+                    width: retro.borderWidth(3),
+                  ),
                   boxShadow: retro.hardShadow(),
                 ),
                 child: Icon(
@@ -959,9 +985,10 @@ class _DynosError extends StatelessWidget {
                 l10n.dynosFailedToLoad,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: retro.design.headingFontFamily,
                   color: retro.ink,
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: retro.design.headingWeight,
                   letterSpacing: 0.4,
                 ),
               ),

@@ -332,3 +332,22 @@ Use this section as the checklist is executed.
 - Keep Komi Store, Floating Apps examples, `run-actions-github`, and other cloned references local and ignored. They are research material, not project modules.
 - Before changing any shared preference, cached flag, Worker identity or notification ID, follow the synchronization checklist in `AGENTS.md`.
 - Record every intentional fire-and-forget Future in the corresponding change summary.
+
+## Integración de temas — custom-themes (2026-10-13)
+
+- [x] Crear rama local desde main y descartar trabajo de flutter-termux solicitado.
+- [x] Implementar contrato/catálogo y definiciones incluidas.
+- [x] Conectar selección y modo independientes con un escritor Hive confirmado.
+- [x] Revisar las 14 pantallas, widgets y raíz compartida del overlay fijo.
+- [x] Añadir claves ARB EN/ES/es_419/PT/pt_BR sin editar generados manualmente.
+- [x] Preparar pruebas de tokens, persistencia/error/paralelismo y selector.
+- [x] Preparar generación/formato/tests y parche de fuentes en Actions.
+- [x] Documentar flujo, inventario de cada Dart y sincronización de estado.
+- [x] Ejecutar diff-check y comprobaciones JSON/YAML/contraste locales.
+- [ ] Ejecutar Actions: gen-l10n, dart format, analyze, tests y APK arm64.
+- [ ] Revisar/incorporar parche generado por el runner si corresponde.
+- [ ] Completar matriz física de temas, operaciones en curso y overlay fijo.
+
+No se instaló SDK ni se afirmó compilación local. Registro de cambios de
+esta rama y guía: [cuatom_themea.md](../cuatom_themea.md). La versión/manifiestos
+publicados permanecen sin cambios.

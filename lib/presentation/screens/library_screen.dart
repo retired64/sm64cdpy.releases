@@ -78,7 +78,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           RetroPinnedAppBar(
             title: Text(
               l10n.libraryTitle,
-              style: retro.heading(size: 18, color: retro.accent),
+              style: retro.heading(size: 18, color: retro.accentText),
             ),
             actions: [
               Padding(
@@ -184,8 +184,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           return SkewChip(
             retro: retro,
             label: count == null
-                ? labels[index].toUpperCase()
-                : '${labels[index].toUpperCase()}  $count',
+                ? retro.displayLabel(labels[index])
+                : '${retro.displayLabel(labels[index])}  $count',
             icon: icons[index],
             selected: _view == _LibraryView.values[index],
             dense: true,
@@ -278,11 +278,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   ) async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: retro.surface,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: retro.border, width: 3),
-        borderRadius: BorderRadius.zero,
-      ),
       builder: (context) => _LibraryFilterSheet(
         retro: retro,
         title: l10n.libraryAllSections,
@@ -307,11 +302,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   ) async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: retro.surface,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: retro.border, width: 3),
-        borderRadius: BorderRadius.zero,
-      ),
       builder: (context) => _LibraryFilterSheet(
         retro: retro,
         title: l10n.libraryAllDestinations,
@@ -441,7 +431,7 @@ class _Notice extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: retro.surface,
-        border: Border(left: BorderSide(color: color, width: 5)),
+        border: Border(left: BorderSide(color: color, width: retro.borderWidth(5))),
         boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Row(
@@ -476,8 +466,12 @@ class _MessageState extends StatelessWidget {
       margin: const EdgeInsets.only(top: 12, bottom: 4),
       padding: const EdgeInsets.symmetric(vertical: 34, horizontal: 22),
       decoration: BoxDecoration(
+        borderRadius: retro.radius,
         color: retro.surface,
-        border: Border.all(color: retro.border, width: 2.5),
+        border: Border.all(
+          color: retro.border,
+          width: retro.borderWidth(2.5),
+        ),
         boxShadow: retro.hardShadow(dx: 4, dy: 4),
       ),
       child: Column(
@@ -486,10 +480,14 @@ class _MessageState extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
+              borderRadius: retro.radius,
               color: retro.surfaceAlt,
-              border: Border.all(color: retro.border, width: 2),
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2),
+              ),
             ),
-            child: Icon(icon, size: 34, color: retro.accent),
+            child: Icon(icon, size: 34, color: retro.accentText),
           ),
           const SizedBox(height: 18),
           Text(
@@ -543,8 +541,12 @@ class _RetroIconButton extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
+              borderRadius: retro.radius,
               color: retro.surface,
-              border: Border.all(color: retro.border, width: 2),
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2),
+              ),
               boxShadow: onPressed == null
                   ? null
                   : retro.hardShadow(dx: 2, dy: 2),
@@ -587,7 +589,7 @@ class _LibraryFilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SkewChip(
     retro: retro,
-    label: label.toUpperCase(),
+    label: retro.displayLabel(label),
     icon: icon,
     trailing: active ? Icons.close_rounded : Icons.expand_more_rounded,
     selected: active,
@@ -631,7 +633,7 @@ class _LibraryFilterSheet extends StatelessWidget {
         children: [
           Center(child: Container(width: 36, height: 4, color: retro.border)),
           const SizedBox(height: 18),
-          SectionKicker(retro: retro, label: title.toUpperCase()),
+          SectionKicker(retro: retro, label: retro.displayLabel(title)),
           const SizedBox(height: 14),
           Flexible(
             child: SingleChildScrollView(
@@ -674,8 +676,12 @@ class _LibraryFilterSheetItem extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: selected ? retro.accent : retro.surfaceAlt,
-          border: Border.all(color: retro.border, width: 2),
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2),
+          ),
         ),
         child: Row(
           children: [
@@ -687,7 +693,7 @@ class _LibraryFilterSheetItem extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                option.label.toUpperCase(),
+                retro.displayLabel(option.label),
                 style: retro.heading(
                   size: 13,
                   color: selected ? retro.inkOnAccent : retro.ink,

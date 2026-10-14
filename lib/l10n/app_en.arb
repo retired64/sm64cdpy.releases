@@ -1658,5 +1658,17 @@
   "libraryMaintenanceError": "The Library could not be updated. Try again.",
   "detailOpenExternalFolder": "OPEN SOURCE FOLDER",
   "detailSourceUnavailable": "This version has no downloadable file available right now.",
-  "detailViewDiscussion": "VIEW COMMUNITY DISCUSSION"
+  "detailViewDiscussion": "VIEW COMMUNITY DISCUSSION",
+
+  "settingsInterfaceTheme": "Interface theme",
+  "settingsInterfaceThemeDesc": "Choose an included design. Applies to the app; the floating panel keeps its dark design.",
+  "themeRetroManga": "Retro Manga",
+  "themeMario64": "Mario 64",
+  "themeOdyssey": "Odyssey",
+  "themeGameCube": "GameCube",
+  "themeModeLight": "Light",
+  "themeModeDark": "Dark",
+  "themeModeSystem": "Follow phone",
+  "themeSaveFailed": "Could not save the appearance. Try again.",
+  "themeSaving": "Saving appearance"
 }

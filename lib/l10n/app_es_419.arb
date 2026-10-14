@@ -457,5 +457,17 @@
   "libraryMaintenanceError": "No se pudo actualizar la Biblioteca. Inténtalo de nuevo.",
   "detailOpenExternalFolder": "ABRIR CARPETA DE ORIGEN",
   "detailSourceUnavailable": "Esta versión no tiene un archivo descargable disponible por ahora.",
-  "detailViewDiscussion": "VER CONVERSACIÓN DE LA COMUNIDAD"
+  "detailViewDiscussion": "VER CONVERSACIÓN DE LA COMUNIDAD",
+
+  "settingsInterfaceTheme": "Tema de interfaz",
+  "settingsInterfaceThemeDesc": "Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.",
+  "themeRetroManga": "Retro Manga",
+  "themeMario64": "Mario 64",
+  "themeOdyssey": "Odyssey",
+  "themeGameCube": "GameCube",
+  "themeModeLight": "Claro",
+  "themeModeDark": "Oscuro",
+  "themeModeSystem": "Seguir el teléfono",
+  "themeSaveFailed": "No se pudo guardar la apariencia. Inténtalo de nuevo.",
+  "themeSaving": "Guardando apariencia"
 }

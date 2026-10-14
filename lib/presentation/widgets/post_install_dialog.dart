@@ -5,23 +5,23 @@ import '../../l10n/app_localizations.dart';
 import '../../services/game_launcher_service.dart';
 
 Future<void> showPostInstallDialog(BuildContext context) async {
-  final retro = RetroTheme.of(context);
   final isGameInstalled = await GameLauncherService.isInstalled();
 
   if (!context.mounted) return;
 
-  showDialog(
+  await showDialog<void>(
     context: context,
     barrierDismissible: false,
     builder: (ctx) {
+      final retro = RetroTheme.of(ctx);
       final l10n = AppLocalizations.of(ctx);
 
       return AlertDialog(
         backgroundColor: retro.surface,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: RoundedRectangleBorder(borderRadius: retro.radius),
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: retro.accent, size: 22),
+            Icon(Icons.check_circle, color: retro.accentText, size: 22),
             const SizedBox(width: 10),
             Expanded(
               child: Text(l10n.postInstallTitle, style: retro.heading(size: 15)),
@@ -70,7 +70,7 @@ Future<void> showPostInstallDialog(BuildContext context) async {
                 l10n.postInstallLaunchGame,
                 style: retro.body(
                   size: 13,
-                  color: retro.accent,
+                  color: retro.accentText,
                   weight: FontWeight.w800,
                 ),
               ),

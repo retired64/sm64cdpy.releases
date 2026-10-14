@@ -18,6 +18,7 @@ import '../providers/mod_providers.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/appearance_selector.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -36,7 +37,7 @@ class SettingsScreen extends ConsumerWidget {
         RetroPinnedAppBar(
           title: Text(
             l10n.settingsTitle,
-            style: retro.heading(size: 18, color: retro.accent),
+            style: retro.heading(size: 18, color: retro.accentText),
           ),
         ),
 
@@ -92,7 +93,7 @@ class SettingsScreen extends ConsumerWidget {
                 japanese: '外観',
               ),
               const SizedBox(height: 10),
-              _ThemeSelector(),
+              const AppearanceSelector(),
               const SizedBox(height: 12),
               _LocaleSelector(),
 
@@ -245,6 +246,7 @@ class _RetroDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final accent = confirmColor ?? retro.accent;
     return Dialog(
@@ -253,8 +255,12 @@ class _RetroDialog extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: retro.surface,
-          border: Border.all(color: retro.border, width: 3),
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(3),
+          ),
           boxShadow: retro.hardShadow(dx: 5, dy: 5),
         ),
         child: Column(
@@ -295,15 +301,20 @@ class _RetroDialog extends StatelessWidget {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
+                      borderRadius: retro.radius,
                       color: accent,
-                      border: Border.all(color: retro.border, width: 2),
+                      border: Border.all(
+                        color: retro.border,
+                        width: retro.borderWidth(2),
+                      ),
                     ),
                     child: Text(
                       confirmLabel,
                       style: TextStyle(
-                        color: retro.background,
+                        fontFamily: retro.design.headingFontFamily,
+                        color: retro.onColor(accent),
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: retro.design.headingWeight,
                         letterSpacing: 0.4,
                       ),
                     ),
@@ -333,6 +344,7 @@ class _RetroSectionKicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Column(
@@ -364,6 +376,7 @@ class _RetroSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return GestureDetector(
       onTap: () => onChanged(!value),
       child: AnimatedContainer(
@@ -373,14 +386,18 @@ class _RetroSwitch extends StatelessWidget {
         height: 26,
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: value ? retro.accent : retro.surfaceAlt,
-          border: Border.all(color: retro.border, width: 2),
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2),
+          ),
         ),
         alignment: value ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           width: 16,
           height: 16,
-          color: value ? retro.background : retro.inkDim,
+          color: value ? retro.inkOnAccent : retro.inkDim,
         ),
       ),
     );
@@ -732,6 +749,7 @@ class _RetroTileShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
@@ -740,10 +758,11 @@ class _RetroTileShell extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
+            borderRadius: retro.radius,
             color: retro.surface,
             border: Border.all(
               color: accentColor ?? retro.border,
-              width: accentColor != null ? 2.5 : 2,
+              width: retro.borderWidth(accentColor != null ? 2.5 : 2),
             ),
             boxShadow: retro.hardShadow(dx: 2, dy: 2),
           ),
@@ -808,14 +827,19 @@ class _RetroIconBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final c = accentColor ?? retro.inkDim;
     return Container(
       width: 38,
       height: 38,
       alignment: Alignment.center,
       decoration: BoxDecoration(
+        borderRadius: retro.radius,
         color: retro.surfaceAlt,
-        border: Border.all(color: c, width: 2),
+        border: Border.all(
+          color: c,
+          width: retro.borderWidth(2),
+        ),
       ),
       child: Icon(icon, color: c, size: 18),
     );
@@ -829,13 +853,18 @@ class _RetroSpinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Container(
       width: 38,
       height: 38,
       alignment: Alignment.center,
       decoration: BoxDecoration(
+        borderRadius: retro.radius,
         color: retro.surfaceAlt,
-        border: Border.all(color: retro.accent, width: 2),
+        border: Border.all(
+          color: retro.accent,
+          width: retro.borderWidth(2),
+        ),
       ),
       child: SizedBox(
         width: 16,
@@ -882,80 +911,6 @@ class _SettingsTile extends StatelessWidget {
   }
 }
 
-// ── Theme selector ────────────────────────────────────────────────────────────
-
-class _ThemeSelector extends ConsumerWidget {
-  const _ThemeSelector();
-
-  static const _options = [
-    (mode: ThemeMode.light, label: 'Light', icon: Icons.wb_sunny_rounded),
-    (mode: ThemeMode.dark, label: 'Dark', icon: Icons.nightlight_round),
-    (
-      mode: ThemeMode.system,
-      label: 'System',
-      icon: Icons.brightness_auto_rounded,
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        border: Border.all(color: retro.border, width: 2.5),
-        boxShadow: retro.hardShadow(dx: 3, dy: 3),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.palette_rounded, size: 14, color: retro.accent),
-              const SizedBox(width: 6),
-              Text(
-                l10n.settingsThemeMode,
-                style: TextStyle(
-                  color: retro.inkDim,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: _options.asMap().entries.map((entry) {
-              final i = entry.key;
-              final opt = entry.value;
-              final isSelected = themeMode == opt.mode;
-              return Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(left: i == 0 ? 0 : 8),
-                  child: _ThemeOptionTile(
-                    retro: retro,
-                    icon: opt.icon,
-                    label: opt.label,
-                    isSelected: isSelected,
-                    onTap: () => ref
-                        .read(themeModeProvider.notifier)
-                        .setThemeMode(opt.mode),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ── Language selector ─────────────────────────────────────────────────────────
 
 class _LocaleSelector extends ConsumerStatefulWidget {
@@ -993,8 +948,12 @@ class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
+        borderRadius: retro.radius,
         color: retro.surface,
-        border: Border.all(color: retro.border, width: 2.5),
+        border: Border.all(
+          color: retro.border,
+          width: retro.borderWidth(2.5),
+        ),
         boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Column(
@@ -1005,7 +964,7 @@ class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
             behavior: HitTestBehavior.opaque,
             child: Row(
               children: [
-                Icon(Icons.translate_rounded, size: 14, color: retro.accent),
+                Icon(Icons.translate_rounded, size: 14, color: retro.accentText),
                 const SizedBox(width: 6),
                 Text(
                   l10n.settingsLanguageMode,
@@ -1035,7 +994,7 @@ class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
                   child: Icon(
                     Icons.expand_more,
                     size: 20,
-                    color: _expanded ? retro.accent : retro.inkDim,
+                    color: _expanded ? retro.accentText : retro.inkDim,
                   ),
                 ),
               ],
@@ -1067,6 +1026,7 @@ class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
                               vertical: 10,
                             ),
                             decoration: BoxDecoration(
+                              borderRadius: retro.radius,
                               color: isSelected
                                   ? retro.accent
                                   : retro.surfaceAlt,
@@ -1074,7 +1034,7 @@ class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
                                 color: isSelected
                                     ? retro.border
                                     : retro.border.withValues(alpha: 0.4),
-                                width: isSelected ? 2 : 1.5,
+                                width: retro.borderWidth(isSelected ? 2 : 1.5),
                               ),
                             ),
                             child: Row(
@@ -1089,7 +1049,7 @@ class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
                                     opt.label,
                                     style: TextStyle(
                                       color: isSelected
-                                          ? retro.background
+                                          ? retro.inkOnAccent
                                           : retro.ink,
                                       fontSize: 13,
                                       fontWeight: isSelected
@@ -1102,7 +1062,7 @@ class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
                                   Icon(
                                     Icons.check,
                                     size: 16,
-                                    color: retro.background,
+                                    color: retro.inkOnAccent,
                                   ),
                               ],
                             ),
@@ -1127,99 +1087,6 @@ class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
       (tag: 'es_419', label: l10n.languageSpanish, flag: '🇲🇽'),
       (tag: 'pt_BR', label: l10n.languagePortuguese, flag: '🇧🇷'),
     ];
-  }
-}
-
-class _ThemeOptionTile extends StatefulWidget {
-  const _ThemeOptionTile({
-    required this.retro,
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final RetroTheme retro;
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  State<_ThemeOptionTile> createState() => _ThemeOptionTileState();
-}
-
-class _ThemeOptionTileState extends State<_ThemeOptionTile>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pressCtrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _pressCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-  }
-
-  @override
-  void dispose() {
-    _pressCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = widget.retro;
-    final bg = widget.isSelected ? retro.accent : retro.surfaceAlt;
-    final fg = widget.isSelected ? retro.background : retro.inkDim;
-
-    return GestureDetector(
-      onTapDown: (_) => _pressCtrl.forward(),
-      onTapUp: (_) {
-        _pressCtrl.reverse();
-        widget.onTap();
-      },
-      onTapCancel: () => _pressCtrl.reverse(),
-      child: AnimatedBuilder(
-        animation: _pressCtrl,
-        builder: (context, child) {
-          final offset = 2.0 * _pressCtrl.value;
-          return Transform.translate(
-            offset: Offset(offset, offset),
-            child: child,
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: bg,
-            border: Border.all(
-              color: widget.isSelected
-                  ? retro.border
-                  : retro.border.withValues(alpha: 0.4),
-              width: widget.isSelected ? 2 : 1.5,
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(widget.icon, size: 18, color: fg),
-              const SizedBox(height: 5),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  color: fg,
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
 

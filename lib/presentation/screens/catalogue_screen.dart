@@ -84,7 +84,7 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
     ref.listen(sortOrderProvider, (_, _) => _resetPage());
 
     return RefreshIndicator(
-      color: retro.background,
+      color: retro.inkOnAccent,
       backgroundColor: retro.accent,
       displacement: 80,
       onRefresh: () async {
@@ -222,7 +222,7 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
             ),
             TextSpan(
               text: 'CATALOG',
-              style: retro.heading(size: 18, color: retro.accent),
+              style: retro.heading(size: 18, color: retro.accentText),
             ),
           ],
         ),
@@ -276,12 +276,20 @@ class _SearchField extends ConsumerWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
+        borderRadius: retro.radius,
         color: retro.surface,
-        border: Border.all(color: retro.border, width: 2.5),
+        border: Border.all(
+          color: retro.border,
+          width: retro.borderWidth(2.5),
+        ),
         boxShadow: focusNode.hasFocus ? [] : retro.hardShadow(dx: 3, dy: 3),
       ),
       transform: focusNode.hasFocus
-          ? Matrix4.translationValues(3.0, 3.0, 0.0)
+          ? Matrix4.translationValues(
+              3 * retro.design.shadowOffsetScale,
+              3 * retro.design.shadowOffsetScale,
+              0,
+            )
           : Matrix4.identity(),
       child: TextField(
         controller: controller,
@@ -304,7 +312,7 @@ class _SearchField extends ConsumerWidget {
           ),
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: focusNode.hasFocus ? retro.accent : retro.inkDim,
+            color: focusNode.hasFocus ? retro.accentText : retro.inkDim,
             size: 20,
           ),
           suffixIcon: ValueListenableBuilder(
@@ -363,7 +371,7 @@ class _FilterBarDelegate extends SliverPersistentHeaderDelegate {
       decoration: BoxDecoration(
         color: retro.background,
         border: elevated
-            ? Border(bottom: BorderSide(color: retro.border, width: 3))
+            ? Border(bottom: BorderSide(color: retro.border, width: retro.borderWidth(3)))
             : null,
       ),
       child: _FilterBar(
@@ -415,7 +423,7 @@ class _FilterBar extends ConsumerWidget {
               padding: const EdgeInsets.only(right: 8),
               child: SkewChip(
                 retro: retro,
-                label: cat.toUpperCase(),
+                label: retro.displayLabel(cat),
                 icon: icon,
                 selected: isSelected,
                 dense: true,
@@ -490,11 +498,6 @@ class _SortChip extends ConsumerWidget {
   void _showSortSheet(BuildContext context, WidgetRef ref, SortOrder current) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: retro.surface,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: retro.border, width: 3),
-        borderRadius: BorderRadius.zero,
-      ),
       builder: (_) => _SortSheet(retro: retro, current: current, ref: ref),
     );
   }
@@ -513,6 +516,7 @@ class _SortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final options = [
       (
@@ -562,22 +566,26 @@ class _SortSheet extends StatelessWidget {
                     vertical: 13,
                   ),
                   decoration: BoxDecoration(
+                    borderRadius: retro.radius,
                     color: isSelected ? retro.accent : retro.surfaceAlt,
-                    border: Border.all(color: retro.border, width: 2),
+                    border: Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(2),
+                    ),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         opt.icon,
                         size: 17,
-                        color: isSelected ? retro.background : retro.ink,
+                        color: isSelected ? retro.inkOnAccent : retro.ink,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          opt.label.toUpperCase(),
+                          retro.displayLabel(opt.label),
                           style: TextStyle(
-                            color: isSelected ? retro.background : retro.ink,
+                            color: isSelected ? retro.inkOnAccent : retro.ink,
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.3,
@@ -588,7 +596,7 @@ class _SortSheet extends StatelessWidget {
                         Icon(
                           Icons.check_rounded,
                           size: 18,
-                          color: retro.background,
+                          color: retro.inkOnAccent,
                         ),
                     ],
                   ),
@@ -652,7 +660,7 @@ class _ResultsHeader extends ConsumerWidget {
                   child: Text(
                     l10n.catalogueClearAll,
                     style: TextStyle(
-                      color: retro.accent,
+                      color: retro.accentText,
                       fontSize: 11.5,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.3,
@@ -733,8 +741,12 @@ class _PaginationBar extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: retro.surface,
-          border: Border.all(color: retro.border, width: 3),
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(3),
+          ),
           boxShadow: retro.hardShadow(),
         ),
         child: Row(
@@ -821,6 +833,7 @@ class _PagePills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -847,17 +860,18 @@ class _PagePills extends StatelessWidget {
             width: isActive ? 28 : 24,
             height: 24,
             decoration: BoxDecoration(
+              borderRadius: retro.radius,
               color: isActive ? retro.accent : retro.surfaceAlt,
               border: Border.all(
                 color: retro.border,
-                width: isActive ? 2 : 1.5,
+                width: retro.borderWidth(isActive ? 2 : 1.5),
               ),
             ),
             alignment: Alignment.center,
             child: Text(
               '${page + 1}',
               style: TextStyle(
-                color: isActive ? retro.background : retro.inkDim,
+                color: isActive ? retro.inkOnAccent : retro.inkDim,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
               ),
@@ -884,6 +898,7 @@ class _PageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return GestureDetector(
       onTap: enabled ? onTap : null,
       child: AnimatedContainer(
@@ -891,17 +906,18 @@ class _PageButton extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: enabled ? retro.accent : retro.surfaceAlt,
           border: Border.all(
             color: enabled ? retro.border : retro.border.withValues(alpha: 0.3),
-            width: 2,
+            width: retro.borderWidth(2),
           ),
         ),
         child: Icon(
           icon,
           size: 15,
           color: enabled
-              ? retro.background
+              ? retro.inkOnAccent
               : retro.inkDim.withValues(alpha: 0.4),
         ),
       ),
@@ -948,8 +964,12 @@ class _EmptyView extends ConsumerWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 color: retro.surface,
-                border: Border.all(color: retro.border, width: 3),
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(3),
+                ),
                 boxShadow: retro.hardShadow(),
               ),
               child: Icon(
@@ -957,7 +977,7 @@ class _EmptyView extends ConsumerWidget {
                     ? Icons.search_off_rounded
                     : Icons.extension_off_rounded,
                 size: 30,
-                color: retro.accent,
+                color: retro.accentText,
               ),
             ),
             const SizedBox(height: 22),
@@ -967,9 +987,10 @@ class _EmptyView extends ConsumerWidget {
                   : l10n.catalogueNothingHere,
               textAlign: TextAlign.center,
               style: TextStyle(
+                fontFamily: retro.design.headingFontFamily,
                 color: retro.ink,
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: retro.design.headingWeight,
                 letterSpacing: 0.5,
               ),
             ),
@@ -995,8 +1016,12 @@ class _EmptyView extends ConsumerWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
+                    borderRadius: retro.radius,
                     color: retro.accent,
-                    border: Border.all(color: retro.border, width: 2.5),
+                    border: Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(2.5),
+                    ),
                     boxShadow: retro.hardShadow(dx: 3, dy: 3),
                   ),
                   child: Row(
@@ -1005,15 +1030,16 @@ class _EmptyView extends ConsumerWidget {
                       Icon(
                         Icons.filter_alt_off_rounded,
                         size: 15,
-                        color: retro.background,
+                        color: retro.inkOnAccent,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         l10n.catalogueClearFilters,
                         style: TextStyle(
-                          color: retro.background,
+                          fontFamily: retro.design.headingFontFamily,
+                          color: retro.inkOnAccent,
                           fontSize: 11.5,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: retro.design.headingWeight,
                           letterSpacing: 0.4,
                         ),
                       ),
@@ -1051,8 +1077,12 @@ class _ErrorView extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 color: retro.surface,
-                border: Border.all(color: retro.red, width: 3),
+                border: Border.all(
+                  color: retro.red,
+                  width: retro.borderWidth(3),
+                ),
                 boxShadow: retro.hardShadow(),
               ),
               child: Icon(
@@ -1066,9 +1096,10 @@ class _ErrorView extends StatelessWidget {
               l10n.catalogueFailedToLoad,
               textAlign: TextAlign.center,
               style: TextStyle(
+                fontFamily: retro.design.headingFontFamily,
                 color: retro.ink,
                 fontSize: 13,
-                fontWeight: FontWeight.w900,
+                fontWeight: retro.design.headingWeight,
                 letterSpacing: 0.4,
               ),
             ),

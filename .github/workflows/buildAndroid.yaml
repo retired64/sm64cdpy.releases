@@ -129,6 +129,12 @@ jobs:
       - name: Instalar dependencias
         run: flutter pub get
 
+      - name: Generar traducciones
+        run: flutter gen-l10n
+
+      - name: Formatear fuentes Dart en el runner
+        run: dart format lib test/core/theme test/presentation
+
       # ── 8. Análisis estático ─────────────────────────────────────────────
       - name: flutter analyze
         run: flutter analyze --no-fatal-infos

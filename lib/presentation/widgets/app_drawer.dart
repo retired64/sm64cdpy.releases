@@ -44,7 +44,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
       width: (MediaQuery.sizeOf(context).width * 0.86).clamp(280.0, 340.0),
       backgroundColor: retro.background,
       elevation: 0,
-      shape: Border(right: BorderSide(color: retro.border, width: 2)),
+      shape: Border(right: BorderSide(color: retro.border, width: retro.borderWidth(2))),
       child: SafeArea(
         child: SingleChildScrollView(
           controller: widget.scrollController,
@@ -240,6 +240,7 @@ class _RetroDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Container(height: 2, color: retro.border);
   }
 }
@@ -262,8 +263,12 @@ class _DrawerHeader extends StatelessWidget {
             height: 44,
             alignment: Alignment.center,
             decoration: BoxDecoration(
+              borderRadius: retro.radius,
               color: retro.surface,
-              border: Border.all(color: retro.border, width: 2.5),
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2.5),
+              ),
               boxShadow: retro.hardShadow(dx: 3, dy: 3),
             ),
             child: RepaintBoundary(
@@ -282,7 +287,7 @@ class _DrawerHeader extends StatelessWidget {
                 Text('SM64', style: retro.heading(size: 16, color: retro.ink)),
                 Text(
                   'CoopDX',
-                  style: retro.heading(size: 16, color: retro.accent),
+                  style: retro.heading(size: 16, color: retro.accentText),
                 ),
                 const SizedBox(height: 3),
                 Text('モッド・カタログ', style: retro.body(size: 10.5)),
@@ -352,7 +357,7 @@ class _NavItemState extends State<_NavItem>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final accent = widget.accentColor ?? retro.accent;
-    final fg = widget.isActive ? retro.background : retro.inkDim;
+    final fg = widget.isActive ? retro.onColor(accent) : retro.inkDim;
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -370,9 +375,10 @@ class _NavItemState extends State<_NavItem>
           curve: _kCurve,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           decoration: BoxDecoration(
+            borderRadius: retro.radius,
             color: widget.isActive ? accent : Colors.transparent,
             border: widget.isActive
-                ? Border.all(color: retro.border, width: 2)
+                ? Border.all(color: retro.border, width: retro.borderWidth(2))
                 : null,
           ),
           child: Row(
@@ -382,7 +388,7 @@ class _NavItemState extends State<_NavItem>
                 curve: _kCurve,
                 width: 3,
                 height: widget.isActive ? 26 : 0,
-                color: widget.isActive ? retro.background : Colors.transparent,
+                color: widget.isActive ? retro.onColor(accent) : Colors.transparent,
               ),
               Expanded(
                 child: Padding(
@@ -581,9 +587,10 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
+            borderRadius: retro.radius,
             color: isSelected ? catColor : Colors.transparent,
             border: isSelected
-                ? Border.all(color: retro.border, width: 1.5)
+                ? Border.all(color: retro.border, width: retro.borderWidth(1.5))
                 : null,
           ),
           child: Row(
@@ -591,13 +598,13 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               Container(
                 width: 7,
                 height: 7,
-                color: isSelected ? retro.background : catColor,
+                color: isSelected ? retro.onColor(catColor) : catColor,
               ),
               const SizedBox(width: 10),
               Icon(
                 icon,
                 size: 15,
-                color: isSelected ? retro.background : catColor,
+                color: isSelected ? retro.onColor(catColor) : catColor,
               ),
               const SizedBox(width: 9),
               Expanded(
@@ -605,7 +612,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
                   duration: _kItemDuration,
                   curve: _kCurve,
                   style: TextStyle(
-                    color: isSelected ? retro.background : retro.inkDim,
+                    color: isSelected ? retro.onColor(catColor) : retro.inkDim,
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     fontSize: 12.5,
                   ),
@@ -617,7 +624,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check, size: 14, color: retro.background),
+                child: Icon(Icons.check, size: 14, color: retro.onColor(catColor)),
               ),
             ],
           ),
@@ -777,9 +784,10 @@ class _SortItemState extends ConsumerState<_SortItem>
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
+            borderRadius: retro.radius,
             color: isSelected ? retro.accent : Colors.transparent,
             border: isSelected
-                ? Border.all(color: retro.border, width: 1.5)
+                ? Border.all(color: retro.border, width: retro.borderWidth(1.5))
                 : null,
           ),
           child: Row(
@@ -789,7 +797,7 @@ class _SortItemState extends ConsumerState<_SortItem>
                   duration: _kItemDuration,
                   curve: _kCurve,
                   style: TextStyle(
-                    color: isSelected ? retro.background : retro.inkDim,
+                    color: isSelected ? retro.inkOnAccent : retro.inkDim,
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     fontSize: 12.5,
                   ),
@@ -799,7 +807,7 @@ class _SortItemState extends ConsumerState<_SortItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check, size: 14, color: retro.background),
+                child: Icon(Icons.check, size: 14, color: retro.inkOnAccent),
               ),
             ],
           ),
@@ -819,6 +827,7 @@ class _ExpandArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return AnimatedRotation(
       turns: expanded ? 0.5 : 0.0,
       duration: const Duration(milliseconds: 200),
@@ -826,7 +835,7 @@ class _ExpandArrow extends StatelessWidget {
       child: Icon(
         Icons.expand_more,
         size: 20,
-        color: expanded ? retro.accent : retro.inkDim,
+        color: expanded ? retro.accentText : retro.inkDim,
       ),
     );
   }
@@ -960,8 +969,12 @@ class _SocialButtonState extends State<_SocialButton>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
+              borderRadius: retro.radius,
               color: retro.surfaceAlt,
-              border: Border.all(color: retro.border, width: 2),
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2),
+              ),
             ),
             child: Center(
               child: RepaintBoundary(

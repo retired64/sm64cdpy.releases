@@ -1,0 +1,91 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
+import 'package:sm64cdpy/core/theme/app_theme_design.dart';
+import 'package:sm64cdpy/core/theme/retro_theme.dart';
+
+double contrast(Color a, Color b) {
+  final x = a.computeLuminance();
+  final y = b.computeLuminance();
+  return ((x > y ? x : y) + 0.05) / ((x < y ? x : y) + 0.05);
+}
+
+void main() {
+  test('unknown/absent IDs preserve Retro for old installations', () {
+    expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);
+    expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);
+    expect(AppThemeCatalog.designs.map((d) => d.id).toSet().length,
+        AppThemeId.values.length);
+  });
+
+  for (final design in AppThemeCatalog.designs) {
+    for (final dark in [false, true]) {
+      test('${design.id.storageKey} $dark has readable surface and fill roles', () {
+        final r = RetroTheme(dark, design: design);
+        for (final surface in [r.background, r.surface, r.surfaceAlt]) {
+          expect(contrast(r.ink, surface), greaterThanOrEqualTo(4.5));
+          expect(contrast(r.inkDim, surface), greaterThanOrEqualTo(4.5));
+          expect(contrast(r.accentText, surface), greaterThanOrEqualTo(4.5));
+        }
+        expect(contrast(r.accent, r.inkOnAccent), greaterThanOrEqualTo(4.5));
+        final material = r.toMaterialTheme();
+        expect(material.extension<RetroTheme>(), same(r));
+        expect(material.colorScheme.primary, r.accent);
+        expect(material.colorScheme.onPrimary, r.inkOnAccent);
+        expect(material.scaffoldBackgroundColor, r.background);
+      });
+    }
+  }
+
+  test('contrast for custom filled categories does not depend on canvas color', () {
+    for (final design in AppThemeCatalog.designs) {
+      final r = RetroTheme(false, design: design);
+      for (final color in [Colors.yellow, Colors.indigo, r.red, r.blue, r.amber, r.medalGold]) {
+        expect(contrast(color, r.onColor(color)), greaterThanOrEqualTo(4.5));
+      }
+    }
+  });
+
+  test('labels preserve authored case outside the manga design', () {
+    expect(const RetroTheme(false).displayLabel('New release'), 'NEW RELEASE');
+    final rounded = RetroTheme(false,
+        design: AppThemeCatalog.resolve(AppThemeId.odyssey));
+    expect(rounded.displayLabel('New release'), 'New release');
+    expect(rounded.systemUiStyle.systemNavigationBarColor, rounded.background);
+  });
+
+  test('overlay keeps its fixed palette regardless of catalogue selection', () {
+    final overlay = RetroTheme.overlay();
+    expect(overlay.design.id, AppThemeId.retroManga);
+    expect(overlay.isDark, isTrue);
+    expect(overlay.background, const Color(0xFF12141C));
+    expect(overlay.surface, const Color(0xFF1A1D29));
+    expect(overlay.toMaterialTheme().extension<RetroTheme>(), same(overlay));
+  });
+
+  test('extension interpolation supports overrides and preserves endpoints', () {
+    final a = RetroTheme.overlay();
+    final b = RetroTheme(false,
+        design: AppThemeCatalog.resolve(AppThemeId.gamecube));
+    expect(a.lerp(b, 0), same(a));
+    expect(a.lerp(b, 1), same(b));
+    expect(a.lerp(b, 0.5).background, Color.lerp(a.background, b.background, 0.5));
+    expect(a.copyWith().background, a.background);
+  });
+
+  testWidgets('changing design removes manga decorations through context', (tester) async {
+    Future<void> render(AppThemeId id) => tester.pumpWidget(MaterialApp(
+      theme: RetroTheme.materialTheme(false, design: AppThemeCatalog.resolve(id)),
+      themeAnimationDuration: Duration.zero,
+      home: const Stack(children: [
+        HalftoneBackground(color: Colors.black),
+        DiagonalStripeBanner(baseColor: Colors.white, stripeColor: Colors.black),
+      ]),
+    ));
+    await render(AppThemeId.retroManga);
+    expect(find.byType(CustomPaint), findsWidgets);
+    await render(AppThemeId.gamecube);
+    expect(find.byType(CustomPaint), findsNothing);
+    expect(find.byType(ColoredBox), findsWidgets);
+  });
+}

@@ -81,10 +81,11 @@ class InstallationLibraryCard extends ConsumerWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: EdgeInsets.all(compact ? 12 : 14),
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: retro.surface,
           border: Border.all(
             color: retro.border.withValues(alpha: 0.45),
-            width: 2,
+            width: retro.borderWidth(2),
           ),
           boxShadow: retro.hardShadow(dx: 3, dy: 3),
         ),
@@ -304,8 +305,12 @@ class InstallationUpdateCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
+        borderRadius: retro.radius,
         color: retro.surface,
-        border: Border.all(color: retro.accent, width: 2),
+        border: Border.all(
+          color: retro.accent,
+          width: retro.borderWidth(2),
+        ),
         boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Column(
@@ -313,7 +318,7 @@ class InstallationUpdateCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.system_update_alt_rounded, color: retro.accent),
+              Icon(Icons.system_update_alt_rounded, color: retro.accentText),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -368,10 +373,11 @@ class DetectedInstallationCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: retro.surface,
           border: Border.all(
             color: retro.border.withValues(alpha: 0.45),
-            width: 2,
+            width: retro.borderWidth(2),
           ),
           boxShadow: retro.hardShadow(dx: 3, dy: 3),
         ),
@@ -385,12 +391,16 @@ class DetectedInstallationCard extends StatelessWidget {
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
+                    borderRadius: retro.radius,
                     color: retro.surfaceAlt,
-                    border: Border.all(color: retro.accent, width: 2),
+                    border: Border.all(
+                      color: retro.accent,
+                      width: retro.borderWidth(2),
+                    ),
                   ),
                   child: Icon(
                     Icons.extension_rounded,
-                    color: retro.accent,
+                    color: retro.accentText,
                     size: 23,
                   ),
                 ),
@@ -449,7 +459,7 @@ class DetectedInstallationCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
               decoration: BoxDecoration(
                 color: retro.surfaceAlt,
-                border: Border(left: BorderSide(color: retro.accent, width: 3)),
+                border: Border(left: BorderSide(color: retro.accent, width: retro.borderWidth(3))),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -227,8 +227,12 @@ class _Podium extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.fromLTRB(14, 18, 14, 16),
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: retro.surface,
-          border: Border.all(color: retro.border, width: 2.5),
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2.5),
+          ),
           boxShadow: retro.hardShadow(),
         ),
         child: Column(
@@ -375,11 +379,19 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
                 width: thumbSize,
                 height: thumbSize,
                 decoration: BoxDecoration(
-                  border: Border.all(color: widget.color, width: 2.5),
+                  borderRadius: retro.radius,
+                  border: Border.all(
+                    color: widget.color,
+                    width: retro.borderWidth(2.5),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: widget.color.withValues(alpha: 0.35),
-                      offset: const Offset(2, 2),
+                      offset: Offset(
+                        2 * retro.design.shadowOffsetScale,
+                        2 * retro.design.shadowOffsetScale,
+                      ),
+                      blurRadius: retro.design.shadowBlur,
                     ),
                   ],
                 ),
@@ -406,15 +418,20 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
               width: double.infinity,
               alignment: Alignment.center,
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 color: widget.color,
-                border: Border.all(color: retro.border, width: 2),
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(2),
+                ),
               ),
               child: Text(
                 widget.mod.downloads.compact,
                 style: TextStyle(
-                  color: retro.background,
+                  fontFamily: retro.design.headingFontFamily,
+                  color: retro.onColor(widget.color),
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: retro.design.headingWeight,
                 ),
               ),
             ),
@@ -435,6 +452,7 @@ class _PodiumThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final hasImage = mod.imageUrl != null && mod.imageUrl!.isNotEmpty;
     if (!hasImage) {
       return Stack(
@@ -526,10 +544,11 @@ class _RankedRowState extends ConsumerState<_RankedRow>
             offset: Offset(offset, offset),
             child: Container(
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 color: retro.surface,
                 border: Border.all(
                   color: isTop3 ? rankColor! : retro.border,
-                  width: isTop3 ? 2.5 : 2,
+                  width: retro.borderWidth(isTop3 ? 2.5 : 2),
                 ),
                 boxShadow: retro.hardShadow(dx: 3 - offset, dy: 3 - offset),
               ),
@@ -550,15 +569,20 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                         height: 28,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
+                          borderRadius: retro.radius,
                           color: rankColor,
-                          border: Border.all(color: retro.border, width: 1.5),
+                          border: Border.all(
+                            color: retro.border,
+                            width: retro.borderWidth(1.5),
+                          ),
                         ),
                         child: Text(
                           '#${widget.rank}',
                           style: TextStyle(
-                            color: retro.background,
+                            fontFamily: retro.design.headingFontFamily,
+                            color: retro.onColor(rankColor ?? retro.accentText),
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: retro.design.headingWeight,
                           ),
                         ),
                       )
@@ -578,7 +602,11 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                   width: 46,
                   height: 46,
                   decoration: BoxDecoration(
-                    border: Border.all(color: retro.border, width: 1.5),
+                    borderRadius: retro.radius,
+                    border: Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(1.5),
+                    ),
                   ),
                   child: _PodiumThumb(mod: widget.mod, retro: retro),
                 ),
@@ -757,6 +785,7 @@ class _PagePills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: _visiblePages.map((page) {
@@ -775,17 +804,18 @@ class _PagePills extends StatelessWidget {
             height: 32,
             alignment: Alignment.center,
             decoration: BoxDecoration(
+              borderRadius: retro.radius,
               color: isActive ? retro.accent : retro.surface,
               border: Border.all(
                 color: retro.border,
-                width: isActive ? 2 : 1.5,
+                width: retro.borderWidth(isActive ? 2 : 1.5),
               ),
               boxShadow: isActive ? retro.hardShadow(dx: 2, dy: 2) : null,
             ),
             child: Text(
               '${page + 1}',
               style: TextStyle(
-                color: isActive ? retro.background : retro.inkDim,
+                color: isActive ? retro.inkOnAccent : retro.inkDim,
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
               ),
@@ -812,6 +842,7 @@ class _PageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return GestureDetector(
       onTap: enabled ? onTap : null,
       child: Container(
@@ -819,10 +850,11 @@ class _PageButton extends StatelessWidget {
         height: 36,
         alignment: Alignment.center,
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: retro.surface,
           border: Border.all(
             color: enabled ? retro.border : retro.border.withValues(alpha: 0.3),
-            width: 1.5,
+            width: retro.borderWidth(1.5),
           ),
           boxShadow: enabled ? retro.hardShadow(dx: 2, dy: 2) : null,
         ),
@@ -875,6 +907,7 @@ class _Bone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Shimmer.fromColors(
       baseColor: retro.surface,
       highlightColor: retro.surfaceAlt,
@@ -882,8 +915,12 @@ class _Bone extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: Colors.white,
-          border: Border.all(color: retro.border, width: 2),
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2),
+          ),
         ),
       ),
     );
@@ -914,8 +951,12 @@ class _PopularError extends StatelessWidget {
                 height: 64,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
+                  borderRadius: retro.radius,
                   color: retro.surface,
-                  border: Border.all(color: retro.red, width: 3),
+                  border: Border.all(
+                    color: retro.red,
+                    width: retro.borderWidth(3),
+                  ),
                   boxShadow: retro.hardShadow(),
                 ),
                 child: Icon(

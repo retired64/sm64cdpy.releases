@@ -69,6 +69,25 @@ jobs:
       - name: Instalar dependencias
         run: flutter pub get
 
+      - name: Generar traducciones
+        run: flutter gen-l10n
+
+      - name: Formatear fuentes Dart en el runner
+        run: dart format lib test/core/theme test/presentation
+
+      # Termux development can lack Dart. Keep generated sources/formatting
+      # reviewable as a patch rather than committing from the runner.
+      - name: Guardar parche de generación y formato
+        run: git diff -- lib test > flutter-source-sync.patch
+
+      - name: Subir parche de fuentes
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-source-sync
+          path: flutter-source-sync.patch
+          retention-days: 7
+
+
       # ── 7. Análisis estático ─────────────────────────────────────────────
       # No se corta el job acá aunque falle: se captura el exit code para
       # decidir el resultado del job DESPUÉS de subir el log completo como
@@ -99,6 +118,9 @@ jobs:
         run: |
           echo "flutter analyze falló (exit code ${{ steps.analyze.outputs.exit_code }}). Revisá el artifact 'flutter-analyze-log' para el detalle completo."
           exit 1
+
+      - name: Pruebas Flutter
+        run: flutter test
 
       # ── 8. Build APK solo arm64 ───────────────────────────────────────────
       - name: Build APK (arm64-v8a)

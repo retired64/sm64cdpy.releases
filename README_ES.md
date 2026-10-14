@@ -36,7 +36,7 @@ descarga e instalación.
 - Importación y exportación de favoritos en JSON.
 - Biblioteca local de contenido instalado, reciente, detectado y con
   actualizaciones disponibles.
-- Interfaz en inglés, español y portugués brasileño; temas claro y oscuro.
+- Interfaz en inglés, español y portugués brasileño; diseños incluidos Retro Manga, Mario 64, Odyssey y GameCube, con apariencia clara, oscura o del teléfono. El panel flotante conserva su diseño oscuro fijo.
 - Actualización manual de bases JSON remotas.
 - Selección persistente de carpetas con el selector de Android.
 - Resolución de enlaces, incluidos assets de GitHub Releases.

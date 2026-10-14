@@ -41,14 +41,10 @@ Future<bool> _showFolderRequiredDialog(
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 color: retro.surfaceAlt,
-                border: Border.all(color: retro.accent, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: retro.shadowColor,
-                    offset: const Offset(5, 5),
-                  ),
-                ],
+                border: Border.all(color: retro.accent, width: retro.borderWidth(2)),
+                boxShadow: retro.hardShadow(dx: 5, dy: 5),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -56,16 +52,17 @@ Future<bool> _showFolderRequiredDialog(
                 children: [
                   Icon(
                     Icons.folder_open_rounded,
-                    color: retro.accent,
+                    color: retro.accentText,
                     size: 34,
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    title.toUpperCase(),
+                    retro.displayLabel(title),
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: retro.design.headingFontFamily,
                       color: retro.ink,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: retro.design.headingWeight,
                       letterSpacing: 1.1,
                     ),
                   ),

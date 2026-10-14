@@ -14,7 +14,10 @@ Revisado el 2026-09-28.
 
 - Se ejecuta manualmente o con un push cuyo mensaje contiene `[testing]`.
 - Instala Java 17 y Flutter 3.41.7.
-- Firma el APK con secretos, ejecuta `flutter analyze` y conserva el log.
+- Genera traducciones (`flutter gen-l10n`), formatea Dart en el runner y guarda
+  un parche `flutter-source-sync` para desarrollo Termux sin SDK.
+- Firma el APK con secretos, ejecuta `flutter analyze`, conserva el log y ejecuta
+  `flutter test` antes de compilar.
 - Compila solo arm64 y publica un artifact durante 7 días.
 - No crea tag ni GitHub Release.
 
@@ -23,7 +26,8 @@ Revisado el 2026-09-28.
 - Solo se ejecuta manualmente y permite marcar una prerelease.
 - Lee `versionName`/`versionCode` de `pubspec.yaml`.
 - Verifica que no exista el tag `v<versionName>`.
-- Ejecuta análisis, compila arm64/arm32/x86_64 y guarda un artifact temporal.
+- Genera traducciones, formatea Dart en el runner, ejecuta análisis, compila
+  arm64/arm32/x86_64 y guarda un artifact temporal.
 - Exige que `release-manifests/v<version>.json` sea válido y coincida
   exactamente con `versionName` y `versionCode`; no publica notas genéricas.
 - Ejecuta `flutter test`, renombra APK, calcula SHA-256 y publica las notas en
@@ -76,3 +80,17 @@ Revisado el 2026-09-28.
 6. Ejecutar el workflow de release y comprobar APK, hashes, enlace estable
    `releases/latest/download/Sm64CDPY-arm64.apk`, evento hacia la web, PR
    generado y OTA por ABI.
+
+## Desarrollo de temas desde Termux (2026-10-13)
+
+La rama `custom-themes` se desarrolla sin Flutter/Dart local. Ambos workflows
+hacen `flutter pub get` → `flutter gen-l10n` → Dart format → análisis antes del
+build; testing también ejecuta ahora `flutter test`. El formato del runner no
+crea commits. El artifact `flutter-source-sync` permite revisar e incorporar el
+parche de generación/formato en el mismo commit desde Termux.
+
+Para probar, seleccionar `custom-themes` en el workflow manual de testing o
+subir un commit con `[testing]`. Continúan siendo necesarios los secretos de
+firma existentes. No usar el workflow de publicación para obtener una prueba.
+No se ejecutaron Actions ni builds como parte de la implementación local.
+Ver [flujo y validación de temas](../cuatom_themea.md).

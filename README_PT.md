@@ -35,7 +35,7 @@ progresso do download e da instalação.
 - Importação e exportação de favoritos em JSON.
 - Biblioteca local de conteúdo instalado, recente, detectado e com
   atualizações disponíveis.
-- Interface em inglês, espanhol e português brasileiro; temas claro e escuro.
+- Interface em inglês, espanhol e português brasileiro; visuais incluídos Retro Manga, Mario 64, Odyssey e GameCube, com aparência clara, escura ou do celular. O painel flutuante mantém seu visual escuro fixo.
 - Atualização manual das bases JSON remotas.
 - Seleção persistente de pastas pelo seletor do Android.
 - Resolução de links, incluindo assets do GitHub Releases.

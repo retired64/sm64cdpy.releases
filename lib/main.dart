@@ -106,33 +106,9 @@ class SM64CoopDXApp extends ConsumerStatefulWidget {
 
 class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
   @override
-  void initState() {
-    super.initState();
-    _updateSystemUIOverlayStyle();
-  }
-
-  void _updateSystemUIOverlayStyle() {
-    final isDark = ref.read(isDarkModeProvider);
-
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-        systemNavigationBarColor: RetroTheme(isDark).background,
-        systemNavigationBarIconBrightness: isDark
-            ? Brightness.light
-            : Brightness.dark,
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    ref.listen<bool>(isDarkModeProvider, (previous, next) {
-      _updateSystemUIOverlayStyle();
-    });
-
     final themeMode = ref.watch(themeModeProvider);
+    final design = ref.watch(themeDesignProvider);
     final localeTag = ref.watch(localeNotifierProvider);
     final locale = localeTag != null
         ? LocaleNotifier.localeFromTag(localeTag)
@@ -144,12 +120,17 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      theme: RetroTheme.materialTheme(false),
-      darkTheme: RetroTheme.materialTheme(true),
+      theme: RetroTheme.materialTheme(false, design: design),
+      darkTheme: RetroTheme.materialTheme(true, design: design),
       themeMode: themeMode,
+      // Apply the complete design at once; avoid mixed contrast during a morph.
+      themeAnimationDuration: Duration.zero,
       routerConfig: appRouter,
-      builder: (context, child) => BackgroundOperationCoordinator(
-        child: child ?? const SizedBox.shrink(),
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: RetroTheme.of(context).systemUiStyle,
+        child: BackgroundOperationCoordinator(
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
     );
   }
@@ -174,12 +155,8 @@ void overlayMain() {
             // arranca este segundo engine).
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            theme: RetroTheme.materialTheme(true).copyWith(
-              scaffoldBackgroundColor: RetroTheme.overlay().background,
-              colorScheme: RetroTheme.materialTheme(
-                true,
-              ).colorScheme.copyWith(surface: RetroTheme.overlay().surface),
-            ),
+            // Shared facade, separate fixed design: no Hive or app selection.
+            theme: RetroTheme.overlay().toMaterialTheme(),
             home: const OverlayPanel(),
           ),
         ),

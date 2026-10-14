@@ -173,9 +173,12 @@ class _UpdateDialogState extends State<UpdateDialog> {
         child: Container(
           decoration: BoxDecoration(
             color: retro.surface,
-            border: Border.all(color: retro.border, width: 2),
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(2),
+            ),
             boxShadow: retro.hardShadow(dx: 4, dy: 4),
-            borderRadius: RetroTheme.radius,
+            borderRadius: retro.radius,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -185,7 +188,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Row(
                   children: [
-                    Icon(Icons.system_update, color: retro.accent, size: 22),
+                    Icon(Icons.system_update, color: retro.accentText, size: 22),
                     const SizedBox(width: 10),
                     Flexible(
                       child: Text(
@@ -242,9 +245,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                           color: retro.red.withValues(alpha: 0.12),
                           border: Border.all(
                             color: retro.red.withValues(alpha: 0.3),
-                            width: 1.5,
+                            width: retro.borderWidth(1.5),
                           ),
-                          borderRadius: RetroTheme.radius,
+                          borderRadius: retro.radius,
                         ),
                         child: Text(
                           _error!,
@@ -261,7 +264,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 decoration: BoxDecoration(
                   border: Border(
-                    top: BorderSide(color: retro.border, width: 1),
+                    top: BorderSide(color: retro.border, width: retro.borderWidth(1)),
                   ),
                 ),
                 child: Wrap(
@@ -325,13 +328,17 @@ class _RetroTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          border: Border.all(color: retro.border, width: 1.5),
-          borderRadius: RetroTheme.radius,
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(1.5),
+          ),
+          borderRadius: retro.radius,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -363,15 +370,19 @@ class _RetroPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: retro.accent,
-          border: Border.all(color: retro.border, width: 2),
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2),
+          ),
           boxShadow: retro.hardShadow(dx: 3, dy: 3),
-          borderRadius: RetroTheme.radius,
+          borderRadius: retro.radius,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

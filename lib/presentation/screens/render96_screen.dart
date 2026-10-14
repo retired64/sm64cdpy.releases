@@ -75,6 +75,7 @@ class _Render96Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return CustomScrollView(
       slivers: [
         RetroPinnedAppBar(
@@ -145,12 +146,18 @@ class _Render96Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
+    final retro = RetroTheme.of(context);
+    return ClipRRect(
+      borderRadius: retro.radius,
       child: Container(
         height: 170,
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: retro.surfaceAlt,
-          border: Border.all(color: retro.border, width: 2),
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2),
+          ),
           boxShadow: retro.hardShadow(dx: 4, dy: 4),
         ),
         child: Stack(
@@ -184,7 +191,7 @@ class _Render96Hero extends StatelessWidget {
                     children: [
                       SkewChip(
                         retro: retro,
-                        label: mainMod.category.toUpperCase(),
+                        label: retro.displayLabel(mainMod.category),
                         selected: true,
                         dense: true,
                         accentColor: retro.amber,
@@ -257,13 +264,13 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
   Color get _accentColor {
     switch (widget.mod.category) {
       case 'Skinpack':
-        return widget.retro.amber;
+        return RetroTheme.of(context).amber;
       case 'Dependency':
-        return widget.retro.blue;
+        return RetroTheme.of(context).blue;
       case 'Texture Pack':
-        return widget.retro.changelogAdded;
+        return RetroTheme.of(context).changelogAdded;
       default:
-        return widget.retro.accent;
+        return RetroTheme.of(context).accent;
     }
   }
 
@@ -274,20 +281,20 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
       case 'Texture Pack':
         return 'OPTIONAL';
       default:
-        return widget.mod.category.toUpperCase();
+        return RetroTheme.of(context).displayLabel(widget.mod.category);
     }
   }
 
   Color get _categoryColor {
     switch (widget.mod.category) {
       case 'Skinpack':
-        return widget.retro.amber;
+        return RetroTheme.of(context).amber;
       case 'Dependency':
-        return widget.retro.blue;
+        return RetroTheme.of(context).blue;
       case 'Texture Pack':
-        return widget.retro.changelogAdded;
+        return RetroTheme.of(context).changelogAdded;
       default:
-        return widget.retro.accent;
+        return RetroTheme.of(context).accent;
     }
   }
 
@@ -345,6 +352,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final desc = widget.mod.description;
     final actionState = ref.watch(installationActionProvider(_identity));
     final action = actionState.primaryAction;
@@ -353,12 +361,13 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
 
     return Container(
       decoration: BoxDecoration(
-        color: widget.retro.surface,
+        borderRadius: retro.radius,
+        color: retro.surface,
         border: Border.all(
-          color: widget.isMain ? _accentColor : widget.retro.border,
-          width: widget.isMain ? 3 : 1.5,
+          color: widget.isMain ? _accentColor : retro.border,
+          width: retro.borderWidth(widget.isMain ? 3 : 1.5),
         ),
-        boxShadow: widget.retro.hardShadow(dx: 3, dy: 3),
+        boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -372,7 +381,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 Row(
                   children: [
                     SkewChip(
-                      retro: widget.retro,
+                      retro: retro,
                       label: _badgeLabel,
                       selected: true,
                       dense: true,
@@ -381,10 +390,10 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                     if (widget.mod.version != null) ...[
                       const SizedBox(width: 8),
                       RetroTag(
-                        retro: widget.retro,
+                        retro: retro,
                         label: 'v${widget.mod.version}',
                         dense: true,
-                        color: widget.retro.inkDim,
+                        color: retro.inkDim,
                       ),
                     ],
                   ],
@@ -392,7 +401,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 const SizedBox(height: 12),
 
                 // Title
-                Text(widget.mod.name, style: widget.retro.heading(size: 16.5)),
+                Text(widget.mod.name, style: retro.heading(size: 16.5)),
 
                 // Author · Repo — antes vivían en lugares distintos (autor
                 // debajo del título, repo apretado en el row de badges sin
@@ -410,7 +419,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                         Flexible(
                           child: Text(
                             widget.mod.author!,
-                            style: widget.retro.body(
+                            style: retro.body(
                               size: 11.5,
                               weight: FontWeight.w700,
                             ),
@@ -423,9 +432,9 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                           padding: const EdgeInsets.symmetric(horizontal: 7),
                           child: Text(
                             '·',
-                            style: widget.retro.body(
+                            style: retro.body(
                               size: 12,
-                              color: widget.retro.inkDim.withValues(
+                              color: retro.inkDim.withValues(
                                 alpha: 0.45,
                               ),
                             ),
@@ -439,7 +448,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                               Icon(
                                 Icons.code_rounded,
                                 size: 12,
-                                color: widget.retro.inkDim.withValues(
+                                color: retro.inkDim.withValues(
                                   alpha: 0.55,
                                 ),
                               ),
@@ -447,9 +456,9 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                               Flexible(
                                 child: Text(
                                   widget.mod.repo,
-                                  style: widget.retro.body(
+                                  style: retro.body(
                                     size: 10.5,
-                                    color: widget.retro.inkDim.withValues(
+                                    color: retro.inkDim.withValues(
                                       alpha: 0.65,
                                     ),
                                   ),
@@ -468,7 +477,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                   const SizedBox(height: 12),
                   Text(
                     desc,
-                    style: widget.retro.body(size: 12, height: 1.5),
+                    style: retro.body(size: 12, height: 1.5),
                     maxLines: _isExpanded ? null : 3,
                     overflow: _isExpanded
                         ? TextOverflow.visible
@@ -482,7 +491,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                           ? widget.l10n.sharedShowLess
                           : widget.l10n.sharedReadMore,
                       style: TextStyle(
-                        color: widget.retro.accent,
+                        color: retro.accentText,
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                       ),
@@ -511,7 +520,10 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                         bottom: BorderSide(
                           color: _accentColor.withValues(alpha: 0.25),
                         ),
-                        left: BorderSide(color: _accentColor, width: 3),
+                        left: BorderSide(
+                          color: _accentColor,
+                          width: retro.borderWidth(3),
+                        ),
                       ),
                     ),
                     child: Padding(
@@ -530,9 +542,9 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                           Expanded(
                             child: Text(
                               widget.mod.notes!,
-                              style: widget.retro.body(
+                              style: retro.body(
                                 size: 11,
-                                color: widget.retro.ink,
+                                color: retro.ink,
                               ),
                             ),
                           ),
@@ -559,10 +571,10 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: _ActionButton(
-                      retro: widget.retro,
+                      retro: retro,
                       label: 'WATCH TRAILER',
                       icon: Icons.play_circle_fill_rounded,
-                      color: widget.retro.red,
+                      color: retro.red,
                       onTap: _openTrailer,
                     ),
                   ),
@@ -570,12 +582,12 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                   children: [
                     Expanded(
                       child: _ActionButton(
-                        retro: widget.retro,
+                        retro: retro,
                         label: action.label(widget.l10n),
                         icon: action.icon,
                         loading: isBusy,
                         color: action == InstallationPrimaryAction.installed
-                            ? widget.retro.changelogAdded
+                            ? retro.changelogAdded
                             : _accentColor,
                         filled: true,
                         onTap:
@@ -642,14 +654,13 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     // Mismo criterio de contraste que ya usa SkewChip para accentColor
     // custom: sobre un relleno claro (amber, teal) la tinta oscura del tema
     // gana legibilidad; sobre un relleno oscuro (verde éxito, azul, rojo)
     // gana el blanco.
     final fg = filled
-        ? (ThemeData.estimateBrightnessForColor(color) == Brightness.dark
-              ? Colors.white
-              : retro.background)
+        ? retro.onColor(color)
         : color;
 
     return GestureDetector(
@@ -658,8 +669,12 @@ class _ActionButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         alignment: Alignment.center,
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: filled ? color : Colors.transparent,
-          border: Border.all(color: color, width: 2),
+          border: Border.all(
+            color: color,
+            width: retro.borderWidth(2),
+          ),
           boxShadow: retro.hardShadow(dx: 2, dy: 2),
         ),
         child: Row(
@@ -741,6 +756,7 @@ class _Render96Error extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -750,9 +766,10 @@ class _Render96Error extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 border: Border.all(
                   color: retro.red.withValues(alpha: 0.35),
-                  width: 2,
+                  width: retro.borderWidth(2),
                 ),
                 boxShadow: retro.hardShadow(dx: 3, dy: 3),
               ),
@@ -790,6 +807,7 @@ class _Render96Empty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -799,9 +817,10 @@ class _Render96Empty extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 border: Border.all(
                   color: retro.inkDim.withValues(alpha: 0.3),
-                  width: 2,
+                  width: retro.borderWidth(2),
                 ),
                 boxShadow: retro.hardShadow(dx: 3, dy: 3),
               ),
@@ -843,14 +862,16 @@ class _Bone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
+        borderRadius: retro.radius,
         color: retro.surfaceAlt,
         border: Border.all(
           color: retro.border.withValues(alpha: 0.2),
-          width: 1.5,
+          width: retro.borderWidth(1.5),
         ),
       ),
     );

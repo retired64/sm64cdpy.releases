@@ -1,21 +1,18 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-/// Tokens de diseño del lenguaje visual "manga panel" compartido entre
-/// screens (OMM Rebirth, Links & Resources, ...). Basado en las referencias
-/// de diseño del usuario: fondo navy oscuro, tinta crema, acento teal,
-/// bordes claros con sombra dura desplazada, chips inclinados tipo viñeta
-/// de cómic y trama halftone de fondo.
-///
-/// Uso:
-/// ```dart
-/// final retro = RetroTheme.of(context);
-/// Container(color: retro.surface, ...)
-/// ```
-class RetroTheme {
-  RetroTheme(
+import 'app_theme_design.dart';
+import 'themes/retro_manga_theme.dart';
+
+/// Compatibility facade and ThemeExtension for every interface design.
+/// The main engine obtains it from ThemeData; the overlay explicitly creates
+/// its own fixed dark instance and does not read the main engine's preferences.
+class RetroTheme extends ThemeExtension<RetroTheme> {
+  const RetroTheme(
     this.isDark, {
+    this.design = retroMangaTheme,
     Color? backgroundOverride,
     Color? surfaceOverride,
     Color? surfaceAltOverride,
@@ -28,112 +25,100 @@ class RetroTheme {
        _shadowColorOverride = shadowColorOverride;
 
   factory RetroTheme.of(BuildContext context) {
-    return RetroTheme(Theme.of(context).brightness == Brightness.dark);
+    final theme = Theme.of(context);
+    return theme.extension<RetroTheme>() ??
+        RetroTheme(theme.brightness == Brightness.dark);
   }
 
-  /// Variante fija para el overlay flotante (corre en un segundo engine de
-  /// Flutter vía `overlayMain()`, sin acceso al `Theme` de la app principal).
-  /// Siempre oscura por diseño: un overlay sobre gameplay en vivo necesita
-  /// contraste alto y no debe competir visualmente con el juego, sin
-  /// importar la preferencia claro/oscuro del usuario en la app. Conserva su
-  /// propia escala navy de baja distracción + el mismo acento teal real del
-  /// sistema (antes el overlay usaba 0xFF00D9C0 hardcodeado, divergente de
-  /// `accent` — corregido acá porque ya no hace falta overridearlo).
-  factory RetroTheme.overlay() => RetroTheme(
+  factory RetroTheme.overlay() => const RetroTheme(
     true,
-    backgroundOverride: const Color(0xFF12141C),
-    surfaceOverride: const Color(0xFF1A1D29),
-    surfaceAltOverride: const Color(0xFF232738),
-    shadowColorOverride: const Color(0xFF090A10),
+    backgroundOverride: Color(0xFF12141C),
+    surfaceOverride: Color(0xFF1A1D29),
+    surfaceAltOverride: Color(0xFF232738),
+    shadowColorOverride: Color(0xFF090A10),
   );
 
   final bool isDark;
+  final AppThemeDesign design;
   final Color? _backgroundOverride;
   final Color? _surfaceOverride;
   final Color? _surfaceAltOverride;
   final Color? _borderOverride;
   final Color? _shadowColorOverride;
 
-  // El modo oscuro usa una escala casi negra inspirada en GitHub Dark para
-  // reducir luminancia sin perder separación entre lienzo, panel y superficie
-  // elevada. El modo claro reinterpreta la identidad sobre papel cálido.
-  Color get background =>
-      _backgroundOverride ??
-      (isDark ? const Color(0xFF0D1117) : const Color(0xFFF5F2E9));
-  Color get surface =>
-      _surfaceOverride ??
-      (isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF));
-  Color get surfaceAlt =>
-      _surfaceAltOverride ??
-      (isDark ? const Color(0xFF21262D) : const Color(0xFFEDE8DA));
-  Color get border =>
-      _borderOverride ??
-      (isDark ? const Color(0xFF6E7681) : const Color(0xFF262A38));
-  Color get shadowColor =>
-      _shadowColorOverride ??
-      (isDark ? const Color(0xFF010409) : const Color(0xFF262A38));
-  Color get ink => isDark ? const Color(0xFFF2EFE4) : const Color(0xFF20232E);
-  Color get inkDim =>
-      isDark ? const Color(0xFF9096A3) : const Color(0xFF696E7C);
+  AppThemePalette get _palette => design.palette(isDark);
+  Color get background => _backgroundOverride ?? _palette.background;
+  Color get surface => _surfaceOverride ?? _palette.surface;
+  Color get surfaceAlt => _surfaceAltOverride ?? _palette.surfaceAlt;
+  Color get border => _borderOverride ?? _palette.border;
+  Color get shadowColor => _shadowColorOverride ?? _palette.shadow;
+  Color get ink => _palette.ink;
+  Color get inkDim => _palette.inkDim;
+  Color get accent => _palette.accent;
+  Color get inkOnAccent => _palette.onAccent;
+  Color get accentText => _palette.accentText;
+  String displayLabel(String value) =>
+      design.uppercaseLabels ? value.toUpperCase() : value;
 
-  // Acento principal (teal) — selección, links, estado activo.
-  Color get accent => const Color(0xFFA7DEE1);
-  // Paleta secundaria tomada del selector de acentos de la referencia.
+  // Stable semantic/brand roles are intentionally independent of theme IDs.
   Color get red => const Color(0xFFE0483A);
   Color get blue => const Color(0xFF3E63E0);
   Color get amber => const Color(0xFFF2A91E);
-  // Texto sobre superficies doradas (botones/badges VIP): tinta oscura fija,
-  // independiente del modo claro/oscuro, porque el dorado siempre es claro
-  // y necesita contraste oscuro encima.
   Color get onAmber => const Color(0xFF20232E);
-
-  // Texto/íconos sobre superficies de acento claro (teal) rellenas — misma
-  // lógica que onAmber: tinta oscura fija para contraste garantizado.
-  Color get inkOnAccent => const Color(0xFF20232E);
-
-  // Colores de medalla (podio / ranking) — paleta clásica olímpica.
   Color get medalGold => const Color(0xFFFFD700);
   Color get medalSilver => const Color(0xFFC0C0C0);
   Color get medalBronze => const Color(0xFFCD7F32);
-
-  // Colores semánticos para tipos de cambio en changelog.
   Color get changelogAdded => const Color(0xFF22C55E);
   Color get changelogImproved => const Color(0xFF3B82F6);
   Color get changelogFixed => const Color(0xFFF59E0B);
   Color get changelogRemoved => const Color(0xFFEF4444);
   Color get changelogChanged => const Color(0xFF8B5CF6);
-
-  // Discord brand color (blurple).
   Color get discordBrand => const Color(0xFF5865F2);
 
-  /// Sombra dura sin blur, desplazada — la firma visual del sistema.
+  /// Use the explicit foreground for the main accent, otherwise the higher
+  /// contrast of dark ink and white (including category/VIP/custom fills).
+  Color onColor(Color color) {
+    if (color == accent) return inkOnAccent;
+    const darkInk = Colors.black;
+    final luminance = color.computeLuminance();
+    final whiteContrast = 1.05 / (luminance + 0.05);
+    final darkContrast = (luminance + 0.05) /
+        (darkInk.computeLuminance() + 0.05);
+    return whiteContrast >= darkContrast ? Colors.white : darkInk;
+  }
+
+  BorderRadius get radius => BorderRadius.circular(design.cornerRadius);
+  double borderWidth(double retroWidth) => retroWidth * design.borderScale;
+  double get chipSkew => design.chipSkew;
+  bool get showHalftone => design.halftone;
+  bool get showStripes => design.stripes;
+
   List<BoxShadow> hardShadow({double dx = 4, double dy = 4}) => [
-    BoxShadow(color: shadowColor, offset: Offset(dx, dy), blurRadius: 0),
+    BoxShadow(
+      color: shadowColor,
+      offset: Offset(
+        dx * design.shadowOffsetScale,
+        dy * design.shadowOffsetScale,
+      ),
+      blurRadius: design.shadowBlur,
+    ),
   ];
 
-  /// Esquinas cuadradas — la referencia no usa radios visibles.
-  static const radius = BorderRadius.zero;
-
-  /// Estilo para títulos / labels: bold condensado en mayúsculas.
-  /// Nota: se aproxima con peso w900 + letterSpacing negativo sobre la
-  /// fuente del sistema. Para el match 1:1 con la referencia hace falta
-  /// bundlear una fuente display condensada (p. ej. "Anton" o "Archivo
-  /// Black") vía `google_fonts` — decilo si quieres que lo agregue.
   TextStyle heading({
     required double size,
     Color? color,
-    FontWeight weight = FontWeight.w900,
-    double letterSpacing = -0.3,
+    FontWeight? weight,
+    double? letterSpacing,
     double height = 1.05,
   }) => TextStyle(
     color: color ?? ink,
+    fontFamily: design.headingFontFamily,
     fontSize: size,
-    fontWeight: weight,
-    letterSpacing: letterSpacing,
+    fontWeight: weight ?? design.headingWeight,
+    letterSpacing: letterSpacing ?? design.headingTracking,
     height: height,
   );
 
-  /// Estilo para cuerpo de texto: sans normal, nada de monospace.
   TextStyle body({
     required double size,
     Color? color,
@@ -141,31 +126,123 @@ class RetroTheme {
     double height = 1.35,
   }) => TextStyle(
     color: color ?? inkDim,
+    fontFamily: design.bodyFontFamily,
     fontSize: size,
     fontWeight: weight,
     height: height,
   );
 
-  /// ThemeData mínimo para MaterialApp — solo lo indispensable para que
-  /// los widgets nativos (Scaffold, Drawer, BottomNav, SnackBar, etc.)
-  /// tengan un baseline coherente. El estilo visual real lo provee
-  /// RetroTheme directamente.
-  static ThemeData materialTheme(bool isDark) {
-    final r = RetroTheme(isDark);
+  SystemUiOverlayStyle get systemUiStyle => SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    systemNavigationBarColor: background,
+    systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+  );
+
+  ThemeData toMaterialTheme() {
+    final shape = RoundedRectangleBorder(borderRadius: radius);
     return ThemeData(
       useMaterial3: true,
+      extensions: <ThemeExtension<dynamic>>[this],
+      fontFamily: design.bodyFontFamily,
       colorScheme: ColorScheme(
         brightness: isDark ? Brightness.dark : Brightness.light,
-        primary: r.accent,
-        onPrimary: r.inkOnAccent,
-        secondary: r.amber,
-        onSecondary: r.onAmber,
-        surface: r.surface,
-        onSurface: r.ink,
-        error: r.red,
-        onError: Colors.white,
+        primary: accent,
+        onPrimary: inkOnAccent,
+        secondary: amber,
+        onSecondary: onAmber,
+        surface: surface,
+        onSurface: ink,
+        error: red,
+        onError: onColor(red),
       ),
-      scaffoldBackgroundColor: r.background,
+      scaffoldBackgroundColor: background,
+      appBarTheme: AppBarTheme(
+        backgroundColor: background,
+        foregroundColor: ink,
+        systemOverlayStyle: systemUiStyle,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: surface,
+        shape: shape,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: BorderSide(color: border, width: borderWidth(3)),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(shape: shape),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(shape: shape),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: accentText),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(shape: shape, foregroundColor: accentText),
+      ),
+    );
+  }
+
+  static ThemeData materialTheme(
+    bool isDark, {
+    AppThemeDesign design = retroMangaTheme,
+  }) => RetroTheme(isDark, design: design).toMaterialTheme();
+
+  @override
+  RetroTheme copyWith({
+    bool? isDark,
+    AppThemeDesign? design,
+    Color? backgroundOverride,
+    Color? surfaceOverride,
+    Color? surfaceAltOverride,
+    Color? borderOverride,
+    Color? shadowColorOverride,
+  }) => RetroTheme(
+    isDark ?? this.isDark,
+    design: design ?? this.design,
+    backgroundOverride: backgroundOverride ?? _backgroundOverride,
+    surfaceOverride: surfaceOverride ?? _surfaceOverride,
+    surfaceAltOverride: surfaceAltOverride ?? _surfaceAltOverride,
+    borderOverride: borderOverride ?? _borderOverride,
+    shadowColorOverride: shadowColorOverride ?? _shadowColorOverride,
+  );
+
+  @override
+  RetroTheme lerp(covariant RetroTheme? other, double t) {
+    if (other == null) return this;
+    if (t <= 0) return this;
+    if (t >= 1) return other;
+    final selected = t < 0.5 ? this : other;
+    final palette = AppThemePalette.lerp(_palette, other._palette, t);
+    return RetroTheme(
+      selected.isDark,
+      design: AppThemeDesign(
+        id: selected.design.id,
+        light: palette,
+        dark: palette,
+        cornerRadius: ui.lerpDouble(design.cornerRadius, other.design.cornerRadius, t)!,
+        borderScale: ui.lerpDouble(design.borderScale, other.design.borderScale, t)!,
+        shadowBlur: ui.lerpDouble(design.shadowBlur, other.design.shadowBlur, t)!,
+        shadowOffsetScale: ui.lerpDouble(design.shadowOffsetScale, other.design.shadowOffsetScale, t)!,
+        chipSkew: ui.lerpDouble(chipSkew, other.chipSkew, t)!,
+        headingWeight: FontWeight.lerp(design.headingWeight, other.design.headingWeight, t)!,
+        headingTracking: ui.lerpDouble(design.headingTracking, other.design.headingTracking, t)!,
+        headingFontFamily: selected.design.headingFontFamily,
+        bodyFontFamily: selected.design.bodyFontFamily,
+        halftone: selected.showHalftone,
+        stripes: selected.showStripes,
+        uppercaseLabels: selected.design.uppercaseLabels,
+      ),
+      backgroundOverride: Color.lerp(background, other.background, t),
+      surfaceOverride: Color.lerp(surface, other.surface, t),
+      surfaceAltOverride: Color.lerp(surfaceAlt, other.surfaceAlt, t),
+      borderOverride: Color.lerp(border, other.border, t),
+      shadowColorOverride: Color.lerp(shadowColor, other.shadowColor, t),
     );
   }
 }
@@ -188,6 +265,7 @@ class HalftoneBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!RetroTheme.of(context).showHalftone) return const SizedBox.shrink();
     return IgnorePointer(
       child: RepaintBoundary(
         child: CustomPaint(
@@ -269,7 +347,7 @@ class SectionKicker extends StatelessWidget {
       children: [
         Transform(
           alignment: Alignment.center,
-          transform: Matrix4.skewX(-0.5),
+          transform: Matrix4.skewX(retro.chipSkew == 0 ? 0 : -0.5),
           child: Container(width: 5, height: 18, color: retro.accent),
         ),
         const SizedBox(width: 10),
@@ -316,8 +394,6 @@ class SkewChip extends StatelessWidget {
   // Usado, por ejemplo, por VIP Mods para chips dorados en vez de teal.
   final Color? accentColor;
 
-  static const _skew = 0.18;
-
   @override
   Widget build(BuildContext context) {
     final accent = accentColor ?? retro.accent;
@@ -328,27 +404,26 @@ class SkewChip extends StatelessWidget {
     // tema global — un azul marino oscuro necesita texto blanco, no la
     // tinta oscura por defecto que usaríamos sobre el teal claro.
     final fg = selected
-        ? (ThemeData.estimateBrightnessForColor(accent) == Brightness.dark
-              ? Colors.white
-              : retro.background)
+        ? retro.onColor(accent)
         : retro.ink;
 
     final chip = Transform(
       alignment: Alignment.center,
-      transform: Matrix4.skewX(-_skew),
+      transform: Matrix4.skewX(-retro.chipSkew),
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: dense ? 10 : 14,
           vertical: dense ? 6 : 9,
         ),
         decoration: BoxDecoration(
+          borderRadius: retro.radius,
           color: bg,
-          border: Border.all(color: retro.border, width: 2),
+          border: Border.all(color: retro.border, width: retro.borderWidth(2)),
           boxShadow: retro.hardShadow(dx: 3, dy: 3),
         ),
         child: Transform(
           alignment: Alignment.center,
-          transform: Matrix4.skewX(_skew),
+          transform: Matrix4.skewX(retro.chipSkew),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -399,6 +474,9 @@ class DiagonalStripeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!RetroTheme.of(context).showStripes) {
+      return ColoredBox(color: baseColor);
+    }
     return IgnorePointer(
       child: RepaintBoundary(
         child: CustomPaint(
@@ -489,14 +567,14 @@ class RetroTag extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = color ?? retro.accent;
     final bg = filled ? c : Colors.transparent;
-    final fg = filled ? retro.background : c;
+    final fg = filled ? retro.onColor(c) : c;
 
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: dense ? 8 : 11,
         vertical: dense ? 4 : 6,
       ),
-      decoration: BoxDecoration(color: bg, border: Border.all(color: c, width: 1.5)),
+      decoration: BoxDecoration(borderRadius: retro.radius, color: bg, border: Border.all(color: c, width: retro.borderWidth(1.5))),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -543,7 +621,7 @@ class RetroMeta extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: color ?? retro.accent),
+        Icon(icon, size: 13, color: color ?? retro.accentText),
         const SizedBox(width: 4),
         Text(
           label,
@@ -587,9 +665,9 @@ class RetroBadgeDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: c,
         shape: BoxShape.circle,
-        border: Border.all(color: retro.background, width: 2),
+        border: Border.all(color: retro.background, width: retro.borderWidth(2)),
       ),
-      child: Icon(icon, size: size * 0.58, color: retro.background),
+      child: Icon(icon, size: size * 0.58, color: retro.onColor(c)),
     );
   }
 }

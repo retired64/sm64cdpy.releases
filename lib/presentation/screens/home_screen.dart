@@ -238,7 +238,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
                     color: _current == i
                         ? retro.accent
                         : retro.inkDim.withValues(alpha: 0.3),
-                    borderRadius: RetroTheme.radius,
+                    borderRadius: retro.radius,
                   ),
                 );
               }),
@@ -306,7 +306,8 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
         onTapCancel: () => _pressCtrl.reverse(),
         child: ScaleTransition(
           scale: _pressScale,
-          child: ClipRect(
+          child: ClipRRect(
+            borderRadius: retro.radius,
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -328,6 +329,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
+                      borderRadius: retro.radius,
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -367,10 +369,11 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                               widget.mod.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
+                                fontFamily: retro.design.headingFontFamily,
                                 color: Colors.white,
                                 fontSize: 17,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: retro.design.headingWeight,
                                 height: 1.2,
                                 letterSpacing: -0.2,
                               ),
@@ -430,10 +433,10 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                           height: 36,
                           decoration: BoxDecoration(
                             color: Colors.black.withValues(alpha: 0.3),
-                            borderRadius: RetroTheme.radius,
+                            borderRadius: retro.radius,
                             border: Border.all(
                               color: Colors.white.withValues(alpha: 0.2),
-                              width: 1.5,
+                              width: retro.borderWidth(1.5),
                             ),
                           ),
                           child: Icon(
@@ -590,7 +593,7 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
                     color: _current == i
                         ? retro.accent
                         : retro.inkDim.withValues(alpha: 0.3),
-                    borderRadius: RetroTheme.radius,
+                    borderRadius: retro.radius,
                   ),
                 );
               }),
@@ -653,7 +656,7 @@ class _BrowseCardState extends State<_BrowseCard>
 
   @override
   Widget build(BuildContext context) {
-    final retro = widget.retro;
+    final retro = retro;
     final l10n = AppLocalizations.of(context);
 
     return Padding(
@@ -671,8 +674,11 @@ class _BrowseCardState extends State<_BrowseCard>
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: retro.surface,
-              borderRadius: RetroTheme.radius,
-              border: Border.all(color: retro.border, width: 2),
+              borderRadius: retro.radius,
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2),
+              ),
               boxShadow: retro.hardShadow(dx: 3, dy: 3),
             ),
             child: Column(
@@ -681,14 +687,19 @@ class _BrowseCardState extends State<_BrowseCard>
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRect(
+                    ClipRRect(
+                      borderRadius: retro.radius,
                       child: Container(
                         width: 56,
                         height: 56,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
+                          borderRadius: retro.radius,
                           color: widget.accent.withValues(alpha: 0.22),
-                          border: Border.all(color: retro.border, width: 1.5),
+                          border: Border.all(
+                            color: retro.border,
+                            width: retro.borderWidth(1.5),
+                          ),
                         ),
                         child:
                             widget.imageUrl != null &&
@@ -854,8 +865,6 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
   late final AnimationController _ctrl;
   late final Animation<double> _scale;
 
-  static const _skew = 0.18;
-
   @override
   void initState() {
     super.initState();
@@ -877,6 +886,7 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) {
@@ -888,18 +898,21 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
         scale: _scale,
         child: Transform(
           alignment: Alignment.center,
-          transform: Matrix4.skewX(-_skew),
+          transform: Matrix4.skewX(-retro.chipSkew),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: widget.retro.surface,
-              borderRadius: RetroTheme.radius,
-              border: Border.all(color: widget.retro.border, width: 2),
-              boxShadow: widget.retro.hardShadow(dx: 3, dy: 3),
+              color: retro.surface,
+              borderRadius: retro.radius,
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2),
+              ),
+              boxShadow: retro.hardShadow(dx: 3, dy: 3),
             ),
             child: Transform(
               alignment: Alignment.center,
-              transform: Matrix4.skewX(_skew),
+              transform: Matrix4.skewX(retro.chipSkew),
               child: Row(
                 children: [
                   Container(
@@ -907,8 +920,12 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
                     height: 42,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
+                      borderRadius: retro.radius,
                       color: widget.accent.withValues(alpha: 0.18),
-                      border: Border.all(color: widget.accent, width: 2),
+                      border: Border.all(
+                        color: widget.accent,
+                        width: retro.borderWidth(2),
+                      ),
                     ),
                     child: Icon(widget.icon, size: 20, color: widget.accent),
                   ),
@@ -920,11 +937,11 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
                       children: [
                         Text(
                           widget.label,
-                          style: widget.retro.heading(size: 14),
+                          style: retro.heading(size: 14),
                         ),
                         Text(
                           widget.description,
-                          style: widget.retro.body(size: 11.5),
+                          style: retro.body(size: 11.5),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -934,7 +951,7 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
                   Icon(
                     Icons.chevron_right_rounded,
                     size: 20,
-                    color: widget.retro.inkDim,
+                    color: retro.inkDim,
                   ),
                 ],
               ),
@@ -982,45 +999,47 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
   }
 
   void _showNotInstalledDialog() {
-    final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: retro.surface,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        title: Text(
-          l10n.homeGameNotInstalled,
-          style: retro.heading(size: 16, color: retro.red),
-        ),
-        content: Text(
-          l10n.homeGameNotInstalledBody,
-          style: retro.body(size: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              l10n.homeClose,
-              style: retro.body(size: 13, color: retro.inkDim),
-            ),
+      builder: (ctx) {
+        final retro = RetroTheme.of(ctx);
+        return AlertDialog(
+          backgroundColor: retro.surface,
+          shape: RoundedRectangleBorder(borderRadius: retro.radius),
+          title: Text(
+            l10n.homeGameNotInstalled,
+            style: retro.heading(size: 16, color: retro.red),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.go('/links-resource');
-            },
-            child: Text(
-              l10n.homeDownload,
-              style: retro.body(
-                size: 13,
-                color: retro.accent,
-                weight: FontWeight.w700,
+          content: Text(
+            l10n.homeGameNotInstalledBody,
+            style: retro.body(size: 13),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                l10n.homeClose,
+                style: retro.body(size: 13, color: retro.inkDim),
               ),
             ),
-          ),
-        ],
-      ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                context.go('/links-resource');
+              },
+              child: Text(
+                l10n.homeDownload,
+                style: retro.body(
+                  size: 13,
+                  color: retro.accentText,
+                  weight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -1037,20 +1056,24 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
           children: [
             Transform(
               alignment: Alignment.center,
-              transform: Matrix4.skewX(-0.18),
+              transform: Matrix4.skewX(-retro.chipSkew),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
+                  borderRadius: retro.radius,
                   color: retro.surfaceAlt,
-                  border: Border.all(color: retro.border, width: 2),
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(2),
+                  ),
                   boxShadow: retro.hardShadow(dx: 3, dy: 3),
                 ),
                 child: Transform(
                   alignment: Alignment.center,
-                  transform: Matrix4.skewX(0.18),
+                  transform: Matrix4.skewX(retro.chipSkew),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -1063,9 +1086,10 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                       Text(
                         l10n.homeLaunchGame,
                         style: TextStyle(
+                          fontFamily: retro.design.headingFontFamily,
                           color: retro.inkDim,
                           fontSize: 14,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: retro.design.headingWeight,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -1081,19 +1105,23 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                 angle: -0.1,
                 child: Transform(
                   alignment: Alignment.center,
-                  transform: Matrix4.skewX(-0.18),
+                  transform: Matrix4.skewX(-retro.chipSkew),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 7,
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
+                      borderRadius: retro.radius,
                       color: retro.amber,
-                      border: Border.all(color: retro.border, width: 1.5),
+                      border: Border.all(
+                        color: retro.border,
+                        width: retro.borderWidth(1.5),
+                      ),
                     ),
                     child: Transform(
                       alignment: Alignment.center,
-                      transform: Matrix4.skewX(0.18),
+                      transform: Matrix4.skewX(retro.chipSkew),
                       child: Text(
                         l10n.homeSoon,
                         style: TextStyle(
@@ -1119,8 +1147,12 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
         child: Container(
           height: 54,
           decoration: BoxDecoration(
+            borderRadius: retro.radius,
             color: retro.surface,
-            border: Border.all(color: retro.border, width: 2),
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(2),
+            ),
           ),
           child: Center(
             child: SizedBox(
@@ -1142,17 +1174,21 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
         onTap: _launch,
         child: Transform(
           alignment: Alignment.center,
-          transform: Matrix4.skewX(-0.18),
+          transform: Matrix4.skewX(-retro.chipSkew),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
+              borderRadius: retro.radius,
               color: retro.accent,
-              border: Border.all(color: retro.border, width: 2),
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2),
+              ),
               boxShadow: retro.hardShadow(dx: 3, dy: 3),
             ),
             child: Transform(
               alignment: Alignment.center,
-              transform: Matrix4.skewX(0.18),
+              transform: Matrix4.skewX(retro.chipSkew),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -1165,9 +1201,10 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                   Text(
                     l10n.homeLaunchGame,
                     style: TextStyle(
+                      fontFamily: retro.design.headingFontFamily,
                       color: retro.inkOnAccent,
                       fontSize: 14,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: retro.design.headingWeight,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -1266,8 +1303,11 @@ class _TopModRowState extends ConsumerState<_TopModRow>
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: retro.surface,
-            borderRadius: RetroTheme.radius,
-            border: Border.all(color: retro.border, width: 2),
+            borderRadius: retro.radius,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(2),
+            ),
             boxShadow: retro.hardShadow(dx: 2, dy: 2),
           ),
           child: Row(
@@ -1296,7 +1336,8 @@ class _TopModRowState extends ConsumerState<_TopModRow>
               const SizedBox(width: 10),
               Hero(
                 tag: 'mod_img_${widget.mod.id}',
-                child: ClipRect(
+                child: ClipRRect(
+                  borderRadius: retro.radius,
                   child: SizedBox(
                     width: 46,
                     height: 46,
@@ -1417,12 +1458,12 @@ class _SectionHeader extends StatelessWidget {
                     actionLabel!,
                     style: retro.body(
                       size: 12,
-                      color: retro.accent,
+                      color: retro.accentText,
                       weight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(width: 2),
-                  Icon(Icons.arrow_forward_ios, size: 10, color: retro.accent),
+                  Icon(Icons.arrow_forward_ios, size: 10, color: retro.accentText),
                 ],
               ),
             ),
@@ -1490,7 +1531,7 @@ class _Bone extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: retro.surface,
-          borderRadius: RetroTheme.radius,
+          borderRadius: retro.radius,
         ),
       ),
     );
@@ -1521,8 +1562,11 @@ class _HomeError extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: retro.surfaceAlt,
-                borderRadius: RetroTheme.radius,
-                border: Border.all(color: retro.red, width: 2),
+                borderRadius: retro.radius,
+                border: Border.all(
+                  color: retro.red,
+                  width: retro.borderWidth(2),
+                ),
               ),
               child: Icon(Icons.error_outline, size: 32, color: retro.red),
             ),

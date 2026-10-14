@@ -115,6 +115,24 @@ por su carpeta física compartida.
 
 GoRouter define un `ShellRoute` para las pantallas principales y una ruta de detalle fuera del shell. Riverpod administra catálogo, filtros, paginación, favoritos, tema e idioma.
 
+## Temas incluidos — rama custom-themes
+
+Implementado el 2026-10-13; pendiente de Actions y matriz física. Ajustes separa
+el diseño incluido (Retro Manga, Mario 64, Odyssey o GameCube) del modo
+claro/oscuro/sistema. `AppearanceNotifier` es el único escritor de `theme_id` y
+`theme_mode` en Hive y publica una selección confirmada solo tras guardar.
+
+`AppThemeDesign` y `AppThemeCatalog` definen paletas, formas, tipografía y
+activación de decoración. `RetroTheme` conserva la API de acceso y ahora es una
+ThemeExtension; los widgets Material y los personalizados comparten tokens.
+MaterialApp y las barras leen la variante efectiva. No se recrean router ni
+providers de operaciones por cambiar de diseño.
+
+La raíz del overlay produce su ThemeData desde `RetroTheme.overlay()` y conserva
+su política oscura fija, sin Hive ni mensajes nuevos de tema. El inventario de
+cada Dart, el flujo y el procedimiento para añadir diseños están en
+[cuatom_themea.md](../cuatom_themea.md). No se modificó Android nativo.
+
 ## Límites importantes
 
 1. El proceso o cualquiera de los engines puede ser recreado por Android.

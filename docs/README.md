@@ -4,6 +4,7 @@ Este directorio es el punto de entrada técnico del proyecto. Los documentos de 
 
 | Documento | Propósito | Estado |
 |---|---|---|
+| [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Rama custom-themes; pendiente Actions y dispositivo |
 | [Arquitectura](ARCHITECTURE.md) | Componentes, engines, persistencia y flujo de datos | Vigente |
 | [Descargas y overlay](DOWNLOADS_AND_OVERLAY.md) | Flujo WorkManager/SAF, progreso y burbuja | Vigente |
 | [Contrato de la base de mods](CATALOG_DATABASE_CONTRACT.md) | Esquema v2, identidad durable, resolutores y publicación segura | Vigente |

@@ -56,6 +56,16 @@ Revisado contra `1.8.2+21` el 2026-09-28.
   GameBanana y archivos de Google Drive; las carpetas Drive no resolubles se
   presentan como enlace de origen sin afirmar que fueron instaladas.
 
+## Temas incluidos en custom-themes (2026-10-13)
+
+- Menú de diseños propios en Ajustes y modo de brillo independiente.
+- Cuatro definiciones incluidas; contraste, radios, bordes, sombras y decoración
+  adaptados en las pantallas y widgets de la app.
+- Persistencia confirmada y recuperación legacy; overlay mantiene diseño fijo.
+- ARB y pruebas preparados; generación, análisis, tests y APK pendientes en
+  Actions porque el entorno Termux de esta tarea no tiene Flutter/Dart.
+- Guía/inventario completos: [cuatom_themea.md](../cuatom_themea.md).
+
 ## Experimental o pendiente de validación
 
 - Biblioteca/historial: implementación funcional completada; falta ampliar la

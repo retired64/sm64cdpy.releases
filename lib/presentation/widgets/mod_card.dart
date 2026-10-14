@@ -60,8 +60,11 @@ class _ModCardState extends ConsumerState<ModCard>
             child: Container(
               decoration: BoxDecoration(
                 color: retro.surface,
-                borderRadius: RetroTheme.radius,
-                border: Border.all(color: retro.border, width: 2.5),
+                borderRadius: retro.radius,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(2.5),
+                ),
                 boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
               ),
               child: child,
@@ -144,10 +147,11 @@ class _ModCardState extends ConsumerState<ModCard>
                   height: 32,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
+                    borderRadius: retro.radius,
                     color: retro.surfaceAlt,
                     border: Border.all(
                       color: isFav ? retro.red : retro.border,
-                      width: isFav ? 2 : 1.5,
+                      width: retro.borderWidth(isFav ? 2 : 1.5),
                     ),
                   ),
                   child: Icon(
@@ -184,6 +188,7 @@ class _Thumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
 
     return Stack(
@@ -192,8 +197,13 @@ class _Thumbnail extends StatelessWidget {
         Container(
           width: _size,
           height: _size,
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            border: Border.all(color: retro.border, width: 2),
+            borderRadius: retro.radius,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(2),
+            ),
           ),
           child: Hero(
             tag: 'mod_img_$modId',
@@ -238,6 +248,7 @@ class _StripedPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return SizedBox(
       width: size,
       height: size,
@@ -256,8 +267,12 @@ class _StripedPlaceholder extends StatelessWidget {
               height: 28,
               alignment: Alignment.center,
               decoration: BoxDecoration(
+                borderRadius: retro.radius,
                 color: retro.background,
-                border: Border.all(color: retro.border, width: 1.5),
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(1.5),
+                ),
               ),
               child: Icon(Icons.extension_rounded, size: 15, color: retro.inkDim),
             ),
@@ -281,7 +296,11 @@ class ModCardSkeleton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          border: Border.all(color: retro.border, width: 2),
+          borderRadius: retro.radius,
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2),
+          ),
         ),
         child: Row(
           children: [

@@ -457,5 +457,17 @@
   "libraryMaintenanceError": "Não foi possível atualizar a Biblioteca. Tente novamente.",
   "detailOpenExternalFolder": "ABRIR PASTA DE ORIGEM",
   "detailSourceUnavailable": "Esta versão não tem um arquivo disponível para download no momento.",
-  "detailViewDiscussion": "VER CONVERSA DA COMUNIDADE"
+  "detailViewDiscussion": "VER CONVERSA DA COMUNIDADE",
+
+  "settingsInterfaceTheme": "Tema da interface",
+  "settingsInterfaceThemeDesc": "Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.",
+  "themeRetroManga": "Retro Manga",
+  "themeMario64": "Mario 64",
+  "themeOdyssey": "Odyssey",
+  "themeGameCube": "GameCube",
+  "themeModeLight": "Claro",
+  "themeModeDark": "Escuro",
+  "themeModeSystem": "Seguir o celular",
+  "themeSaveFailed": "Não foi possível salvar a aparência. Tente novamente.",
+  "themeSaving": "Salvando aparência"
 }

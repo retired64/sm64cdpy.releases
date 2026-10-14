@@ -39,7 +39,8 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final showHalftone = !_noHalftoneRoutes.contains(widget.currentRoute);
+    final showHalftone = retro.showHalftone &&
+        !_noHalftoneRoutes.contains(widget.currentRoute);
 
     return Scaffold(
       backgroundColor: retro.background,
@@ -132,10 +133,11 @@ class RetroPinnedAppBar extends StatelessWidget {
       toolbarHeight: 56,
       backgroundColor: retro.background,
       surfaceTintColor: Colors.transparent,
+      systemOverlayStyle: retro.systemUiStyle,
       elevation: 0,
       scrolledUnderElevation: 0,
       shape: showBottomBorder
-          ? Border(bottom: BorderSide(color: retro.border, width: 2))
+          ? Border(bottom: BorderSide(color: retro.border, width: retro.borderWidth(2)))
           : null,
       leadingWidth: 56,
       leading: DrawerMenuButton(color: leadingColor),
@@ -173,7 +175,7 @@ class RetroFixedHeaderView extends StatelessWidget {
             height: 56,
             decoration: BoxDecoration(
               color: retro.background,
-              border: Border(bottom: BorderSide(color: retro.border, width: 2)),
+              border: Border(bottom: BorderSide(color: retro.border, width: retro.borderWidth(2))),
             ),
             child: Row(
               children: [
