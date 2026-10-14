@@ -368,7 +368,10 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                   PopupMenuButton<_AccessAction>(
                     tooltip: l10n.gameModsManage,
                     enabled: !_busy,
-                    icon: MarioGameIcon(Icons.more_horiz_rounded, color: retro.ink),
+                    icon: MarioGameIcon(
+                      Icons.more_horiz_rounded,
+                      color: retro.ink,
+                    ),
                     onSelected: _access,
                     itemBuilder: (_) => [
                       PopupMenuItem(
@@ -456,7 +459,10 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
               hintStyle: retro.body(size: 12, color: retro.inkDim),
               filled: true,
               fillColor: retro.surface,
-              prefixIcon: MarioGameIcon(Icons.search_rounded, color: retro.accentText),
+              prefixIcon: MarioGameIcon(
+                Icons.search_rounded,
+                color: retro.accentText,
+              ),
               suffixIcon: query.isEmpty
                   ? null
                   : IconButton(
@@ -579,16 +585,18 @@ class _LibraryNotice extends StatelessWidget {
     final retro = RetroTheme.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: retro.gameDecoration(BoxDecoration(
-        color: retro.surfaceAlt,
-        borderRadius: retro.radius,
-        border: Border(
-          left: BorderSide(
-            color: warning ? retro.amber : retro.accent,
-            width: retro.borderWidth(3),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          color: retro.surfaceAlt,
+          borderRadius: retro.radius,
+          border: Border(
+            left: BorderSide(
+              color: warning ? retro.amber : retro.accent,
+              width: retro.borderWidth(3),
+            ),
           ),
         ),
-      )),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -773,10 +781,12 @@ class _GameModCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: retro.gameDecoration(BoxDecoration(
-                  color: retro.surfaceAlt,
-                  borderRadius: retro.radius,
-                )),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    color: retro.surfaceAlt,
+                    borderRadius: retro.radius,
+                  ),
+                ),
                 child: MarioMenuGlyph(
                   retro: retro,
                   asset: mod.enabled ? 'hand_pressed' : 'hand',
@@ -822,28 +832,34 @@ class _GameModCard extends StatelessWidget {
                 Semantics(
                   label: mod.title,
                   child: retro.isMario && retro.marioAssets.complete
-                    ? MarioGameToggle(key: ValueKey('game-mod-switch-${mod.name}'), value: mod.enabled, onChanged: onChanged)
-                    : Switch(
-                    key: ValueKey('game-mod-switch-${mod.name}'),
-                    value: mod.enabled,
-                    onChanged: onChanged,
-                    activeTrackColor: retro.accent,
-                    activeThumbColor: retro.inkOnAccent,
-                    inactiveTrackColor: retro.surfaceAlt,
-                    inactiveThumbColor: retro.inkDim,
-                    trackOutlineColor: WidgetStatePropertyAll(retro.border),
-                    thumbIcon: WidgetStateProperty.resolveWith(
-                      (states) => states.contains(WidgetState.selected)
-                          ? Icon(
-                              retro.design.playfulSelection
-                                  ? Icons.star_rounded
-                                  : Icons.check_rounded,
-                              size: 16,
-                              color: retro.accentText,
-                            )
-                          : null,
-                    ),
-                  ),
+                      ? MarioGameToggle(
+                          key: ValueKey('game-mod-switch-${mod.name}'),
+                          value: mod.enabled,
+                          onChanged: onChanged,
+                        )
+                      : Switch(
+                          key: ValueKey('game-mod-switch-${mod.name}'),
+                          value: mod.enabled,
+                          onChanged: onChanged,
+                          activeTrackColor: retro.accent,
+                          activeThumbColor: retro.inkOnAccent,
+                          inactiveTrackColor: retro.surfaceAlt,
+                          inactiveThumbColor: retro.inkDim,
+                          trackOutlineColor: WidgetStatePropertyAll(
+                            retro.border,
+                          ),
+                          thumbIcon: WidgetStateProperty.resolveWith(
+                            (states) => states.contains(WidgetState.selected)
+                                ? Icon(
+                                    retro.design.playfulSelection
+                                        ? Icons.star_rounded
+                                        : Icons.check_rounded,
+                                    size: 16,
+                                    color: retro.accentText,
+                                  )
+                                : null,
+                          ),
+                        ),
                 ),
             ],
           ),
