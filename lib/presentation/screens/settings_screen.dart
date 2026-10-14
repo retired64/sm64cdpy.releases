@@ -830,7 +830,6 @@ class _CheckUpdateTileState extends State<_CheckUpdateTile> {
 
 // ── Shared helpers ──────────────────────────────────────────────────────────
 
-
 class _OverlayToggle extends ConsumerStatefulWidget {
   const _OverlayToggle();
 

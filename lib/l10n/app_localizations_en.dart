@@ -1606,10 +1606,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get marioRomDescription =>
-      'Select your unmodified US Super Mario 64 ROM (.z64) once to activate the original menu materials, game skies, cursors, HUD and ROM typography. Resources stay private on this device. The ROM and game are never changed.';
+      'Mario themes use the ROM in your connected user folder. Images and fonts are prepared privately once and reused later. No separate ROM selection is needed.';
 
   @override
-  String get marioRomImport => 'Choose my ROM';
+  String get marioRomImport => 'Prepare from game folder';
 
   @override
   String get marioRomPreparing => 'Preparing game resources…';
@@ -1634,4 +1634,75 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get marioRomUpgrade =>
       'Select the ROM again to upgrade the original interface';
+
+  @override
+  String get gameFolderTitle => 'Connect SM64CoopDX';
+
+  @override
+  String get gameFolderSummary =>
+      'Choose the game folder once for your mods, DynOS packs and Mario themes.';
+
+  @override
+  String get gameFolderGuide =>
+      'Choose the user folder inside your SM64CoopDX game folder, usually com.maniscat2.sm64coopdx/user. We will find mods, DynOS packs and your game ROM inside it. Choose the folder, not a file. Your ROM and game settings will not be replaced.';
+
+  @override
+  String get gameFolderChoose => 'Choose game folder';
+
+  @override
+  String get gameFolderLater => 'Not now';
+
+  @override
+  String get gameFolderConnected => 'Game connected';
+
+  @override
+  String get gameFolderResolved =>
+      'Mods: user/mods · DynOS and Touch Controls: user/dynos/packs';
+
+  @override
+  String get gameFolderConfigReady => 'Game mod settings found.';
+
+  @override
+  String get gameFolderConfigMissing =>
+      'Open the game once to create its mod settings. Downloads and themes remain available.';
+
+  @override
+  String get gameFolderRomFound =>
+      'Game ROM found. Mario themes can prepare their resources when selected.';
+
+  @override
+  String get gameFolderRomMissing =>
+      'No compatible ROM was found in user. Open SM64CoopDX and set up its ROM, then try again.';
+
+  @override
+  String get gameFolderChange => 'Change game folder';
+
+  @override
+  String get gameFolderInvalid =>
+      'Choose the game’s user folder. Open SM64CoopDX once if it has not been set up.';
+
+  @override
+  String get gameFolderAccessLost =>
+      'The game folder is unavailable. Choose it again to reconnect.';
+
+  @override
+  String get gameFolderDisconnect => 'Disconnect game';
+
+  @override
+  String get gameFolderDisconnectBody =>
+      'Stop using this folder for mods, DynOS and ROM detection. Your game files, installed mods and prepared theme resources will stay on the device.';
+
+  @override
+  String get gameFolderPrepareTitle => 'Prepare Mario theme';
+
+  @override
+  String get gameFolderPrepareBody =>
+      'We will read the ROM in your connected game folder and prepare the theme’s images and fonts. This is done once; the ROM and game configuration stay unchanged.';
+
+  @override
+  String get gameFolderPrepare => 'Prepare theme';
+
+  @override
+  String get gameFolderBusy =>
+      'Wait for downloads and installations to finish before changing the game folder.';
 }

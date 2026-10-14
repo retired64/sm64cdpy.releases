@@ -49,8 +49,12 @@ class _HomeBody extends ConsumerWidget {
       slivers: [
         // ── Custom app bar ────────────────────────────────────
         const _HomeAppBar(),
-        const SliverToBoxAdapter(child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 12, 16, 0), child: GameFolderCard(optional: true))),
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: GameFolderCard(optional: true),
+          ),
+        ),
 
         // ── Featured carousel ─────────────────────────────────
         SliverToBoxAdapter(

@@ -2925,13 +2925,13 @@ abstract class AppLocalizations {
   /// No description provided for @marioRomDescription.
   ///
   /// In en, this message translates to:
-  /// **'Select your unmodified US Super Mario 64 ROM (.z64) once to activate the original menu materials, game skies, cursors, HUD and ROM typography. Resources stay private on this device. The ROM and game are never changed.'**
+  /// **'Mario themes use the ROM in your connected user folder. Images and fonts are prepared privately once and reused later. No separate ROM selection is needed.'**
   String get marioRomDescription;
 
   /// No description provided for @marioRomImport.
   ///
   /// In en, this message translates to:
-  /// **'Choose my ROM'**
+  /// **'Prepare from game folder'**
   String get marioRomImport;
 
   /// No description provided for @marioRomPreparing.
@@ -2975,6 +2975,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select the ROM again to upgrade the original interface'**
   String get marioRomUpgrade;
+
+  /// No description provided for @gameFolderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect SM64CoopDX'**
+  String get gameFolderTitle;
+
+  /// No description provided for @gameFolderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the game folder once for your mods, DynOS packs and Mario themes.'**
+  String get gameFolderSummary;
+
+  /// No description provided for @gameFolderGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the user folder inside your SM64CoopDX game folder, usually com.maniscat2.sm64coopdx/user. We will find mods, DynOS packs and your game ROM inside it. Choose the folder, not a file. Your ROM and game settings will not be replaced.'**
+  String get gameFolderGuide;
+
+  /// No description provided for @gameFolderChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose game folder'**
+  String get gameFolderChoose;
+
+  /// No description provided for @gameFolderLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get gameFolderLater;
+
+  /// No description provided for @gameFolderConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Game connected'**
+  String get gameFolderConnected;
+
+  /// No description provided for @gameFolderResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods: user/mods · DynOS and Touch Controls: user/dynos/packs'**
+  String get gameFolderResolved;
+
+  /// No description provided for @gameFolderConfigReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Game mod settings found.'**
+  String get gameFolderConfigReady;
+
+  /// No description provided for @gameFolderConfigMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the game once to create its mod settings. Downloads and themes remain available.'**
+  String get gameFolderConfigMissing;
+
+  /// No description provided for @gameFolderRomFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Game ROM found. Mario themes can prepare their resources when selected.'**
+  String get gameFolderRomFound;
+
+  /// No description provided for @gameFolderRomMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No compatible ROM was found in user. Open SM64CoopDX and set up its ROM, then try again.'**
+  String get gameFolderRomMissing;
+
+  /// No description provided for @gameFolderChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change game folder'**
+  String get gameFolderChange;
+
+  /// No description provided for @gameFolderInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the game’s user folder. Open SM64CoopDX once if it has not been set up.'**
+  String get gameFolderInvalid;
+
+  /// No description provided for @gameFolderAccessLost.
+  ///
+  /// In en, this message translates to:
+  /// **'The game folder is unavailable. Choose it again to reconnect.'**
+  String get gameFolderAccessLost;
+
+  /// No description provided for @gameFolderDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect game'**
+  String get gameFolderDisconnect;
+
+  /// No description provided for @gameFolderDisconnectBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop using this folder for mods, DynOS and ROM detection. Your game files, installed mods and prepared theme resources will stay on the device.'**
+  String get gameFolderDisconnectBody;
+
+  /// No description provided for @gameFolderPrepareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare Mario theme'**
+  String get gameFolderPrepareTitle;
+
+  /// No description provided for @gameFolderPrepareBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We will read the ROM in your connected game folder and prepare the theme’s images and fonts. This is done once; the ROM and game configuration stay unchanged.'**
+  String get gameFolderPrepareBody;
+
+  /// No description provided for @gameFolderPrepare.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare theme'**
+  String get gameFolderPrepare;
+
+  /// No description provided for @gameFolderBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for downloads and installations to finish before changing the game folder.'**
+  String get gameFolderBusy;
 }
 
 class _AppLocalizationsDelegate

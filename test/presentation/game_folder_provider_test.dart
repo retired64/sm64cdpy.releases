@@ -17,6 +17,7 @@ class FolderFake extends GameFolderService {
     return pending.future;
   }
 }
+
 class DelayedFolderRead extends GameFolderService {
   final stale = Completer<GameFolderConnection?>();
   int reads = 0;
@@ -26,7 +27,12 @@ class DelayedFolderRead extends GameFolderService {
       reads++;
       return reads == 1 ? const GameFolderConnection() : stale.future;
     }
-    return const GameFolderConnection(connected: true, unified: true, mods: true, dynos: true);
+    return const GameFolderConnection(
+      connected: true,
+      unified: true,
+      mods: true,
+      dynos: true,
+    );
   }
 }
 
@@ -34,7 +40,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   test('a stale refresh cannot overwrite a confirmed connection', () async {
     final service = DelayedFolderRead();
-    final container = ProviderContainer(overrides: [gameFolderServiceProvider.overrideWithValue(service)]);
+    final container = ProviderContainer(
+      overrides: [gameFolderServiceProvider.overrideWithValue(service)],
+    );
     final notifier = container.read(gameFolderProvider.notifier);
     await notifier.initialize();
     final oldRefresh = notifier.refresh();
@@ -46,29 +54,39 @@ void main() {
     expect(container.read(gameFolderProvider).busy, isFalse);
     container.dispose();
   });
-  test('one pending selection blocks duplicates and cancellation releases UI', () async {
-    final service = FolderFake();
-    final container = ProviderContainer(overrides: [gameFolderServiceProvider.overrideWithValue(service)]);
-    final notifier = container.read(gameFolderProvider.notifier);
-    await notifier.initialize();
-    final selecting = notifier.perform('connectGameFolder');
-    await Future<void>.delayed(Duration.zero);
-    expect(container.read(gameFolderProvider).busy, isTrue);
-    expect(await notifier.perform('connectGameFolder'), isFalse);
-    service.pending.complete(null);
-    expect(await selecting, isFalse);
-    expect(container.read(gameFolderProvider).busy, isFalse);
-    expect(container.read(gameFolderProvider).connection.connected, isFalse);
-    expect(service.writes, 1);
-    container.dispose();
-  });
-  test('an active install error preserves the previous connection and releases UI', () async {
-    final service = FolderFake()..fail = true;
-    final container = ProviderContainer(overrides: [gameFolderServiceProvider.overrideWithValue(service)]);
-    final notifier = container.read(gameFolderProvider.notifier);
-    expect(await notifier.perform('disconnectGameFolder'), isFalse);
-    expect(container.read(gameFolderProvider).error, 'installing');
-    expect(container.read(gameFolderProvider).busy, isFalse);
-    container.dispose();
-  });
+  test(
+    'one pending selection blocks duplicates and cancellation releases UI',
+    () async {
+      final service = FolderFake();
+      final container = ProviderContainer(
+        overrides: [gameFolderServiceProvider.overrideWithValue(service)],
+      );
+      final notifier = container.read(gameFolderProvider.notifier);
+      await notifier.initialize();
+      final selecting = notifier.perform('connectGameFolder');
+      await Future<void>.delayed(Duration.zero);
+      expect(container.read(gameFolderProvider).busy, isTrue);
+      expect(await notifier.perform('connectGameFolder'), isFalse);
+      service.pending.complete(null);
+      expect(await selecting, isFalse);
+      expect(container.read(gameFolderProvider).busy, isFalse);
+      expect(container.read(gameFolderProvider).connection.connected, isFalse);
+      expect(service.writes, 1);
+      container.dispose();
+    },
+  );
+  test(
+    'an active install error preserves the previous connection and releases UI',
+    () async {
+      final service = FolderFake()..fail = true;
+      final container = ProviderContainer(
+        overrides: [gameFolderServiceProvider.overrideWithValue(service)],
+      );
+      final notifier = container.read(gameFolderProvider.notifier);
+      expect(await notifier.perform('disconnectGameFolder'), isFalse);
+      expect(container.read(gameFolderProvider).error, 'installing');
+      expect(container.read(gameFolderProvider).busy, isFalse);
+      container.dispose();
+    },
+  );
 }

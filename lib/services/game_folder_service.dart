@@ -1,14 +1,27 @@
 import 'package:flutter/services.dart';
 
 class GameFolderConnection {
-  const GameFolderConnection({this.connected = false, this.dismissed = false, this.unified = false,
-    this.mods = false, this.dynos = false, this.config = false, this.rom = false,
-    this.status = 'unselected'});
-  factory GameFolderConnection.fromMap(Map<dynamic, dynamic> value) => GameFolderConnection(
-    unified: value['unified'] == true, connected: value['connected'] == true, dismissed: value['dismissed'] == true,
-    mods: value['mods'] == true, dynos: value['dynos'] == true,
-    config: value['config'] == true, rom: value['rom'] == true,
-    status: value['status'] as String? ?? 'unselected');
+  const GameFolderConnection({
+    this.connected = false,
+    this.dismissed = false,
+    this.unified = false,
+    this.mods = false,
+    this.dynos = false,
+    this.config = false,
+    this.rom = false,
+    this.status = 'unselected',
+  });
+  factory GameFolderConnection.fromMap(Map<dynamic, dynamic> value) =>
+      GameFolderConnection(
+        unified: value['unified'] == true,
+        connected: value['connected'] == true,
+        dismissed: value['dismissed'] == true,
+        mods: value['mods'] == true,
+        dynos: value['dynos'] == true,
+        config: value['config'] == true,
+        rom: value['rom'] == true,
+        status: value['status'] as String? ?? 'unselected',
+      );
   final bool connected, dismissed, unified, mods, dynos, config, rom;
   final String status;
 }
