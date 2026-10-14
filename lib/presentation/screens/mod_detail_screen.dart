@@ -950,7 +950,11 @@ class _VersionCardState extends State<_VersionCard> {
                         : widget.version.version,
                   ),
                   Text(
-                    formatDate(widget.version.releaseDate, locale: l10n.localeName) ?? widget.version.releaseDate,
+                    formatDate(
+                          widget.version.releaseDate,
+                          locale: l10n.localeName,
+                        ) ??
+                        widget.version.releaseDate,
                     style: retro.body(size: 11, color: retro.inkDim),
                   ),
                   if (widget.version.downloads > 0) ...[
