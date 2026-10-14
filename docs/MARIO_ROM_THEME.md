@@ -182,3 +182,5 @@ Roboto de 14 para lectura precisa. Retro Manga conserva su escala. No cambia
 la importación, el formato v2, preferencias, workers ni el engine del overlay.
 Las capturas no se incluyen en el commit. Validación visual física pendiente
 para el nuevo ajuste, incluidos claro/oscuro y escala de texto aumentada.
+
+Validación del ajuste: [Testing #199](https://github.com/retired64/sm64cdpy.releases/actions/runs/38634094017), completado correctamente: formato Dart, análisis, pruebas Flutter, APK arm64 y pruebas nativas. Los commits posteriores sincronizan formato y documentación; no cambian el comportamiento probado.
