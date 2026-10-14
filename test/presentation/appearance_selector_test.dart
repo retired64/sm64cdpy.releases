@@ -78,7 +78,7 @@ void main() {
         expect(theme.extension<RetroTheme>()!.design.id, AppThemeId.mario64);
         expect(
           theme.extension<RetroTheme>()!.radius,
-          BorderRadius.circular(14),
+          BorderRadius.circular(8),
         );
         expect(theme.extension<RetroTheme>()!.showN64Backdrop, isTrue);
         expect(theme.extension<RetroTheme>()!.usesBeveledSurfaces, isTrue);

@@ -302,14 +302,25 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (retro.isMario && snapshot != null)
-          Padding(padding: const EdgeInsets.only(bottom: 12), child: ExcludeSemantics(
-            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              MarioMenuGlyph(retro: retro, asset: 'star', fallback: Icons.star_rounded),
-              const SizedBox(width: 6),
-              MarioHudNumber(value: active, retro: retro),
-              Text(' / ', style: retro.body(size: 14)),
-              MarioHudNumber(value: mods.length, retro: retro),
-            ]))),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: ExcludeSemantics(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  MarioMenuGlyph(
+                    retro: retro,
+                    asset: 'star',
+                    fallback: Icons.star_rounded,
+                  ),
+                  const SizedBox(width: 6),
+                  MarioHudNumber(value: active, retro: retro),
+                  Text(' / ', style: retro.body(size: 14)),
+                  MarioHudNumber(value: mods.length, retro: retro),
+                ],
+              ),
+            ),
+          ),
         Container(
           key: const ValueKey('game-mods-header'),
           decoration: retro.surfaceDecoration(shadowDx: 3, shadowDy: 3),
@@ -769,7 +780,9 @@ class _GameModCard extends StatelessWidget {
                 child: MarioMenuGlyph(
                   retro: retro,
                   asset: mod.enabled ? 'hand_pressed' : 'hand',
-                  fallback: mod.enabled && retro.design.playfulSelection ? Icons.star_rounded : Icons.extension_rounded,
+                  fallback: mod.enabled && retro.design.playfulSelection
+                      ? Icons.star_rounded
+                      : Icons.extension_rounded,
                   size: 24,
                   color: mod.enabled ? retro.accentText : retro.inkDim,
                 ),

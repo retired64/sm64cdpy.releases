@@ -1613,6 +1613,42 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get gameModsCloseDetails => 'Cerrar';
+
+  @override
+  String get marioRomTitle => 'Recursos del juego original';
+
+  @override
+  String get marioRomBuiltIn => 'Diseño incluido';
+
+  @override
+  String get marioRomReady => 'Recursos originales listos';
+
+  @override
+  String get marioRomDescription =>
+      'Elige tu ROM estadounidense sin modificar de Super Mario 64 (.z64) para usar sus texturas de menú, cursor e iconos del HUD. Todo permanece en este dispositivo; el juego y la ROM no se modifican.';
+
+  @override
+  String get marioRomImport => 'Elegir mi ROM';
+
+  @override
+  String get marioRomPreparing => 'Preparando recursos del juego…';
+
+  @override
+  String get marioRomCancel => 'Cancelar importación';
+
+  @override
+  String get marioRomRemove => 'Usar diseño incluido';
+
+  @override
+  String get marioRomUnsupported =>
+      'Esta ROM no es compatible. Selecciona una ROM estadounidense .z64 sin modificar. Tu diseño anterior sigue disponible.';
+
+  @override
+  String get marioRomFailed =>
+      'No se pudieron leer o guardar los recursos. Elige el archivo de nuevo y comprueba el espacio disponible. Tu diseño anterior sigue disponible.';
+
+  @override
+  String get marioRomSuccess => 'Los recursos del juego original están listos.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -3224,4 +3260,40 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get gameModsCloseDetails => 'Cerrar';
+
+  @override
+  String get marioRomTitle => 'Recursos del juego original';
+
+  @override
+  String get marioRomBuiltIn => 'Diseño incluido';
+
+  @override
+  String get marioRomReady => 'Recursos originales listos';
+
+  @override
+  String get marioRomDescription =>
+      'Elige tu ROM estadounidense sin modificar de Super Mario 64 (.z64) para usar sus texturas de menú, cursor e iconos del HUD. Todo permanece en este dispositivo; el juego y la ROM no se modifican.';
+
+  @override
+  String get marioRomImport => 'Elegir mi ROM';
+
+  @override
+  String get marioRomPreparing => 'Preparando recursos del juego…';
+
+  @override
+  String get marioRomCancel => 'Cancelar importación';
+
+  @override
+  String get marioRomRemove => 'Usar diseño incluido';
+
+  @override
+  String get marioRomUnsupported =>
+      'Esta ROM no es compatible. Selecciona una ROM estadounidense .z64 sin modificar. Tu diseño anterior sigue disponible.';
+
+  @override
+  String get marioRomFailed =>
+      'No se pudieron leer o guardar los recursos. Elige el archivo de nuevo y comprueba el espacio disponible. Tu diseño anterior sigue disponible.';
+
+  @override
+  String get marioRomSuccess => 'Los recursos del juego original están listos.';
 }

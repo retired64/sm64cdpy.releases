@@ -7,5 +7,6 @@ class MarioThemeAssetsService {
     final data = await _channel.invokeMapMethod<Object?, Object?>(method);
     return data == null ? null : MarioThemeAssets.fromMap(data);
   }
+
   Future<void> cancel() => _channel.invokeMethod<void>('cancel');
 }

@@ -7,7 +7,9 @@ class MarioThemeAssets {
   bool get available => generation != null && files.length == 15;
 
   factory MarioThemeAssets.fromMap(Map<Object?, Object?>? data) {
-    if (data == null || data['generation'] is! String || data['files'] is! Map) {
+    if (data == null ||
+        data['generation'] is! String ||
+        data['files'] is! Map) {
       return const MarioThemeAssets();
     }
     final files = <String, String>{};

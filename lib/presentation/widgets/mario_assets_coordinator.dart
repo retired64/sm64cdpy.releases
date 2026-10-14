@@ -14,7 +14,12 @@ class MarioAssetsCoordinator extends ConsumerWidget {
       if (previous?.busy != true || next.busy || !context.mounted) return;
       final l10n = AppLocalizations.of(context);
       if (next.error != null) {
-        AppSnackbar.error(context, message: next.error == 'unsupported' ? l10n.marioRomUnsupported : l10n.marioRomFailed);
+        AppSnackbar.error(
+          context,
+          message: next.error == 'unsupported'
+              ? l10n.marioRomUnsupported
+              : l10n.marioRomFailed,
+        );
       } else if (next.imported > (previous?.imported ?? 0)) {
         AppSnackbar.success(context, message: l10n.marioRomSuccess);
       }

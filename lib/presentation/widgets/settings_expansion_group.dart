@@ -195,8 +195,12 @@ class SettingsSelectionOption extends StatelessWidget {
                 MarioMenuGlyph(
                   retro: retro,
                   asset: 'hand',
-                  fallback: retro.isMario ? Icons.pan_tool_alt_rounded : Icons.check_circle,
-                  color: retro.design.playfulSelection ? retro.secondaryAccent : retro.accentText,
+                  fallback: retro.isMario
+                      ? Icons.pan_tool_alt_rounded
+                      : Icons.check_circle,
+                  color: retro.design.playfulSelection
+                      ? retro.secondaryAccent
+                      : retro.accentText,
                 ),
             ],
           ),

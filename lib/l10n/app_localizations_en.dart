@@ -1591,4 +1591,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameModsCloseDetails => 'Close';
+
+  @override
+  String get marioRomTitle => 'Original game resources';
+
+  @override
+  String get marioRomBuiltIn => 'Built-in design';
+
+  @override
+  String get marioRomReady => 'Original resources ready';
+
+  @override
+  String get marioRomDescription =>
+      'Choose your unmodified US Super Mario 64 ROM (.z64) to use its menu textures, cursor and HUD icons. Everything stays on this device; the game and ROM are never modified.';
+
+  @override
+  String get marioRomImport => 'Choose my ROM';
+
+  @override
+  String get marioRomPreparing => 'Preparing game resources…';
+
+  @override
+  String get marioRomCancel => 'Cancel import';
+
+  @override
+  String get marioRomRemove => 'Use built-in design';
+
+  @override
+  String get marioRomUnsupported =>
+      'This ROM is not supported. Select an unmodified US .z64 ROM. Your previous design is still available.';
+
+  @override
+  String get marioRomFailed =>
+      'Could not read or save the resources. Select the file again and check available storage. Your previous design is still available.';
+
+  @override
+  String get marioRomSuccess => 'Original game resources are ready.';
 }

@@ -20,7 +20,9 @@ class MarioRomAssetsPanel extends ConsumerWidget {
       child: SettingsExpansionGroup(
         key: const PageStorageKey('mario-rom-assets'),
         title: l10n.marioRomTitle,
-        subtitle: state.assets.available ? l10n.marioRomReady : l10n.marioRomBuiltIn,
+        subtitle: state.assets.available
+            ? l10n.marioRomReady
+            : l10n.marioRomBuiltIn,
         icon: Icons.videogame_asset_outlined,
         children: [
           Text(l10n.marioRomDescription, style: retro.body(size: 13)),
@@ -29,24 +31,39 @@ class MarioRomAssetsPanel extends ConsumerWidget {
             LinearProgressIndicator(semanticsLabel: l10n.marioRomPreparing),
             const SizedBox(height: 8),
             Text(l10n.marioRomPreparing, style: retro.body(size: 13)),
-            TextButton(onPressed: () async { await notifier.cancel(); }, child: Text(l10n.marioRomCancel)),
+            TextButton(
+              onPressed: () async {
+                await notifier.cancel();
+              },
+              child: Text(l10n.marioRomCancel),
+            ),
           ] else ...[
             FilledButton.icon(
-              onPressed: () async { await notifier.perform('import'); },
+              onPressed: () async {
+                await notifier.perform('import');
+              },
               icon: const Icon(Icons.file_open_outlined),
               label: Text(l10n.marioRomImport),
             ),
             if (state.assets.available)
               TextButton.icon(
-                onPressed: () async { await notifier.perform('remove'); },
+                onPressed: () async {
+                  await notifier.perform('remove');
+                },
                 icon: const Icon(Icons.restore_rounded),
                 label: Text(l10n.marioRomRemove),
               ),
           ],
           if (state.error != null)
-            Padding(padding: const EdgeInsets.only(top: 8),
-              child: Text(state.error == 'unsupported' ? l10n.marioRomUnsupported : l10n.marioRomFailed,
-                style: retro.body(size: 13, color: retro.red))),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                state.error == 'unsupported'
+                    ? l10n.marioRomUnsupported
+                    : l10n.marioRomFailed,
+                style: retro.body(size: 13, color: retro.red),
+              ),
+            ),
         ],
       ),
     );

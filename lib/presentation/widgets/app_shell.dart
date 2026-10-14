@@ -63,7 +63,9 @@ class _AppShellState extends ConsumerState<AppShell> {
               children: [
                 Positioned.fill(
                   child: ThemeBackdrop(
-                    menuSurface: widget.currentRoute == '/library' || widget.currentRoute == '/settings',
+                    menuSurface:
+                        widget.currentRoute == '/library' ||
+                        widget.currentRoute == '/settings',
                     allowHalftone: !_noHalftoneRoutes.contains(
                       widget.currentRoute,
                     ),

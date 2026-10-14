@@ -130,8 +130,16 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      theme: RetroTheme.materialTheme(false, design: design, marioAssets: marioAssets),
-      darkTheme: RetroTheme.materialTheme(true, design: design, marioAssets: marioAssets),
+      theme: RetroTheme.materialTheme(
+        false,
+        design: design,
+        marioAssets: marioAssets,
+      ),
+      darkTheme: RetroTheme.materialTheme(
+        true,
+        design: design,
+        marioAssets: marioAssets,
+      ),
       themeMode: themeMode,
       // Apply the complete design at once; avoid mixed contrast during a morph.
       themeAnimationDuration: Duration.zero,

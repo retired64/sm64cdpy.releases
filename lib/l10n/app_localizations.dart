@@ -2897,6 +2897,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get gameModsCloseDetails;
+
+  /// No description provided for @marioRomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Original game resources'**
+  String get marioRomTitle;
+
+  /// No description provided for @marioRomBuiltIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Built-in design'**
+  String get marioRomBuiltIn;
+
+  /// No description provided for @marioRomReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Original resources ready'**
+  String get marioRomReady;
+
+  /// No description provided for @marioRomDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your unmodified US Super Mario 64 ROM (.z64) to use its menu textures, cursor and HUD icons. Everything stays on this device; the game and ROM are never modified.'**
+  String get marioRomDescription;
+
+  /// No description provided for @marioRomImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose my ROM'**
+  String get marioRomImport;
+
+  /// No description provided for @marioRomPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing game resources…'**
+  String get marioRomPreparing;
+
+  /// No description provided for @marioRomCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel import'**
+  String get marioRomCancel;
+
+  /// No description provided for @marioRomRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Use built-in design'**
+  String get marioRomRemove;
+
+  /// No description provided for @marioRomUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This ROM is not supported. Select an unmodified US .z64 ROM. Your previous design is still available.'**
+  String get marioRomUnsupported;
+
+  /// No description provided for @marioRomFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read or save the resources. Select the file again and check available storage. Your previous design is still available.'**
+  String get marioRomFailed;
+
+  /// No description provided for @marioRomSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Original game resources are ready.'**
+  String get marioRomSuccess;
 }
 
 class _AppLocalizationsDelegate

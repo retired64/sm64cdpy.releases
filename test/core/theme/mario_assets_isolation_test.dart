@@ -5,17 +5,39 @@ import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import 'package:sm64cdpy/domain/entities/mario_theme_assets.dart';
 
 void main() {
-  test('imported files remain exclusive to Mario, including copy and interpolation', () {
-    const assets = MarioThemeAssets(generation: 'local', files: {'stone': '/private/stone.png'});
-    final mario = RetroTheme(false, design: AppThemeCatalog.resolve(AppThemeId.mario64), marioAssets: assets);
-    expect(mario.marioAsset('stone'), '/private/stone.png');
-    expect(mario.copyWith().marioAsset('stone'), '/private/stone.png');
-    expect(mario.lerp(mario.copyWith(isDark: true), 0.5).marioAsset('stone'), '/private/stone.png');
-    expect(RetroTheme(false, marioAssets: assets).marioAsset('stone'), isNull);
-    expect(RetroTheme.overlay().marioAsset('stone'), isNull);
-  });
+  test(
+    'imported files remain exclusive to Mario, including copy and interpolation',
+    () {
+      const assets = MarioThemeAssets(
+        generation: 'local',
+        files: {'stone': '/private/stone.png'},
+      );
+      final mario = RetroTheme(
+        false,
+        design: AppThemeCatalog.resolve(AppThemeId.mario64),
+        marioAssets: assets,
+      );
+      expect(mario.marioAsset('stone'), '/private/stone.png');
+      expect(mario.copyWith().marioAsset('stone'), '/private/stone.png');
+      expect(
+        mario.lerp(mario.copyWith(isDark: true), 0.5).marioAsset('stone'),
+        '/private/stone.png',
+      );
+      expect(
+        RetroTheme(false, marioAssets: assets).marioAsset('stone'),
+        isNull,
+      );
+      expect(RetroTheme.overlay().marioAsset('stone'), isNull);
+    },
+  );
   test('incomplete persisted asset maps fall back to the built-in design', () {
-    expect(MarioThemeAssets.fromMap({'generation': 'local', 'files': {'stone': '/file'}}).available, isFalse);
+    expect(
+      MarioThemeAssets.fromMap({
+        'generation': 'local',
+        'files': {'stone': '/file'},
+      }).available,
+      isFalse,
+    );
     expect(MarioThemeAssets.fromMap(null).available, isFalse);
   });
 }
