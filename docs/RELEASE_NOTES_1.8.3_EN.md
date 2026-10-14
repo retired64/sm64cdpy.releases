@@ -17,6 +17,7 @@ Version 1.8.3 brings verified game mod activation to Library, unifies local mod 
 - Mario 64 uses menu, dialog and HUD typography generated privately from the ROM. Colored headings use original glyphs; characters missing from the US ROM retain readable language fallbacks.
 - An unmodified US .z64 ROM supplies 151 images and three generated fonts, including menu materials, cursors, icons and Clouds/BBH skies. Resources stay private outside Android backup, and no ROM or extracted artwork is bundled. Older 15-texture imports can be reimported without losing the previous set on cancellation.
 - SM64 Intro adds a golden day menu and a blue night menu with dark panels, ROM lettering and Mario save-slot controls for confirmed active/inactive game mods. It reuses an existing Mario 64 ROM import.
+- Mod details use a framed cover without a banner, readable menu panels, adaptive statistics and larger captions. Long download labels and version dates wrap without clipping.
 
 ### Consistent Settings
 

@@ -486,3 +486,9 @@ con Mario 64, sin reimportación si ya está preparado. Plan, inventario de
 integración y validación: `docs/SM64_INTRO_THEME.md`. Testing pendiente.
 
 Validación: [Testing #206](https://github.com/retired64/sm64cdpy.releases/actions/runs/38636988190) completado correctamente: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas. Los commits posteriores solo sincronizan formato probado y documentación. Pendiente prueba visual física de SM64 Intro.
+
+## Ficha de mod y lectura
+
+Portada sin banner, navegación sin solapamientos, paneles y estadísticas
+adaptables. Mario eleva texto mínimo a 16 y descripción a 18 puntos.
+Plan técnico: `docs/MOD_DETAIL_DESIGN.md`. Testing pendiente.

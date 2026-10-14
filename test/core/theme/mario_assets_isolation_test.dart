@@ -33,7 +33,7 @@ void main() {
       expect(label.style!.fontSize, 13.5);
       expect(tester.getSize(find.text('NAVIGATION')).width, 210);
       expect(find.byType(MarioGameTitle), findsNothing);
-      expect(mario.body(size: 11).fontSize, 14);
+      expect(mario.body(size: 11).fontSize, 16);
       expect(mario.body(size: 16).fontSize, 16);
       expect(mario.body(size: 11).letterSpacing, 0);
       expect(const RetroTheme(false).body(size: 11).fontSize, 11);

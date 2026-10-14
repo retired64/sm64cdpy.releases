@@ -69,18 +69,11 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
 
   bool _descExpanded = false;
   bool _changelogExpanded = false;
-  double _scrollOffset = 0;
-
-  double _heroHeight = 180.0;
-  static const _appBarHeight = kToolbarHeight + 40;
 
   @override
   void initState() {
     super.initState();
-    _scrollCtrl = ScrollController()
-      ..addListener(() {
-        setState(() => _scrollOffset = _scrollCtrl.offset);
-      });
+    _scrollCtrl = ScrollController();
 
     _fadeCtrl = AnimationController(
       vsync: this,
@@ -97,25 +90,13 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
     super.dispose();
   }
 
-  double get _heroOpacity {
-    if (_scrollOffset <= 0) return 1.0;
-    return (1 - (_scrollOffset / (_heroHeight * 0.6))).clamp(0.0, 1.0);
-  }
-
-  bool get _isAppBarSolid => _scrollOffset > (_heroHeight - _appBarHeight - 20);
-
   @override
   Widget build(BuildContext context) {
-    _heroHeight = (MediaQuery.orientationOf(context) == Orientation.landscape)
-        ? (MediaQuery.sizeOf(context).height * 0.28).clamp(140.0, 180.0)
-        : 180.0;
-
     final retro = RetroTheme.of(context);
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
 
     return Scaffold(
-      backgroundColor: retro.background,
-      extendBodyBehindAppBar: true,
+      backgroundColor: retro.isMario ? Colors.transparent : retro.background,
       appBar: _buildAppBar(retro, isFav),
       body: FadeTransition(
         opacity: _fadeAnim,
@@ -123,28 +104,19 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
           controller: _scrollCtrl,
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // ── Cinematic hero ───────────────────────────────────
             SliverToBoxAdapter(
-              child: _CinematicHero(
-                mod: widget.mod,
-                heroOpacity: _heroOpacity,
-                height: _heroHeight,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: _ModHeader(mod: widget.mod),
               ),
             ),
-
-            // ── Content card that overlaps the hero ──────────────
             SliverToBoxAdapter(
-              child: Transform.translate(
-                offset: const Offset(0, -32),
-                child: _ContentCard(
-                  mod: widget.mod,
-                  descExpanded: _descExpanded,
-                  changelogExpanded: _changelogExpanded,
-                  onExpandDesc: () =>
-                      setState(() => _descExpanded = !_descExpanded),
-                  onExpandChangelog: () =>
-                      setState(() => _changelogExpanded = !_changelogExpanded),
-                ),
+              child: _ContentCard(
+                mod: widget.mod,
+                descExpanded: _descExpanded,
+                changelogExpanded: _changelogExpanded,
+                onExpandDesc: () => setState(() => _descExpanded = !_descExpanded),
+                onExpandChangelog: () => setState(() => _changelogExpanded = !_changelogExpanded),
               ),
             ),
 
@@ -156,16 +128,12 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
   }
 
   PreferredSizeWidget _buildAppBar(RetroTheme retro, bool isFav) {
-    final bgColor = _isAppBarSolid ? retro.background : Colors.transparent;
+    final bgColor = retro.background;
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: _isAppBarSolid
-            ? retro.systemUiStyle
-            : retro.systemUiStyle.copyWith(
-                statusBarIconBrightness: Brightness.light,
-              ),
+        value: retro.systemUiStyle,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           color: bgColor,
@@ -177,7 +145,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
                   _GlassIconButton(
                     icon: Icons.arrow_back_ios_rounded,
                     onTap: () => Navigator.of(context).pop(),
-                    isAppBarSolid: _isAppBarSolid,
+                    isAppBarSolid: true,
                     retro: retro,
                   ),
                   const Spacer(),
@@ -188,17 +156,17 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
                     onTap: () => ref
                         .read(favouritesProvider.notifier)
                         .toggle(widget.mod.id),
-                    isAppBarSolid: _isAppBarSolid,
+                    isAppBarSolid: true,
                     retro: retro,
                     activeColor: isFav
-                        ? (_isAppBarSolid ? retro.accentText : Colors.white)
+                        ? retro.accentText
                         : null,
                   ),
                   const SizedBox(width: 6),
                   _GlassIconButton(
                     icon: Icons.share_rounded,
                     onTap: () => _share(widget.mod),
-                    isAppBarSolid: _isAppBarSolid,
+                    isAppBarSolid: true,
                     retro: retro,
                   ),
                 ],
@@ -269,95 +237,50 @@ class _GlassIconButton extends StatelessWidget {
 // Fondo de color sólido con el avatar del mod superpuesto abajo a la
 // izquierda.
 
-class _CinematicHero extends StatelessWidget {
-  const _CinematicHero({
-    required this.mod,
-    required this.heroOpacity,
-    required this.height,
-  });
-
+/// A bounded cover and title share one menu panel; no banner or overlap.
+class _ModHeader extends StatelessWidget {
+  const _ModHeader({required this.mod});
   final ModEntity mod;
-  final double heroOpacity;
-  final double height;
-
-  static const _avatarSize = 84.0;
 
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final hasImage = mod.imageUrl != null && mod.imageUrl!.isNotEmpty;
-
-    return SizedBox(
-      height: height,
-      child: Opacity(
-        opacity: heroOpacity.clamp(0.0, 1.0),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Container(color: retro.accent),
-
-            // Costura hacia la content card, que se superpone por debajo.
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 70,
-                decoration: retro.gameDecoration(
-                  BoxDecoration(
-                    borderRadius: retro.radius,
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, retro.background],
-                    ),
-                  ),
-                ),
+    final hasImage = mod.imageUrl?.isNotEmpty ?? false;
+    final cover = Container(
+      key: const ValueKey('mod-detail-cover'),
+      width: 112,
+      height: 112,
+      clipBehavior: Clip.hardEdge,
+      padding: const EdgeInsets.all(3),
+      decoration: retro.surfaceDecoration(border: 2, shadowDx: 2, shadowDy: 2),
+      child: hasImage
+          ? Hero(
+              tag: 'mod_img_${mod.id}',
+              child: CachedNetworkImage(
+                imageUrl: mod.imageUrl!,
+                fit: BoxFit.contain,
+                placeholder: (_, _) => _HeroPlaceholder(retro: retro),
+                errorWidget: (_, _, _) => _HeroPlaceholder(retro: retro),
               ),
-            ),
-
-            // Avatar del mod
-            Positioned(
-              left: 20,
-              bottom: 22,
-              child: Container(
-                width: _avatarSize,
-                height: _avatarSize,
-                clipBehavior: Clip.hardEdge,
-                padding: retro.isMario
-                    ? const EdgeInsets.all(4)
-                    : EdgeInsets.zero,
-                decoration: retro.surfaceDecoration(
-                  color: retro.isMario
-                      ? retro.secondaryAccent
-                      : retro.surfaceAlt,
-                  borderColor: retro.border,
-                  border: 3,
-                ),
-                child: hasImage
-                    ? Hero(
-                        tag: 'mod_img_${mod.id}',
-                        child: CachedNetworkImage(
-                          imageUrl: mod.imageUrl!,
-                          fit: BoxFit.cover,
-                          placeholder: (_, _) =>
-                              Container(color: retro.surfaceAlt),
-                          errorWidget: (_, _, _) =>
-                              _HeroPlaceholder(retro: retro),
-                        ),
-                      )
-                    : _HeroPlaceholder(retro: retro),
-              ),
-            ),
-
-            // Insignia "featured" — círculo superpuesto en la esquina del avatar
-            if (mod.isFeatured)
-              Positioned(
-                left: 20 + _avatarSize - 16,
-                bottom: 22 + _avatarSize - 16,
-                child: RetroBadgeDot(retro: retro, icon: Icons.star_rounded),
-              ),
-          ],
-        ),
-      ),
+            )
+          : _HeroPlaceholder(retro: retro),
+    );
+    return Container(
+      key: const ValueKey('mod-detail-header'),
+      padding: const EdgeInsets.all(16),
+      decoration: retro.surfaceDecoration(shadowDx: 3, shadowDy: 3),
+      child: LayoutBuilder(builder: (context, constraints) {
+        if (constraints.maxWidth < 420 || MediaQuery.textScalerOf(context).scale(16) > 22) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [Stack(children: [cover, if (mod.isFeatured) Positioned(right: 0, bottom: 0, child: RetroBadgeDot(retro: retro, icon: Icons.star_rounded))]), const SizedBox(height: 16), _TitleSection(mod: mod)],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [Stack(children: [cover, if (mod.isFeatured) Positioned(right: 0, bottom: 0, child: RetroBadgeDot(retro: retro, icon: Icons.star_rounded))]), const SizedBox(width: 20), Expanded(child: _TitleSection(mod: mod))],
+        );
+      }),
     );
   }
 }
@@ -402,116 +325,76 @@ class _ContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return Container(
-      decoration: retro.gameDecoration(
-        BoxDecoration(
-          color: retro.surface,
-          border: Border(
-            top: BorderSide(color: retro.border, width: retro.borderWidth(3)),
-          ),
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 20),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ── Title + author ─────────────────────────────
-                _TitleSection(mod: mod),
-
-                const SizedBox(height: 20),
-
-                // ── Stats bar ──────────────────────────────────
-                _StatsBar(mod: mod),
-
-                const SizedBox(height: 24),
-
-                // ── Download CTA ───────────────────────────────
-                _VersionAccordion(
-                  modId: mod.id,
-                  versions: mod.versions,
-                  downloadUrls: mod.downloadUrls,
-                  modUrl: mod.url,
-                  modTitle: mod.title,
-                ),
-
-                const SizedBox(height: 28),
-
-                // ── Screenshot gallery ─────────────────────────
-                if (mod.descriptionImages.isNotEmpty) ...[
-                  _SectionTitle(label: l10n.detailScreenshots),
-                  const SizedBox(height: 12),
-                  _ScreenshotGallery(images: mod.descriptionImages),
-                  const SizedBox(height: 28),
-                ],
-
-                // ── Tags ───────────────────────────────────────
-                if (mod.tags.isNotEmpty) ...[
-                  _SectionTitle(label: l10n.detailTags),
-                  const SizedBox(height: 10),
-                  _TagCloud(tags: mod.tags),
-                  const SizedBox(height: 28),
-                ],
-
-                // ── About ──────────────────────────────────────
-                if (mod.description.isNotEmpty) ...[
-                  _SectionTitle(label: l10n.detailAbout),
-                  const SizedBox(height: 10),
-                  _ExpandableText(
-                    text: mod.description,
-                    expanded: descExpanded,
-                    onToggle: onExpandDesc,
-                  ),
-                  const SizedBox(height: 28),
-                ],
-
-                if (mod.threadUrl.isNotEmpty) ...[
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () => launchUrl(
-                        Uri.parse(mod.threadUrl),
-                        mode: LaunchMode.externalApplication,
-                      ),
-                      icon: const MarioGameIcon(Icons.forum_outlined, size: 18),
-                      label: Text(l10n.detailViewDiscussion),
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                ],
-
-                // ── Release info ───────────────────────────────
-                if (mod.firstRelease != null || mod.lastUpdate != null) ...[
-                  _ReleaseDates(
-                    firstRelease: mod.firstRelease,
-                    lastUpdate: mod.lastUpdate,
-                  ),
-                  const SizedBox(height: 28),
-                ],
-
-                // ── Changelog ─────────────────────────────────
-                if (mod.updates.isNotEmpty) ...[
-                  _ChangelogSection(
-                    updates: mod.updates,
-                    expanded: changelogExpanded,
-                    onToggle: onExpandChangelog,
-                  ),
-                ],
-              ],
+          _StatsBar(mod: mod),
+          const SizedBox(height: 16),
+          _DetailPanel(children: [
+            _VersionAccordion(modId: mod.id, versions: mod.versions,
+              downloadUrls: mod.downloadUrls, modUrl: mod.url, modTitle: mod.title),
+          ]),
+          if (mod.description.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _DetailPanel(children: [
+              _SectionTitle(label: l10n.detailAbout),
+              const SizedBox(height: 12),
+              _ExpandableText(text: mod.description, expanded: descExpanded, onToggle: onExpandDesc),
+            ]),
+          ],
+          if (mod.descriptionImages.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _DetailPanel(children: [
+              _SectionTitle(label: l10n.detailScreenshots),
+              const SizedBox(height: 12),
+              _ScreenshotGallery(images: mod.descriptionImages),
+            ]),
+          ],
+          if (mod.tags.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _DetailPanel(children: [
+              _SectionTitle(label: l10n.detailTags), const SizedBox(height: 12),
+              _TagCloud(tags: mod.tags),
+            ]),
+          ],
+          if (mod.threadUrl.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: () => launchUrl(Uri.parse(mod.threadUrl), mode: LaunchMode.externalApplication),
+              icon: const MarioGameIcon(Icons.forum_outlined, size: 18),
+              label: Text(l10n.detailViewDiscussion),
             ),
-          ),
+          ],
+          if (mod.firstRelease != null || mod.lastUpdate != null) ...[
+            const SizedBox(height: 16),
+            _ReleaseDates(firstRelease: mod.firstRelease, lastUpdate: mod.lastUpdate),
+          ],
+          if (mod.updates.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _DetailPanel(children: [
+              _ChangelogSection(updates: mod.updates, expanded: changelogExpanded,
+                onToggle: onExpandChangelog),
+            ]),
+          ],
         ],
       ),
     );
   }
+}
+
+class _DetailPanel extends StatelessWidget {
+  const _DetailPanel({required this.children});
+  final List<Widget> children;
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: RetroTheme.of(context).surfaceDecoration(shadowDx: 2, shadowDy: 2),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+  );
 }
 
 // ── Title section ─────────────────────────────────────────────────────────────
@@ -525,9 +408,9 @@ class _TitleSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final titleStyle = retro.heading(
-      size: 25,
-      letterSpacing: -0.4,
-      height: 1.1,
+      size: retro.isMario ? 19 : 22,
+      letterSpacing: 0,
+      height: 1.3,
     );
 
     return Column(
@@ -601,51 +484,23 @@ class _StatsBar extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
-      decoration: retro.gameDecoration(
-        BoxDecoration(
-          color: retro.surface,
-          borderRadius: retro.radius,
-          border: Border.all(color: retro.border.withValues(alpha: 0.35)),
-        ),
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            _StatCell(
-              value: mod.rating?.star ?? '—',
-              label: l10n.detailRating,
-              icon: Icons.star_rounded,
-              iconColor: retro.amber,
-              retro: retro,
-            ),
-            _Divider(retro: retro),
-            _StatCell(
-              value: mod.downloads.compact,
-              label: l10n.detailDownloads,
-              icon: Icons.download_rounded,
-              iconColor: retro.accent,
-              retro: retro,
-            ),
-            _Divider(retro: retro),
-            _StatCell(
-              value: mod.views.compact,
-              label: l10n.detailViews,
-              icon: Icons.visibility_rounded,
-              iconColor: retro.inkDim,
-              retro: retro,
-            ),
-            _Divider(retro: retro),
-            _StatCell(
-              value: mod.reviewCount.compact,
-              label: l10n.detailReviews,
-              icon: Icons.rate_review_rounded,
-              iconColor: retro.inkDim,
-              retro: retro,
-            ),
-          ],
-        ),
-      ),
+      key: const ValueKey('mod-detail-stats'),
+      padding: const EdgeInsets.all(14),
+      decoration: retro.surfaceDecoration(shadowDx: 2, shadowDy: 2),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 560 && MediaQuery.textScalerOf(context).scale(16) <= 22 ? 4 : 2;
+        final width = (constraints.maxWidth - (columns - 1) * 12) / columns;
+        return Wrap(spacing: 12, runSpacing: 18, children: [
+          SizedBox(width: width, child: _StatCell(value: mod.rating?.star ?? '—', label: l10n.detailRating,
+            icon: Icons.star_rounded, iconColor: retro.amber, retro: retro)),
+          SizedBox(width: width, child: _StatCell(value: mod.downloads.compact, label: l10n.detailDownloads,
+            icon: Icons.download_rounded, iconColor: retro.accentText, retro: retro)),
+          SizedBox(width: width, child: _StatCell(value: mod.views.compact, label: l10n.detailViews,
+            icon: Icons.visibility_rounded, iconColor: retro.inkDim, retro: retro)),
+          SizedBox(width: width, child: _StatCell(value: mod.reviewCount.compact, label: l10n.detailReviews,
+            icon: Icons.rate_review_rounded, iconColor: retro.inkDim, retro: retro)),
+        ]);
+      }),
     );
   }
 }
@@ -668,8 +523,7 @@ class _StatCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    return Expanded(
-      child: Column(
+    return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           MarioGameIcon(icon, size: 16, color: iconColor),
@@ -678,7 +532,7 @@ class _StatCell extends StatelessWidget {
             value,
             style: TextStyle(
               color: retro.ink,
-              fontSize: 15,
+              fontSize: retro.isMario ? 17 : 15,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -687,33 +541,14 @@ class _StatCell extends StatelessWidget {
             label,
             style: TextStyle(
               color: retro.inkDim,
-              fontSize: 10,
+              fontSize: retro.isMario ? 16 : 10,
               fontWeight: FontWeight.w500,
             ),
           ),
         ],
-      ),
     );
   }
 }
-
-class _Divider extends StatelessWidget {
-  const _Divider({required this.retro});
-
-  final RetroTheme retro;
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    return VerticalDivider(
-      width: 1,
-      thickness: 1,
-      color: retro.border.withValues(alpha: 0.3),
-    );
-  }
-}
-
-// ── Download section ──────────────────────────────────────────────────────────
 
 class _VersionAccordion extends StatefulWidget {
   const _VersionAccordion({
@@ -980,7 +815,10 @@ class _VersionCardState extends State<_VersionCard> {
                 : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   if (widget.collapsible) ...[
                     MarioGameIcon(
@@ -998,14 +836,9 @@ class _VersionCardState extends State<_VersionCard> {
                         ? l10n.detailVersionFallback
                         : widget.version.version,
                   ),
-                  const Spacer(),
-                  Flexible(
-                    child: Text(
+                  Text(
                       widget.version.releaseDate,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: retro.body(size: 11, color: retro.inkDim),
-                    ),
                   ),
                   if (widget.version.downloads > 0) ...[
                     const SizedBox(width: 10),
@@ -1435,7 +1268,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           ),
           const SizedBox(width: 10),
           SizedBox(
-            height: 34,
+            height: retro.isMario ? null : 34,
             child: FilledButton.icon(
               onPressed:
                   (_localDownloading && !actionState.isOperationActive) ||
@@ -1454,8 +1287,8 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
                 backgroundColor: retro.accent,
                 foregroundColor: retro.inkOnAccent,
                 shape: RoundedRectangleBorder(borderRadius: retro.radius),
-                textStyle: const TextStyle(
-                  fontSize: 12,
+                textStyle: TextStyle(
+                  fontSize: retro.isMario ? 16 : 12,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1836,7 +1669,8 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           child: ScaleTransition(
             scale: _scale,
             child: Container(
-              height: 54,
+              constraints: const BoxConstraints(minHeight: 56),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: retro.gameDecoration(
                 BoxDecoration(
                   color: isActive
@@ -1859,12 +1693,15 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                       size: 20,
                     ),
                     const SizedBox(width: 10),
-                    Text(
+                    Flexible(child: Text(
                       isActive
                           ? '${downloadProgress ?? (_localProgress * 100).round()}% · ${action.label(_l10n!)}'
                           : action.label(_l10n!),
-                      style: retro.heading(size: 15, color: retro.accentText),
-                    ),
+                      textAlign: TextAlign.center,
+                      style: retro.isMario
+                          ? retro.body(size: 18, color: retro.accentText)
+                          : retro.heading(size: 15, color: retro.accentText),
+                    )),
                   ],
                 ),
               ),
@@ -2147,9 +1984,9 @@ class _FullscreenGalleryState extends State<_FullscreenGallery> {
                         ),
                         child: Text(
                           '${_current + 1} / ${widget.images.length}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 13,
+                            fontSize: retro.isMario ? 16 : 13,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -2194,7 +2031,7 @@ class _TagCloud extends StatelessWidget {
             tag,
             style: TextStyle(
               color: retro.inkDim,
-              fontSize: 12,
+              fontSize: retro.isMario ? 16 : 12,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -2225,8 +2062,10 @@ class _ExpandableText extends StatelessWidget {
 
     final baseStyle = TextStyle(
       color: retro.inkDim,
-      fontSize: 14,
-      height: 1.65,
+      fontSize: retro.isMario ? 18 : 14,
+      fontFamily: retro.isMario ? 'Roboto' : retro.bodyFamily,
+      letterSpacing: 0,
+      height: 1.5,
     );
 
     return Column(
@@ -2256,7 +2095,7 @@ class _ExpandableText extends StatelessWidget {
                   expanded ? l10n.detailShowLess : l10n.detailShowMore,
                   style: TextStyle(
                     color: retro.accentText,
-                    fontSize: 13,
+                    fontSize: retro.isMario ? 16 : 13,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -2394,9 +2233,9 @@ class _DateCell extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: retro.inkDim,
-                  fontSize: 10,
+                  fontSize: retro.isMario ? 16 : 10,
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+                  letterSpacing: retro.isMario ? 0 : 0.5,
                 ),
               ),
               const SizedBox(height: 2),
@@ -2406,7 +2245,7 @@ class _DateCell extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: retro.ink,
-                  fontSize: 13,
+                  fontSize: retro.isMario ? 16 : 13,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -2472,7 +2311,7 @@ class _ChangelogSection extends StatelessWidget {
                 '${updates.length}',
                 style: TextStyle(
                   color: retro.inkDim,
-                  fontSize: 11,
+                  fontSize: retro.isMario ? 16 : 11,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -2519,7 +2358,7 @@ class _ChangelogSection extends StatelessWidget {
                           : l10n.detailViewAllUpdates(updates.length),
                       style: TextStyle(
                         color: retro.accentText,
-                        fontSize: 13,
+                        fontSize: retro.isMario ? 16 : 13,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -2583,7 +2422,7 @@ class _ChangelogEntry extends StatelessWidget {
                     '${index + 1}',
                     style: TextStyle(
                       color: index == 0 ? retro.inkOnAccent : retro.inkDim,
-                      fontSize: 11,
+                      fontSize: retro.isMario ? 16 : 11,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -2614,7 +2453,7 @@ class _ChangelogEntry extends StatelessWidget {
                       update.title!,
                       style: TextStyle(
                         color: retro.ink,
-                        fontSize: 14,
+                        fontSize: retro.isMario ? 17 : 14,
                         fontWeight: FontWeight.w700,
                         height: 1.3,
                       ),
@@ -2626,7 +2465,7 @@ class _ChangelogEntry extends StatelessWidget {
                           update.date!,
                       style: TextStyle(
                         color: retro.inkDim,
-                        fontSize: 11,
+                        fontSize: retro.isMario ? 16 : 11,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -2636,7 +2475,7 @@ class _ChangelogEntry extends StatelessWidget {
                     update.changelog,
                     style: TextStyle(
                       color: retro.inkDim,
-                      fontSize: 13,
+                      fontSize: retro.isMario ? 16 : 13,
                       height: 1.55,
                     ),
                   ),
@@ -2663,12 +2502,9 @@ class _SectionTitle extends StatelessWidget {
 
     return Text(
       retro.displayLabel(label),
-      style: TextStyle(
-        color: retro.inkDim,
-        fontSize: 10,
-        fontWeight: FontWeight.w800,
-        letterSpacing: 1.5,
-      ),
+      style: retro.isMario
+          ? retro.body(size: 17, color: retro.accentText)
+          : TextStyle(color: retro.inkDim, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1.5),
     );
   }
 }

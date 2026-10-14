@@ -251,7 +251,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     fontFamily: bodyFamily,
     fontFamilyFallback: const ['Roboto'],
     fontSize: isMario && marioAssets.complete
-        ? size.clamp(14.0, double.infinity)
+        ? size.clamp(16.0, double.infinity)
         : size,
     fontWeight: isMario && marioAssets.complete ? FontWeight.w400 : weight,
     letterSpacing: isMario ? 0 : null,
@@ -360,12 +360,12 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
                       const TextStyle(inherit: false, fontSize: 14))
                   .copyWith(
                     inherit: false,
-                    fontSize: 14,
+                    fontSize: isMario && marioAssets.complete ? 16 : 14,
                     height: 1.4,
                     letterSpacing: 0.1,
                     textBaseline: TextBaseline.alphabetic,
                     leadingDistribution: TextLeadingDistribution.even,
-                    fontFamily: menuFamily,
+                    fontFamily: isMario && marioAssets.complete ? bodyFamily : menuFamily,
                     fontFamilyFallback: const ['Roboto'],
                     fontWeight: FontWeight.w400,
                   ),

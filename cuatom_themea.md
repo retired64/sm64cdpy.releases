@@ -497,3 +497,9 @@ Nuevo diseño `sm64_intro` con ambiente dorado en claro y azul nocturno en oscur
 paneles de menú y ranuras Mario activas/inactivas. Comparte el conjunto ROM v2
 con Mario 64, sin reimportación si ya está preparado. Plan, inventario de
 integración y validación: `docs/SM64_INTRO_THEME.md`. Testing pendiente.
+
+## Ficha de mod y lectura
+
+Portada sin banner, navegación sin solapamientos, paneles y estadísticas
+adaptables. Mario eleva texto mínimo a 16 y descripción a 18 puntos.
+Plan técnico: `docs/MOD_DETAIL_DESIGN.md`. Testing pendiente.
