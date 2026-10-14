@@ -111,7 +111,12 @@ void main() {
     expect(gateway.writes, 2);
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
+    // Android lifecycle passes through hidden/inactive when returning to the UI.
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pumpAndSettle();
     await _toggle(tester, 'alpha');
