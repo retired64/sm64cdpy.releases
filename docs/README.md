@@ -1,9 +1,10 @@
 # Documentación de SM64CDPY
 
-Este directorio es el punto de entrada técnico del proyecto. Los documentos de la tabla siguiente se contrastaron con el código de la versión `1.8.2+21`.
+Este directorio es el punto de entrada técnico del proyecto. La arquitectura y el estado incluyen la preparación de `1.8.3+22` en `custom-themes`; no se ha fusionado ni publicado. Otros documentos conservan su fecha y alcance de revisión explícitos.
 
 | Documento | Propósito | Estado |
 |---|---|---|
+| [Preparación de release 1.8.3](RELEASE_1.8.3.md) | Versión/build, manifiesto EN/ES/PT-BR, validaciones y pasos de integración/publicación | Preparada en custom-themes; sin merge ni release |
 | [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Rama custom-themes; pendiente Actions y dispositivo |
 | [Arquitectura](ARCHITECTURE.md) | Componentes, engines, persistencia y flujo de datos | Vigente |
 | [Descargas y overlay](DOWNLOADS_AND_OVERLAY.md) | Flujo WorkManager/SAF, progreso y burbuja | Vigente |

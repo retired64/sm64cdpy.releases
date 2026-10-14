@@ -1,6 +1,6 @@
 # Temas propios incluidos: implementación y flujo de trabajo Android
 
-Actualizado: 2026-10-13. Rama local: `custom-themes`, creada desde el `main` local (`8bdc996`). Versión de la app conservada: `1.8.2+21`. Estado: el usuario confirmó que la build y prueba anteriores funcionaron. La reducción a dos temas y los menús coherentes requieren una nueva ejecución de Actions y revisión física. No es una release publicada.
+Actualizado: 2026-10-13. Rama local: `custom-themes`, creada desde el `main` local (`8bdc996`). Versión preparada: `1.8.3+22`, sin merge ni publicación. Estado: el usuario confirmó que la build y prueba anteriores funcionaron. La build #177 de los menús pasó; el bump a 1.8.3+22 requiere una nueva Actions y revisión física. No es una release publicada.
 
 ## 1. Qué se implementó
 
@@ -242,11 +242,11 @@ git diff --check
 
 Cuando tú decidas subir esta rama, el workflow de prueba se ejecuta manualmente seleccionando `custom-themes`, o por un push cuyo mensaje de commit contenga `[testing]`. No necesitas usar el workflow de publicación para obtener el APK de prueba.
 
-El orden de prueba es: Java/Flutter → dependencias → `flutter gen-l10n` → Dart format en el runner → parche de fuentes → análisis/log → `flutter test` → APK arm64 → artifact. El workflow mantiene sus secretos de firma existentes y no crea releases ni tags.
+El workflow ahora valida manifiesto/pubspec y produce notas preview antes de decodificar la firma. Admite `all_abis: true` manual para revisar los tres APK sin publicar. El resto del orden de prueba es: Java/Flutter → dependencias → `flutter gen-l10n` → Dart format en el runner → parche de fuentes → análisis/log → `flutter test` → APK arm64 → artifact. El workflow mantiene sus secretos de firma existentes y no crea releases ni tags.
 
 El artifact `flutter-source-sync` contiene `flutter-source-sync.patch`: cambios generados y de formato del runner. Puedes revisarlo y aplicarlo en el mismo commit local con `git apply --check` y después `git apply`; no aplicarlo sin revisar si tu copia ya avanzó. Esto permite incorporar la generación/formato aun trabajando en Termux sin SDK. El runner no hace commits por ti.
 
-El workflow de publicación también genera localizaciones y formatea antes de analizar, pero no fue ejecutado ni está autorizado como parte de esta tarea. La versión y los manifiestos de release no se cambiaron.
+El workflow de publicación también genera localizaciones y formatea antes de analizar, pero no fue ejecutado ni está autorizado como parte de esta tarea. Se prepararon `1.8.3+22` y su manifiesto localizado; los manifiestos publicados no se cambiaron. Ver [preparación oficial](docs/RELEASE_1.8.3.md).
 
 ## 10. Registro de cambios de desarrollo de esta rama
 
@@ -268,9 +268,9 @@ El workflow de publicación también genera localizaciones y formatea antes de a
   todos los diseños. El resumen recibido no incluye la excepción concreta;
   no se certifica la causa exacta ni el resultado del cambio sin repetir Actions.
   Testing conserva ahora el log expandido completo como `flutter-test-log`.
-- Pendientes: ejecución completa de Actions, incorporación opcional de su parche y matriz física.
+- La build #177 de idioma/Ajustes pasó en Actions; la preparación posterior de 1.8.3+22 requiere su propia build. Continúan pendientes revisión del parche y matriz física.
 
-Este registro es el changelog de desarrollo. No crea un manifiesto de lanzamiento para una versión todavía no elegida ni altera notas de una release ya publicada.
+Este registro conserva el historial de desarrollo. Las notas oficiales preparadas de 1.8.3 viven en `release-manifests/v1.8.3.json`; no se altera ninguna nota publicada.
 
 ## 11. Verificación de sincronización de estado
 

@@ -19,12 +19,14 @@ Revisado el 2026-09-28.
 - Firma el APK con secretos, ejecuta `flutter analyze`, conserva el log y ejecuta
   `flutter test --reporter expanded` antes de compilar; conserva `flutter-test-log`
   incluso cuando una prueba falla, y el fallo continúa bloqueando el APK.
-- Compila solo arm64 y publica un artifact durante 7 días.
+- Compila arm64 por defecto; testing manual con `all_abis: true` incluye
+  arm32/x86_64 sin publicar releases. Conserva el artifact durante 7 días.
 - No crea tag ni GitHub Release.
 
 ### `buildAndroid.yaml`
 
 - Solo se ejecuta manualmente y permite marcar una prerelease.
+- Release estable requiere `main`; el tag se fija al SHA compilado.
 - Lee `versionName`/`versionCode` de `pubspec.yaml`.
 - Verifica que no exista el tag `v<versionName>`.
 - Genera traducciones, formatea Dart en el runner, ejecuta análisis, compila
@@ -95,3 +97,15 @@ subir un commit con `[testing]`. Continúan siendo necesarios los secretos de
 firma existentes. No usar el workflow de publicación para obtener una prueba.
 No se ejecutaron Actions ni builds como parte de la implementación local.
 Ver [flujo y validación de temas](../cuatom_themea.md).
+
+## Preparación 1.8.3+22
+
+`pubspec.yaml` y `release-manifests/v1.8.3.json` están alineados. Testing valida
+esa pareja, ejecuta los tests Python y adjunta preview EN/ES junto al JSON
+localizado. Los tests de manifiesto derivan la versión desde pubspec.
+
+Una ejecución manual de testing con `all_abis: true` permite revisar los tres
+APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
+El valor por defecto/push permanece en arm64. La publicación oficial sigue
+requiriendo autorización y merge previo a main; las prereleases conservan su
+flujo manual autorizado. Ver [preparación 1.8.3](RELEASE_1.8.3.md).

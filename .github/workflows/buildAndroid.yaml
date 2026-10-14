@@ -25,6 +25,16 @@ jobs:
 
     steps:
 
+      - name: Verificar rama para release estable
+        if: inputs.prerelease == 'false'
+        env:
+          RELEASE_REF: ${{ github.ref }}
+        run: |
+          if [ "$RELEASE_REF" != 'refs/heads/main' ]; then
+            echo '::error::Una release estable debe prepararse y publicarse desde main.'
+            exit 1
+          fi
+
       # ── 1. Checkout ──────────────────────────────────────────────────────────
       - name: Checkout repositorio
         uses: actions/checkout@v4
@@ -215,11 +225,11 @@ jobs:
           cat >> "$NOTES_FILE" << 'DOWNLOADS'
 
           ---
-          ## Descargas
+          ## Downloads
 
-          - **arm64** → dispositivos modernos 64-bit (2018+) ← recomendado
-          - **arm32** → dispositivos antiguos 32-bit
-          - **x86_64** → emuladores
+          - **arm64** → Android devices with 64-bit ARM support (recommended when supported)
+          - **arm32** → Android devices using 32-bit ARM
+          - **x86_64** → Android x86_64 emulators
           DOWNLOADS
 
       # ── 14. Calcular SHA-256 de los APKs ─────────────────────────────────
@@ -254,6 +264,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}
+          target_commitish: ${{ github.sha }}
           name: "Sm64CDPY v${{ steps.version.outputs.version }}"
           body_path: /tmp/release_notes.txt
           files: |

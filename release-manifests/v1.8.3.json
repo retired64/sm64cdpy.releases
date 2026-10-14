@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.3",
+  "build": 22,
+  "publishedAt": "2026-10-14T02:59:33Z",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "Interface themes and a refreshed Settings screen",
+      "summary": "Version 1.8.3 adds the bundled Retro Manga and Mario 64 interface designs and brings matching animated selectors to Settings.",
+      "highlights": [
+        "Choose Retro Manga or Mario 64 independently from light, dark, or system appearance.",
+        "Theme, appearance mode, and language use matching expandable selectors.",
+        "Mario 64 gives Settings softer panels, rounded controls, and subtle shadows."
+      ],
+      "sections": [
+        {
+          "heading": "Interface themes",
+          "items": [
+            "Retro Manga remains the default; Mario 64 is included as an alternative with its own light and dark palettes, rounded surfaces, and decoration settings.",
+            "The selected design applies to app screens, catalogue cards, filters, dialogs, and loading or error states.",
+            "Themes work offline and are remembered when the app is reopened."
+          ]
+        },
+        {
+          "heading": "Consistent Settings",
+          "items": [
+            "Interface theme, appearance mode, and language display the current selection and reveal their options when opened.",
+            "The language selector keeps its animated arrow and expansion and closes automatically after a language is chosen.",
+            "Mario 64 uses finer borders, softer shadows, rounded icon tiles and switches, and cleaner section headings in Settings."
+          ]
+        },
+        {
+          "heading": "Appearance recovery and contrast",
+          "items": [
+            "Appearance choices are confirmed after saving; simultaneous requests are blocked and a failed save restores the previous choice.",
+            "Older installations keep their appearance mode. Unavailable saved designs fall back to Retro Manga without losing the mode.",
+            "Text on filled buttons, badges, filters, and progress surfaces uses the matching contrast role."
+          ]
+        },
+        {
+          "heading": "Floating panel and updates",
+          "items": [
+            "The floating panel keeps its independent, fixed dark design; interface selection currently applies to the main app.",
+            "Download and installation behavior is preserved. This is an optional update."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Temas de interfaz y Ajustes renovados",
+      "summary": "La versión 1.8.3 incorpora los diseños incluidos Retro Manga y Mario 64 y unifica los selectores animados de Ajustes.",
+      "highlights": [
+        "Elige Retro Manga o Mario 64 de forma independiente del modo claro, oscuro o del sistema.",
+        "Tema, modo de apariencia e idioma usan selectores desplegables con el mismo diseño.",
+        "Mario 64 da a Ajustes paneles más suaves, controles redondeados y sombras discretas."
+      ],
+      "sections": [
+        {
+          "heading": "Temas de interfaz",
+          "items": [
+            "Retro Manga sigue siendo el tema predeterminado; Mario 64 se incluye como alternativa con paletas clara y oscura, superficies redondeadas y decoración propia.",
+            "El diseño seleccionado se aplica a las pantallas, tarjetas de catálogo, filtros, diálogos y estados de carga o error.",
+            "Los temas funcionan sin conexión y se conservan al volver a abrir la app."
+          ]
+        },
+        {
+          "heading": "Ajustes coherentes",
+          "items": [
+            "Tema de interfaz, modo de apariencia e idioma muestran la selección actual y despliegan sus opciones al abrirlos.",
+            "El selector de idioma conserva el giro de la flecha y la expansión animada, y se cierra automáticamente después de elegir un idioma.",
+            "Mario 64 usa bordes más finos, sombras suaves, iconos y switches redondeados y cabeceras más limpias en Ajustes."
+          ]
+        },
+        {
+          "heading": "Recuperación de apariencia y contraste",
+          "items": [
+            "Las selecciones de apariencia se confirman después de guardar; se bloquean solicitudes simultáneas y un fallo restaura la selección anterior.",
+            "Las instalaciones anteriores conservan su modo de apariencia. Los diseños guardados que ya no están disponibles recuperan Retro Manga sin perder el modo.",
+            "Texto sobre botones rellenos, etiquetas, filtros y superficies de progreso usa el color de contraste correspondiente."
+          ]
+        },
+        {
+          "heading": "Panel flotante y actualizaciones",
+          "items": [
+            "El panel flotante conserva su diseño oscuro fijo e independiente; la selección de interfaz se aplica por ahora a la app principal.",
+            "Se mantiene el funcionamiento de descargas e instalaciones. La actualización es opcional."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Temas de interface e Configurações renovadas",
+      "summary": "A versão 1.8.3 inclui os visuais Retro Manga e Mario 64 e unifica os seletores animados de Configurações.",
+      "highlights": [
+        "Escolha Retro Manga ou Mario 64 independentemente do modo claro, escuro ou do sistema.",
+        "Tema, modo de aparência e idioma usam seletores expansíveis com o mesmo visual.",
+        "Mario 64 traz painéis mais suaves, controles arredondados e sombras discretas para Configurações."
+      ],
+      "sections": [
+        {
+          "heading": "Temas de interface",
+          "items": [
+            "Retro Manga continua como padrão; Mario 64 está incluído como alternativa com paletas clara e escura, superfícies arredondadas e decoração própria.",
+            "O visual selecionado se aplica às telas, cartões do catálogo, filtros, diálogos e estados de carregamento ou erro.",
+            "Os temas funcionam sem conexão e são mantidos ao reabrir o app."
+          ]
+        },
+        {
+          "heading": "Configurações consistentes",
+          "items": [
+            "Tema da interface, modo de aparência e idioma mostram a seleção atual e revelam suas opções ao abrir os seletores.",
+            "O seletor de idioma mantém a rotação da seta e a expansão animada, e fecha automaticamente após escolher um idioma.",
+            "Mario 64 usa bordas mais finas, sombras suaves, ícones e switches arredondados e cabeçalhos mais limpos em Configurações."
+          ]
+        },
+        {
+          "heading": "Recuperação da aparência e contraste",
+          "items": [
+            "As escolhas de aparência são confirmadas após salvar; solicitações simultâneas são bloqueadas e uma falha restaura a seleção anterior.",
+            "Instalações anteriores mantêm seu modo de aparência. Visuais salvos que não estão mais disponíveis voltam para Retro Manga sem perder o modo.",
+            "O texto sobre botões preenchidos, etiquetas, filtros e superfícies de progresso usa a cor de contraste correspondente."
+          ]
+        },
+        {
+          "heading": "Painel flutuante e atualizações",
+          "items": [
+            "O painel flutuante mantém seu visual escuro fixo e independente; a seleção de interface se aplica por enquanto ao app principal.",
+            "O funcionamento dos downloads e das instalações é mantido. A atualização é opcional."
+          ]
+        }
+      ]
+    }
+  }
+}

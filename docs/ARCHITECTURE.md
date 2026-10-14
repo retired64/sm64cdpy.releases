@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado contra `1.8.2+21` el 2026-09-28.
+Revisado para la preparación de `1.8.3+22` en `custom-themes` el 2026-10-13; sin merge ni publicación.
 
 ## Alcance
 

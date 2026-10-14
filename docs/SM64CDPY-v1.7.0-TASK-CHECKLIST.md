@@ -389,3 +389,22 @@ y revisión física de este ajuste; no se modificó overlay ni Android nativo.
 - [x] Mantener Retro y los flujos de SAF/WorkManager/overlay.
 - [x] Preparar prueba de UI de idioma y réplica de preferencias.
 - [ ] Ejecutar nueva Actions y verificar idioma/texto grande en dispositivo.
+
+## Preparación de versión oficial 1.8.3+22
+
+- [x] Confirmar éxito de Actions #177 para la base de idioma/Ajustes.
+- [x] Incrementar pubspec a 1.8.3+22; conservar versionCodes ABI derivados.
+- [x] Crear manifiesto canónico EN/ES/PT-BR con actualización opcional.
+- [x] Adaptar test de manifiesto actual para leer versión desde pubspec.
+- [x] Validar manifiestos y renderer con los tests Python disponibles.
+- [x] Alinear README, arquitectura, estado, CI/CD y guía de release.
+- [x] Testing: validación de versión/notas, previews y opción manual todas ABI.
+- [x] Release: stable solo en main y target_commitish sobre SHA construido.
+- [ ] Nueva Actions con build 22 aprobada.
+- [ ] Prueba física, tres ABI y recuperación/OTA desde 1.8.2.
+- [ ] Fijar publishedAt definitivo (el valor actual es provisional).
+- [ ] Autorizar y realizar merge a main; todavía no realizado.
+- [ ] Autorizar publicación y comprobar tag/assets/Discord/sitio; no iniciado.
+
+Fuente canónica: `release-manifests/v1.8.3.json`. Plan completo:
+[RELEASE_1.8.3.md](RELEASE_1.8.3.md). No se modifican releases históricas.

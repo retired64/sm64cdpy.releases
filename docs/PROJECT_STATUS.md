@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado contra `1.8.2+21` el 2026-09-28.
+Revisado para la preparación de `1.8.3+22` en `custom-themes` el 2026-10-13; sin merge ni publicación.
 
 ## Implementado
 
@@ -115,3 +115,13 @@ Selector de idioma alineado con los dos selectores de apariencia, manteniendo
 animaciones. Mario 64 usa paneles discretos, iconos/toggles redondeados y
 cabeceras limpias en Ajustes. Código y pruebas añadidos; nueva Actions y matriz
 física de idioma/tamaño de texto pendientes.
+
+## Preparación oficial 1.8.3+22
+
+- Base de UI validada en Actions #177 (`e02877f`), con build 21 anterior.
+- Versión/build incrementados y notas oficiales EN/ES/PT-BR en el manifiesto nuevo.
+- Testing valida manifiesto/pubspec, entrega notas preview y permite todas las
+  arquitecturas mediante `all_abis: true` manual, sin publicar.
+- Publicación estable limitada a main y tag sobre SHA compilado.
+- Pendientes: nueva build 22, matriz física/ABIs, fecha final, merge autorizado y
+  publicación autorizada. [Checklist completo](RELEASE_1.8.3.md).
