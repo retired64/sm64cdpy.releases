@@ -224,8 +224,8 @@ subida/publicación si falla. No se añadió una compilación debug redundante.
 
 ## Integración visual de Biblioteca
 
-`Mods del juego` es ahora una pestaña propia, inmediatamente después de
-Instalados, con el mismo selector horizontal y contador que las otras vistas.
+`Mods del juego` es ahora una pestaña propia, como vista principal de
+Biblioteca, con el mismo selector horizontal y contador que las otras vistas.
 El selector queda accesible incluso si falla la lectura de recibos; la edición
 del juego depende de su propia instantánea. `?view=game-mods` abre esa vista.
 Al refrescarla no se fuerza una actualización de catálogos ni otro escaneo de
@@ -263,3 +263,49 @@ Validación física pendiente: aspecto de ambas variantes, teclado/búsqueda,
 navegación entre pestañas, lectores de pantalla y cambio en el menú del juego.
 La funcionalidad anterior fue confirmada por el usuario y la prueba #181
 compiló APK y pasó tests Flutter/Kotlin. Esta revisión visual se valida aparte.
+
+## Fusión de Detectados en Mods del juego
+
+La vista visible Detectados y `DetectedInstallationCard` se retiraron. Biblioteca
+conserva Instalados (recibos), Mods del juego (unidades físicas y activación),
+Actualizaciones e Historial. El enlace antiguo `?view=detected` abre Mods del juego.
+Los textos obsoletos se retiran de los cinco ARB mediante generación normal en CI.
+
+Prioridad: `GameModActivationStore` decide qué existe como mod del juego, con las
+reglas exactas de Lua inmediato/carpeta con main.lua. El nuevo lector compartido
+`LuaModMetadata` recibe el mismo encabezado que ya se leyó para incompatibilidades.
+Migra nombre limpio, autor, categoría, descripción y versión detectada. No consulta
+de nuevo SAF y no busca un supuesto equivalente por título entre descubrimientos.
+El nombre físico sigue siendo la identidad de `enable-mod:`; campos informativos
+no afectan activación, tamaño, incompatibilidades o política de actualizaciones.
+
+El juego reconoce nombre/categoría/descripcion e incompatibilidades en comentarios
+iniciales. Autor y versión son información adicional que publica el mod: su ausencia
+se representa omitiendo el campo. La versión puede extraerse del título, descripción
+o filename cuando hay un marcador reconocible; no se atribuye un ID de catálogo ni
+se ejecuta Lua para obtenerla. Los formatos y colores se limpian solo para mostrar.
+Los metadatos permanecen acotados: nombre/categoría 64, autor 128, descripción 800.
+
+La misma tarjeta muestra autor, categoría y versión cuando existen. Una descripción
+corta lleva a un panel de detalles de solo lectura con el texto completo y la
+identidad real; abrirlo no escribe configuración. La búsqueda local ahora incluye
+esos campos. Se mantienen ambos diseños, filtros de activación, contador y paginación.
+Mods con estructuras inválidas que el descubridor anterior aceptaba como indicios
+no se convierten en mods controlables. DynOS no se mezcla con este contrato Lua.
+
+Se eliminan los disparadores de escaneo antiguo en navegación, refresco, cambio de
+carpeta y olvido de recibos. `ModInstallerPlugin` entrega recibos sin adjuntar su
+caché de descubrimiento; la proyección Hive deja de arrastrar sus errores/datos en
+la siguiente sincronización. El parser, entidad y endpoint antiguos siguen leyendo
+el formato previo para compatibilidad técnica y tests, pero no alimentan la UI.
+Olvidar un recibo conserva los archivos: Mods del juego los enumera independientemente.
+No se añade una caché de metadatos ni otra autoridad de activación.
+
+Tests añadidos: metadata inicial limpia/acotada, ausencia de campos, búsqueda por
+autor y detalles sin escritura; DTO compatible con instantáneas antiguas e identidad
+separada del título. El test de olvido comprueba que conserva historial sin volver
+a escanear archivos. Pendiente físico: seis mods en una sola vista, autor/versiones,
+detalles largos, refresco y activación tras abrir el juego.
+
+Mods del juego es la primera pestaña y la vista predeterminada. Instalados conserva
+los recibos de SM64CDPY y puede abrirse explícitamente con `?view=installed`.

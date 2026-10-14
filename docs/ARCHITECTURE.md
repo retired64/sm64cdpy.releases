@@ -100,16 +100,17 @@ principal mediante un bus de invalidación que no conserva autoridad; el
 válida según `requestId`. Recibos nativos, SAF y WorkManager continúan siendo
 las fuentes de verdad.
 
-El descubrimiento de contenido previo o copiado por fuera de SM64CDPY vive en
-una fuente separada. `InstallationDiscoveryScanner` recorre SAF únicamente al
-abrir Biblioteca, al cambiar una carpeta o mediante refresco manual; nunca
-durante cada render. El recorrido y la lectura de encabezados Lua están
-acotados y se ejecutan fuera del hilo principal. Su caché nativa no es un
-recibo: los hallazgos carecen deliberadamente de identidad de catálogo y solo
-alimentan la vista Detectados de la proyección Hive v3. Un marcador Lua y sus
-metadatos pueden elevar la confianza estructural, pero no autorizan a mostrar
-Instalado ni Actualizar. DynOS y Touch Controls siguen siendo indistinguibles
-por su carpeta física compartida.
+Los mods locales previos o copiados por fuera de SM64CDPY aparecen en la misma
+vista Mods del juego que los descargados por la app. `GameModActivationStore`
+enumera únicamente unidades válidas según el juego: Lua inmediato o carpeta
+inmediata con `main.lua`. La identidad de activación procede del nombre físico;
+`LuaModMetadata` aporta autor, categoría, descripción y versión informativa desde
+el mismo encabezado limitado. Metadata no crea recibos ni identidad de catálogo.
+No se ofrece una pestaña Detectados ni un segundo escaneo de descubrimiento al
+entrar/refrescar Biblioteca, cambiar carpeta u olvidar un recibo. La caché legacy
+no se adjunta a las instantáneas de recibos. El endpoint/modelo de descubrimiento
+anterior permanece para compatibilidad técnica, sin consumidores visuales.
+DynOS/Touch conservan su contrato independiente y no obtienen switches Lua.
 
 ## Navegación y estado
 

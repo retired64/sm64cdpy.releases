@@ -17,7 +17,7 @@ import '../widgets/game_mod_activation_panel.dart';
 import '../providers/game_mod_activation_provider.dart';
 import '../widgets/installation_library_card.dart';
 
-enum _LibraryView { installed, gameMods, updates, detected, recent }
+enum _LibraryView { gameMods, installed, updates, recent }
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -26,7 +26,7 @@ class LibraryScreen extends ConsumerStatefulWidget {
 }
 
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
-  _LibraryView _view = _LibraryView.installed;
+  _LibraryView _view = _LibraryView.gameMods;
   String? _section;
   String? _destination;
   bool _initialViewApplied = false;
@@ -42,7 +42,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     ref.invalidate(allRender96Provider);
     await ref
         .read(installationLibraryProvider.notifier)
-        .refresh(discover: true, forceDiscovery: true);
+        .refresh();
   }
 
   @override
@@ -51,7 +51,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       unawaited(
-        ref.read(installationLibraryProvider.notifier).refresh(discover: true),
+        ref.read(installationLibraryProvider.notifier).refresh(),
       );
     });
   }
@@ -63,8 +63,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         GoRouterState.of(context).uri.queryParameters['view'] == 'recent') {
       _view = _LibraryView.recent;
     } else if (!_initialViewApplied &&
-        GoRouterState.of(context).uri.queryParameters['view'] == 'game-mods') {
+        const ['game-mods', 'detected'].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
       _view = _LibraryView.gameMods;
+    } else if (!_initialViewApplied &&
+        GoRouterState.of(context).uri.queryParameters['view'] == 'installed') {
+      _view = _LibraryView.installed;
     }
     _initialViewApplied = true;
   }
@@ -140,12 +143,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     ),
                   _filters(l10n, retro, state.snapshot, updates),
                   const SizedBox(height: 18),
-                  if (_view == _LibraryView.detected &&
-                      state.snapshot.discoveryTruncated)
-                    _Notice(
-                      text: l10n.libraryDetectedScanLimit,
-                      color: retro.amber,
-                    ),
                   ..._content(l10n, state.snapshot, updates),
                 ],
               ),
@@ -163,24 +160,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     AsyncValue<List<InstallationUpdateCandidate>> updates,
   ) {
     final labels = [
-      l10n.libraryInstalled,
       l10n.gameModsTitle,
+      l10n.libraryInstalled,
       l10n.libraryUpdates,
-      l10n.libraryDetected,
       l10n.libraryRecent,
     ];
     final icons = [
-      Icons.inventory_2_outlined,
       Icons.sports_esports_rounded,
+      Icons.inventory_2_outlined,
       Icons.system_update_alt_rounded,
-      Icons.manage_search_rounded,
       Icons.history_rounded,
     ];
     final counts = <int?>[
-      snapshot?.receipts.length,
       ref.watch(gameModActivationProvider).asData?.value.mods.length,
+      snapshot?.receipts.length,
       updates.asData?.value.length,
-      snapshot?.discoveries.length,
       snapshot?.history.length,
     ];
     return SizedBox(
@@ -227,7 +221,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             <String>{},
       _LibraryView.recent =>
         snapshot.history.map((item) => item.section).toSet(),
-      _LibraryView.detected || _LibraryView.gameMods => <String>{},
+      _LibraryView.gameMods => <String>{},
     }.toList()..sort();
     final destinations = switch (_view) {
       _LibraryView.installed =>
@@ -237,8 +231,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 .map((item) => item.installed.destination)
                 .toSet() ??
             <String>{},
-      _LibraryView.detected =>
-        snapshot.discoveries.map((item) => item.destination).toSet(),
       _LibraryView.recent =>
         snapshot.history.map((item) => item.destination).toSet(),
       _LibraryView.gameMods => <String>{},
@@ -340,25 +332,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     InstallationLibrarySnapshot snapshot,
     AsyncValue<List<InstallationUpdateCandidate>> updates,
   ) {
-    if (_view == _LibraryView.detected) {
-      final discoveries = snapshot.discoveries
-          .where(
-            (item) => _destination == null || item.destination == _destination,
-          )
-          .toList();
-      if (discoveries.isEmpty) {
-        return [
-          _MessageState(
-            icon: Icons.manage_search_rounded,
-            title: l10n.libraryDetectedEmptyTitle,
-            body: l10n.libraryDetectedEmptyBody,
-          ),
-        ];
-      }
-      return discoveries
-          .map((item) => DetectedInstallationCard(discovery: item))
-          .toList(growable: false);
-    }
     if (_view == _LibraryView.updates) {
       return updates.when(
         loading: () => [

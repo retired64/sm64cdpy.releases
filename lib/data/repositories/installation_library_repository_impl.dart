@@ -187,9 +187,9 @@ class InstallationLibraryRepositoryImpl
   Future<InstallationLibrarySnapshot> forgetContent(String contentKey) =>
       _serialized(() async {
         await _gateway.forgetContent(contentKey);
-        // Force discovery because forgotten files remain in the selected SAF
-        // tree and should now be represented conservatively as external.
-        return _store(await _gateway.discover(force: true));
+        // Forget only receipts. The game-mod scanner lists files independently
+        // of ownership and does not need another legacy discovery pass.
+        return _synchronize();
       });
 
   @override

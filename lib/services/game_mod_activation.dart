@@ -1,17 +1,25 @@
 import 'package:flutter/services.dart';
 
 class GameModEntry {
-  const GameModEntry({required this.name, required this.title, required this.enabled, required this.selectable});
+  const GameModEntry({required this.name, required this.title, required this.enabled, required this.selectable, this.author, this.category, this.versionLabel, this.description});
   factory GameModEntry.fromMap(Map<dynamic, dynamic> value) => GameModEntry(
     name: value['name'] as String,
     title: value['title'] as String,
     enabled: value['enabled'] == true,
     selectable: value['selectable'] == true,
+    author: value['author'] as String?,
+    category: value['category'] as String?,
+    versionLabel: value['versionLabel'] as String?,
+    description: value['description'] as String?,
   );
   final String name;
   final String title;
   final bool enabled;
   final bool selectable;
+  final String? author;
+  final String? category;
+  final String? versionLabel;
+  final String? description;
 }
 
 class GameModSnapshot {

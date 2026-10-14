@@ -274,10 +274,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private fun readInstallationLibrarySnapshot(): Map<String, Any?> =
-        InstallationDiscoveryScanner.attachToSnapshot(
-            InstallationReceiptStore.readSnapshot(applicationContext),
-            InstallationDiscoveryScanner.readCached(applicationContext)
-        )
+        InstallationReceiptStore.readSnapshot(applicationContext).filterKeys { it != "ownershipReceipts" }
 
     private fun clearInstallationHistory(result: Result) {
         try {

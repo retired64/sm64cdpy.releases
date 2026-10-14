@@ -178,3 +178,8 @@ búsqueda y filtros locales, contador de activados, tarjetas adaptadas a cada
 diseño y confirmación de juego cerrado por visita (reiniciada al reanudar).
 Restaurar continúa exigiendo confirmación; cada escritura conserva la autoridad
 nativa. Ver [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md), integración visual.
+
+Mods del juego absorbe los datos útiles de Detectados: autor, categoría, versión
+informativa y descripción con detalles/búsqueda. Detectados ya no es una pestaña.
+La enumeración y los switches siguen las reglas del juego; no hay coincidencias
+por título ni otro escaneo automático de descubrimiento. Ver GAME_MOD_ACTIVATION.md.

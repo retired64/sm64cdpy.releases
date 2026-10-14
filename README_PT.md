@@ -33,7 +33,7 @@ progresso do download e da instalação.
 - Catálogo principal, conteúdo popular e destaques.
 - Seções VIP, DynOS, controles de toque, OMM Rebirth e Render96.
 - Importação e exportação de favoritos em JSON.
-- Biblioteca local de conteúdo instalado, recente, detectado e com
+- Biblioteca local de conteúdo instalado, recente, mods do jogo e com
   atualizações disponíveis.
 - Interface em inglês, espanhol e português brasileiro; visuais incluídos Retro Manga e Mario 64, com aparência clara, escura ou do celular. O painel flutuante mantém seu visual escuro fixo.
 - Atualização manual das bases JSON remotas.

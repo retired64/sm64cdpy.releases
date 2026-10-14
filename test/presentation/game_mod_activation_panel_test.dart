@@ -14,7 +14,7 @@ import 'package:sm64cdpy/services/game_mod_activation.dart';
 class _Gateway extends GameModActivation {
   GameModSnapshot current = const GameModSnapshot(status: 'ready', mods: [
     GameModEntry(name: 'alpha', title: 'Alpha adventure with a long descriptive name', enabled: false, selectable: true),
-    GameModEntry(name: 'beta.lua', title: 'Beta', enabled: false, selectable: true),
+    GameModEntry(name: 'beta.lua', title: 'Beta', enabled: false, selectable: true, author: 'Fixture Author', category: 'romhack', versionLabel: '2.4', description: 'A description from the initial Lua header.'),
   ]);
   int writes = 0;
   Completer<void>? gate;
@@ -28,6 +28,7 @@ class _Gateway extends GameModActivation {
     final values = arguments!;
     current = GameModSnapshot(status: 'ready', mods: current.mods.map((mod) => GameModEntry(
       name: mod.name, title: mod.title, selectable: mod.selectable,
+      author: mod.author, category: mod.category, versionLabel: mod.versionLabel, description: mod.description,
       enabled: mod.name == values['name'] ? values['enabled'] == true : mod.enabled,
     )).toList());
     return current;
@@ -89,6 +90,29 @@ void main() {
       });
     }
   }
+
+  testWidgets('merged metadata is searchable and full details never write configuration', (tester) async {
+    final gateway = _Gateway();
+    await _mount(tester, gateway, AppThemeId.mario64);
+    final search = find.byKey(const ValueKey('game-mods-search'));
+    await tester.ensureVisible(search);
+    await tester.enterText(search, 'Fixture Author');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('game-mod-card-alpha')), findsNothing);
+    expect(find.byKey(const ValueKey('game-mod-card-beta.lua')), findsOneWidget);
+    final details = find.text('Mod details');
+    await tester.ensureVisible(details);
+    await tester.tap(details);
+    await tester.pumpAndSettle();
+    expect(find.text('beta.lua'), findsOneWidget);
+    expect(find.text('A description from the initial Lua header.'), findsWidgets);
+    expect(gateway.writes, 0);
+    final close = find.text('Close');
+    await tester.ensureVisible(close);
+    await tester.tap(close);
+    await tester.pumpAndSettle();
+    expect(gateway.writes, 0);
+  });
 
   testWidgets('confirmation covers the visit, saves remain confirmed and resume asks again', (tester) async {
     final gateway = _Gateway();

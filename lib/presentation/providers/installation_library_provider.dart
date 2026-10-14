@@ -41,12 +41,9 @@ class InstallationLibraryNotifier
     ) {
       if (event is BgInstallCompleted) unawaited(refresh());
     });
-    _settingsSubscription = ModInstaller.libraryInvalidations.listen((reason) {
-      final folderChanged =
-          reason.contains('FolderChanged') || reason.contains('FolderCleared');
-      unawaited(
-        refresh(discover: folderChanged, forceDiscovery: folderChanged),
-      );
+    _settingsSubscription = ModInstaller.libraryInvalidations.listen((_) {
+      // Game mods own live discovery. Receipt refresh only verifies its sentinels.
+      unawaited(refresh());
     });
     ref.onDispose(() {
       _installSubscription?.cancel();

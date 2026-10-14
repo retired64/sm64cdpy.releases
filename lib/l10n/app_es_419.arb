@@ -410,7 +410,6 @@
   "libraryTitle": "BIBLIOTECA",
   "libraryInstalled": "Instalados",
   "libraryUpdates": "Actualizaciones",
-  "libraryDetected": "Detectados",
   "libraryRecent": "Recientes",
   "libraryViewAll": "Ver todo",
   "libraryRefresh": "Actualizar biblioteca",
@@ -428,14 +427,9 @@
   "libraryEmptyBody": "Los mods instalados por SM64CDPY aparecerán aquí.",
   "libraryUpdatesEmptyTitle": "NO HAY ACTUALIZACIONES CONOCIDAS",
   "libraryUpdatesEmptyBody": "Aquí aparecerán las actualizaciones confirmadas por el catálogo. También puedes revisar cada sección.",
-  "libraryDetectedEmptyTitle": "NO HAY CONTENIDO EXTERNO DETECTADO",
-  "libraryDetectedEmptyBody": "No se encontró contenido Lua sin registrar en las carpetas seleccionadas. Actualiza después de hacer cambios externos.",
-  "libraryDetectedOnDevice": "Detectado en el dispositivo — sin vincular al catálogo",
   "libraryDiscoveryHeaderIdentified": "Encabezado identificado",
   "libraryDiscoveryProbable": "Mod probable",
   "libraryDiscoveryUnlinked": "Lua sin vincular",
-  "libraryDetectedPath": "Archivo de entrada",
-  "libraryDetectedScanLimit": "Se alcanzó el límite seguro de escaneo. Puede que parte del contenido no aparezca.",
   "libraryErrorTitle": "BIBLIOTECA NO DISPONIBLE",
   "libraryErrorBody": "No se pudo leer el historial de instalaciones. Reintenta sin modificar los archivos del juego.",
   "libraryPartialWarning": "Algunos registros no se pudieron leer. Las instalaciones válidas siguen visibles.",
@@ -494,7 +488,7 @@
   "gameModsSaved": "Selección guardada y verificada para el próximo inicio del juego.",
   "gameModsManage": "Gestionar carpeta del juego",
   "gameModsCount": "{enabled} de {total} activados",
-  "gameModsSearch": "Buscar mods del juego…",
+  "gameModsSearch": "Buscar mods, autores, categorías…",
   "gameModsAll": "Todos",
   "gameModsEnabledFilter": "Activados",
   "gameModsDisabledFilter": "Desactivados",
@@ -510,5 +504,7 @@
       }
     }
   },
-  "gameModsClearSearch": "Borrar búsqueda"
+  "gameModsClearSearch": "Borrar búsqueda",
+  "gameModsDetails": "Detalles del mod",
+  "gameModsCloseDetails": "Cerrar"
 }

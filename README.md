@@ -49,7 +49,7 @@ in-game mod workflow.
 - Browse dedicated VIP, DynOS, Touch Controls, OMM Rebirth, and Render96
   sections.
 - Save favourites locally and import or export them as JSON.
-- Review installed, recently changed, externally detected, and updateable
+- Review installed, recently changed, game-managed, and updateable
   content in the local Library.
 - Use English, Spanish, or Brazilian Portuguese; select a bundled interface design (Retro Manga or Mario 64) independently from light, dark, or system appearance. The floating panel keeps its fixed dark design.
 - Refresh bundled catalogues from their remote JSON sources.

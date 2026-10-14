@@ -1604,7 +1604,6 @@
   "libraryTitle": "LIBRARY",
   "libraryInstalled": "Installed",
   "libraryUpdates": "Updates",
-  "libraryDetected": "Detected",
   "libraryRecent": "Recent",
   "libraryViewAll": "View all",
   "libraryRefresh": "Refresh library",
@@ -1622,14 +1621,9 @@
   "libraryEmptyBody": "Mods installed by SM64CDPY will appear here.",
   "libraryUpdatesEmptyTitle": "NO KNOWN UPDATES",
   "libraryUpdatesEmptyBody": "Updates confirmed by the catalog will appear here. You can still check each content section.",
-  "libraryDetectedEmptyTitle": "NO EXTERNAL CONTENT DETECTED",
-  "libraryDetectedEmptyBody": "No untracked Lua content was found in the selected folders. Refresh after making external changes.",
-  "libraryDetectedOnDevice": "Detected on device — not linked to the catalog",
   "libraryDiscoveryHeaderIdentified": "Header identified",
   "libraryDiscoveryProbable": "Probable mod",
   "libraryDiscoveryUnlinked": "Unlinked Lua",
-  "libraryDetectedPath": "Entry file",
-  "libraryDetectedScanLimit": "The safety scan limit was reached. Some content may not be shown.",
   "libraryErrorTitle": "LIBRARY UNAVAILABLE",
   "libraryErrorBody": "The installation history could not be read. Try again without changing your game files.",
   "libraryPartialWarning": "Some records could not be read. Valid installations are still shown.",
@@ -1695,7 +1689,7 @@
   "gameModsSaved": "Selection saved and verified for the next game start.",
   "gameModsManage": "Manage game folder",
   "gameModsCount": "{enabled} of {total} enabled",
-  "gameModsSearch": "Search game mods…",
+  "gameModsSearch": "Search mods, authors, categories…",
   "gameModsAll": "All",
   "gameModsEnabledFilter": "Enabled",
   "gameModsDisabledFilter": "Disabled",
@@ -1711,5 +1705,7 @@
       }
     }
   },
-  "gameModsClearSearch": "Clear search"
+  "gameModsClearSearch": "Clear search",
+  "gameModsDetails": "Mod details",
+  "gameModsCloseDetails": "Close"
 }

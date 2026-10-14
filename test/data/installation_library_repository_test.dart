@@ -197,7 +197,7 @@ void main() {
     expect(snapshot.history, isEmpty);
   });
 
-  test('forgetting content preserves history and forces discovery', () async {
+  test('forgetting content preserves history without scanning game files again', () async {
     final receipt = installationReceiptFixture();
     final gateway = FakeGateway({
       'schemaVersion': 1,
@@ -215,7 +215,7 @@ void main() {
     );
 
     expect(gateway.forgetCalls, 1);
-    expect(gateway.discoverCalls, 1);
+    expect(gateway.discoverCalls, 0);
     expect(snapshot.receipts, isEmpty);
     expect(snapshot.history, hasLength(1));
   });

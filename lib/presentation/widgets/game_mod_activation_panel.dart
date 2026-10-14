@@ -171,7 +171,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     final mods = snapshot?.mods ?? const <GameModEntry>[];
     final query = _search.text.trim().toLowerCase();
     final filtered = mods.where((mod) =>
-      (query.isEmpty || mod.title.toLowerCase().contains(query) || mod.name.toLowerCase().contains(query)) &&
+      (query.isEmpty || [mod.title, mod.name, mod.author, mod.category, mod.versionLabel, mod.description].whereType<String>().any((text) => text.toLowerCase().contains(query))) &&
       switch (_filter) { _ModFilter.all => true, _ModFilter.enabled => mod.enabled, _ModFilter.disabled => !mod.enabled },
     ).toList(growable: false);
     final active = mods.where((mod) => mod.enabled).length;
@@ -328,6 +328,35 @@ class _GameModCard extends StatelessWidget {
   final bool saving;
   final bool showIdentity;
   final ValueChanged<bool>? onChanged;
+  Future<void> _showDetails(BuildContext context) async {
+    await showModalBottomSheet<void>(context: context, isScrollControlled: true,
+      builder: (context) {
+        final retro = RetroTheme.of(context);
+        final l10n = AppLocalizations.of(context);
+        return FractionallySizedBox(heightFactor: 0.75, child: SafeArea(child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            SectionKicker(retro: retro, label: l10n.gameModsDetails),
+            const SizedBox(height: 18),
+            Text(mod.title.isEmpty ? mod.name : mod.title, style: retro.heading(size: 20)),
+            const SizedBox(height: 8),
+            Text(mod.name, style: retro.body(size: 12, color: retro.inkDim)),
+            const SizedBox(height: 16),
+            Wrap(spacing: 12, runSpacing: 8, children: [
+              if (mod.versionLabel != null) _GameMetadata(icon: Icons.sell_outlined, label: mod.versionLabel!),
+              if (mod.author != null) _GameMetadata(icon: Icons.person_outline_rounded, label: mod.author!),
+              if (mod.category != null) _GameMetadata(icon: Icons.category_outlined, label: mod.category!),
+            ]),
+            const SizedBox(height: 18),
+            Text(mod.description ?? '', style: retro.body(size: 14, color: retro.ink)),
+            const SizedBox(height: 20),
+            _LibraryAction(label: l10n.gameModsCloseDetails, icon: Icons.close_rounded, onPressed: () => Navigator.pop(context)),
+          ]),
+        )));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
@@ -356,6 +385,22 @@ class _GameModCard extends StatelessWidget {
               ? Icon(retro.design.playfulSelection ? Icons.star_rounded : Icons.check_rounded, size: 16, color: retro.accentText) : null),
           )),
         ]),
+        if (mod.versionLabel != null || mod.author != null || mod.category != null) ...[
+          const SizedBox(height: 10),
+          Wrap(spacing: 12, runSpacing: 6, children: [
+            if (mod.versionLabel != null) _GameMetadata(icon: Icons.sell_outlined, label: mod.versionLabel!),
+            if (mod.author != null) _GameMetadata(icon: Icons.person_outline_rounded, label: mod.author!),
+            if (mod.category != null) _GameMetadata(icon: Icons.category_outlined, label: mod.category!),
+          ]),
+        ],
+        if (mod.description != null) ...[
+          const SizedBox(height: 10),
+          Text(mod.description!, maxLines: 2, overflow: TextOverflow.ellipsis, style: retro.body(size: 12)),
+          Align(alignment: AlignmentDirectional.centerEnd, child: TextButton.icon(
+            onPressed: () => _showDetails(context),
+            icon: const Icon(Icons.description_outlined, size: 16), label: Text(l10n.gameModsDetails),
+          )),
+        ],
         const SizedBox(height: 10),
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Icon(!mod.selectable ? Icons.lock_outline_rounded : mod.enabled ? Icons.check_circle_outline_rounded : Icons.pause_circle_outline_rounded,
@@ -366,5 +411,19 @@ class _GameModCard extends StatelessWidget {
         ]),
       ]),
     );
+  }
+}
+
+class _GameMetadata extends StatelessWidget {
+  const _GameMetadata({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      Icon(icon, size: 14, color: retro.inkDim), const SizedBox(width: 5),
+      Flexible(child: Text(label, style: retro.body(size: 11.5, color: retro.inkDim))),
+    ]);
   }
 }

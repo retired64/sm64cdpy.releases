@@ -14,7 +14,7 @@ internal object GameModActivationStore {
     const val KEY = "game_user_tree_uri"
     private const val MAX_CONFIG = 256 * 1024
     private const val MAX_ENTRIES = 500
-    private data class Mod(val name: String, val title: String, val tags: Set<String>, val safe: Boolean)
+    private data class Mod(val name: String, val title: String, val tags: Set<String>, val safe: Boolean, val metadata: LuaModMetadata.Info)
 
     private fun prefs(context: Context) = context.getSharedPreferences(ModInstallerPlugin.PREF_NAME, Context.MODE_PRIVATE)
     private fun sameDocument(a: Uri, b: Uri): Boolean = a.authority == b.authority &&
@@ -171,11 +171,17 @@ internal object GameModActivationStore {
             var title = name
             var safe = GameModConfig.validName(name)
             var tags = emptySet<String>()
+            var metadata = LuaModMetadata.Info()
             try {
                 val lines = mutableListOf<String>()
                 context.contentResolver.openInputStream(script.uri)?.bufferedReader(Charsets.UTF_8)?.use { reader ->
                     var length = 0
                     while (true) {
+                        reader.mark(2)
+                        val first = reader.read()
+                        val second = reader.read()
+                        reader.reset()
+                        if (first != 45 || second != 45) break
                         val lineBuffer = StringBuilder()
                         var ended = false
                         while (true) {
@@ -193,6 +199,7 @@ internal object GameModActivationStore {
                         lines += line
                     }
                 } ?: error("access")
+                metadata = LuaModMetadata.parse(lines.joinToString("\n"), name)
                 var foundTags = false
                 for (line in lines) {
                     if (title == name && line.startsWith("-- name:")) title = line.removePrefix("-- name:").trim().take(64)
@@ -202,7 +209,7 @@ internal object GameModActivationStore {
                     }
                 }
             } catch (_: Exception) { safe = false }
-            Mod(name, title, tags, safe)
+            Mod(name, metadata.name ?: LuaModMetadata.clean(title).ifBlank { name }, tags, safe, metadata)
         }.sortedBy { it.name }
     }
 
@@ -218,7 +225,9 @@ internal object GameModActivationStore {
             mapOf("status" to "ready", "backupAvailable" to (prefs(context).getString("game_mod_backup_document", null) == config.uri.toString()), "mods" to mods.map { mod ->
                 val conflict = mods.any { it.name != mod.name && it.name in selected &&
                     it.tags.intersect(mod.tags).isNotEmpty() }
-                mapOf("name" to mod.name, "title" to mod.title, "enabled" to (mod.name in selected),
+                mapOf("name" to mod.name, "title" to mod.title,
+                    "author" to mod.metadata.author, "category" to mod.metadata.category,
+                    "versionLabel" to mod.metadata.version, "description" to mod.metadata.description, "enabled" to (mod.name in selected),
                     "selectable" to (mod.name in selected || (mod.safe && mods.all { it.safe } && !conflict)))
             })
         } catch (error: Exception) {

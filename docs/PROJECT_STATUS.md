@@ -28,9 +28,9 @@ Revisado para la preparación de `1.8.3+22` en `custom-themes` el 2026-10-13; si
 - Snapshot versionado de Biblioteca hacia el segundo engine del overlay, con
   descarte de respuestas antiguas y actualización tras instalación,
   verificación o cambio de carpeta.
-- Detección conservadora de contenido Lua externo mediante SAF, con lectura
-  limitada de encabezados, caché nativa separada, confianza estructural y vista
-  Detectados sin fabricar identidad de catálogo ni recibos.
+- Vista única Mods del juego para unidades Lua válidas, propias o externas,
+  con activación verificada y metadata limitada de autor/categoría/versión/descripcion.
+  Detectados fue retirada; no se inventan recibos ni identidades de catálogo.
 - Actualizaciones de Biblioteca contra artefactos canónicos del catálogo,
   clasificación durable de instalación/actualización/reinstalación, reemplazo
   lógico recuperable y mantenimiento individual sin borrar archivos del juego.

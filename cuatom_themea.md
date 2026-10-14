@@ -399,3 +399,7 @@ paletas locales. La presentación incluye búsqueda/filtros locales, estados
 de acceso/error/vacío/guardado, acciones y diálogos propios y `AppSnackbar`.
 Añadir otro diseño al catálogo actualiza estos elementos mediante sus roles.
 Plan técnico y ciclo de vida: `docs/GAME_MOD_ACTIVATION.md`.
+
+La tarjeta única de Mods del juego incorpora autor/categoría/versión, descripción
+y detalles de solo lectura mediante los mismos roles visuales. Detectados y su
+widget se retiraron; no hay una segunda presentación visual del mismo archivo.
