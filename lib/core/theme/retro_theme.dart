@@ -248,7 +248,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     color: color ?? inkDim,
     fontFamily: bodyFamily,
     fontFamilyFallback: const ['Roboto'],
-    fontSize: isMario && marioAssets.complete ? size.clamp(14.0, double.infinity) : size,
+    fontSize: isMario && marioAssets.complete
+        ? size.clamp(14.0, double.infinity)
+        : size,
     fontWeight: isMario && marioAssets.complete ? FontWeight.w400 : weight,
     letterSpacing: isMario ? 0 : null,
     height: height,
@@ -806,11 +808,13 @@ class SectionKicker extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: retro.heading(size: 13.5).copyWith(
-                fontFamily: retro.menuFamily,
-                height: 1.3,
-                letterSpacing: 0,
-              ),
+              style: retro
+                  .heading(size: 13.5)
+                  .copyWith(
+                    fontFamily: retro.menuFamily,
+                    height: 1.3,
+                    letterSpacing: 0,
+                  ),
             ),
           )
         else

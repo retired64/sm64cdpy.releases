@@ -827,7 +827,9 @@ class _RetroTileShell extends StatelessWidget {
                       Text(
                         pathHint!,
                         style: retro.isMario
-                            ? retro.body(size: 14).copyWith(fontFamily: 'Roboto')
+                            ? retro
+                                  .body(size: 14)
+                                  .copyWith(fontFamily: 'Roboto')
                             : TextStyle(
                                 color: retro.inkDim,
                                 fontSize: 10,
