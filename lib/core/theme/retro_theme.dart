@@ -146,6 +146,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   }) => TextStyle(
     color: color ?? ink,
     fontFamily: design.headingFontFamily,
+    fontFamilyFallback: design.headingFontFamilyFallback,
     fontSize: size,
     fontWeight: weight ?? design.headingWeight,
     letterSpacing: letterSpacing ?? design.headingTracking,
@@ -176,10 +177,11 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
 
   ThemeData toMaterialTheme() {
     final shape = RoundedRectangleBorder(borderRadius: radius);
-    return ThemeData(
+    final theme = ThemeData(
       useMaterial3: true,
       extensions: <ThemeExtension<dynamic>>[this],
       fontFamily: design.bodyFontFamily,
+      fontFamilyFallback: design.headingFontFamilyFallback,
       colorScheme: ColorScheme(
         brightness: isDark ? Brightness.dark : Brightness.light,
         primary: accent,
@@ -235,6 +237,28 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
           foregroundColor: accentText,
         ),
       ),
+    );
+    if (design.headingFontFamily == null) return theme;
+    TextStyle? title(TextStyle? base) => base?.copyWith(
+      fontFamily: design.headingFontFamily,
+      fontFamilyFallback: design.headingFontFamilyFallback,
+      fontWeight: design.headingWeight,
+      letterSpacing: design.headingTracking,
+    );
+    TextTheme typography(TextTheme base) => base.copyWith(
+      displayLarge: title(base.displayLarge),
+      displayMedium: title(base.displayMedium),
+      displaySmall: title(base.displaySmall),
+      headlineLarge: title(base.headlineLarge),
+      headlineMedium: title(base.headlineMedium),
+      headlineSmall: title(base.headlineSmall),
+      titleLarge: title(base.titleLarge),
+      titleMedium: title(base.titleMedium),
+      titleSmall: title(base.titleSmall),
+    );
+    return theme.copyWith(
+      textTheme: typography(theme.textTheme),
+      primaryTextTheme: typography(theme.primaryTextTheme),
     );
   }
 
@@ -307,6 +331,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
           t,
         )!,
         headingFontFamily: selected.design.headingFontFamily,
+        headingFontFamilyFallback: selected.design.headingFontFamilyFallback,
         bodyFontFamily: selected.design.bodyFontFamily,
         halftone: selected.showHalftone,
         stripes: selected.showStripes,

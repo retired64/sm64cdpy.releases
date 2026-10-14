@@ -30,7 +30,8 @@
           "items": [
             "Retro Manga remains the default; Mario 64 is included as an alternative with its own light and dark palettes, rounded surfaces, and decoration settings.",
             "The selected design applies to app screens, catalogue cards, filters, dialogs, and loading or error states.",
-            "Themes work offline and are remembered when the app is reopened."
+            "Themes work offline and are remembered when the app is reopened.",
+            "Mario 64 uses bundled TypefaceMario64 for headings and SuperMario286 for descriptions, with fallback for accented characters."
           ]
         },
         {
@@ -83,7 +84,8 @@
           "items": [
             "Retro Manga sigue siendo el tema predeterminado; Mario 64 se incluye como alternativa con paletas clara y oscura, superficies redondeadas y decoración propia.",
             "El diseño seleccionado se aplica a las pantallas, tarjetas de catálogo, filtros, diálogos y estados de carga o error.",
-            "Los temas funcionan sin conexión y se conservan al volver a abrir la app."
+            "Los temas funcionan sin conexión y se conservan al volver a abrir la app.",
+            "Mario 64 utiliza TypefaceMario64 incluida para títulos y SuperMario286 para descripciones, con respaldo para caracteres acentuados."
           ]
         },
         {
@@ -136,7 +138,8 @@
           "items": [
             "Retro Manga continua como padrão; Mario 64 está incluído como alternativa com paletas clara e escura, superfícies arredondadas e decoração própria.",
             "O visual selecionado se aplica às telas, cartões do catálogo, filtros, diálogos e estados de carregamento ou erro.",
-            "Os temas funcionam sem conexão e são mantidos ao reabrir o app."
+            "Os temas funcionam sem conexão e são mantidos ao reabrir o app.",
+            "Mario 64 usa TypefaceMario64 incluída nos títulos e SuperMario286 nas descrições, com fallback para caracteres acentuados."
           ]
         },
         {

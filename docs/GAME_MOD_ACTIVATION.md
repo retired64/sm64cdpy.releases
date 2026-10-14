@@ -309,3 +309,10 @@ detalles largos, refresco y activación tras abrir el juego.
 
 Mods del juego es la primera pestaña y la vista predeterminada. Instalados conserva
 los recibos de SM64CDPY y puede abrirse explícitamente con `?view=installed`.
+
+## Tipografía Mario 64
+
+La vista y los detalles utilizan roles de `RetroTheme`: TypefaceMario64 para
+encabezados y SuperMario286 (`fonts/3.ttf`) para texto descriptivo, solo en Mario 64.
+Los tests de pantalla estrecha/texto ampliado cargan los archivos de fuente reales,
+en lugar de comprobar únicamente la tipografía de prueba del runner.

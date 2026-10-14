@@ -103,6 +103,7 @@ class AppThemeDesign {
     this.headingWeight = FontWeight.w900,
     this.headingTracking = -0.3,
     this.headingFontFamily,
+    this.headingFontFamilyFallback = const [],
     this.bodyFontFamily,
     this.halftone = true,
     this.stripes = true,
@@ -124,6 +125,7 @@ class AppThemeDesign {
   final FontWeight headingWeight;
   final double headingTracking;
   final String? headingFontFamily;
+  final List<String> headingFontFamilyFallback;
   final String? bodyFontFamily;
   final bool halftone;
   final bool stripes;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_theme_design.dart';
 
 /// Code-native interpretation of the bright, dimensional language of a
-/// late-1990s 3D platform game. It deliberately uses no extracted game assets.
+/// late-1990s 3D platform game. It uses bundled typography supplied for this design.
 const mario64Theme = AppThemeDesign(
   id: AppThemeId.mario64,
   cornerRadius: 14,
@@ -12,6 +12,10 @@ const mario64Theme = AppThemeDesign(
   shadowOffsetScale: 0.8,
   chipSkew: 0,
   headingTracking: 0,
+  headingWeight: FontWeight.w400,
+  headingFontFamily: 'TypefaceMario64',
+  headingFontFamilyFallback: ['SuperMario286'],
+  bodyFontFamily: 'SuperMario286',
   halftone: false,
   stripes: false,
   uppercaseLabels: false,

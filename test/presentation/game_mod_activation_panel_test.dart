@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/core/theme/app_theme_design.dart';
@@ -35,7 +36,20 @@ class _Gateway extends GameModActivation {
   }
 }
 
+bool _fontsLoaded = false;
+
+Future<void> _loadBundledFonts(WidgetTester tester) async {
+  if (_fontsLoaded) return;
+  await tester.runAsync(() async {
+    final headings = FontLoader('TypefaceMario64')..addFont(rootBundle.load('fonts/TypefaceMario64.otf'));
+    final body = FontLoader('SuperMario286')..addFont(rootBundle.load('fonts/3.ttf'));
+    await Future.wait([headings.load(), body.load()]);
+  });
+  _fontsLoaded = true;
+}
+
 Future<void> _mount(WidgetTester tester, _Gateway gateway, AppThemeId design, {bool dark = false, double scale = 1}) async {
+  await _loadBundledFonts(tester);
   await tester.pumpWidget(ProviderScope(overrides: [gameModGatewayProvider.overrideWithValue(gateway)],
     child: MaterialApp(
       theme: RetroTheme.materialTheme(dark, design: AppThemeCatalog.resolve(design)),

@@ -60,3 +60,13 @@ flutter:
     - assets/db/render96.json
     - assets/icons/
     - assets/icons/menu/
+
+  fonts:
+    - family: TypefaceMario64
+      fonts:
+        - asset: fonts/TypefaceMario64.otf
+          weight: 400
+    - family: SuperMario286
+      fonts:
+        - asset: fonts/3.ttf
+          weight: 400

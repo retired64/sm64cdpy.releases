@@ -183,3 +183,9 @@ Mods del juego absorbe los datos útiles de Detectados: autor, categoría, versi
 informativa y descripción con detalles/búsqueda. Detectados ya no es una pestaña.
 La enumeración y los switches siguen las reglas del juego; no hay coincidencias
 por título ni otro escaneo automático de descubrimiento. Ver GAME_MOD_ACTIVATION.md.
+
+Mario 64 integra las fuentes locales de `fonts/`: TypefaceMario64 en títulos y
+SuperMario286 (3.ttf) en descripciones/cuerpo. El respaldo de títulos conserva
+acentos de español/portugués. Roles Material y helpers comparten esa definición;
+Retro y overlay conservan su tipografía. CI incluye prueba con fuentes reales
+para ancho estrecho y texto ampliado. Pendiente la revisión visual en dispositivo.
