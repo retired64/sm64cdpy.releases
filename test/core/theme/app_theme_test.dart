@@ -37,10 +37,16 @@ void main() {
           expect(material.colorScheme.primary, r.accent);
           expect(material.colorScheme.onPrimary, r.inkOnAccent);
           expect(material.scaffoldBackgroundColor, r.background);
-          expect(r.systemUiStyle.statusBarIconBrightness,
-            r.background.computeLuminance() > 0.179 ? Brightness.dark : Brightness.light);
-          expect(r.systemUiStyle.systemNavigationBarIconBrightness,
-            r.systemUiStyle.statusBarIconBrightness);
+          expect(
+            r.systemUiStyle.statusBarIconBrightness,
+            r.background.computeLuminance() > 0.179
+                ? Brightness.dark
+                : Brightness.light,
+          );
+          expect(
+            r.systemUiStyle.systemNavigationBarIconBrightness,
+            r.systemUiStyle.statusBarIconBrightness,
+          );
         },
       );
     }

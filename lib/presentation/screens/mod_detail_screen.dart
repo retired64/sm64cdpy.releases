@@ -115,8 +115,10 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
                 mod: widget.mod,
                 descExpanded: _descExpanded,
                 changelogExpanded: _changelogExpanded,
-                onExpandDesc: () => setState(() => _descExpanded = !_descExpanded),
-                onExpandChangelog: () => setState(() => _changelogExpanded = !_changelogExpanded),
+                onExpandDesc: () =>
+                    setState(() => _descExpanded = !_descExpanded),
+                onExpandChangelog: () =>
+                    setState(() => _changelogExpanded = !_changelogExpanded),
               ),
             ),
 
@@ -158,9 +160,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
                         .toggle(widget.mod.id),
                     isAppBarSolid: true,
                     retro: retro,
-                    activeColor: isFav
-                        ? retro.accentText
-                        : null,
+                    activeColor: isFav ? retro.accentText : null,
                   ),
                   const SizedBox(width: 6),
                   _GlassIconButton(
@@ -269,18 +269,55 @@ class _ModHeader extends StatelessWidget {
       key: const ValueKey('mod-detail-header'),
       padding: const EdgeInsets.all(16),
       decoration: retro.surfaceDecoration(shadowDx: 3, shadowDy: 3),
-      child: LayoutBuilder(builder: (context, constraints) {
-        if (constraints.maxWidth < 420 || MediaQuery.textScalerOf(context).scale(16) > 22) {
-          return Column(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 420 ||
+              MediaQuery.textScalerOf(context).scale(16) > 22) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    cover,
+                    if (mod.isFeatured)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: RetroBadgeDot(
+                          retro: retro,
+                          icon: Icons.star_rounded,
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _TitleSection(mod: mod),
+              ],
+            );
+          }
+          return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Stack(children: [cover, if (mod.isFeatured) Positioned(right: 0, bottom: 0, child: RetroBadgeDot(retro: retro, icon: Icons.star_rounded))]), const SizedBox(height: 16), _TitleSection(mod: mod)],
+            children: [
+              Stack(
+                children: [
+                  cover,
+                  if (mod.isFeatured)
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: RetroBadgeDot(
+                        retro: retro,
+                        icon: Icons.star_rounded,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 20),
+              Expanded(child: _TitleSection(mod: mod)),
+            ],
           );
-        }
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Stack(children: [cover, if (mod.isFeatured) Positioned(right: 0, bottom: 0, child: RetroBadgeDot(retro: retro, icon: Icons.star_rounded))]), const SizedBox(width: 20), Expanded(child: _TitleSection(mod: mod))],
-        );
-      }),
+        },
+      ),
     );
   }
 }
@@ -334,51 +371,80 @@ class _ContentCard extends StatelessWidget {
         children: [
           _StatsBar(mod: mod),
           const SizedBox(height: 16),
-          _DetailPanel(children: [
-            _VersionAccordion(modId: mod.id, versions: mod.versions,
-              downloadUrls: mod.downloadUrls, modUrl: mod.url, modTitle: mod.title),
-          ]),
+          _DetailPanel(
+            children: [
+              _VersionAccordion(
+                modId: mod.id,
+                versions: mod.versions,
+                downloadUrls: mod.downloadUrls,
+                modUrl: mod.url,
+                modTitle: mod.title,
+              ),
+            ],
+          ),
           if (mod.description.isNotEmpty) ...[
             const SizedBox(height: 16),
-            _DetailPanel(children: [
-              _SectionTitle(label: l10n.detailAbout),
-              const SizedBox(height: 12),
-              _ExpandableText(text: mod.description, expanded: descExpanded, onToggle: onExpandDesc),
-            ]),
+            _DetailPanel(
+              children: [
+                _SectionTitle(label: l10n.detailAbout),
+                const SizedBox(height: 12),
+                _ExpandableText(
+                  text: mod.description,
+                  expanded: descExpanded,
+                  onToggle: onExpandDesc,
+                ),
+              ],
+            ),
           ],
           if (mod.descriptionImages.isNotEmpty) ...[
             const SizedBox(height: 16),
-            _DetailPanel(children: [
-              _SectionTitle(label: l10n.detailScreenshots),
-              const SizedBox(height: 12),
-              _ScreenshotGallery(images: mod.descriptionImages),
-            ]),
+            _DetailPanel(
+              children: [
+                _SectionTitle(label: l10n.detailScreenshots),
+                const SizedBox(height: 12),
+                _ScreenshotGallery(images: mod.descriptionImages),
+              ],
+            ),
           ],
           if (mod.tags.isNotEmpty) ...[
             const SizedBox(height: 16),
-            _DetailPanel(children: [
-              _SectionTitle(label: l10n.detailTags), const SizedBox(height: 12),
-              _TagCloud(tags: mod.tags),
-            ]),
+            _DetailPanel(
+              children: [
+                _SectionTitle(label: l10n.detailTags),
+                const SizedBox(height: 12),
+                _TagCloud(tags: mod.tags),
+              ],
+            ),
           ],
           if (mod.threadUrl.isNotEmpty) ...[
             const SizedBox(height: 16),
             OutlinedButton.icon(
-              onPressed: () => launchUrl(Uri.parse(mod.threadUrl), mode: LaunchMode.externalApplication),
+              onPressed: () => launchUrl(
+                Uri.parse(mod.threadUrl),
+                mode: LaunchMode.externalApplication,
+              ),
               icon: const MarioGameIcon(Icons.forum_outlined, size: 18),
               label: Text(l10n.detailViewDiscussion),
             ),
           ],
           if (mod.firstRelease != null || mod.lastUpdate != null) ...[
             const SizedBox(height: 16),
-            _ReleaseDates(firstRelease: mod.firstRelease, lastUpdate: mod.lastUpdate),
+            _ReleaseDates(
+              firstRelease: mod.firstRelease,
+              lastUpdate: mod.lastUpdate,
+            ),
           ],
           if (mod.updates.isNotEmpty) ...[
             const SizedBox(height: 16),
-            _DetailPanel(children: [
-              _ChangelogSection(updates: mod.updates, expanded: changelogExpanded,
-                onToggle: onExpandChangelog),
-            ]),
+            _DetailPanel(
+              children: [
+                _ChangelogSection(
+                  updates: mod.updates,
+                  expanded: changelogExpanded,
+                  onToggle: onExpandChangelog,
+                ),
+              ],
+            ),
           ],
         ],
       ),
@@ -392,8 +458,13 @@ class _DetailPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(16),
-    decoration: RetroTheme.of(context).surfaceDecoration(shadowDx: 2, shadowDy: 2),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+    decoration: RetroTheme.of(
+      context,
+    ).surfaceDecoration(shadowDx: 2, shadowDy: 2),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
+    ),
   );
 }
 
@@ -487,20 +558,62 @@ class _StatsBar extends StatelessWidget {
       key: const ValueKey('mod-detail-stats'),
       padding: const EdgeInsets.all(14),
       decoration: retro.surfaceDecoration(shadowDx: 2, shadowDy: 2),
-      child: LayoutBuilder(builder: (context, constraints) {
-        final columns = constraints.maxWidth >= 560 && MediaQuery.textScalerOf(context).scale(16) <= 22 ? 4 : 2;
-        final width = (constraints.maxWidth - (columns - 1) * 12) / columns;
-        return Wrap(spacing: 12, runSpacing: 18, children: [
-          SizedBox(width: width, child: _StatCell(value: mod.rating?.star ?? '—', label: l10n.detailRating,
-            icon: Icons.star_rounded, iconColor: retro.amber, retro: retro)),
-          SizedBox(width: width, child: _StatCell(value: mod.downloads.compact, label: l10n.detailDownloads,
-            icon: Icons.download_rounded, iconColor: retro.accentText, retro: retro)),
-          SizedBox(width: width, child: _StatCell(value: mod.views.compact, label: l10n.detailViews,
-            icon: Icons.visibility_rounded, iconColor: retro.inkDim, retro: retro)),
-          SizedBox(width: width, child: _StatCell(value: mod.reviewCount.compact, label: l10n.detailReviews,
-            icon: Icons.rate_review_rounded, iconColor: retro.inkDim, retro: retro)),
-        ]);
-      }),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final columns =
+              constraints.maxWidth >= 560 &&
+                  MediaQuery.textScalerOf(context).scale(16) <= 22
+              ? 4
+              : 2;
+          final width = (constraints.maxWidth - (columns - 1) * 12) / columns;
+          return Wrap(
+            spacing: 12,
+            runSpacing: 18,
+            children: [
+              SizedBox(
+                width: width,
+                child: _StatCell(
+                  value: mod.rating?.star ?? '—',
+                  label: l10n.detailRating,
+                  icon: Icons.star_rounded,
+                  iconColor: retro.amber,
+                  retro: retro,
+                ),
+              ),
+              SizedBox(
+                width: width,
+                child: _StatCell(
+                  value: mod.downloads.compact,
+                  label: l10n.detailDownloads,
+                  icon: Icons.download_rounded,
+                  iconColor: retro.accentText,
+                  retro: retro,
+                ),
+              ),
+              SizedBox(
+                width: width,
+                child: _StatCell(
+                  value: mod.views.compact,
+                  label: l10n.detailViews,
+                  icon: Icons.visibility_rounded,
+                  iconColor: retro.inkDim,
+                  retro: retro,
+                ),
+              ),
+              SizedBox(
+                width: width,
+                child: _StatCell(
+                  value: mod.reviewCount.compact,
+                  label: l10n.detailReviews,
+                  icon: Icons.rate_review_rounded,
+                  iconColor: retro.inkDim,
+                  retro: retro,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
@@ -524,28 +637,28 @@ class _StatCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          MarioGameIcon(icon, size: 16, color: iconColor),
-          const SizedBox(height: 5),
-          Text(
-            value,
-            style: TextStyle(
-              color: retro.ink,
-              fontSize: retro.isMario ? 17 : 15,
-              fontWeight: FontWeight.w800,
-            ),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        MarioGameIcon(icon, size: 16, color: iconColor),
+        const SizedBox(height: 5),
+        Text(
+          value,
+          style: TextStyle(
+            color: retro.ink,
+            fontSize: retro.isMario ? 17 : 15,
+            fontWeight: FontWeight.w800,
           ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              color: retro.inkDim,
-              fontSize: retro.isMario ? 16 : 10,
-              fontWeight: FontWeight.w500,
-            ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: TextStyle(
+            color: retro.inkDim,
+            fontSize: retro.isMario ? 16 : 10,
+            fontWeight: FontWeight.w500,
           ),
-        ],
+        ),
+      ],
     );
   }
 }
@@ -837,8 +950,8 @@ class _VersionCardState extends State<_VersionCard> {
                         : widget.version.version,
                   ),
                   Text(
-                      widget.version.releaseDate,
-                      style: retro.body(size: 11, color: retro.inkDim),
+                    widget.version.releaseDate,
+                    style: retro.body(size: 11, color: retro.inkDim),
                   ),
                   if (widget.version.downloads > 0) ...[
                     const SizedBox(width: 10),
@@ -1693,15 +1806,17 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                       size: 20,
                     ),
                     const SizedBox(width: 10),
-                    Flexible(child: Text(
-                      isActive
-                          ? '${downloadProgress ?? (_localProgress * 100).round()}% · ${action.label(_l10n!)}'
-                          : action.label(_l10n!),
-                      textAlign: TextAlign.center,
-                      style: retro.isMario
-                          ? retro.body(size: 18, color: retro.accentText)
-                          : retro.heading(size: 15, color: retro.accentText),
-                    )),
+                    Flexible(
+                      child: Text(
+                        isActive
+                            ? '${downloadProgress ?? (_localProgress * 100).round()}% · ${action.label(_l10n!)}'
+                            : action.label(_l10n!),
+                        textAlign: TextAlign.center,
+                        style: retro.isMario
+                            ? retro.body(size: 18, color: retro.accentText)
+                            : retro.heading(size: 15, color: retro.accentText),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -2504,7 +2619,12 @@ class _SectionTitle extends StatelessWidget {
       retro.displayLabel(label),
       style: retro.isMario
           ? retro.body(size: 17, color: retro.accentText)
-          : TextStyle(color: retro.inkDim, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1.5),
+          : TextStyle(
+              color: retro.inkDim,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.5,
+            ),
     );
   }
 }

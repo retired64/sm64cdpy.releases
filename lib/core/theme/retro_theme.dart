@@ -367,7 +367,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
                     letterSpacing: 0.1,
                     textBaseline: TextBaseline.alphabetic,
                     leadingDistribution: TextLeadingDistribution.even,
-                    fontFamily: isMario && marioAssets.complete ? bodyFamily : menuFamily,
+                    fontFamily: isMario && marioAssets.complete
+                        ? bodyFamily
+                        : menuFamily,
                     fontFamilyFallback: const ['Roboto'],
                     fontWeight: FontWeight.w400,
                   ),
