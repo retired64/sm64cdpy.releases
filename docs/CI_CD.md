@@ -1,6 +1,6 @@
 # GitHub Actions y releases
 
-Revisado el 2026-09-28.
+Revisado para 1.8.3 el 2026-10-14.
 
 > **Fuente canónica:** la aplicación ya no incluye una pantalla de changelog ni
 > muestra el cuerpo del GitHub Release. Cada lanzamiento tiene un manifiesto
@@ -95,7 +95,7 @@ parche de generación/formato en el mismo commit desde Termux.
 Para probar, seleccionar `custom-themes` en el workflow manual de testing o
 subir un commit con `[testing]`. Continúan siendo necesarios los secretos de
 firma existentes. No usar el workflow de publicación para obtener una prueba.
-No se ejecutaron Actions ni builds como parte de la implementación local.
+La compilación se ejecuta en Actions; resultados y candidata actual en RELEASE_1.8.3.md.
 Ver [flujo y validación de temas](../cuatom_themea.md).
 
 ## Preparación 1.8.3+22
@@ -104,7 +104,7 @@ Ver [flujo y validación de temas](../cuatom_themea.md).
 esa pareja, ejecuta los tests Python y adjunta preview EN/ES junto al JSON
 localizado. Los tests de manifiesto derivan la versión desde pubspec.
 
-Una ejecución manual de testing con `all_abis: true` permite revisar los tres
+Una ejecución manual con `all_abis: true`, o un push `[testing] [all-abis]`, permite revisar los tres
 APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
@@ -118,3 +118,9 @@ comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la es
 DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
 Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
 Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
+
+El flag `ALL_ABIS` se define una sola vez a nivel de job en testing. Compilación
+y renombrado consumen el mismo valor; el marcador no crea tags, releases, avisos
+ni dispatch al sitio. Sin input/marcador, testing sigue produciendo solo arm64.
+La candidata de merge incorpora la generación y formato del runner #187; la
+comprobación definitiva corresponde al commit consolidado, no a un APK anterior.

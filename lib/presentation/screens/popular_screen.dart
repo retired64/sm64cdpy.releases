@@ -917,10 +917,7 @@ class _Bone extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: retro.radius,
           color: Colors.white,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(2),
-          ),
+          border: Border.all(color: retro.border, width: retro.borderWidth(2)),
         ),
       ),
     );

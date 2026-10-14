@@ -169,10 +169,7 @@ class _HubHero extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: retro.radius,
         color: retro.surface,
-        border: Border.all(
-          color: retro.border,
-          width: retro.borderWidth(2.5),
-        ),
+        border: Border.all(color: retro.border, width: retro.borderWidth(2.5)),
         boxShadow: retro.hardShadow(),
       ),
       child: Column(

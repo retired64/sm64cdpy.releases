@@ -278,10 +278,7 @@ class _SearchField extends ConsumerWidget {
       decoration: BoxDecoration(
         borderRadius: retro.radius,
         color: retro.surface,
-        border: Border.all(
-          color: retro.border,
-          width: retro.borderWidth(2.5),
-        ),
+        border: Border.all(color: retro.border, width: retro.borderWidth(2.5)),
         boxShadow: focusNode.hasFocus ? [] : retro.hardShadow(dx: 3, dy: 3),
       ),
       transform: focusNode.hasFocus
@@ -371,7 +368,12 @@ class _FilterBarDelegate extends SliverPersistentHeaderDelegate {
       decoration: BoxDecoration(
         color: retro.background,
         border: elevated
-            ? Border(bottom: BorderSide(color: retro.border, width: retro.borderWidth(3)))
+            ? Border(
+                bottom: BorderSide(
+                  color: retro.border,
+                  width: retro.borderWidth(3),
+                ),
+              )
             : null,
       ),
       child: _FilterBar(
@@ -743,10 +745,7 @@ class _PaginationBar extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: retro.radius,
           color: retro.surface,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(3),
-          ),
+          border: Border.all(color: retro.border, width: retro.borderWidth(3)),
           boxShadow: retro.hardShadow(),
         ),
         child: Row(

@@ -1321,9 +1321,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get libraryUpdates => 'Atualizações';
 
   @override
-  String get libraryDetected => 'Detectados';
-
-  @override
   String get libraryRecent => 'Recentes';
 
   @override
@@ -1377,17 +1374,6 @@ class AppLocalizationsPt extends AppLocalizations {
       'As atualizações confirmadas pelo catálogo aparecerão aqui. Você também pode verificar cada seção.';
 
   @override
-  String get libraryDetectedEmptyTitle => 'NENHUM CONTEÚDO EXTERNO DETECTADO';
-
-  @override
-  String get libraryDetectedEmptyBody =>
-      'Nenhum conteúdo Lua não registrado foi encontrado nas pastas selecionadas. Atualize após fazer alterações externas.';
-
-  @override
-  String get libraryDetectedOnDevice =>
-      'Detectado no dispositivo — não vinculado ao catálogo';
-
-  @override
   String get libraryDiscoveryHeaderIdentified => 'Cabeçalho identificado';
 
   @override
@@ -1395,13 +1381,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get libraryDiscoveryUnlinked => 'Lua não vinculado';
-
-  @override
-  String get libraryDetectedPath => 'Arquivo de entrada';
-
-  @override
-  String get libraryDetectedScanLimit =>
-      'O limite seguro de verificação foi atingido. Parte do conteúdo pode não aparecer.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA INDISPONÍVEL';
@@ -1506,6 +1485,125 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get themeSaving => 'Salvando aparência';
+
+  @override
+  String get gameModsTitle => 'Mods do jogo';
+
+  @override
+  String get gameModsSubtitle => 'Escolha os mods para a próxima abertura';
+
+  @override
+  String get gameModsHint =>
+      'Feche o jogo antes de alterar as opções. Estes controles configuram a próxima abertura; os pacotes DynOS são gerenciados separadamente.';
+
+  @override
+  String get gameModsSelectHint =>
+      'Selecione a pasta user do jogo que contém sm64config.txt e mods.';
+
+  @override
+  String get gameModsConfirm =>
+      'Feche o jogo primeiro. Aplicar esta seleção para a próxima abertura?';
+
+  @override
+  String get gameModsCancel => 'Cancelar';
+
+  @override
+  String get gameModsApply => 'Aplicar';
+
+  @override
+  String get gameModsSelect => 'Selecionar pasta user';
+
+  @override
+  String get gameModsDisconnect => 'Desconectar';
+
+  @override
+  String get gameModsConflict =>
+      'A configuração mudou ou outro mod ativado é incompatível. Atualize e tente novamente.';
+
+  @override
+  String get gameModsBlocked =>
+      'Não é possível ativar este mod com segurança. Confira sua estrutura e dados ou desative um mod incompatível.';
+
+  @override
+  String get gameModsMismatch =>
+      'Esta pasta user não corresponde à pasta de mods selecionada. Escolha a mesma instalação do jogo.';
+
+  @override
+  String get gameModsWriteError =>
+      'Não foi possível confirmar a gravação. Feche o jogo e restaure a configuração anterior se necessário.';
+
+  @override
+  String get gameModsFormat =>
+      'A configuração ou pasta excede os limites aceitos ou usa um formato incompatível. A alteração não foi aplicada.';
+
+  @override
+  String get gameModsAccess =>
+      'Configuração indisponível. Confira se user contém sm64config.txt e mods e selecione a pasta novamente com acesso de leitura e gravação.';
+
+  @override
+  String get gameModsRestore => 'Restaurar configuração anterior';
+
+  @override
+  String get gameModsRestoreConfirm =>
+      'Com o jogo fechado, substituir a configuração pelo backup privado anterior à última edição? Isso também restaura as outras opções.';
+
+  @override
+  String get gameModsInstalling =>
+      'Aguarde o fim dos downloads e instalações antes de alterar os mods do jogo.';
+
+  @override
+  String get gameModsEmpty =>
+      'Nenhum mod Lua compatível encontrado nesta pasta.';
+
+  @override
+  String get gameModsEnabled => 'Ativado para a próxima abertura';
+
+  @override
+  String get gameModsDisabled => 'Desativado para a próxima abertura';
+
+  @override
+  String get gameModsMore => 'Mostrar mais';
+
+  @override
+  String get gameModsSize =>
+      'Este mod atinge o limite de 35 MiB do jogo e não pode ser ativado.';
+
+  @override
+  String get gameModsSaved =>
+      'Seleção salva e verificada para a próxima abertura do jogo.';
+
+  @override
+  String get gameModsManage => 'Gerenciar pasta do jogo';
+
+  @override
+  String gameModsCount(int enabled, int total) {
+    return '$enabled de $total ativados';
+  }
+
+  @override
+  String get gameModsSearch => 'Buscar mods, autores, categorias…';
+
+  @override
+  String get gameModsAll => 'Todos';
+
+  @override
+  String get gameModsEnabledFilter => 'Ativados';
+
+  @override
+  String get gameModsDisabledFilter => 'Desativados';
+
+  @override
+  String get gameModsNoResults =>
+      'Nenhum mod corresponde à busca ou ao filtro.';
+
+  @override
+  String get gameModsClearSearch => 'Limpar busca';
+
+  @override
+  String get gameModsDetails => 'Detalhes do mod';
+
+  @override
+  String get gameModsCloseDetails => 'Fechar';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2825,9 +2923,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get libraryUpdates => 'Atualizações';
 
   @override
-  String get libraryDetected => 'Detectados';
-
-  @override
   String get libraryRecent => 'Recentes';
 
   @override
@@ -2881,17 +2976,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'As atualizações confirmadas pelo catálogo aparecerão aqui. Você também pode verificar cada seção.';
 
   @override
-  String get libraryDetectedEmptyTitle => 'NENHUM CONTEÚDO EXTERNO DETECTADO';
-
-  @override
-  String get libraryDetectedEmptyBody =>
-      'Nenhum conteúdo Lua não registrado foi encontrado nas pastas selecionadas. Atualize após fazer alterações externas.';
-
-  @override
-  String get libraryDetectedOnDevice =>
-      'Detectado no dispositivo — não vinculado ao catálogo';
-
-  @override
   String get libraryDiscoveryHeaderIdentified => 'Cabeçalho identificado';
 
   @override
@@ -2899,13 +2983,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get libraryDiscoveryUnlinked => 'Lua não vinculado';
-
-  @override
-  String get libraryDetectedPath => 'Arquivo de entrada';
-
-  @override
-  String get libraryDetectedScanLimit =>
-      'O limite seguro de verificação foi atingido. Parte do conteúdo pode não aparecer.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA INDISPONÍVEL';
@@ -3010,4 +3087,123 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get themeSaving => 'Salvando aparência';
+
+  @override
+  String get gameModsTitle => 'Mods do jogo';
+
+  @override
+  String get gameModsSubtitle => 'Escolha os mods para a próxima abertura';
+
+  @override
+  String get gameModsHint =>
+      'Feche o jogo antes de alterar as opções. Estes controles configuram a próxima abertura; os pacotes DynOS são gerenciados separadamente.';
+
+  @override
+  String get gameModsSelectHint =>
+      'Selecione a pasta user do jogo que contém sm64config.txt e mods.';
+
+  @override
+  String get gameModsConfirm =>
+      'Feche o jogo primeiro. Aplicar esta seleção para a próxima abertura?';
+
+  @override
+  String get gameModsCancel => 'Cancelar';
+
+  @override
+  String get gameModsApply => 'Aplicar';
+
+  @override
+  String get gameModsSelect => 'Selecionar pasta user';
+
+  @override
+  String get gameModsDisconnect => 'Desconectar';
+
+  @override
+  String get gameModsConflict =>
+      'A configuração mudou ou outro mod ativado é incompatível. Atualize e tente novamente.';
+
+  @override
+  String get gameModsBlocked =>
+      'Não é possível ativar este mod com segurança. Confira sua estrutura e dados ou desative um mod incompatível.';
+
+  @override
+  String get gameModsMismatch =>
+      'Esta pasta user não corresponde à pasta de mods selecionada. Escolha a mesma instalação do jogo.';
+
+  @override
+  String get gameModsWriteError =>
+      'Não foi possível confirmar a gravação. Feche o jogo e restaure a configuração anterior se necessário.';
+
+  @override
+  String get gameModsFormat =>
+      'A configuração ou pasta excede os limites aceitos ou usa um formato incompatível. A alteração não foi aplicada.';
+
+  @override
+  String get gameModsAccess =>
+      'Configuração indisponível. Confira se user contém sm64config.txt e mods e selecione a pasta novamente com acesso de leitura e gravação.';
+
+  @override
+  String get gameModsRestore => 'Restaurar configuração anterior';
+
+  @override
+  String get gameModsRestoreConfirm =>
+      'Com o jogo fechado, substituir a configuração pelo backup privado anterior à última edição? Isso também restaura as outras opções.';
+
+  @override
+  String get gameModsInstalling =>
+      'Aguarde o fim dos downloads e instalações antes de alterar os mods do jogo.';
+
+  @override
+  String get gameModsEmpty =>
+      'Nenhum mod Lua compatível encontrado nesta pasta.';
+
+  @override
+  String get gameModsEnabled => 'Ativado para a próxima abertura';
+
+  @override
+  String get gameModsDisabled => 'Desativado para a próxima abertura';
+
+  @override
+  String get gameModsMore => 'Mostrar mais';
+
+  @override
+  String get gameModsSize =>
+      'Este mod atinge o limite de 35 MiB do jogo e não pode ser ativado.';
+
+  @override
+  String get gameModsSaved =>
+      'Seleção salva e verificada para a próxima abertura do jogo.';
+
+  @override
+  String get gameModsManage => 'Gerenciar pasta do jogo';
+
+  @override
+  String gameModsCount(int enabled, int total) {
+    return '$enabled de $total ativados';
+  }
+
+  @override
+  String get gameModsSearch => 'Buscar mods, autores, categorias…';
+
+  @override
+  String get gameModsAll => 'Todos';
+
+  @override
+  String get gameModsEnabledFilter => 'Ativados';
+
+  @override
+  String get gameModsDisabledFilter => 'Desativados';
+
+  @override
+  String get gameModsNoResults =>
+      'Nenhum mod corresponde à busca ou ao filtro.';
+
+  @override
+  String get gameModsClearSearch => 'Limpar busca';
+
+  @override
+  String get gameModsDetails => 'Detalhes do mod';
+
+  @override
+  String get gameModsCloseDetails => 'Fechar';
 }

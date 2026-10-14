@@ -452,7 +452,10 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                 Container(
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: retro.border, width: retro.borderWidth(3)),
+                      bottom: BorderSide(
+                        color: retro.border,
+                        width: retro.borderWidth(3),
+                      ),
                     ),
                   ),
                   child: CachedNetworkImage(
@@ -629,7 +632,8 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                                     Text(
                                       action.label(l10n),
                                       style: TextStyle(
-                                        fontFamily: retro.design.headingFontFamily,
+                                        fontFamily:
+                                            retro.design.headingFontFamily,
                                         fontSize: 13,
                                         fontWeight: retro.design.headingWeight,
                                         letterSpacing: 1,
@@ -759,10 +763,7 @@ class _Bone extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(3),
-          ),
+          border: Border.all(color: retro.border, width: retro.borderWidth(3)),
           borderRadius: retro.radius,
         ),
       ),

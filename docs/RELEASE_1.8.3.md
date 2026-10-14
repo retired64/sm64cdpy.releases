@@ -1,69 +1,166 @@
-# Preparación oficial de SM64CDPY 1.8.3
+# SM64CDPY 1.8.3 — preparación de merge y publicación
 
-Preparación iniciada el 2026-10-13 en `custom-themes`. Este documento no anuncia
-una publicación: `main` no se ha fusionado, no se ha creado `v1.8.3` y no se ha
-iniciado el workflow de release.
+Revisión consolidada: 2026-10-14. Rama: `custom-themes`. Este documento describe
+la candidata; no anuncia una publicación ni autoriza fusionar a `main`, crear
+etiquetas, publicar APKs o ejecutar el workflow oficial.
 
-## Versión y APK
+## Versión y distribución
 
-| Dato | Anterior | Preparado |
-|---|---|---|
-| Versión Flutter / Android versionName | 1.8.2 | 1.8.3 |
-| Build base en pubspec/manifiesto | 21 | 22 |
-| VersionCode APK arm32 | 211 | 221 |
-| VersionCode APK arm64 | 212 | 222 |
-| VersionCode APK x86_64 | 213 | 223 |
-| Tag de lanzamiento | v1.8.2 | v1.8.3, todavía sin crear |
-| Actualización forzada | false | false |
-
-`pubspec.yaml` declara `1.8.3+22`. Gradle toma `flutter.versionName` y
-`flutter.versionCode` y aplica su fórmula existente `build * 10 + código ABI`.
-No hay que duplicar una versión literal en Gradle o Kotlin. Application ID,
-firma, minSdk 24, Flutter 3.41.7, Dart 3.11.x y Java 17 conservan sus contratos.
-
-Los tres assets finales conservan nombres estables:
-
-- `Sm64CDPY-arm64.apk`
-- `Sm64CDPY-arm32.apk`
-- `Sm64CDPY-x86_64.apk`
-
-No se cambian URLs públicas de descarga ni notas de versiones publicadas. La
-actualización OTA continuará seleccionando la arquitectura apropiada y la
-nueva versión no incluye el marcador `[FORCE]`.
-
-## Changelog canónico localizado
-
-[release-manifests/v1.8.3.json](../release-manifests/v1.8.3.json) es la única
-fuente de notas EN, ES y PT-BR para este lanzamiento. El archivo tiene título,
-resumen, destacados y cuatro secciones equivalentes en cada idioma:
-
-| Sección | Cambio de producto |
+| Campo | Valor preparado |
 |---|---|
-| Temas de interfaz | Retro Manga predeterminado y Mario 64 incluido, con variantes claras/oscuras y selección persistente |
-| Ajustes coherentes | Tema, modo e idioma despliegan opciones con el mismo diseño; idioma conserva sus animaciones; Mario suaviza solo Ajustes |
-| Recuperación y contraste | Guardado de apariencia confirmado, doble toque bloqueado, fallback de diseños no disponibles y texto sobre rellenos con foreground adecuado |
-| Panel flotante y actualizaciones | Burbuja oscura fija independiente; funcionamiento de descargas/instalaciones conservado; actualización opcional |
+| Pubspec / versionName | `1.8.3+22` / `1.8.3` |
+| Build base | `22` |
+| VersionCode arm32 / arm64 / x86_64 | `221` / `222` / `223` |
+| Tag previsto | `v1.8.3`, sin crear durante esta preparación |
+| Actualización obligatoria | No: `forceUpdate: false` |
+| Toolchain | Flutter 3.41.7, Dart 3.11.x, Java 17 |
+| Android mínimo | API 24 |
+| APKs oficiales | `Sm64CDPY-arm32.apk`, `Sm64CDPY-arm64.apk`, `Sm64CDPY-x86_64.apk` |
 
-No se anuncian Odyssey/GameCube como opciones de esta versión, ni cambios de
-WorkManager/SAF que no pertenecen al diff. Los IDs retirados de builds de prueba
-se recuperan mediante el fallback ya implementado.
+`pubspec.yaml` es la autoridad de versión/build. Gradle utiliza esos valores y
+su fórmula existente `build * 10 + ABI`. El manifiesto se valida contra pubspec.
+Se conservan identidad del paquete, firma y nombres públicos de assets OTA.
 
-El renderer produce notas de GitHub en inglés y de Discord en español. El sitio
-consume también PT-BR del mismo manifiesto. Las notas de prueba se pueden
-revisar sin crear un tag o release.
+## Alcance final del lanzamiento
 
-### Fecha provisional
+1. **Biblioteca y mods del juego:** vista principal con switches para unidades
+   Lua locales compatibles, propias o externas. Usa la identidad real que lee
+   el juego; no inventa recibos a partir de títulos.
+2. **Una sola vista de esos mods:** Detectados se retiró. Autor, categoría,
+   descripción y versión informativa aparecen en Mods del juego, junto con
+   búsqueda, filtros de activación, contadores y detalles de solo lectura.
+   Instalados, Actualizaciones e Historial conservan sus funciones propias.
+3. **Configuración verificable:** selección SAF de `user`, lectura/escritura de
+   `sm64config.txt`, incompatibilidades locales conocidas, tamaño, respaldo privado,
+   conservación de otras líneas y confirmación por relectura. Restaurar requiere
+   confirmación. El usuario debe cerrar el juego: se configura el próximo inicio.
+4. **Temas incluidos:** Retro Manga predeterminado y Mario 64; ambos admiten modo
+   claro, oscuro o sistema, independiente de diseño e idioma. Mario utiliza
+   superficies con relieve, fondos de cielo y selección con estrellas.
+5. **Tipografía:** TypefaceMario64 exclusivamente en títulos de Mario, incluidos
+   los nombres de Top downloads en Home. Cuerpo/descripciones usan la fuente
+   predeterminada; Roboto cubre los acentos ausentes. Solo se empaqueta la OTF.
+6. **Ajustes:** tema, modo e idioma comparten menús expandibles y animación. Los
+   cambios se confirman después de guardar; fallos conservan el estado anterior.
+7. **Contraste y recuperación:** roles de texto sobre rellenos y fallback a
+   Retro Manga para IDs ausentes/retirados, conservando modo de apariencia.
 
-El esquema vigente exige un `publishedAt` válido. Su valor actual corresponde a
-la preparación del manifiesto, **no a una release ya publicada**. Antes de
-publicar, actualizarlo a la fecha/hora elegida de lanzamiento, con zona horaria,
-y volver a validar/commitear. No agregar campos `draft` o `status` al JSON: su
-esquema rechaza propiedades extra. El estado de preparación vive en este
-documento y checklist.
+La burbuja conserva su diseño oscuro independiente y su flujo de instalación.
+DynOS/Touch Controls usan su contrato de packs, separado de los switches Lua.
+No se anuncian Odyssey, GameCube, edición de packs o desinstalación nueva.
 
-## Validación de contenido y metadatos
+Detalles técnicos: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md),
+[guía de temas](../cuatom_themea.md) y [arquitectura](ARCHITECTURE.md).
 
-Comandos ejecutables en Termux sin Flutter:
+## Notas listas para revisión
+
+Fuente canónica: [release-manifests/v1.8.3.json](../release-manifests/v1.8.3.json).
+Título, resumen, destacados y cinco secciones equivalentes EN/ES/PT-BR cubren
+el comportamiento final, sin el historial de implementaciones descartadas.
+
+Previews generadas desde ese JSON, sin editar manualmente:
+
+- [English](RELEASE_NOTES_1.8.3_EN.md) — GitHub.
+- [Español](RELEASE_NOTES_1.8.3_ES.md) — revisión/Discord.
+- [Português do Brasil](RELEASE_NOTES_1.8.3_PT_BR.md) — revisión/sitio.
+
+El renderer existente alimenta GitHub/Discord y el manifiesto publicado permite
+al sitio consumir los tres idiomas. Flutter mantiene OTA; no muestra estas
+notas como una nueva pantalla. Cambiar notas exige modificar el JSON y regenerar
+las previews. Releases anteriores permanecen intactas.
+
+`publishedAt` sigue siendo provisional: el esquema exige una fecha ISO válida,
+pero el valor de preparación no afirma que se publicó. Revisar fecha/hora real
+antes de publicar y volver a validar; no agregar campos ajenos al esquema.
+
+## Evidencia y comprobaciones
+
+| Evidencia | Resultado observado al preparar esta revisión |
+|---|---|
+| [Testing #183](https://github.com/retired64/sm64cdpy.releases/actions/runs/38519260819) | Correcta: UI de Biblioteca y tests de ciclo de vida |
+| [Testing #184](https://github.com/retired64/sm64cdpy.releases/actions/runs/38522079175) | Correcta: fusión de metadatos y parser Kotlin |
+| [Testing #185](https://github.com/retired64/sm64cdpy.releases/actions/runs/38597376849) | Correcta: registro de fuentes |
+| [Testing #186](https://github.com/retired64/sm64cdpy.releases/actions/runs/38601655928) | Correcta: solo fuente de títulos, descripción predeterminada |
+| [Testing #187](https://github.com/retired64/sm64cdpy.releases/actions/runs/38605660934) | Correcta: Top downloads, análisis, 78 tests Flutter, tests Kotlin y APK arm64 |
+| Validador de notas y cuatro tests Python | Correctos localmente |
+| Compatibilidad del merge con `origin/main` `8bdc996` | `git merge-tree --write-tree` sin conflictos; sin merge real |
+
+Se incorporó el artifact `flutter-source-sync` de #187, generado para `fc25c0f`:
+traducciones producidas por `flutter gen-l10n` y formato Dart de los archivos
+cambiados por esta rama. Se excluyeron nueve archivos cuyo único cambio sería
+formato ajeno al alcance. No se editaron traducciones Dart generadas a mano.
+
+La candidata consolidada debe superar su propia ejecución CI. Testing permite
+`all_abis: true` manual o un commit `[testing] [all-abis]`: compila las tres
+arquitecturas, ejecuta pruebas y sube artifacts, sin publicar. La condición ABI
+es compartida por compilación y renombrado; el build común sigue siendo arm64.
+
+## Pendientes antes de aprobar merge/release
+
+- [x] Versión `1.8.3+22`, build y ABI codes alineados.
+- [x] Changelog final equivalente en tres idiomas y actualización opcional.
+- [x] Previews de notas regeneradas y documentación vigente consolidada.
+- [x] Fuentes finales y traducciones/formato del runner incorporados.
+- [x] Verificación de conflictos contra el main remoto consultado.
+- [ ] CI del commit consolidado correcta para arm32/arm64/x86_64.
+- [ ] Revisar artifacts de APK, notas y patch final de generación/formato.
+- [ ] Confirmar última matriz física y revisión de títulos de Top downloads.
+- [ ] Actualizar fecha de publicación definitiva.
+- [ ] Autorización del usuario para merge a main.
+- [ ] Autorización distinta para publicar `v1.8.3`.
+
+El usuario confirmó anteriormente activación/desactivación en dispositivo y
+el diseño de los temas. Eso no sustituye verificar el APK final. Matriz mínima:
+
+- Retro/Mario en claro, oscuro y sistema; idioma, acentos y texto ampliado.
+- Home, Top downloads, Ajustes, Biblioteca, detalles y diálogos.
+- Mods existentes sin recibo y propios con recibo; información ausente/larga.
+- Activar/desactivar con juego cerrado y comprobar selección en el siguiente inicio.
+- Selección/cancelación de carpeta, acceso perdido, fallo al guardar y restauración.
+- Instalar desde app/overlay, volver del segundo plano y reiniciar la app.
+- Actualización desde 1.8.2 conservando carpeta, idioma, modo, favoritos e historial.
+- Instalar los APKs de arquitecturas aplicables a los dispositivos disponibles.
+
+## Secuencia de merge y publicación
+
+1. Revisar la candidata y los checks/artifacts. Los cambios del usuario en
+   `.gitignore` y el clon `sm64coopdx/` no forman parte de esta preparación.
+2. Antes del merge autorizado, actualizar referencias remotas y comprobar otra
+   vez conflictos/versión si main recibió cambios. No resetear trabajo local.
+3. Fusionar `custom-themes` a `main` solo cuando lo indique el usuario. El diff
+   incluye comportamiento, metadatos, recursos, pruebas y documentación juntos.
+4. Revisar `publishedAt`, versión/build y el SHA final. Si el merge modifica
+   código o resuelve conflictos, volver a validar ese resultado.
+5. Publicar únicamente con autorización explícita. Ejecutar `buildAndroid.yaml`
+   sobre `main`, con `prerelease: false`, después de revisar firma y secretos.
+6. El workflow oficial valida manifiesto/tag y acceso al sitio, prueba, compila
+   tres APKs, ejecuta tests nativos y publica `v1.8.3` sobre `github.sha`. No usarlo
+   para obtener pruebas: crea release/assets y realiza avisos/dispatch externos.
+7. Verificar tag, tres APKs, checksums, manifiesto localizado, enlaces, sitio y
+   OTA de cada ABI disponible. No declarar publicación completa con assets faltantes.
+
+La release estable está bloqueada fuera de `main`. El objetivo del tag es el
+SHA compilado; no se etiqueta automáticamente otra rama por defecto.
+
+## Texto propuesto para el PR de merge
+
+**Title:** Prepare SM64CDPY 1.8.3: game mod controls and Mario 64 theme
+
+**Description:**
+
+Version 1.8.3 adds verified activation of compatible local Lua mods for the next
+game start. Library replaces the separate Detected view with Game mods, combining
+activation, local search and mod metadata while keeping installation receipts,
+updates and history separate. Configuration edits preserve other settings and
+provide verified saves and a private recovery backup.
+
+The app includes Retro Manga and Mario 64 with independent appearance modes,
+matching animated Settings selectors and Mario-only heading typography. Version
+metadata and localized release notes are aligned to 1.8.3+22. The overlay keeps
+its independent design. Attach the consolidated CI run and device checks before
+approval; this PR does not authorize publishing a release.
+
+## Comandos de validación local
 
 ```sh
 python3 scripts/release_manifest.py release-manifests/v1.8.3.json --pubspec pubspec.yaml
@@ -71,124 +168,21 @@ python3 -m unittest discover -s test/scripts -p '*_test.py' -v
 git diff --check
 ```
 
-La prueba del manifiesto actual ahora deriva el nombre de archivo desde
-pubspec. Antes estaba fijada a `v1.8.2.json`, lo que habría bloqueado toda
-publicación posterior. Los manifiestos históricos siguen validándose y no se
-modifican.
-
-En testing, antes de compilar, el workflow verifica manifiesto/pubspec y ejecuta
-los tests Python. Conserva las vistas previas de notas EN/ES como artifact
-`release-notes-preview-1.8.3`. Después genera ARB, formatea, analiza, ejecuta tests
-Flutter y compila arm64. Ni la validación de notas ni ese artifact publican nada.
-
-## Evidencia y pendientes
-
-- La [build #177](https://github.com/retired64/sm64cdpy.releases/actions/runs/38502549130)
-  terminó correctamente para `e02877f`: integración de idioma y Ajustes Mario,
-  todavía con versión `1.8.2+21`.
-- La preparación `1.8.3+22` necesita su propia build de testing; la evidencia del
-  commit anterior no sustituye verificar el bump y los workflows nuevos.
-- Los tests Python de manifiestos, concordancia con pubspec y render localizado
-  se verifican localmente. Flutter/Dart no están instalados en este Termux.
-- Sigue pendiente comprobar en teléfono el selector de idioma, los tres menús,
-  texto grande, claro/oscuro/sistema y operaciones en curso.
-- Testing produce arm64 por defecto. Su opción manual `all_abis: true` compila
-  arm64/arm32/x86_64 sin publicar y permite validar las tres arquitecturas
-  antes de considerar aprobada la distribución oficial.
-
-## Flujo hasta main y publicación
-
-1. Mantener la preparación y revisiones en `custom-themes`; no mezclar cambios
-   ajenos ni modificar manifiestos de releases anteriores.
-2. Subir un commit `[testing]` con el bump y revisar su análisis/tests/APK, notas
-   preview y parche de generación/formato.
-3. Ejecutar testing manual en `custom-themes` con `all_abis: true` y revisar
-   el artifact: arm64 conserva `cdpy-<sha>.apk`; arm32/x86_64 llevan el sufijo
-   correspondiente. Revisar las notas localizadas y completar la matriz física. Confirmar que
-   solo se ofrecen Retro Manga y Mario 64 y que la burbuja conserva su tema.
-4. Actualizar el `publishedAt` provisional y volver a ejecutar las compuertas.
-5. Fusionar hacia `main` únicamente cuando el usuario lo autorice. Si aparecen
-   conflictos, reconciliar contra el main vigente sin reset destructivo.
-6. Autorizar explícitamente la publicación antes de ejecutar `buildAndroid.yaml`.
-   Ese workflow crea tag, release, APKs y notificaciones: no es un build de prueba.
-7. Para release oficial, seleccionar `main` y `prerelease: false`. Verificar los
-   secretos de firma y `WEBSITE_DISPATCH_TOKEN` con sus permisos existentes.
-8. El workflow valida versión/notas/tag, analiza y prueba, compila los tres APK,
-   calcula checksums y publica `v1.8.3` sobre el SHA exacto construido. Después
-   verifica assets, notifica Discord y solicita actualización del sitio.
-9. Confirmar release, assets y enlaces de descarga, sincronización del sitio y
-   actualización OTA desde una instalación 1.8.2 de cada arquitectura aplicable.
-
-La publicación estable está bloqueada fuera de `main` por un nuevo guard en el
-workflow. Las prereleases conservan su lanzamiento manual desde otras ramas,
-pero también requieren autorización y no se ejecutan durante esta preparación.
-`target_commitish: github.sha` fija la futura etiqueta al commit compilado; la
-acción antes usaba por defecto la rama principal. Se mantiene la versión de la
-acción y la toolchain existentes. [Contrato de la acción](https://github.com/softprops/action-gh-release/tree/v2).
-
-## Checklist de salida
-
-- [x] Versión `1.8.3+22` y manifiesto con el mismo build.
-- [x] Notas EN/ES/PT-BR completas y `forceUpdate: false`.
-- [x] Tres README y documentación técnica alineados.
-- [x] Test de manifiesto actual independiente de una versión histórica.
-- [x] Testing valida metadatos y entrega preview de notas.
-- [x] Release estable requiere main y etiqueta sobre SHA construido.
-- [ ] Nueva Actions de `1.8.3+22` aprobada.
-- [ ] Incorporar/revisar parche generado si corresponde.
-- [ ] Matriz física y compatibilidad de las tres arquitecturas.
-- [ ] Fecha de publicación definitiva revisada.
-- [ ] Autorización de merge y fusión a main.
-- [ ] Autorización de publicación y workflow oficial.
-- [ ] Verificación posterior de release/assets/OTA/sitio.
+Flutter/Dart no están instalados en Termux. Gen-l10n, formato, análisis, tests,
+compilación y tests Kotlin se ejecutan en Actions. La simulación de merge no
+prueba funcionalidad Android ni reemplaza el resultado de CI.
 
 ## Verificación de sincronización de estado
 
-**Escritores:** versión/build en pubspec y notas localizadas en el nuevo
-manifiesto. No se modifican preferencias de usuario ni eventos de instalación.
-
-**Lectores y autoridad:** Flutter/Gradle leen pubspec para el paquete; los
-workflows y el validador contrastan el manifiesto con esa versión/build. En la
-app instalada, PackageInfo/Android siguen siendo la autoridad sobre la versión
-real. GitHub Releases y el sitio usan las notas del manifiesto tras publicar.
-
-**Concordancia:** `1.8.3+22` está alineada en la preparación. Los versionCodes
-por ABI son una transformación documentada, no un build base distinto. Nueva
-compilación y distribución siguen pendientes; main permanece sin modificar.
-
-**Caches/Futures:** no se introducen caches, timers, readers de preferencias o
-Futures Dart. Las caches de versión existentes se inicializan desde el paquete
-instalado; no se sincronizan engines por variables estáticas.
-
-**Hermanos revisados:** testing y publicación, los tres README, manifiesto/schema,
-renderer/tests, Gradle/ABIs, UpdateService/UpdateConfig y documentación de temas,
-arquitectura, estado y checklist. Overlay mantiene su diseño independiente.
-
-## Activación de mods — candidata 1.8.3
-
-Biblioteca incluye una sección de unidades Lua del juego con switches de selección
-para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
-comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
-DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
-Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
-Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
-
-Biblioteca integra Mods del juego como pestaña nativa del sistema visual, con
-búsqueda y filtros locales, contador de activados, tarjetas adaptadas a cada
-diseño y confirmación de juego cerrado por visita (reiniciada al reanudar).
-Restaurar continúa exigiendo confirmación; cada escritura conserva la autoridad
-nativa. Ver [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md), integración visual.
-
-Mods del juego absorbe los datos útiles de Detectados: autor, categoría, versión
-informativa y descripción con detalles/búsqueda. Detectados ya no es una pestaña.
-La enumeración y los switches siguen las reglas del juego; no hay coincidencias
-por título ni otro escaneo automático de descubrimiento. Ver GAME_MOD_ACTIVATION.md.
-
-Mario 64 utiliza TypefaceMario64 de `fonts/` únicamente en títulos. El cuerpo y
-las descripciones mantienen la tipografía predeterminada; Roboto sirve de respaldo
-para los acentos ausentes en la fuente de títulos. Roles Material y helpers
-comparten esa definición. CI carga la fuente real para probar ancho estrecho y
-texto ampliado. Pendiente la revisión visual en dispositivo.
-
-Se incluyeron los títulos de mods de Top downloads en Home en el rol tipográfico
-de títulos de Mario 64; las cifras siguen utilizando la tipografía de cuerpo.
+- **Escritores/lectores:** pubspec define versión/build; manifiesto define notas;
+  workflows/validador/Gradle consumen esos valores. ARB genera traducciones Dart;
+  previews derivan del manifiesto y no compiten como fuente de verdad.
+- **Autoridad:** paquete instalado para versión real; configuración del juego
+  para selección persistida; WorkManager para instalaciones activas. Esta
+  preparación no modifica esas preferencias ni sus protocolos.
+- **Concordancia:** metadatos y contenido final alineados; checks consolidados y
+  publicación permanecen pendientes hasta confirmarse. Main no se modificó.
+- **Caches/Futures:** ninguna caché de app, timer o Future nuevo. Solo datos,
+  fuentes generadas/formato y un flag de CI compartido por build/renombrado.
+- **Hermanos:** tres idiomas, tres ABIs, testing/release, README/documentación,
+  app/overlay, fuente de títulos/cuerpo y parser/editor de mods revisados.

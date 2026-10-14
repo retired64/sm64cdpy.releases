@@ -6,163 +6,160 @@
   "forceUpdate": false,
   "locales": {
     "en": {
-      "title": "Interface themes and a refreshed Settings screen",
-      "summary": "Version 1.8.3 adds the bundled Retro Manga and Mario 64 interface designs and brings matching animated selectors to Settings.",
+      "title": "Game mod controls and the Mario 64 interface",
+      "summary": "Version 1.8.3 brings verified game mod activation to Library, unifies local mod information, and adds the Mario 64 interface alongside Retro Manga with consistent Settings selectors.",
       "highlights": [
-        "Choose Retro Manga or Mario 64 independently from light, dark, or system appearance.",
-        "Theme, appearance mode, and language use matching expandable selectors.",
-        "Mario 64 gives Settings softer panels, rounded controls, and subtle shadows.",
-        "Enable or disable compatible local Lua mods from Library for the next game start."
+        "Enable or disable compatible local Lua mods for the next game start.",
+        "One Game mods view combines activation, author, category, version information and descriptions.",
+        "Choose Retro Manga or Mario 64; Mario titles use the bundled TypefaceMario64 font.",
+        "Interface theme, appearance mode and language have matching animated selectors."
       ],
       "sections": [
         {
-          "heading": "Game mod selection",
+          "heading": "Library and game mod controls",
           "items": [
-            "Enable or disable compatible local Lua mods from Library for the next game start.",
-            "Select the game user folder with persistent document access; edits preserve other settings and create a private recovery backup.",
-            "Selections are checked for incompatible mods, size limits and successful saving. Close the game before editing; DynOS packs use their separate configuration.",
-            "Game mods have their own Library tab with themed cards, local search, activation filters and verified save feedback.",
-            "Detected content is merged into Game mods: one view combines verified activation with author, category, version labels and descriptions, without a second automatic discovery scan."
+            "Game mods is the main Library view. It replaces the separate Detected tab and lists both existing mods and content installed by SM64CDPY when they match the game’s supported structure.",
+            "Activation uses the real folder or Lua filename. Local search, enabled/disabled filters, counters and read-only details include author, category, version labels and descriptions when available.",
+            "Select the game’s user folder once to grant persistent access to sm64config.txt. Close the game before editing: selections apply to its next start, and DynOS/Touch Controls retain their separate configuration.",
+            "Saving checks known local incompatibilities and the game’s size limit, preserves unrelated configuration lines, creates a private backup and verifies the written result. Previous configuration can be restored with confirmation.",
+            "Cards, controls, progress, dialogs and save feedback follow the selected interface theme. The retired discovery view no longer triggers a second automatic scan; installation receipts, update checks and history keep their distinct roles."
           ]
         },
         {
-          "heading": "Interface themes",
+          "heading": "Retro Manga and Mario 64 themes",
           "items": [
-            "Retro Manga remains the default; Mario 64 is included as an alternative with its own light and dark palettes, rounded surfaces, and decoration settings.",
-            "The selected design applies to app screens, catalogue cards, filters, dialogs, and loading or error states.",
-            "Themes work offline and are remembered when the app is reopened.",
-            "Mario 64 uses bundled TypefaceMario64 only for headings; descriptions retain the default font, with Roboto fallback for accented heading characters."
+            "Retro Manga remains the default. Mario 64 adds its own light and dark palettes, dimensional surfaces, sky-inspired backgrounds and star accents across the main app.",
+            "Themes are included offline, remembered after reopening, and selected independently from light, dark or system appearance.",
+            "Mario 64 uses TypefaceMario64 for titles and large headings, including Home’s Top downloads mod names. Descriptions keep the default font, and Roboto provides accented characters missing from the heading font."
           ]
         },
         {
           "heading": "Consistent Settings",
           "items": [
-            "Interface theme, appearance mode, and language display the current selection and reveal their options when opened.",
-            "The language selector keeps its animated arrow and expansion and closes automatically after a language is chosen.",
-            "Mario 64 uses finer borders, softer shadows, rounded icon tiles and switches, and cleaner section headings in Settings."
+            "Interface theme, appearance mode and language show the current choice and reveal their options through matching expandable selectors.",
+            "The language selector keeps its arrow and expansion animations and closes after the choice is saved.",
+            "Mario 64 gives Settings themed panels, finer borders, rounded controls and icons, and softer shadows."
           ]
         },
         {
-          "heading": "Appearance recovery and contrast",
+          "heading": "Appearance recovery and readability",
           "items": [
-            "Appearance choices are confirmed after saving; simultaneous requests are blocked and a failed save restores the previous choice.",
-            "Older installations keep their appearance mode. Unavailable saved designs fall back to Retro Manga without losing the mode.",
-            "Text on filled buttons, badges, filters, and progress surfaces uses the matching contrast role."
+            "Appearance changes are confirmed after saving; simultaneous requests are blocked and failed saves preserve the previous selection.",
+            "Older installations retain their appearance mode. Missing or unavailable design IDs fall back to Retro Manga.",
+            "Filled buttons, badges, filters and progress surfaces use the matching foreground contrast role."
           ]
         },
         {
           "heading": "Floating panel and updates",
           "items": [
-            "The floating panel keeps its independent, fixed dark design; interface selection currently applies to the main app.",
-            "Download and installation behavior is preserved. This is an optional update."
+            "The floating panel keeps its independent fixed dark design. Theme selection and game mod editing apply to the main app.",
+            "Download and installation behavior is preserved. Version 1.8.3 is an optional update."
           ]
         }
       ]
     },
     "es": {
-      "title": "Temas de interfaz y Ajustes renovados",
-      "summary": "La versión 1.8.3 incorpora los diseños incluidos Retro Manga y Mario 64 y unifica los selectores animados de Ajustes.",
+      "title": "Control de mods y la interfaz Mario 64",
+      "summary": "La versión 1.8.3 incorpora activación verificada de mods desde Biblioteca, reúne la información de los mods locales y añade la interfaz Mario 64 junto a Retro Manga con selectores coherentes en Ajustes.",
       "highlights": [
-        "Elige Retro Manga o Mario 64 de forma independiente del modo claro, oscuro o del sistema.",
-        "Tema, modo de apariencia e idioma usan selectores desplegables con el mismo diseño.",
-        "Mario 64 da a Ajustes paneles más suaves, controles redondeados y sombras discretas.",
-        "Activa o desactiva mods Lua locales compatibles desde Biblioteca para el próximo inicio del juego."
+        "Activa o desactiva mods Lua locales compatibles para el próximo inicio del juego.",
+        "Una sola vista Mods del juego reúne activación, autor, categoría, versión informativa y descripción.",
+        "Elige Retro Manga o Mario 64; los títulos de Mario usan la fuente TypefaceMario64 incluida.",
+        "Tema de interfaz, modo de apariencia e idioma comparten selectores animados."
       ],
       "sections": [
         {
-          "heading": "Selección de mods del juego",
+          "heading": "Biblioteca y control de mods del juego",
           "items": [
-            "Activa o desactiva mods Lua locales compatibles desde Biblioteca para el próximo inicio del juego.",
-            "Selecciona la carpeta user del juego con acceso persistente; las ediciones conservan otros ajustes y crean un respaldo privado de recuperación.",
-            "Las selecciones comprueban incompatibilidades, límites de tamaño y guardado correcto. Cierra el juego antes de editar; los packs DynOS utilizan su configuración independiente.",
-            "Mods del juego tiene su propia pestaña en Biblioteca, con tarjetas adaptadas al tema, búsqueda local, filtros de activación y avisos de guardado verificado.",
-            "Detectados se integra en Mods del juego: una sola vista combina activación verificada con autor, categoría, versión informativa y descripción, sin otro escaneo automático de descubrimiento."
+            "Mods del juego es la vista principal de Biblioteca. Sustituye la pestaña Detectados y muestra tanto mods existentes como contenido instalado por SM64CDPY cuando cumplen la estructura compatible con el juego.",
+            "La activación usa el nombre real de la carpeta o archivo Lua. Búsqueda local, filtros de activados/desactivados, contadores y detalles de solo lectura incluyen autor, categoría, versión informativa y descripción cuando existen.",
+            "Selecciona una vez la carpeta user del juego para conceder acceso persistente a sm64config.txt. Cierra el juego antes de editar: la selección se aplica en el próximo inicio, y DynOS/Touch Controls mantienen su configuración independiente.",
+            "El guardado comprueba incompatibilidades locales conocidas y el límite de tamaño del juego, conserva las demás líneas de configuración, crea un respaldo privado y verifica el resultado escrito. La configuración anterior puede restaurarse con confirmación.",
+            "Tarjetas, controles, progreso, diálogos y avisos de guardado siguen el tema elegido. La vista retirada ya no provoca otro escaneo automático; recibos de instalación, comprobación de actualizaciones e historial conservan sus funciones propias."
           ]
         },
         {
-          "heading": "Temas de interfaz",
+          "heading": "Temas Retro Manga y Mario 64",
           "items": [
-            "Retro Manga sigue siendo el tema predeterminado; Mario 64 se incluye como alternativa con paletas clara y oscura, superficies redondeadas y decoración propia.",
-            "El diseño seleccionado se aplica a las pantallas, tarjetas de catálogo, filtros, diálogos y estados de carga o error.",
-            "Los temas funcionan sin conexión y se conservan al volver a abrir la app.",
-            "Mario 64 utiliza TypefaceMario64 incluida solo para títulos; las descripciones conservan la fuente predeterminada, con respaldo Roboto para acentos en los títulos."
+            "Retro Manga sigue siendo el tema predeterminado. Mario 64 incorpora paletas clara y oscura, superficies con relieve, fondos inspirados en cielos y detalles de estrellas en la app principal.",
+            "Los temas vienen incluidos sin conexión, se recuerdan al volver a abrir y se eligen de forma independiente del modo claro, oscuro o del sistema.",
+            "Mario 64 utiliza TypefaceMario64 en títulos y encabezados grandes, incluidos los nombres de mods de Top downloads en Home. Las descripciones conservan la fuente predeterminada y Roboto cubre los caracteres acentuados ausentes en la fuente de títulos."
           ]
         },
         {
           "heading": "Ajustes coherentes",
           "items": [
-            "Tema de interfaz, modo de apariencia e idioma muestran la selección actual y despliegan sus opciones al abrirlos.",
-            "El selector de idioma conserva el giro de la flecha y la expansión animada, y se cierra automáticamente después de elegir un idioma.",
-            "Mario 64 usa bordes más finos, sombras suaves, iconos y switches redondeados y cabeceras más limpias en Ajustes."
+            "Tema de interfaz, modo de apariencia e idioma muestran la selección actual y despliegan sus opciones con el mismo diseño.",
+            "El selector de idioma conserva las animaciones de flecha y expansión, y se cierra después de guardar la selección.",
+            "Mario 64 adapta Ajustes con paneles del tema, bordes más finos, controles e iconos redondeados y sombras suaves."
           ]
         },
         {
-          "heading": "Recuperación de apariencia y contraste",
+          "heading": "Recuperación de apariencia y legibilidad",
           "items": [
-            "Las selecciones de apariencia se confirman después de guardar; se bloquean solicitudes simultáneas y un fallo restaura la selección anterior.",
-            "Las instalaciones anteriores conservan su modo de apariencia. Los diseños guardados que ya no están disponibles recuperan Retro Manga sin perder el modo.",
-            "Texto sobre botones rellenos, etiquetas, filtros y superficies de progreso usa el color de contraste correspondiente."
+            "Los cambios de apariencia se confirman después de guardar; se bloquean solicitudes simultáneas y los fallos conservan la selección anterior.",
+            "Las instalaciones anteriores conservan su modo de apariencia. Los IDs de diseño ausentes o no disponibles recuperan Retro Manga.",
+            "Botones rellenos, etiquetas, filtros y superficies de progreso usan el color de texto correspondiente a su contraste."
           ]
         },
         {
           "heading": "Panel flotante y actualizaciones",
           "items": [
-            "El panel flotante conserva su diseño oscuro fijo e independiente; la selección de interfaz se aplica por ahora a la app principal.",
-            "Se mantiene el funcionamiento de descargas e instalaciones. La actualización es opcional."
+            "El panel flotante conserva su diseño oscuro fijo e independiente. La selección de tema y la edición de mods se aplican a la app principal.",
+            "Se mantiene el funcionamiento de descargas e instalaciones. La versión 1.8.3 es una actualización opcional."
           ]
         }
       ]
     },
     "pt-BR": {
-      "title": "Temas de interface e Configurações renovadas",
-      "summary": "A versão 1.8.3 inclui os visuais Retro Manga e Mario 64 e unifica os seletores animados de Configurações.",
+      "title": "Controle de mods e a interface Mario 64",
+      "summary": "A versão 1.8.3 traz ativação verificada de mods na Biblioteca, reúne informações dos mods locais e adiciona a interface Mario 64 ao lado de Retro Manga com seletores consistentes nas Configurações.",
       "highlights": [
-        "Escolha Retro Manga ou Mario 64 independentemente do modo claro, escuro ou do sistema.",
-        "Tema, modo de aparência e idioma usam seletores expansíveis com o mesmo visual.",
-        "Mario 64 traz painéis mais suaves, controles arredondados e sombras discretas para Configurações.",
-        "Ative ou desative mods Lua locais compatíveis na Biblioteca para a próxima abertura do jogo."
+        "Ative ou desative mods Lua locais compatíveis para a próxima abertura do jogo.",
+        "Uma única aba Mods do jogo reúne ativação, autor, categoria, versão informativa e descrição.",
+        "Escolha Retro Manga ou Mario 64; os títulos de Mario usam a fonte TypefaceMario64 incluída.",
+        "Tema de interface, modo de aparência e idioma compartilham seletores animados."
       ],
       "sections": [
         {
-          "heading": "Seleção de mods do jogo",
+          "heading": "Biblioteca e controle de mods do jogo",
           "items": [
-            "Ative ou desative mods Lua locais compatíveis na Biblioteca para a próxima abertura do jogo.",
-            "Selecione a pasta user do jogo com acesso persistente; as edições preservam outras opções e criam um backup privado para recuperação.",
-            "As seleções verificam incompatibilidades, limites de tamanho e gravação correta. Feche o jogo antes de editar; os pacotes DynOS usam sua configuração separada.",
-            "Mods do jogo têm sua própria aba na Biblioteca, com cartões adaptados ao tema, busca local, filtros de ativação e avisos de gravação verificada.",
-            "Conteúdo detectado é integrado a Mods do jogo: uma única aba combina ativação verificada com autor, categoria, versão informativa e descrição, sem outra busca automática de descoberta."
+            "Mods do jogo é a aba principal da Biblioteca. Substitui a aba Detectados e mostra tanto mods existentes quanto conteúdo instalado pelo SM64CDPY quando seguem a estrutura compatível com o jogo.",
+            "A ativação usa o nome real da pasta ou arquivo Lua. Busca local, filtros de ativados/desativados, contadores e detalhes somente para leitura incluem autor, categoria, versão informativa e descrição quando disponíveis.",
+            "Selecione uma vez a pasta user do jogo para conceder acesso persistente a sm64config.txt. Feche o jogo antes de editar: a seleção vale para a próxima abertura, e DynOS/Touch Controls mantêm sua configuração separada.",
+            "A gravação verifica incompatibilidades locais conhecidas e o limite de tamanho do jogo, preserva as demais linhas de configuração, cria um backup privado e confirma o resultado gravado. A configuração anterior pode ser restaurada com confirmação.",
+            "Cartões, controles, progresso, diálogos e avisos de gravação acompanham o tema escolhido. A aba removida não dispara outra busca automática; recibos de instalação, verificação de atualizações e histórico mantêm suas funções próprias."
           ]
         },
         {
-          "heading": "Temas de interface",
+          "heading": "Temas Retro Manga e Mario 64",
           "items": [
-            "Retro Manga continua como padrão; Mario 64 está incluído como alternativa com paletas clara e escura, superfícies arredondadas e decoração própria.",
-            "O visual selecionado se aplica às telas, cartões do catálogo, filtros, diálogos e estados de carregamento ou erro.",
-            "Os temas funcionam sem conexão e são mantidos ao reabrir o app.",
-            "Mario 64 usa TypefaceMario64 incluída apenas nos títulos; as descrições mantêm a fonte padrão, com fallback Roboto para acentos nos títulos."
+            "Retro Manga continua como padrão. Mario 64 inclui paletas clara e escura, superfícies com relevo, fundos inspirados em céus e detalhes de estrelas no app principal.",
+            "Os temas vêm incluídos offline, são lembrados ao reabrir o app e podem ser escolhidos independentemente do modo claro, escuro ou do sistema.",
+            "Mario 64 usa TypefaceMario64 em títulos e cabeçalhos grandes, incluindo nomes de mods em Top downloads na Home. As descrições mantêm a fonte padrão e Roboto fornece os caracteres acentuados ausentes na fonte dos títulos."
           ]
         },
         {
           "heading": "Configurações consistentes",
           "items": [
-            "Tema da interface, modo de aparência e idioma mostram a seleção atual e revelam suas opções ao abrir os seletores.",
-            "O seletor de idioma mantém a rotação da seta e a expansão animada, e fecha automaticamente após escolher um idioma.",
-            "Mario 64 usa bordas mais finas, sombras suaves, ícones e switches arredondados e cabeçalhos mais limpos em Configurações."
+            "Tema de interface, modo de aparência e idioma mostram a seleção atual e expandem suas opções com o mesmo visual.",
+            "O seletor de idioma mantém as animações da seta e da expansão e fecha depois de salvar a seleção.",
+            "Mario 64 adapta as Configurações com painéis do tema, bordas mais finas, controles e ícones arredondados e sombras suaves."
           ]
         },
         {
-          "heading": "Recuperação da aparência e contraste",
+          "heading": "Recuperação de aparência e legibilidade",
           "items": [
-            "As escolhas de aparência são confirmadas após salvar; solicitações simultâneas são bloqueadas e uma falha restaura a seleção anterior.",
-            "Instalações anteriores mantêm seu modo de aparência. Visuais salvos que não estão mais disponíveis voltam para Retro Manga sem perder o modo.",
-            "O texto sobre botões preenchidos, etiquetas, filtros e superfícies de progresso usa a cor de contraste correspondente."
+            "Mudanças de aparência são confirmadas depois de salvar; solicitações simultâneas são bloqueadas e falhas preservam a seleção anterior.",
+            "Instalações anteriores mantêm o modo de aparência. IDs de design ausentes ou indisponíveis retornam a Retro Manga.",
+            "Botões preenchidos, etiquetas, filtros e superfícies de progresso usam a cor de texto correspondente ao contraste."
           ]
         },
         {
           "heading": "Painel flutuante e atualizações",
           "items": [
-            "O painel flutuante mantém seu visual escuro fixo e independente; a seleção de interface se aplica por enquanto ao app principal.",
-            "O funcionamento dos downloads e das instalações é mantido. A atualização é opcional."
+            "O painel flutuante mantém seu visual escuro fixo e independente. A escolha de tema e a edição de mods se aplicam ao app principal.",
+            "O funcionamento de downloads e instalações é preservado. A versão 1.8.3 é uma atualização opcional."
           ]
         }
       ]

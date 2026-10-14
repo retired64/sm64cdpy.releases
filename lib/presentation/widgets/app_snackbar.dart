@@ -190,8 +190,11 @@ class _BouncyToast extends StatelessWidget {
       tween: Tween(begin: 0.85, end: 1.0),
       duration: const Duration(milliseconds: 320),
       curve: Curves.easeOutBack,
-      builder: (context, scale, child) =>
-          Transform.scale(scale: scale, alignment: Alignment.bottomCenter, child: child),
+      builder: (context, scale, child) => Transform.scale(
+        scale: scale,
+        alignment: Alignment.bottomCenter,
+        child: child,
+      ),
       child: child,
     );
   }

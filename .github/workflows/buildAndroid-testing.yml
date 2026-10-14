@@ -22,6 +22,9 @@ jobs:
   build-testing:
     name: Build APKs (testing)
     runs-on: ubuntu-latest
+    env:
+      # A release-validation push can exercise all ABIs without publication.
+      ALL_ABIS: ${{ inputs.all_abis == true || contains(github.event.head_commit.message, '[all-abis]') }}
     # Corre siempre en workflow_dispatch. En push, solo si el commit incluye [testing]
     if: >
       github.event_name == 'workflow_dispatch' ||
@@ -161,8 +164,6 @@ jobs:
 
       # ── 8. Build APK arm64 por defecto / todas las ABI manualmente ───────────────────────────────────────────
       - name: Build APKs de prueba
-        env:
-          ALL_ABIS: ${{ inputs.all_abis }}
         run: |
           if [ "$ALL_ABIS" = 'true' ]; then
             flutter build apk --release --split-per-abi
@@ -179,8 +180,6 @@ jobs:
       # ── 8.5. Renombrar APK con short commit SHA ──────────────────────────
       - name: Renombrar APK con short commit SHA
         id: apk
-        env:
-          ALL_ABIS: ${{ inputs.all_abis }}
         run: |
           APK_DIR="build/app/outputs/flutter-apk"
           SHORT_SHA=$(git rev-parse --short HEAD)
@@ -196,8 +195,6 @@ jobs:
 
       # ── 9. Verificar que el APK se generó ────────────────────────────────
       - name: Verificar APK generado
-        env:
-          ALL_ABIS: ${{ inputs.all_abis }}
         run: |
           APK_DIR="build/app/outputs/flutter-apk"
           APK="${{ steps.apk.outputs.apk_name }}"

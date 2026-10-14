@@ -41,7 +41,10 @@ class _LocaleSelectorState extends ConsumerState<LocaleSelector> {
     } catch (error, stack) {
       debugPrint('Locale selection failed: $error\n$stack');
       if (!mounted) return;
-      AppSnackbar.error(context, message: AppLocalizations.of(context).themeSaveFailed);
+      AppSnackbar.error(
+        context,
+        message: AppLocalizations.of(context).themeSaveFailed,
+      );
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -65,7 +68,11 @@ class _LocaleSelectorState extends ConsumerState<LocaleSelector> {
             label: _name(l10n, option),
             leading: Text(_flag(option), style: const TextStyle(fontSize: 18)),
             selected: option == tag,
-            onPressed: _saving ? null : () async { await _select(option); },
+            onPressed: _saving
+                ? null
+                : () async {
+                    await _select(option);
+                  },
           ),
       ],
     );

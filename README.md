@@ -153,3 +153,5 @@ names, images, and related content belong to their respective creators.
 [GitHub profile](https://github.com/retired64)
 
 Library also configures compatible local Lua mods for the next game start through a selected game user folder, with verified saves and a private recovery backup. Close the game before editing. DynOS packs remain separate.
+
+Release 1.8.3 preparation includes game mod controls, the unified Library and Retro Manga/Mario 64 themes. [Merge and release checklist](docs/RELEASE_1.8.3.md).

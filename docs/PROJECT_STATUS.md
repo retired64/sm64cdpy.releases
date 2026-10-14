@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado para la preparación de `1.8.3+22` en `custom-themes` el 2026-10-13; sin merge ni publicación.
+Revisado para la preparación de `1.8.3+22` en `custom-themes` el 2026-10-14; sin merge ni publicación.
 
 ## Implementado
 
@@ -118,13 +118,14 @@ física de idioma/tamaño de texto pendientes.
 
 ## Preparación oficial 1.8.3+22
 
-- Base de UI validada en Actions #177 (`e02877f`), con build 21 anterior.
-- Versión/build incrementados y notas oficiales EN/ES/PT-BR en el manifiesto nuevo.
-- Testing valida manifiesto/pubspec, entrega notas preview y permite todas las
-  arquitecturas mediante `all_abis: true` manual, sin publicar.
-- Publicación estable limitada a main y tag sobre SHA compilado.
-- Pendientes: nueva build 22, matriz física/ABIs, fecha final, merge autorizado y
-  publicación autorizada. [Checklist completo](RELEASE_1.8.3.md).
+- Notas finales EN/ES/PT-BR incluyen Biblioteca unificada, edición de mods,
+  Retro/Mario, ajustes y fuente de títulos; previews generadas para revisión.
+- Testing #183–#186 terminó correctamente; #187 pasó análisis/78 tests Flutter.
+- Generación/formato de #187 incorporados solo en archivos del alcance.
+- Merge simulado contra main remoto `8bdc996` sin conflictos, sin fusionar.
+- Testing admite todas las ABI por input manual o `[testing] [all-abis]`.
+- Pendientes: ejecución consolidada, matriz física/ABIs, fecha final y
+  autorizaciones de merge/publicación. [Checklist](RELEASE_1.8.3.md).
 
 ## Activación de mods — candidata 1.8.3
 

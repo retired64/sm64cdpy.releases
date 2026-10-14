@@ -2388,12 +2388,6 @@ abstract class AppLocalizations {
   /// **'Updates'**
   String get libraryUpdates;
 
-  /// No description provided for @libraryDetected.
-  ///
-  /// In en, this message translates to:
-  /// **'Detected'**
-  String get libraryDetected;
-
   /// No description provided for @libraryRecent.
   ///
   /// In en, this message translates to:
@@ -2496,24 +2490,6 @@ abstract class AppLocalizations {
   /// **'Updates confirmed by the catalog will appear here. You can still check each content section.'**
   String get libraryUpdatesEmptyBody;
 
-  /// No description provided for @libraryDetectedEmptyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'NO EXTERNAL CONTENT DETECTED'**
-  String get libraryDetectedEmptyTitle;
-
-  /// No description provided for @libraryDetectedEmptyBody.
-  ///
-  /// In en, this message translates to:
-  /// **'No untracked Lua content was found in the selected folders. Refresh after making external changes.'**
-  String get libraryDetectedEmptyBody;
-
-  /// No description provided for @libraryDetectedOnDevice.
-  ///
-  /// In en, this message translates to:
-  /// **'Detected on device — not linked to the catalog'**
-  String get libraryDetectedOnDevice;
-
   /// No description provided for @libraryDiscoveryHeaderIdentified.
   ///
   /// In en, this message translates to:
@@ -2531,18 +2507,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlinked Lua'**
   String get libraryDiscoveryUnlinked;
-
-  /// No description provided for @libraryDetectedPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Entry file'**
-  String get libraryDetectedPath;
-
-  /// No description provided for @libraryDetectedScanLimit.
-  ///
-  /// In en, this message translates to:
-  /// **'The safety scan limit was reached. Some content may not be shown.'**
-  String get libraryDetectedScanLimit;
 
   /// No description provided for @libraryErrorTitle.
   ///
@@ -2729,6 +2693,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saving appearance'**
   String get themeSaving;
+
+  /// No description provided for @gameModsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Game mods'**
+  String get gameModsTitle;
+
+  /// No description provided for @gameModsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose mods for the next game start'**
+  String get gameModsSubtitle;
+
+  /// No description provided for @gameModsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the game before making changes. These switches configure the next start; DynOS packs are managed separately.'**
+  String get gameModsHint;
+
+  /// No description provided for @gameModsSelectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the game’s user folder containing sm64config.txt and mods.'**
+  String get gameModsSelectHint;
+
+  /// No description provided for @gameModsConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the game first. Apply this selection for its next start?'**
+  String get gameModsConfirm;
+
+  /// No description provided for @gameModsCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get gameModsCancel;
+
+  /// No description provided for @gameModsApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get gameModsApply;
+
+  /// No description provided for @gameModsSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Select user folder'**
+  String get gameModsSelect;
+
+  /// No description provided for @gameModsDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get gameModsDisconnect;
+
+  /// No description provided for @gameModsConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'The configuration changed or another enabled mod is incompatible. Refresh and try again.'**
+  String get gameModsConflict;
+
+  /// No description provided for @gameModsBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot safely enable this mod. Check its structure and metadata, or disable an incompatible mod.'**
+  String get gameModsBlocked;
+
+  /// No description provided for @gameModsMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'This user folder does not match your selected mods folder. Choose the same game installation.'**
+  String get gameModsMismatch;
+
+  /// No description provided for @gameModsWriteError.
+  ///
+  /// In en, this message translates to:
+  /// **'The write could not be confirmed. Close the game and restore the previous configuration if necessary.'**
+  String get gameModsWriteError;
+
+  /// No description provided for @gameModsFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'The configuration or folder exceeds the supported limits or has an unsupported format. No change was applied.'**
+  String get gameModsFormat;
+
+  /// No description provided for @gameModsAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration unavailable. Check that user contains sm64config.txt and mods, and select the folder again with read/write access.'**
+  String get gameModsAccess;
+
+  /// No description provided for @gameModsRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore previous configuration'**
+  String get gameModsRestore;
+
+  /// No description provided for @gameModsRestoreConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'With the game closed, replace the configuration with the private backup from before the last edit? This also restores its other settings.'**
+  String get gameModsRestoreConfirm;
+
+  /// No description provided for @gameModsInstalling.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for downloads and installations to finish before changing game mods.'**
+  String get gameModsInstalling;
+
+  /// No description provided for @gameModsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No compatible Lua mods found in this folder.'**
+  String get gameModsEmpty;
+
+  /// No description provided for @gameModsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled for next start'**
+  String get gameModsEnabled;
+
+  /// No description provided for @gameModsDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled for next start'**
+  String get gameModsDisabled;
+
+  /// No description provided for @gameModsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get gameModsMore;
+
+  /// No description provided for @gameModsSize.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod reaches the game’s 35 MiB size limit and cannot be enabled.'**
+  String get gameModsSize;
+
+  /// No description provided for @gameModsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Selection saved and verified for the next game start.'**
+  String get gameModsSaved;
+
+  /// No description provided for @gameModsManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage game folder'**
+  String get gameModsManage;
+
+  /// Confirmed enabled game mods versus all controllable mods
+  ///
+  /// In en, this message translates to:
+  /// **'{enabled} of {total} enabled'**
+  String gameModsCount(int enabled, int total);
+
+  /// No description provided for @gameModsSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search mods, authors, categories…'**
+  String get gameModsSearch;
+
+  /// No description provided for @gameModsAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get gameModsAll;
+
+  /// No description provided for @gameModsEnabledFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get gameModsEnabledFilter;
+
+  /// No description provided for @gameModsDisabledFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get gameModsDisabledFilter;
+
+  /// No description provided for @gameModsNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No mods match this search or filter.'**
+  String get gameModsNoResults;
+
+  /// No description provided for @gameModsClearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get gameModsClearSearch;
+
+  /// No description provided for @gameModsDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod details'**
+  String get gameModsDetails;
+
+  /// No description provided for @gameModsCloseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get gameModsCloseDetails;
 }
 
 class _AppLocalizationsDelegate

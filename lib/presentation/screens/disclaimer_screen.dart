@@ -214,10 +214,7 @@ class _DisclaimerSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: retro.surface,
         borderRadius: retro.radius,
-        border: Border.all(
-          color: retro.border,
-          width: retro.borderWidth(2),
-        ),
+        border: Border.all(color: retro.border, width: retro.borderWidth(2)),
         boxShadow: retro.hardShadow(dx: 2, dy: 2),
       ),
       child: Row(
@@ -265,10 +262,7 @@ class _WarningBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: retro.surface,
         borderRadius: retro.radius,
-        border: Border.all(
-          color: retro.red,
-          width: retro.borderWidth(2),
-        ),
+        border: Border.all(color: retro.red, width: retro.borderWidth(2)),
         boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Row(

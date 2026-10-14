@@ -500,7 +500,10 @@ class _VipModCardState extends ConsumerState<VipModCard>
                 Container(
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: retro.border, width: retro.borderWidth(3)),
+                      bottom: BorderSide(
+                        color: retro.border,
+                        width: retro.borderWidth(3),
+                      ),
                     ),
                   ),
                   child: CachedNetworkImage(
@@ -746,9 +749,11 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                       Text(
                                         action.label(l10n),
                                         style: TextStyle(
-                                          fontFamily: retro.design.headingFontFamily,
+                                          fontFamily:
+                                              retro.design.headingFontFamily,
                                           fontSize: 15,
-                                          fontWeight: retro.design.headingWeight,
+                                          fontWeight:
+                                              retro.design.headingWeight,
                                           color: retro.onAmber,
                                         ),
                                       ),
@@ -906,10 +911,7 @@ class _Bone extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(3),
-          ),
+          border: Border.all(color: retro.border, width: retro.borderWidth(3)),
           borderRadius: retro.radius,
         ),
       ),

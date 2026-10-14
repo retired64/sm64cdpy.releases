@@ -94,3 +94,5 @@ os autores dos mods. O conteúdo pertence aos respectivos criadores.
 [Discord](https://discord.com/invite/thuhUH2WNX)
 
 A Biblioteca também permite configurar mods Lua locais compatíveis para a próxima abertura do jogo, selecionando a pasta user, com gravação verificada e backup privado. Feche o jogo antes de editar. Os pacotes DynOS são gerenciados separadamente.
+
+A preparação de 1.8.3 inclui controle de mods, Biblioteca unificada e os temas Retro Manga/Mario 64. [Checklist de merge e publicação](docs/RELEASE_1.8.3.md).

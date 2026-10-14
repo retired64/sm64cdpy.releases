@@ -71,10 +71,9 @@ class AppearanceNotifier extends Notifier<AppearanceSettings> {
       isSaving: true,
     );
     try {
-      await Hive.box<String>(AppConstants.settingsBoxKey).putAll({
-        _themeIdKey: nextId.storageKey,
-        _themeModeKey: storedMode,
-      });
+      await Hive.box<String>(
+        AppConstants.settingsBoxKey,
+      ).putAll({_themeIdKey: nextId.storageKey, _themeModeKey: storedMode});
       if (ref.mounted) {
         state = AppearanceSettings(themeId: nextId, mode: nextMode);
       }
@@ -92,13 +91,15 @@ final appearanceProvider =
       AppearanceNotifier.new,
     );
 
-final themeModeProvider = Provider<ThemeMode>((ref) =>
-    ref.watch(appearanceProvider.select((settings) => settings.mode)));
+final themeModeProvider = Provider<ThemeMode>(
+  (ref) => ref.watch(appearanceProvider.select((settings) => settings.mode)),
+);
 
-final themeDesignProvider = Provider<AppThemeDesign>((ref) =>
-    AppThemeCatalog.resolve(
-      ref.watch(appearanceProvider.select((settings) => settings.themeId)),
-    ));
+final themeDesignProvider = Provider<AppThemeDesign>(
+  (ref) => AppThemeCatalog.resolve(
+    ref.watch(appearanceProvider.select((settings) => settings.themeId)),
+  ),
+);
 
 /// Provider for managing app locale (system/forced) with persistence.
 ///
@@ -119,8 +120,9 @@ class LocaleNotifier extends Notifier<String?> {
     state = tag;
 
     try {
-      await Hive.box<String>(AppConstants.settingsBoxKey)
-          .put('locale', tag ?? 'system');
+      await Hive.box<String>(
+        AppConstants.settingsBoxKey,
+      ).put('locale', tag ?? 'system');
     } catch (e) {
       debugPrint('Failed to save locale preference: $e');
     }
@@ -146,5 +148,6 @@ class LocaleNotifier extends Notifier<String?> {
   }
 }
 
-final localeNotifierProvider =
-    NotifierProvider<LocaleNotifier, String?>(() => LocaleNotifier());
+final localeNotifierProvider = NotifierProvider<LocaleNotifier, String?>(
+  () => LocaleNotifier(),
+);

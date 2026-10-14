@@ -935,10 +935,7 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          widget.label,
-                          style: retro.heading(size: 14),
-                        ),
+                        Text(widget.label, style: retro.heading(size: 14)),
                         Text(
                           widget.description,
                           style: retro.body(size: 11.5),
@@ -1381,7 +1378,8 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                       style: TextStyle(
                         color: retro.ink,
                         fontFamily: retro.design.headingFontFamily,
-                        fontFamilyFallback: retro.design.headingFontFamilyFallback,
+                        fontFamilyFallback:
+                            retro.design.headingFontFamilyFallback,
                         fontSize: 13,
                         fontWeight: retro.design.headingFontFamily == null
                             ? FontWeight.w700
@@ -1467,7 +1465,11 @@ class _SectionHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 2),
-                  Icon(Icons.arrow_forward_ios, size: 10, color: retro.accentText),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 10,
+                    color: retro.accentText,
+                  ),
                 ],
               ),
             ),

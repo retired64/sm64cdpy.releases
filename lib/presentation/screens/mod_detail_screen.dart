@@ -163,7 +163,9 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: _isAppBarSolid
             ? retro.systemUiStyle
-            : retro.systemUiStyle.copyWith(statusBarIconBrightness: Brightness.light),
+            : retro.systemUiStyle.copyWith(
+                statusBarIconBrightness: Brightness.light,
+              ),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           color: bgColor,
@@ -397,7 +399,9 @@ class _ContentCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: retro.surface,
-        border: Border(top: BorderSide(color: retro.border, width: retro.borderWidth(3))),
+        border: Border(
+          top: BorderSide(color: retro.border, width: retro.borderWidth(3)),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -527,7 +531,10 @@ class _TitleSection extends StatelessWidget {
               width: 26,
               height: 26,
               alignment: Alignment.center,
-              decoration: BoxDecoration(borderRadius: retro.radius, color: retro.accent),
+              decoration: BoxDecoration(
+                borderRadius: retro.radius,
+                color: retro.accent,
+              ),
               child: Icon(
                 Icons.person_rounded,
                 size: 14,
@@ -986,7 +993,11 @@ class _VersionCardState extends State<_VersionCard> {
                   ),
                   if (widget.version.downloads > 0) ...[
                     const SizedBox(width: 10),
-                    Icon(Icons.download_rounded, size: 13, color: retro.accentText),
+                    Icon(
+                      Icons.download_rounded,
+                      size: 13,
+                      color: retro.accentText,
+                    ),
                     const SizedBox(width: 3),
                     Text(
                       widget.version.downloads.toString(),
@@ -1417,9 +1428,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
               style: FilledButton.styleFrom(
                 backgroundColor: retro.accent,
                 foregroundColor: retro.inkOnAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: retro.radius,
-                ),
+                shape: RoundedRectangleBorder(borderRadius: retro.radius),
                 textStyle: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -2757,7 +2766,11 @@ class _DetailError extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline_rounded, size: 48, color: retro.accentText),
+              Icon(
+                Icons.error_outline_rounded,
+                size: 48,
+                color: retro.accentText,
+              ),
               const SizedBox(height: 12),
               Text(
                 l10n.detailFailedToLoad,

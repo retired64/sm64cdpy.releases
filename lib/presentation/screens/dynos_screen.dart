@@ -508,7 +508,10 @@ class _DynosCardState extends ConsumerState<DynosCard>
                 Container(
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: retro.border, width: retro.borderWidth(3)),
+                      bottom: BorderSide(
+                        color: retro.border,
+                        width: retro.borderWidth(3),
+                      ),
                     ),
                   ),
                   child: CachedNetworkImage(
@@ -737,7 +740,8 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                   children: [
                                     LinearProgressIndicator(
                                       value: visibleProgress,
-                                      backgroundColor: retro.onColor(retro.blue)
+                                      backgroundColor: retro
+                                          .onColor(retro.blue)
                                           .withValues(alpha: 0.25),
                                       color: retro.onColor(retro.blue),
                                       minHeight: 4,
@@ -748,7 +752,8 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                           ? action.label(l10n)
                                           : '${(visibleProgress * 100).toStringAsFixed(0)}% · ${action.label(l10n)}',
                                       style: TextStyle(
-                                        fontFamily: retro.design.headingFontFamily,
+                                        fontFamily:
+                                            retro.design.headingFontFamily,
                                         fontSize: 13,
                                         fontWeight: retro.design.headingWeight,
                                         color: retro.onColor(retro.blue),
@@ -768,7 +773,8 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                     Text(
                                       action.label(l10n),
                                       style: TextStyle(
-                                        fontFamily: retro.design.headingFontFamily,
+                                        fontFamily:
+                                            retro.design.headingFontFamily,
                                         fontSize: 15,
                                         fontWeight: retro.design.headingWeight,
                                         color: retro.onColor(retro.blue),
@@ -932,10 +938,7 @@ class _Bone extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(3),
-          ),
+          border: Border.all(color: retro.border, width: retro.borderWidth(3)),
           borderRadius: retro.radius,
         ),
       ),

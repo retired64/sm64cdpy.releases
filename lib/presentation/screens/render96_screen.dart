@@ -154,10 +154,7 @@ class _Render96Hero extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: retro.radius,
           color: retro.surfaceAlt,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(2),
-          ),
+          border: Border.all(color: retro.border, width: retro.borderWidth(2)),
           boxShadow: retro.hardShadow(dx: 4, dy: 4),
         ),
         child: Stack(
@@ -434,9 +431,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                             '·',
                             style: retro.body(
                               size: 12,
-                              color: retro.inkDim.withValues(
-                                alpha: 0.45,
-                              ),
+                              color: retro.inkDim.withValues(alpha: 0.45),
                             ),
                           ),
                         ),
@@ -448,9 +443,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                               Icon(
                                 Icons.code_rounded,
                                 size: 12,
-                                color: retro.inkDim.withValues(
-                                  alpha: 0.55,
-                                ),
+                                color: retro.inkDim.withValues(alpha: 0.55),
                               ),
                               const SizedBox(width: 3),
                               Flexible(
@@ -458,9 +451,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                                   widget.mod.repo,
                                   style: retro.body(
                                     size: 10.5,
-                                    color: retro.inkDim.withValues(
-                                      alpha: 0.65,
-                                    ),
+                                    color: retro.inkDim.withValues(alpha: 0.65),
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -542,10 +533,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                           Expanded(
                             child: Text(
                               widget.mod.notes!,
-                              style: retro.body(
-                                size: 11,
-                                color: retro.ink,
-                              ),
+                              style: retro.body(size: 11, color: retro.ink),
                             ),
                           ),
                         ],
@@ -659,9 +647,7 @@ class _ActionButton extends StatelessWidget {
     // custom: sobre un relleno claro (amber, teal) la tinta oscura del tema
     // gana legibilidad; sobre un relleno oscuro (verde éxito, azul, rojo)
     // gana el blanco.
-    final fg = filled
-        ? retro.onColor(color)
-        : color;
+    final fg = filled ? retro.onColor(color) : color;
 
     return GestureDetector(
       onTap: onTap,
@@ -671,10 +657,7 @@ class _ActionButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: retro.radius,
           color: filled ? color : Colors.transparent,
-          border: Border.all(
-            color: color,
-            width: retro.borderWidth(2),
-          ),
+          border: Border.all(color: color, width: retro.borderWidth(2)),
           boxShadow: retro.hardShadow(dx: 2, dy: 2),
         ),
         child: Row(

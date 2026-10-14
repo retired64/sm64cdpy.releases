@@ -2,7 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/game_mod_activation.dart';
 
 final gameModGatewayProvider = Provider((ref) => GameModActivation());
-final gameModActivationProvider = AsyncNotifierProvider<GameModActivationNotifier, GameModSnapshot>(GameModActivationNotifier.new);
+final gameModActivationProvider =
+    AsyncNotifierProvider<GameModActivationNotifier, GameModSnapshot>(
+      GameModActivationNotifier.new,
+    );
 
 class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
   bool _busy = false;
@@ -15,7 +18,11 @@ class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
   }
 
   Future<void> _settled(Future<GameModSnapshot> initial) async {
-    try { await initial; } catch (_) { /* build exposes the initial error. */ }
+    try {
+      await initial;
+    } catch (_) {
+      /* build exposes the initial error. */
+    }
   }
 
   Future<void> refresh() async {
@@ -29,7 +36,9 @@ class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
     } catch (error, stack) {
       if (ref.mounted) state = AsyncError(error, stack);
       rethrow;
-    } finally { _busy = false; }
+    } finally {
+      _busy = false;
+    }
   }
 
   Future<void> perform(String method, [Map<String, Object>? arguments]) async {
@@ -38,8 +47,12 @@ class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
     try {
       await _startup;
       if (!ref.mounted) return;
-      final result = await ref.read(gameModGatewayProvider).call(method, arguments);
+      final result = await ref
+          .read(gameModGatewayProvider)
+          .call(method, arguments);
       if (result != null && ref.mounted) state = AsyncData(result);
-    } finally { _busy = false; }
+    } finally {
+      _busy = false;
+    }
   }
 }

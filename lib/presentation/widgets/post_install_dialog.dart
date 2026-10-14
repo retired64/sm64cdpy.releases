@@ -24,7 +24,10 @@ Future<void> showPostInstallDialog(BuildContext context) async {
             Icon(Icons.check_circle, color: retro.accentText, size: 22),
             const SizedBox(width: 10),
             Expanded(
-              child: Text(l10n.postInstallTitle, style: retro.heading(size: 15)),
+              child: Text(
+                l10n.postInstallTitle,
+                style: retro.heading(size: 15),
+              ),
             ),
           ],
         ),
@@ -37,7 +40,11 @@ Future<void> showPostInstallDialog(BuildContext context) async {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, size: 14, color: retro.amber),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 14,
+                    color: retro.amber,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(

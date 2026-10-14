@@ -1330,9 +1330,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get libraryUpdates => 'Actualizaciones';
 
   @override
-  String get libraryDetected => 'Detectados';
-
-  @override
   String get libraryRecent => 'Recientes';
 
   @override
@@ -1386,17 +1383,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'Aquí aparecerán las actualizaciones confirmadas por el catálogo. También puedes revisar cada sección.';
 
   @override
-  String get libraryDetectedEmptyTitle => 'NO HAY CONTENIDO EXTERNO DETECTADO';
-
-  @override
-  String get libraryDetectedEmptyBody =>
-      'No se encontró contenido Lua sin registrar en las carpetas seleccionadas. Actualiza después de hacer cambios externos.';
-
-  @override
-  String get libraryDetectedOnDevice =>
-      'Detectado en el dispositivo — sin vincular al catálogo';
-
-  @override
   String get libraryDiscoveryHeaderIdentified => 'Encabezado identificado';
 
   @override
@@ -1404,13 +1390,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get libraryDiscoveryUnlinked => 'Lua sin vincular';
-
-  @override
-  String get libraryDetectedPath => 'Archivo de entrada';
-
-  @override
-  String get libraryDetectedScanLimit =>
-      'Se alcanzó el límite seguro de escaneo. Puede que parte del contenido no aparezca.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA NO DISPONIBLE';
@@ -1515,6 +1494,125 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get themeSaving => 'Guardando apariencia';
+
+  @override
+  String get gameModsTitle => 'Mods del juego';
+
+  @override
+  String get gameModsSubtitle => 'Elige los mods para el próximo inicio';
+
+  @override
+  String get gameModsHint =>
+      'Cierra el juego antes de cambiar opciones. Estos interruptores configuran el próximo inicio; los packs DynOS se gestionan por separado.';
+
+  @override
+  String get gameModsSelectHint =>
+      'Selecciona la carpeta user del juego que contiene sm64config.txt y mods.';
+
+  @override
+  String get gameModsConfirm =>
+      'Cierra primero el juego. ¿Aplicar esta selección para el próximo inicio?';
+
+  @override
+  String get gameModsCancel => 'Cancelar';
+
+  @override
+  String get gameModsApply => 'Aplicar';
+
+  @override
+  String get gameModsSelect => 'Seleccionar carpeta user';
+
+  @override
+  String get gameModsDisconnect => 'Desconectar';
+
+  @override
+  String get gameModsConflict =>
+      'La configuración cambió o hay otro mod activado incompatible. Actualiza e inténtalo de nuevo.';
+
+  @override
+  String get gameModsBlocked =>
+      'No se puede activar este mod con seguridad. Revisa su estructura y datos, o desactiva un mod incompatible.';
+
+  @override
+  String get gameModsMismatch =>
+      'Esta carpeta user no corresponde a la carpeta de mods seleccionada. Elige la misma instalación del juego.';
+
+  @override
+  String get gameModsWriteError =>
+      'No se pudo confirmar la escritura. Cierra el juego y restaura la configuración anterior si hace falta.';
+
+  @override
+  String get gameModsFormat =>
+      'La configuración o carpeta supera los límites admitidos o tiene un formato no compatible. No se aplicó el cambio.';
+
+  @override
+  String get gameModsAccess =>
+      'Configuración no disponible. Comprueba que user contiene sm64config.txt y mods, y vuelve a seleccionar la carpeta con acceso de lectura y escritura.';
+
+  @override
+  String get gameModsRestore => 'Restaurar configuración anterior';
+
+  @override
+  String get gameModsRestoreConfirm =>
+      'Con el juego cerrado, ¿reemplazar la configuración por el respaldo privado anterior a la última edición? También restaura sus otros ajustes.';
+
+  @override
+  String get gameModsInstalling =>
+      'Espera a que terminen las descargas e instalaciones antes de cambiar los mods del juego.';
+
+  @override
+  String get gameModsEmpty =>
+      'No se encontraron mods Lua compatibles en esta carpeta.';
+
+  @override
+  String get gameModsEnabled => 'Activado para el próximo inicio';
+
+  @override
+  String get gameModsDisabled => 'Desactivado para el próximo inicio';
+
+  @override
+  String get gameModsMore => 'Mostrar más';
+
+  @override
+  String get gameModsSize =>
+      'Este mod alcanza el límite de 35 MiB del juego y no se puede activar.';
+
+  @override
+  String get gameModsSaved =>
+      'Selección guardada y verificada para el próximo inicio del juego.';
+
+  @override
+  String get gameModsManage => 'Gestionar carpeta del juego';
+
+  @override
+  String gameModsCount(int enabled, int total) {
+    return '$enabled de $total activados';
+  }
+
+  @override
+  String get gameModsSearch => 'Buscar mods, autores, categorías…';
+
+  @override
+  String get gameModsAll => 'Todos';
+
+  @override
+  String get gameModsEnabledFilter => 'Activados';
+
+  @override
+  String get gameModsDisabledFilter => 'Desactivados';
+
+  @override
+  String get gameModsNoResults =>
+      'No hay mods que coincidan con la búsqueda o el filtro.';
+
+  @override
+  String get gameModsClearSearch => 'Borrar búsqueda';
+
+  @override
+  String get gameModsDetails => 'Detalles del mod';
+
+  @override
+  String get gameModsCloseDetails => 'Cerrar';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2843,9 +2941,6 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get libraryUpdates => 'Actualizaciones';
 
   @override
-  String get libraryDetected => 'Detectados';
-
-  @override
   String get libraryRecent => 'Recientes';
 
   @override
@@ -2899,17 +2994,6 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
       'Aquí aparecerán las actualizaciones confirmadas por el catálogo. También puedes revisar cada sección.';
 
   @override
-  String get libraryDetectedEmptyTitle => 'NO HAY CONTENIDO EXTERNO DETECTADO';
-
-  @override
-  String get libraryDetectedEmptyBody =>
-      'No se encontró contenido Lua sin registrar en las carpetas seleccionadas. Actualiza después de hacer cambios externos.';
-
-  @override
-  String get libraryDetectedOnDevice =>
-      'Detectado en el dispositivo — sin vincular al catálogo';
-
-  @override
   String get libraryDiscoveryHeaderIdentified => 'Encabezado identificado';
 
   @override
@@ -2917,13 +3001,6 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get libraryDiscoveryUnlinked => 'Lua sin vincular';
-
-  @override
-  String get libraryDetectedPath => 'Archivo de entrada';
-
-  @override
-  String get libraryDetectedScanLimit =>
-      'Se alcanzó el límite seguro de escaneo. Puede que parte del contenido no aparezca.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA NO DISPONIBLE';
@@ -3028,4 +3105,123 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get themeSaving => 'Guardando apariencia';
+
+  @override
+  String get gameModsTitle => 'Mods del juego';
+
+  @override
+  String get gameModsSubtitle => 'Elige los mods para el próximo inicio';
+
+  @override
+  String get gameModsHint =>
+      'Cierra el juego antes de cambiar opciones. Estos interruptores configuran el próximo inicio; los packs DynOS se gestionan por separado.';
+
+  @override
+  String get gameModsSelectHint =>
+      'Selecciona la carpeta user del juego que contiene sm64config.txt y mods.';
+
+  @override
+  String get gameModsConfirm =>
+      'Cierra primero el juego. ¿Aplicar esta selección para el próximo inicio?';
+
+  @override
+  String get gameModsCancel => 'Cancelar';
+
+  @override
+  String get gameModsApply => 'Aplicar';
+
+  @override
+  String get gameModsSelect => 'Seleccionar carpeta user';
+
+  @override
+  String get gameModsDisconnect => 'Desconectar';
+
+  @override
+  String get gameModsConflict =>
+      'La configuración cambió o hay otro mod activado incompatible. Actualiza e inténtalo de nuevo.';
+
+  @override
+  String get gameModsBlocked =>
+      'No se puede activar este mod con seguridad. Revisa su estructura y datos, o desactiva un mod incompatible.';
+
+  @override
+  String get gameModsMismatch =>
+      'Esta carpeta user no corresponde a la carpeta de mods seleccionada. Elige la misma instalación del juego.';
+
+  @override
+  String get gameModsWriteError =>
+      'No se pudo confirmar la escritura. Cierra el juego y restaura la configuración anterior si hace falta.';
+
+  @override
+  String get gameModsFormat =>
+      'La configuración o carpeta supera los límites admitidos o tiene un formato no compatible. No se aplicó el cambio.';
+
+  @override
+  String get gameModsAccess =>
+      'Configuración no disponible. Comprueba que user contiene sm64config.txt y mods, y vuelve a seleccionar la carpeta con acceso de lectura y escritura.';
+
+  @override
+  String get gameModsRestore => 'Restaurar configuración anterior';
+
+  @override
+  String get gameModsRestoreConfirm =>
+      'Con el juego cerrado, ¿reemplazar la configuración por el respaldo privado anterior a la última edición? También restaura sus otros ajustes.';
+
+  @override
+  String get gameModsInstalling =>
+      'Espera a que terminen las descargas e instalaciones antes de cambiar los mods del juego.';
+
+  @override
+  String get gameModsEmpty =>
+      'No se encontraron mods Lua compatibles en esta carpeta.';
+
+  @override
+  String get gameModsEnabled => 'Activado para el próximo inicio';
+
+  @override
+  String get gameModsDisabled => 'Desactivado para el próximo inicio';
+
+  @override
+  String get gameModsMore => 'Mostrar más';
+
+  @override
+  String get gameModsSize =>
+      'Este mod alcanza el límite de 35 MiB del juego y no se puede activar.';
+
+  @override
+  String get gameModsSaved =>
+      'Selección guardada y verificada para el próximo inicio del juego.';
+
+  @override
+  String get gameModsManage => 'Gestionar carpeta del juego';
+
+  @override
+  String gameModsCount(int enabled, int total) {
+    return '$enabled de $total activados';
+  }
+
+  @override
+  String get gameModsSearch => 'Buscar mods, autores, categorías…';
+
+  @override
+  String get gameModsAll => 'Todos';
+
+  @override
+  String get gameModsEnabledFilter => 'Activados';
+
+  @override
+  String get gameModsDisabledFilter => 'Desactivados';
+
+  @override
+  String get gameModsNoResults =>
+      'No hay mods que coincidan con la búsqueda o el filtro.';
+
+  @override
+  String get gameModsClearSearch => 'Borrar búsqueda';
+
+  @override
+  String get gameModsDetails => 'Detalles del mod';
+
+  @override
+  String get gameModsCloseDetails => 'Cerrar';
 }

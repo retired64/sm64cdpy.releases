@@ -307,10 +307,7 @@ class InstallationUpdateCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: retro.radius,
         color: retro.surface,
-        border: Border.all(
-          color: retro.accent,
-          width: retro.borderWidth(2),
-        ),
+        border: Border.all(color: retro.accent, width: retro.borderWidth(2)),
         boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Column(

@@ -141,7 +141,8 @@ class _ModCardState extends ConsumerState<ModCard>
 
               // ── Fav button ─────────────────────────────────────
               GestureDetector(
-                onTap: () => ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
+                onTap: () =>
+                    ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
                 child: Container(
                   width: 32,
                   height: 32,
@@ -155,7 +156,9 @@ class _ModCardState extends ConsumerState<ModCard>
                     ),
                   ),
                   child: Icon(
-                    isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                    isFav
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
                     size: 16,
                     color: isFav ? retro.red : retro.inkDim,
                   ),
@@ -274,7 +277,11 @@ class _StripedPlaceholder extends StatelessWidget {
                   width: retro.borderWidth(1.5),
                 ),
               ),
-              child: Icon(Icons.extension_rounded, size: 15, color: retro.inkDim),
+              child: Icon(
+                Icons.extension_rounded,
+                size: 15,
+                color: retro.inkDim,
+              ),
             ),
           ),
         ],
@@ -297,10 +304,7 @@ class ModCardSkeleton extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: retro.radius,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(2),
-          ),
+          border: Border.all(color: retro.border, width: retro.borderWidth(2)),
         ),
         child: Row(
           children: [

@@ -32,7 +32,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   bool _initialViewApplied = false;
 
   Future<void> _refresh() async {
-    try { await ref.read(gameModActivationProvider.notifier).refresh(); } catch (_) { /* Provider exposes the access error. */ }
+    try {
+      await ref.read(gameModActivationProvider.notifier).refresh();
+    } catch (_) {
+      /* Provider exposes the access error. */
+    }
     if (_view == _LibraryView.gameMods) return;
     ref.invalidate(allModsProvider);
     ref.invalidate(allVipModsProvider);
@@ -40,9 +44,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     ref.invalidate(allTouchControlsProvider);
     ref.invalidate(allOmmRebirthProvider);
     ref.invalidate(allRender96Provider);
-    await ref
-        .read(installationLibraryProvider.notifier)
-        .refresh();
+    await ref.read(installationLibraryProvider.notifier).refresh();
   }
 
   @override
@@ -50,9 +52,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      unawaited(
-        ref.read(installationLibraryProvider.notifier).refresh(),
-      );
+      unawaited(ref.read(installationLibraryProvider.notifier).refresh());
     });
   }
 
@@ -63,7 +63,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         GoRouterState.of(context).uri.queryParameters['view'] == 'recent') {
       _view = _LibraryView.recent;
     } else if (!_initialViewApplied &&
-        const ['game-mods', 'detected'].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
+        const [
+          'game-mods',
+          'detected',
+        ].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
       _view = _LibraryView.gameMods;
     } else if (!_initialViewApplied &&
         GoRouterState.of(context).uri.queryParameters['view'] == 'installed') {
@@ -95,7 +98,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 padding: const EdgeInsetsDirectional.only(end: 14),
                 child: _RetroIconButton(
                   tooltip: l10n.libraryRefresh,
-                  onPressed: value.isLoading && _view != _LibraryView.gameMods ? null : _refresh,
+                  onPressed: value.isLoading && _view != _LibraryView.gameMods
+                      ? null
+                      : _refresh,
                   icon: Icons.refresh_rounded,
                   busy: value.isLoading && _view != _LibraryView.gameMods,
                 ),
@@ -104,50 +109,67 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            sliver: SliverToBoxAdapter(child: Column(children: [
-              Padding(padding: const EdgeInsets.only(bottom: 12), child: SectionKicker(
-                retro: retro, label: l10n.libraryTitle, japanese: 'ライブラリ')),
-              _viewSelector(l10n, retro, value.asData?.value.snapshot, updates),
-              const SizedBox(height: 18),
-            ])),
-          ),
-          if (_view == _LibraryView.gameMods)
-            const SliverPadding(padding: EdgeInsets.fromLTRB(16, 0, 16, 40),
-              sliver: SliverToBoxAdapter(child: GameModActivationPanel()))
-          else
-          value.when(
-            loading: () => SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: CircularProgressIndicator(color: retro.accent),
-              ),
-            ),
-            error: (error, _) => SliverFillRemaining(
-              hasScrollBody: false,
-              child: _MessageState(
-                icon: Icons.error_outline_rounded,
-                title: l10n.libraryErrorTitle,
-                body: l10n.libraryErrorBody,
-                action: l10n.generalRetry,
-                onAction: () => ref.invalidate(installationLibraryProvider),
-              ),
-            ),
-            data: (state) => SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
-              sliver: SliverList.list(
+            sliver: SliverToBoxAdapter(
+              child: Column(
                 children: [
-                  if (state.status == InstallationLibraryLoadStatus.partial)
-                    _Notice(
-                      text: l10n.libraryPartialWarning,
-                      color: retro.amber,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: SectionKicker(
+                      retro: retro,
+                      label: l10n.libraryTitle,
+                      japanese: 'ライブラリ',
                     ),
-                  _filters(l10n, retro, state.snapshot, updates),
+                  ),
+                  _viewSelector(
+                    l10n,
+                    retro,
+                    value.asData?.value.snapshot,
+                    updates,
+                  ),
                   const SizedBox(height: 18),
-                  ..._content(l10n, state.snapshot, updates),
                 ],
               ),
             ),
           ),
+          if (_view == _LibraryView.gameMods)
+            const SliverPadding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 40),
+              sliver: SliverToBoxAdapter(child: GameModActivationPanel()),
+            )
+          else
+            value.when(
+              loading: () => SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: CircularProgressIndicator(color: retro.accent),
+                ),
+              ),
+              error: (error, _) => SliverFillRemaining(
+                hasScrollBody: false,
+                child: _MessageState(
+                  icon: Icons.error_outline_rounded,
+                  title: l10n.libraryErrorTitle,
+                  body: l10n.libraryErrorBody,
+                  action: l10n.generalRetry,
+                  onAction: () => ref.invalidate(installationLibraryProvider),
+                ),
+              ),
+              data: (state) => SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+                sliver: SliverList.list(
+                  children: [
+                    if (state.status == InstallationLibraryLoadStatus.partial)
+                      _Notice(
+                        text: l10n.libraryPartialWarning,
+                        color: retro.amber,
+                      ),
+                    _filters(l10n, retro, state.snapshot, updates),
+                    const SizedBox(height: 18),
+                    ..._content(l10n, state.snapshot, updates),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -418,7 +440,9 @@ class _Notice extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: retro.surface,
-        border: Border(left: BorderSide(color: color, width: retro.borderWidth(5))),
+        border: Border(
+          left: BorderSide(color: color, width: retro.borderWidth(5)),
+        ),
         boxShadow: retro.hardShadow(dx: 3, dy: 3),
       ),
       child: Row(
@@ -455,10 +479,7 @@ class _MessageState extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: retro.radius,
         color: retro.surface,
-        border: Border.all(
-          color: retro.border,
-          width: retro.borderWidth(2.5),
-        ),
+        border: Border.all(color: retro.border, width: retro.borderWidth(2.5)),
         boxShadow: retro.hardShadow(dx: 4, dy: 4),
       ),
       child: Column(
@@ -665,10 +686,7 @@ class _LibraryFilterSheetItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: retro.radius,
           color: selected ? retro.accent : retro.surfaceAlt,
-          border: Border.all(
-            color: retro.border,
-            width: retro.borderWidth(2),
-          ),
+          border: Border.all(color: retro.border, width: retro.borderWidth(2)),
         ),
         child: Row(
           children: [

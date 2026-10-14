@@ -44,7 +44,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
       width: (MediaQuery.sizeOf(context).width * 0.86).clamp(280.0, 340.0),
       backgroundColor: retro.background,
       elevation: 0,
-      shape: Border(right: BorderSide(color: retro.border, width: retro.borderWidth(2))),
+      shape: Border(
+        right: BorderSide(color: retro.border, width: retro.borderWidth(2)),
+      ),
       child: SafeArea(
         child: SingleChildScrollView(
           controller: widget.scrollController,
@@ -388,7 +390,9 @@ class _NavItemState extends State<_NavItem>
                 curve: _kCurve,
                 width: 3,
                 height: widget.isActive ? 26 : 0,
-                color: widget.isActive ? retro.onColor(accent) : Colors.transparent,
+                color: widget.isActive
+                    ? retro.onColor(accent)
+                    : Colors.transparent,
               ),
               Expanded(
                 child: Padding(
@@ -624,7 +628,11 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               AnimatedOpacity(
                 duration: _kItemDuration,
                 opacity: isSelected ? 1.0 : 0.0,
-                child: Icon(Icons.check, size: 14, color: retro.onColor(catColor)),
+                child: Icon(
+                  Icons.check,
+                  size: 14,
+                  color: retro.onColor(catColor),
+                ),
               ),
             ],
           ),

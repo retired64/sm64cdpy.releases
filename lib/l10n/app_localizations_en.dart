@@ -1312,9 +1312,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get libraryUpdates => 'Updates';
 
   @override
-  String get libraryDetected => 'Detected';
-
-  @override
   String get libraryRecent => 'Recent';
 
   @override
@@ -1367,17 +1364,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Updates confirmed by the catalog will appear here. You can still check each content section.';
 
   @override
-  String get libraryDetectedEmptyTitle => 'NO EXTERNAL CONTENT DETECTED';
-
-  @override
-  String get libraryDetectedEmptyBody =>
-      'No untracked Lua content was found in the selected folders. Refresh after making external changes.';
-
-  @override
-  String get libraryDetectedOnDevice =>
-      'Detected on device — not linked to the catalog';
-
-  @override
   String get libraryDiscoveryHeaderIdentified => 'Header identified';
 
   @override
@@ -1385,13 +1371,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryDiscoveryUnlinked => 'Unlinked Lua';
-
-  @override
-  String get libraryDetectedPath => 'Entry file';
-
-  @override
-  String get libraryDetectedScanLimit =>
-      'The safety scan limit was reached. Some content may not be shown.';
 
   @override
   String get libraryErrorTitle => 'LIBRARY UNAVAILABLE';
@@ -1495,4 +1474,121 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSaving => 'Saving appearance';
+
+  @override
+  String get gameModsTitle => 'Game mods';
+
+  @override
+  String get gameModsSubtitle => 'Choose mods for the next game start';
+
+  @override
+  String get gameModsHint =>
+      'Close the game before making changes. These switches configure the next start; DynOS packs are managed separately.';
+
+  @override
+  String get gameModsSelectHint =>
+      'Select the game’s user folder containing sm64config.txt and mods.';
+
+  @override
+  String get gameModsConfirm =>
+      'Close the game first. Apply this selection for its next start?';
+
+  @override
+  String get gameModsCancel => 'Cancel';
+
+  @override
+  String get gameModsApply => 'Apply';
+
+  @override
+  String get gameModsSelect => 'Select user folder';
+
+  @override
+  String get gameModsDisconnect => 'Disconnect';
+
+  @override
+  String get gameModsConflict =>
+      'The configuration changed or another enabled mod is incompatible. Refresh and try again.';
+
+  @override
+  String get gameModsBlocked =>
+      'Cannot safely enable this mod. Check its structure and metadata, or disable an incompatible mod.';
+
+  @override
+  String get gameModsMismatch =>
+      'This user folder does not match your selected mods folder. Choose the same game installation.';
+
+  @override
+  String get gameModsWriteError =>
+      'The write could not be confirmed. Close the game and restore the previous configuration if necessary.';
+
+  @override
+  String get gameModsFormat =>
+      'The configuration or folder exceeds the supported limits or has an unsupported format. No change was applied.';
+
+  @override
+  String get gameModsAccess =>
+      'Configuration unavailable. Check that user contains sm64config.txt and mods, and select the folder again with read/write access.';
+
+  @override
+  String get gameModsRestore => 'Restore previous configuration';
+
+  @override
+  String get gameModsRestoreConfirm =>
+      'With the game closed, replace the configuration with the private backup from before the last edit? This also restores its other settings.';
+
+  @override
+  String get gameModsInstalling =>
+      'Wait for downloads and installations to finish before changing game mods.';
+
+  @override
+  String get gameModsEmpty => 'No compatible Lua mods found in this folder.';
+
+  @override
+  String get gameModsEnabled => 'Enabled for next start';
+
+  @override
+  String get gameModsDisabled => 'Disabled for next start';
+
+  @override
+  String get gameModsMore => 'Show more';
+
+  @override
+  String get gameModsSize =>
+      'This mod reaches the game’s 35 MiB size limit and cannot be enabled.';
+
+  @override
+  String get gameModsSaved =>
+      'Selection saved and verified for the next game start.';
+
+  @override
+  String get gameModsManage => 'Manage game folder';
+
+  @override
+  String gameModsCount(int enabled, int total) {
+    return '$enabled of $total enabled';
+  }
+
+  @override
+  String get gameModsSearch => 'Search mods, authors, categories…';
+
+  @override
+  String get gameModsAll => 'All';
+
+  @override
+  String get gameModsEnabledFilter => 'Enabled';
+
+  @override
+  String get gameModsDisabledFilter => 'Disabled';
+
+  @override
+  String get gameModsNoResults => 'No mods match this search or filter.';
+
+  @override
+  String get gameModsClearSearch => 'Clear search';
+
+  @override
+  String get gameModsDetails => 'Mod details';
+
+  @override
+  String get gameModsCloseDetails => 'Close';
 }

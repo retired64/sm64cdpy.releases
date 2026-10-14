@@ -43,7 +43,10 @@ Future<bool> _showFolderRequiredDialog(
               decoration: BoxDecoration(
                 borderRadius: retro.radius,
                 color: retro.surfaceAlt,
-                border: Border.all(color: retro.accent, width: retro.borderWidth(2)),
+                border: Border.all(
+                  color: retro.accent,
+                  width: retro.borderWidth(2),
+                ),
                 boxShadow: retro.hardShadow(dx: 5, dy: 5),
               ),
               child: Column(

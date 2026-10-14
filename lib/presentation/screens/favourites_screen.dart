@@ -57,7 +57,10 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
             labelColor: retro.accent,
             unselectedLabelColor: retro.inkDim,
             indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: retro.accent, width: retro.borderWidth(3)),
+              borderSide: BorderSide(
+                color: retro.accent,
+                width: retro.borderWidth(3),
+              ),
               insets: const EdgeInsets.symmetric(horizontal: 16),
             ),
           ),
@@ -262,7 +265,11 @@ class _EmptyFavourites extends StatelessWidget {
                 width: retro.borderWidth(2),
               ),
             ),
-            child: Icon(Icons.favorite_border, size: 36, color: retro.accentText),
+            child: Icon(
+              Icons.favorite_border,
+              size: 36,
+              color: retro.accentText,
+            ),
           ),
           const SizedBox(height: 16),
           Text(emptyTitle(), style: retro.heading(size: 18)),

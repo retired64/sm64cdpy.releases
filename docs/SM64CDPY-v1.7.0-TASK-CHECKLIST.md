@@ -434,3 +434,11 @@ las descripciones mantienen la tipografía predeterminada; Roboto sirve de respa
 para los acentos ausentes en la fuente de títulos. Roles Material y helpers
 comparten esa definición. CI carga la fuente real para probar ancho estrecho y
 texto ampliado. Pendiente la revisión visual en dispositivo.
+
+## Puerta de salida consolidada 1.8.3 (2026-10-14)
+
+La preparación anterior queda consolidada en [RELEASE_1.8.3.md](RELEASE_1.8.3.md).
+Notas en tres idiomas y código generado/formateado del runner están alineados.
+Antes de merge/publicación quedan CI de las tres ABI, revisión física del APK
+final, fecha definitiva y autorizaciones respectivas. No marcar publicación
+completa únicamente porque la versión y las notas estén preparadas.
