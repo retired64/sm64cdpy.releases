@@ -35,8 +35,9 @@ class MarioThemeAssetsNotifier extends Notifier<MarioAssetsState> {
       final assets = await ref
           .read(marioThemeAssetsServiceProvider)
           .call('read');
-      if (ref.mounted)
+      if (ref.mounted) {
         state = MarioAssetsState(assets: assets ?? const MarioThemeAssets());
+      }
     } catch (_) {
       // Safe built-in theme when no channel is available (including widget tests).
     }

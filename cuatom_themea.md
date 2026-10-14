@@ -1,17 +1,17 @@
 # Temas propios incluidos: implementación y flujo de trabajo Android
 
-Actualizado: 2026-10-13. Rama local: `custom-themes`, creada desde el `main` local (`8bdc996`). Versión preparada: `1.8.3+22`, sin merge ni publicación. Estado: el usuario confirmó que la build y prueba anteriores funcionaron. La build #177 de los menús pasó; el bump a 1.8.3+22 requiere una nueva Actions y revisión física. No es una release publicada.
+Actualizado: 2026-10-14. Rama `custom-themes`, desde `main` (`8bdc996`). Versión preparada `1.8.3+22`, sin merge ni publicación. Testing #192 validó análisis, 83 tests Flutter, APK arm64 y tests Kotlin. La matriz física de importación ROM permanece pendiente.
 
 ## 1. Qué se implementó
 
 Ajustes → Apariencia contiene un menú expandible **Tema de interfaz**. Ofrece dos diseños incluidos en el código: Retro Manga y Mario 64. El usuario elige uno; tú mantienes sus definiciones. Un segundo menú expandible, con el mismo estilo, permite claro, oscuro o seguir el sistema. Cada encabezado muestra la selección actual y despliega sus opciones al pulsarlo.
 
-Son primeras interpretaciones visuales propias, creadas con colores y geometría Flutter. No incluyen imágenes, fuentes o interfaces extraídas de juegos ni pretenden reproducir exactamente sus menús. Puedes ajustar cada diseño sin rehacer los flujos del catálogo. Todas las definiciones están incluidas en el APK y no requieren red.
+Los diseños incluidos utilizan colores, geometría Flutter y la fuente de títulos aportada para Mario. El APK no incluye recursos extraídos del juego. Mario permite importar localmente 15 texturas desde la ROM vanilla US elegida por el usuario para acercar sus menús al juego original. Todas las definiciones y el diseño de reserva funcionan sin red ni ROM.
 
 | ID persistido | Definición | Configuración inicial |
 |---|---|---|
 | `retro_manga` | `lib/core/theme/themes/retro_manga_theme.dart` | Formas rectas, sombra dura, inclinación, puntos y franjas; conserva el diseño anterior con ajustes de contraste del texto secundario y acento textual claros |
-| `mario64` | `lib/core/theme/themes/mario64_theme.dart` | Interpretación N64: cielo y colinas dibujados en Flutter, superficies crema/azules biseladas, acentos rojo y dorado, radio 14 y selección con estrella; sin assets extraídos |
+| `mario64` | `lib/core/theme/themes/mario64_theme.dart` | Interpretación N64: cielo y colinas dibujados en Flutter, superficies crema/azules biseladas, acentos rojo y dorado, radio 8, sombra definida, selección con mano y contadores HUD; recursos originales opcionales importados localmente |
 
 El cambio no reinicia `ProviderScope`, no altera la ruta actual, no borra favoritos y no cancela descargas. La selección cambia presentación; contenido, identidad de operaciones y destino de instalación conservan su lógica existente.
 
@@ -23,7 +23,7 @@ Se adaptó esa raíz para construir su ThemeData completo desde `RetroTheme.over
 
 Esta es la integración necesaria de la dependencia compartida; la selección de diseños para el overlay queda expresamente fuera de esta fase. El texto del menú explica que la selección afecta a la app y el panel conserva su diseño oscuro.
 
-Android nativo no requiere cambios para este selector. Se revisaron `MainActivity.kt`, `ModInstallerPlugin.kt`, `ModDownloadWorker.kt`, `ModInstallWorker.kt`, `SafZipExtractor.kt`, `InstallIdentityMetadata.kt`, `InstallationReceiptStore.kt`, `InstallationSafVerifier.kt` e `InstallationDiscoveryScanner.kt`. Ninguno recibe ni guarda IDs de tema.
+El selector de diseños por sí mismo no requiere persistencia Android. La importación opcional añade `MarioAssetsPlugin` y `MarioRomDecoder`, registrados en `MainActivity`; véase el contrato de recursos locales. Se revisaron `MainActivity.kt`, `ModInstallerPlugin.kt`, `ModDownloadWorker.kt`, `ModInstallWorker.kt`, `SafZipExtractor.kt`, `InstallIdentityMetadata.kt`, `InstallationReceiptStore.kt`, `InstallationSafVerifier.kt` e `InstallationDiscoveryScanner.kt`. Ninguno recibe ni guarda IDs de tema.
 
 `AndroidManifest.xml`, `values/styles.xml`, `values-night/styles.xml`, ambos `launch_background.xml`, strings nativos, iconos y Gradle permanecen como en `main`. El splash todavía sigue sus recursos Android y no lee el diseño de Hive. Las barras del sistema se ajustan desde Flutter con el brillo efectivo; las restricciones de Android sobre edge-to-edge y sus superficies requieren comprobación física.
 
@@ -54,7 +54,7 @@ La misma instancia produce `toMaterialTheme()`: ColorScheme, fondo de Scaffold, 
 - `radius` dejó de ser una constante estática: es una propiedad del diseño activo.
 - `borderWidth(valorRetro)` conserva el énfasis relativo del borde multiplicándolo por la escala del diseño.
 - `hardShadow()` conserva su API, pero aplica blur y escala de offset del diseño.
-- `surfaceDecoration()` concentra relleno, borde, radio y relieve. En el diseño N64 añade una luz superior izquierda y una sombra inferior derecha; las pantallas no preguntan si el ID es `mario64`.
+- `surfaceDecoration()` concentra relleno, borde, radio y relieve. En el diseño N64 añade una luz superior izquierda y una sombra inferior derecha; los rellenos de acento conservan su contraste. Los recursos importados se resuelven con `marioAsset`, exclusivo de Mario; el resto de roles continúa compartido.
 - `heading()` y `body()` aceptan las familias del diseño. Los encabezados dibujados con TextStyle local también consumen peso/familia central.
 - `onColor(color)` usa el foreground explícito del acento y compara contraste entre negro y blanco para otros rellenos. `accentText` evita usar un acento claro como texto sobre papel claro; las etiquetas respetan mayúsculas solo cuando el diseño lo solicita.
 - `copyWith()` conserva overrides; `lerp()` interpola paleta y propiedades numéricas y conserva extremos.
@@ -384,7 +384,7 @@ La tabla siguiente deja explícito qué participa y qué queda ajeno al tema. Re
 | `lib/services/update_service.dart` | Revisado en la frontera de presentación; sin cambios en operaciones/plataforma/OTA |
 | `lib/widgets/update_dialog.dart` | Adaptado: consumidor visual; formas/contraste/decoración según su función |
 
-Total: 86 archivos Dart en `lib/` enumerados. Esta es una auditoría temática, no una certificación exhaustiva de cada método de descarga/SAF.
+Total: 94 archivos Dart en `lib/` enumerados (inventario inicial y ampliaciones siguientes). Esta es una auditoría temática, no una certificación exhaustiva de cada método de descarga/SAF.
 
 ## 13. Referencias técnicas
 
@@ -394,8 +394,8 @@ El contrato utiliza las APIs oficiales [ThemeExtension](https://api.flutter.dev/
 
 `game_mod_activation_panel.dart` y `library_screen.dart` integran la pestaña
 Mods del juego con `RetroTheme.surfaceDecoration`, `SkewChip`, roles de texto,
-radios, sombras y `playfulSelection`. No ramifican por ID de tema ni definen
-paletas locales. La presentación incluye búsqueda/filtros locales, estados
+radios, sombras y `playfulSelection`. Los iconos y contadores importados son
+exclusivos de Mario mediante la fachada; no definen paletas locales. La presentación incluye búsqueda/filtros locales, estados
 de acceso/error/vacío/guardado, acciones y diálogos propios y `AppSnackbar`.
 Añadir otro diseño al catálogo actualiza estos elementos mediante sus roles.
 Plan técnico y ciclo de vida: `docs/GAME_MOD_ACTIVATION.md`.
@@ -427,5 +427,31 @@ Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
 usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
 selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
 overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
-de pruebas en [MARIO_ROM_THEME.md](docs/MARIO_ROM_THEME.md). Validación de este cambio pendiente de Actions y dispositivo; la evidencia
-anterior de 1.8.3 no valida el importador nuevo.
+de pruebas en [MARIO_ROM_THEME.md](docs/MARIO_ROM_THEME.md). Validado en [Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573): análisis, 83 tests Flutter,
+APK arm64 y tests Kotlin correctos para `f23034a`. Sigue pendiente la matriz
+física con ROM real; estos tests usan datos sintéticos y no una ROM del usuario.
+
+
+### Inventario adicional de Dart para recursos ROM
+
+| Archivo | Responsabilidad |
+|---|---|
+| `lib/domain/entities/mario_theme_assets.dart` | Conjunto inmutable y validación del DTO de 15 archivos |
+| `lib/services/mario_theme_assets_service.dart` | Canal Android, import/read/remove/cancel |
+| `lib/presentation/providers/mario_theme_assets_provider.dart` | Arranque, busy, confirmación, error y cancelación |
+| `lib/presentation/widgets/mario_rom_assets_panel.dart` | Grupo de Ajustes exclusivo de Mario |
+| `lib/presentation/widgets/mario_assets_coordinator.dart` | Feedback terminal que sobrevive a navegación |
+
+Los archivos existentes `main.dart`, `retro_theme.dart`, `mario64_theme.dart`,
+`app_router.dart`, `app_shell.dart`, `app_drawer.dart`, `appearance_selector.dart`,
+`settings_expansion_group.dart`, `mod_card.dart`, `game_mod_activation_panel.dart`,
+`home_screen.dart` y `mod_detail_screen.dart` conectan estos recursos, marcos,
+contadores y transiciones. Los ARB de cinco locales y sus tres implementaciones
+generadas/base incorporan los mensajes de importación. Las otras pantallas siguen
+los roles y el fondo compartidos; overlay no lee el conjunto.
+
+| Archivo de activación previamente añadido | Responsabilidad visual/estado |
+|---|---|
+| `lib/services/game_mod_activation.dart` | DTO y canal del editor; no decide diseño ni importa ROM |
+| `lib/presentation/providers/game_mod_activation_provider.dart` | Proyección de configuración y guardado; independiente de recursos visuales |
+| `lib/presentation/widgets/game_mod_activation_panel.dart` | Vista única de mods, marcos, cursor y contador Mario; conserva reglas de activación |

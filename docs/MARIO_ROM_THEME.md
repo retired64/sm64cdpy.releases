@@ -137,3 +137,22 @@ rotar durante selección/extracción, navegar, minimizar/reabrir, matar proceso,
 espacio insuficiente y proveedor de documentos sin acceso. Revisar contraste,
 texto grande, TalkBack y reducción de movimiento. Importar bytes desde un proveedor
 remoto puede depender de su disponibilidad; no se afirma un tiempo fijo.
+
+
+Fuentes Android: [documentos SAF](https://developer.android.com/training/data-storage/shared/documents-files)
+y [exclusiones de Auto Backup](https://developer.android.com/identity/data/autobackup).
+
+
+### Evidencia de CI del cambio completo
+
+[Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573),
+commit `f23034a`: gen-l10n, formato Dart, análisis, **83 tests Flutter**, APK
+arm64 (24.5 MB) y `:app:testReleaseUnitTest` terminaron correctamente. Artifact:
+`cdpy-f23034a-TESTING`. Se conserva 1.8.3+22; no hubo merge, tag ni release.
+El commit posterior consolida documentación y añade llaves al if de inicialización
+para resolver un aviso de estilo, sin cambiar comportamiento. El APK corresponde
+al código funcional validado en esa ejecución. La prueba física con una ROM real sigue pendiente.
+
+El análisis de #192 informó seis avisos de estilo no fatales (llaves en if), sin
+errores ni warnings. Cinco ya existían en el panel de activación; el aviso nuevo
+del inicializador ROM queda corregido en la consolidación posterior.

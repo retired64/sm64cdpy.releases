@@ -127,8 +127,9 @@ claro/oscuro/sistema. `AppearanceNotifier` es el único escritor de `theme_id` y
 tratamientos semánticos de fondo, superficie y selección. `RetroTheme` conserva
 la API de acceso y ahora es una ThemeExtension; los widgets Material y los
 personalizados comparten tokens. `ThemeBackdrop` y `surfaceDecoration()` aplican
-la interpretación N64 en puntos centrales, sin condicionales por ID en las
-pantallas ni assets extraídos del juego.
+la interpretación N64 en puntos centrales. Los recursos originales opcionales
+se importan localmente y se resuelven exclusivamente para Mario; el APK no los
+incluye. Algunas composiciones Mario utilizan marcos y contadores específicos.
 MaterialApp y las barras leen la variante efectiva. No se recrean router ni
 providers de operaciones por cambiar de diseño.
 
@@ -183,5 +184,6 @@ Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
 usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
 selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
 overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
-de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validación de este cambio pendiente de Actions y dispositivo; la evidencia
-anterior de 1.8.3 no valida el importador nuevo.
+de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validado en [Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573): análisis, 83 tests Flutter,
+APK arm64 y tests Kotlin correctos para `f23034a`. Sigue pendiente la matriz
+física con ROM real; estos tests usan datos sintéticos y no una ROM del usuario.

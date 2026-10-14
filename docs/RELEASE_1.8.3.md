@@ -155,7 +155,10 @@ updates and history separate. Configuration edits preserve other settings and
 provide verified saves and a private recovery backup.
 
 The app includes Retro Manga and Mario 64 with independent appearance modes,
-matching animated Settings selectors and Mario-only heading typography. Version
+matching animated Settings selectors and Mario-only heading typography. Mario
+adds menu materials, framed covers and an optional private import of menu/HUD
+textures from a user-selected vanilla US ROM, with confirmed replacement,
+cancellation and recovery. The APK bundles no extracted game artwork. Version
 metadata and localized release notes are aligned to 1.8.3+22. The overlay keeps
 its independent design. Attach the consolidated CI run and device checks before
 approval; this PR does not authorize publishing a release.
@@ -179,13 +182,18 @@ prueba funcionalidad Android ni reemplaza el resultado de CI.
   previews derivan del manifiesto y no compiten como fuente de verdad.
 - **Autoridad:** paquete instalado para versión real; configuración del juego
   para selección persistida; WorkManager para instalaciones activas. Esta
-  preparación no modifica esas preferencias ni sus protocolos.
+  preparación no modifica esos protocolos. La referencia nativa de recursos ROM
+  y sus archivos privados confirmados son autoridad de la importación visual.
 - **Concordancia:** metadatos y contenido final alineados; checks consolidados y
   publicación permanecen pendientes hasta confirmarse. Main no se modificó.
-- **Caches/Futures:** ninguna caché de app, timer o Future nuevo. Solo datos,
-  fuentes generadas/formato y un flag de CI compartido por build/renombrado.
+- **Caches/Futures:** recursos PNG inmutables por generación UUID e ImageCache;
+  cambio de generación cambia claves y el siguiente arranque limpia archivos
+  inactivos. El arranque inicia la lectura de recursos mediante un
+  unawaited intencional con errores capturados; UI espera perform/cancel. Los
+  datos de release, traducciones y flag CI conservan sus fuentes únicas.
 - **Hermanos:** tres idiomas, tres ABIs, testing/release, README/documentación,
-  app/overlay, fuente de títulos/cuerpo y parser/editor de mods revisados.
+  app/overlay, fuente de títulos/cuerpo, parser/editor de mods, biblioteca,
+  portadas/detalle y selección/importación ROM revisados.
 
 
 ## Mario 64: recursos locales y menú original
@@ -194,5 +202,6 @@ Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
 usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
 selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
 overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
-de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validación de este cambio pendiente de Actions y dispositivo; la evidencia
-anterior de 1.8.3 no valida el importador nuevo.
+de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validado en [Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573): análisis, 83 tests Flutter,
+APK arm64 y tests Kotlin correctos para `f23034a`. Sigue pendiente la matriz
+física con ROM real; estos tests usan datos sintéticos y no una ROM del usuario.
