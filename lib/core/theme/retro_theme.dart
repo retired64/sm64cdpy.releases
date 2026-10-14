@@ -272,7 +272,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     );
     if (isMario) {
       ButtonStyle originalControl(ButtonStyle? base) => (base ?? const ButtonStyle()).copyWith(
-        textStyle: WidgetStatePropertyAll(TextStyle(fontFamily: menuFamily, fontFamilyFallback: const ['Roboto'], fontWeight: FontWeight.w400)),
+        textStyle: WidgetStatePropertyAll((theme.textTheme.labelLarge ?? const TextStyle(inherit: false, fontSize: 14)).copyWith(fontFamily: menuFamily, fontFamilyFallback: const ['Roboto'], fontWeight: FontWeight.w400)),
         minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
         backgroundBuilder: (context, states, child) {
           final texture = marioAsset(isDark ? 'stone_dark' : 'stone');

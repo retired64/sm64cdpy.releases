@@ -96,7 +96,7 @@ void main() {
           tester.element(find.byKey(const ValueKey('theme-probe'))),
         );
         expect(theme.brightness, Brightness.dark);
-        expect(theme.colorScheme.primary, const Color(0xFFFFB6AE));
+        expect(theme.colorScheme.primary, const Color(0xFFFFC928));
         expect(find.byKey(const ValueKey('theme-odyssey')), findsNothing);
         expect(find.byKey(const ValueKey('theme-gamecube')), findsNothing);
         final modeHeader = find.text(

@@ -30,7 +30,7 @@ const mario64Theme = AppThemeDesign(
     ink: Color(0xFF101018),
     inkDim: Color(0xFF32323C),
     accent: Color(0xFFA82010),
-    accentText: Color(0xFF9C1908),
+    accentText: Color(0xFF901406),
     onAccent: Color(0xFFFFFFFF),
     secondaryAccent: Color(0xFFFFCE20),
     surfaceHighlight: Color(0xFFFFFFFF),
