@@ -135,7 +135,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     double shadowDy = 4,
   }) => BoxDecoration(
     color: color ?? surface,
-    image: (color != null && color != surface && color != surfaceAlt) ||
+    image:
+        (color != null && color != surface && color != surfaceAlt) ||
             marioAsset(isDark ? 'stone_dark' : 'stone') == null
         ? null
         : DecorationImage(
@@ -150,7 +151,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
               /* Keep the solid, readable surface. */
             },
           ),
-    gradient: usesBeveledSurfaces && (color == null || color == surface || color == surfaceAlt)
+    gradient:
+        usesBeveledSurfaces &&
+            (color == null || color == surface || color == surfaceAlt)
         ? LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

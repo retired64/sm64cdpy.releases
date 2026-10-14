@@ -52,6 +52,7 @@ in-game mod workflow.
 - Review installed, recently changed, game-managed, and updateable
   content in the local Library.
 - Use English, Spanish, or Brazilian Portuguese; select a bundled interface design (Retro Manga or Mario 64) independently from light, dark, or system appearance. The floating panel keeps its fixed dark design.
+- In the Mario 64 theme, Settings can import original menu textures and HUD icons from your unmodified US .z64 ROM. Resources stay on your device; the ROM and game are never changed. [Import details](docs/MARIO_ROM_THEME.md).
 - Refresh bundled catalogues from their remote JSON sources.
 - Select persistent destination folders with Android's system folder picker.
 - Resolve download links, including GitHub Release assets.

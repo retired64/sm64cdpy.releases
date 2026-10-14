@@ -77,12 +77,13 @@ solo dos segmentos y genera 15 imágenes. `MarioRomDecoder` limita salida MIO0 a
 y comprueba los rangos de cada textura. No ejecuta código del archivo.
 
 Cada importación escribe una generación UUID distinta en
-`filesDir/mario_theme_v1/<UUID>/`. Cada PNG se sincroniza, decodifica y verifica
+`noBackupFilesDir/mario_theme_v1/<UUID>/`. Cada PNG se sincroniza, decodifica y verifica
 por dimensiones antes de cambiar la referencia `generation` en SharedPreferences
 `mario_theme`. La cancelación y el commit se serializan en el hilo principal;
 un fallo anterior no cambia la referencia. Si commit devuelve false o la lectura
 final falla, también se restaura la referencia anterior en memoria/persistencia;
-no se deja activo el directorio fallido. La ROM no se guarda ni se sube.
+no se deja activo el directorio fallido. La ROM no se guarda ni se sube. Las texturas se excluyen del backup de Android;
+si se restaura una preferencia sin el conjunto local, read vuelve al diseño incluido.
 
 Las generaciones anteriores permanecen hasta el siguiente arranque del plugin;
 así ImageCache no apunta a archivos eliminados durante un cambio visible. En

@@ -200,10 +200,18 @@ class _Thumbnail extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           padding: retro.isMario ? const EdgeInsets.all(3) : EdgeInsets.zero,
           decoration: retro.isMario
-              ? retro.surfaceDecoration(color: retro.secondaryAccent, borderColor: retro.border, shadowDx: 0, shadowDy: 0)
+              ? retro.surfaceDecoration(
+                  color: retro.secondaryAccent,
+                  borderColor: retro.border,
+                  shadowDx: 0,
+                  shadowDy: 0,
+                )
               : BoxDecoration(
                   borderRadius: retro.radius,
-                  border: Border.all(color: retro.border, width: retro.borderWidth(2)),
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(2),
+                  ),
                 ),
           child: Hero(
             tag: 'mod_img_$modId',

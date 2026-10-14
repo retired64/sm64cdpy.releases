@@ -31,7 +31,7 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
     private var attached = false
     private var pending: MethodChannel.Result? = null
     private var picking = false
-    private val root get() = File(context.filesDir, "mario_theme_v${MarioRomDecoder.VERSION}")
+    private val root get() = File(context.noBackupFilesDir, "mario_theme_v${MarioRomDecoder.VERSION}")
     private val preferences get() = context.getSharedPreferences("mario_theme", Context.MODE_PRIVATE)
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {

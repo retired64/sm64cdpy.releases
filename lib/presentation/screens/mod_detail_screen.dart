@@ -318,9 +318,13 @@ class _CinematicHero extends StatelessWidget {
                 width: _avatarSize,
                 height: _avatarSize,
                 clipBehavior: Clip.hardEdge,
-                padding: retro.isMario ? const EdgeInsets.all(4) : EdgeInsets.zero,
+                padding: retro.isMario
+                    ? const EdgeInsets.all(4)
+                    : EdgeInsets.zero,
                 decoration: retro.surfaceDecoration(
-                  color: retro.isMario ? retro.secondaryAccent : retro.surfaceAlt,
+                  color: retro.isMario
+                      ? retro.secondaryAccent
+                      : retro.surfaceAlt,
                   borderColor: retro.border,
                   border: 3,
                 ),
