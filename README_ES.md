@@ -93,3 +93,5 @@ los autores de mods. El contenido pertenece a sus respectivos creadores.
 
 [Releases](https://github.com/retired64/sm64cdpy.releases/releases) ·
 [Discord](https://discord.com/invite/thuhUH2WNX)
+
+Biblioteca también permite configurar mods Lua locales compatibles para el próximo inicio del juego, seleccionando su carpeta user, con guardado verificado y respaldo privado. Cierra el juego antes de editar. Los packs DynOS se gestionan por separado.

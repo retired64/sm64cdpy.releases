@@ -408,3 +408,12 @@ y revisión física de este ajuste; no se modificó overlay ni Android nativo.
 
 Fuente canónica: `release-manifests/v1.8.3.json`. Plan completo:
 [RELEASE_1.8.3.md](RELEASE_1.8.3.md). No se modifican releases históricas.
+
+## Activación de mods — candidata 1.8.3
+
+Biblioteca incluye una sección de unidades Lua del juego con switches de selección
+para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
+comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
+DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
+Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Ambos workflows ejecutan también `:app:testDebugUnitTest`. No hay merge ni release.

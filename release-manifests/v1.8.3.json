@@ -11,9 +11,18 @@
       "highlights": [
         "Choose Retro Manga or Mario 64 independently from light, dark, or system appearance.",
         "Theme, appearance mode, and language use matching expandable selectors.",
-        "Mario 64 gives Settings softer panels, rounded controls, and subtle shadows."
+        "Mario 64 gives Settings softer panels, rounded controls, and subtle shadows.",
+        "Enable or disable compatible local Lua mods from Library for the next game start."
       ],
       "sections": [
+        {
+          "heading": "Game mod selection",
+          "items": [
+            "Enable or disable compatible local Lua mods from Library for the next game start.",
+            "Select the game user folder with persistent document access; edits preserve other settings and create a private recovery backup.",
+            "Selections are checked for incompatible mods, size limits and successful saving. Close the game before editing; DynOS packs use their separate configuration."
+          ]
+        },
         {
           "heading": "Interface themes",
           "items": [
@@ -53,9 +62,18 @@
       "highlights": [
         "Elige Retro Manga o Mario 64 de forma independiente del modo claro, oscuro o del sistema.",
         "Tema, modo de apariencia e idioma usan selectores desplegables con el mismo diseño.",
-        "Mario 64 da a Ajustes paneles más suaves, controles redondeados y sombras discretas."
+        "Mario 64 da a Ajustes paneles más suaves, controles redondeados y sombras discretas.",
+        "Activa o desactiva mods Lua locales compatibles desde Biblioteca para el próximo inicio del juego."
       ],
       "sections": [
+        {
+          "heading": "Selección de mods del juego",
+          "items": [
+            "Activa o desactiva mods Lua locales compatibles desde Biblioteca para el próximo inicio del juego.",
+            "Selecciona la carpeta user del juego con acceso persistente; las ediciones conservan otros ajustes y crean un respaldo privado de recuperación.",
+            "Las selecciones comprueban incompatibilidades, límites de tamaño y guardado correcto. Cierra el juego antes de editar; los packs DynOS utilizan su configuración independiente."
+          ]
+        },
         {
           "heading": "Temas de interfaz",
           "items": [
@@ -95,9 +113,18 @@
       "highlights": [
         "Escolha Retro Manga ou Mario 64 independentemente do modo claro, escuro ou do sistema.",
         "Tema, modo de aparência e idioma usam seletores expansíveis com o mesmo visual.",
-        "Mario 64 traz painéis mais suaves, controles arredondados e sombras discretas para Configurações."
+        "Mario 64 traz painéis mais suaves, controles arredondados e sombras discretas para Configurações.",
+        "Ative ou desative mods Lua locais compatíveis na Biblioteca para a próxima abertura do jogo."
       ],
       "sections": [
+        {
+          "heading": "Seleção de mods do jogo",
+          "items": [
+            "Ative ou desative mods Lua locais compatíveis na Biblioteca para a próxima abertura do jogo.",
+            "Selecione a pasta user do jogo com acesso persistente; as edições preservam outras opções e criam um backup privado para recuperação.",
+            "As seleções verificam incompatibilidades, limites de tamanho e gravação correta. Feche o jogo antes de editar; os pacotes DynOS usam sua configuração separada."
+          ]
+        },
         {
           "heading": "Temas de interface",
           "items": [

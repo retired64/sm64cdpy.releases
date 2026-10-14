@@ -13,6 +13,8 @@ import '../providers/installation_library_provider.dart';
 import '../providers/installation_update_provider.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/game_mod_activation_panel.dart';
+import '../providers/game_mod_activation_provider.dart';
 import '../widgets/installation_library_card.dart';
 
 enum _LibraryView { installed, updates, detected, recent }
@@ -30,6 +32,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   bool _initialViewApplied = false;
 
   Future<void> _refresh() async {
+    try { await ref.read(gameModActivationProvider.notifier).refresh(); } catch (_) { /* Panel exposes access state on next read. */ }
     ref.invalidate(allModsProvider);
     ref.invalidate(allVipModsProvider);
     ref.invalidate(allDynosProvider);
@@ -126,6 +129,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       japanese: 'ライブラリ',
                     ),
                   ),
+                  const GameModActivationPanel(),
                   _viewSelector(l10n, retro, state.snapshot, updates),
                   const SizedBox(height: 14),
                   _filters(l10n, retro, state.snapshot, updates),

@@ -163,3 +163,12 @@ instalado; no se sincronizan engines por variables estáticas.
 **Hermanos revisados:** testing y publicación, los tres README, manifiesto/schema,
 renderer/tests, Gradle/ABIs, UpdateService/UpdateConfig y documentación de temas,
 arquitectura, estado y checklist. Overlay mantiene su diseño independiente.
+
+## Activación de mods — candidata 1.8.3
+
+Biblioteca incluye una sección de unidades Lua del juego con switches de selección
+para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
+comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
+DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
+Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Ambos workflows ejecutan también `:app:testDebugUnitTest`. No hay merge ni release.

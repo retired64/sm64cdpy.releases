@@ -76,6 +76,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var pendingModPickerResult: Result? = null
     private var pendingDynosPickerResult: Result? = null
     private var pendingPermissionResult: Result? = null
+    private var pendingGamePickerResult: Result? = null
 
     // WorkManager may emit null when REPLACE prunes the previous row for the
     // same unique work. The observer type must therefore be nullable; a
@@ -102,6 +103,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+        pendingGamePickerResult?.error("access", "access", null)
+        pendingGamePickerResult = null
         eventChannel?.setStreamHandler(null)
         eventChannel = null
         eventSinks.clear()
@@ -115,6 +118,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         binding.addActivityResultListener { requestCode, resultCode, data ->
             if (requestCode == REQUEST_CODE_TREE) {
                 handleTreeResult(resultCode, data)
+                true
+            } else if (requestCode == 9004) {
+                handleGamePicker(resultCode, data)
                 true
             } else if (requestCode == REQUEST_CODE_DYNOS_TREE) {
                 handleDynosTreeResult(resultCode, data)
@@ -137,6 +143,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onDetachedFromActivity() {
+        pendingGamePickerResult?.error("access", "access", null)
+        pendingGamePickerResult = null
         cleanupObservers()
         activity = null
     }
@@ -156,6 +164,18 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
+            "selectGameUserFolder" -> selectGameUserFolder(result)
+            "getGameModActivation" -> gameTask(result) { GameModActivationStore.snapshot(applicationContext) }
+            "setGameModActivation" -> gameTask(result) {
+                GameModActivationStore.set(applicationContext,
+                    call.argument<String>("name") ?: error("invalid"),
+                    call.argument<Boolean>("enabled") ?: error("invalid"))
+            }
+            "clearGameUserFolder" -> gameTask(result) {
+                GameModActivationStore.clear(applicationContext)
+                GameModActivationStore.snapshot(applicationContext)
+            }
+            "restoreGameModConfig" -> gameTask(result) { GameModActivationStore.restore(applicationContext) }
             "openDirectoryPicker" -> openDirectoryPicker(result)
             "getSavedDirectoryUri" -> getSavedDirectoryUri(result)
             "installMod" -> installMod(call, result)
@@ -182,6 +202,48 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "copyFileToDynosFolder" -> copyFileToDynosFolder(call, result)
             "clearDynosSelection" -> clearDynosSelection(result)
             else -> result.notImplemented()
+        }
+    }
+
+    private fun gameTask(result: Result, action: () -> Map<String, Any?>) {
+        thread(name = "game-mod-configuration") {
+            try {
+                val value = action()
+                Handler(Looper.getMainLooper()).post { result.success(value) }
+            } catch (error: Exception) {
+                val code = error.message?.takeIf { it in setOf("access", "missing", "folder", "mismatch", "limit", "format", "invalid", "conflict", "write", "verify", "installing", "size") } ?: "access"
+                Handler(Looper.getMainLooper()).post { result.error(code, code, null) }
+            }
+        }
+    }
+
+    private fun selectGameUserFolder(result: Result) {
+        val owner = activity
+        if (owner == null || pendingGamePickerResult != null) {
+            result.error("access", "access", null)
+            return
+        }
+        pendingGamePickerResult = result
+        try {
+            owner.startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
+            }, 9004)
+        } catch (_: Exception) {
+            pendingGamePickerResult = null
+            result.error("access", "access", null)
+        }
+    }
+
+    private fun handleGamePicker(resultCode: Int, data: Intent?) {
+        val result = pendingGamePickerResult ?: return
+        pendingGamePickerResult = null
+        val uri = data?.data
+        if (resultCode != Activity.RESULT_OK || uri == null) { result.success(null); return }
+        val flags = data?.flags ?: 0
+        gameTask(result) {
+            GameModActivationStore.select(applicationContext, uri, flags)
+            GameModActivationStore.snapshot(applicationContext)
         }
     }
 

@@ -92,3 +92,5 @@ os autores dos mods. O conteúdo pertence aos respectivos criadores.
 
 [Releases](https://github.com/retired64/sm64cdpy.releases/releases) ·
 [Discord](https://discord.com/invite/thuhUH2WNX)
+
+A Biblioteca também permite configurar mods Lua locais compatíveis para a próxima abertura do jogo, selecionando a pasta user, com gravação verificada e backup privado. Feche o jogo antes de editar. Os pacotes DynOS são gerenciados separadamente.

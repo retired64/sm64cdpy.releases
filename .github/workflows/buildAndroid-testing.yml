@@ -160,6 +160,10 @@ jobs:
           retention-days: 7
 
       # ── 8. Build APK arm64 por defecto / todas las ABI manualmente ───────────────────────────────────────────
+      - name: Pruebas nativas de configuración y biblioteca
+        working-directory: android
+        run: ./gradlew :app:testDebugUnitTest
+
       - name: Build APKs de prueba
         env:
           ALL_ABIS: ${{ inputs.all_abis }}

@@ -109,3 +109,12 @@ APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
 flujo manual autorizado. Ver [preparación 1.8.3](RELEASE_1.8.3.md).
+
+## Activación de mods — candidata 1.8.3
+
+Biblioteca incluye una sección de unidades Lua del juego con switches de selección
+para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
+comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
+DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
+Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Ambos workflows ejecutan también `:app:testDebugUnitTest`. No hay merge ni release.

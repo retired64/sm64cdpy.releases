@@ -151,3 +151,5 @@ names, images, and related content belong to their respective creators.
 
 [Discord](https://discord.com/invite/thuhUH2WNX) ·
 [GitHub profile](https://github.com/retired64)
+
+Library also configures compatible local Lua mods for the next game start through a selected game user folder, with verified saves and a private recovery backup. Close the game before editing. DynOS packs remain separate.

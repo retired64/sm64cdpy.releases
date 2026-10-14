@@ -153,3 +153,12 @@ Los selectores de tema, modo e idioma reutilizan `SettingsExpansionGroup` y
 habilita superficies suaves únicamente en Ajustes mediante `softSettingsPanels`;
 Retro mantiene su estilo. `LocaleSelector` espera el setter de idioma existente
 antes de cerrar y controla loading local sin crear otra fuente persistente.
+
+## Activación de mods — candidata 1.8.3
+
+Biblioteca incluye una sección de unidades Lua del juego con switches de selección
+para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
+comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
+DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
+Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Ambos workflows ejecutan también `:app:testDebugUnitTest`. No hay merge ni release.

@@ -125,3 +125,12 @@ física de idioma/tamaño de texto pendientes.
 - Publicación estable limitada a main y tag sobre SHA compilado.
 - Pendientes: nueva build 22, matriz física/ABIs, fecha final, merge autorizado y
   publicación autorizada. [Checklist completo](RELEASE_1.8.3.md).
+
+## Activación de mods — candidata 1.8.3
+
+Biblioteca incluye una sección de unidades Lua del juego con switches de selección
+para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
+comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
+DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
+Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Ambos workflows ejecutan también `:app:testDebugUnitTest`. No hay merge ni release.

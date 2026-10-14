@@ -24,3 +24,5 @@ Este directorio es el punto de entrada técnico del proyecto. La arquitectura y 
 Cuando cambien versión mínima, dependencias, workers, canales de plataforma, persistencia, overlay o workflows, actualiza el documento correspondiente y la fecha de revisión del archivo. Las ideas y auditorías puntuales no deben presentarse como arquitectura vigente: deben añadirse al índice del archivo.
 
 Última revisión contra el código: **2026-09-27**.
+
+- [Activación de mods desde Biblioteca](GAME_MOD_ACTIVATION.md): contrato del juego, SAF, edición verificada, recuperación y pruebas.
