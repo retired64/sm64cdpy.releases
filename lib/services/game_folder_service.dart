@@ -10,6 +10,7 @@ class GameFolderConnection {
     this.config = false,
     this.rom = false,
     this.status = 'unselected',
+    this.connectionKey,
   });
   factory GameFolderConnection.fromMap(Map<dynamic, dynamic> value) =>
       GameFolderConnection(
@@ -21,9 +22,11 @@ class GameFolderConnection {
         config: value['config'] == true,
         rom: value['rom'] == true,
         status: value['status'] as String? ?? 'unselected',
+        connectionKey: value['rootUri'] as String?,
       );
   final bool connected, dismissed, unified, mods, dynos, config, rom;
   final String status;
+  final String? connectionKey;
 }
 
 class GameFolderService {

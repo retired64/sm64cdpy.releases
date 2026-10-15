@@ -1,3 +1,4 @@
+import '../domain/entities/installation_library_sync.dart';
 import 'dart:async';
 
 import 'package:floaty_chatheads/floaty_chatheads.dart';
@@ -34,7 +35,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   final Set<String> _cancelledMods = {};
   InstallationLibrarySnapshot? _librarySnapshot;
   bool _libraryLoading = true;
-  int _libraryRequestId = 0;
+  final _librarySync = InstallationLibrarySyncGate();
 
   final _searchCtrl = TextEditingController();
 
@@ -273,24 +274,30 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   void _onOverlayData(Object? data) {
     if (data is! Map) return;
     final type = data['type'] as String?;
+    if (type == 'installation_library_loading' || type == 'installation_library_snapshot' || type == 'installation_library_error') {
+      if (!mounted || !_librarySync.accept(data['sessionId'] as String?, data['requestId'] as int? ?? 0)) return;
+      if (_librarySync.sessionChanged || (type == 'installation_library_loading' && data['reset'] == true)) {
+        setState(() {
+          _librarySnapshot = null;
+          _libraryLoading = true;
+          _modStatus.removeWhere((_, status) => status == 'done');
+        });
+      }
+    }
     if (type == 'db_reloaded') {
       ref.invalidate(overlayAllItems);
     } else if (type == 'installation_library_loading') {
-      final requestId = data['requestId'] as int? ?? 0;
-      if (requestId < _libraryRequestId || !mounted) return;
+      if (!mounted) return;
       setState(() {
-        _libraryRequestId = requestId;
         _libraryLoading = true;
       });
     } else if (type == 'installation_library_snapshot') {
-      final requestId = data['requestId'] as int? ?? 0;
       final raw = data['snapshot'];
-      if (requestId < _libraryRequestId || raw is! Map || !mounted) return;
+      if (raw is! Map || !mounted) return;
       try {
         final snapshot = InstallationLibrarySnapshot.fromOverlayMap(raw);
         setState(() {
-          _libraryRequestId = requestId;
-          _librarySnapshot = snapshot;
+            _librarySnapshot = snapshot;
           _libraryLoading = false;
           // `done` is only the short-lived WorkManager result. Once the
           // durable receipt/SAF projection arrives, the canonical selector
@@ -300,15 +307,12 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       } catch (error, stack) {
         debugPrint('[overlay] Invalid installation snapshot: $error\n$stack');
         setState(() {
-          _libraryRequestId = requestId;
-          _libraryLoading = false;
+            _libraryLoading = false;
         });
       }
     } else if (type == 'installation_library_error') {
-      final requestId = data['requestId'] as int? ?? 0;
-      if (requestId < _libraryRequestId || !mounted) return;
+      if (!mounted) return;
       setState(() {
-        _libraryRequestId = requestId;
         _libraryLoading = false;
       });
     } else if (type == 'install_progress') {

@@ -1,3 +1,4 @@
+import 'game_mod_activation_provider.dart';
 import 'dart:async';
 import '../../services/background_install_service.dart';
 import 'mod_providers.dart';
@@ -59,10 +60,12 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
           value != null) {
         final changed =
             state.connection.connected != value.connected ||
-            state.connection.unified != value.unified;
+            state.connection.unified != value.unified || state.connection.connectionKey != value.connectionKey;
         state = GameFolderState(initialized: true, connection: value);
-        if (changed)
+        if (changed) {
+          ref.invalidate(gameModActivationProvider);
           ModInstaller.invalidateInstallationLibrary('gameFolderAccessChanged');
+        }
       }
     } catch (_) {
       if (ref.mounted && !state.busy && revision == _revision)
@@ -89,6 +92,7 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
       if (!ref.mounted) return false;
       state = GameFolderState(initialized: true, connection: value ?? previous);
       if (value != null && method != 'dismissGameFolderGuide') {
+        ref.invalidate(gameModActivationProvider);
         ModInstaller.invalidateInstallationLibrary('gameFolderChanged');
       }
       return value != null;

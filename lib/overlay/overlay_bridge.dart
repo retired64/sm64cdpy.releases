@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -20,6 +21,11 @@ class OverlayBridge {
   static bool _initialized = false;
   static bool _panelOpen = false;
   static int _libraryRequestId = 0;
+  static final _librarySession = _newLibrarySession();
+  static String _newLibrarySession() {
+    final random = Random.secure();
+    return List.generate(16, (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
+  }
   static int _libraryRefreshDepth = 0;
   static final _libraryRepository = InstallationLibraryRepositoryImpl();
 
@@ -33,8 +39,10 @@ class OverlayBridge {
         _sendLibrarySnapshot(snapshot, ++_libraryRequestId);
       }
     });
-    ModInstaller.libraryInvalidations.listen((_) {
-      if (_panelOpen) unawaited(_refreshLibrary(verify: true));
+    ModInstaller.libraryInvalidations.listen((reason) {
+      final folderChanged = reason.contains('Folder');
+      if (_panelOpen || folderChanged) unawaited(_refreshLibrary(
+        verify: true, announceLoading: folderChanged, reset: folderChanged, force: folderChanged));
     });
     unawaited(refreshAutoInstall());
   }
@@ -50,11 +58,13 @@ class OverlayBridge {
     }
   }
 
-  static void _safeShare(Map<String, dynamic> data) {
+  static void _safeShare(Map<String, dynamic> data) => unawaited(_share(data));
+
+  static Future<void> _share(Map<String, dynamic> data) async {
     try {
-      FloatyChatheads.shareData(data);
-    } catch (e) {
-      debugPrint('OverlayBridge shareData failed (overlay likely closed): $e');
+      await Future.sync(() => FloatyChatheads.shareData(data));
+    } catch (error) {
+      debugPrint('OverlayBridge shareData failed (overlay likely closed): $error');
     }
   }
 
@@ -266,12 +276,16 @@ class OverlayBridge {
     required bool verify,
     String? artifactKey,
     bool announceLoading = false,
+    bool reset = false,
+    bool force = false,
   }) async {
-    if (!_panelOpen) return;
+    if (!_panelOpen && !force) return;
     final requestId = ++_libraryRequestId;
     if (announceLoading) {
       _safeShare({
         'type': 'installation_library_loading',
+        'sessionId': _librarySession,
+        'reset': reset,
         'requestId': requestId,
       });
     }
@@ -283,12 +297,13 @@ class OverlayBridge {
                 ? await _libraryRepository.verifyAll()
                 : await _libraryRepository.verifyArtifact(artifactKey)
           : await _libraryRepository.synchronize();
-      if (_panelOpen) _sendLibrarySnapshot(snapshot, requestId);
+      if (_panelOpen || force) _sendLibrarySnapshot(snapshot, requestId);
     } catch (error, stack) {
       debugPrint('[OverlayBridge] Library refresh failed: $error\n$stack');
-      if (_panelOpen) {
+      if (_panelOpen || force) {
         _safeShare({
           'type': 'installation_library_error',
+          'sessionId': _librarySession,
           'requestId': requestId,
         });
       }
@@ -303,6 +318,7 @@ class OverlayBridge {
   ) {
     _safeShare({
       'type': 'installation_library_snapshot',
+      'sessionId': _librarySession,
       'requestId': requestId,
       'snapshot': snapshot.toOverlayMap(),
     });

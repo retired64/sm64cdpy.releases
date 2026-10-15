@@ -134,3 +134,17 @@ Dos ámbitos de coordinación: el lock SAF serializa metadatos y escritura manua
 selectionLock coordina exclusivamente captura/commit de preferencias y enqueue.
 El enqueue no espera una extracción manual ni un escaneo completo. La selección
 recomprueba WorkManager justo antes del commit, después de validar los directorios.
+
+## Cambio de carpeta y reinicio de engines
+
+Una conexión confirmada invalida inmediatamente la proyección de mods del juego.
+Biblioteca descarta verificación anterior y publica Comprobando; una revisión
+por carpeta impide que un resultado en vuelo reponga datos de la carpeta anterior.
+El bridge envía reset/loading también si su engine acaba de recrearse y todavía
+no conoce si el panel estaba abierto. Captura errores de shareData asíncronos.
+Los mensajes de Biblioteca incluyen un identificador aleatorio de sesión: el
+overlay reinicia su contador al cambiar el engine principal y rechaza respuestas
+de sesiones retiradas (máximo 32). El cache del gate vive y se destruye con el
+panel. El diseño de la burbuja se conserva; cambian solo proyección y ordenación.
+Pruebas: refresh pendiente de otra carpeta, respuestas tardías, recreación de
+engine y compatibilidad de mensajes sin sessionId antes de una sesión nueva.

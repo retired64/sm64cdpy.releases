@@ -113,7 +113,7 @@ internal object GameFolderStore {
         val unified = root != null && mods != null && packs != null &&
             preferences.getString(ModInstallerPlugin.KEY_TREE_URI, null) == mods.uri.toString() &&
             preferences.getString(ModInstallerPlugin.KEY_DYNOS_TREE_URI, null) == packs.uri.toString()
-        mapOf("unified" to unified, "dismissed" to preferences.getBoolean("game_setup_dismissed", false), "connected" to (root != null), "status" to (if (root != null && !unified) "installing" else if (root != null) "ready" else if (saved != null || preferences.getBoolean(ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, false) || preferences.getBoolean(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED, false)) "access" else "unselected"),
+        mapOf("rootUri" to (if (root != null) saved else null), "unified" to unified, "dismissed" to preferences.getBoolean("game_setup_dismissed", false), "connected" to (root != null), "status" to (if (root != null && !unified) "installing" else if (root != null) "ready" else if (saved != null || preferences.getBoolean(ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, false) || preferences.getBoolean(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED, false)) "access" else "unselected"),
             "mods" to (mods != null),
             "dynos" to (packs != null),
             "config" to (root?.findFile("sm64config.txt")?.isFile == true),

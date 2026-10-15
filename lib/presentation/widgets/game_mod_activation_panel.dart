@@ -229,7 +229,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     if (action == _AccessAction.select) {
       await _run(() async {
         if (await connectGameFolder(context, ref)) {
-          await ref.read(gameModActivationProvider.notifier).refresh();
+          await ref.read(gameModActivationProvider.future);
         }
       });
       return;
@@ -237,7 +237,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     if (action == _AccessAction.disconnect) {
       await _run(() async {
         if (await disconnectGameFolder(context, ref)) {
-          await ref.read(gameModActivationProvider.notifier).refresh();
+          await ref.read(gameModActivationProvider.future);
         }
       });
       return;
@@ -266,7 +266,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     final installing =
         BackgroundInstallService.instance.activeInstalls.isNotEmpty;
     final snapshot = value.asData?.value;
-    final ready = snapshot?.status == 'ready';
+    final ready = !value.isLoading && snapshot?.status == 'ready';
     final status = _error ?? snapshot?.status;
     final message = switch (status) {
       'ready' => l10n.gameModsHint,
