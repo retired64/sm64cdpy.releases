@@ -1497,7 +1497,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get gameModsHint =>
-      'Feche o jogo antes de alterar as opções. Estes controles configuram a próxima abertura; os pacotes DynOS são gerenciados separadamente.';
+      'Feche o jogo antes de alterar as opções. Estes controles configuram mods Lua e pacotes DynOS/Touch Controls para a próxima inicialização.';
 
   @override
   String get gameModsSelectHint =>
@@ -1556,7 +1556,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get gameModsEmpty =>
-      'Nenhum mod Lua compatível encontrado nesta pasta.';
+      'Nenhum mod Lua compatível ou pasta de pacote DynOS/Touch Controls foi encontrado.';
 
   @override
   String get gameModsEnabled => 'Ativado para a próxima abertura';
@@ -1718,6 +1718,12 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get gameFolderBusy =>
       'Espere os downloads e instalações terminarem antes de mudar a pasta do jogo.';
+
+  @override
+  String get gameModsLuaType => 'Mods Lua';
+
+  @override
+  String get gameModsDynosType => 'DynOS / Touch Controls';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3213,7 +3219,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get gameModsHint =>
-      'Feche o jogo antes de alterar as opções. Estes controles configuram a próxima abertura; os pacotes DynOS são gerenciados separadamente.';
+      'Feche o jogo antes de alterar as opções. Estes controles configuram mods Lua e pacotes DynOS/Touch Controls para a próxima inicialização.';
 
   @override
   String get gameModsSelectHint =>
@@ -3272,7 +3278,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get gameModsEmpty =>
-      'Nenhum mod Lua compatível encontrado nesta pasta.';
+      'Nenhum mod Lua compatível ou pasta de pacote DynOS/Touch Controls foi encontrado.';
 
   @override
   String get gameModsEnabled => 'Ativado para a próxima abertura';
@@ -3434,4 +3440,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get gameFolderBusy =>
       'Espere os downloads e instalações terminarem antes de mudar a pasta do jogo.';
+
+  @override
+  String get gameModsLuaType => 'Mods Lua';
+
+  @override
+  String get gameModsDynosType => 'DynOS / Touch Controls';
 }

@@ -1506,7 +1506,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get gameModsHint =>
-      'Cierra el juego antes de cambiar opciones. Estos interruptores configuran el próximo inicio; los packs DynOS se gestionan por separado.';
+      'Cierra el juego antes de cambiar opciones. Estos interruptores configuran mods Lua y packs DynOS/Touch Controls para el próximo inicio.';
 
   @override
   String get gameModsSelectHint =>
@@ -1565,7 +1565,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get gameModsEmpty =>
-      'No se encontraron mods Lua compatibles en esta carpeta.';
+      'No se encontraron mods Lua compatibles ni carpetas de packs DynOS/Touch Controls.';
 
   @override
   String get gameModsEnabled => 'Activado para el próximo inicio';
@@ -1727,6 +1727,12 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get gameFolderBusy =>
       'Espera a que terminen las descargas e instalaciones antes de cambiar la carpeta del juego.';
+
+  @override
+  String get gameModsLuaType => 'Mods Lua';
+
+  @override
+  String get gameModsDynosType => 'DynOS / Touch Controls';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -3231,7 +3237,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get gameModsHint =>
-      'Cierra el juego antes de cambiar opciones. Estos interruptores configuran el próximo inicio; los packs DynOS se gestionan por separado.';
+      'Cierra el juego antes de cambiar opciones. Estos interruptores configuran mods Lua y packs DynOS/Touch Controls para el próximo inicio.';
 
   @override
   String get gameModsSelectHint =>
@@ -3290,7 +3296,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get gameModsEmpty =>
-      'No se encontraron mods Lua compatibles en esta carpeta.';
+      'No se encontraron mods Lua compatibles ni carpetas de packs DynOS/Touch Controls.';
 
   @override
   String get gameModsEnabled => 'Activado para el próximo inicio';
@@ -3452,4 +3458,10 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get gameFolderBusy =>
       'Espera a que terminen las descargas e instalaciones antes de cambiar la carpeta del juego.';
+
+  @override
+  String get gameModsLuaType => 'Mods Lua';
+
+  @override
+  String get gameModsDynosType => 'DynOS / Touch Controls';
 }

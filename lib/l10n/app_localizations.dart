@@ -2715,7 +2715,7 @@ abstract class AppLocalizations {
   /// No description provided for @gameModsHint.
   ///
   /// In en, this message translates to:
-  /// **'Close the game before making changes. These switches configure the next start; DynOS packs are managed separately.'**
+  /// **'Close the game before making changes. These switches configure Lua mods and DynOS/Touch Controls packs for the next start.'**
   String get gameModsHint;
 
   /// No description provided for @gameModsSelectHint.
@@ -2811,7 +2811,7 @@ abstract class AppLocalizations {
   /// No description provided for @gameModsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No compatible Lua mods found in this folder.'**
+  /// **'No compatible Lua mods or DynOS/Touch Controls pack folders were found.'**
   String get gameModsEmpty;
 
   /// No description provided for @gameModsEnabled.
@@ -3095,6 +3095,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wait for downloads and installations to finish before changing the game folder.'**
   String get gameFolderBusy;
+
+  /// No description provided for @gameModsLuaType.
+  ///
+  /// In en, this message translates to:
+  /// **'Lua mods'**
+  String get gameModsLuaType;
+
+  /// No description provided for @gameModsDynosType.
+  ///
+  /// In en, this message translates to:
+  /// **'DynOS / Touch Controls'**
+  String get gameModsDynosType;
 }
 
 class _AppLocalizationsDelegate

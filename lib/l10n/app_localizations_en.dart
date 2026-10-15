@@ -1486,7 +1486,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameModsHint =>
-      'Close the game before making changes. These switches configure the next start; DynOS packs are managed separately.';
+      'Close the game before making changes. These switches configure Lua mods and DynOS/Touch Controls packs for the next start.';
 
   @override
   String get gameModsSelectHint =>
@@ -1544,7 +1544,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Wait for downloads and installations to finish before changing game mods.';
 
   @override
-  String get gameModsEmpty => 'No compatible Lua mods found in this folder.';
+  String get gameModsEmpty =>
+      'No compatible Lua mods or DynOS/Touch Controls pack folders were found.';
 
   @override
   String get gameModsEnabled => 'Enabled for next start';
@@ -1705,4 +1706,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get gameFolderBusy =>
       'Wait for downloads and installations to finish before changing the game folder.';
+
+  @override
+  String get gameModsLuaType => 'Lua mods';
+
+  @override
+  String get gameModsDynosType => 'DynOS / Touch Controls';
 }

@@ -733,7 +733,9 @@ class _GameModCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    mod.isDynos ? 'user/dynos/packs/${mod.name}' : 'user/mods/${mod.name}',
+                    mod.isDynos
+                        ? 'user/dynos/packs/${mod.name}'
+                        : 'user/mods/${mod.name}',
                     style: retro.body(size: 12, color: retro.inkDim),
                   ),
                   const SizedBox(height: 16),
@@ -891,8 +893,12 @@ class _GameModCard extends StatelessWidget {
               runSpacing: 6,
               children: [
                 _GameMetadata(
-                  icon: mod.isDynos ? Icons.texture_rounded : Icons.code_rounded,
-                  label: mod.isDynos ? l10n.gameModsDynosType : l10n.gameModsLuaType,
+                  icon: mod.isDynos
+                      ? Icons.texture_rounded
+                      : Icons.code_rounded,
+                  label: mod.isDynos
+                      ? l10n.gameModsDynosType
+                      : l10n.gameModsLuaType,
                 ),
                 if (mod.versionLabel != null)
                   _GameMetadata(
