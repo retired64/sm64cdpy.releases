@@ -26,6 +26,7 @@ La versión 1.8.3 incorpora activación verificada de mods desde Biblioteca, re�
 - El selector de idioma conserva las animaciones de flecha y expansión, y se cierra después de guardar la selección.
 - Mario 64 incorpora superficies de menú, marcos biselados e indicadores de selección coherentes en Ajustes.
 - Los encabezados de Mario 64 aprovechan el ancho disponible; Ajustes distingue tamaños legibles para opciones, descripciones y rutas.
+- La conexión del juego y la preparación de ROM usan paneles propios de cada tema, estados legibles y el mismo desplegable animado de Ajustes.
 
 ### Recuperación de apariencia y legibilidad
 

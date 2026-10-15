@@ -501,3 +501,8 @@ Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada
 mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
 migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
 Validación Actions pendiente; revisión física requerida.
+
+Conexión guiada: superficies y acciones propias de cada tema, desplegable de
+Ajustes coherente con selectores y estados separados de configuración/ROM.
+Pruebas de interfaz y testing de esta revisión pendientes. Detalle en
+[UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).

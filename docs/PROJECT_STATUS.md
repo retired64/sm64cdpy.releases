@@ -192,3 +192,8 @@ Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada
 mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
 migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
 Validado en [Testing #225](https://github.com/retired64/sm64cdpy.releases/actions/runs/38658236343): generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos para `458189b`. La sincronización posterior solo incorpora formato del runner. Revisión física de permisos, rutas y ROM requerida.
+
+Conexión guiada: superficies y acciones propias de cada tema, desplegable de
+Ajustes coherente con selectores y estados separados de configuración/ROM.
+Pruebas de interfaz y testing de esta revisión pendientes. Detalle en
+[UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).

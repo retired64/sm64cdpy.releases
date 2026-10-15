@@ -160,3 +160,25 @@ el formato del mismo runner. Pruebas locales del manifiesto de release: 4 correc
 Riverpod conserva el valor anterior durante loading: los consumidores de
 Biblioteca fuerzan la rama de carga y las acciones ignoran ese valor retenido.
 Una verificación anterior al cambio de carpeta no puede publicar su resultado.
+
+## Integración visual de la guía
+
+La conexión en Ajustes reutiliza `SettingsExpansionGroup`, como idioma, diseño
+y brillo: resumen visible, flecha de 200 ms y expansión de 220 ms. Home conserva
+una invitación opcional completa; Biblioteca y selección de tema abren la misma
+guía. `game_setup_widgets.dart` centraliza acciones, filas de estado y diálogo.
+Retro Manga usa sombras duras y tinta; Mario 64 hereda materiales ROM y tipografía;
+SM64 Intro conserva marcos de ranura y relieves del menú. No se extraen nuevos
+assets ni se obliga a tener una ROM para entender la guía inicial.
+
+Antes del explorador aparece la carpeta esperada y una explicación localizada.
+Configuración y ROM tienen indicadores distintos; ROM encontrada no significa
+recursos preparados. Desconectar y preparar recursos usan el mismo lenguaje
+visual, acciones apiladas de al menos 52 puntos y contenido desplazable. Los
+textos acompañan a los iconos y no dependen solo del color. Las animaciones no
+retrasan el picker ni el guardado. No cambian autoridades, URI ni mensajes entre
+engines; la UI sigue esperando a los providers existentes.
+
+Pruebas de UI: tres diseños en claro/oscuro, ancho de 360, escala de texto 1.6,
+guía desplazable y cancelación; expansión/colapso de conexión confirmada.
+Revisión física de texturas ROM, TalkBack y transición al explorador pendiente.

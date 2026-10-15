@@ -26,6 +26,7 @@ Version 1.8.3 brings verified game mod activation to Library, unifies local mod 
 - The language selector keeps its arrow and expansion animations and closes after the choice is saved.
 - Mario 64 gives Settings themed menu surfaces, beveled frames and consistent selection indicators.
 - Mario 64 section headings use the available width; settings use consistent readable option, description and folder-path sizes.
+- Game folder setup and ROM preparation use theme-native menu panels, readable status rows and matching animated Settings expansion.
 
 ### Appearance recovery and readability
 

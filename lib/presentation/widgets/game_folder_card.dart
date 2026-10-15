@@ -5,30 +5,16 @@ import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/game_folder_provider.dart';
 import 'app_snackbar.dart';
+import 'game_setup_widgets.dart';
+import 'settings_expansion_group.dart';
 
 /// Every entry point explains why the system folder picker is being opened.
 Future<bool> connectGameFolder(BuildContext context, WidgetRef ref) async {
   final l10n = AppLocalizations.of(context);
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      scrollable: true,
-      title: Text(l10n.gameFolderTitle),
-      content: Text(
-        l10n.gameFolderGuide,
-        style: RetroTheme.of(dialogContext).body(size: 16),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext, false),
-          child: Text(l10n.gameFolderLater),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(dialogContext, true),
-          child: Text(l10n.gameFolderChoose),
-        ),
-      ],
-    ),
+  final confirmed = await showGameSetupDialog(context,
+    title: l10n.gameFolderTitle, body: l10n.gameFolderGuide,
+    confirm: l10n.gameFolderChoose, cancel: l10n.gameFolderLater,
+    icon: Icons.folder_open_rounded, showFolder: true,
   );
   if (!context.mounted || confirmed != true) return false;
   final result = await ref
@@ -50,26 +36,10 @@ Future<bool> connectGameFolder(BuildContext context, WidgetRef ref) async {
 
 Future<bool> disconnectGameFolder(BuildContext context, WidgetRef ref) async {
   final l10n = AppLocalizations.of(context);
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      scrollable: true,
-      title: Text(l10n.gameFolderDisconnect),
-      content: Text(
-        l10n.gameFolderDisconnectBody,
-        style: RetroTheme.of(dialogContext).body(size: 16),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext, false),
-          child: Text(l10n.gameModsCancel),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(dialogContext, true),
-          child: Text(l10n.gameFolderDisconnect),
-        ),
-      ],
-    ),
+  final confirmed = await showGameSetupDialog(context,
+    title: l10n.gameFolderDisconnect, body: l10n.gameFolderDisconnectBody,
+    confirm: l10n.gameFolderDisconnect, cancel: l10n.gameModsCancel,
+    icon: Icons.link_off_rounded,
   );
   if (!context.mounted || confirmed != true) return false;
   final done = await ref
@@ -125,83 +95,75 @@ class _GameFolderCardState extends ConsumerState<GameFolderCard>
       return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
+    final warning = folder.status == 'access' || state.error == 'access';
+    final details = <Widget>[
+      if (!folder.connected)
+        Padding(padding: const EdgeInsets.only(bottom: 12),
+          child: Text(l10n.gameFolderSummary, style: retro.body(size: 16, height: 1.5))),
+      if (folder.status == 'installing' || state.error == 'installing')
+        GameSetupStatus(label: l10n.gameFolderBusy, icon: Icons.hourglass_top_rounded),
+      if (state.error == 'folder')
+        GameSetupStatus(label: l10n.gameFolderInvalid, icon: Icons.folder_off_outlined),
+      if (warning)
+        GameSetupStatus(label: l10n.gameFolderAccessLost, icon: Icons.folder_off_outlined),
+      if (folder.connected) ...[
+        GameSetupStatus(label: l10n.gameFolderResolved,
+          icon: Icons.folder_copy_outlined, ready: folder.mods && folder.dynos),
+        GameSetupStatus(label: folder.config ? l10n.gameFolderConfigReady : l10n.gameFolderConfigMissing,
+          icon: Icons.tune_rounded, ready: folder.config),
+        GameSetupStatus(label: folder.rom ? l10n.gameFolderRomFound : l10n.gameFolderRomMissing,
+          icon: Icons.videogame_asset_outlined, ready: folder.rom),
+      ],
+      AnimatedSize(duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        child: state.busy ? Padding(padding: const EdgeInsets.symmetric(vertical: 12),
+          child: LinearProgressIndicator(color: retro.accent,
+            backgroundColor: retro.surfaceAlt)) : const SizedBox.shrink()),
+      const SizedBox(height: 12),
+      GameSetupAction(
+        label: folder.connected ? l10n.gameFolderChange : l10n.gameFolderChoose,
+        icon: Icons.folder_open_rounded, primary: true,
+        onPressed: state.busy ? null : () async { await connectGameFolder(context, ref); },
+      ),
+      if (widget.optional) ...[
+        const SizedBox(height: 12),
+        GameSetupAction(label: l10n.gameFolderLater, icon: Icons.arrow_forward_rounded,
+          onPressed: state.busy ? null : () async {
+            await ref.read(gameFolderProvider.notifier).perform('dismissGameFolderGuide');
+          }),
+      ],
+      if (!widget.optional && folder.connected) ...[
+        const SizedBox(height: 12),
+        GameSetupAction(label: l10n.gameFolderDisconnect, icon: Icons.link_off_rounded,
+          onPressed: state.busy ? null : () async { await disconnectGameFolder(context, ref); }),
+      ],
+    ];
+    if (!widget.optional) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: SettingsExpansionGroup(
+          key: const PageStorageKey('game-folder-connection'),
+          title: l10n.gameFolderTitle,
+          subtitle: warning ? l10n.gameFolderAccessLost : folder.connected
+            ? l10n.gameFolderConnected : l10n.gameFolderChoose,
+          icon: warning ? Icons.folder_off_outlined : Icons.sports_esports_rounded,
+          children: details,
+        ),
+      );
+    }
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: retro.surfaceDecoration(shadowDx: 2, shadowDy: 2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            folder.connected ? l10n.gameFolderConnected : l10n.gameFolderTitle,
-            style: retro.heading(size: 16),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            folder.connected && folder.unified
-                ? l10n.gameFolderResolved
-                : l10n.gameFolderSummary,
-            style: retro.body(size: 16),
-          ),
-          if (folder.status == 'installing')
-            Text(l10n.gameFolderBusy, style: retro.body(size: 16)),
-          if (folder.status == 'access')
-            Text(
-              l10n.gameFolderAccessLost,
-              style: retro.body(size: 16, color: retro.red),
-            ),
-          if (folder.connected) ...[
-            const SizedBox(height: 8),
-            Text(
-              folder.config
-                  ? l10n.gameFolderConfigReady
-                  : l10n.gameFolderConfigMissing,
-              style: retro.body(size: 16),
-            ),
-            Text(
-              folder.rom ? l10n.gameFolderRomFound : l10n.gameFolderRomMissing,
-              style: retro.body(size: 16),
-            ),
-          ],
-          if (state.busy)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: LinearProgressIndicator(),
-            ),
-          const SizedBox(height: 10),
-          FilledButton.icon(
-            onPressed: state.busy
-                ? null
-                : () async {
-                    await connectGameFolder(context, ref);
-                  },
-            icon: const MarioGameIcon(Icons.folder_open_rounded),
-            label: Text(
-              folder.connected ? l10n.gameFolderChange : l10n.gameFolderChoose,
-            ),
-          ),
-          if (widget.optional)
-            TextButton(
-              onPressed: state.busy
-                  ? null
-                  : () async {
-                      await ref
-                          .read(gameFolderProvider.notifier)
-                          .perform('dismissGameFolderGuide');
-                    },
-              child: Text(l10n.gameFolderLater),
-            ),
-          if (!widget.optional && folder.connected)
-            TextButton(
-              onPressed: state.busy
-                  ? null
-                  : () async {
-                      await disconnectGameFolder(context, ref);
-                    },
-              child: Text(l10n.gameFolderDisconnect),
-            ),
-        ],
-      ),
+      padding: const EdgeInsets.all(18),
+      decoration: retro.surfaceDecoration(shadowDx: 3, shadowDy: 3),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          MarioGameIcon(Icons.sports_esports_rounded, color: retro.accentText, size: 30),
+          const SizedBox(width: 12),
+          Expanded(child: MarioGameTitle(text: l10n.gameFolderTitle, retro: retro, size: 18)),
+        ]),
+        const SizedBox(height: 16),
+        ...details,
+      ]),
     );
   }
 }

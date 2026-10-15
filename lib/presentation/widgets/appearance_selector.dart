@@ -1,5 +1,6 @@
 import '../providers/game_folder_provider.dart';
 import 'game_folder_card.dart';
+import 'game_setup_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -38,26 +39,10 @@ class AppearanceSelector extends ConsumerWidget {
         if (!await connectGameFolder(context, ref) || !context.mounted) return;
       } else {
         final l10n = AppLocalizations.of(context);
-        final accepted = await showDialog<bool>(
-          context: context,
-          builder: (dialogContext) => AlertDialog(
-            scrollable: true,
-            title: Text(l10n.gameFolderPrepareTitle),
-            content: Text(
-              l10n.gameFolderPrepareBody,
-              style: RetroTheme.of(dialogContext).body(size: 16),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext, false),
-                child: Text(l10n.gameFolderLater),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(dialogContext, true),
-                child: Text(l10n.gameFolderPrepare),
-              ),
-            ],
-          ),
+        final accepted = await showGameSetupDialog(context,
+          title: l10n.gameFolderPrepareTitle, body: l10n.gameFolderPrepareBody,
+          confirm: l10n.gameFolderPrepare, cancel: l10n.gameFolderLater,
+          icon: Icons.videogame_asset_outlined,
         );
         if (!context.mounted || accepted != true) return;
       }

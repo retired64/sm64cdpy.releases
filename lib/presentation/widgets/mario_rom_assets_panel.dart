@@ -1,5 +1,6 @@
 import '../providers/game_folder_provider.dart';
 import 'game_folder_card.dart';
+import 'game_setup_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/retro_theme.dart';
@@ -34,14 +35,16 @@ class MarioRomAssetsPanel extends ConsumerWidget {
             LinearProgressIndicator(semanticsLabel: l10n.marioRomPreparing),
             const SizedBox(height: 8),
             Text(l10n.marioRomPreparing, style: retro.body(size: 13)),
-            TextButton(
+            GameSetupAction(
+              icon: Icons.close_rounded,
               onPressed: () async {
                 await notifier.cancel();
               },
-              child: Text(l10n.marioRomCancel),
+              label: l10n.marioRomCancel,
             ),
           ] else ...[
-            FilledButton.icon(
+            GameSetupAction(
+              primary: true,
               onPressed: () async {
                 await ref.read(gameFolderProvider.notifier).initialize();
                 if (!context.mounted) return;
@@ -52,17 +55,19 @@ class MarioRomAssetsPanel extends ConsumerWidget {
                 }
                 await notifier.perform('import');
               },
-              icon: const MarioGameIcon(Icons.file_open_outlined),
-              label: Text(l10n.marioRomImport),
+              icon: Icons.videogame_asset_outlined,
+              label: l10n.marioRomImport,
             ),
-            if (state.assets.available)
-              TextButton.icon(
+            if (state.assets.available) ...[
+              const SizedBox(height: 12),
+              GameSetupAction(
                 onPressed: () async {
                   await notifier.perform('remove');
                 },
-                icon: const MarioGameIcon(Icons.restore_rounded),
-                label: Text(l10n.marioRomRemove),
+                icon: Icons.restore_rounded,
+                label: l10n.marioRomRemove,
               ),
+            ],
           ],
           if (state.error != null)
             Padding(
