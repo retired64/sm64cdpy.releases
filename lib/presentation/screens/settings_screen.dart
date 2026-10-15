@@ -509,10 +509,8 @@ class _RetroTileShell extends StatelessWidget {
     required this.subtitle,
     this.trailing,
     this.onTap,
-    this.onLongPress,
     this.titleColor,
     this.accentColor,
-    this.pathHint,
   });
 
   final RetroTheme retro;
@@ -521,10 +519,8 @@ class _RetroTileShell extends StatelessWidget {
   final String subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
   final Color? titleColor;
   final Color? accentColor;
-  final String? pathHint;
 
   @override
   Widget build(BuildContext context) {
@@ -533,7 +529,6 @@ class _RetroTileShell extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
         onTap: onTap,
-        onLongPress: onLongPress,
         child: Container(
           padding: EdgeInsets.all(retro.design.softSettingsPanels ? 14 : 12),
           decoration: retro.settingsPanel(
@@ -569,21 +564,6 @@ class _RetroTileShell extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                     ),
-                    if (pathHint != null) ...[
-                      const SizedBox(height: 3),
-                      Text(
-                        pathHint!,
-                        style: retro.isMario
-                            ? retro
-                                  .body(size: 14)
-                                  .copyWith(fontFamily: 'Roboto')
-                            : TextStyle(
-                                color: retro.inkDim,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                              ),
-                      ),
-                    ],
                   ],
                 ),
               ),
