@@ -210,6 +210,14 @@ principales. La selección de Mario coordina importación antes de guardar tema;
 v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.
 
+La generación privada v3 conserva además el segmento Mario descomprimido.
+`MarioPlayerPreviewRenderer` interpreta únicamente las listas F3D de vértices y
+triángulos necesarias para una pose fija, usa la jerarquía corporal de
+SM64CoopDX y aplica los ocho roles de paleta. Ojos, bigote y botones se muestrean
+desde sus texturas de ROM. El PNG resultante se identifica por generación y
+hash de colores; el cache se limita a 24 archivos y la conversión ocurre en el
+executor nativo mientras Flutter conserva el cuadro anterior.
+
 ## Conexión unificada del juego
 
 Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada,

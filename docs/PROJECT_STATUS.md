@@ -60,9 +60,10 @@ Revisado para `1.8.4+23` en `library-performance-1.8.4` el 2026-10-15. La 1.8.3 
   bloqueo, respaldo y verificación con la activación de mods; Riverpod conserva
   un borrador y aplica el perfil en una sola transacción. Los presets se leen en
   formato `[PALETTE]` y los personales se guardan en `user/palettes`. La primera
-  vista previa compone los colores localmente y reutiliza el icono extraído de la
-  ROM cuando está disponible; el render completo de geometría N64 queda como
-  ampliación posterior.
+  vista previa se rasteriza desde los vértices, UV y texturas del segmento Mario
+  de la ROM del usuario. Una pose fija aplica los ocho grupos de SM64CoopDX y se
+  cachea por generación de ROM y combinación de colores, sin incluir el modelo
+  ni imágenes extraídas en el APK.
 
 ## Temas incluidos en custom-themes (2026-10-13)
 

@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:async';
+import 'dart:ui' show FontFeature;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/player_profile.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
+import '../providers/mario_theme_assets_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/settings_expansion_group.dart';
@@ -55,9 +58,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     final retro = RetroTheme.of(context);
     if (!_loaded) {
       _loaded = true;
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => ref.read(playerProfileProvider.notifier).load(),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await ref.read(playerProfileProvider.notifier).load();
+        if (!mounted) return;
+        await ref.read(marioThemeAssetsProvider.notifier).initialize();
+        if (mounted && !ref.read(marioThemeAssetsProvider).assets.complete) {
+          await ref.read(marioThemeAssetsProvider.notifier).perform('import');
+        }
+      });
     }
     final draft = state.draft;
     if (draft != null && _name.text != draft.name && !_nameFocus.hasFocus)
@@ -82,7 +90,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 110),
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 96),
               sliver: SliverList.list(
                 children: [
                   if (state.busy && draft == null)
@@ -107,13 +115,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                     ),
                   if (draft != null) ...[
                     _PlayerPreview(profile: draft),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     _Panel(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(l10n.playerName, style: retro.heading(size: 15)),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           TextField(
                             controller: _name,
                             focusNode: _nameFocus,
@@ -127,7 +135,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 .read(playerProfileProvider.notifier)
                                 .setName,
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 2),
                           Text(
                             l10n.playerCloseGameHint,
                             style: TextStyle(color: retro.inkDim, fontSize: 12),
@@ -135,11 +143,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     Text(l10n.playerPresets, style: retro.heading(size: 16)),
                     const SizedBox(height: 8),
                     SizedBox(
-                      height: 88,
+                      height: 72,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: state.presets.length,
@@ -160,7 +168,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         },
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 14),
                     Text(l10n.playerParts, style: retro.heading(size: 16)),
                     const SizedBox(height: 8),
                     GridView.builder(
@@ -169,9 +177,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 2.75,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
+                            childAspectRatio: 3.35,
+                            crossAxisSpacing: 7,
+                            mainAxisSpacing: 7,
                           ),
                       itemCount: PlayerPart.values.length,
                       itemBuilder: (_, index) {
@@ -184,7 +192,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         );
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     _ColorEditor(
                       part: _part,
                       color: draft.palette[_part],
@@ -192,7 +200,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                           .read(playerProfileProvider.notifier)
                           .setColor(_part, color),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 14),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -416,7 +424,7 @@ class _Panel extends StatelessWidget {
     final retro = RetroTheme.of(context);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: retro.settingsPanel(width: 2, dx: 4, dy: 4),
       child: child,
     );
@@ -455,35 +463,91 @@ class _Unavailable extends StatelessWidget {
   }
 }
 
-class _PlayerPreview extends StatelessWidget {
+class _PlayerPreview extends ConsumerStatefulWidget {
   const _PlayerPreview({required this.profile});
   final PlayerProfile profile;
+
+  @override
+  ConsumerState<_PlayerPreview> createState() => _PlayerPreviewState();
+}
+
+class _PlayerPreviewState extends ConsumerState<_PlayerPreview> {
+  Timer? _timer;
+  String? _path;
+  String? _generation;
+  int _request = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _schedule(Duration.zero);
+  }
+
+  @override
+  void didUpdateWidget(covariant _PlayerPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.profile.palette != widget.profile.palette) {
+      _schedule(const Duration(milliseconds: 90));
+    }
+  }
+
+  void _schedule(Duration delay) {
+    _timer?.cancel();
+    final request = ++_request;
+    _timer = Timer(delay, () async {
+      try {
+        final path = await ref
+            .read(marioThemeAssetsServiceProvider)
+            .renderPlayer(widget.profile.palette.platformColors);
+        if (mounted && request == _request && path != null) {
+          setState(() => _path = path);
+        }
+      } catch (_) {
+        // A missing ROM keeps the explicit unavailable preview below.
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final icon = retro.marioAsset('mario_head');
+    final generation = ref.watch(marioThemeAssetsProvider).assets.generation;
+    if (generation != _generation) {
+      _generation = generation;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _schedule(Duration.zero);
+      });
+    }
     return Container(
-      height: 280,
+      height: 250,
       decoration: retro.settingsPanel(width: 3, dx: 5, dy: 5),
       child: ClipRect(
         child: Stack(
           fit: StackFit.expand,
           children: [
             const ThemeBackdrop(menuSurface: true),
-            CustomPaint(painter: _MarioPalettePainter(profile.palette)),
-            if (icon != null)
-              Positioned(
-                top: 24,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Image.file(
-                    File(icon),
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.none,
-                  ),
+            if (_path != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 8, 18, 32),
+                child: Image.file(
+                  File(_path!),
+                  fit: BoxFit.contain,
+                  gaplessPlayback: true,
+                  filterQuality: FilterQuality.medium,
+                ),
+              )
+            else
+              Center(
+                child: Icon(
+                  Icons.person_search_outlined,
+                  size: 72,
+                  color: retro.inkDim,
                 ),
               ),
             Positioned(
@@ -491,7 +555,7 @@ class _PlayerPreview extends StatelessWidget {
               right: 12,
               bottom: 10,
               child: Text(
-                profile.name,
+                widget.profile.name,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -503,77 +567,6 @@ class _PlayerPreview extends StatelessWidget {
       ),
     );
   }
-}
-
-class _MarioPalettePainter extends CustomPainter {
-  const _MarioPalettePainter(this.palette);
-  final PlayerPalette palette;
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final p = Paint()..style = PaintingStyle.fill;
-    final outline = Paint()
-      ..color = Colors.black.withValues(alpha: .72)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 5;
-    void oval(Rect rect, Color color) {
-      p.color = color;
-      canvas.drawOval(rect, p);
-      canvas.drawOval(rect, outline);
-    }
-
-    // An abstract preview keeps every SM64CoopDX palette part visible. ROM icon overlays the face when available.
-    oval(
-      Rect.fromCenter(center: Offset(cx, 69), width: 104, height: 62),
-      palette[PlayerPart.cap],
-    );
-    oval(
-      Rect.fromCenter(center: Offset(cx, 100), width: 76, height: 70),
-      palette[PlayerPart.skin],
-    );
-    p.color = palette[PlayerPart.hair];
-    canvas.drawArc(
-      Rect.fromCenter(center: Offset(cx, 102), width: 80, height: 72),
-      .15,
-      2.84,
-      false,
-      p,
-    );
-    p.color = palette[PlayerPart.emblem];
-    canvas.drawCircle(Offset(cx, 57), 11, p);
-    oval(
-      Rect.fromCenter(center: Offset(cx, 153), width: 105, height: 80),
-      palette[PlayerPart.shirt],
-    );
-    p.color = palette[PlayerPart.pants];
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(cx, 165), width: 68, height: 74),
-        const Radius.circular(14),
-      ),
-      p,
-    );
-    oval(
-      Rect.fromCenter(center: Offset(cx - 63, 158), width: 38, height: 38),
-      palette[PlayerPart.gloves],
-    );
-    oval(
-      Rect.fromCenter(center: Offset(cx + 63, 158), width: 38, height: 38),
-      palette[PlayerPart.gloves],
-    );
-    oval(
-      Rect.fromCenter(center: Offset(cx - 26, 220), width: 62, height: 30),
-      palette[PlayerPart.shoes],
-    );
-    oval(
-      Rect.fromCenter(center: Offset(cx + 26, 220), width: 62, height: 30),
-      palette[PlayerPart.shoes],
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _MarioPalettePainter oldDelegate) =>
-      oldDelegate.palette != palette;
 }
 
 class _PresetCard extends StatelessWidget {
@@ -598,8 +591,8 @@ class _PresetCard extends StatelessWidget {
         onTap: onTap,
         onLongPress: onLongPress,
         child: Container(
-          width: 116,
-          padding: const EdgeInsets.all(9),
+          width: 108,
+          padding: const EdgeInsets.all(8),
           decoration: retro.surfaceDecoration(
             borderColor: selected ? retro.accent : retro.border,
             border: selected ? 3 : 2,
@@ -619,7 +612,7 @@ class _PresetCard extends StatelessWidget {
                     .take(6)
                     .map(
                       (c) => Expanded(
-                        child: Container(height: 18, color: Color(c)),
+                        child: Container(height: 14, color: Color(c)),
                       ),
                     )
                     .toList(),
@@ -654,7 +647,7 @@ class _PartTile extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           decoration: retro.surfaceDecoration(
             borderColor: selected ? retro.accent : retro.border,
             border: selected ? 3 : 2,
@@ -662,15 +655,15 @@ class _PartTile extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 28,
-                height: 28,
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
                   color: color,
                   shape: BoxShape.circle,
                   border: Border.all(color: retro.ink, width: 2),
                 ),
               ),
-              const SizedBox(width: 9),
+              const SizedBox(width: 7),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -741,25 +734,36 @@ class _ColorEditorState extends State<_ColorEditor> {
             _partLabel(l10n, widget.part),
             style: RetroTheme.of(context).heading(size: 16),
           ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _hexController,
-            maxLength: 7,
-            textCapitalization: TextCapitalization.characters,
-            decoration: InputDecoration(
-              labelText: l10n.playerHex,
-              counterText: '',
-            ),
-            onSubmitted: (value) {
-              final match = RegExp(
-                r'^#?([0-9a-fA-F]{6})$',
-              ).firstMatch(value.trim());
-              if (match != null)
-                widget.onChanged(
-                  Color(0xFF000000 | int.parse(match.group(1)!, radix: 16)),
-                );
-            },
+          const SizedBox(height: 6),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: RetroTheme.of(context).ink, width: 2),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextField(
+                  controller: _hexController,
+                  maxLength: 7,
+                  textCapitalization: TextCapitalization.characters,
+                  decoration: InputDecoration(
+                    labelText: l10n.playerHex,
+                    counterText: '',
+                    isDense: true,
+                  ),
+                  onSubmitted: _submitHex,
+                ),
+              ),
+            ],
           ),
+          const SizedBox(height: 4),
           _channel(
             l10n.playerRed,
             widget.color.r,
@@ -780,14 +784,30 @@ class _ColorEditorState extends State<_ColorEditor> {
     );
   }
 
+  void _submitHex(String value) {
+    final match = RegExp(r'^#?([0-9a-fA-F]{6})$').firstMatch(value.trim());
+    if (match != null) {
+      widget.onChanged(
+        Color(0xFF000000 | int.parse(match.group(1)!, radix: 16)),
+      );
+    }
+  }
+
   Widget _channel(String label, double value, ValueChanged<double> onChanged) =>
-      Row(
-        children: [
-          SizedBox(width: 64, child: Text('$label ${(value * 255).round()}')),
-          Expanded(
-            child: Slider(value: value, onChanged: onChanged),
-          ),
-        ],
+      SizedBox(
+        height: 42,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 58,
+              child: Text(
+                '$label ${(value * 255).round()}',
+                style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+              ),
+            ),
+            Expanded(child: Slider(value: value, onChanged: onChanged)),
+          ],
+        ),
       );
 }
 

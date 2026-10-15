@@ -1,4 +1,4 @@
-# Mario 64: reconstrucción de menús con la ROM — versión 2
+# Mario 64: reconstrucción de menús con la ROM — versión 3
 
 Rama `custom-themes`, Android, preparación de 1.8.3+22. El usuario comprobó que
 la importación v1 funcionaba, pero sus 15 imágenes y opacidades 9–16 % dejaban
@@ -79,6 +79,22 @@ las carga antes de publicar el conjunto observable. Se cargan una sola vez por
 engine porque solo se acepta un hash ROM y la versión del generador es fija.
 Una modificación futura del algoritmo requiere subir versión/alias del conjunto.
 
+## Extensión v3: vista previa del jugador
+
+La pantalla Jugador necesita una generación v3. Al abrirla, si el conjunto
+actual es anterior, intenta preparar otra vez la ROM encontrada en la carpeta
+del juego; no abre un segundo selector ni bloquea la edición del perfil. La
+generación conserva privadamente el segmento Mario MIO0 descomprimido y nunca lo
+expone a Flutter.
+
+`MarioPlayerPreviewRenderer` interpreta un subconjunto acotado de F3D: carga de
+vértices, triángulos y fin de lista en offsets fijos comprobados contra el código
+de SM64CoopDX. Ensambla una pose neutral mediante las traslaciones de
+`mario_geo_body`, aplica PANTS/SHIRT/GLOVES/SHOES/HAIR/SKIN/CAP/EMBLEM y muestrea
+ojos, bigote y botones desde la ROM. No ejecuta scripts, animaciones ni código de
+la ROM. Cada PNG se cachea por UUID de generación y SHA-256 de los 24 canales;
+se conservan como máximo 24 vistas y un cambio de ROM invalida las claves.
+
 ## Diseño claro y oscuro
 
 El juego no ofrece el selector Android claro/oscuro. Ambas variantes comparten
@@ -113,21 +129,22 @@ con su diseño fijo y no lee ni necesita el conjunto.
 ## Almacenamiento, migración y confirmación
 
 `MarioAssetsPlugin`, registrado solo en MainActivity, conserva canal
-`sm64cdpy/mario_assets`: read/import/cancel/remove. Un executor serial hace lectura,
+`sm64cdpy/mario_assets`: read/import/cancel/remove/renderPlayer. Un executor serial hace lectura,
 MIO0, generación, fsync y verificación de imágenes/fuentes fuera del hilo UI.
 Solo el commit pequeño del pointer se serializa con cancelación en main.
 
-Se escribe `noBackupFilesDir/mario_theme_v2/<UUID>/`; SharedPreferences `mario_theme`
+Se escribe `noBackupFilesDir/mario_theme_v3/<UUID>/`; SharedPreferences `mario_theme`
 guarda `generation`. Cada importación crea rutas inmutables nuevas. Commit false
 restaura también la copia en memoria de preferencias. Cancelación, engine destruido
 o error no publica el directorio incompleto. Se cierra el stream al cancelar;
 el Future original confirma el terminal, no el acuse de la orden cancel.
 
-Lectura valida 151 PNG por dimensión y tres TTF por presencia/tamaño. Si hay v1,
+Lectura valida 151 PNG por dimensión, tres TTF por presencia/tamaño y el segmento
+privado acotado del jugador. Si hay v1 o v2,
 lee sus 15 PNG desde `mario_theme_v1`, conserva apariencia y muestra que debe
 reimportarse para el conjunto nuevo. No puede reconstruir fuentes/cielos sin
 volver a seleccionar la ROM: v1 no retenía sus bytes. Cancelar actualización
-conserva v1. Una vez v2 queda confirmado, un arranque posterior limpia generaciones
+conserva el tema con fallback hasta preparar nuevamente la ROM. Una vez v3 queda confirmado, un arranque posterior limpia generaciones
 v1/inactivas; remove limpia pointer y el siguiente arranque elimina archivos.
 
 Rotación conserva pendiente y reinstala ActivityResultListener. Navegar no corta

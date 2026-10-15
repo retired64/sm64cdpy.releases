@@ -4,7 +4,9 @@ package mods.sm64cdpy
 internal object MarioRomDecoder {
     const val ROM_SIZE = 8 * 1024 * 1024
     const val ROM_MD5 = "20b854b239203baf6c961b850a4a51a2"
-    const val VERSION = 2
+    const val VERSION = 3
+    const val PLAYER_SEGMENT = 0x00114750
+    const val PLAYER_SEGMENT_BYTES = 78432
     data class Texture(val id: String, val segment: Int, val segmentBytes: Int,
                        val offset: Int, val width: Int, val height: Int, val format: String = "rgba16", val dialogQuad: Boolean = false)
     // Addresses from CoopDX levels/menu/leveldata.c and bin/segment2.c (US).
