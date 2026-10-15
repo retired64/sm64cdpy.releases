@@ -254,7 +254,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.descendant(
-          of: find.byType(Dialog),
+          of: find.byType(BottomSheet),
           matching: find.text('user/mods/beta.lua'),
         ),
         findsOneWidget,
