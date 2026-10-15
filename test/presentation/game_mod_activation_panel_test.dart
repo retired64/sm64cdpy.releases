@@ -35,6 +35,7 @@ class _Gateway extends GameModActivation {
     ],
   );
   int writes = 0;
+  Map<String, Object>? lastWrite;
   Completer<void>? gate;
   @override
   Future<GameModSnapshot> read() async => current;
@@ -47,11 +48,13 @@ class _Gateway extends GameModActivation {
     writes++;
     if (gate != null) await gate!.future;
     final values = arguments!;
+    lastWrite = values;
     current = GameModSnapshot(
       status: 'ready',
       mods: current.mods
           .map(
             (mod) => GameModEntry(
+              kind: mod.kind,
               name: mod.name,
               title: mod.title,
               selectable: mod.selectable,
@@ -59,7 +62,7 @@ class _Gateway extends GameModActivation {
               category: mod.category,
               versionLabel: mod.versionLabel,
               description: mod.description,
-              enabled: mod.name == values['name']
+              enabled: mod.name == values['name'] && mod.kind == (values['kind'] ?? 'lua')
                   ? values['enabled'] == true
                   : mod.enabled,
             ),
@@ -139,6 +142,29 @@ Future<void> _apply(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('DynOS and Lua with the same folder name save independent switches', (tester) async {
+    final gateway = _Gateway();
+    gateway.current = const GameModSnapshot(status: 'ready', mods: [
+      GameModEntry(name: 'Same', title: 'Same', enabled: false, selectable: true),
+      GameModEntry(kind: 'dynos', name: 'Same', title: 'Same', enabled: false, selectable: true),
+    ]);
+    await _mount(tester, gateway, AppThemeId.sm64Intro);
+    expect(find.byKey(const ValueKey('game-mod-card-Same')), findsOneWidget);
+    expect(find.byKey(const ValueKey('game-mod-card-dynos:Same')), findsOneWidget);
+    await _toggle(tester, 'dynos:Same');
+    await _apply(tester);
+    await tester.pumpAndSettle();
+    expect(gateway.lastWrite, {'name': 'Same', 'kind': 'dynos', 'enabled': true});
+    expect(gateway.current.mods.first.enabled, isFalse);
+    expect(gateway.current.mods.last.enabled, isTrue);
+    await _toggle(tester, 'Same');
+    await tester.pumpAndSettle();
+    expect(gateway.lastWrite, {'name': 'Same', 'kind': 'lua', 'enabled': true});
+    expect(gateway.current.mods.every((mod) => mod.enabled), isTrue);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   for (final design in AppThemeId.values) {
     for (final dark in [false, true]) {
       testWidgets(

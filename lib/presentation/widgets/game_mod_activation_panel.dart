@@ -209,9 +209,9 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     await _run(
       () => ref.read(gameModActivationProvider.notifier).perform(
         'setGameModActivation',
-        {'name': mod.name, 'enabled': enabled},
+        {'name': mod.name, 'enabled': enabled, 'kind': mod.kind},
       ),
-      savingName: mod.name,
+      savingName: mod.keyName,
     );
     if (mounted && _error == null)
       AppSnackbar.success(
@@ -293,6 +293,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
           (mod) =>
               (query.isEmpty ||
                   [
+                    mod.isDynos ? l10n.gameModsDynosType : l10n.gameModsLuaType,
                     mod.title,
                     mod.name,
                     mod.author,
@@ -567,9 +568,9 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
             ),
           for (final mod in filtered.take(_visible))
             _GameModCard(
-              key: ValueKey('game-mod-card-${mod.name}'),
+              key: ValueKey('game-mod-card-${mod.keyName}'),
               mod: mod,
-              saving: _savingName == mod.name,
+              saving: _savingName == mod.keyName,
               showIdentity:
                   mods.where((other) => other.title == mod.title).length > 1,
               onChanged: _busy || installing || !mod.selectable
@@ -732,7 +733,7 @@ class _GameModCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    mod.name,
+                    mod.isDynos ? 'user/dynos/packs/${mod.name}' : 'user/mods/${mod.name}',
                     style: retro.body(size: 12, color: retro.inkDim),
                   ),
                   const SizedBox(height: 16),
@@ -853,12 +854,12 @@ class _GameModCard extends StatelessWidget {
                   label: mod.title,
                   child: retro.isMario && retro.marioAssets.complete
                       ? MarioGameToggle(
-                          key: ValueKey('game-mod-switch-${mod.name}'),
+                          key: ValueKey('game-mod-switch-${mod.keyName}'),
                           value: mod.enabled,
                           onChanged: onChanged,
                         )
                       : Switch(
-                          key: ValueKey('game-mod-switch-${mod.name}'),
+                          key: ValueKey('game-mod-switch-${mod.keyName}'),
                           value: mod.enabled,
                           onChanged: onChanged,
                           activeTrackColor: retro.accent,
@@ -883,14 +884,16 @@ class _GameModCard extends StatelessWidget {
                 ),
             ],
           ),
-          if (mod.versionLabel != null ||
-              mod.author != null ||
-              mod.category != null) ...[
+          ...[
             const SizedBox(height: 10),
             Wrap(
               spacing: 12,
               runSpacing: 6,
               children: [
+                _GameMetadata(
+                  icon: mod.isDynos ? Icons.texture_rounded : Icons.code_rounded,
+                  label: mod.isDynos ? l10n.gameModsDynosType : l10n.gameModsLuaType,
+                ),
                 if (mod.versionLabel != null)
                   _GameMetadata(
                     icon: Icons.sell_outlined,

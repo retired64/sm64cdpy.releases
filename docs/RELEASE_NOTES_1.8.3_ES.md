@@ -10,6 +10,7 @@ La versión 1.8.3 incorpora activación verificada de mods desde Biblioteca, re�
 - El guardado comprueba incompatibilidades locales conocidas y el límite de tamaño del juego, conserva las demás líneas de configuración, crea un respaldo privado y verifica el resultado escrito. La configuración anterior puede restaurarse con confirmación.
 - Tarjetas, controles, progreso, diálogos y avisos de guardado siguen el tema elegido. La vista retirada ya no provoca otro escaneo automático; recibos de instalación, comprobación de actualizaciones e historial conservan sus funciones propias.
 - Una sola carpeta user del juego conecta Biblioteca, mods, DynOS/Touch Controls y detección de ROM para temas Mario. La guía explica el selector; los temas preparados reutilizan sus recursos privados.
+- Biblioteca también activa y desactiva carpetas de packs DynOS y Touch Controls mediante la directiva dynos-pack del juego, con compatibilidad legacy e identidades independientes de Lua. VIP y OMMR Pack retiran botones de favoritos y el gesto largo.
 
 ### Temas Retro Manga y Mario 64
 

@@ -6,12 +6,14 @@ class GameModEntry {
     required this.title,
     required this.enabled,
     required this.selectable,
+    this.kind = 'lua',
     this.author,
     this.category,
     this.versionLabel,
     this.description,
   });
   factory GameModEntry.fromMap(Map<dynamic, dynamic> value) => GameModEntry(
+    kind: value['kind'] as String? ?? 'lua',
     name: value['name'] as String,
     title: value['title'] as String,
     enabled: value['enabled'] == true,
@@ -21,6 +23,9 @@ class GameModEntry {
     versionLabel: value['versionLabel'] as String?,
     description: value['description'] as String?,
   );
+  final String kind;
+  bool get isDynos => kind == 'dynos';
+  String get keyName => isDynos ? 'dynos:$name' : name;
   final String name;
   final String title;
   final bool enabled;

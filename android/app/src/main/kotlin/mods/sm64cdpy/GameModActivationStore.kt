@@ -193,6 +193,15 @@ internal object GameModActivationStore {
         }.sortedBy { it.name }
     }
 
+    private fun packs(directory: DocumentFile): List<DocumentFile> {
+        val packs = directory.findFile("dynos")?.findFile("packs") ?: return emptyList()
+        require(packs.isDirectory && packs.canRead()) { "access" }
+        val entries = packs.listFiles()
+        require(entries.size <= MAX_ENTRIES) { "limit" }
+        // DynOS_Gfx_Init adds direct directories, even before binaries are generated.
+        return entries.filter { it.isDirectory && it.name != null }.sortedBy { it.name }
+    }
+
     fun snapshot(context: Context): Map<String, Any?> = synchronized(InstallationSafAccessCoordinator.lock) {
         val saved = prefs(context).getString(KEY, null)
             ?: return@synchronized mapOf("status" to "unselected", "mods" to emptyList<Any>())
@@ -200,15 +209,23 @@ internal object GameModActivationStore {
             val directory = root(context, Uri.parse(saved))
             val config = directory.findFile("sm64config.txt") ?: error("missing")
             require(config.canWrite()) { "access" }
-            val selected = GameModConfig.enabled(read(context, config).toString(Charsets.UTF_8))
+            val text = read(context, config).toString(Charsets.UTF_8)
+            val selected = GameModConfig.enabled(text)
+            val enabledPacks = GameDynosConfig.enabled(text)
+            val dynos = packs(directory)
             val mods = scan(context, directory.findFile("mods") ?: error("folder"))
             mapOf("status" to "ready", "backupAvailable" to (prefs(context).getString("game_mod_backup_document", null) == config.uri.toString()), "mods" to mods.map { mod ->
                 val conflict = mods.any { it.name != mod.name && it.name in selected &&
                     it.tags.intersect(mod.tags).isNotEmpty() }
-                mapOf("name" to mod.name, "title" to mod.title,
+                mapOf("kind" to "lua", "name" to mod.name, "title" to mod.title,
                     "author" to mod.metadata.author, "category" to mod.metadata.category,
                     "versionLabel" to mod.metadata.version, "description" to mod.metadata.description, "enabled" to (mod.name in selected),
                     "selectable" to (mod.name in selected || (mod.safe && mods.all { it.safe } && !conflict)))
+            } + dynos.map { pack ->
+                val name = pack.name!!
+                mapOf("kind" to "dynos", "name" to name, "title" to name,
+                    "enabled" to (name in enabledPacks),
+                    "selectable" to GameDynosConfig.validName(name))
             })
         } catch (error: Exception) {
             mapOf("backupAvailable" to (prefs(context).getString("game_mod_backup_document", null)?.let { backupUri ->
@@ -218,25 +235,31 @@ internal object GameModActivationStore {
         }
     }
 
-    fun set(context: Context, name: String, enabled: Boolean): Map<String, Any?> =
+    fun set(context: Context, name: String, enabled: Boolean, kind: String = "lua"): Map<String, Any?> =
         synchronized(InstallationSafAccessCoordinator.lock) {
-            require(GameModConfig.validName(name)) { "invalid" }
+            require(kind == "lua" || kind == "dynos") { "invalid" }
+            val dynos = kind == "dynos"
+            require(if (dynos) GameDynosConfig.validName(name) else GameModConfig.validName(name)) { "invalid" }
             val saved = prefs(context).getString(KEY, null) ?: error("access")
             val directory = root(context, Uri.parse(saved))
             val file = directory.findFile("sm64config.txt") ?: error("missing")
             require(file.isFile && file.canWrite()) { "access" }
             val original = read(context, file)
             val text = original.toString(Charsets.UTF_8)
-            val mods = scan(context, directory.findFile("mods") ?: error("folder"))
             requireNoInstall(context)
-            val target = mods.singleOrNull { it.name == name } ?: error("invalid")
-            if (enabled) require(target.safe) { "invalid" }
-            val active = GameModConfig.enabled(text)
-            if (enabled) verifySize(context, directory.findFile("mods")?.findFile(name) ?: error("invalid"))
-            if (enabled) require(mods.all { it.safe }) { "invalid" }
-            if (enabled) require(mods.none { it.name != name && it.name in active &&
-                it.tags.intersect(target.tags).isNotEmpty() }) { "conflict" }
-            val updated = GameModConfig.edit(text, name, enabled).toByteArray(Charsets.UTF_8)
+            val updated = if (dynos) {
+                require(packs(directory).count { it.name == name } == 1) { "invalid" }
+                GameDynosConfig.edit(text, name, enabled)
+            } else {
+                val mods = scan(context, directory.findFile("mods") ?: error("folder"))
+                val target = mods.singleOrNull { it.name == name } ?: error("invalid")
+                if (enabled) require(target.safe && mods.all { it.safe }) { "invalid" }
+                val active = GameModConfig.enabled(text)
+                if (enabled) verifySize(context, directory.findFile("mods")?.findFile(name) ?: error("invalid"))
+                if (enabled) require(mods.none { it.name != name && it.name in active &&
+                    it.tags.intersect(target.tags).isNotEmpty() }) { "conflict" }
+                GameModConfig.edit(text, name, enabled)
+            }.toByteArray(Charsets.UTF_8)
             require(updated.size <= MAX_CONFIG) { "limit" }
             if (original.contentEquals(updated)) {
                 val confirmed = snapshot(context)

@@ -153,6 +153,6 @@ names, images, and related content belong to their respective creators.
 [Discord](https://discord.com/invite/thuhUH2WNX) ·
 [GitHub profile](https://github.com/retired64)
 
-Library also configures compatible local Lua mods for the next game start through a selected game user folder, with verified saves and a private recovery backup. Close the game before editing. DynOS packs remain separate.
+Library also configures compatible local Lua mods for the next game start through a selected game user folder, with verified saves and a private recovery backup. Close the game before editing. DynOS and Touch Controls packs in user/dynos/packs have their own switches in the same Library, using the game’s dynos-pack configuration.
 
 Release 1.8.3 preparation includes game mod controls, the unified Library and Retro Manga/Mario 64/SM64 Intro themes. [Merge and release checklist](docs/RELEASE_1.8.3.md).

@@ -174,7 +174,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "setGameModActivation" -> gameTask(result) {
                 GameModActivationStore.set(applicationContext,
                     call.argument<String>("name") ?: error("invalid"),
-                    call.argument<Boolean>("enabled") ?: error("invalid"))
+                    call.argument<Boolean>("enabled") ?: error("invalid"),
+                    call.argument<String>("kind") ?: "lua")
             }
             "clearGameUserFolder" -> gameTask(result) {
                 GameModActivationStore.clear(applicationContext)

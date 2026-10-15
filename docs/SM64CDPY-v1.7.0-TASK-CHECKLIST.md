@@ -414,7 +414,7 @@ Fuente canónica: `release-manifests/v1.8.3.json`. Plan completo:
 Biblioteca incluye una sección de unidades Lua del juego con switches de selección
 para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
 comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
-DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
+DynOS/Touch mantienen su directiva separada `dynos-pack:` dentro de Biblioteca. La validación física está pendiente.
 Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
 Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
 
@@ -506,3 +506,9 @@ Conexión guiada: superficies y acciones propias de cada tema, desplegable de
 Ajustes coherente con selectores y estados separados de configuración/ROM.
 Validado en [Testing #229](https://github.com/retired64/sm64cdpy.releases/actions/runs/38671162732): formato, análisis, pruebas Flutter (incluidos los seis casos de tema/brillo), APK arm64 y pruebas nativas correctos para `9b0b133`. Revisión visual física pendiente. Detalle en
 [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+
+Biblioteca integra packs DynOS/Touch Controls de user/dynos/packs mediante
+`dynos-pack:`; Lua conserva `enable-mod:`. Identidades por tipo/nombre, backup
+y guardado verificado compartidos. VIP/OMMR Pack retiran favoritos y gesto largo.
+Plan y límites: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md). Testing de esta
+revisión y prueba física pendientes.

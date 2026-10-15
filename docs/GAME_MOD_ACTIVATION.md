@@ -15,8 +15,8 @@ no se modifica ni se distribuye con SM64CDPY.
 7. Añadir pruebas de contrato, traducciones y validación CI.
 8. Probar en Android antes de aprobar la versión oficial.
 
-La implementación cubre mods Lua locales normales. DynOS y Touch Controls
-utilizan `dynos-pack:` y no reciben este control. Una instalación OMM, VIP o
+La implementación cubre mods Lua locales normales mediante `enable-mod:` y
+packs DynOS/Touch Controls mediante `dynos-pack:` en la misma Biblioteca. Una instalación OMM, VIP o
 Render96 aparece si produce una unidad Lua válida en la carpeta normal de mods.
 Un ZIP/recibo puede contener varias unidades: no se inventa un switch global
 por descarga. La lista muestra cada unidad encontrada por el contrato del juego.
@@ -212,7 +212,8 @@ Matriz física pendiente antes de release:
 - Futures no esperados: únicamente refrescos con captura de errores y teardown
   de suscripción como patrón existente; escrituras y confirmaciones se esperan.
 - Hermanos: catálogo/recibos externos y propios convergen en unidades Lua;
-  DynOS/Touch no usan este contrato; overlay sigue instalando con WorkManager.
+  DynOS/Touch usan su contrato `dynos-pack:` independiente del contrato Lua;
+  el overlay sigue instalando con WorkManager.
 
 ## Evidencia CI inicial
 
@@ -291,7 +292,7 @@ corta lleva a un panel de detalles de solo lectura con el texto completo y la
 identidad real; abrirlo no escribe configuración. La búsqueda local ahora incluye
 esos campos. Se mantienen ambos diseños, filtros de activación, contador y paginación.
 Mods con estructuras inválidas que el descubridor anterior aceptaba como indicios
-no se convierten en mods controlables. DynOS no se mezcla con este contrato Lua.
+no se convierten en mods controlables. DynOS conserva su directiva separada dentro de la misma vista y editor.
 
 Se eliminan los disparadores de escaneo antiguo en navegación, refresco, cambio de
 carpeta y olvido de recibos. `ModInstallerPlugin` entrega recibos sin adjuntar su
@@ -316,3 +317,59 @@ La vista y los detalles utilizan roles de `RetroTheme`: TypefaceMario64 solo par
 encabezados de Mario 64; el texto descriptivo conserva la fuente predeterminada.
 Los tests de pantalla estrecha/texto ampliado cargan los archivos de fuente reales,
 en lugar de comprobar únicamente la tipografía de prueba del runner.
+
+
+## Extensión DynOS / Touch Controls — plan e implementación
+
+1. Contrastar `configfile.c::dynos_pack_read`, `dynos_pack_write` y
+   `enable_queued_dynos_packs`; no reutilizar `enable-mod:` para packs.
+2. Descubrir directorios directos de `user/dynos/packs` igual que
+   `data/dynos_gfx_init.cpp::ScanPacksFolder`, sin exigir Lua ni binarios ya
+   generados y sin recursión. No se representa cada archivo como un pack.
+3. Mantener la identidad por nombre exacto y tipo, sin colisiones con Lua.
+4. Reutilizar autorización de user, editor acotado, backup privado, exclusión de
+   instalaciones activas y verificación de bytes antes/después de escribir.
+5. Integrar en las tarjetas de Biblioteca con indicadores de tipo, búsqueda,
+   filtros de activación y estilos de los tres temas; validar y probar en Android.
+
+`GameDynosConfig` replica el formato de lectura: ausencia significa desactivado;
+se aceptan líneas modernas y antiguas con `true` final. Un `false` final ignora
+esa línea, no cancela otra línea activada. Hay hasta 20 tokens, incluyendo la
+clave, y comparación sensible a mayúsculas. Al guardar, se eliminan duplicados
+modernos/legacy del pack objetivo y se agrega únicamente `dynos-pack: Nombre`
+si se activa. Las otras directivas, packs y saltos de línea se preservan.
+Nombres no representables de forma segura, incluyendo terminaciones `true` o
+`false`, son visibles pero no editables. No se renombran carpetas para habilitarlas.
+
+El juego inicializa packs desactivados (`dynos_mgr_pack.cpp::DynOS_Pack_Add`) y
+los resuelve por nombre visible/base de carpeta, deduplicando el mismo nombre.
+Escanea primero recursos del ejecutable y después user; Biblioteca lista solo
+los directorios autorizados de user. No pretende enumerar los packs internos del
+APK. Si ambos orígenes tienen un nombre igual, el juego decide su precedencia;
+el archivo de configuración controla ese nombre compartido. Los reemplazos de
+modelos/texturas y su prioridad siguen siendo responsabilidad del juego.
+
+Touch Controls descargado como pack usa este mismo contrato. No se modifican
+posiciones, tamaños o controles táctiles de `sm64config.txt`; un mod táctil Lua
+se controla como Lua según su estructura real, no por el título del catálogo.
+OMM/VIP/Render96 aparecen por sus unidades reales instaladas, nunca por un switch
+inventado sobre un ZIP. Activar desde el manager configura el próximo inicio;
+no ejecuta hooks ni cambia la memoria del juego abierto.
+
+El canal añade `kind: lua|dynos`, con `lua` por defecto para clientes anteriores.
+El snapshot conserva `mods` y agrega `kind` a cada entrada. Las claves de UI y el
+indicador de guardado distinguen tipos con el mismo nombre. No se crean caches,
+preferencias ni permisos nuevos. Se usan los mismos listeners de finalización,
+invalidación de carpeta y reanudación. El overlay mantiene instalaciones y diseño
+independientes, sin un segundo escritor de configuración.
+
+Favoritos: VIP y OMMR Pack dejan de ofrecer botón y gesto largo. Se conservan
+preferencias históricas sin borrarlas; no hay nuevos escritores desde esas vistas.
+Los favoritos del catálogo general y DynOS conservan su comportamiento.
+
+Pruebas: parser moderno/legacy, duplicados, mayúsculas, límites, preservación de
+Lua/config y guardado UI independiente con un Lua y un pack del mismo nombre.
+Matriz física pendiente: pack DynOS y Touch Controls, configuración legacy,
+confirmar activación al reiniciar el juego, restaurar backup, permisos revocados,
+instalación activa, vuelta de background y temas claro/oscuro. Actions ejecuta
+análisis, pruebas Flutter, compilación Kotlin/APK y pruebas unitarias nativas.

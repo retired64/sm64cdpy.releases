@@ -465,7 +465,7 @@
   "themeSaving": "Salvando aparência",
   "gameModsTitle": "Mods do jogo",
   "gameModsSubtitle": "Escolha os mods para a próxima abertura",
-  "gameModsHint": "Feche o jogo antes de alterar as opções. Estes controles configuram a próxima abertura; os pacotes DynOS são gerenciados separadamente.",
+  "gameModsHint": "Feche o jogo antes de alterar as opções. Estes controles configuram mods Lua e pacotes DynOS/Touch Controls para a próxima inicialização.",
   "gameModsSelectHint": "Selecione a pasta user do jogo que contém sm64config.txt e mods.",
   "gameModsConfirm": "Feche o jogo primeiro. Aplicar esta seleção para a próxima abertura?",
   "gameModsCancel": "Cancelar",
@@ -481,7 +481,7 @@
   "gameModsRestore": "Restaurar configuração anterior",
   "gameModsRestoreConfirm": "Com o jogo fechado, substituir a configuração pelo backup privado anterior à última edição? Isso também restaura as outras opções.",
   "gameModsInstalling": "Aguarde o fim dos downloads e instalações antes de alterar os mods do jogo.",
-  "gameModsEmpty": "Nenhum mod Lua compatível encontrado nesta pasta.",
+  "gameModsEmpty": "Nenhum mod Lua compatível ou pasta de pacote DynOS/Touch Controls foi encontrado.",
   "gameModsEnabled": "Ativado para a próxima abertura",
   "gameModsDisabled": "Desativado para a próxima abertura",
   "gameModsMore": "Mostrar mais",
@@ -539,5 +539,7 @@
   "gameFolderPrepareTitle": "Preparar tema Mario",
   "gameFolderPrepareBody": "Leremos a ROM da pasta conectada do jogo para preparar as imagens e fontes do tema. Isso é feito uma vez; a ROM e as configurações do jogo não são alteradas.",
   "gameFolderPrepare": "Preparar tema",
-  "gameFolderBusy": "Espere os downloads e instalações terminarem antes de mudar a pasta do jogo."
+  "gameFolderBusy": "Espere os downloads e instalações terminarem antes de mudar a pasta do jogo.",
+  "gameModsLuaType": "Mods Lua",
+  "gameModsDynosType": "DynOS / Touch Controls"
 }

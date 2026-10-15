@@ -12,6 +12,10 @@ void main() {
         'selectable': true,
       });
       expect(old.author, isNull);
+      expect(old.kind, 'lua');
+      final pack = GameModEntry.fromMap({'kind': 'dynos', 'name': 'actual.lua', 'title': 'Pack', 'enabled': true, 'selectable': true});
+      expect(pack.isDynos, isTrue);
+      expect(pack.keyName, isNot(old.keyName));
       final merged = GameModEntry.fromMap({
         'name': 'actual.lua',
         'title': 'Different display title',
