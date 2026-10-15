@@ -55,6 +55,14 @@ Revisado para `1.8.4+23` en `library-performance-1.8.4` el 2026-10-15. La 1.8.3 
 - Resolución en tiempo de descarga para páginas estables de MediaFire,
   GameBanana y archivos de Google Drive; las carpetas Drive no resolubles se
   presentan como enlace de origen sin afirmar que fueron instaladas.
+- Pantalla principal Jugador en desarrollo para editar el nombre y los ocho
+  grupos RGB que SM64CoopDX guarda en `user/sm64config.txt`. Android comparte
+  bloqueo, respaldo y verificación con la activación de mods; Riverpod conserva
+  un borrador y aplica el perfil en una sola transacción. Los presets se leen en
+  formato `[PALETTE]` y los personales se guardan en `user/palettes`. La primera
+  vista previa compone los colores localmente y reutiliza el icono extraído de la
+  ROM cuando está disponible; el render completo de geometría N64 queda como
+  ampliación posterior.
 
 ## Temas incluidos en custom-themes (2026-10-13)
 

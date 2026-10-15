@@ -182,6 +182,35 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 GameModActivationStore.snapshot(applicationContext)
             }
             "restoreGameModConfig" -> gameTask(result) { GameModActivationStore.restore(applicationContext) }
+            "getPlayerProfile" -> gameTask(result) { GameModActivationStore.playerSnapshot(applicationContext) }
+            "restorePlayerConfig" -> gameTask(result) {
+                GameModActivationStore.restore(applicationContext)
+                GameModActivationStore.playerSnapshot(applicationContext)
+            }
+            "applyPlayerProfile" -> gameTask(result) {
+                val colors = call.argument<List<Number>>("colors")?.map { it.toInt() } ?: error("invalid")
+                GameModActivationStore.applyPlayer(
+                    applicationContext,
+                    call.argument<String>("name") ?: error("invalid"),
+                    colors,
+                    call.argument<String>("revision") ?: error("invalid"),
+                )
+            }
+            "savePlayerPalette" -> gameTask(result) {
+                val colors = call.argument<List<Number>>("colors")?.map { it.toInt() } ?: error("invalid")
+                GameModActivationStore.savePlayerPalette(
+                    applicationContext,
+                    call.argument<String>("name") ?: error("invalid"),
+                    colors,
+                    call.argument<Boolean>("overwrite") ?: false,
+                )
+            }
+            "deletePlayerPalette" -> gameTask(result) {
+                GameModActivationStore.deletePlayerPalette(
+                    applicationContext,
+                    call.argument<String>("id") ?: error("invalid"),
+                )
+            }
             "openDirectoryPicker" -> selectGameUserFolder(result, "mods")
             "getSavedDirectoryUri" -> getSavedDirectoryUri(result)
             "installMod" -> installMod(call, result)
@@ -228,7 +257,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val value = action()
                 Handler(Looper.getMainLooper()).post { result.success(value) }
             } catch (error: Exception) {
-                val code = error.message?.takeIf { it in setOf("access", "missing", "folder", "mismatch", "limit", "format", "invalid", "conflict", "write", "verify", "installing", "size") } ?: "access"
+                val code = error.message?.takeIf { it in setOf("access", "missing", "folder", "mismatch", "limit", "format", "invalid", "conflict", "write", "verify", "installing", "size", "exists") } ?: "access"
                 Handler(Looper.getMainLooper()).post { result.error(code, code, null) }
             }
         }

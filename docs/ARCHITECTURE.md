@@ -112,6 +112,18 @@ no se adjunta a las instantáneas de recibos. El endpoint/modelo de descubrimien
 anterior permanece para compatibilidad técnica, sin consumidores visuales.
 DynOS/Touch conservan su contrato independiente `dynos-pack:` con switches propios en Biblioteca.
 
+La pantalla Jugador reutiliza esa misma autoridad nativa y el mismo bloqueo SAF
+para leer y modificar las claves `coop_player_*` de `user/sm64config.txt`. Un
+digest del documento actúa como revisión compare-and-swap: si el juego u otra
+función cambia el archivo después de la lectura, la aplicación rechaza la
+escritura y solicita refrescar. Nombre y ocho colores se confirman en una única
+transacción con el respaldo común de la activación de mods. Riverpod conserva
+por separado el perfil confirmado y el borrador, por lo que sliders y presets
+actualizan la vista previa sin I/O nativo. Las paletas incluidas son de solo
+lectura; las personales usan el formato real `[PALETTE]` en `user/palettes`.
+Cambiar la carpeta unificada invalida tanto la proyección de mods como la de
+Jugador.
+
 ## Navegación y estado
 
 GoRouter define un `ShellRoute` para las pantallas principales y una ruta de detalle fuera del shell. Riverpod administra catálogo, filtros, paginación, favoritos, tema e idioma.
