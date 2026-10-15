@@ -69,7 +69,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(find.byType(AlertDialog), findsNothing);
           expect(find.byType(Dialog), findsOneWidget);
-          expect(find.text('com.maniscat2.sm64coopdx/\nuser/'), findsOneWidget);
+          expect(find.text('com.maniscat2.sm64coopdx/'), findsOneWidget);
           expect(find.text(l10n.gameFolderGuide), findsOneWidget);
           final dialog = find.byType(Dialog);
           final cancel = find.descendant(

@@ -24,4 +24,27 @@ class GameFolderLayoutTest {
         assertEquals(listOf("mods"), GameFolderLayout.destinations["mods"])
         assertEquals(listOf("dynos", "packs"), GameFolderLayout.destinations["dynos"])
     }
+    @Test fun parentGrantResolvesBothSourcesWithOpaqueIds() {
+        val externalMods = Node("external-mods")
+        val externalPacks = Node("external-packs")
+        val game = Node("game-root", mapOf("user" to user, "mods" to externalMods,
+            "dynos" to Node("external-dynos", mapOf("packs" to externalPacks))))
+        fun resolveGame(id: String) = GameFolderLayout.resolve(game, id, { it.id }, { parent, name -> parent.children[name] })
+        assertSame(user, resolveGame("opaque-user"))
+        assertSame(mods, resolveGame("opaque-mods"))
+        assertSame(packs, resolveGame("opaque-packs"))
+        assertSame(externalMods, resolveGame("external-mods"))
+        assertSame(externalPacks, resolveGame("external-packs"))
+        assertNull(resolveGame("invented-parent/child"))
+    }
+    @Test fun duplicateNamesFollowEachSubsystemsFirstLoadedSource() {
+        val user = listOf("Same" to "user", "UserOnly" to "user")
+        val root = listOf("Same" to "root", "RootOnly" to "root")
+        val lua = GameFolderLayout.preferred(user, root) { it.first }
+        val dynos = GameFolderLayout.preferred(root, user) { it.first }
+        assertEquals("user", lua.single { it.first == "Same" }.second)
+        assertEquals("root", dynos.single { it.first == "Same" }.second)
+        assertEquals(3, lua.size)
+        assertEquals(3, dynos.size)
+    }
 }

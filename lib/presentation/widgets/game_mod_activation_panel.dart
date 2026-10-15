@@ -571,8 +571,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
               key: ValueKey('game-mod-card-${mod.keyName}'),
               mod: mod,
               saving: _savingName == mod.keyName,
-              showIdentity:
-                  mods.where((other) => other.title == mod.title).length > 1,
+              showIdentity: true,
               onChanged: _busy || installing || !mod.selectable
                   ? null
                   : (enabled) => _change(mod, enabled),
@@ -733,9 +732,7 @@ class _GameModCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    mod.isDynos
-                        ? 'user/dynos/packs/${mod.name}'
-                        : 'user/mods/${mod.name}',
+                    mod.gamePath,
                     style: retro.body(size: 12, color: retro.inkDim),
                   ),
                   const SizedBox(height: 16),
@@ -832,7 +829,7 @@ class _GameModCard extends StatelessWidget {
                     if (showIdentity) ...[
                       const SizedBox(height: 4),
                       Text(
-                        mod.name,
+                        mod.gamePath,
                         style: retro.body(size: 11, color: retro.inkDim),
                       ),
                     ],

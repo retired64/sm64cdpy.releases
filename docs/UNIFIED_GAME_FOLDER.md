@@ -1,4 +1,49 @@
-# Una conexión a la carpeta user — unified-game-folder
+# Conexión de la carpeta principal del juego
+
+## Contrato vigente: carpeta principal y dos orígenes (esquema 2)
+
+La selección nueva es `com.maniscat2.sm64coopdx/`, no `user/`. Se exige que
+contenga un user reconocible; no se crea un user vacío en una carpeta ajena.
+`game_root_tree_uri` autoriza el árbol principal. `game_user_tree_uri` apunta
+al documento user dentro de ese árbol. Los destinos persistidos de instalación
+siguen siendo user/mods y user/dynos/packs, confirmados atómicamente junto a
+ambas URI. Configuración, backup y ROM continúan en user. No se mueve contenido.
+
+| Contenido | Primer origen | Segundo origen | Identidad |
+|---|---|---|---|
+| Lua | user/mods | mods | nombre relativo exacto |
+| DynOS / Touch Controls | dynos/packs | user/dynos/packs | nombre exacto de carpeta |
+
+El primer nombre válido encontrado gana, igual que mods.c/mod.c y
+DynOS_Gfx_Init/DynOS_Pack_Add. Biblioteca no duplica interruptores para nombres
+que el juego trata como una sola unidad. Cada tarjeta muestra su ruta efectiva.
+No se asume una prioridad común: Lua y DynOS usan órdenes distintos. Al verificar
+el tamaño Lua se usa la carpeta efectiva, también si está fuera de user.
+
+GameFolderLayout resuelve IDs opacos de ambas ramas por hijos conocidos; nunca
+construye una URI padre ni usa prefijos de texto como permisos. Las URI capturadas
+por Workers siguen apuntando a destinos concretos dentro de user. MarioAssetsPlugin
+recibe el documento user y conserva detección de ROM sin un selector adicional.
+
+Las selecciones antiguas de user se mantienen operativas en modo limitado,
+`fullAccess=false`, con aviso para ampliar acceso a la carpeta principal. No se
+abre el explorador automáticamente ni se inventa acceso a sus hermanas. El estado
+incluye fullAccess; cambiarlo invalida Biblioteca y su proyección al overlay. No
+hay caches de contenido nuevos. Revocación, desconexión y rollback incluyen la
+nueva clave raíz, y conservan los locks y el bloqueo con instalaciones activas.
+
+El origen del snapshot es `user` o `root`, con user por defecto para compatibilidad.
+La activación sigue guardándose por tipo/nombre en user/sm64config.txt. El origen
+no añade otra directiva al juego; solo identifica qué archivo/carpeta cargará.
+Se preservan los mismos backup, confirmación de juego cerrado y verificación.
+
+Pruebas: resolución de cinco documentos por IDs opacos desde el árbol principal,
+precedencia inversa por subsistema, rutas de presentación y suite de activación.
+Prueba física pendiente: user antiguo y ampliación, cheats.lua externo, duplicados
+en ambas raíces, packs externos/internos, permiso revocado, reinstalación y ROM.
+
+## Evolución previa: selección limitada a user (esquema 1)
+
 
 Rama creada desde `custom-themes`. La única selección habitual es la carpeta
 `user` de la instalación elegida por el usuario, normalmente bajo

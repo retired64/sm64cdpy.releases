@@ -55,6 +55,7 @@ class _Gateway extends GameModActivation {
           .map(
             (mod) => GameModEntry(
               kind: mod.kind,
+              origin: mod.origin,
               name: mod.name,
               title: mod.title,
               selectable: mod.selectable,
@@ -159,6 +160,7 @@ void main() {
           ),
           GameModEntry(
             kind: 'dynos',
+            origin: 'root',
             name: 'Same',
             title: 'Same',
             enabled: false,
@@ -172,6 +174,7 @@ void main() {
         find.byKey(const ValueKey('game-mod-card-dynos:Same')),
         findsOneWidget,
       );
+      expect(find.text('dynos/packs/Same'), findsOneWidget);
       await _toggle(tester, 'dynos:Same');
       await _apply(tester);
       await tester.pumpAndSettle();
@@ -249,7 +252,7 @@ void main() {
       await tester.ensureVisible(details);
       await tester.tap(details);
       await tester.pumpAndSettle();
-      expect(find.text('user/mods/beta.lua'), findsOneWidget);
+      expect(find.descendant(of: find.byType(Dialog), matching: find.text('user/mods/beta.lua')), findsOneWidget);
       expect(
         find.text('A description from the initial Lua header.'),
         findsWidgets,

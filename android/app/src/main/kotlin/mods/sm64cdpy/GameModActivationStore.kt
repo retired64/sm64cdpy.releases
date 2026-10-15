@@ -14,7 +14,7 @@ internal object GameModActivationStore {
     const val KEY = "game_user_tree_uri"
     private const val MAX_CONFIG = 256 * 1024
     private const val MAX_ENTRIES = 500
-    private data class Mod(val name: String, val title: String, val tags: Set<String>, val safe: Boolean, val metadata: LuaModMetadata.Info)
+    private data class Mod(val name: String, val title: String, val tags: Set<String>, val safe: Boolean, val metadata: LuaModMetadata.Info, val origin: String = "user")
 
     private fun prefs(context: Context) = context.getSharedPreferences(ModInstallerPlugin.PREF_NAME, Context.MODE_PRIVATE)
     private fun sameDocument(a: Uri, b: Uri): Boolean = a.authority == b.authority &&
@@ -23,7 +23,6 @@ internal object GameModActivationStore {
     private fun root(context: Context, uri: Uri): DocumentFile {
         val granted = GameFolderAccess.hasGrant(context, uri, write = true)
         if (!granted) {
-            if (prefs(context).getString(KEY, null) == uri.toString()) prefs(context).edit().remove(KEY).commit()
             throw SecurityException("access")
         }
         val root = GameFolderAccess.resolve(context, uri) ?: error("access")
@@ -137,7 +136,7 @@ internal object GameModActivationStore {
         return bytes
     }
 
-    private fun scan(context: Context, directory: DocumentFile): List<Mod> {
+    private fun scan(context: Context, directory: DocumentFile, origin: String = "user"): List<Mod> {
         val children = directory.listFiles()
         require(children.size <= MAX_ENTRIES) { "limit" }
         return children.mapNotNull { child ->
@@ -189,17 +188,33 @@ internal object GameModActivationStore {
                     }
                 }
             } catch (_: Exception) { safe = false }
-            Mod(name, metadata.name ?: LuaModMetadata.clean(title).ifBlank { name }, tags, safe, metadata)
+            Mod(name, metadata.name ?: LuaModMetadata.clean(title).ifBlank { name }, tags, safe, metadata, origin)
         }.sortedBy { it.name }
     }
 
-    private fun packs(directory: DocumentFile): List<DocumentFile> {
-        val packs = directory.findFile("dynos")?.findFile("packs") ?: return emptyList()
-        require(packs.isDirectory && packs.canRead()) { "access" }
-        val entries = packs.listFiles()
-        require(entries.size <= MAX_ENTRIES) { "limit" }
-        // DynOS_Gfx_Init adds direct directories, even before binaries are generated.
-        return entries.filter { it.isDirectory && it.name != null }.sortedBy { it.name }
+    private fun mods(context: Context, user: DocumentFile): List<Mod> {
+        val personal = scan(context, user.findFile("mods") ?: error("folder"))
+        val external = GameFolderStore.gameRoot(context)?.findFile("mods")?.let {
+            require(it.isDirectory && it.canRead()) { "access" }
+            scan(context, it, "root")
+        } ?: emptyList()
+        return GameFolderLayout.preferred(personal, external) { it.name }
+    }
+
+    private data class Pack(val document: DocumentFile, val origin: String) {
+        val name get() = document.name!!
+    }
+    private fun packs(context: Context, user: DocumentFile): List<Pack> {
+        fun scanPacks(base: DocumentFile?, origin: String): List<Pack> {
+            val directory = base?.findFile("dynos")?.findFile("packs") ?: return emptyList()
+            require(directory.isDirectory && directory.canRead()) { "access" }
+            val entries = directory.listFiles()
+            require(entries.size <= MAX_ENTRIES) { "limit" }
+            return entries.filter { it.isDirectory && it.name != null }.map { Pack(it, origin) }.sortedBy { it.name }
+        }
+        // DynOS scans resources first; Lua scans user first. Their precedence differs.
+        return GameFolderLayout.preferred(scanPacks(GameFolderStore.gameRoot(context), "root"),
+            scanPacks(user, "user")) { it.name }
     }
 
     fun snapshot(context: Context): Map<String, Any?> = synchronized(InstallationSafAccessCoordinator.lock) {
@@ -212,18 +227,18 @@ internal object GameModActivationStore {
             val text = read(context, config).toString(Charsets.UTF_8)
             val selected = GameModConfig.enabled(text)
             val enabledPacks = GameDynosConfig.enabled(text)
-            val dynos = packs(directory)
-            val mods = scan(context, directory.findFile("mods") ?: error("folder"))
+            val dynos = packs(context, directory)
+            val mods = mods(context, directory)
             mapOf("status" to "ready", "backupAvailable" to (prefs(context).getString("game_mod_backup_document", null) == config.uri.toString()), "mods" to mods.map { mod ->
                 val conflict = mods.any { it.name != mod.name && it.name in selected &&
                     it.tags.intersect(mod.tags).isNotEmpty() }
-                mapOf("kind" to "lua", "name" to mod.name, "title" to mod.title,
+                mapOf("kind" to "lua", "origin" to mod.origin, "name" to mod.name, "title" to mod.title,
                     "author" to mod.metadata.author, "category" to mod.metadata.category,
                     "versionLabel" to mod.metadata.version, "description" to mod.metadata.description, "enabled" to (mod.name in selected),
                     "selectable" to (mod.name in selected || (mod.safe && mods.all { it.safe } && !conflict)))
             } + dynos.map { pack ->
-                val name = pack.name!!
-                mapOf("kind" to "dynos", "name" to name, "title" to name,
+                val name = pack.name
+                mapOf("kind" to "dynos", "origin" to pack.origin, "name" to name, "title" to name,
                     "enabled" to (name in enabledPacks),
                     "selectable" to GameDynosConfig.validName(name))
             })
@@ -248,14 +263,17 @@ internal object GameModActivationStore {
             val text = original.toString(Charsets.UTF_8)
             requireNoInstall(context)
             val updated = if (dynos) {
-                require(packs(directory).count { it.name == name } == 1) { "invalid" }
+                require(packs(context, directory).count { it.name == name } == 1) { "invalid" }
                 GameDynosConfig.edit(text, name, enabled)
             } else {
-                val mods = scan(context, directory.findFile("mods") ?: error("folder"))
+                val mods = mods(context, directory)
                 val target = mods.singleOrNull { it.name == name } ?: error("invalid")
                 if (enabled) require(target.safe && mods.all { it.safe }) { "invalid" }
                 val active = GameModConfig.enabled(text)
-                if (enabled) verifySize(context, directory.findFile("mods")?.findFile(name) ?: error("invalid"))
+                if (enabled) {
+                    val base = if (target.origin == "root") GameFolderStore.gameRoot(context) else directory
+                    verifySize(context, base?.findFile("mods")?.findFile(name) ?: error("invalid"))
+                }
                 if (enabled) require(mods.none { it.name != name && it.name in active &&
                     it.tags.intersect(target.tags).isNotEmpty() }) { "conflict" }
                 GameModConfig.edit(text, name, enabled)

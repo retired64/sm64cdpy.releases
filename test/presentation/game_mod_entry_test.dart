@@ -13,6 +13,9 @@ void main() {
       });
       expect(old.author, isNull);
       expect(old.kind, 'lua');
+      expect(old.gamePath, 'user/mods/actual.lua');
+      final external = GameModEntry.fromMap({'origin': 'root', 'kind': 'dynos', 'name': 'Pack', 'title': 'Pack'});
+      expect(external.gamePath, 'dynos/packs/Pack');
       final pack = GameModEntry.fromMap({
         'kind': 'dynos',
         'name': 'actual.lua',

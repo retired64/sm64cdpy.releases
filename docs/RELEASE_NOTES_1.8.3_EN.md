@@ -11,6 +11,7 @@ Version 1.8.3 brings verified game mod activation to Library, unifies local mod 
 - Cards, controls, progress, dialogs and save feedback follow the selected interface theme. The retired discovery view no longer triggers a second automatic scan; installation receipts, update checks and history keep their distinct roles.
 - One game user folder connects the Library, mods, DynOS/Touch Controls and ROM detection for Mario themes. Guided setup explains the folder picker; prepared themes reuse their private resources.
 - Library also enables or disables DynOS and Touch Controls pack folders using the game’s dynos-pack directive, with legacy compatibility and independent Lua/pack identities. VIP and OMMR Pack no longer offer unused favorite buttons or long-press shortcuts.
+- Select the main game folder to discover Lua mods and DynOS packs both inside and outside user, respecting each subsystem’s duplicate-name priority. Existing user-only access can be upgraded; installations and ROM remain in user.
 
 ### Retro Manga and Mario 64 themes
 

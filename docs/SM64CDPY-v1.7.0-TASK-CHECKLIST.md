@@ -512,3 +512,10 @@ Biblioteca integra packs DynOS/Touch Controls de user/dynos/packs mediante
 y guardado verificado compartidos. VIP/OMMR Pack retiran favoritos y gesto largo.
 Plan y límites: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
 Validado en [Testing #232](https://github.com/retired64/sm64cdpy.releases/actions/runs/38679650559) para `8ff4975`: traducciones, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Prueba física pendiente.
+
+## Resolución de rutas Android — esquema 2
+
+Selección principal de com.maniscat2.sm64coopdx, cuatro rutas de lectura y
+destinos de escritura en user. Lua prioriza user; DynOS prioriza raíz. Migración
+limitada desde user con aviso para ampliar permiso. Contrato vigente al inicio
+de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Testing y matriz física pendientes.

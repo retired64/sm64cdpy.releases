@@ -7,6 +7,7 @@ class GameModEntry {
     required this.enabled,
     required this.selectable,
     this.kind = 'lua',
+    this.origin = 'user',
     this.author,
     this.category,
     this.versionLabel,
@@ -14,6 +15,7 @@ class GameModEntry {
   });
   factory GameModEntry.fromMap(Map<dynamic, dynamic> value) => GameModEntry(
     kind: value['kind'] as String? ?? 'lua',
+    origin: value['origin'] as String? ?? 'user',
     name: value['name'] as String,
     title: value['title'] as String,
     enabled: value['enabled'] == true,
@@ -24,6 +26,8 @@ class GameModEntry {
     description: value['description'] as String?,
   );
   final String kind;
+  final String origin;
+  String get gamePath => '${origin == "root" ? "" : "user/"}${isDynos ? "dynos/packs" : "mods"}/$name';
   bool get isDynos => kind == 'dynos';
   String get keyName => isDynos ? 'dynos:$name' : name;
   final String name;

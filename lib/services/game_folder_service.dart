@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 class GameFolderConnection {
   const GameFolderConnection({
     this.connected = false,
+    this.fullAccess = false,
     this.dismissed = false,
     this.unified = false,
     this.mods = false,
@@ -15,6 +16,7 @@ class GameFolderConnection {
   factory GameFolderConnection.fromMap(Map<dynamic, dynamic> value) =>
       GameFolderConnection(
         unified: value['unified'] == true,
+        fullAccess: value['fullAccess'] == true,
         connected: value['connected'] == true,
         dismissed: value['dismissed'] == true,
         mods: value['mods'] == true,
@@ -24,6 +26,7 @@ class GameFolderConnection {
         status: value['status'] as String? ?? 'unselected',
         connectionKey: value['rootUri'] as String?,
       );
+  final bool fullAccess;
   final bool connected, dismissed, unified, mods, dynos, config, rom;
   final String status;
   final String? connectionKey;

@@ -60,6 +60,7 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
           value != null) {
         final changed =
             state.connection.connected != value.connected ||
+            state.connection.fullAccess != value.fullAccess ||
             state.connection.unified != value.unified ||
             state.connection.connectionKey != value.connectionKey;
         state = GameFolderState(initialized: true, connection: value);

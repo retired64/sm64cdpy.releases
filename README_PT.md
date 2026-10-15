@@ -97,3 +97,5 @@ os autores dos mods. O conteúdo pertence aos respectivos criadores.
 A Biblioteca também permite configurar mods Lua locais compatíveis para a próxima abertura do jogo, selecionando a pasta user, com gravação verificada e backup privado. Feche o jogo antes de editar. Os pacotes DynOS e Touch Controls em user/dynos/packs têm seus próprios controles na mesma Biblioteca, usando a configuração dynos-pack do jogo.
 
 A preparação de 1.8.3 inclui controle de mods, Biblioteca unificada e os temas Retro Manga/Mario 64/SM64 Intro. [Checklist de merge e publicação](docs/RELEASE_1.8.3.md).
+
+Escolha a pasta principal `com.maniscat2.sm64coopdx` para incluir mods e pacotes DynOS dentro e fora de `user`. Conexões antigas de user podem ser ampliadas nos Ajustes. Novas instalações, configuração e ROM permanecem em `user`.

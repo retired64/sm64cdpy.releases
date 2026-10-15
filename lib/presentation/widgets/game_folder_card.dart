@@ -127,8 +127,10 @@ class _GameFolderCardState extends ConsumerState<GameFolderCard>
           label: l10n.gameFolderAccessLost,
           icon: Icons.folder_off_outlined,
         ),
+      if (folder.connected && !folder.fullAccess)
+        GameSetupStatus(label: l10n.gameFolderUpgrade, icon: Icons.drive_file_move_outline_rounded),
       if (folder.connected) ...[
-        GameSetupStatus(
+        if (folder.fullAccess) GameSetupStatus(
           label: l10n.gameFolderResolved,
           icon: Icons.folder_copy_outlined,
           ready: folder.mods && folder.dynos,

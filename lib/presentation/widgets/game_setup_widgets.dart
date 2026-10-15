@@ -194,7 +194,7 @@ Future<bool?> showGameSetupDialog(
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'com.maniscat2.sm64coopdx/\nuser/',
+                            'com.maniscat2.sm64coopdx/',
                             style: retro.body(size: 16, height: 1.5),
                           ),
                         ),
