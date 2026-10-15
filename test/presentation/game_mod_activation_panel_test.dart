@@ -252,7 +252,13 @@ void main() {
       await tester.ensureVisible(details);
       await tester.tap(details);
       await tester.pumpAndSettle();
-      expect(find.descendant(of: find.byType(Dialog), matching: find.text('user/mods/beta.lua')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(Dialog),
+          matching: find.text('user/mods/beta.lua'),
+        ),
+        findsOneWidget,
+      );
       expect(
         find.text('A description from the initial Lua header.'),
         findsWidgets,

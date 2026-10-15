@@ -98,7 +98,7 @@ class _GameFolderCardState extends ConsumerState<GameFolderCard>
     final state = ref.watch(gameFolderProvider);
     if (!state.initialized) return const SizedBox.shrink();
     final folder = state.connection;
-    if (widget.optional && (folder.connected || folder.dismissed))
+    if (widget.optional && ((folder.connected && folder.fullAccess) || folder.dismissed))
       return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
@@ -128,13 +128,17 @@ class _GameFolderCardState extends ConsumerState<GameFolderCard>
           icon: Icons.folder_off_outlined,
         ),
       if (folder.connected && !folder.fullAccess)
-        GameSetupStatus(label: l10n.gameFolderUpgrade, icon: Icons.drive_file_move_outline_rounded),
-      if (folder.connected) ...[
-        if (folder.fullAccess) GameSetupStatus(
-          label: l10n.gameFolderResolved,
-          icon: Icons.folder_copy_outlined,
-          ready: folder.mods && folder.dynos,
+        GameSetupStatus(
+          label: l10n.gameFolderUpgrade,
+          icon: Icons.folder_open_rounded,
         ),
+      if (folder.connected) ...[
+        if (folder.fullAccess)
+          GameSetupStatus(
+            label: l10n.gameFolderResolved,
+            icon: Icons.folder_copy_outlined,
+            ready: folder.mods && folder.dynos,
+          ),
         GameSetupStatus(
           label: folder.config
               ? l10n.gameFolderConfigReady

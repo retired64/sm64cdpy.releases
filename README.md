@@ -54,7 +54,7 @@ in-game mod workflow.
 - Use English, Spanish, or Brazilian Portuguese; select a bundled interface design (Retro Manga, Mario 64 or SM64 Intro) independently from light, dark, or system appearance. The floating panel keeps its fixed dark design.
 - Choosing Mario 64 or SM64 Intro prepares the original menu materials, game skies, HUD and ROM typography from the unmodified US .z64 ROM in your connected game folder once. Later selections reuse the private local resources. Cancelling keeps the previous theme. [Import details](docs/MARIO_ROM_THEME.md).
 - Refresh bundled catalogues from their remote JSON sources.
-- Connect the game's user folder once with Android's folder picker. Mods, DynOS/Touch Controls and ROM detection reuse that connection.
+- Connect the main com.maniscat2.sm64coopdx game folder once with Android's folder picker. Mods, DynOS/Touch Controls and ROM detection reuse that connection.
 - Resolve download links, including GitHub Release assets.
 - Download and install mods in the background using WorkManager.
 - Display foreground notifications, progress, errors, and cancellation actions.
@@ -153,7 +153,7 @@ names, images, and related content belong to their respective creators.
 [Discord](https://discord.com/invite/thuhUH2WNX) ·
 [GitHub profile](https://github.com/retired64)
 
-Library also configures compatible local Lua mods for the next game start through a selected game user folder, with verified saves and a private recovery backup. Close the game before editing. DynOS and Touch Controls packs in user/dynos/packs have their own switches in the same Library, using the game’s dynos-pack configuration.
+Library also configures compatible local Lua mods for the next game start through the selected main game folder, with verified saves and a private recovery backup. Close the game before editing. DynOS and Touch Controls packs in dynos/packs and user/dynos/packs have their own switches in the same Library, using the game’s dynos-pack configuration.
 
 Release 1.8.3 preparation includes game mod controls, the unified Library and Retro Manga/Mario 64/SM64 Intro themes. [Merge and release checklist](docs/RELEASE_1.8.3.md).
 

@@ -192,7 +192,7 @@ internal object GameModActivationStore {
         }.sortedBy { it.name }
     }
 
-    private fun mods(context: Context, user: DocumentFile): List<Mod> {
+    private fun scanMods(context: Context, user: DocumentFile): List<Mod> {
         val personal = scan(context, user.findFile("mods") ?: error("folder"))
         val external = GameFolderStore.gameRoot(context)?.findFile("mods")?.let {
             require(it.isDirectory && it.canRead()) { "access" }
@@ -228,7 +228,7 @@ internal object GameModActivationStore {
             val selected = GameModConfig.enabled(text)
             val enabledPacks = GameDynosConfig.enabled(text)
             val dynos = packs(context, directory)
-            val mods = mods(context, directory)
+            val mods = scanMods(context, directory)
             mapOf("status" to "ready", "backupAvailable" to (prefs(context).getString("game_mod_backup_document", null) == config.uri.toString()), "mods" to mods.map { mod ->
                 val conflict = mods.any { it.name != mod.name && it.name in selected &&
                     it.tags.intersect(mod.tags).isNotEmpty() }
@@ -266,7 +266,7 @@ internal object GameModActivationStore {
                 require(packs(context, directory).count { it.name == name } == 1) { "invalid" }
                 GameDynosConfig.edit(text, name, enabled)
             } else {
-                val mods = mods(context, directory)
+                val mods = scanMods(context, directory)
                 val target = mods.singleOrNull { it.name == name } ?: error("invalid")
                 if (enabled) require(target.safe && mods.all { it.safe }) { "invalid" }
                 val active = GameModConfig.enabled(text)

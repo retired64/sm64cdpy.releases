@@ -94,7 +94,7 @@ os autores dos mods. O conteúdo pertence aos respectivos criadores.
 [Releases](https://github.com/retired64/sm64cdpy.releases/releases) ·
 [Discord](https://discord.com/invite/thuhUH2WNX)
 
-A Biblioteca também permite configurar mods Lua locais compatíveis para a próxima abertura do jogo, selecionando a pasta user, com gravação verificada e backup privado. Feche o jogo antes de editar. Os pacotes DynOS e Touch Controls em user/dynos/packs têm seus próprios controles na mesma Biblioteca, usando a configuração dynos-pack do jogo.
+A Biblioteca também permite configurar mods Lua locais compatíveis para a próxima abertura do jogo, selecionando a pasta principal do jogo, com gravação verificada e backup privado. Feche o jogo antes de editar. Os pacotes DynOS e Touch Controls em dynos/packs e user/dynos/packs têm seus próprios controles na mesma Biblioteca, usando a configuração dynos-pack do jogo.
 
 A preparação de 1.8.3 inclui controle de mods, Biblioteca unificada e os temas Retro Manga/Mario 64/SM64 Intro. [Checklist de merge e publicação](docs/RELEASE_1.8.3.md).
 

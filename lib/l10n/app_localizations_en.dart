@@ -1641,11 +1641,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameFolderSummary =>
-      'Choose the game folder once for your mods, DynOS packs and Mario themes.';
+      'Choose the main game folder once to find mods and DynOS packs both inside and outside user, plus the ROM for Mario themes.';
 
   @override
   String get gameFolderGuide =>
-      'Choose the user folder inside your SM64CoopDX game folder, usually com.maniscat2.sm64coopdx/user. We will find mods, DynOS packs and your game ROM inside it. Choose the folder, not a file. Your ROM and game settings will not be replaced.';
+      'Choose the main com.maniscat2.sm64coopdx folder, the one containing user. We will check mods and dynos/packs both here and inside user. Configuration and ROM stay in user; new installations also go inside user. Select the main folder, not user or an individual file.';
 
   @override
   String get gameFolderChoose => 'Choose game folder';
@@ -1658,7 +1658,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameFolderResolved =>
-      'Mods: user/mods · DynOS and Touch Controls: user/dynos/packs';
+      'Library: mods, user/mods, dynos/packs and user/dynos/packs. New installations: user/mods and user/dynos/packs.';
 
   @override
   String get gameFolderConfigReady => 'Game mod settings found.';
@@ -1680,7 +1680,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameFolderInvalid =>
-      'Choose the game’s user folder. Open SM64CoopDX once if it has not been set up.';
+      'Choose the main game folder containing user, normally com.maniscat2.sm64coopdx. Open the game once if its user folder is not ready.';
 
   @override
   String get gameFolderAccessLost =>
@@ -1712,4 +1712,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameModsDynosType => 'DynOS / Touch Controls';
+
+  @override
+  String get gameFolderUpgrade =>
+      'Access is limited to user. Choose the main game folder to include mods and DynOS packs outside user too.';
 }

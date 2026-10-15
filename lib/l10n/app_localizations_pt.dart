@@ -1653,11 +1653,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get gameFolderSummary =>
-      'Escolha uma vez a pasta do jogo para seus mods, packs DynOS e temas Mario.';
+      'Escolha uma vez a pasta principal do jogo para encontrar mods e pacotes DynOS dentro e fora de user, além da ROM para os temas Mario.';
 
   @override
   String get gameFolderGuide =>
-      'Escolha a pasta user dentro da pasta do SM64CoopDX, geralmente com.maniscat2.sm64coopdx/user. Buscaremos nela os mods, packs DynOS e a ROM do jogo. Selecione a pasta, não um arquivo. A ROM e as configurações do jogo não serão substituídas.';
+      'Escolha a pasta principal com.maniscat2.sm64coopdx, aquela que contém user. Buscaremos mods e dynos/packs aqui e dentro de user. A configuração e a ROM permanecem em user; novas instalações também ficam dentro de user. Selecione a pasta principal, não user nem um arquivo.';
 
   @override
   String get gameFolderChoose => 'Escolher pasta do jogo';
@@ -1670,7 +1670,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get gameFolderResolved =>
-      'Mods: user/mods · DynOS e Touch Controls: user/dynos/packs';
+      'Biblioteca: mods, user/mods, dynos/packs e user/dynos/packs. Novas instalações: user/mods e user/dynos/packs.';
 
   @override
   String get gameFolderConfigReady => 'Configuração de mods encontrada.';
@@ -1692,7 +1692,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get gameFolderInvalid =>
-      'Escolha a pasta user do jogo. Se ele ainda não foi configurado, abra o SM64CoopDX uma vez.';
+      'Escolha a pasta principal do jogo que contém user, normalmente com.maniscat2.sm64coopdx. Abra o jogo uma vez se a pasta user ainda não estiver pronta.';
 
   @override
   String get gameFolderAccessLost =>
@@ -1724,6 +1724,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get gameModsDynosType => 'DynOS / Touch Controls';
+
+  @override
+  String get gameFolderUpgrade =>
+      'O acesso está limitado a user. Escolha a pasta principal do jogo para incluir também os mods e pacotes DynOS fora de user.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3375,11 +3379,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get gameFolderSummary =>
-      'Escolha uma vez a pasta do jogo para seus mods, packs DynOS e temas Mario.';
+      'Escolha uma vez a pasta principal do jogo para encontrar mods e pacotes DynOS dentro e fora de user, além da ROM para os temas Mario.';
 
   @override
   String get gameFolderGuide =>
-      'Escolha a pasta user dentro da pasta do SM64CoopDX, geralmente com.maniscat2.sm64coopdx/user. Buscaremos nela os mods, packs DynOS e a ROM do jogo. Selecione a pasta, não um arquivo. A ROM e as configurações do jogo não serão substituídas.';
+      'Escolha a pasta principal com.maniscat2.sm64coopdx, aquela que contém user. Buscaremos mods e dynos/packs aqui e dentro de user. A configuração e a ROM permanecem em user; novas instalações também ficam dentro de user. Selecione a pasta principal, não user nem um arquivo.';
 
   @override
   String get gameFolderChoose => 'Escolher pasta do jogo';
@@ -3392,7 +3396,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get gameFolderResolved =>
-      'Mods: user/mods · DynOS e Touch Controls: user/dynos/packs';
+      'Biblioteca: mods, user/mods, dynos/packs e user/dynos/packs. Novas instalações: user/mods e user/dynos/packs.';
 
   @override
   String get gameFolderConfigReady => 'Configuração de mods encontrada.';
@@ -3414,7 +3418,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get gameFolderInvalid =>
-      'Escolha a pasta user do jogo. Se ele ainda não foi configurado, abra o SM64CoopDX uma vez.';
+      'Escolha a pasta principal do jogo que contém user, normalmente com.maniscat2.sm64coopdx. Abra o jogo uma vez se a pasta user ainda não estiver pronta.';
 
   @override
   String get gameFolderAccessLost =>
@@ -3446,4 +3450,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get gameModsDynosType => 'DynOS / Touch Controls';
+
+  @override
+  String get gameFolderUpgrade =>
+      'O acesso está limitado a user. Escolha a pasta principal do jogo para incluir também os mods e pacotes DynOS fora de user.';
 }

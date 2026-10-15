@@ -388,9 +388,9 @@ aunque el juego pueda admitir algunos de ellos. No se renombran carpetas para ha
 
 El juego inicializa packs desactivados (`dynos_mgr_pack.cpp::DynOS_Pack_Add`) y
 los resuelve por nombre visible/base de carpeta, deduplicando el mismo nombre.
-Escanea primero recursos del ejecutable y después user; Biblioteca lista solo
-los directorios autorizados de user. No pretende enumerar los packs internos del
-APK. Si ambos orígenes tienen un nombre igual, el juego decide su precedencia;
+Escanea primero recursos del ejecutable y después user; Biblioteca lista los directorios autorizados de ambas raíces con el esquema 2.
+En Android la ruta de recursos es la carpeta principal externa del juego, no
+necesariamente el APK. Si ambos orígenes tienen un nombre igual, el juego decide su precedencia;
 el archivo de configuración controla ese nombre compartido. Los reemplazos de
 modelos/texturas y su prioridad siguen siendo responsabilidad del juego.
 

@@ -27,7 +27,8 @@ class GameModEntry {
   );
   final String kind;
   final String origin;
-  String get gamePath => '${origin == "root" ? "" : "user/"}${isDynos ? "dynos/packs" : "mods"}/$name';
+  String get gamePath =>
+      '${origin == "root" ? "" : "user/"}${isDynos ? "dynos/packs" : "mods"}/$name';
   bool get isDynos => kind == 'dynos';
   String get keyName => isDynos ? 'dynos:$name' : name;
   final String name;
