@@ -1,8 +1,9 @@
-# SM64CDPY 1.8.3 — preparación de merge y publicación
+# SM64CDPY 1.8.3 — registro de preparación y lanzamiento
 
-Revisión consolidada: 2026-10-14. Rama: `custom-themes`. Este documento describe
-la candidata; no anuncia una publicación ni autoriza fusionar a `main`, crear
-etiquetas, publicar APKs o ejecutar el workflow oficial.
+Revisión de preparación: 2026-10-14. Estado actualizado 2026-10-15: el usuario
+confirma que 1.8.3 se fusionó a `main` y se publicó oficialmente. Las casillas
+y advertencias de abajo registran el estado previo al lanzamiento; no describen
+el estado actual ni autorizan acciones sobre versiones posteriores.
 
 ## Versión y distribución
 

@@ -318,7 +318,12 @@ void main() {
       await tester.pump(const Duration(milliseconds: 250));
       expect(gateway.writes, 1);
       expect(gateway.current.mods.first.enabled, isFalse);
-      expect(find.byKey(const ValueKey('game-mod-switch-alpha')), findsNothing);
+      expect(
+        tester
+            .widget<Switch>(find.byKey(const ValueKey('game-mod-switch-alpha')))
+            .value,
+        isTrue,
+      );
       gateway.gate!.complete();
       await tester.pumpAndSettle();
       expect(

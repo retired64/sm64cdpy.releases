@@ -518,7 +518,7 @@ Validado en [Testing #232](https://github.com/retired64/sm64cdpy.releases/action
 Selección principal de com.maniscat2.sm64coopdx, cuatro rutas de lectura y
 destinos de escritura en user. Lua prioriza user; DynOS prioriza raíz. Migración
 limitada desde user con aviso para ampliar permiso. Contrato vigente al inicio
-de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. No se fusionó a main ni se publicó release.
+de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. El merge y la publicación se completaron posteriormente para 1.8.3.
 
 ## Apartados separados en Biblioteca
 
@@ -532,3 +532,21 @@ Historial conservan su finalidad. Se admiten enlaces ?view=dynos y
 ?view=touch-controls; los enlaces game-mods/detected mantienen compatibilidad.
 No cambia Kotlin, las rutas, el backup ni las directivas del juego. Validación
 Actions validado en [Testing #240](https://github.com/retired64/sm64cdpy.releases/actions/runs/38684870621), commit `a18779d`: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Generados y formato del runner sincronizados posteriormente. Prueba física de los tres temas pendiente.
+
+
+## Rendimiento de Biblioteca — 1.8.4+23 (2026-10-15)
+
+- [x] Crear `library-performance-1.8.4` desde `main` después del lanzamiento oficial 1.8.3.
+- [x] Diferir recibos y catálogos de comparación hasta abrir las secciones que los usan.
+- [x] Reutilizar el snapshot de mods al navegar; revalidar tras 30 s al volver, instalación, carpeta, reanudación o refresco manual.
+- [x] Mostrar el switch inmediatamente, guardar en una cola silenciosa ordenada
+  y revertir con aviso si la escritura falla.
+- [x] Quitar el escaneo completo posterior a cada cambio y resolver solo el objetivo Lua/DynOS.
+- [x] Conservar backup, relectura exacta del config, conflictos, límite de tamaño Lua y protección WorkManager.
+- [ ] Ejecutar flutter analyze, tests existentes, build APK y tests nativos en GitHub Actions.
+- [ ] Medir cold load, navegación warm, activación y reanudación en dispositivo Android.
+
+La 1.8.3 se fusionó y publicó oficialmente después de la instantánea de estado
+registrada en la sección anterior. La versión vigente en esta rama es 1.8.4+23.
+Detalle: [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md) y
+[RELEASE_1.8.4.md](RELEASE_1.8.4.md).

@@ -1,6 +1,6 @@
 # GitHub Actions y releases
 
-Revisado para 1.8.3 el 2026-10-14.
+Revisado para 1.8.4 el 2026-10-15.
 
 > **Fuente canónica:** la aplicación ya no incluye una pantalla de changelog ni
 > muestra el cuerpo del GitHub Release. Cada lanzamiento tiene un manifiesto
@@ -84,40 +84,40 @@ Revisado para 1.8.3 el 2026-10-14.
    `releases/latest/download/Sm64CDPY-arm64.apk`, evento hacia la web, PR
    generado y OTA por ABI.
 
-## Desarrollo de temas desde Termux (2026-10-13)
+## Desarrollo desde Termux
 
-La rama `custom-themes` se desarrolla sin Flutter/Dart local. Ambos workflows
+La rama `library-performance-1.8.4` se desarrolla sin Flutter/Dart local. Ambos workflows
 hacen `flutter pub get` → `flutter gen-l10n` → Dart format → análisis antes del
 build; testing también ejecuta ahora `flutter test`. El formato del runner no
 crea commits. El artifact `flutter-source-sync` permite revisar e incorporar el
 parche de generación/formato en el mismo commit desde Termux.
 
-Para probar, seleccionar `custom-themes` en el workflow manual de testing o
+Para probar, seleccionar `library-performance-1.8.4` en el workflow manual de testing o
 subir un commit con `[testing]`. Continúan siendo necesarios los secretos de
 firma existentes. No usar el workflow de publicación para obtener una prueba.
-La compilación se ejecuta en Actions; resultados y candidata actual en RELEASE_1.8.3.md.
+La compilación se ejecuta en Actions; candidata actual en [RELEASE_1.8.4.md](RELEASE_1.8.4.md).
 Ver [flujo y validación de temas](../cuatom_themea.md).
 
-## Preparación 1.8.3+22
+## Release oficial 1.8.3+22
 
-`pubspec.yaml` y `release-manifests/v1.8.3.json` están alineados. Testing valida
-esa pareja, ejecuta los tests Python y adjunta preview EN/ES junto al JSON
-localizado. Los tests de manifiesto derivan la versión desde pubspec.
+La versión 1.8.3 se fusionó a `main` y se publicó oficialmente. Su manifiesto y
+previews EN/ES/PT-BR se conservan como referencia histórica en
+`release-manifests/v1.8.3.json` y `RELEASE_1.8.3.md`.
 
 Una ejecución manual con `all_abis: true`, o un push `[testing] [all-abis]`, permite revisar los tres
 APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
-flujo manual autorizado. Ver [preparación 1.8.3](RELEASE_1.8.3.md).
+flujo manual autorizado. La candidata siguiente es [1.8.4](RELEASE_1.8.4.md).
 
-## Activación de mods — candidata 1.8.3
+## Activación de mods — release 1.8.3
 
 Biblioteca incluye una sección de unidades Lua del juego con switches de selección
 para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
 comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
 DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
 Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
-Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
+Ambos workflows ejecutan también `:app:testReleaseUnitTest`. La implementación se publicó con 1.8.3.
 
 El flag `ALL_ABIS` se define una sola vez a nivel de job en testing. Compilación
 y renombrado consumen el mismo valor; el marcador no crea tags, releases, avisos

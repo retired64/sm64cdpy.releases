@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.4",
+  "build": 23,
+  "publishedAt": "2026-10-15T00:00:00Z",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "A faster, more responsive Library",
+      "summary": "Version 1.8.4 streamlines Library loading and makes game mod controls respond immediately while Android safely confirms configuration changes.",
+      "highlights": [
+        "Game mods and DynOS reuse recent library data when switching sections.",
+        "Unrelated receipts and update catalogs load only when their sections need them.",
+        "Activation controls respond immediately and recover cleanly if saving fails."
+      ],
+      "sections": [
+        {
+          "heading": "A smoother Library",
+          "items": [
+            "Opening Game mods or DynOS no longer starts receipt checks and update-catalog work in the background.",
+            "Returning to either game-content section reuses its recent snapshot. The list remains visible during refresh, and game folder changes and completed installs invalidate the snapshot; resuming while the section is open or refreshing manually requests current data.",
+            "The section counts appear as their data becomes available, without delaying the active view for information it does not need."
+          ]
+        },
+        {
+          "heading": "Faster activation feedback",
+          "items": [
+            "After confirmation, the selected Lua mod or DynOS pack updates on screen immediately while Android saves the game configuration.",
+            "Android verifies each write silently in an ordered background queue. If saving fails, the control returns to its last confirmed state and reports the error.",
+            "The manager validates the selected game item and relevant active Lua metadata instead of rebuilding the complete list after every change. Lua size checks, configuration backup, conflict protection and installation safeguards remain in place.",
+            "The game applies changes on its next start. SAF provider speed and large mod folders can still affect the time needed to confirm a real file write."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Una Biblioteca más rápida y fluida",
+      "summary": "La versión 1.8.4 agiliza la carga de Biblioteca y hace que los controles de mods respondan al instante mientras Android confirma los cambios de configuración.",
+      "highlights": [
+        "Mods del juego y DynOS reutilizan datos recientes al cambiar de sección.",
+        "Los recibos y catálogos de actualización se cargan cuando sus secciones los necesitan.",
+        "Los controles responden enseguida y recuperan su estado si falla el guardado."
+      ],
+      "sections": [
+        {
+          "heading": "Una Biblioteca más fluida",
+          "items": [
+            "Abrir Mods del juego o DynOS ya no inicia en segundo plano la revisión de recibos ni la carga del catálogo de actualizaciones.",
+            "Al volver a esas secciones se reutiliza el snapshot reciente. La lista permanece visible durante la actualización; cambiar la carpeta y terminar una instalación invalidan los datos; reanudar la app con la sección abierta o actualizar manualmente solicita datos actuales.",
+            "Los contadores aparecen conforme cada sección obtiene sus datos, sin retrasar la vista activa para mostrar información que todavía no necesita."
+          ]
+        },
+        {
+          "heading": "Respuesta más rápida al activar",
+          "items": [
+            "Después de confirmar, el mod Lua o pack DynOS cambia en pantalla enseguida mientras Android guarda la configuración del juego.",
+            "Android verifica cada escritura silenciosamente en una cola ordenada en segundo plano. Si falla, el control vuelve al último estado confirmado y muestra el error.",
+            "El gestor valida el elemento seleccionado y los metadatos Lua activos necesarios, sin reconstruir toda la lista después de cada cambio. Se mantienen la comprobación de tamaño Lua, la copia de configuración, el control de conflictos y la protección durante instalaciones.",
+            "El juego aplica los cambios en el siguiente inicio. La velocidad del proveedor SAF y las carpetas grandes todavía pueden afectar la confirmación de una escritura real."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Uma Biblioteca mais rápida e fluida",
+      "summary": "A versão 1.8.4 agiliza o carregamento da Biblioteca e faz os controles de mods responderem na hora enquanto o Android confirma as alterações de configuração.",
+      "highlights": [
+        "Mods do jogo e DynOS reutilizam dados recentes ao trocar de seção.",
+        "Recibos e catálogos de atualização são carregados quando suas seções precisam deles.",
+        "Os controles respondem imediatamente e recuperam o estado se o salvamento falhar."
+      ],
+      "sections": [
+        {
+          "heading": "Uma Biblioteca mais fluida",
+          "items": [
+            "Abrir Mods do jogo ou DynOS não inicia mais a verificação de recibos e o carregamento do catálogo de atualizações em segundo plano.",
+            "Ao voltar para essas seções, o snapshot recente é reutilizado. A lista continua visível durante a atualização; trocar a pasta e concluir uma instalação invalida os dados; retomar o app com a seção aberta ou atualizar manualmente solicita dados atuais.",
+            "Os contadores aparecem conforme cada seção recebe seus dados, sem atrasar a tela ativa para mostrar informações que ainda não são necessárias."
+          ]
+        },
+        {
+          "heading": "Resposta mais rápida na ativação",
+          "items": [
+            "Depois da confirmação, o mod Lua ou pacote DynOS muda na tela imediatamente enquanto o Android salva a configuração do jogo.",
+            "O Android verifica cada gravação silenciosamente em uma fila ordenada em segundo plano. Se falhar, o controle volta ao último estado confirmado e mostra o erro.",
+            "O gerenciador valida o item escolhido e os metadados Lua ativos necessários, sem reconstruir a lista completa após cada alteração. A verificação de tamanho Lua, o backup da configuração, a proteção contra conflitos e durante instalações continuam ativos.",
+            "O jogo aplica as alterações na próxima inicialização. A velocidade do provedor SAF e pastas grandes ainda podem afetar a confirmação de uma gravação real."
+          ]
+        }
+      ]
+    }
+  }
+}
