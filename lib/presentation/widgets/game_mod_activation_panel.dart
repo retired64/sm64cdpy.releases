@@ -51,9 +51,12 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     // share one configuration and one writer, even while switching views.
   }
 
-  String? _savingName;
   String? _error;
   final Map<String, bool> _pendingEnabled = {};
+  final Map<String, int> _pendingVersions = {};
+  Future<void> _changeQueue = Future<void>.value();
+  int _changeVersion = 0;
+  int _queuedWrites = 0;
   StreamSubscription<BgInstallEvent>? _subscription;
   StreamSubscription<String>? _folderSubscription;
 
@@ -99,8 +102,11 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     }
   }
 
-  Future<void> _refresh() =>
-      _run(() => ref.read(gameModActivationProvider.notifier).refresh());
+  Future<void> _refresh() async {
+    await _changeQueue;
+    if (!mounted) return;
+    await _run(() => ref.read(gameModActivationProvider.notifier).refresh());
+  }
 
   Future<void> _refreshIfStale() async {
     try {
@@ -118,15 +124,11 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     }
   }
 
-  Future<void> _run(
-    Future<void> Function() action, {
-    String? savingName,
-  }) async {
+  Future<void> _run(Future<void> Function() action) async {
     if (_busy || !mounted) return;
     setState(() {
       _busy = true;
       _error = null;
-      _savingName = savingName;
     });
     try {
       await action();
@@ -138,7 +140,6 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
       if (mounted)
         setState(() {
           _busy = false;
-          _savingName = null;
         });
     }
   }
@@ -254,26 +255,73 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
         return;
       _closedGameConfirmed = true;
     }
-    setState(() => _pendingEnabled[mod.keyName] = enabled);
-    await _run(
-      () => ref.read(gameModActivationProvider.notifier).perform(
+    final key = mod.keyName;
+    final version = ++_changeVersion;
+    final notifier = ref.read(gameModActivationProvider.notifier);
+    setState(() {
+      _error = null;
+      _pendingEnabled[key] = enabled;
+      _pendingVersions[key] = version;
+      _queuedWrites++;
+    });
+    final operation = _changeQueue.then(
+      (_) => notifier.perform(
         'setGameModActivation',
         {'name': mod.name, 'enabled': enabled, 'kind': mod.kind},
       ),
-      savingName: mod.keyName,
     );
-    if (mounted) {
-      setState(() => _pendingEnabled.remove(mod.keyName));
-    }
-    if (mounted && _error == null)
-      AppSnackbar.success(
-        context,
-        message: AppLocalizations.of(context).gameModsSaved,
-      );
+    _changeQueue = operation.catchError((Object _) {});
+    unawaited(_finishChange(operation, key: key, version: version));
   }
 
+  Future<void> _finishChange(
+    Future<void> operation, {
+    required String key,
+    required int version,
+  }) async {
+    String? errorCode;
+    try {
+      await operation;
+    } on PlatformException catch (error) {
+      errorCode = error.code;
+    } catch (_) {
+      errorCode = 'access';
+    }
+    if (!mounted) return;
+    final isLatest = _pendingVersions[key] == version;
+    setState(() {
+      _queuedWrites--;
+      if (isLatest) {
+        _pendingVersions.remove(key);
+        _pendingEnabled.remove(key);
+        if (errorCode != null) _error = errorCode;
+      }
+    });
+    if (isLatest && errorCode != null) {
+      AppSnackbar.error(
+        context,
+        message: _activationErrorMessage(
+          AppLocalizations.of(context),
+          errorCode,
+        ),
+      );
+    }
+  }
+
+  String _activationErrorMessage(AppLocalizations l10n, String code) =>
+      switch (code) {
+        'conflict' => l10n.gameModsConflict,
+        'invalid' => l10n.gameModsBlocked,
+        'size' => l10n.gameModsSize,
+        'installing' => l10n.gameModsInstalling,
+        'mismatch' => l10n.gameModsMismatch,
+        'write' || 'verify' => l10n.gameModsWriteError,
+        'limit' || 'format' => l10n.gameModsFormat,
+        _ => l10n.gameModsAccess,
+      };
+
   Future<void> _access(_AccessAction action) async {
-    if (_busy) return;
+    if (_busy || _queuedWrites > 0) return;
     if (action == _AccessAction.restore &&
         (!await _confirm(restore: true) || !mounted))
       return;
@@ -447,7 +495,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                   ),
                   PopupMenuButton<_AccessAction>(
                     tooltip: l10n.gameModsManage,
-                    enabled: !_busy,
+                    enabled: !_busy && _queuedWrites == 0,
                     icon: MarioGameIcon(
                       Icons.more_horiz_rounded,
                       color: retro.ink,
@@ -638,7 +686,6 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
             _GameModCard(
               key: ValueKey('game-mod-card-${mod.keyName}'),
               mod: mod,
-              saving: _savingName == mod.keyName,
               showIdentity: true,
               onChanged: _busy || installing || !mod.selectable
                   ? null
@@ -769,12 +816,10 @@ class _GameModCard extends StatelessWidget {
   const _GameModCard({
     super.key,
     required this.mod,
-    required this.saving,
     required this.onChanged,
     required this.showIdentity,
   });
   final GameModEntry mod;
-  final bool saving;
   final bool showIdentity;
   final ValueChanged<bool>? onChanged;
   Future<void> _showDetails(BuildContext context) async {
@@ -904,51 +949,38 @@ class _GameModCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (saving)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  child: SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: retro.accent,
-                    ),
-                  ),
-                ),
-              if (!saving)
-                Semantics(
-                  label: mod.title,
-                  child: retro.isMario && retro.marioAssets.complete
-                      ? MarioGameToggle(
-                          key: ValueKey('game-mod-switch-${mod.keyName}'),
-                          value: mod.enabled,
-                          onChanged: onChanged,
-                        )
-                      : Switch(
-                          key: ValueKey('game-mod-switch-${mod.keyName}'),
-                          value: mod.enabled,
-                          onChanged: onChanged,
-                          activeTrackColor: retro.accent,
-                          activeThumbColor: retro.inkOnAccent,
-                          inactiveTrackColor: retro.surfaceAlt,
-                          inactiveThumbColor: retro.inkDim,
-                          trackOutlineColor: WidgetStatePropertyAll(
-                            retro.border,
-                          ),
-                          thumbIcon: WidgetStateProperty.resolveWith(
-                            (states) => states.contains(WidgetState.selected)
-                                ? Icon(
-                                    retro.design.playfulSelection
-                                        ? Icons.star_rounded
-                                        : Icons.check_rounded,
-                                    size: 16,
-                                    color: retro.accentText,
-                                  )
-                                : null,
-                          ),
+              Semantics(
+                label: mod.title,
+                child: retro.isMario && retro.marioAssets.complete
+                    ? MarioGameToggle(
+                        key: ValueKey('game-mod-switch-${mod.keyName}'),
+                        value: mod.enabled,
+                        onChanged: onChanged,
+                      )
+                    : Switch(
+                        key: ValueKey('game-mod-switch-${mod.keyName}'),
+                        value: mod.enabled,
+                        onChanged: onChanged,
+                        activeTrackColor: retro.accent,
+                        activeThumbColor: retro.inkOnAccent,
+                        inactiveTrackColor: retro.surfaceAlt,
+                        inactiveThumbColor: retro.inkDim,
+                        trackOutlineColor: WidgetStatePropertyAll(
+                          retro.border,
                         ),
-                ),
+                        thumbIcon: WidgetStateProperty.resolveWith(
+                          (states) => states.contains(WidgetState.selected)
+                              ? Icon(
+                                  retro.design.playfulSelection
+                                      ? Icons.star_rounded
+                                      : Icons.check_rounded,
+                                  size: 16,
+                                  color: retro.accentText,
+                                )
+                              : null,
+                        ),
+                      ),
+              ),
             ],
           ),
           ...[

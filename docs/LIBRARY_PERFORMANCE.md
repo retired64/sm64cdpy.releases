@@ -39,10 +39,10 @@ trabajo en el hilo de Flutter.
    como el juego. Deshabilitar permite retirar del config una directiva cuyo
    contenido ya no exista.
 4. **Actualización visual inmediata.** Tras confirmar el cuadro de acción, el
-   switch y los contadores usan un estado temporal local mientras se guarda. El
-   control muestra que sigue pendiente; la app no informa éxito hasta que
-   Android confirma la relectura exacta del archivo. Un error descarta el estado
-   temporal y vuelve a mostrar el valor confirmado anterior.
+   switch y los contadores usan un estado temporal local mientras Android guarda
+   en segundo plano. La tarjeta no se bloquea ni sustituye el control por un
+   spinner. Si la escritura falla, se descarta el estado temporal, se recupera
+   el valor confirmado anterior y se muestra un error accionable.
 5. **Respuesta compacta.** Kotlin conserva la copia de seguridad, comprueba que
    el config no cambió entre lectura y escritura, vuelve a comprobar que no haya
    Workers activos, escribe, sincroniza y relee los bytes. Devuelve el resultado
@@ -66,24 +66,26 @@ No se salta esa comprobación para dar una respuesta rápida.
   operación visible, `_pendingEnabled` solo proyecta temporalmente el valor
   solicitado en `GameModActivationPanel`.
 - **Confirmación:** solo el resultado nativo tras verificar los bytes se mezcla
-  como valor confirmado. Un error borra la proyección temporal y mantiene el
-  snapshot confirmado.
+  como valor confirmado. La UI anticipa la intención del usuario, pero un error
+  borra esa proyección, mantiene el snapshot confirmado y muestra el fallo.
 - **Invalidación:** cambios de carpeta e instalación marcan el snapshot como
   obsoleto. Si la app reanuda con Biblioteca abierta, el panel visible fuerza
   lectura; al volver a montarse, revalida si los datos tienen más de 30
   segundos. El gesto manual siempre vuelve a leer SAF.
 - **Engines:** esta gestión vive en el engine principal. La autoridad nativa y
   el archivo compartido evitan depender de memoria cruzada con el overlay.
-- **Escrituras paralelas:** la operación sigue serializada con acceso SAF,
-  selección de carpeta y cambios de instalación; la edición vuelve a comprobar
-  el config y la actividad de WorkManager justo antes de escribir.
+- **Escrituras consecutivas:** los toques se reflejan inmediatamente y entran en
+  una cola ordenada. La operación nativa sigue serializada con acceso SAF; la
+  edición vuelve a comprobar el config y la actividad de WorkManager justo antes
+  de escribir. Acciones destructivas de carpeta/restauración esperan a que la
+  cola termine.
 
 ## Objetivo y límites de rendimiento
 
 Al volver a Mods del juego o DynOS con un snapshot reciente, la interfaz debe
 mostrar la lista sin esperar un nuevo recorrido SAF. Después de aceptar la
-confirmación, el switch debe reflejar el cambio en el primer frame disponible y
-mostrar que sigue guardándose. El tiempo de confirmación real depende del
+confirmación, el switch debe reflejar el cambio en el primer frame disponible;
+la validación continúa silenciosamente y solo interrumpe si falla. El tiempo de confirmación real depende del
 proveedor SAF del dispositivo y del tamaño/estructura del mod; no se promete
 que cada escritura física termine en menos de un segundo.
 

@@ -539,7 +539,8 @@ Actions validado en [Testing #240](https://github.com/retired64/sm64cdpy.release
 - [x] Crear `library-performance-1.8.4` desde `main` después del lanzamiento oficial 1.8.3.
 - [x] Diferir recibos y catálogos de comparación hasta abrir las secciones que los usan.
 - [x] Reutilizar el snapshot de mods al navegar; revalidar tras 30 s al volver, instalación, carpeta, reanudación o refresco manual.
-- [x] Mostrar inmediatamente el switch pendiente y revertirlo si la escritura falla.
+- [x] Mostrar el switch inmediatamente, guardar en una cola silenciosa ordenada
+  y revertir con aviso si la escritura falla.
 - [x] Quitar el escaneo completo posterior a cada cambio y resolver solo el objetivo Lua/DynOS.
 - [x] Conservar backup, relectura exacta del config, conflictos, límite de tamaño Lua y protección WorkManager.
 - [ ] Ejecutar flutter analyze, tests existentes, build APK y tests nativos en GitHub Actions.

@@ -11,6 +11,6 @@ La versión 1.8.4 agiliza la carga de Biblioteca y hace que los controles de mod
 ### Respuesta más rápida al activar
 
 - Después de confirmar, el mod Lua o pack DynOS cambia en pantalla enseguida mientras Android guarda la configuración del juego.
-- Un indicador muestra que el guardado sigue pendiente hasta que Android verifica exactamente el archivo escrito. Si falla, el control vuelve al último estado confirmado.
+- Android verifica cada escritura silenciosamente en una cola ordenada en segundo plano. Si falla, el control vuelve al último estado confirmado y muestra el error.
 - El gestor valida el elemento seleccionado y los metadatos Lua activos necesarios, sin reconstruir toda la lista después de cada cambio. Se mantienen la comprobación de tamaño Lua, la copia de configuración, el control de conflictos y la protección durante instalaciones.
 - El juego aplica los cambios en el siguiente inicio. La velocidad del proveedor SAF y las carpetas grandes todavía pueden afectar la confirmación de una escritura real.

@@ -26,7 +26,7 @@
           "heading": "Faster activation feedback",
           "items": [
             "After confirmation, the selected Lua mod or DynOS pack updates on screen immediately while Android saves the game configuration.",
-            "A pending indicator remains until Android verifies the exact written configuration. If saving fails, the control returns to its last confirmed state.",
+            "Android verifies each write silently in an ordered background queue. If saving fails, the control returns to its last confirmed state and reports the error.",
             "The manager validates the selected game item and relevant active Lua metadata instead of rebuilding the complete list after every change. Lua size checks, configuration backup, conflict protection and installation safeguards remain in place.",
             "The game applies changes on its next start. SAF provider speed and large mod folders can still affect the time needed to confirm a real file write."
           ]
@@ -54,7 +54,7 @@
           "heading": "Respuesta más rápida al activar",
           "items": [
             "Después de confirmar, el mod Lua o pack DynOS cambia en pantalla enseguida mientras Android guarda la configuración del juego.",
-            "Un indicador muestra que el guardado sigue pendiente hasta que Android verifica exactamente el archivo escrito. Si falla, el control vuelve al último estado confirmado.",
+            "Android verifica cada escritura silenciosamente en una cola ordenada en segundo plano. Si falla, el control vuelve al último estado confirmado y muestra el error.",
             "El gestor valida el elemento seleccionado y los metadatos Lua activos necesarios, sin reconstruir toda la lista después de cada cambio. Se mantienen la comprobación de tamaño Lua, la copia de configuración, el control de conflictos y la protección durante instalaciones.",
             "El juego aplica los cambios en el siguiente inicio. La velocidad del proveedor SAF y las carpetas grandes todavía pueden afectar la confirmación de una escritura real."
           ]
@@ -82,7 +82,7 @@
           "heading": "Resposta mais rápida na ativação",
           "items": [
             "Depois da confirmação, o mod Lua ou pacote DynOS muda na tela imediatamente enquanto o Android salva a configuração do jogo.",
-            "Um indicador mostra que o salvamento está pendente até o Android verificar exatamente o arquivo gravado. Se falhar, o controle volta ao último estado confirmado.",
+            "O Android verifica cada gravação silenciosamente em uma fila ordenada em segundo plano. Se falhar, o controle volta ao último estado confirmado e mostra o erro.",
             "O gerenciador valida o item escolhido e os metadados Lua ativos necessários, sem reconstruir a lista completa após cada alteração. A verificação de tamanho Lua, o backup da configuração, a proteção contra conflitos e durante instalações continuam ativos.",
             "O jogo aplica as alterações na próxima inicialização. A velocidade do provedor SAF e pastas grandes ainda podem afetar a confirmação de uma gravação real."
           ]

@@ -140,10 +140,11 @@ Ambos workflows ejecutan también `:app:testReleaseUnitTest`. Esta implementaci�
 
 Rama `library-performance-1.8.4`, creada desde `main` después de la publicación
 oficial de 1.8.3. Biblioteca carga recibos y catálogo de comparación bajo
-demanda; Mods del juego/DynOS reutiliza un snapshot reciente y actualiza
-visualmente el switch mientras Android confirma la escritura. El guardado ya no
-reconstruye todo el catálogo después de cada cambio y valida solo el objetivo y
-los mods activos relacionados, manteniendo respaldo, control de conflictos,
+demanda; Mods del juego/DynOS reutiliza un snapshot reciente y actualiza el
+switch en el primer frame. Android procesa los cambios en una cola silenciosa y
+ordenada; solo un fallo revierte el último valor afectado y avisa. El guardado ya
+no reconstruye todo el catálogo después de cada cambio y valida solo el objetivo
+y los mods activos relacionados, manteniendo respaldo, control de conflictos,
 tamaño Lua y bloqueo durante instalaciones. Actions y medición física quedan
 pendientes. Detalle: [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md) y
 [preparación 1.8.4](RELEASE_1.8.4.md).

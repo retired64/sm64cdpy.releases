@@ -11,6 +11,6 @@ Version 1.8.4 streamlines Library loading and makes game mod controls respond im
 ### Faster activation feedback
 
 - After confirmation, the selected Lua mod or DynOS pack updates on screen immediately while Android saves the game configuration.
-- A pending indicator remains until Android verifies the exact written configuration. If saving fails, the control returns to its last confirmed state.
+- Android verifies each write silently in an ordered background queue. If saving fails, the control returns to its last confirmed state and reports the error.
 - The manager validates the selected game item and relevant active Lua metadata instead of rebuilding the complete list after every change. Lua size checks, configuration backup, conflict protection and installation safeguards remain in place.
 - The game applies changes on its next start. SAF provider speed and large mod folders can still affect the time needed to confirm a real file write.

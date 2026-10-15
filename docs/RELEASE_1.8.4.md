@@ -14,8 +14,8 @@ implementación; no publica ni autoriza el merge a `main`.
 3. Revalidar snapshots tras cambio de carpeta, instalación, reanudación con Mods
    del juego activo, refresco manual o al volver a montar el panel con datos de
    más de 30 segundos.
-4. Reflejar enseguida la selección visual tras la confirmación y revertirla si
-   la operación nativa falla.
+4. Reflejar enseguida la selección visual tras la confirmación, guardar mediante
+   una cola silenciosa y revertir con aviso si la operación nativa falla.
 5. Validar directamente el Lua o pack solicitado, preservar precedencia de las
    dos rutas y devolver la confirmación de escritura sin reconstruir todo el
    catálogo.

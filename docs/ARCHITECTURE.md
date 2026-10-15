@@ -226,8 +226,9 @@ reutiliza al alternar pestañas; al volver a montar el panel se revalida si supe
 30 segundos. Reanudar con el panel activo, instalar, cambiar carpeta o refrescar
 manualmente también actualiza el estado. Los recibos se cargan al visitar
 Instalados/Historial y el catálogo remoto al entrar a Actualizaciones. Tras la
-confirmación del usuario, el switch refleja el cambio temporalmente; Kotlin
-valida el objetivo, preserva `sm64config.txt`, verifica los bytes y devuelve
+confirmación del usuario, el switch refleja el cambio inmediatamente y las
+escrituras se encolan sin bloquear las tarjetas; Kotlin valida el objetivo,
+preserva `sm64config.txt`, verifica los bytes y devuelve
 una confirmación pequeña sin recorrer otra vez toda la biblioteca. Ante error,
-la UI recupera el último estado confirmado. Matriz y límites SAF:
+la UI recupera el último estado confirmado y avisa. Matriz y límites SAF:
 [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md).
