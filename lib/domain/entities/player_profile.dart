@@ -4,7 +4,7 @@ enum PlayerPart { pants, shirt, gloves, shoes, hair, skin, cap, emblem }
 
 @immutable
 class PlayerPalette {
-  const PlayerPalette(this.colors) : assert(colors.length == 8);
+  const PlayerPalette(this.colors);
 
   static const mario = PlayerPalette([
     0xFF0000FF,
