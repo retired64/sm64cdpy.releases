@@ -195,5 +195,5 @@ Validado en [Testing #225](https://github.com/retired64/sm64cdpy.releases/action
 
 Conexión guiada: superficies y acciones propias de cada tema, desplegable de
 Ajustes coherente con selectores y estados separados de configuración/ROM.
-Pruebas de interfaz y testing de esta revisión pendientes. Detalle en
+Validado en [Testing #229](https://github.com/retired64/sm64cdpy.releases/actions/runs/38671162732): formato, análisis, pruebas Flutter (incluidos los seis casos de tema/brillo), APK arm64 y pruebas nativas correctos para `9b0b133`. Revisión visual física pendiente. Detalle en
 [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).

@@ -182,3 +182,5 @@ engines; la UI sigue esperando a los providers existentes.
 Pruebas de UI: tres diseños en claro/oscuro, ancho de 360, escala de texto 1.6,
 guía desplazable y cancelación; expansión/colapso de conexión confirmada.
 Revisión física de texturas ROM, TalkBack y transición al explorador pendiente.
+
+Validación visual automatizada: [Testing #229](https://github.com/retired64/sm64cdpy.releases/actions/runs/38671162732), commit `9b0b133`: formato, análisis, suite Flutter, compilación APK arm64 y pruebas nativas correctos. Las cuatro pruebas locales de scripts y `git diff --check` también pasaron. La revisión física indicada arriba sigue pendiente.
