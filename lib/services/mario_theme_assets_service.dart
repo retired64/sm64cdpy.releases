@@ -29,8 +29,8 @@ class MarioThemeAssetsService {
 
   Future<void> cancel() => _channel.invokeMethod<void>('cancel');
 
-  Future<String?> renderPlayer(List<int> colors) => _channel.invokeMethod<String>(
-    'renderPlayer',
-    {'colors': colors.map((value) => value & 0xFFFFFF).toList()},
-  );
+  Future<String?> renderPlayer(List<int> colors) =>
+      _channel.invokeMethod<String>('renderPlayer', {
+        'colors': colors.map((value) => value & 0xFFFFFF).toList(),
+      });
 }

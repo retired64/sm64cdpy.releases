@@ -744,7 +744,10 @@ class _ColorEditorState extends State<_ColorEditor> {
                 decoration: BoxDecoration(
                   color: widget.color,
                   shape: BoxShape.circle,
-                  border: Border.all(color: RetroTheme.of(context).ink, width: 2),
+                  border: Border.all(
+                    color: RetroTheme.of(context).ink,
+                    width: 2,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -802,10 +805,14 @@ class _ColorEditorState extends State<_ColorEditor> {
               width: 58,
               child: Text(
                 '$label ${(value * 255).round()}',
-                style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+                style: const TextStyle(
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
               ),
             ),
-            Expanded(child: Slider(value: value, onChanged: onChanged)),
+            Expanded(
+              child: Slider(value: value, onChanged: onChanged),
+            ),
           ],
         ),
       );
