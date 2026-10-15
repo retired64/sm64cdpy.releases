@@ -98,7 +98,8 @@ class _GameFolderCardState extends ConsumerState<GameFolderCard>
     final state = ref.watch(gameFolderProvider);
     if (!state.initialized) return const SizedBox.shrink();
     final folder = state.connection;
-    if (widget.optional && ((folder.connected && folder.fullAccess) || folder.dismissed))
+    if (widget.optional &&
+        ((folder.connected && folder.fullAccess) || folder.dismissed))
       return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);

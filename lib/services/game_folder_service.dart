@@ -13,20 +13,22 @@ class GameFolderConnection {
     this.status = 'unselected',
     this.connectionKey,
   });
-  factory GameFolderConnection.fromMap(Map<dynamic, dynamic> value) =>
-      GameFolderConnection(
-        unified: value['unified'] == true,
-        fullAccess: value['fullAccess'] == true,
-        connected: value['connected'] == true,
-        dismissed: value['dismissed'] == true,
-        mods: value['mods'] == true,
-        dynos: value['dynos'] == true,
-        config: value['config'] == true,
-        rom: value['rom'] == true,
-        status: value['status'] as String? ?? 'unselected',
-        connectionKey: value['rootUri'] == null ? null :
-          '${value['rootUri']}|${value['userUri']}|${value['modsUri']}|${value['dynosUri']}',
-      );
+  factory GameFolderConnection.fromMap(
+    Map<dynamic, dynamic> value,
+  ) => GameFolderConnection(
+    unified: value['unified'] == true,
+    fullAccess: value['fullAccess'] == true,
+    connected: value['connected'] == true,
+    dismissed: value['dismissed'] == true,
+    mods: value['mods'] == true,
+    dynos: value['dynos'] == true,
+    config: value['config'] == true,
+    rom: value['rom'] == true,
+    status: value['status'] as String? ?? 'unselected',
+    connectionKey: value['rootUri'] == null
+        ? null
+        : '${value['rootUri']}|${value['userUri']}|${value['modsUri']}|${value['dynosUri']}',
+  );
   final bool fullAccess;
   final bool connected, dismissed, unified, mods, dynos, config, rom;
   final String status;
