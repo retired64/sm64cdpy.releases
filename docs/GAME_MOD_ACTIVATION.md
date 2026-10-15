@@ -42,6 +42,8 @@ precedencia inversa por subsistema, rutas de presentación y suite de activació
 Prueba física pendiente: user antiguo y ampliación, cheats.lua externo, duplicados
 en ambas raíces, packs externos/internos, permiso revocado, reinstalación y ROM.
 
+Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. No se fusionó a main ni se publicó release.
+
 
 Implementación para `custom-themes`, candidata a `1.8.3+22`. No constituye una
 publicación. El clon `sm64coopdx/` es material de referencia excluido de Git;
