@@ -39,9 +39,12 @@ class AppearanceSelector extends ConsumerWidget {
         if (!await connectGameFolder(context, ref) || !context.mounted) return;
       } else {
         final l10n = AppLocalizations.of(context);
-        final accepted = await showGameSetupDialog(context,
-          title: l10n.gameFolderPrepareTitle, body: l10n.gameFolderPrepareBody,
-          confirm: l10n.gameFolderPrepare, cancel: l10n.gameFolderLater,
+        final accepted = await showGameSetupDialog(
+          context,
+          title: l10n.gameFolderPrepareTitle,
+          body: l10n.gameFolderPrepareBody,
+          confirm: l10n.gameFolderPrepare,
+          cancel: l10n.gameFolderLater,
           icon: Icons.videogame_asset_outlined,
         );
         if (!context.mounted || accepted != true) return;
