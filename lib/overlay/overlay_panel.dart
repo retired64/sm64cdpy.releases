@@ -274,9 +274,17 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
   void _onOverlayData(Object? data) {
     if (data is! Map) return;
     final type = data['type'] as String?;
-    if (type == 'installation_library_loading' || type == 'installation_library_snapshot' || type == 'installation_library_error') {
-      if (!mounted || !_librarySync.accept(data['sessionId'] as String?, data['requestId'] as int? ?? 0)) return;
-      if (_librarySync.sessionChanged || (type == 'installation_library_loading' && data['reset'] == true)) {
+    if (type == 'installation_library_loading' ||
+        type == 'installation_library_snapshot' ||
+        type == 'installation_library_error') {
+      if (!mounted ||
+          !_librarySync.accept(
+            data['sessionId'] as String?,
+            data['requestId'] as int? ?? 0,
+          ))
+        return;
+      if (_librarySync.sessionChanged ||
+          (type == 'installation_library_loading' && data['reset'] == true)) {
         setState(() {
           _librarySnapshot = null;
           _libraryLoading = true;
@@ -297,7 +305,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       try {
         final snapshot = InstallationLibrarySnapshot.fromOverlayMap(raw);
         setState(() {
-            _librarySnapshot = snapshot;
+          _librarySnapshot = snapshot;
           _libraryLoading = false;
           // `done` is only the short-lived WorkManager result. Once the
           // durable receipt/SAF projection arrives, the canonical selector
@@ -307,7 +315,7 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
       } catch (error, stack) {
         debugPrint('[overlay] Invalid installation snapshot: $error\n$stack');
         setState(() {
-            _libraryLoading = false;
+          _libraryLoading = false;
         });
       }
     } else if (type == 'installation_library_error') {

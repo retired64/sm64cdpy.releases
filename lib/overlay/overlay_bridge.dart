@@ -24,8 +24,12 @@ class OverlayBridge {
   static final _librarySession = _newLibrarySession();
   static String _newLibrarySession() {
     final random = Random.secure();
-    return List.generate(16, (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
+    return List.generate(
+      16,
+      (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0'),
+    ).join();
   }
+
   static int _libraryRefreshDepth = 0;
   static final _libraryRepository = InstallationLibraryRepositoryImpl();
 
@@ -41,8 +45,15 @@ class OverlayBridge {
     });
     ModInstaller.libraryInvalidations.listen((reason) {
       final folderChanged = reason.contains('Folder');
-      if (_panelOpen || folderChanged) unawaited(_refreshLibrary(
-        verify: true, announceLoading: folderChanged, reset: folderChanged, force: folderChanged));
+      if (_panelOpen || folderChanged)
+        unawaited(
+          _refreshLibrary(
+            verify: true,
+            announceLoading: folderChanged,
+            reset: folderChanged,
+            force: folderChanged,
+          ),
+        );
     });
     unawaited(refreshAutoInstall());
   }
@@ -64,7 +75,9 @@ class OverlayBridge {
     try {
       await Future.sync(() => FloatyChatheads.shareData(data));
     } catch (error) {
-      debugPrint('OverlayBridge shareData failed (overlay likely closed): $error');
+      debugPrint(
+        'OverlayBridge shareData failed (overlay likely closed): $error',
+      );
     }
   }
 

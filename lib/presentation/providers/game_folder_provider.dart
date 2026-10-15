@@ -60,7 +60,8 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
           value != null) {
         final changed =
             state.connection.connected != value.connected ||
-            state.connection.unified != value.unified || state.connection.connectionKey != value.connectionKey;
+            state.connection.unified != value.unified ||
+            state.connection.connectionKey != value.connectionKey;
         state = GameFolderState(initialized: true, connection: value);
         if (changed) {
           ref.invalidate(gameModActivationProvider);
