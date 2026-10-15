@@ -201,5 +201,5 @@ Validado en [Testing #229](https://github.com/retired64/sm64cdpy.releases/action
 Biblioteca integra packs DynOS/Touch Controls de user/dynos/packs mediante
 `dynos-pack:`; Lua conserva `enable-mod:`. Identidades por tipo/nombre, backup
 y guardado verificado compartidos. VIP/OMMR Pack retiran favoritos y gesto largo.
-Plan y límites: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md). Testing de esta
-revisión y prueba física pendientes.
+Plan y límites: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Validado en [Testing #232](https://github.com/retired64/sm64cdpy.releases/actions/runs/38679650559) para `8ff4975`: traducciones, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Prueba física pendiente.

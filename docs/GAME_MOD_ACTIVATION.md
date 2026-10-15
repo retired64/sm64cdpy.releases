@@ -8,7 +8,7 @@ no se modifica ni se distribuye con SM64CDPY.
 
 1. Contrastar descubrimiento e identidad con el juego.
 2. Autorizar la carpeta `user` con SAF y comprobar su relación con `mods`.
-3. Implementar un editor que solo posea las entradas `enable-mod:`.
+3. Implementar editores separados para `enable-mod:` y `dynos-pack:`.
 4. Serializar las operaciones en Android y confirmar cada escritura.
 5. Mostrar unidades reales del juego en Biblioteca, independientes de recibos.
 6. Manejar cancelación, conflictos, permisos, recuperación y ciclo de vida.
@@ -338,8 +338,10 @@ esa línea, no cancela otra línea activada. Hay hasta 20 tokens, incluyendo la
 clave, y comparación sensible a mayúsculas. Al guardar, se eliminan duplicados
 modernos/legacy del pack objetivo y se agrega únicamente `dynos-pack: Nombre`
 si se activa. Las otras directivas, packs y saltos de línea se preservan.
-Nombres no representables de forma segura, incluyendo terminaciones `true` o
-`false`, son visibles pero no editables. No se renombran carpetas para habilitarlas.
+El editor mantiene límites conservadores: ASCII imprimible, espacios únicos,
+menos de 256 bytes, hasta 19 palabras y sin separadores/rutas. Los nombres fuera
+de esos límites y las terminaciones `true` o `false` son visibles pero no editables,
+aunque el juego pueda admitir algunos de ellos. No se renombran carpetas para habilitarlas.
 
 El juego inicializa packs desactivados (`dynos_mgr_pack.cpp::DynOS_Pack_Add`) y
 los resuelve por nombre visible/base de carpeta, deduplicando el mismo nombre.
@@ -373,3 +375,5 @@ Matriz física pendiente: pack DynOS y Touch Controls, configuración legacy,
 confirmar activación al reiniciar el juego, restaurar backup, permisos revocados,
 instalación activa, vuelta de background y temas claro/oscuro. Actions ejecuta
 análisis, pruebas Flutter, compilación Kotlin/APK y pruebas unitarias nativas.
+
+Validación: [Testing #232](https://github.com/retired64/sm64cdpy.releases/actions/runs/38679650559), commit `8ff4975`, completado correctamente: generación de traducciones, formato, análisis, pruebas Flutter, APK arm64 y pruebas unitarias nativas, incluidas las de `GameDynosConfigTest`. Generados sincronizados desde el runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. Sigue pendiente la matriz física anterior; no se ha fusionado a main ni publicado una release.
