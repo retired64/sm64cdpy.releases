@@ -148,3 +148,15 @@ de sesiones retiradas (máximo 32). El cache del gate vive y se destruye con el
 panel. El diseño de la burbuja se conserva; cambian solo proyección y ordenación.
 Pruebas: refresh pendiente de otra carpeta, respuestas tardías, recreación de
 engine y compatibilidad de mensajes sin sessionId antes de una sesión nueva.
+
+## Evidencia de validación
+
+[Testing #225](https://github.com/retired64/sm64cdpy.releases/actions/runs/38658236343)
+validó `458189b`: generación de traducciones, formato, análisis Flutter, suite
+Flutter, compilación APK arm64 y pruebas nativas. Se incorporó posteriormente
+el formato del mismo runner. Pruebas locales del manifiesto de release: 4 correctas;
+`git diff --check` correcto. La matriz física anterior sigue pendiente.
+
+Riverpod conserva el valor anterior durante loading: los consumidores de
+Biblioteca fuerzan la rama de carga y las acciones ignoran ese valor retenido.
+Una verificación anterior al cambio de carpeta no puede publicar su resultado.

@@ -191,4 +191,4 @@ Validado en [Testing #213](https://github.com/retired64/sm64cdpy.releases/action
 Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada,
 mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
 migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
-Validación Actions pendiente; revisión física requerida.
+Validado en [Testing #225](https://github.com/retired64/sm64cdpy.releases/actions/runs/38658236343): generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos para `458189b`. La sincronización posterior solo incorpora formato del runner. Revisión física de permisos, rutas y ROM requerida.
