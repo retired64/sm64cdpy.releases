@@ -50,6 +50,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     // Keep the pending operation and close-game confirmation: both sections
     // share one configuration and one writer, even while switching views.
   }
+
   String? _savingName;
   String? _error;
   StreamSubscription<BgInstallEvent>? _subscription;
@@ -159,7 +160,11 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                     Semantics(
                       namesRoute: true,
                       child: Text(
-                        restore ? l10n.gameModsRestore : (widget.dynosOnly ? l10n.gameModsDynosType : l10n.gameModsTitle),
+                        restore
+                            ? l10n.gameModsRestore
+                            : (widget.dynosOnly
+                                  ? l10n.gameModsDynosType
+                                  : l10n.gameModsTitle),
                         style: retro.heading(size: 20),
                       ),
                     ),
@@ -304,7 +309,8 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
             snapshot?.status != 'ready' &&
             snapshot?.status != 'unselected');
     final mods = (snapshot?.mods ?? const <GameModEntry>[])
-        .where((mod) => mod.isDynos == widget.dynosOnly).toList(growable: false);
+        .where((mod) => mod.isDynos == widget.dynosOnly)
+        .toList(growable: false);
     final query = _search.text.trim().toLowerCase();
     final filtered = mods
         .where(
@@ -388,7 +394,11 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          retro.displayLabel(widget.dynosOnly ? l10n.gameModsDynosType : l10n.gameModsTitle),
+                          retro.displayLabel(
+                            widget.dynosOnly
+                                ? l10n.gameModsDynosType
+                                : l10n.gameModsTitle,
+                          ),
                           style: retro.heading(size: 18),
                         ),
                         const SizedBox(height: 5),
@@ -491,7 +501,9 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
             style: retro.body(size: 14),
             onChanged: (_) => setState(() => _visible = 20),
             decoration: InputDecoration(
-              hintText: widget.dynosOnly ? l10n.gameDynosSearch : l10n.gameModsSearch,
+              hintText: widget.dynosOnly
+                  ? l10n.gameDynosSearch
+                  : l10n.gameModsSearch,
               hintStyle: retro.body(size: 12, color: retro.inkDim),
               filled: true,
               fillColor: retro.surface,
@@ -577,7 +589,11 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    mods.isEmpty ? (widget.dynosOnly ? l10n.gameDynosEmpty : l10n.gameModsEmpty) : l10n.gameModsNoResults,
+                    mods.isEmpty
+                        ? (widget.dynosOnly
+                              ? l10n.gameDynosEmpty
+                              : l10n.gameModsEmpty)
+                        : l10n.gameModsNoResults,
                     textAlign: TextAlign.center,
                     style: retro.body(size: 14),
                   ),

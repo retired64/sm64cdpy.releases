@@ -1556,7 +1556,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get gameModsEmpty =>
-      'Nenhum mod Lua compatível ou pasta de pacote DynOS/Touch Controls foi encontrado.';
+      'Nenhum mod Lua compatível foi encontrado nas pastas do jogo.';
 
   @override
   String get gameModsEnabled => 'Ativado para a próxima abertura';
@@ -1728,6 +1728,13 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get gameFolderUpgrade =>
       'O acesso está limitado a user. Escolha a pasta principal do jogo para incluir também os mods e pacotes DynOS fora de user.';
+
+  @override
+  String get gameDynosEmpty =>
+      'Nenhuma pasta de pacote DynOS / Touch Controls foi encontrada nas pastas do jogo.';
+
+  @override
+  String get gameDynosSearch => 'Buscar pacotes DynOS / Touch Controls…';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3282,7 +3289,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get gameModsEmpty =>
-      'Nenhum mod Lua compatível ou pasta de pacote DynOS/Touch Controls foi encontrado.';
+      'Nenhum mod Lua compatível foi encontrado nas pastas do jogo.';
 
   @override
   String get gameModsEnabled => 'Ativado para a próxima abertura';
@@ -3454,4 +3461,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get gameFolderUpgrade =>
       'O acesso está limitado a user. Escolha a pasta principal do jogo para incluir também os mods e pacotes DynOS fora de user.';
+
+  @override
+  String get gameDynosEmpty =>
+      'Nenhuma pasta de pacote DynOS / Touch Controls foi encontrada nas pastas do jogo.';
+
+  @override
+  String get gameDynosSearch => 'Buscar pacotes DynOS / Touch Controls…';
 }

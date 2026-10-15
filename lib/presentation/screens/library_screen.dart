@@ -27,7 +27,8 @@ class LibraryScreen extends ConsumerStatefulWidget {
 
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   _LibraryView _view = _LibraryView.gameMods;
-  bool get _isGameView => _view == _LibraryView.gameMods || _view == _LibraryView.dynos;
+  bool get _isGameView =>
+      _view == _LibraryView.gameMods || _view == _LibraryView.dynos;
   String? _section;
   String? _destination;
   bool _initialViewApplied = false;
@@ -70,7 +71,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         ].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
       _view = _LibraryView.gameMods;
     } else if (!_initialViewApplied &&
-        const ['dynos', 'touch-controls'].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
+        const [
+          'dynos',
+          'touch-controls',
+        ].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
       _view = _LibraryView.dynos;
     } else if (!_initialViewApplied &&
         GoRouterState.of(context).uri.queryParameters['view'] == 'installed') {
@@ -102,9 +106,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 padding: const EdgeInsetsDirectional.only(end: 14),
                 child: _RetroIconButton(
                   tooltip: l10n.libraryRefresh,
-                  onPressed: value.isLoading && !_isGameView
-                      ? null
-                      : _refresh,
+                  onPressed: value.isLoading && !_isGameView ? null : _refresh,
                   icon: Icons.refresh_rounded,
                   busy: value.isLoading && !_isGameView,
                 ),
@@ -138,7 +140,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           if (_isGameView)
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
-              sliver: SliverToBoxAdapter(child: GameModActivationPanel(dynosOnly: _view == _LibraryView.dynos)),
+              sliver: SliverToBoxAdapter(
+                child: GameModActivationPanel(
+                  dynosOnly: _view == _LibraryView.dynos,
+                ),
+              ),
             )
           else
             value.when(

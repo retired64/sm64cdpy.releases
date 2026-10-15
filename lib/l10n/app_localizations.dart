@@ -2811,7 +2811,7 @@ abstract class AppLocalizations {
   /// No description provided for @gameModsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No compatible Lua mods or DynOS/Touch Controls pack folders were found.'**
+  /// **'No compatible Lua mods were found in the game folders.'**
   String get gameModsEmpty;
 
   /// No description provided for @gameModsEnabled.
@@ -3113,6 +3113,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Access is limited to user. Choose the main game folder to include mods and DynOS packs outside user too.'**
   String get gameFolderUpgrade;
+
+  /// No description provided for @gameDynosEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No DynOS / Touch Controls pack folders were found in the game folders.'**
+  String get gameDynosEmpty;
+
+  /// No description provided for @gameDynosSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search DynOS / Touch Controls packs…'**
+  String get gameDynosSearch;
 }
 
 class _AppLocalizationsDelegate

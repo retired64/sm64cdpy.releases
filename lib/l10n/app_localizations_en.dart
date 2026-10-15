@@ -1545,7 +1545,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameModsEmpty =>
-      'No compatible Lua mods or DynOS/Touch Controls pack folders were found.';
+      'No compatible Lua mods were found in the game folders.';
 
   @override
   String get gameModsEnabled => 'Enabled for next start';
@@ -1716,4 +1716,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get gameFolderUpgrade =>
       'Access is limited to user. Choose the main game folder to include mods and DynOS packs outside user too.';
+
+  @override
+  String get gameDynosEmpty =>
+      'No DynOS / Touch Controls pack folders were found in the game folders.';
+
+  @override
+  String get gameDynosSearch => 'Search DynOS / Touch Controls packs…';
 }

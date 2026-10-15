@@ -1565,7 +1565,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get gameModsEmpty =>
-      'No se encontraron mods Lua compatibles ni carpetas de packs DynOS/Touch Controls.';
+      'No se encontraron mods Lua compatibles en las carpetas del juego.';
 
   @override
   String get gameModsEnabled => 'Activado para el próximo inicio';
@@ -1737,6 +1737,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get gameFolderUpgrade =>
       'El acceso está limitado a user. Elige la carpeta principal del juego para incluir también los mods y packs DynOS fuera de user.';
+
+  @override
+  String get gameDynosEmpty =>
+      'No se encontraron carpetas de packs DynOS / Touch Controls en las carpetas del juego.';
+
+  @override
+  String get gameDynosSearch => 'Buscar packs DynOS / Touch Controls…';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -3300,7 +3307,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get gameModsEmpty =>
-      'No se encontraron mods Lua compatibles ni carpetas de packs DynOS/Touch Controls.';
+      'No se encontraron mods Lua compatibles en las carpetas del juego.';
 
   @override
   String get gameModsEnabled => 'Activado para el próximo inicio';
@@ -3472,4 +3479,11 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get gameFolderUpgrade =>
       'El acceso está limitado a user. Elige la carpeta principal del juego para incluir también los mods y packs DynOS fuera de user.';
+
+  @override
+  String get gameDynosEmpty =>
+      'No se encontraron carpetas de packs DynOS / Touch Controls en las carpetas del juego.';
+
+  @override
+  String get gameDynosSearch => 'Buscar packs DynOS / Touch Controls…';
 }
