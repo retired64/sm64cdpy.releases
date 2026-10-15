@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -50,7 +48,7 @@ class _OmmRebirthScreenState extends ConsumerState<OmmRebirthScreen> {
     final l10n = AppLocalizations.of(context);
     final title = Text(
       l10n.ommTitle,
-      style: retro.heading(size: 16, color: retro.accent),
+      style: retro.heading(size: 16, color: retro.accentText),
     );
 
     return ommAsync.when(
@@ -92,7 +90,7 @@ class _OmmBody extends StatelessWidget {
           leadingColor: retro.accent,
           title: Text(
             l10n.ommTitle,
-            style: retro.heading(size: 16, color: retro.accent),
+            style: retro.heading(size: 16, color: retro.accentText),
           ),
           actions: [
             Padding(
@@ -162,9 +160,6 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   late final AnimationController _pressCtrl;
   bool _isExpanded = false;
 
-  Timer? _longPressTimer;
-  bool _isLongPressing = false;
-
   bool _downloading = false;
   double _progress = 0.0;
 
@@ -183,45 +178,6 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
     _pressCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 100),
-    );
-  }
-
-  void _startLongPress() {
-    _longPressTimer?.cancel();
-    _isLongPressing = true;
-
-    _longPressTimer = Timer(const Duration(seconds: 2), _completeLongPress);
-  }
-
-  void _cancelLongPress() {
-    _longPressTimer?.cancel();
-    _longPressTimer = null;
-    if (_isLongPressing) {
-      setState(() {
-        _isLongPressing = false;
-      });
-    }
-  }
-
-  void _completeLongPress() {
-    _longPressTimer?.cancel();
-    _longPressTimer = null;
-    setState(() {
-      _isLongPressing = false;
-    });
-    _toggleFavorite();
-  }
-
-  Future<void> _toggleFavorite() async {
-    await toggleOmmFavourite(ref, widget.mod.id);
-    if (!mounted) return;
-    final isNowFav = ref.read(ommFavouritesProvider).contains(widget.mod.id);
-    AppSnackbar.info(
-      context,
-      message: isNowFav
-          ? AppLocalizations.of(context).sharedAddedToFavorites
-          : AppLocalizations.of(context).sharedRemovedFromFavorites,
-      duration: const Duration(seconds: 1),
     );
   }
 
@@ -484,7 +440,6 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   @override
   void dispose() {
     _pressCtrl.dispose();
-    _longPressTimer?.cancel();
     super.dispose();
   }
 
@@ -492,7 +447,6 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
-    final isFav = ref.watch(ommFavouritesProvider).contains(widget.mod.id);
     final actionState = ref.watch(installationActionProvider(_identity));
     final action = actionState.primaryAction;
     final isDownloading = _downloading || actionState.isOperationActive;
@@ -513,9 +467,6 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
       onTapUp: (_) => _pressCtrl.reverse(),
       onTapCancel: () => _pressCtrl.reverse(),
       onTap: () => setState(() => _isExpanded = !_isExpanded),
-      onLongPressStart: (_) => _startLongPress(),
-      onLongPressEnd: (_) => _cancelLongPress(),
-      onLongPressMoveUpdate: (_) => _cancelLongPress(),
       child: AnimatedBuilder(
         animation: _pressCtrl,
         builder: (context, child) {
@@ -525,27 +476,37 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
           return Transform.translate(
             offset: Offset(offset, offset),
             child: Container(
-              decoration: BoxDecoration(
-                color: retro.surface,
-                borderRadius: RetroTheme.radius,
-                border: Border.all(color: retro.border, width: 3),
-                boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  color: retro.surface,
+                  borderRadius: retro.radius,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
+                ),
               ),
               child: child,
             ),
           );
         },
         child: ClipRRect(
-          borderRadius: RetroTheme.radius,
+          borderRadius: retro.radius,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Image banner (solo si hay URL) ────────────────
               if (hasImage)
                 Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: retro.border, width: 3),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: retro.border,
+                          width: retro.borderWidth(3),
+                        ),
+                      ),
                     ),
                   ),
                   child: CachedNetworkImage(
@@ -561,7 +522,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                       color: retro.surfaceAlt,
                       height: cardImageHeight,
                       alignment: Alignment.center,
-                      child: Icon(
+                      child: MarioGameIcon(
                         Icons.extension_rounded,
                         size: 30,
                         color: retro.inkDim,
@@ -621,9 +582,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                 ? l10n.sharedShowLess
                                 : l10n.sharedReadMore,
                             style: TextStyle(
-                              color: retro.accent,
+                              fontFamily: retro.headingFamily,
+                              color: retro.accentText,
                               fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: retro.design.headingWeight,
                               letterSpacing: 0.6,
                             ),
                           ),
@@ -632,50 +594,22 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
 
                     const SizedBox(height: 18),
 
-                    // Favorite button
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        icon: Icon(
-                          isFav
-                              ? Icons.favorite_rounded
-                              : Icons.favorite_border_rounded,
-                          size: 16,
-                          color: retro.accent,
-                        ),
-                        label: Text(
-                          isFav
-                              ? l10n.sharedRemoveFromFavorites
-                              : l10n.sharedAddToFavorites,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        onPressed: _toggleFavorite,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: retro.accent,
-                          side: BorderSide(color: retro.accent, width: 2),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: RetroTheme.radius,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
                     // Download button — botón de arcade sólido
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: retro.border, width: 3),
-                          boxShadow: isDownloading
-                              ? []
-                              : retro.hardShadow(dx: 4, dy: 4),
+                        decoration: retro.gameDecoration(
+                          BoxDecoration(
+                            borderRadius: retro.radius,
+                            border: Border.all(
+                              color: retro.border,
+                              width: retro.borderWidth(3),
+                            ),
+                            boxShadow: isDownloading
+                                ? []
+                                : retro.hardShadow(dx: 4, dy: 4),
+                          ),
                         ),
                         child: ElevatedButton(
                           onPressed:
@@ -693,13 +627,13 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                 ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.red,
-                            foregroundColor: Colors.white,
+                            foregroundColor: retro.onColor(retro.red),
                             disabledBackgroundColor: retro.red.withValues(
                               alpha: 0.55,
                             ),
                             elevation: 0,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: retro.radius,
                             ),
                           ),
                           child: isDownloading
@@ -714,7 +648,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                         value: visibleProgress,
                                         backgroundColor: Colors.black
                                             .withValues(alpha: 0.35),
-                                        color: retro.accent,
+                                        color: retro.onColor(retro.red),
                                         minHeight: 4,
                                       ),
                                       const SizedBox(height: 4),
@@ -723,7 +657,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                                             ? action.label(l10n)
                                             : '${(visibleProgress * 100).toStringAsFixed(0)}% · ${action.label(l10n)}',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: retro.onColor(retro.red),
                                           fontSize: 11,
                                           fontWeight: FontWeight.w800,
                                         ),
@@ -734,13 +668,15 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                               : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(action.icon, size: 18),
+                                    MarioGameIcon(action.icon, size: 18),
                                     SizedBox(width: 8),
                                     Text(
                                       action.label(l10n),
                                       style: TextStyle(
+                                        fontFamily:
+                                            retro.design.headingFontFamily,
                                         fontSize: 13,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: retro.design.headingWeight,
                                         letterSpacing: 1,
                                       ),
                                     ),
@@ -754,7 +690,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
                           onPressed: _download,
-                          icon: const Icon(Icons.refresh_rounded, size: 15),
+                          icon: const MarioGameIcon(
+                            Icons.refresh_rounded,
+                            size: 15,
+                          ),
                           label: Text(l10n.installationReinstall),
                         ),
                       ),
@@ -783,7 +722,7 @@ class _RetroMeta extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: retro.accent),
+        MarioGameIcon(icon, size: 13, color: retro.accentText),
         const SizedBox(width: 4),
         Text(
           label,
@@ -816,15 +755,21 @@ class _EmptyView extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: BoxDecoration(
-                color: retro.surface,
-                border: Border.all(color: retro.border, width: 3),
-                boxShadow: retro.hardShadow(),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surface,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(),
+                ),
               ),
-              child: Icon(
+              child: MarioGameIcon(
                 Icons.auto_awesome_rounded,
                 size: 30,
-                color: retro.accent,
+                color: retro.accentText,
               ),
             ),
             const SizedBox(height: 22),
@@ -832,9 +777,10 @@ class _EmptyView extends StatelessWidget {
               l10n.ommEmpty,
               textAlign: TextAlign.center,
               style: TextStyle(
+                fontFamily: retro.headingFamily,
                 color: retro.ink,
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: retro.design.headingWeight,
                 letterSpacing: 0.5,
               ),
             ),
@@ -890,10 +836,15 @@ class _Bone extends StatelessWidget {
       highlightColor: retro.surfaceAlt,
       child: Container(
         height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: retro.border, width: 3),
-          borderRadius: RetroTheme.radius,
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(3),
+            ),
+            borderRadius: retro.radius,
+          ),
         ),
       ),
     );
@@ -922,12 +873,18 @@ class _OmmError extends StatelessWidget {
               Container(
                 width: 64,
                 height: 64,
-                decoration: BoxDecoration(
-                  color: retro.surface,
-                  border: Border.all(color: retro.red, width: 3),
-                  boxShadow: retro.hardShadow(),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surface,
+                    border: Border.all(
+                      color: retro.red,
+                      width: retro.borderWidth(3),
+                    ),
+                    boxShadow: retro.hardShadow(),
+                  ),
                 ),
-                child: Icon(
+                child: MarioGameIcon(
                   Icons.error_outline_rounded,
                   size: 28,
                   color: retro.red,
@@ -938,9 +895,10 @@ class _OmmError extends StatelessWidget {
                 l10n.ommFailedToLoad,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: retro.headingFamily,
                   color: retro.ink,
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: retro.design.headingWeight,
                   letterSpacing: 0.4,
                 ),
               ),

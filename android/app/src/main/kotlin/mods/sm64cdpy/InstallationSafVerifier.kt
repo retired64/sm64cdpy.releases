@@ -80,15 +80,13 @@ object InstallationSafVerifier {
         } catch (_: Exception) {
             return RootAccess.PermissionRevoked
         }
-        val hasReadGrant = context.contentResolver.persistedUriPermissions.any {
-            it.uri == uri && it.isReadPermission
-        }
+        val hasReadGrant = GameFolderAccess.hasGrant(context, uri)
         if (!hasReadGrant) return RootAccess.PermissionRevoked
         return try {
-            val root = DocumentFile.fromTreeUri(context, uri)
+            val root = GameFolderAccess.resolve(context, uri)
                 ?: return RootAccess.Unavailable
             if (!root.exists() || !root.canRead()) RootAccess.PermissionRevoked
-            else RootAccess.Available(root)
+            else if (root.name == "user") RootAccess.Unavailable else RootAccess.Available(root)
         } catch (_: SecurityException) {
             RootAccess.PermissionRevoked
         } catch (_: Exception) {

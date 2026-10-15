@@ -80,13 +80,16 @@ class InstallationLibraryCard extends ConsumerWidget {
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 10),
         padding: EdgeInsets.all(compact ? 12 : 14),
-        decoration: BoxDecoration(
-          color: retro.surface,
-          border: Border.all(
-            color: retro.border.withValues(alpha: 0.45),
-            width: 2,
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: retro.surface,
+            border: Border.all(
+              color: retro.border.withValues(alpha: 0.45),
+              width: retro.borderWidth(2),
+            ),
+            boxShadow: retro.hardShadow(dx: 3, dy: 3),
           ),
-          boxShadow: retro.hardShadow(dx: 3, dy: 3),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +97,7 @@ class InstallationLibraryCard extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(displayIcon, color: displayColor, size: 22),
+                MarioGameIcon(displayIcon, color: displayColor, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -249,7 +252,7 @@ class InstallationLibraryCard extends ConsumerWidget {
         status == InstallationVerificationStatus.folderNotSelected) {
       return OutlinedButton.icon(
         onPressed: () => context.go('/settings'),
-        icon: const Icon(Icons.folder_open_rounded, size: 18),
+        icon: const MarioGameIcon(Icons.folder_open_rounded, size: 18),
         label: Text(l10n.installationSelectFolder),
       );
     }
@@ -258,7 +261,7 @@ class InstallationLibraryCard extends ConsumerWidget {
         onPressed: () => ref
             .read(installationLibraryProvider.notifier)
             .verifyArtifact(record.artifactKey),
-        icon: const Icon(Icons.fact_check_outlined, size: 18),
+        icon: const MarioGameIcon(Icons.fact_check_outlined, size: 18),
         label: Text(l10n.installationVerify),
       );
     }
@@ -271,7 +274,7 @@ class InstallationLibraryCard extends ConsumerWidget {
           context.go(route);
         }
       },
-      icon: Icon(
+      icon: MarioGameIcon(
         status == InstallationVerificationStatus.missing
             ? Icons.install_mobile_rounded
             : Icons.open_in_new_rounded,
@@ -303,17 +306,23 @@ class InstallationUpdateCard extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        border: Border.all(color: retro.accent, width: 2),
-        boxShadow: retro.hardShadow(dx: 3, dy: 3),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.surface,
+          border: Border.all(color: retro.accent, width: retro.borderWidth(2)),
+          boxShadow: retro.hardShadow(dx: 3, dy: 3),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.system_update_alt_rounded, color: retro.accent),
+              MarioGameIcon(
+                Icons.system_update_alt_rounded,
+                color: retro.accentText,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -341,138 +350,14 @@ class InstallationUpdateCard extends StatelessWidget {
                   context.go(update.available.route);
                 }
               },
-              icon: const Icon(Icons.system_update_alt_rounded, size: 18),
+              icon: const MarioGameIcon(
+                Icons.system_update_alt_rounded,
+                size: 18,
+              ),
               label: Text(l10n.installationUpdate),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class DetectedInstallationCard extends StatelessWidget {
-  const DetectedInstallationCard({super.key, required this.discovery});
-
-  final DiscoveredInstallation discovery;
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-    return Semantics(
-      container: true,
-      label: '${discovery.displayName}, ${l10n.libraryDetectedOnDevice}',
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: retro.surface,
-          border: Border.all(
-            color: retro.border.withValues(alpha: 0.45),
-            width: 2,
-          ),
-          boxShadow: retro.hardShadow(dx: 3, dy: 3),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: retro.surfaceAlt,
-                    border: Border.all(color: retro.accent, width: 2),
-                  ),
-                  child: Icon(
-                    Icons.extension_rounded,
-                    color: retro.accent,
-                    size: 23,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        discovery.displayName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: retro.heading(size: 16),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.libraryDetectedOnDevice,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: retro.body(size: 11.5, color: retro.inkDim),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Wrap(
-              spacing: 12,
-              runSpacing: 6,
-              children: [
-                if (discovery.versionLabel != null)
-                  _Meta(
-                    icon: Icons.sell_outlined,
-                    label: discovery.versionLabel!,
-                  ),
-                if (discovery.author != null)
-                  _Meta(
-                    icon: Icons.person_outline_rounded,
-                    label: discovery.author!,
-                  ),
-                if (discovery.category != null)
-                  _Meta(
-                    icon: Icons.category_outlined,
-                    label: discovery.category!,
-                  ),
-                _Meta(
-                  icon: Icons.folder_outlined,
-                  label: _destinationLabel(l10n, discovery.destination),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-              decoration: BoxDecoration(
-                color: retro.surfaceAlt,
-                border: Border(left: BorderSide(color: retro.accent, width: 3)),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.description_outlined,
-                    size: 15,
-                    color: retro.inkDim,
-                  ),
-                  const SizedBox(width: 7),
-                  Expanded(
-                    child: Text(
-                      '${l10n.libraryDetectedPath}: ${discovery.entryPath}',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: retro.body(size: 10.5, color: retro.inkDim),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -488,7 +373,7 @@ class _Meta extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: retro.inkDim),
+        MarioGameIcon(icon, size: 14, color: retro.inkDim),
         const SizedBox(width: 4),
         Text(label, style: retro.body(size: 10.5)),
       ],

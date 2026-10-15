@@ -58,11 +58,11 @@ class _ModCardState extends ConsumerState<ModCard>
           return Transform.translate(
             offset: Offset(offset, offset),
             child: Container(
-              decoration: BoxDecoration(
-                color: retro.surface,
-                borderRadius: RetroTheme.radius,
-                border: Border.all(color: retro.border, width: 2.5),
-                boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
+              decoration: retro.surfaceDecoration(
+                borderColor: retro.border,
+                border: 2.5,
+                shadowDx: 4 - offset,
+                shadowDy: 4 - offset,
               ),
               child: child,
             ),
@@ -88,11 +88,12 @@ class _ModCardState extends ConsumerState<ModCard>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Title
-                    Text(
-                      widget.mod.title,
+                    MarioGameTitle(
+                      text: widget.mod.title,
+                      retro: retro,
+                      size: 14.5,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: retro.heading(size: 14.5, letterSpacing: -0.1),
                     ),
                     const SizedBox(height: 5),
 
@@ -138,20 +139,26 @@ class _ModCardState extends ConsumerState<ModCard>
 
               // ── Fav button ─────────────────────────────────────
               GestureDetector(
-                onTap: () => ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
+                onTap: () =>
+                    ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
                 child: Container(
                   width: 32,
                   height: 32,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: retro.surfaceAlt,
-                    border: Border.all(
-                      color: isFav ? retro.red : retro.border,
-                      width: isFav ? 2 : 1.5,
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      borderRadius: retro.radius,
+                      color: retro.surfaceAlt,
+                      border: Border.all(
+                        color: isFav ? retro.red : retro.border,
+                        width: retro.borderWidth(isFav ? 2 : 1.5),
+                      ),
                     ),
                   ),
-                  child: Icon(
-                    isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  child: MarioGameIcon(
+                    isFav
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
                     size: 16,
                     color: isFav ? retro.red : retro.inkDim,
                   ),
@@ -184,6 +191,7 @@ class _Thumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
 
     return Stack(
@@ -192,9 +200,24 @@ class _Thumbnail extends StatelessWidget {
         Container(
           width: _size,
           height: _size,
-          decoration: BoxDecoration(
-            border: Border.all(color: retro.border, width: 2),
-          ),
+          clipBehavior: Clip.antiAlias,
+          padding: retro.isMario ? const EdgeInsets.all(3) : EdgeInsets.zero,
+          decoration: retro.isMario
+              ? retro.surfaceDecoration(
+                  color: retro.secondaryAccent,
+                  borderColor: retro.border,
+                  shadowDx: 0,
+                  shadowDy: 0,
+                )
+              : retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    border: Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(2),
+                    ),
+                  ),
+                ),
           child: Hero(
             tag: 'mod_img_$modId',
             child: hasImage
@@ -238,6 +261,7 @@ class _StripedPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return SizedBox(
       width: size,
       height: size,
@@ -255,11 +279,21 @@ class _StripedPlaceholder extends StatelessWidget {
               width: 28,
               height: 28,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: retro.background,
-                border: Border.all(color: retro.border, width: 1.5),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.background,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(1.5),
+                  ),
+                ),
               ),
-              child: Icon(Icons.extension_rounded, size: 15, color: retro.inkDim),
+              child: MarioGameIcon(
+                Icons.extension_rounded,
+                size: 15,
+                color: retro.inkDim,
+              ),
             ),
           ),
         ],
@@ -280,8 +314,14 @@ class ModCardSkeleton extends StatelessWidget {
       highlightColor: retro.surfaceAlt,
       child: Container(
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          border: Border.all(color: retro.border, width: 2),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(2),
+            ),
+          ),
         ),
         child: Row(
           children: [

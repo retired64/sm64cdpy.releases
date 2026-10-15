@@ -12,7 +12,7 @@ final installationActionProvider = Provider.family
       return InstallationActionSelector.select(
         identity: identity,
         operation: operations[identity.operationKey],
-        library: libraryValue.value?.snapshot,
+        library: libraryValue.isLoading ? null : libraryValue.value?.snapshot,
         libraryLoading: libraryValue.isLoading,
       );
     });

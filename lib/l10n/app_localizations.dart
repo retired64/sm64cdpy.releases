@@ -1695,7 +1695,7 @@ abstract class AppLocalizations {
   /// Settings screen section header for theme mode selection
   ///
   /// In en, this message translates to:
-  /// **'THEME MODE'**
+  /// **'Theme mode'**
   String get settingsThemeMode;
 
   /// Settings screen message when the mod database is updated
@@ -2205,7 +2205,7 @@ abstract class AppLocalizations {
   /// Settings tile label for the language selector
   ///
   /// In en, this message translates to:
-  /// **'LANGUAGE'**
+  /// **'Language'**
   String get settingsLanguageMode;
 
   /// Language option to follow the device's system language
@@ -2388,12 +2388,6 @@ abstract class AppLocalizations {
   /// **'Updates'**
   String get libraryUpdates;
 
-  /// No description provided for @libraryDetected.
-  ///
-  /// In en, this message translates to:
-  /// **'Detected'**
-  String get libraryDetected;
-
   /// No description provided for @libraryRecent.
   ///
   /// In en, this message translates to:
@@ -2496,24 +2490,6 @@ abstract class AppLocalizations {
   /// **'Updates confirmed by the catalog will appear here. You can still check each content section.'**
   String get libraryUpdatesEmptyBody;
 
-  /// No description provided for @libraryDetectedEmptyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'NO EXTERNAL CONTENT DETECTED'**
-  String get libraryDetectedEmptyTitle;
-
-  /// No description provided for @libraryDetectedEmptyBody.
-  ///
-  /// In en, this message translates to:
-  /// **'No untracked Lua content was found in the selected folders. Refresh after making external changes.'**
-  String get libraryDetectedEmptyBody;
-
-  /// No description provided for @libraryDetectedOnDevice.
-  ///
-  /// In en, this message translates to:
-  /// **'Detected on device — not linked to the catalog'**
-  String get libraryDetectedOnDevice;
-
   /// No description provided for @libraryDiscoveryHeaderIdentified.
   ///
   /// In en, this message translates to:
@@ -2531,18 +2507,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlinked Lua'**
   String get libraryDiscoveryUnlinked;
-
-  /// No description provided for @libraryDetectedPath.
-  ///
-  /// In en, this message translates to:
-  /// **'Entry file'**
-  String get libraryDetectedPath;
-
-  /// No description provided for @libraryDetectedScanLimit.
-  ///
-  /// In en, this message translates to:
-  /// **'The safety scan limit was reached. Some content may not be shown.'**
-  String get libraryDetectedScanLimit;
 
   /// No description provided for @libraryErrorTitle.
   ///
@@ -2675,6 +2639,492 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'VIEW COMMUNITY DISCUSSION'**
   String get detailViewDiscussion;
+
+  /// No description provided for @settingsInterfaceTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface theme'**
+  String get settingsInterfaceTheme;
+
+  /// No description provided for @settingsInterfaceThemeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an included design. Applies to the app; the floating panel keeps its dark design.'**
+  String get settingsInterfaceThemeDesc;
+
+  /// No description provided for @themeRetroManga.
+  ///
+  /// In en, this message translates to:
+  /// **'Retro Manga'**
+  String get themeRetroManga;
+
+  /// No description provided for @themeMario64.
+  ///
+  /// In en, this message translates to:
+  /// **'Mario 64'**
+  String get themeMario64;
+
+  /// No description provided for @themeSm64Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64 Intro'**
+  String get themeSm64Intro;
+
+  /// No description provided for @themeModeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeModeLight;
+
+  /// No description provided for @themeModeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeModeDark;
+
+  /// No description provided for @themeModeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system'**
+  String get themeModeSystem;
+
+  /// No description provided for @themeSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the appearance. Try again.'**
+  String get themeSaveFailed;
+
+  /// No description provided for @themeSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving appearance'**
+  String get themeSaving;
+
+  /// No description provided for @gameModsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Game mods'**
+  String get gameModsTitle;
+
+  /// No description provided for @gameModsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose mods for the next game start'**
+  String get gameModsSubtitle;
+
+  /// No description provided for @gameModsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the game before making changes. These switches configure Lua mods and DynOS/Touch Controls packs for the next start.'**
+  String get gameModsHint;
+
+  /// No description provided for @gameModsSelectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the game’s user folder containing sm64config.txt and mods.'**
+  String get gameModsSelectHint;
+
+  /// No description provided for @gameModsConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the game first. Apply this selection for its next start?'**
+  String get gameModsConfirm;
+
+  /// No description provided for @gameModsCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get gameModsCancel;
+
+  /// No description provided for @gameModsApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get gameModsApply;
+
+  /// No description provided for @gameModsSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Select user folder'**
+  String get gameModsSelect;
+
+  /// No description provided for @gameModsDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get gameModsDisconnect;
+
+  /// No description provided for @gameModsConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'The configuration changed or another enabled mod is incompatible. Refresh and try again.'**
+  String get gameModsConflict;
+
+  /// No description provided for @gameModsBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot safely enable this mod. Check its structure and metadata, or disable an incompatible mod.'**
+  String get gameModsBlocked;
+
+  /// No description provided for @gameModsMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'This user folder does not match your selected mods folder. Choose the same game installation.'**
+  String get gameModsMismatch;
+
+  /// No description provided for @gameModsWriteError.
+  ///
+  /// In en, this message translates to:
+  /// **'The write could not be confirmed. Close the game and restore the previous configuration if necessary.'**
+  String get gameModsWriteError;
+
+  /// No description provided for @gameModsFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'The configuration or folder exceeds the supported limits or has an unsupported format. No change was applied.'**
+  String get gameModsFormat;
+
+  /// No description provided for @gameModsAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration unavailable. Check that user contains sm64config.txt and mods, and select the folder again with read/write access.'**
+  String get gameModsAccess;
+
+  /// No description provided for @gameModsRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore previous configuration'**
+  String get gameModsRestore;
+
+  /// No description provided for @gameModsRestoreConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'With the game closed, replace the configuration with the private backup from before the last edit? This also restores its other settings.'**
+  String get gameModsRestoreConfirm;
+
+  /// No description provided for @gameModsInstalling.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for downloads and installations to finish before changing game mods.'**
+  String get gameModsInstalling;
+
+  /// No description provided for @gameModsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No compatible Lua mods were found in the game folders.'**
+  String get gameModsEmpty;
+
+  /// No description provided for @gameModsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled for next start'**
+  String get gameModsEnabled;
+
+  /// No description provided for @gameModsDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled for next start'**
+  String get gameModsDisabled;
+
+  /// No description provided for @gameModsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get gameModsMore;
+
+  /// No description provided for @gameModsSize.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod reaches the game’s 35 MiB size limit and cannot be enabled.'**
+  String get gameModsSize;
+
+  /// No description provided for @gameModsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Selection saved and verified for the next game start.'**
+  String get gameModsSaved;
+
+  /// No description provided for @gameModsManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage game folder'**
+  String get gameModsManage;
+
+  /// Confirmed enabled game mods versus all controllable mods
+  ///
+  /// In en, this message translates to:
+  /// **'{enabled} of {total} enabled'**
+  String gameModsCount(int enabled, int total);
+
+  /// No description provided for @gameModsSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search mods, authors, categories…'**
+  String get gameModsSearch;
+
+  /// No description provided for @gameModsAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get gameModsAll;
+
+  /// No description provided for @gameModsEnabledFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get gameModsEnabledFilter;
+
+  /// No description provided for @gameModsDisabledFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get gameModsDisabledFilter;
+
+  /// No description provided for @gameModsNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No mods match this search or filter.'**
+  String get gameModsNoResults;
+
+  /// No description provided for @gameModsClearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get gameModsClearSearch;
+
+  /// No description provided for @gameModsDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod details'**
+  String get gameModsDetails;
+
+  /// No description provided for @gameModsCloseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get gameModsCloseDetails;
+
+  /// No description provided for @marioRomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Original game resources'**
+  String get marioRomTitle;
+
+  /// No description provided for @marioRomBuiltIn.
+  ///
+  /// In en, this message translates to:
+  /// **'ROM not selected'**
+  String get marioRomBuiltIn;
+
+  /// No description provided for @marioRomReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Original interface ready'**
+  String get marioRomReady;
+
+  /// No description provided for @marioRomDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Mario themes use the ROM in your connected user folder. Images and fonts are prepared privately once and reused later. No separate ROM selection is needed.'**
+  String get marioRomDescription;
+
+  /// No description provided for @marioRomImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare from game folder'**
+  String get marioRomImport;
+
+  /// No description provided for @marioRomPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing game resources…'**
+  String get marioRomPreparing;
+
+  /// No description provided for @marioRomCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel import'**
+  String get marioRomCancel;
+
+  /// No description provided for @marioRomRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Use built-in design'**
+  String get marioRomRemove;
+
+  /// No description provided for @marioRomUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This ROM is not supported. Select an unmodified US .z64 ROM. Your previous design is still available.'**
+  String get marioRomUnsupported;
+
+  /// No description provided for @marioRomFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read or save the resources. Select the file again and check available storage. Your previous design is still available.'**
+  String get marioRomFailed;
+
+  /// No description provided for @marioRomSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Original game resources are ready.'**
+  String get marioRomSuccess;
+
+  /// No description provided for @marioRomUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the ROM again to upgrade the original interface'**
+  String get marioRomUpgrade;
+
+  /// No description provided for @gameFolderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect SM64CoopDX'**
+  String get gameFolderTitle;
+
+  /// No description provided for @gameFolderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the main game folder once to find mods and DynOS packs both inside and outside user, plus the ROM for Mario themes.'**
+  String get gameFolderSummary;
+
+  /// No description provided for @gameFolderGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the main com.maniscat2.sm64coopdx folder, the one containing user. We will check mods and dynos/packs both here and inside user. Configuration and ROM stay in user; new installations also go inside user. Select the main folder, not user or an individual file.'**
+  String get gameFolderGuide;
+
+  /// No description provided for @gameFolderChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose game folder'**
+  String get gameFolderChoose;
+
+  /// No description provided for @gameFolderLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get gameFolderLater;
+
+  /// No description provided for @gameFolderConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Game connected'**
+  String get gameFolderConnected;
+
+  /// No description provided for @gameFolderResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Library: mods, user/mods, dynos/packs and user/dynos/packs. New installations: user/mods and user/dynos/packs.'**
+  String get gameFolderResolved;
+
+  /// No description provided for @gameFolderConfigReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Game mod settings found.'**
+  String get gameFolderConfigReady;
+
+  /// No description provided for @gameFolderConfigMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the game once to create its mod settings. Downloads and themes remain available.'**
+  String get gameFolderConfigMissing;
+
+  /// No description provided for @gameFolderRomFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Game ROM found. Mario themes can prepare their resources when selected.'**
+  String get gameFolderRomFound;
+
+  /// No description provided for @gameFolderRomMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No compatible ROM was found in user. Open SM64CoopDX and set up its ROM, then try again.'**
+  String get gameFolderRomMissing;
+
+  /// No description provided for @gameFolderChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change game folder'**
+  String get gameFolderChange;
+
+  /// No description provided for @gameFolderInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the main game folder containing user, normally com.maniscat2.sm64coopdx. Open the game once if its user folder is not ready.'**
+  String get gameFolderInvalid;
+
+  /// No description provided for @gameFolderAccessLost.
+  ///
+  /// In en, this message translates to:
+  /// **'The game folder is unavailable. Choose it again to reconnect.'**
+  String get gameFolderAccessLost;
+
+  /// No description provided for @gameFolderDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect game'**
+  String get gameFolderDisconnect;
+
+  /// No description provided for @gameFolderDisconnectBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop using this folder for mods, DynOS and ROM detection. Your game files, installed mods and prepared theme resources will stay on the device.'**
+  String get gameFolderDisconnectBody;
+
+  /// No description provided for @gameFolderPrepareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare Mario theme'**
+  String get gameFolderPrepareTitle;
+
+  /// No description provided for @gameFolderPrepareBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We will read the ROM in your connected game folder and prepare the theme’s images and fonts. This is done once; the ROM and game configuration stay unchanged.'**
+  String get gameFolderPrepareBody;
+
+  /// No description provided for @gameFolderPrepare.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare theme'**
+  String get gameFolderPrepare;
+
+  /// No description provided for @gameFolderBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for downloads and installations to finish before changing the game folder.'**
+  String get gameFolderBusy;
+
+  /// No description provided for @gameModsLuaType.
+  ///
+  /// In en, this message translates to:
+  /// **'Lua mods'**
+  String get gameModsLuaType;
+
+  /// No description provided for @gameModsDynosType.
+  ///
+  /// In en, this message translates to:
+  /// **'DynOS / Touch Controls'**
+  String get gameModsDynosType;
+
+  /// No description provided for @gameFolderUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Access is limited to user. Choose the main game folder to include mods and DynOS packs outside user too.'**
+  String get gameFolderUpgrade;
+
+  /// No description provided for @gameDynosEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No DynOS / Touch Controls pack folders were found in the game folders.'**
+  String get gameDynosEmpty;
+
+  /// No description provided for @gameDynosSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search DynOS / Touch Controls packs…'**
+  String get gameDynosSearch;
 }
 
 class _AppLocalizationsDelegate

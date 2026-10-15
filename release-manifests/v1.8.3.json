@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.3",
+  "build": 22,
+  "publishedAt": "2026-10-14T02:59:33Z",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "Game mod controls and the Mario 64 interface",
+      "summary": "Version 1.8.3 brings verified game mod activation to Library, unifies local mod information, and adds the Mario 64 interface alongside Retro Manga with consistent Settings selectors.",
+      "highlights": [
+        "Enable or disable compatible local Lua mods for the next game start.",
+        "One Game mods view combines activation, author, category, version information and descriptions.",
+        "Choose Retro Manga or the rebuilt Mario 64 interface with original ROM materials and typography.",
+        "Interface theme, appearance mode and language have matching animated selectors."
+      ],
+      "sections": [
+        {
+          "heading": "Library and game mod controls",
+          "items": [
+            "Game mods is the main Library view. It replaces the separate Detected tab and lists both existing mods and content installed by SM64CDPY when they match the game’s supported structure.",
+            "Activation uses the real folder or Lua filename. Local search, enabled/disabled filters, counters and read-only details include author, category, version labels and descriptions when available.",
+            "Select the game’s user folder once to grant persistent access to sm64config.txt. Close the game before editing: selections apply to its next start, and DynOS/Touch Controls retain their separate configuration.",
+            "Saving checks known local incompatibilities and the game’s size limit, preserves unrelated configuration lines, creates a private backup and verifies the written result. Previous configuration can be restored with confirmation.",
+            "Cards, controls, progress, dialogs and save feedback follow the selected interface theme. The retired discovery view no longer triggers a second automatic scan; installation receipts, update checks and history keep their distinct roles.",
+            "One game user folder connects the Library, mods, DynOS/Touch Controls and ROM detection for Mario themes. Guided setup explains the folder picker; prepared themes reuse their private resources.",
+            "Library also enables or disables DynOS and Touch Controls pack folders using the game’s dynos-pack directive, with legacy compatibility and independent Lua/pack identities. VIP and OMMR Pack no longer offer unused favorite buttons or long-press shortcuts.",
+            "Select the main game folder to discover Lua mods and DynOS packs both inside and outside user, respecting each subsystem’s duplicate-name priority. Existing user-only access can be upgraded; installations and ROM remain in user.",
+            "Library separates Lua Game mods from DynOS / Touch Controls packs, with independent counts, searches and filters while preserving verified activation."
+          ]
+        },
+        {
+          "heading": "Retro Manga and Mario 64 themes",
+          "items": [
+            "Retro Manga remains the default. Mario 64 rebuilds the main interface around original file-select materials, square frames, game skies and HUD accents in light and dark modes.",
+            "Themes are remembered after reopening. Choosing Mario 64 requests the ROM once when its complete local resource set is missing; cancellation preserves the previous theme. Brightness remains independent.",
+            "Mario 64 uses menu, dialog and HUD typography generated privately from the ROM. Colored headings use original glyphs; characters missing from the US ROM retain readable language fallbacks.",
+            "An unmodified US .z64 ROM supplies 151 images and three generated fonts, including menu materials, cursors, icons and Clouds/BBH skies. Resources stay private outside Android backup, and no ROM or extracted artwork is bundled. Older 15-texture imports can be reimported without losing the previous set on cancellation.",
+            "SM64 Intro adds a golden day menu and a blue night menu with dark panels, ROM lettering and Mario save-slot controls for confirmed active/inactive game mods. It reuses an existing Mario 64 ROM import.",
+            "Mod details use a framed cover without a banner, readable menu panels, adaptive statistics and larger captions. Long download labels and version dates wrap without clipping."
+          ]
+        },
+        {
+          "heading": "Consistent Settings",
+          "items": [
+            "Interface theme, appearance mode and language show the current choice and reveal their options through matching expandable selectors.",
+            "The language selector keeps its arrow and expansion animations and closes after the choice is saved.",
+            "Mario 64 gives Settings themed menu surfaces, beveled frames and consistent selection indicators.",
+            "Mario 64 section headings use the available width; settings use consistent readable option, description and folder-path sizes.",
+            "Game folder setup and ROM preparation use theme-native menu panels, readable status rows and matching animated Settings expansion."
+          ]
+        },
+        {
+          "heading": "Appearance recovery and readability",
+          "items": [
+            "Appearance changes are confirmed after saving; simultaneous requests are blocked and failed saves preserve the previous selection.",
+            "Older installations retain their appearance mode. Missing or unavailable design IDs fall back to Retro Manga.",
+            "Filled buttons, badges, filters and progress surfaces use the matching foreground contrast role."
+          ]
+        },
+        {
+          "heading": "Floating panel and updates",
+          "items": [
+            "The floating panel keeps its independent fixed dark design. Theme selection and game mod editing apply to the main app.",
+            "Download and installation behavior is preserved. Version 1.8.3 is an optional update."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Control de mods y la interfaz Mario 64",
+      "summary": "La versión 1.8.3 incorpora activación verificada de mods desde Biblioteca, reúne la información de los mods locales y añade la interfaz Mario 64 junto a Retro Manga con selectores coherentes en Ajustes.",
+      "highlights": [
+        "Activa o desactiva mods Lua locales compatibles para el próximo inicio del juego.",
+        "Una sola vista Mods del juego reúne activación, autor, categoría, versión informativa y descripción.",
+        "Elige Retro Manga o la interfaz Mario 64 reconstruida con materiales y tipografías de la ROM.",
+        "Tema de interfaz, modo de apariencia e idioma comparten selectores animados."
+      ],
+      "sections": [
+        {
+          "heading": "Biblioteca y control de mods del juego",
+          "items": [
+            "Mods del juego es la vista principal de Biblioteca. Sustituye la pestaña Detectados y muestra tanto mods existentes como contenido instalado por SM64CDPY cuando cumplen la estructura compatible con el juego.",
+            "La activación usa el nombre real de la carpeta o archivo Lua. Búsqueda local, filtros de activados/desactivados, contadores y detalles de solo lectura incluyen autor, categoría, versión informativa y descripción cuando existen.",
+            "Selecciona una vez la carpeta user del juego para conceder acceso persistente a sm64config.txt. Cierra el juego antes de editar: la selección se aplica en el próximo inicio, y DynOS/Touch Controls mantienen su configuración independiente.",
+            "El guardado comprueba incompatibilidades locales conocidas y el límite de tamaño del juego, conserva las demás líneas de configuración, crea un respaldo privado y verifica el resultado escrito. La configuración anterior puede restaurarse con confirmación.",
+            "Tarjetas, controles, progreso, diálogos y avisos de guardado siguen el tema elegido. La vista retirada ya no provoca otro escaneo automático; recibos de instalación, comprobación de actualizaciones e historial conservan sus funciones propias.",
+            "Una sola carpeta user del juego conecta Biblioteca, mods, DynOS/Touch Controls y detección de ROM para temas Mario. La guía explica el selector; los temas preparados reutilizan sus recursos privados.",
+            "Biblioteca también activa y desactiva carpetas de packs DynOS y Touch Controls mediante la directiva dynos-pack del juego, con compatibilidad legacy e identidades independientes de Lua. VIP y OMMR Pack retiran botones de favoritos y el gesto largo.",
+            "Selecciona la carpeta principal del juego para detectar mods Lua y packs DynOS dentro y fuera de user, respetando la prioridad de nombres duplicados de cada subsistema. El acceso antiguo a user se puede ampliar; instalaciones y ROM permanecen en user.",
+            "Biblioteca separa Mods del juego Lua de los packs DynOS / Touch Controls, con contadores, búsquedas y filtros independientes y la misma activación verificada."
+          ]
+        },
+        {
+          "heading": "Temas Retro Manga y Mario 64",
+          "items": [
+            "Retro Manga sigue como tema por defecto. Mario 64 reconstruye la interfaz principal con materiales del selector original, marcos cuadrados, cielos del juego y HUD en modos claro y oscuro.",
+            "Los temas se recuerdan al reabrir. Elegir Mario 64 pide la ROM una vez si falta su conjunto local completo; cancelar conserva el tema anterior. El brillo sigue siendo independiente.",
+            "Mario 64 utiliza fuentes de menú, diálogo y HUD generadas privadamente desde la ROM. Los encabezados a color usan glifos originales; caracteres ausentes de la ROM US conservan un fallback legible para el idioma.",
+            "Una ROM US .z64 sin modificar proporciona 151 imágenes y tres fuentes generadas, incluidos materiales, cursores, iconos y cielos Clouds/BBH. Los recursos quedan privados y fuera del backup Android; no se incluye ROM ni arte extraído en el APK. Las importaciones antiguas de 15 texturas pueden actualizarse sin perderlas al cancelar.",
+            "SM64 Intro añade un menú dorado de día y azul nocturno, con paneles oscuros, letras de la ROM y controles de ranura Mario para mods activos/inactivos confirmados. Reutiliza la importación de ROM de Mario 64.",
+            "La ficha del mod usa portada enmarcada sin banner, paneles de menú legibles, estadísticas adaptables y textos mayores. Las etiquetas de descarga y fechas se distribuyen sin recortarse."
+          ]
+        },
+        {
+          "heading": "Ajustes coherentes",
+          "items": [
+            "Tema de interfaz, modo de apariencia e idioma muestran la selección actual y despliegan sus opciones con el mismo diseño.",
+            "El selector de idioma conserva las animaciones de flecha y expansión, y se cierra después de guardar la selección.",
+            "Mario 64 incorpora superficies de menú, marcos biselados e indicadores de selección coherentes en Ajustes.",
+            "Los encabezados de Mario 64 aprovechan el ancho disponible; Ajustes distingue tamaños legibles para opciones, descripciones y rutas.",
+            "La conexión del juego y la preparación de ROM usan paneles propios de cada tema, estados legibles y el mismo desplegable animado de Ajustes."
+          ]
+        },
+        {
+          "heading": "Recuperación de apariencia y legibilidad",
+          "items": [
+            "Los cambios de apariencia se confirman después de guardar; se bloquean solicitudes simultáneas y los fallos conservan la selección anterior.",
+            "Las instalaciones anteriores conservan su modo de apariencia. Los IDs de diseño ausentes o no disponibles recuperan Retro Manga.",
+            "Botones rellenos, etiquetas, filtros y superficies de progreso usan el color de texto correspondiente a su contraste."
+          ]
+        },
+        {
+          "heading": "Panel flotante y actualizaciones",
+          "items": [
+            "El panel flotante conserva su diseño oscuro fijo e independiente. La selección de tema y la edición de mods se aplican a la app principal.",
+            "Se mantiene el funcionamiento de descargas e instalaciones. La versión 1.8.3 es una actualización opcional."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Controle de mods e a interface Mario 64",
+      "summary": "A versão 1.8.3 traz ativação verificada de mods na Biblioteca, reúne informações dos mods locais e adiciona a interface Mario 64 ao lado de Retro Manga com seletores consistentes nas Configurações.",
+      "highlights": [
+        "Ative ou desative mods Lua locais compatíveis para a próxima abertura do jogo.",
+        "Uma única aba Mods do jogo reúne ativação, autor, categoria, versão informativa e descrição.",
+        "Escolha Retro Manga ou a interface Mario 64 reconstruída com materiais e fontes da ROM.",
+        "Tema de interface, modo de aparência e idioma compartilham seletores animados."
+      ],
+      "sections": [
+        {
+          "heading": "Biblioteca e controle de mods do jogo",
+          "items": [
+            "Mods do jogo é a aba principal da Biblioteca. Substitui a aba Detectados e mostra tanto mods existentes quanto conteúdo instalado pelo SM64CDPY quando seguem a estrutura compatível com o jogo.",
+            "A ativação usa o nome real da pasta ou arquivo Lua. Busca local, filtros de ativados/desativados, contadores e detalhes somente para leitura incluem autor, categoria, versão informativa e descrição quando disponíveis.",
+            "Selecione uma vez a pasta user do jogo para conceder acesso persistente a sm64config.txt. Feche o jogo antes de editar: a seleção vale para a próxima abertura, e DynOS/Touch Controls mantêm sua configuração separada.",
+            "A gravação verifica incompatibilidades locais conhecidas e o limite de tamanho do jogo, preserva as demais linhas de configuração, cria um backup privado e confirma o resultado gravado. A configuração anterior pode ser restaurada com confirmação.",
+            "Cartões, controles, progresso, diálogos e avisos de gravação acompanham o tema escolhido. A aba removida não dispara outra busca automática; recibos de instalação, verificação de atualizações e histórico mantêm suas funções próprias.",
+            "Uma única pasta user do jogo conecta a Biblioteca, mods, DynOS/Touch Controls e detecção de ROM dos temas Mario. A orientação explica o seletor; temas preparados reutilizam seus recursos privados.",
+            "A Biblioteca também ativa e desativa pastas de pacotes DynOS e Touch Controls pela diretiva dynos-pack do jogo, com compatibilidade legada e identidades independentes de Lua. VIP e OMMR Pack removem botões de favoritos e o gesto de toque longo.",
+            "Selecione a pasta principal do jogo para detectar mods Lua e pacotes DynOS dentro e fora de user, respeitando a prioridade de nomes duplicados de cada subsistema. O acesso antigo a user pode ser ampliado; instalações e ROM permanecem em user.",
+            "A Biblioteca separa mods Lua dos pacotes DynOS / Touch Controls, com contagens, buscas e filtros independentes e a mesma ativação verificada."
+          ]
+        },
+        {
+          "heading": "Temas Retro Manga e Mario 64",
+          "items": [
+            "Retro Manga continua como visual padrão. Mario 64 reconstrói a interface principal com materiais do seletor original, molduras quadradas, céus do jogo e HUD nos modos claro e escuro.",
+            "Os temas são lembrados ao reabrir. Escolher Mario 64 pede a ROM uma vez se faltar o conjunto local completo; cancelar mantém o tema anterior. O brilho continua independente.",
+            "Mario 64 usa fontes de menu, diálogo e HUD geradas privadamente da ROM. Cabeçalhos coloridos usam glifos originais; caracteres ausentes na ROM US mantêm um fallback legível para o idioma.",
+            "Uma ROM US .z64 sem modificações fornece 151 imagens e três fontes geradas, com materiais, cursores, ícones e céus Clouds/BBH. Os recursos ficam privados e fora do backup Android; nenhuma ROM ou arte extraída é incluída no APK. Importações antigas de 15 texturas podem ser atualizadas sem perdê-las ao cancelar.",
+            "SM64 Intro traz um menu dourado de dia e azul à noite, com painéis escuros, letras da ROM e controles de slot Mario para mods ativos/inativos confirmados. Reutiliza a importação de ROM do Mario 64.",
+            "Os detalhes do mod usam capa emoldurada sem banner, painéis legíveis, estatísticas adaptáveis e textos maiores. Rótulos de download e datas se ajustam sem cortes."
+          ]
+        },
+        {
+          "heading": "Configurações consistentes",
+          "items": [
+            "Tema de interface, modo de aparência e idioma mostram a seleção atual e expandem suas opções com o mesmo visual.",
+            "O seletor de idioma mantém as animações da seta e da expansão e fecha depois de salvar a seleção.",
+            "Mario 64 traz superfícies de menu, molduras com relevo e indicadores de seleção consistentes aos Ajustes.",
+            "Os títulos de seção do Mario 64 aproveitam a largura disponível; as Configurações usam tamanhos legíveis para opções, descrições e caminhos.",
+            "A conexão do jogo e a preparação da ROM usam painéis de cada tema, estados legíveis e a mesma expansão animada dos Ajustes."
+          ]
+        },
+        {
+          "heading": "Recuperação de aparência e legibilidade",
+          "items": [
+            "Mudanças de aparência são confirmadas depois de salvar; solicitações simultâneas são bloqueadas e falhas preservam a seleção anterior.",
+            "Instalações anteriores mantêm o modo de aparência. IDs de design ausentes ou indisponíveis retornam a Retro Manga.",
+            "Botões preenchidos, etiquetas, filtros e superfícies de progresso usam a cor de texto correspondente ao contraste."
+          ]
+        },
+        {
+          "heading": "Painel flutuante e atualizações",
+          "items": [
+            "O painel flutuante mantém seu visual escuro fixo e independente. A escolha de tema e a edição de mods se aplicam ao app principal.",
+            "O funcionamento de downloads e instalações é preservado. A versão 1.8.3 é uma atualização opcional."
+          ]
+        }
+      ]
+    }
+  }
+}

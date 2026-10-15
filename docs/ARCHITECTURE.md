@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado contra `1.8.2+21` el 2026-09-28.
+Revisado para la preparación de `1.8.3+22` en `custom-themes` el 2026-10-13; sin merge ni publicación.
 
 ## Alcance
 
@@ -100,20 +100,43 @@ principal mediante un bus de invalidación que no conserva autoridad; el
 válida según `requestId`. Recibos nativos, SAF y WorkManager continúan siendo
 las fuentes de verdad.
 
-El descubrimiento de contenido previo o copiado por fuera de SM64CDPY vive en
-una fuente separada. `InstallationDiscoveryScanner` recorre SAF únicamente al
-abrir Biblioteca, al cambiar una carpeta o mediante refresco manual; nunca
-durante cada render. El recorrido y la lectura de encabezados Lua están
-acotados y se ejecutan fuera del hilo principal. Su caché nativa no es un
-recibo: los hallazgos carecen deliberadamente de identidad de catálogo y solo
-alimentan la vista Detectados de la proyección Hive v3. Un marcador Lua y sus
-metadatos pueden elevar la confianza estructural, pero no autorizan a mostrar
-Instalado ni Actualizar. DynOS y Touch Controls siguen siendo indistinguibles
-por su carpeta física compartida.
+Los mods locales previos o copiados por fuera de SM64CDPY aparecen en la misma
+vista Mods del juego que los descargados por la app. `GameModActivationStore`
+enumera únicamente unidades válidas según el juego: Lua inmediato o carpeta
+inmediata con `main.lua`. La identidad de activación procede del nombre físico;
+`LuaModMetadata` aporta autor, categoría, descripción y versión informativa desde
+el mismo encabezado limitado. Metadata no crea recibos ni identidad de catálogo.
+No se ofrece una pestaña Detectados ni un segundo escaneo de descubrimiento al
+entrar/refrescar Biblioteca, cambiar carpeta u olvidar un recibo. La caché legacy
+no se adjunta a las instantáneas de recibos. El endpoint/modelo de descubrimiento
+anterior permanece para compatibilidad técnica, sin consumidores visuales.
+DynOS/Touch conservan su contrato independiente `dynos-pack:` con switches propios en Biblioteca.
 
 ## Navegación y estado
 
 GoRouter define un `ShellRoute` para las pantallas principales y una ruta de detalle fuera del shell. Riverpod administra catálogo, filtros, paginación, favoritos, tema e idioma.
+
+## Temas incluidos — rama custom-themes
+
+Implementado el 2026-10-13; pendiente de Actions y matriz física. Ajustes separa
+el diseño incluido (Retro Manga, Mario 64 o SM64 Intro) del modo
+claro/oscuro/sistema. `AppearanceNotifier` es el único escritor de `theme_id` y
+`theme_mode` en Hive y publica una selección confirmada solo tras guardar.
+
+`AppThemeDesign` y `AppThemeCatalog` definen paletas, formas, tipografía y
+tratamientos semánticos de fondo, superficie y selección. `RetroTheme` conserva
+la API de acceso y ahora es una ThemeExtension; los widgets Material y los
+personalizados comparten tokens. `ThemeBackdrop` y `surfaceDecoration()` aplican
+la interpretación N64 en puntos centrales. Los recursos originales opcionales
+se importan localmente y se resuelven exclusivamente para Mario; el APK no los
+incluye. Algunas composiciones Mario utilizan marcos y contadores específicos.
+MaterialApp y las barras leen la variante efectiva. No se recrean router ni
+providers de operaciones por cambiar de diseño.
+
+La raíz del overlay produce su ThemeData desde `RetroTheme.overlay()` y conserva
+su política oscura fija, sin Hive ni mensajes nuevos de tema. El inventario de
+cada Dart, el flujo y el procedimiento para añadir diseños están en
+[cuatom_themea.md](../cuatom_themea.md). No se modificó Android nativo.
 
 ## Límites importantes
 
@@ -124,3 +147,73 @@ GoRouter define un `ShellRoute` para las pantallas principales y una ruta de det
 5. Los eventos en memoria no sustituyen el estado persistido de WorkManager.
 
 El checklist obligatorio para cambios de estado compartido está en [`../AGENTS.md`](../AGENTS.md).
+
+### Presentación compartida de Ajustes
+
+Los selectores de tema, modo e idioma reutilizan `SettingsExpansionGroup` y
+`SettingsSelectionOption`, con animaciones de giro/expansión 200/220 ms. Mario 64
+habilita superficies suaves únicamente en Ajustes mediante `softSettingsPanels`;
+Retro mantiene su estilo. `LocaleSelector` espera el setter de idioma existente
+antes de cerrar y controla loading local sin crear otra fuente persistente.
+
+## Activación de mods — candidata 1.8.3
+
+Biblioteca incluye una sección de unidades Lua del juego con switches de selección
+para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
+comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
+DynOS/Touch mantienen su directiva separada `dynos-pack:` dentro de Biblioteca. La validación física está pendiente.
+Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
+
+Biblioteca integra Mods del juego como pestaña nativa del sistema visual, con
+búsqueda y filtros locales, contador de activados, tarjetas adaptadas a cada
+diseño y confirmación de juego cerrado por visita (reiniciada al reanudar).
+Restaurar continúa exigiendo confirmación; cada escritura conserva la autoridad
+nativa. Ver [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md), integración visual.
+
+Mario 64 utiliza TypefaceMario64 de `fonts/` únicamente en títulos. El cuerpo y
+las descripciones mantienen la tipografía predeterminada; Roboto sirve de respaldo
+para los acentos ausentes en la fuente de títulos. Roles Material y helpers
+comparten esa definición. CI carga la fuente real para probar ancho estrecho y
+texto ampliado. Pendiente la revisión visual en dispositivo.
+
+
+## Mario 64: recursos locales y menú original
+
+Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
+usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
+selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
+overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
+de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validado en [Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573): análisis, 83 tests Flutter,
+APK arm64 y tests Kotlin correctos para `f23034a`. Sigue pendiente la matriz
+física con ROM real; estos tests usan datos sintéticos y no una ROM del usuario.
+
+
+## Reconstrucción Mario 64 v2 — nueva validación pendiente
+
+Se sustituye la interpretación de 15 texturas débiles por 151 imágenes y tres
+fuentes privadas derivadas de ROM: materiales opacos, cielos Clouds/BBH, cursor,
+HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
+principales. La selección de Mario coordina importación antes de guardar tema;
+v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
+[MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.
+
+## Conexión unificada del juego
+
+Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada,
+mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
+migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+Validación Actions pendiente; revisión física requerida.
+
+Biblioteca integra packs DynOS/Touch Controls de user/dynos/packs mediante
+`dynos-pack:`; Lua conserva `enable-mod:`. Identidades por tipo/nombre, backup
+y guardado verificado compartidos. VIP/OMMR Pack retiran favoritos y gesto largo.
+Plan y límites: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Validado en [Testing #232](https://github.com/retired64/sm64cdpy.releases/actions/runs/38679650559) para `8ff4975`: traducciones, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Prueba física pendiente.
+
+## Resolución de rutas Android — esquema 2
+
+Selección principal de com.maniscat2.sm64coopdx, cuatro rutas de lectura y
+destinos de escritura en user. Lua prioriza user; DynOS prioriza raíz. Migración
+limitada desde user con aviso para ampliar permiso. Contrato vigente al inicio
+de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. No se fusionó a main ni se publicó release.

@@ -935,7 +935,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Você será perguntado após cada download';
 
   @override
-  String get settingsThemeMode => 'MODO DE TEMA';
+  String get settingsThemeMode => 'Modo do tema';
 
   @override
   String settingsDatabaseUpdated(int count, String date) {
@@ -1221,7 +1221,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsDynosFolderCleared => 'Seleção da pasta DynOS removida.';
 
   @override
-  String get settingsLanguageMode => 'IDIOMA';
+  String get settingsLanguageMode => 'Idioma';
 
   @override
   String get languageFollowSystem => 'Seguir sistema';
@@ -1321,9 +1321,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get libraryUpdates => 'Atualizações';
 
   @override
-  String get libraryDetected => 'Detectados';
-
-  @override
   String get libraryRecent => 'Recentes';
 
   @override
@@ -1377,17 +1374,6 @@ class AppLocalizationsPt extends AppLocalizations {
       'As atualizações confirmadas pelo catálogo aparecerão aqui. Você também pode verificar cada seção.';
 
   @override
-  String get libraryDetectedEmptyTitle => 'NENHUM CONTEÚDO EXTERNO DETECTADO';
-
-  @override
-  String get libraryDetectedEmptyBody =>
-      'Nenhum conteúdo Lua não registrado foi encontrado nas pastas selecionadas. Atualize após fazer alterações externas.';
-
-  @override
-  String get libraryDetectedOnDevice =>
-      'Detectado no dispositivo — não vinculado ao catálogo';
-
-  @override
   String get libraryDiscoveryHeaderIdentified => 'Cabeçalho identificado';
 
   @override
@@ -1395,13 +1381,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get libraryDiscoveryUnlinked => 'Lua não vinculado';
-
-  @override
-  String get libraryDetectedPath => 'Arquivo de entrada';
-
-  @override
-  String get libraryDetectedScanLimit =>
-      'O limite seguro de verificação foi atingido. Parte do conteúdo pode não aparecer.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA INDISPONÍVEL';
@@ -1477,6 +1456,285 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSA DA COMUNIDADE';
+
+  @override
+  String get settingsInterfaceTheme => 'Tema da interface';
+
+  @override
+  String get settingsInterfaceThemeDesc =>
+      'Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.';
+
+  @override
+  String get themeRetroManga => 'Retro Manga';
+
+  @override
+  String get themeMario64 => 'Mario 64';
+
+  @override
+  String get themeSm64Intro => 'SM64 Intro';
+
+  @override
+  String get themeModeLight => 'Claro';
+
+  @override
+  String get themeModeDark => 'Escuro';
+
+  @override
+  String get themeModeSystem => 'Seguir o sistema';
+
+  @override
+  String get themeSaveFailed =>
+      'Não foi possível salvar a aparência. Tente novamente.';
+
+  @override
+  String get themeSaving => 'Salvando aparência';
+
+  @override
+  String get gameModsTitle => 'Mods do jogo';
+
+  @override
+  String get gameModsSubtitle => 'Escolha os mods para a próxima abertura';
+
+  @override
+  String get gameModsHint =>
+      'Feche o jogo antes de alterar as opções. Estes controles configuram mods Lua e pacotes DynOS/Touch Controls para a próxima inicialização.';
+
+  @override
+  String get gameModsSelectHint =>
+      'Selecione a pasta user do jogo que contém sm64config.txt e mods.';
+
+  @override
+  String get gameModsConfirm =>
+      'Feche o jogo primeiro. Aplicar esta seleção para a próxima abertura?';
+
+  @override
+  String get gameModsCancel => 'Cancelar';
+
+  @override
+  String get gameModsApply => 'Aplicar';
+
+  @override
+  String get gameModsSelect => 'Selecionar pasta user';
+
+  @override
+  String get gameModsDisconnect => 'Desconectar';
+
+  @override
+  String get gameModsConflict =>
+      'A configuração mudou ou outro mod ativado é incompatível. Atualize e tente novamente.';
+
+  @override
+  String get gameModsBlocked =>
+      'Não é possível ativar este mod com segurança. Confira sua estrutura e dados ou desative um mod incompatível.';
+
+  @override
+  String get gameModsMismatch =>
+      'Esta pasta user não corresponde à pasta de mods selecionada. Escolha a mesma instalação do jogo.';
+
+  @override
+  String get gameModsWriteError =>
+      'Não foi possível confirmar a gravação. Feche o jogo e restaure a configuração anterior se necessário.';
+
+  @override
+  String get gameModsFormat =>
+      'A configuração ou pasta excede os limites aceitos ou usa um formato incompatível. A alteração não foi aplicada.';
+
+  @override
+  String get gameModsAccess =>
+      'Configuração indisponível. Confira se user contém sm64config.txt e mods e selecione a pasta novamente com acesso de leitura e gravação.';
+
+  @override
+  String get gameModsRestore => 'Restaurar configuração anterior';
+
+  @override
+  String get gameModsRestoreConfirm =>
+      'Com o jogo fechado, substituir a configuração pelo backup privado anterior à última edição? Isso também restaura as outras opções.';
+
+  @override
+  String get gameModsInstalling =>
+      'Aguarde o fim dos downloads e instalações antes de alterar os mods do jogo.';
+
+  @override
+  String get gameModsEmpty =>
+      'Nenhum mod Lua compatível foi encontrado nas pastas do jogo.';
+
+  @override
+  String get gameModsEnabled => 'Ativado para a próxima abertura';
+
+  @override
+  String get gameModsDisabled => 'Desativado para a próxima abertura';
+
+  @override
+  String get gameModsMore => 'Mostrar mais';
+
+  @override
+  String get gameModsSize =>
+      'Este mod atinge o limite de 35 MiB do jogo e não pode ser ativado.';
+
+  @override
+  String get gameModsSaved =>
+      'Seleção salva e verificada para a próxima abertura do jogo.';
+
+  @override
+  String get gameModsManage => 'Gerenciar pasta do jogo';
+
+  @override
+  String gameModsCount(int enabled, int total) {
+    return '$enabled de $total ativados';
+  }
+
+  @override
+  String get gameModsSearch => 'Buscar mods, autores, categorias…';
+
+  @override
+  String get gameModsAll => 'Todos';
+
+  @override
+  String get gameModsEnabledFilter => 'Ativados';
+
+  @override
+  String get gameModsDisabledFilter => 'Desativados';
+
+  @override
+  String get gameModsNoResults =>
+      'Nenhum mod corresponde à busca ou ao filtro.';
+
+  @override
+  String get gameModsClearSearch => 'Limpar busca';
+
+  @override
+  String get gameModsDetails => 'Detalhes do mod';
+
+  @override
+  String get gameModsCloseDetails => 'Fechar';
+
+  @override
+  String get marioRomTitle => 'Recursos do jogo original';
+
+  @override
+  String get marioRomBuiltIn => 'ROM não selecionada';
+
+  @override
+  String get marioRomReady => 'Interface original pronta';
+
+  @override
+  String get marioRomDescription =>
+      'Os temas Mario usam a ROM da pasta user conectada. As imagens e fontes são preparadas uma vez em armazenamento privado e reutilizadas depois. Não é preciso selecionar a ROM separadamente.';
+
+  @override
+  String get marioRomImport => 'Preparar pela pasta do jogo';
+
+  @override
+  String get marioRomPreparing => 'Preparando recursos do jogo…';
+
+  @override
+  String get marioRomCancel => 'Cancelar importação';
+
+  @override
+  String get marioRomRemove => 'Usar visual incluído';
+
+  @override
+  String get marioRomUnsupported =>
+      'Esta ROM não é compatível. Selecione uma ROM americana .z64 sem modificações. Seu visual anterior continua disponível.';
+
+  @override
+  String get marioRomFailed =>
+      'Não foi possível ler ou salvar os recursos. Escolha o arquivo novamente e confira o espaço disponível. Seu visual anterior continua disponível.';
+
+  @override
+  String get marioRomSuccess => 'Os recursos do jogo original estão prontos.';
+
+  @override
+  String get marioRomUpgrade =>
+      'Escolha a ROM novamente para atualizar a interface original';
+
+  @override
+  String get gameFolderTitle => 'Conectar SM64CoopDX';
+
+  @override
+  String get gameFolderSummary =>
+      'Escolha uma vez a pasta principal do jogo para encontrar mods e pacotes DynOS dentro e fora de user, além da ROM para os temas Mario.';
+
+  @override
+  String get gameFolderGuide =>
+      'Escolha a pasta principal com.maniscat2.sm64coopdx, aquela que contém user. Buscaremos mods e dynos/packs aqui e dentro de user. A configuração e a ROM permanecem em user; novas instalações também ficam dentro de user. Selecione a pasta principal, não user nem um arquivo.';
+
+  @override
+  String get gameFolderChoose => 'Escolher pasta do jogo';
+
+  @override
+  String get gameFolderLater => 'Agora não';
+
+  @override
+  String get gameFolderConnected => 'Jogo conectado';
+
+  @override
+  String get gameFolderResolved =>
+      'Biblioteca: mods, user/mods, dynos/packs e user/dynos/packs. Novas instalações: user/mods e user/dynos/packs.';
+
+  @override
+  String get gameFolderConfigReady => 'Configuração de mods encontrada.';
+
+  @override
+  String get gameFolderConfigMissing =>
+      'Abra o jogo uma vez para criar sua configuração de mods. Downloads e temas continuam disponíveis.';
+
+  @override
+  String get gameFolderRomFound =>
+      'ROM do jogo encontrada. Os temas Mario prepararão seus recursos quando selecionados.';
+
+  @override
+  String get gameFolderRomMissing =>
+      'Não encontramos uma ROM compatível em user. Abra o SM64CoopDX e configure sua ROM; depois tente novamente.';
+
+  @override
+  String get gameFolderChange => 'Mudar pasta do jogo';
+
+  @override
+  String get gameFolderInvalid =>
+      'Escolha a pasta principal do jogo que contém user, normalmente com.maniscat2.sm64coopdx. Abra o jogo uma vez se a pasta user ainda não estiver pronta.';
+
+  @override
+  String get gameFolderAccessLost =>
+      'A pasta do jogo não está disponível. Escolha-a novamente para reconectar.';
+
+  @override
+  String get gameFolderDisconnect => 'Desconectar jogo';
+
+  @override
+  String get gameFolderDisconnectBody =>
+      'Parar de usar esta pasta para mods, DynOS e detecção da ROM. Os arquivos do jogo, mods instalados e recursos de temas preparados continuarão no dispositivo.';
+
+  @override
+  String get gameFolderPrepareTitle => 'Preparar tema Mario';
+
+  @override
+  String get gameFolderPrepareBody =>
+      'Leremos a ROM da pasta conectada do jogo para preparar as imagens e fontes do tema. Isso é feito uma vez; a ROM e as configurações do jogo não são alteradas.';
+
+  @override
+  String get gameFolderPrepare => 'Preparar tema';
+
+  @override
+  String get gameFolderBusy =>
+      'Espere os downloads e instalações terminarem antes de mudar a pasta do jogo.';
+
+  @override
+  String get gameModsLuaType => 'Mods Lua';
+
+  @override
+  String get gameModsDynosType => 'DynOS / Touch Controls';
+
+  @override
+  String get gameFolderUpgrade =>
+      'O acesso está limitado a user. Escolha a pasta principal do jogo para incluir também os mods e pacotes DynOS fora de user.';
+
+  @override
+  String get gameDynosEmpty =>
+      'Nenhuma pasta de pacote DynOS / Touch Controls foi encontrada nas pastas do jogo.';
+
+  @override
+  String get gameDynosSearch => 'Buscar pacotes DynOS / Touch Controls…';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2410,7 +2668,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Você será perguntado após cada download';
 
   @override
-  String get settingsThemeMode => 'MODO DE TEMA';
+  String get settingsThemeMode => 'Modo do tema';
 
   @override
   String settingsDatabaseUpdated(int count, String date) {
@@ -2696,7 +2954,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get settingsDynosFolderCleared => 'Seleção da pasta DynOS removida.';
 
   @override
-  String get settingsLanguageMode => 'IDIOMA';
+  String get settingsLanguageMode => 'Idioma';
 
   @override
   String get languageFollowSystem => 'Seguir sistema';
@@ -2796,9 +3054,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get libraryUpdates => 'Atualizações';
 
   @override
-  String get libraryDetected => 'Detectados';
-
-  @override
   String get libraryRecent => 'Recentes';
 
   @override
@@ -2852,17 +3107,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'As atualizações confirmadas pelo catálogo aparecerão aqui. Você também pode verificar cada seção.';
 
   @override
-  String get libraryDetectedEmptyTitle => 'NENHUM CONTEÚDO EXTERNO DETECTADO';
-
-  @override
-  String get libraryDetectedEmptyBody =>
-      'Nenhum conteúdo Lua não registrado foi encontrado nas pastas selecionadas. Atualize após fazer alterações externas.';
-
-  @override
-  String get libraryDetectedOnDevice =>
-      'Detectado no dispositivo — não vinculado ao catálogo';
-
-  @override
   String get libraryDiscoveryHeaderIdentified => 'Cabeçalho identificado';
 
   @override
@@ -2870,13 +3114,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get libraryDiscoveryUnlinked => 'Lua não vinculado';
-
-  @override
-  String get libraryDetectedPath => 'Arquivo de entrada';
-
-  @override
-  String get libraryDetectedScanLimit =>
-      'O limite seguro de verificação foi atingido. Parte do conteúdo pode não aparecer.';
 
   @override
   String get libraryErrorTitle => 'BIBLIOTECA INDISPONÍVEL';
@@ -2952,4 +3189,283 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get detailViewDiscussion => 'VER CONVERSA DA COMUNIDADE';
+
+  @override
+  String get settingsInterfaceTheme => 'Tema da interface';
+
+  @override
+  String get settingsInterfaceThemeDesc =>
+      'Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.';
+
+  @override
+  String get themeRetroManga => 'Retro Manga';
+
+  @override
+  String get themeMario64 => 'Mario 64';
+
+  @override
+  String get themeSm64Intro => 'SM64 Intro';
+
+  @override
+  String get themeModeLight => 'Claro';
+
+  @override
+  String get themeModeDark => 'Escuro';
+
+  @override
+  String get themeModeSystem => 'Seguir o sistema';
+
+  @override
+  String get themeSaveFailed =>
+      'Não foi possível salvar a aparência. Tente novamente.';
+
+  @override
+  String get themeSaving => 'Salvando aparência';
+
+  @override
+  String get gameModsTitle => 'Mods do jogo';
+
+  @override
+  String get gameModsSubtitle => 'Escolha os mods para a próxima abertura';
+
+  @override
+  String get gameModsHint =>
+      'Feche o jogo antes de alterar as opções. Estes controles configuram mods Lua e pacotes DynOS/Touch Controls para a próxima inicialização.';
+
+  @override
+  String get gameModsSelectHint =>
+      'Selecione a pasta user do jogo que contém sm64config.txt e mods.';
+
+  @override
+  String get gameModsConfirm =>
+      'Feche o jogo primeiro. Aplicar esta seleção para a próxima abertura?';
+
+  @override
+  String get gameModsCancel => 'Cancelar';
+
+  @override
+  String get gameModsApply => 'Aplicar';
+
+  @override
+  String get gameModsSelect => 'Selecionar pasta user';
+
+  @override
+  String get gameModsDisconnect => 'Desconectar';
+
+  @override
+  String get gameModsConflict =>
+      'A configuração mudou ou outro mod ativado é incompatível. Atualize e tente novamente.';
+
+  @override
+  String get gameModsBlocked =>
+      'Não é possível ativar este mod com segurança. Confira sua estrutura e dados ou desative um mod incompatível.';
+
+  @override
+  String get gameModsMismatch =>
+      'Esta pasta user não corresponde à pasta de mods selecionada. Escolha a mesma instalação do jogo.';
+
+  @override
+  String get gameModsWriteError =>
+      'Não foi possível confirmar a gravação. Feche o jogo e restaure a configuração anterior se necessário.';
+
+  @override
+  String get gameModsFormat =>
+      'A configuração ou pasta excede os limites aceitos ou usa um formato incompatível. A alteração não foi aplicada.';
+
+  @override
+  String get gameModsAccess =>
+      'Configuração indisponível. Confira se user contém sm64config.txt e mods e selecione a pasta novamente com acesso de leitura e gravação.';
+
+  @override
+  String get gameModsRestore => 'Restaurar configuração anterior';
+
+  @override
+  String get gameModsRestoreConfirm =>
+      'Com o jogo fechado, substituir a configuração pelo backup privado anterior à última edição? Isso também restaura as outras opções.';
+
+  @override
+  String get gameModsInstalling =>
+      'Aguarde o fim dos downloads e instalações antes de alterar os mods do jogo.';
+
+  @override
+  String get gameModsEmpty =>
+      'Nenhum mod Lua compatível foi encontrado nas pastas do jogo.';
+
+  @override
+  String get gameModsEnabled => 'Ativado para a próxima abertura';
+
+  @override
+  String get gameModsDisabled => 'Desativado para a próxima abertura';
+
+  @override
+  String get gameModsMore => 'Mostrar mais';
+
+  @override
+  String get gameModsSize =>
+      'Este mod atinge o limite de 35 MiB do jogo e não pode ser ativado.';
+
+  @override
+  String get gameModsSaved =>
+      'Seleção salva e verificada para a próxima abertura do jogo.';
+
+  @override
+  String get gameModsManage => 'Gerenciar pasta do jogo';
+
+  @override
+  String gameModsCount(int enabled, int total) {
+    return '$enabled de $total ativados';
+  }
+
+  @override
+  String get gameModsSearch => 'Buscar mods, autores, categorias…';
+
+  @override
+  String get gameModsAll => 'Todos';
+
+  @override
+  String get gameModsEnabledFilter => 'Ativados';
+
+  @override
+  String get gameModsDisabledFilter => 'Desativados';
+
+  @override
+  String get gameModsNoResults =>
+      'Nenhum mod corresponde à busca ou ao filtro.';
+
+  @override
+  String get gameModsClearSearch => 'Limpar busca';
+
+  @override
+  String get gameModsDetails => 'Detalhes do mod';
+
+  @override
+  String get gameModsCloseDetails => 'Fechar';
+
+  @override
+  String get marioRomTitle => 'Recursos do jogo original';
+
+  @override
+  String get marioRomBuiltIn => 'ROM não selecionada';
+
+  @override
+  String get marioRomReady => 'Interface original pronta';
+
+  @override
+  String get marioRomDescription =>
+      'Os temas Mario usam a ROM da pasta user conectada. As imagens e fontes são preparadas uma vez em armazenamento privado e reutilizadas depois. Não é preciso selecionar a ROM separadamente.';
+
+  @override
+  String get marioRomImport => 'Preparar pela pasta do jogo';
+
+  @override
+  String get marioRomPreparing => 'Preparando recursos do jogo…';
+
+  @override
+  String get marioRomCancel => 'Cancelar importação';
+
+  @override
+  String get marioRomRemove => 'Usar visual incluído';
+
+  @override
+  String get marioRomUnsupported =>
+      'Esta ROM não é compatível. Selecione uma ROM americana .z64 sem modificações. Seu visual anterior continua disponível.';
+
+  @override
+  String get marioRomFailed =>
+      'Não foi possível ler ou salvar os recursos. Escolha o arquivo novamente e confira o espaço disponível. Seu visual anterior continua disponível.';
+
+  @override
+  String get marioRomSuccess => 'Os recursos do jogo original estão prontos.';
+
+  @override
+  String get marioRomUpgrade =>
+      'Escolha a ROM novamente para atualizar a interface original';
+
+  @override
+  String get gameFolderTitle => 'Conectar SM64CoopDX';
+
+  @override
+  String get gameFolderSummary =>
+      'Escolha uma vez a pasta principal do jogo para encontrar mods e pacotes DynOS dentro e fora de user, além da ROM para os temas Mario.';
+
+  @override
+  String get gameFolderGuide =>
+      'Escolha a pasta principal com.maniscat2.sm64coopdx, aquela que contém user. Buscaremos mods e dynos/packs aqui e dentro de user. A configuração e a ROM permanecem em user; novas instalações também ficam dentro de user. Selecione a pasta principal, não user nem um arquivo.';
+
+  @override
+  String get gameFolderChoose => 'Escolher pasta do jogo';
+
+  @override
+  String get gameFolderLater => 'Agora não';
+
+  @override
+  String get gameFolderConnected => 'Jogo conectado';
+
+  @override
+  String get gameFolderResolved =>
+      'Biblioteca: mods, user/mods, dynos/packs e user/dynos/packs. Novas instalações: user/mods e user/dynos/packs.';
+
+  @override
+  String get gameFolderConfigReady => 'Configuração de mods encontrada.';
+
+  @override
+  String get gameFolderConfigMissing =>
+      'Abra o jogo uma vez para criar sua configuração de mods. Downloads e temas continuam disponíveis.';
+
+  @override
+  String get gameFolderRomFound =>
+      'ROM do jogo encontrada. Os temas Mario prepararão seus recursos quando selecionados.';
+
+  @override
+  String get gameFolderRomMissing =>
+      'Não encontramos uma ROM compatível em user. Abra o SM64CoopDX e configure sua ROM; depois tente novamente.';
+
+  @override
+  String get gameFolderChange => 'Mudar pasta do jogo';
+
+  @override
+  String get gameFolderInvalid =>
+      'Escolha a pasta principal do jogo que contém user, normalmente com.maniscat2.sm64coopdx. Abra o jogo uma vez se a pasta user ainda não estiver pronta.';
+
+  @override
+  String get gameFolderAccessLost =>
+      'A pasta do jogo não está disponível. Escolha-a novamente para reconectar.';
+
+  @override
+  String get gameFolderDisconnect => 'Desconectar jogo';
+
+  @override
+  String get gameFolderDisconnectBody =>
+      'Parar de usar esta pasta para mods, DynOS e detecção da ROM. Os arquivos do jogo, mods instalados e recursos de temas preparados continuarão no dispositivo.';
+
+  @override
+  String get gameFolderPrepareTitle => 'Preparar tema Mario';
+
+  @override
+  String get gameFolderPrepareBody =>
+      'Leremos a ROM da pasta conectada do jogo para preparar as imagens e fontes do tema. Isso é feito uma vez; a ROM e as configurações do jogo não são alteradas.';
+
+  @override
+  String get gameFolderPrepare => 'Preparar tema';
+
+  @override
+  String get gameFolderBusy =>
+      'Espere os downloads e instalações terminarem antes de mudar a pasta do jogo.';
+
+  @override
+  String get gameModsLuaType => 'Mods Lua';
+
+  @override
+  String get gameModsDynosType => 'DynOS / Touch Controls';
+
+  @override
+  String get gameFolderUpgrade =>
+      'O acesso está limitado a user. Escolha a pasta principal do jogo para incluir também os mods e pacotes DynOS fora de user.';
+
+  @override
+  String get gameDynosEmpty =>
+      'Nenhuma pasta de pacote DynOS / Touch Controls foi encontrada nas pastas do jogo.';
+
+  @override
+  String get gameDynosSearch => 'Buscar pacotes DynOS / Touch Controls…';
 }

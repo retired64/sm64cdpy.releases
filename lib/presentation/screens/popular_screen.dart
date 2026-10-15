@@ -226,10 +226,16 @@ class _Podium extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Container(
         padding: const EdgeInsets.fromLTRB(14, 18, 14, 16),
-        decoration: BoxDecoration(
-          color: retro.surface,
-          border: Border.all(color: retro.border, width: 2.5),
-          boxShadow: retro.hardShadow(),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: retro.surface,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(2.5),
+            ),
+            boxShadow: retro.hardShadow(),
+          ),
         ),
         child: Column(
           children: [
@@ -358,7 +364,7 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
                   ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 6),
-                child: Icon(
+                child: MarioGameIcon(
                   isFav
                       ? Icons.favorite_rounded
                       : Icons.favorite_border_rounded,
@@ -374,14 +380,24 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
               child: Container(
                 width: thumbSize,
                 height: thumbSize,
-                decoration: BoxDecoration(
-                  border: Border.all(color: widget.color, width: 2.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.color.withValues(alpha: 0.35),
-                      offset: const Offset(2, 2),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    border: Border.all(
+                      color: widget.color,
+                      width: retro.borderWidth(2.5),
                     ),
-                  ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: widget.color.withValues(alpha: 0.35),
+                        offset: Offset(
+                          2 * retro.design.shadowOffsetScale,
+                          2 * retro.design.shadowOffsetScale,
+                        ),
+                        blurRadius: retro.design.shadowBlur,
+                      ),
+                    ],
+                  ),
                 ),
                 child: _PodiumThumb(mod: widget.mod, retro: retro),
               ),
@@ -405,16 +421,23 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
               height: widget.baseHeight,
               width: double.infinity,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: widget.color,
-                border: Border.all(color: retro.border, width: 2),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: widget.color,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(2),
+                  ),
+                ),
               ),
               child: Text(
                 widget.mod.downloads.compact,
                 style: TextStyle(
-                  color: retro.background,
+                  fontFamily: retro.headingFamily,
+                  color: retro.onColor(widget.color),
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: retro.design.headingWeight,
                 ),
               ),
             ),
@@ -435,6 +458,7 @@ class _PodiumThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final hasImage = mod.imageUrl != null && mod.imageUrl!.isNotEmpty;
     if (!hasImage) {
       return Stack(
@@ -447,7 +471,11 @@ class _PodiumThumb extends StatelessWidget {
             gap: 6,
           ),
           Center(
-            child: Icon(Icons.extension_rounded, size: 18, color: retro.inkDim),
+            child: MarioGameIcon(
+              Icons.extension_rounded,
+              size: 18,
+              color: retro.inkDim,
+            ),
           ),
         ],
       );
@@ -458,7 +486,11 @@ class _PodiumThumb extends StatelessWidget {
       placeholder: (_, _) => Container(color: retro.surfaceAlt),
       errorWidget: (_, _, _) => Container(
         color: retro.surfaceAlt,
-        child: Icon(Icons.extension_rounded, size: 18, color: retro.inkDim),
+        child: MarioGameIcon(
+          Icons.extension_rounded,
+          size: 18,
+          color: retro.inkDim,
+        ),
       ),
     );
   }
@@ -525,13 +557,16 @@ class _RankedRowState extends ConsumerState<_RankedRow>
           return Transform.translate(
             offset: Offset(offset, offset),
             child: Container(
-              decoration: BoxDecoration(
-                color: retro.surface,
-                border: Border.all(
-                  color: isTop3 ? rankColor! : retro.border,
-                  width: isTop3 ? 2.5 : 2,
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surface,
+                  border: Border.all(
+                    color: isTop3 ? rankColor! : retro.border,
+                    width: retro.borderWidth(isTop3 ? 2.5 : 2),
+                  ),
+                  boxShadow: retro.hardShadow(dx: 3 - offset, dy: 3 - offset),
                 ),
-                boxShadow: retro.hardShadow(dx: 3 - offset, dy: 3 - offset),
               ),
               child: child,
             ),
@@ -549,16 +584,23 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                         width: 28,
                         height: 28,
                         alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: rankColor,
-                          border: Border.all(color: retro.border, width: 1.5),
+                        decoration: retro.gameDecoration(
+                          BoxDecoration(
+                            borderRadius: retro.radius,
+                            color: rankColor,
+                            border: Border.all(
+                              color: retro.border,
+                              width: retro.borderWidth(1.5),
+                            ),
+                          ),
                         ),
                         child: Text(
                           '#${widget.rank}',
                           style: TextStyle(
-                            color: retro.background,
+                            fontFamily: retro.headingFamily,
+                            color: retro.onColor(rankColor ?? retro.accentText),
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: retro.design.headingWeight,
                           ),
                         ),
                       )
@@ -577,8 +619,14 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                 child: Container(
                   width: 46,
                   height: 46,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: retro.border, width: 1.5),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      borderRadius: retro.radius,
+                      border: Border.all(
+                        color: retro.border,
+                        width: retro.borderWidth(1.5),
+                      ),
+                    ),
                   ),
                   child: _PodiumThumb(mod: widget.mod, retro: retro),
                 ),
@@ -635,7 +683,7 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                     ref.read(favouritesProvider.notifier).toggle(widget.mod.id),
                 child: Padding(
                   padding: const EdgeInsets.all(6),
-                  child: Icon(
+                  child: MarioGameIcon(
                     isFav
                         ? Icons.favorite_rounded
                         : Icons.favorite_border_rounded,
@@ -757,6 +805,7 @@ class _PagePills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: _visiblePages.map((page) {
@@ -774,18 +823,21 @@ class _PagePills extends StatelessWidget {
             width: 32,
             height: 32,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isActive ? retro.accent : retro.surface,
-              border: Border.all(
-                color: retro.border,
-                width: isActive ? 2 : 1.5,
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                borderRadius: retro.radius,
+                color: isActive ? retro.accent : retro.surface,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(isActive ? 2 : 1.5),
+                ),
+                boxShadow: isActive ? retro.hardShadow(dx: 2, dy: 2) : null,
               ),
-              boxShadow: isActive ? retro.hardShadow(dx: 2, dy: 2) : null,
             ),
             child: Text(
               '${page + 1}',
               style: TextStyle(
-                color: isActive ? retro.background : retro.inkDim,
+                color: isActive ? retro.inkOnAccent : retro.inkDim,
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
               ),
@@ -812,21 +864,27 @@ class _PageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return GestureDetector(
       onTap: enabled ? onTap : null,
       child: Container(
         width: 36,
         height: 36,
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: retro.surface,
-          border: Border.all(
-            color: enabled ? retro.border : retro.border.withValues(alpha: 0.3),
-            width: 1.5,
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: retro.surface,
+            border: Border.all(
+              color: enabled
+                  ? retro.border
+                  : retro.border.withValues(alpha: 0.3),
+              width: retro.borderWidth(1.5),
+            ),
+            boxShadow: enabled ? retro.hardShadow(dx: 2, dy: 2) : null,
           ),
-          boxShadow: enabled ? retro.hardShadow(dx: 2, dy: 2) : null,
         ),
-        child: Icon(
+        child: MarioGameIcon(
           icon,
           size: 13,
           color: enabled ? retro.ink : retro.inkDim.withValues(alpha: 0.4),
@@ -875,15 +933,22 @@ class _Bone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Shimmer.fromColors(
       baseColor: retro.surface,
       highlightColor: retro.surfaceAlt,
       child: Container(
         width: width,
         height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: retro.border, width: 2),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: Colors.white,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(2),
+            ),
+          ),
         ),
       ),
     );
@@ -913,12 +978,18 @@ class _PopularError extends StatelessWidget {
                 width: 64,
                 height: 64,
                 alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: retro.surface,
-                  border: Border.all(color: retro.red, width: 3),
-                  boxShadow: retro.hardShadow(),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surface,
+                    border: Border.all(
+                      color: retro.red,
+                      width: retro.borderWidth(3),
+                    ),
+                    boxShadow: retro.hardShadow(),
+                  ),
                 ),
-                child: Icon(
+                child: MarioGameIcon(
                   Icons.error_outline_rounded,
                   size: 28,
                   color: retro.red,

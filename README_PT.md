@@ -6,7 +6,7 @@ SM64CDPY é um navegador e gerenciador de mods não oficial, voltado para Androi
 para o **SM64CoopDX**. Ele reúne descoberta, download e instalação de conteúdo,
 integração com o jogo e atualização do catálogo em uma interface móvel.
 
-O projeto está em manutenção ativa. A versão declarada é **1.8.2+21**. A
+O projeto está em manutenção ativa. A versão declarada é **1.8.3+22**. A
 bolha flutuante da linha 1.7 está implementada, mas continua experimental até a
 conclusão de testes em dispositivos Android reais.
 
@@ -33,11 +33,12 @@ progresso do download e da instalação.
 - Catálogo principal, conteúdo popular e destaques.
 - Seções VIP, DynOS, controles de toque, OMM Rebirth e Render96.
 - Importação e exportação de favoritos em JSON.
-- Biblioteca local de conteúdo instalado, recente, detectado e com
+- Biblioteca local de conteúdo instalado, recente, mods do jogo e com
   atualizações disponíveis.
-- Interface em inglês, espanhol e português brasileiro; temas claro e escuro.
+- Interface em inglês, espanhol e português brasileiro; visuais incluídos Retro Manga, Mario 64 e SM64 Intro, com aparência clara, escura ou do celular. O painel flutuante mantém seu visual escuro fixo.
+- Escolher Mario 64 ou SM64 Intro prepara uma vez materiais do menu, céus, HUD e fontes da ROM americana .z64 sem modificações na pasta conectada do jogo. As próximas seleções reutilizam os recursos locais privados. Cancelar mantém o tema anterior. [Detalhes da importação](docs/MARIO_ROM_THEME.md).
 - Atualização manual das bases JSON remotas.
-- Seleção persistente de pastas pelo seletor do Android.
+- Conecte uma vez a pasta user do jogo pelo seletor do Android. Mods, DynOS/Touch Controls e detecção da ROM reutilizam essa conexão.
 - Resolução de links, incluindo assets do GitHub Releases.
 - Download e instalação pelo WorkManager com progresso e cancelamento.
 - Cópia de arquivos avulsos e extração de ZIP/7z.
@@ -92,3 +93,9 @@ os autores dos mods. O conteúdo pertence aos respectivos criadores.
 
 [Releases](https://github.com/retired64/sm64cdpy.releases/releases) ·
 [Discord](https://discord.com/invite/thuhUH2WNX)
+
+A Biblioteca também permite configurar mods Lua locais compatíveis para a próxima abertura do jogo, selecionando a pasta principal do jogo, com gravação verificada e backup privado. Feche o jogo antes de editar. Os pacotes DynOS e Touch Controls em dynos/packs e user/dynos/packs têm seus próprios controles na mesma Biblioteca, usando a configuração dynos-pack do jogo.
+
+A preparação de 1.8.3 inclui controle de mods, Biblioteca unificada e os temas Retro Manga/Mario 64/SM64 Intro. [Checklist de merge e publicação](docs/RELEASE_1.8.3.md).
+
+Escolha a pasta principal `com.maniscat2.sm64coopdx` para incluir mods e pacotes DynOS dentro e fora de `user`. Conexões antigas de user podem ser ampliadas nos Ajustes. Novas instalações, configuração e ROM permanecem em `user`.

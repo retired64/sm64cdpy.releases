@@ -4,87 +4,129 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/theme/app_theme_catalog.dart';
+import '../../core/theme/app_theme_design.dart';
+import 'mario_theme_assets_provider.dart';
 
-/// Provider for managing theme mode (light/dark/system) with persistence
-class ThemeNotifier extends Notifier<ThemeMode> {
+const _themeIdKey = 'theme_id';
+const _themeModeKey = 'theme_mode';
+
+String? _readSetting(String key) {
+  try {
+    if (!Hive.isBoxOpen(AppConstants.settingsBoxKey)) return null;
+    return Hive.box<String>(AppConstants.settingsBoxKey).get(key);
+  } catch (error) {
+    debugPrint('Failed to read appearance setting: $error');
+    return null;
+  }
+}
+
+@immutable
+class AppearanceSettings {
+  const AppearanceSettings({
+    this.themeId = AppThemeId.retroManga,
+    this.mode = ThemeMode.system,
+    this.isSaving = false,
+  });
+
+  final AppThemeId themeId;
+  final ThemeMode mode;
+  final bool isSaving;
+}
+
+/// One writer for both appearance keys. A selection is only published after
+/// persistence succeeds; concurrent taps are rejected until saving finishes.
+class AppearanceNotifier extends Notifier<AppearanceSettings> {
   @override
-  ThemeMode build() {
-    final box = Hive.box<String>(AppConstants.settingsBoxKey);
-    final savedTheme = box.get('theme_mode', defaultValue: 'system');
-
-    return switch (savedTheme) {
+  AppearanceSettings build() => AppearanceSettings(
+    themeId: AppThemeId.fromStorage(_readSetting(_themeIdKey)),
+    mode: switch (_readSetting(_themeModeKey)) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
       _ => ThemeMode.system,
-    };
-  }
+    },
+  );
 
-  /// Change theme mode and persist to storage
-  Future<void> setThemeMode(ThemeMode mode) async {
-    state = mode;
-
+  /// UI selection requires a complete ROM pack before changing into Mario.
+  /// null means the picker was cancelled/import failed; the ROM coordinator owns feedback.
+  Future<bool?> selectThemeWithRom(AppThemeId id) async {
+    if (state.isSaving) return null;
+    if ((id != AppThemeId.mario64 && id != AppThemeId.sm64Intro) ||
+        ref.read(marioThemeAssetsProvider).assets.complete)
+      return setTheme(id);
+    final previous = state;
+    state = AppearanceSettings(
+      themeId: previous.themeId,
+      mode: previous.mode,
+      isSaving: true,
+    );
     try {
-      await Hive.box<String>(AppConstants.settingsBoxKey)
-          .put('theme_mode', _themeModeToString(mode));
-    } catch (e) {
-      // Silently fail if storage is unavailable
-      debugPrint('Failed to save theme preference: $e');
+      await ref.read(marioThemeAssetsProvider.notifier).perform('import');
+      if (!ref.mounted || !ref.read(marioThemeAssetsProvider).assets.complete)
+        return null;
+      state = previous;
+      return await setTheme(id);
+    } finally {
+      if (ref.mounted && state.isSaving) {
+        state = AppearanceSettings(themeId: state.themeId, mode: state.mode);
+      }
     }
   }
 
-  /// Toggle between light and dark (skip system)
-  Future<void> toggleTheme() async {
-    final newMode = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    await setThemeMode(newMode);
-  }
+  Future<bool> setTheme(AppThemeId id) => _save(themeId: id);
+  Future<bool> setThemeMode(ThemeMode mode) => _save(mode: mode);
 
-  /// Check if dark theme should be used based on current mode and system preference
-  bool get isDarkMode {
-    switch (state) {
-      case ThemeMode.light:
-        return false;
-      case ThemeMode.dark:
-        return true;
-      case ThemeMode.system:
-        return WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-            Brightness.dark;
+  Future<bool> _save({AppThemeId? themeId, ThemeMode? mode}) async {
+    if (state.isSaving) return false;
+    final previous = state;
+    final nextId = themeId ?? previous.themeId;
+    final nextMode = mode ?? previous.mode;
+    final storedMode = switch (nextMode) {
+      ThemeMode.light => 'light',
+      ThemeMode.dark => 'dark',
+      ThemeMode.system => 'system',
+    };
+    if (nextId == previous.themeId &&
+        nextMode == previous.mode &&
+        _readSetting(_themeIdKey) == nextId.storageKey &&
+        _readSetting(_themeModeKey) == storedMode) {
+      return true;
     }
-  }
-
-  /// Get the current theme mode as a display string
-  String get displayName {
-    switch (state) {
-      case ThemeMode.light:
-        return 'Light';
-      case ThemeMode.dark:
-        return 'Dark';
-      case ThemeMode.system:
-        return 'System';
-    }
-  }
-
-  /// Convert ThemeMode to string for storage
-  String _themeModeToString(ThemeMode mode) {
-    switch (mode) {
-      case ThemeMode.light:
-        return 'light';
-      case ThemeMode.dark:
-        return 'dark';
-      case ThemeMode.system:
-        return 'system';
+    state = AppearanceSettings(
+      themeId: previous.themeId,
+      mode: previous.mode,
+      isSaving: true,
+    );
+    try {
+      await Hive.box<String>(
+        AppConstants.settingsBoxKey,
+      ).putAll({_themeIdKey: nextId.storageKey, _themeModeKey: storedMode});
+      if (ref.mounted) {
+        state = AppearanceSettings(themeId: nextId, mode: nextMode);
+      }
+      return true;
+    } catch (error, stack) {
+      debugPrint('Failed to save appearance: $error\n$stack');
+      if (ref.mounted) state = previous;
+      return false;
     }
   }
 }
 
-/// Provider that exposes the current theme mode
-final themeModeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(
-  () => ThemeNotifier(),
+final appearanceProvider =
+    NotifierProvider<AppearanceNotifier, AppearanceSettings>(
+      AppearanceNotifier.new,
+    );
+
+final themeModeProvider = Provider<ThemeMode>(
+  (ref) => ref.watch(appearanceProvider.select((settings) => settings.mode)),
 );
 
-/// Provider that provides whether dark mode is active
-final isDarkModeProvider = Provider<bool>((ref) {
-  return ref.watch(themeModeProvider.notifier).isDarkMode;
-});
+final themeDesignProvider = Provider<AppThemeDesign>(
+  (ref) => AppThemeCatalog.resolve(
+    ref.watch(appearanceProvider.select((settings) => settings.themeId)),
+  ),
+);
 
 /// Provider for managing app locale (system/forced) with persistence.
 ///
@@ -94,8 +136,7 @@ final isDarkModeProvider = Provider<bool>((ref) {
 class LocaleNotifier extends Notifier<String?> {
   @override
   String? build() {
-    final box = Hive.box<String>(AppConstants.settingsBoxKey);
-    final saved = box.get('locale', defaultValue: 'system');
+    final saved = _readSetting('locale') ?? 'system';
 
     if (saved == 'system') return null;
     if (['en_US', 'es_419', 'pt_BR'].contains(saved)) return saved;
@@ -106,8 +147,9 @@ class LocaleNotifier extends Notifier<String?> {
     state = tag;
 
     try {
-      await Hive.box<String>(AppConstants.settingsBoxKey)
-          .put('locale', tag ?? 'system');
+      await Hive.box<String>(
+        AppConstants.settingsBoxKey,
+      ).put('locale', tag ?? 'system');
     } catch (e) {
       debugPrint('Failed to save locale preference: $e');
     }
@@ -133,5 +175,6 @@ class LocaleNotifier extends Notifier<String?> {
   }
 }
 
-final localeNotifierProvider =
-    NotifierProvider<LocaleNotifier, String?>(() => LocaleNotifier());
+final localeNotifierProvider = NotifierProvider<LocaleNotifier, String?>(
+  () => LocaleNotifier(),
+);

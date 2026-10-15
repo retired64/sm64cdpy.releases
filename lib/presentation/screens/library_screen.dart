@@ -13,9 +13,11 @@ import '../providers/installation_library_provider.dart';
 import '../providers/installation_update_provider.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/game_mod_activation_panel.dart';
+import '../providers/game_mod_activation_provider.dart';
 import '../widgets/installation_library_card.dart';
 
-enum _LibraryView { installed, updates, detected, recent }
+enum _LibraryView { gameMods, dynos, installed, updates, recent }
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -24,21 +26,27 @@ class LibraryScreen extends ConsumerStatefulWidget {
 }
 
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
-  _LibraryView _view = _LibraryView.installed;
+  _LibraryView _view = _LibraryView.gameMods;
+  bool get _isGameView =>
+      _view == _LibraryView.gameMods || _view == _LibraryView.dynos;
   String? _section;
   String? _destination;
   bool _initialViewApplied = false;
 
   Future<void> _refresh() async {
+    try {
+      await ref.read(gameModActivationProvider.notifier).refresh();
+    } catch (_) {
+      /* Provider exposes the access error. */
+    }
+    if (_isGameView) return;
     ref.invalidate(allModsProvider);
     ref.invalidate(allVipModsProvider);
     ref.invalidate(allDynosProvider);
     ref.invalidate(allTouchControlsProvider);
     ref.invalidate(allOmmRebirthProvider);
     ref.invalidate(allRender96Provider);
-    await ref
-        .read(installationLibraryProvider.notifier)
-        .refresh(discover: true, forceDiscovery: true);
+    await ref.read(installationLibraryProvider.notifier).refresh();
   }
 
   @override
@@ -46,9 +54,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      unawaited(
-        ref.read(installationLibraryProvider.notifier).refresh(discover: true),
-      );
+      unawaited(ref.read(installationLibraryProvider.notifier).refresh());
     });
   }
 
@@ -58,6 +64,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     if (!_initialViewApplied &&
         GoRouterState.of(context).uri.queryParameters['view'] == 'recent') {
       _view = _LibraryView.recent;
+    } else if (!_initialViewApplied &&
+        const [
+          'game-mods',
+          'detected',
+        ].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
+      _view = _LibraryView.gameMods;
+    } else if (!_initialViewApplied &&
+        const [
+          'dynos',
+          'touch-controls',
+        ].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
+      _view = _LibraryView.dynos;
+    } else if (!_initialViewApplied &&
+        GoRouterState.of(context).uri.queryParameters['view'] == 'installed') {
+      _view = _LibraryView.installed;
     }
     _initialViewApplied = true;
   }
@@ -78,46 +99,25 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           RetroPinnedAppBar(
             title: Text(
               l10n.libraryTitle,
-              style: retro.heading(size: 18, color: retro.accent),
+              style: retro.heading(size: 18, color: retro.accentText),
             ),
             actions: [
               Padding(
                 padding: const EdgeInsetsDirectional.only(end: 14),
                 child: _RetroIconButton(
                   tooltip: l10n.libraryRefresh,
-                  onPressed: value.isLoading ? null : _refresh,
+                  onPressed: value.isLoading && !_isGameView ? null : _refresh,
                   icon: Icons.refresh_rounded,
-                  busy: value.isLoading,
+                  busy: value.isLoading && !_isGameView,
                 ),
               ),
             ],
           ),
-          value.when(
-            loading: () => SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: CircularProgressIndicator(color: retro.accent),
-              ),
-            ),
-            error: (error, _) => SliverFillRemaining(
-              hasScrollBody: false,
-              child: _MessageState(
-                icon: Icons.error_outline_rounded,
-                title: l10n.libraryErrorTitle,
-                body: l10n.libraryErrorBody,
-                action: l10n.generalRetry,
-                onAction: () => ref.invalidate(installationLibraryProvider),
-              ),
-            ),
-            data: (state) => SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
-              sliver: SliverList.list(
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            sliver: SliverToBoxAdapter(
+              child: Column(
                 children: [
-                  if (state.status == InstallationLibraryLoadStatus.partial)
-                    _Notice(
-                      text: l10n.libraryPartialWarning,
-                      color: retro.amber,
-                    ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: SectionKicker(
@@ -126,21 +126,62 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       japanese: 'ライブラリ',
                     ),
                   ),
-                  _viewSelector(l10n, retro, state.snapshot, updates),
-                  const SizedBox(height: 14),
-                  _filters(l10n, retro, state.snapshot, updates),
+                  _viewSelector(
+                    l10n,
+                    retro,
+                    value.isLoading ? null : value.asData?.value.snapshot,
+                    updates,
+                  ),
                   const SizedBox(height: 18),
-                  if (_view == _LibraryView.detected &&
-                      state.snapshot.discoveryTruncated)
-                    _Notice(
-                      text: l10n.libraryDetectedScanLimit,
-                      color: retro.amber,
-                    ),
-                  ..._content(l10n, state.snapshot, updates),
                 ],
               ),
             ),
           ),
+          if (_isGameView)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+              sliver: SliverToBoxAdapter(
+                child: GameModActivationPanel(
+                  dynosOnly: _view == _LibraryView.dynos,
+                ),
+              ),
+            )
+          else
+            value.when(
+              skipLoadingOnRefresh: false,
+              skipLoadingOnReload: false,
+              loading: () => SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: CircularProgressIndicator(color: retro.accent),
+                ),
+              ),
+              error: (error, _) => SliverFillRemaining(
+                hasScrollBody: false,
+                child: _MessageState(
+                  icon: Icons.error_outline_rounded,
+                  title: l10n.libraryErrorTitle,
+                  body: l10n.libraryErrorBody,
+                  action: l10n.generalRetry,
+                  onAction: () => ref.invalidate(installationLibraryProvider),
+                ),
+              ),
+              data: (state) => SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+                sliver: SliverList.list(
+                  children: [
+                    if (state.status == InstallationLibraryLoadStatus.partial)
+                      _Notice(
+                        text: l10n.libraryPartialWarning,
+                        color: retro.amber,
+                      ),
+                    _filters(l10n, retro, state.snapshot, updates),
+                    const SizedBox(height: 18),
+                    ..._content(l10n, state.snapshot, updates),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -149,26 +190,31 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   Widget _viewSelector(
     AppLocalizations l10n,
     RetroTheme retro,
-    InstallationLibrarySnapshot snapshot,
+    InstallationLibrarySnapshot? snapshot,
     AsyncValue<List<InstallationUpdateCandidate>> updates,
   ) {
     final labels = [
+      l10n.gameModsTitle,
+      l10n.gameModsDynosType,
       l10n.libraryInstalled,
       l10n.libraryUpdates,
-      l10n.libraryDetected,
       l10n.libraryRecent,
     ];
     final icons = [
+      Icons.sports_esports_rounded,
+      Icons.texture_rounded,
       Icons.inventory_2_outlined,
       Icons.system_update_alt_rounded,
-      Icons.manage_search_rounded,
       Icons.history_rounded,
     ];
+    final gameValue = ref.watch(gameModActivationProvider);
+    final entries = gameValue.isLoading ? null : gameValue.asData?.value.mods;
     final counts = <int?>[
-      snapshot.receipts.length,
+      entries?.where((mod) => !mod.isDynos).length,
+      entries?.where((mod) => mod.isDynos).length,
+      snapshot?.receipts.length,
       updates.asData?.value.length,
-      snapshot.discoveries.length,
-      snapshot.history.length,
+      snapshot?.history.length,
     ];
     return SizedBox(
       height: 44,
@@ -184,8 +230,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           return SkewChip(
             retro: retro,
             label: count == null
-                ? labels[index].toUpperCase()
-                : '${labels[index].toUpperCase()}  $count',
+                ? retro.displayLabel(labels[index])
+                : '${retro.displayLabel(labels[index])}  $count',
             icon: icons[index],
             selected: _view == _LibraryView.values[index],
             dense: true,
@@ -214,7 +260,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             <String>{},
       _LibraryView.recent =>
         snapshot.history.map((item) => item.section).toSet(),
-      _LibraryView.detected => <String>{},
+      _LibraryView.gameMods || _LibraryView.dynos => <String>{},
     }.toList()..sort();
     final destinations = switch (_view) {
       _LibraryView.installed =>
@@ -224,10 +270,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 .map((item) => item.installed.destination)
                 .toSet() ??
             <String>{},
-      _LibraryView.detected =>
-        snapshot.discoveries.map((item) => item.destination).toSet(),
       _LibraryView.recent =>
         snapshot.history.map((item) => item.destination).toSet(),
+      _LibraryView.gameMods || _LibraryView.dynos => <String>{},
     }.toList()..sort();
     final showSection = sections.length > 1;
     final showDestination = destinations.length > 1;
@@ -278,11 +323,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   ) async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: retro.surface,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: retro.border, width: 3),
-        borderRadius: BorderRadius.zero,
-      ),
       builder: (context) => _LibraryFilterSheet(
         retro: retro,
         title: l10n.libraryAllSections,
@@ -307,11 +347,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   ) async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: retro.surface,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: retro.border, width: 3),
-        borderRadius: BorderRadius.zero,
-      ),
       builder: (context) => _LibraryFilterSheet(
         retro: retro,
         title: l10n.libraryAllDestinations,
@@ -336,25 +371,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     InstallationLibrarySnapshot snapshot,
     AsyncValue<List<InstallationUpdateCandidate>> updates,
   ) {
-    if (_view == _LibraryView.detected) {
-      final discoveries = snapshot.discoveries
-          .where(
-            (item) => _destination == null || item.destination == _destination,
-          )
-          .toList();
-      if (discoveries.isEmpty) {
-        return [
-          _MessageState(
-            icon: Icons.manage_search_rounded,
-            title: l10n.libraryDetectedEmptyTitle,
-            body: l10n.libraryDetectedEmptyBody,
-          ),
-        ];
-      }
-      return discoveries
-          .map((item) => DetectedInstallationCard(discovery: item))
-          .toList(growable: false);
-    }
     if (_view == _LibraryView.updates) {
       return updates.when(
         loading: () => [
@@ -439,14 +455,18 @@ class _Notice extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        border: Border(left: BorderSide(color: color, width: 5)),
-        boxShadow: retro.hardShadow(dx: 3, dy: 3),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          color: retro.surface,
+          border: Border(
+            left: BorderSide(color: color, width: retro.borderWidth(5)),
+          ),
+          boxShadow: retro.hardShadow(dx: 3, dy: 3),
+        ),
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline_rounded, color: color, size: 19),
+          MarioGameIcon(Icons.info_outline_rounded, color: color, size: 19),
           const SizedBox(width: 10),
           Expanded(child: Text(text, style: retro.body(size: 12))),
         ],
@@ -475,21 +495,33 @@ class _MessageState extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.only(top: 12, bottom: 4),
       padding: const EdgeInsets.symmetric(vertical: 34, horizontal: 22),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        border: Border.all(color: retro.border, width: 2.5),
-        boxShadow: retro.hardShadow(dx: 4, dy: 4),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.surface,
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2.5),
+          ),
+          boxShadow: retro.hardShadow(dx: 4, dy: 4),
+        ),
       ),
       child: Column(
         children: [
           Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(
-              color: retro.surfaceAlt,
-              border: Border.all(color: retro.border, width: 2),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                borderRadius: retro.radius,
+                color: retro.surfaceAlt,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(2),
+                ),
+              ),
             ),
-            child: Icon(icon, size: 34, color: retro.accent),
+            child: MarioGameIcon(icon, size: 34, color: retro.accentText),
           ),
           const SizedBox(height: 18),
           Text(
@@ -542,12 +574,18 @@ class _RetroIconButton extends StatelessWidget {
           child: Container(
             width: 38,
             height: 38,
-            decoration: BoxDecoration(
-              color: retro.surface,
-              border: Border.all(color: retro.border, width: 2),
-              boxShadow: onPressed == null
-                  ? null
-                  : retro.hardShadow(dx: 2, dy: 2),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                borderRadius: retro.radius,
+                color: retro.surface,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(2),
+                ),
+                boxShadow: onPressed == null
+                    ? null
+                    : retro.hardShadow(dx: 2, dy: 2),
+              ),
             ),
             child: busy
                 ? Padding(
@@ -557,7 +595,7 @@ class _RetroIconButton extends StatelessWidget {
                       color: retro.accent,
                     ),
                   )
-                : Icon(
+                : MarioGameIcon(
                     icon,
                     size: 20,
                     color: onPressed == null ? retro.inkDim : retro.ink,
@@ -587,7 +625,7 @@ class _LibraryFilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SkewChip(
     retro: retro,
-    label: label.toUpperCase(),
+    label: retro.displayLabel(label),
     icon: icon,
     trailing: active ? Icons.close_rounded : Icons.expand_more_rounded,
     selected: active,
@@ -631,7 +669,7 @@ class _LibraryFilterSheet extends StatelessWidget {
         children: [
           Center(child: Container(width: 36, height: 4, color: retro.border)),
           const SizedBox(height: 18),
-          SectionKicker(retro: retro, label: title.toUpperCase()),
+          SectionKicker(retro: retro, label: retro.displayLabel(title)),
           const SizedBox(height: 14),
           Flexible(
             child: SingleChildScrollView(
@@ -673,13 +711,19 @@ class _LibraryFilterSheetItem extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-        decoration: BoxDecoration(
-          color: selected ? retro.accent : retro.surfaceAlt,
-          border: Border.all(color: retro.border, width: 2),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: selected ? retro.accent : retro.surfaceAlt,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(2),
+            ),
+          ),
         ),
         child: Row(
           children: [
-            Icon(
+            MarioGameIcon(
               option.icon,
               size: 18,
               color: selected ? retro.inkOnAccent : retro.ink,
@@ -687,7 +731,7 @@ class _LibraryFilterSheetItem extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                option.label.toUpperCase(),
+                retro.displayLabel(option.label),
                 style: retro.heading(
                   size: 13,
                   color: selected ? retro.inkOnAccent : retro.ink,
@@ -695,7 +739,11 @@ class _LibraryFilterSheetItem extends StatelessWidget {
               ),
             ),
             if (selected)
-              Icon(Icons.check_rounded, size: 19, color: retro.inkOnAccent),
+              MarioGameIcon(
+                Icons.check_rounded,
+                size: 19,
+                color: retro.inkOnAccent,
+              ),
           ],
         ),
       ),

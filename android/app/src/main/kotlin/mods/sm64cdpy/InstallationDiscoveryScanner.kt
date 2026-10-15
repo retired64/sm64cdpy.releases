@@ -29,14 +29,6 @@ object InstallationDiscoveryScanner {
 
     private const val CACHE_FILE = "installation_discoveries_v1.json"
 
-    data class LuaMetadata(
-        val name: String? = null,
-        val version: String? = null,
-        val category: String? = null,
-        val author: String? = null,
-        val description: String? = null
-    )
-
     private data class Candidate(
         val file: DocumentFile,
         val relativePath: String,
@@ -136,36 +128,10 @@ object InstallationDiscoveryScanner {
         }
     }
 
-    internal fun parseLuaHeader(text: String, fallbackName: String): LuaMetadata {
-        var name: String? = null
-        var category: String? = null
-        var author: String? = null
-        var description: String? = null
-        val normalized = text.removePrefix("\uFEFF")
-        for (raw in normalized.lineSequence()) {
-            val line = raw.trimEnd('\r')
-            if (!line.startsWith("--")) break
-            val separator = line.indexOf(':')
-            if (separator < 2) continue
-            val key = line.substring(2, separator).trim().lowercase()
-            val value = cleanLuaText(line.substring(separator + 1)).takeIf(String::isNotBlank)
-            when (key) {
-                "name" -> if (name == null) name = value?.take(64)
-                "category" -> if (category == null) category = value?.take(64)
-                "author" -> if (author == null) author = value?.take(128)
-                "description" -> if (description == null) description = value?.take(800)
-            }
-        }
-        val version = extractVersion(name, description, fallbackName)
-        return LuaMetadata(name, version, category, author, description)
-    }
+    internal fun parseLuaHeader(text: String, fallbackName: String): LuaModMetadata.Info =
+        LuaModMetadata.parse(text, fallbackName)
 
-    internal fun cleanLuaText(value: String): String = value
-        .replace("\\n", " ")
-        .replace(Regex("\\\\+#[0-9A-Fa-f]{6}\\\\+"), "")
-        .replace(Regex("\\\\+"), "")
-        .replace(Regex("[ \\t]{2,}"), " ")
-        .trim()
+    internal fun cleanLuaText(value: String): String = LuaModMetadata.clean(value)
 
     private fun scanRoot(
         context: Context,
@@ -264,7 +230,7 @@ object InstallationDiscoveryScanner {
     ): JSONObject {
         val fallbackName = candidate.relativePath.substringBefore('/').substringBeforeLast('.')
         val metadata = if (candidate.file.name?.endsWith(".luac", true) == true) {
-            LuaMetadata(version = extractVersion(fallbackName))
+            LuaModMetadata.Info(version = LuaModMetadata.extractVersion(fallbackName))
         } else {
             parseLuaHeader(readHeader(context, candidate.file), fallbackName)
         }
@@ -323,11 +289,9 @@ object InstallationDiscoveryScanner {
     private fun resolveRoot(context: Context, uriString: String?): DocumentFile? {
         if (uriString == null) return null
         val uri = Uri.parse(uriString)
-        val granted = context.contentResolver.persistedUriPermissions.any {
-            it.uri == uri && it.isReadPermission
-        }
+        val granted = GameFolderAccess.hasGrant(context, uri)
         if (!granted) return null
-        return DocumentFile.fromTreeUri(context, uri)?.takeIf { it.exists() && it.canRead() }
+        return GameFolderAccess.resolve(context, uri)?.takeIf { it.name != "user" && it.exists() && it.canRead() }
     }
 
     private fun rootFingerprint(context: Context, uriString: String?): String? {
@@ -337,27 +301,13 @@ object InstallationDiscoveryScanner {
         } catch (_: Exception) {
             return sha256("invalid|$uriString")
         }
-        val readable = context.contentResolver.persistedUriPermissions.any {
-            it.uri == uri && it.isReadPermission
-        }
+        val readable = GameFolderAccess.hasGrant(context, uri)
         return sha256("$uriString|read=$readable")
     }
 
     private fun isLua(file: DocumentFile): Boolean {
         val name = file.name ?: return false
         return name.endsWith(".lua", true) || name.endsWith(".luac", true)
-    }
-
-    private fun extractVersion(vararg texts: String?): String? {
-        val combined = texts.filterNotNull().joinToString(" ")
-        val patterns = listOf(
-            Regex("(?i)\\bversion\\s*[:-]?\\s*v?(\\d+(?:[.-]\\d+){0,3})\\b"),
-            Regex("(?i)\\bv(?:er)?[.\\s]?(\\d+(?:[.-]\\d+){1,3})\\b"),
-            Regex("\\b(\\d+\\.\\d+(?:\\.\\d+)?)\\b")
-        )
-        return patterns.firstNotNullOfOrNull { pattern ->
-            pattern.find(combined)?.groupValues?.get(1)?.replace('-', '.')
-        }
     }
 
     private fun cacheMatches(cache: JSONObject, fingerprints: Map<String, String?>): Boolean {
@@ -437,4 +387,6 @@ object InstallationDiscoveryScanner {
 /** Serializes read-heavy SAF library operations across both Flutter engines. */
 internal object InstallationSafAccessCoordinator {
     val lock = Any()
+    // Only preference capture/commit and enqueue; never hold during file I/O.
+    val selectionLock = Any()
 }

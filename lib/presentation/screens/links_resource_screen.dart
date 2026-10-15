@@ -95,7 +95,7 @@ class LinksResourceScreen extends StatelessWidget {
                 ),
                 TextSpan(
                   text: l10n.linksSubtitle,
-                  style: retro.heading(size: 18, color: retro.accent),
+                  style: retro.heading(size: 18, color: retro.accentText),
                 ),
               ],
             ),
@@ -162,24 +162,35 @@ class _HubHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        border: Border.all(color: retro.border, width: 2.5),
-        boxShadow: retro.hardShadow(),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.surface,
+          border: Border.all(
+            color: retro.border,
+            width: retro.borderWidth(2.5),
+          ),
+          boxShadow: retro.hardShadow(),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.link_rounded, size: 18, color: retro.accent),
+              MarioGameIcon(
+                Icons.link_rounded,
+                size: 18,
+                color: retro.accentText,
+              ),
               const SizedBox(width: 8),
               Text(
                 l10n.linksHeroTitle,
-                style: retro.heading(size: 13, color: retro.accent),
+                style: retro.heading(size: 13, color: retro.accentText),
               ),
             ],
           ),
@@ -254,6 +265,7 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return SliverPadding(
       padding: EdgeInsets.fromLTRB(16, 22, 16, isLast ? 0 : 4),
       sliver: SliverList.list(
@@ -353,10 +365,16 @@ class _LinkCardState extends State<_LinkCard>
             return Transform.translate(
               offset: Offset(offset, offset),
               child: Container(
-                decoration: BoxDecoration(
-                  color: retro.surface,
-                  border: Border.all(color: retro.border, width: 2),
-                  boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surface,
+                    border: Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(2),
+                    ),
+                    boxShadow: retro.hardShadow(dx: 4 - offset, dy: 4 - offset),
+                  ),
                 ),
                 child: child,
               ),
@@ -365,10 +383,15 @@ class _LinkCardState extends State<_LinkCard>
           child: Container(
             padding: const EdgeInsets.fromLTRB(12, 13, 10, 13),
             decoration: widget.link.isPrimary
-                ? BoxDecoration(
-                    color: widget.accent.withValues(alpha: 0.08),
-                    border: Border(
-                      left: BorderSide(color: widget.accent, width: 4),
+                ? retro.gameDecoration(
+                    BoxDecoration(
+                      color: widget.accent.withValues(alpha: 0.08),
+                      border: Border(
+                        left: BorderSide(
+                          color: widget.accent,
+                          width: retro.borderWidth(4),
+                        ),
+                      ),
                     ),
                   )
                 : null,
@@ -379,11 +402,21 @@ class _LinkCardState extends State<_LinkCard>
                   width: 46,
                   height: 46,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: widget.accent.withValues(alpha: 0.18),
-                    border: Border.all(color: widget.accent, width: 2),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      borderRadius: retro.radius,
+                      color: widget.accent.withValues(alpha: 0.18),
+                      border: Border.all(
+                        color: widget.accent,
+                        width: retro.borderWidth(2),
+                      ),
+                    ),
                   ),
-                  child: Icon(widget.link.icon, size: 22, color: widget.accent),
+                  child: MarioGameIcon(
+                    widget.link.icon,
+                    size: 22,
+                    color: widget.accent,
+                  ),
                 ),
                 const SizedBox(width: 13),
                 Expanded(
@@ -417,10 +450,16 @@ class _LinkCardState extends State<_LinkCard>
                   width: 32,
                   height: 32,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: retro.border, width: 1.5),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      borderRadius: retro.radius,
+                      border: Border.all(
+                        color: retro.border,
+                        width: retro.borderWidth(1.5),
+                      ),
+                    ),
                   ),
-                  child: Icon(
+                  child: MarioGameIcon(
                     Icons.north_east_rounded,
                     size: 17,
                     color: widget.link.isPrimary ? widget.accent : retro.inkDim,

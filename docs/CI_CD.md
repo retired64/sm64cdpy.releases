@@ -1,6 +1,6 @@
 # GitHub Actions y releases
 
-Revisado el 2026-09-28.
+Revisado para 1.8.3 el 2026-10-14.
 
 > **Fuente canónica:** la aplicación ya no incluye una pantalla de changelog ni
 > muestra el cuerpo del GitHub Release. Cada lanzamiento tiene un manifiesto
@@ -14,16 +14,23 @@ Revisado el 2026-09-28.
 
 - Se ejecuta manualmente o con un push cuyo mensaje contiene `[testing]`.
 - Instala Java 17 y Flutter 3.41.7.
-- Firma el APK con secretos, ejecuta `flutter analyze` y conserva el log.
-- Compila solo arm64 y publica un artifact durante 7 días.
+- Genera traducciones (`flutter gen-l10n`), formatea Dart en el runner y guarda
+  un parche `flutter-source-sync` para desarrollo Termux sin SDK.
+- Firma el APK con secretos, ejecuta `flutter analyze`, conserva el log y ejecuta
+  `flutter test --reporter expanded` antes de compilar; conserva `flutter-test-log`
+  incluso cuando una prueba falla, y el fallo continúa bloqueando el APK.
+- Compila arm64 por defecto; testing manual con `all_abis: true` incluye
+  arm32/x86_64 sin publicar releases. Conserva el artifact durante 7 días.
 - No crea tag ni GitHub Release.
 
 ### `buildAndroid.yaml`
 
 - Solo se ejecuta manualmente y permite marcar una prerelease.
+- Release estable requiere `main`; el tag se fija al SHA compilado.
 - Lee `versionName`/`versionCode` de `pubspec.yaml`.
 - Verifica que no exista el tag `v<versionName>`.
-- Ejecuta análisis, compila arm64/arm32/x86_64 y guarda un artifact temporal.
+- Genera traducciones, formatea Dart en el runner, ejecuta análisis, compila
+  arm64/arm32/x86_64 y guarda un artifact temporal.
 - Exige que `release-manifests/v<version>.json` sea válido y coincida
   exactamente con `versionName` y `versionCode`; no publica notas genéricas.
 - Ejecuta `flutter test`, renombra APK, calcula SHA-256 y publica las notas en
@@ -76,3 +83,51 @@ Revisado el 2026-09-28.
 6. Ejecutar el workflow de release y comprobar APK, hashes, enlace estable
    `releases/latest/download/Sm64CDPY-arm64.apk`, evento hacia la web, PR
    generado y OTA por ABI.
+
+## Desarrollo de temas desde Termux (2026-10-13)
+
+La rama `custom-themes` se desarrolla sin Flutter/Dart local. Ambos workflows
+hacen `flutter pub get` → `flutter gen-l10n` → Dart format → análisis antes del
+build; testing también ejecuta ahora `flutter test`. El formato del runner no
+crea commits. El artifact `flutter-source-sync` permite revisar e incorporar el
+parche de generación/formato en el mismo commit desde Termux.
+
+Para probar, seleccionar `custom-themes` en el workflow manual de testing o
+subir un commit con `[testing]`. Continúan siendo necesarios los secretos de
+firma existentes. No usar el workflow de publicación para obtener una prueba.
+La compilación se ejecuta en Actions; resultados y candidata actual en RELEASE_1.8.3.md.
+Ver [flujo y validación de temas](../cuatom_themea.md).
+
+## Preparación 1.8.3+22
+
+`pubspec.yaml` y `release-manifests/v1.8.3.json` están alineados. Testing valida
+esa pareja, ejecuta los tests Python y adjunta preview EN/ES junto al JSON
+localizado. Los tests de manifiesto derivan la versión desde pubspec.
+
+Una ejecución manual con `all_abis: true`, o un push `[testing] [all-abis]`, permite revisar los tres
+APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
+El valor por defecto/push permanece en arm64. La publicación oficial sigue
+requiriendo autorización y merge previo a main; las prereleases conservan su
+flujo manual autorizado. Ver [preparación 1.8.3](RELEASE_1.8.3.md).
+
+## Activación de mods — candidata 1.8.3
+
+Biblioteca incluye una sección de unidades Lua del juego con switches de selección
+para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
+comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
+DynOS/Touch mantienen su contrato separado. La validación física está pendiente.
+Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
+
+El flag `ALL_ABIS` se define una sola vez a nivel de job en testing. Compilación
+y renombrado consumen el mismo valor; el marcador no crea tags, releases, avisos
+ni dispatch al sitio. Sin input/marcador, testing sigue produciendo solo arm64.
+La candidata de merge incorpora la generación y formato del runner #187; la
+comprobación definitiva corresponde al commit consolidado, no a un APK anterior.
+
+## Conexión unificada del juego
+
+Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada,
+mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
+migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+Validación Actions pendiente; revisión física requerida.

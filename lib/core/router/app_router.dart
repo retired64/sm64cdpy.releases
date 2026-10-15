@@ -1,3 +1,4 @@
+import '../theme/retro_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -95,12 +96,15 @@ CustomTransitionPage<void> _page(Widget child, GoRouterState state) {
     transitionDuration: const Duration(milliseconds: 300),
     reverseTransitionDuration: const Duration(milliseconds: 260),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final retro = RetroTheme.of(context);
+      final reduceMotion = MediaQuery.disableAnimationsOf(context);
+      if (reduceMotion) return child;
       final enterFade = CurvedAnimation(
         parent: animation,
         curve: Curves.easeOutCubic,
       );
       final enterScale = Tween<double>(
-        begin: 0.97,
+        begin: retro.isMario ? 0.91 : 0.97,
         end: 1.0,
       ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
 

@@ -29,6 +29,7 @@ class InstallationLibraryNotifier
     extends AsyncNotifier<InstallationLibraryState> {
   StreamSubscription<BgInstallEvent>? _installSubscription;
   StreamSubscription<String>? _settingsSubscription;
+  int _folderRevision = 0;
   bool _refreshing = false;
   bool _refreshRequested = false;
   bool _discoveryRequested = false;
@@ -42,11 +43,13 @@ class InstallationLibraryNotifier
       if (event is BgInstallCompleted) unawaited(refresh());
     });
     _settingsSubscription = ModInstaller.libraryInvalidations.listen((reason) {
-      final folderChanged =
-          reason.contains('FolderChanged') || reason.contains('FolderCleared');
-      unawaited(
-        refresh(discover: folderChanged, forceDiscovery: folderChanged),
-      );
+      if (!ref.mounted) return;
+      if (reason.contains('Folder')) {
+        ++_folderRevision;
+        state = const AsyncLoading<InstallationLibraryState>();
+      }
+      // Game mods own live discovery. Receipt refresh only verifies its sentinels.
+      unawaited(refresh());
     });
     ref.onDispose(() {
       _installSubscription?.cancel();
@@ -131,13 +134,18 @@ class InstallationLibraryNotifier
         pendingForceDiscovery = false;
         _discoveryRequested = false;
         _forceDiscoveryRequested = false;
+        final revision = _folderRevision;
         final next = await AsyncValue.guard(
           () => _load(
             discover: shouldDiscover,
             forceDiscovery: shouldForceDiscovery,
           ),
         );
-        if (ref.mounted) state = next;
+        if (revision != _folderRevision) {
+          _refreshRequested = true;
+        } else if (ref.mounted) {
+          state = next;
+        }
       } while (_refreshRequested && ref.mounted);
     } finally {
       _refreshing = false;

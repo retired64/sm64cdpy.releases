@@ -57,7 +57,10 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
             labelColor: retro.accent,
             unselectedLabelColor: retro.inkDim,
             indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: retro.accent, width: 3),
+              borderSide: BorderSide(
+                color: retro.accent,
+                width: retro.borderWidth(3),
+              ),
               insets: const EdgeInsets.symmetric(horizontal: 16),
             ),
           ),
@@ -254,12 +257,21 @@ class _EmptyFavourites extends StatelessWidget {
           Container(
             width: 72,
             height: 72,
-            decoration: BoxDecoration(
-              color: retro.surfaceAlt,
-              borderRadius: RetroTheme.radius,
-              border: Border.all(color: retro.accent, width: 2),
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                color: retro.surfaceAlt,
+                borderRadius: retro.radius,
+                border: Border.all(
+                  color: retro.accent,
+                  width: retro.borderWidth(2),
+                ),
+              ),
             ),
-            child: Icon(Icons.favorite_border, size: 36, color: retro.accent),
+            child: MarioGameIcon(
+              Icons.favorite_border,
+              size: 36,
+              color: retro.accentText,
+            ),
           ),
           const SizedBox(height: 16),
           Text(emptyTitle(), style: retro.heading(size: 18)),
@@ -278,19 +290,25 @@ class _EmptyFavourites extends StatelessWidget {
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
-              decoration: BoxDecoration(
-                color: retro.accent,
-                borderRadius: RetroTheme.radius,
-                boxShadow: retro.hardShadow(dx: 3, dy: 3),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  color: retro.accent,
+                  borderRadius: retro.radius,
+                  boxShadow: retro.hardShadow(dx: 3, dy: 3),
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.explore, size: 18, color: retro.background),
+                  MarioGameIcon(
+                    Icons.explore,
+                    size: 18,
+                    color: retro.inkOnAccent,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.favBrowse,
-                    style: retro.heading(size: 12, color: retro.background),
+                    style: retro.heading(size: 12, color: retro.inkOnAccent),
                   ),
                 ],
               ),

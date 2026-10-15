@@ -1,3 +1,4 @@
+import '../widgets/game_folder_card.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -10,14 +11,15 @@ import '../../core/constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../overlay/overlay_bridge.dart';
 import '../../core/theme/retro_theme.dart';
-import '../../services/mod_installer.dart';
 import '../../services/update_service.dart';
 import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
-import '../providers/theme_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/appearance_selector.dart';
+import '../widgets/locale_selector.dart';
+import '../widgets/settings_expansion_group.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -36,7 +38,7 @@ class SettingsScreen extends ConsumerWidget {
         RetroPinnedAppBar(
           title: Text(
             l10n.settingsTitle,
-            style: retro.heading(size: 18, color: retro.accent),
+            style: retro.heading(size: 18, color: retro.accentText),
           ),
         ),
 
@@ -79,9 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                 japanese: 'ゲーム連携',
               ),
               const SizedBox(height: 10),
-              _ModsFolderTile(),
-              _RetroGap(height: 6),
-              _DynosFolderTile(),
+              const GameFolderCard(),
               _AutoInstallToggle(),
               _OverlayToggle(),
 
@@ -92,9 +92,9 @@ class SettingsScreen extends ConsumerWidget {
                 japanese: '外観',
               ),
               const SizedBox(height: 10),
-              _ThemeSelector(),
+              const AppearanceSelector(),
               const SizedBox(height: 12),
-              _LocaleSelector(),
+              const LocaleSelector(),
 
               const SizedBox(height: 20),
               _RetroSectionKicker(
@@ -245,6 +245,7 @@ class _RetroDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final accent = confirmColor ?? retro.accent;
     return Dialog(
@@ -252,11 +253,7 @@ class _RetroDialog extends StatelessWidget {
       elevation: 0,
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: retro.surface,
-          border: Border.all(color: retro.border, width: 3),
-          boxShadow: retro.hardShadow(dx: 5, dy: 5),
-        ),
+        decoration: retro.settingsPanel(width: 3, dx: 5, dy: 5),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,16 +291,23 @@ class _RetroDialog extends StatelessWidget {
                       horizontal: 16,
                       vertical: 10,
                     ),
-                    decoration: BoxDecoration(
-                      color: accent,
-                      border: Border.all(color: retro.border, width: 2),
+                    decoration: retro.gameDecoration(
+                      BoxDecoration(
+                        borderRadius: retro.radius,
+                        color: accent,
+                        border: Border.all(
+                          color: retro.border,
+                          width: retro.borderWidth(2),
+                        ),
+                      ),
                     ),
                     child: Text(
                       confirmLabel,
                       style: TextStyle(
-                        color: retro.background,
+                        fontFamily: retro.headingFamily,
+                        color: retro.onColor(accent),
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: retro.design.headingWeight,
                         letterSpacing: 0.4,
                       ),
                     ),
@@ -333,6 +337,35 @@ class _RetroSectionKicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    if (retro.design.softSettingsPanels) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
+        child: Row(
+          children: [
+            MarioGameIcon(
+              retro.design.playfulSelection ? Icons.star_rounded : Icons.circle,
+              size: retro.design.playfulSelection ? 18 : 6,
+              color: retro.design.playfulSelection
+                  ? retro.secondaryAccent
+                  : retro.accentText,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: retro.heading(
+                  size: 13,
+                  weight: FontWeight.w800,
+                  color: retro.inkDim,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Column(
@@ -364,6 +397,7 @@ class _RetroSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return GestureDetector(
       onTap: () => onChanged(!value),
       child: AnimatedContainer(
@@ -372,15 +406,28 @@ class _RetroSwitch extends StatelessWidget {
         width: 46,
         height: 26,
         padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          color: value ? retro.accent : retro.surfaceAlt,
-          border: Border.all(color: retro.border, width: 2),
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            borderRadius: retro.radius,
+            color: value ? retro.accent : retro.surfaceAlt,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+            ),
+          ),
         ),
         alignment: value ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
           width: 16,
           height: 16,
-          color: value ? retro.background : retro.inkDim,
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              color: value ? retro.inkOnAccent : retro.inkDim,
+              borderRadius: retro.design.softSettingsPanels
+                  ? BorderRadius.circular(8)
+                  : BorderRadius.zero,
+            ),
+          ),
         ),
       ),
     );
@@ -388,250 +435,6 @@ class _RetroSwitch extends StatelessWidget {
 }
 
 // ── Mods folder tile ───────────────────────────────────────────────────────
-
-class _ModsFolderTile extends ConsumerStatefulWidget {
-  const _ModsFolderTile();
-
-  @override
-  ConsumerState<_ModsFolderTile> createState() => _ModsFolderTileState();
-}
-
-class _ModsFolderTileState extends ConsumerState<_ModsFolderTile> {
-  bool _loading = false;
-  bool _hasFolder = false;
-  String? _folderUri;
-
-  final _installer = ModInstaller();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkFolder();
-  }
-
-  Future<void> _checkFolder() async {
-    try {
-      final uri = await _installer.getSavedDirectoryUri();
-      final has = await _installer.isDirectorySelected();
-      if (mounted) {
-        setState(() {
-          _hasFolder = has;
-          _folderUri = uri;
-        });
-      }
-    } catch (e) {
-      debugPrint('_ModsFolderTile._checkFolder: $e');
-    }
-  }
-
-  Future<void> _selectFolder() async {
-    setState(() => _loading = true);
-    try {
-      final uri = await _installer.openDirectoryPicker();
-      if (!mounted) return;
-      if (uri != null) {
-        setState(() {
-          _hasFolder = true;
-          _folderUri = uri;
-        });
-        if (!mounted) return;
-        final l10n = AppLocalizations.of(context);
-        AppSnackbar.success(context, message: l10n.settingsModsFolderSelected);
-      }
-    } on ModInstallerException catch (e) {
-      if (mounted) {
-        AppSnackbar.error(context, message: e.message);
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _confirmClear() async {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => _RetroDialog(
-        retro: retro,
-        title: l10n.settingsClearModsFolderTitle,
-        message: l10n.settingsClearModsFolderBody,
-        confirmLabel: l10n.settingsClearButton,
-        confirmColor: retro.red,
-        onConfirm: () => Navigator.of(ctx).pop(true),
-      ),
-    );
-
-    if (confirmed == true) {
-      await _installer.clearDirectorySelection();
-      if (mounted) {
-        setState(() {
-          _hasFolder = false;
-          _folderUri = null;
-        });
-        AppSnackbar.info(context, message: l10n.settingsModsFolderCleared);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return _RetroTileShell(
-      retro: retro,
-      onTap: _loading ? null : _selectFolder,
-      onLongPress: _hasFolder ? _confirmClear : null,
-      accentColor: _hasFolder ? retro.accent : null,
-      leading: _loading
-          ? _RetroSpinner(retro: retro)
-          : _RetroIconBox(
-              retro: retro,
-              icon: _hasFolder
-                  ? Icons.folder_special_rounded
-                  : Icons.folder_open_rounded,
-              accentColor: _hasFolder ? retro.accent : null,
-            ),
-      title: _hasFolder
-          ? l10n.settingsModsFolder
-          : l10n.settingsSelectModsFolder,
-      titleColor: _hasFolder ? retro.accent : retro.ink,
-      subtitle: _hasFolder
-          ? l10n.settingsModsFolderHint
-          : l10n.settingsModsFolderDesc,
-      pathHint: _folderUri != null ? _displayPath(_folderUri!) : null,
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: retro.inkDim,
-        size: 20,
-      ),
-    );
-  }
-}
-
-// ── DynOS folder tile ────────────────────────────────────────────────────────
-
-class _DynosFolderTile extends ConsumerStatefulWidget {
-  const _DynosFolderTile();
-
-  @override
-  ConsumerState<_DynosFolderTile> createState() => _DynosFolderTileState();
-}
-
-class _DynosFolderTileState extends ConsumerState<_DynosFolderTile> {
-  bool _loading = false;
-  bool _hasFolder = false;
-  String? _folderUri;
-
-  final _installer = ModInstaller();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkFolder();
-  }
-
-  Future<void> _checkFolder() async {
-    try {
-      final uri = await _installer.getSavedDynosUri();
-      final has = await _installer.isDynosDirectorySelected();
-      if (mounted) {
-        setState(() {
-          _hasFolder = has;
-          _folderUri = uri;
-        });
-      }
-    } catch (e) {
-      debugPrint('_DynosFolderTile._checkFolder: $e');
-    }
-  }
-
-  Future<void> _selectFolder() async {
-    setState(() => _loading = true);
-    try {
-      final uri = await _installer.openDynosPicker();
-      if (!mounted) return;
-      if (uri != null) {
-        setState(() {
-          _hasFolder = true;
-          _folderUri = uri;
-        });
-        if (!mounted) return;
-        final l10n = AppLocalizations.of(context);
-        AppSnackbar.success(context, message: l10n.settingsDynosFolderSelected);
-      }
-    } on ModInstallerException catch (e) {
-      if (mounted) {
-        AppSnackbar.error(context, message: e.message);
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _confirmClear() async {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => _RetroDialog(
-        retro: retro,
-        title: l10n.settingsClearDynosFolderTitle,
-        message: l10n.settingsClearDynosFolderBody,
-        confirmLabel: l10n.settingsClearButton,
-        confirmColor: retro.red,
-        onConfirm: () => Navigator.of(ctx).pop(true),
-      ),
-    );
-
-    if (confirmed == true) {
-      await _installer.clearDynosSelection();
-      if (mounted) {
-        setState(() {
-          _hasFolder = false;
-          _folderUri = null;
-        });
-        AppSnackbar.info(context, message: l10n.settingsDynosFolderCleared);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return _RetroTileShell(
-      retro: retro,
-      onTap: _loading ? null : _selectFolder,
-      onLongPress: _hasFolder ? _confirmClear : null,
-      accentColor: _hasFolder ? retro.blue : null,
-      leading: _loading
-          ? _RetroSpinner(retro: retro)
-          : _RetroIconBox(
-              retro: retro,
-              icon: _hasFolder
-                  ? Icons.auto_awesome_rounded
-                  : Icons.auto_awesome_outlined,
-              accentColor: _hasFolder ? retro.blue : null,
-            ),
-      title: _hasFolder
-          ? l10n.settingsDynosFolder
-          : l10n.settingsSelectDynosFolder,
-      titleColor: _hasFolder ? retro.blue : retro.ink,
-      subtitle: _hasFolder
-          ? l10n.settingsDynosFolderHint
-          : l10n.settingsDynosFolderDesc,
-      pathHint: _folderUri != null ? _displayPath(_folderUri!) : null,
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: retro.inkDim,
-        size: 20,
-      ),
-    );
-  }
-}
 
 // ── Auto-install toggle ────────────────────────────────────────────────────
 
@@ -698,13 +501,6 @@ class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
 // Contenedor común para todos los tiles de settings: borde duro, sombra
 // desplazada suave, caja de ícono a la izquierda, título/subtítulo, trailing.
 
-String _displayPath(String uri) {
-  final parts = uri.split('/tree/');
-  if (parts.length < 2) return uri;
-  final decoded = Uri.decodeComponent(parts.last);
-  return decoded.replaceFirst('primary:', '/');
-}
-
 class _RetroTileShell extends StatelessWidget {
   const _RetroTileShell({
     required this.retro,
@@ -732,20 +528,17 @@ class _RetroTileShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
         onTap: onTap,
         onLongPress: onLongPress,
         child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: retro.surface,
-            border: Border.all(
-              color: accentColor ?? retro.border,
-              width: accentColor != null ? 2.5 : 2,
-            ),
-            boxShadow: retro.hardShadow(dx: 2, dy: 2),
+          padding: EdgeInsets.all(retro.design.softSettingsPanels ? 14 : 12),
+          decoration: retro.settingsPanel(
+            borderColor: accentColor,
+            width: accentColor != null ? 2.5 : 2,
           ),
           child: Row(
             children: [
@@ -757,30 +550,38 @@ class _RetroTileShell extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        color: titleColor ?? retro.ink,
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: retro.isMario
+                          ? retro.body(size: 16, color: titleColor ?? retro.ink)
+                          : TextStyle(
+                              color: titleColor ?? retro.ink,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w800,
+                            ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       subtitle,
-                      style: TextStyle(
-                        color: retro.inkDim,
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: retro.isMario
+                          ? retro.body(size: 14)
+                          : TextStyle(
+                              color: retro.inkDim,
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w600,
+                            ),
                     ),
                     if (pathHint != null) ...[
                       const SizedBox(height: 3),
                       Text(
                         pathHint!,
-                        style: TextStyle(
-                          color: retro.inkDim,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: retro.isMario
+                            ? retro
+                                  .body(size: 14)
+                                  .copyWith(fontFamily: 'Roboto')
+                            : TextStyle(
+                                color: retro.inkDim,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
                       ),
                     ],
                   ],
@@ -808,16 +609,25 @@ class _RetroIconBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     final c = accentColor ?? retro.inkDim;
     return Container(
       width: 38,
       height: 38,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: retro.surfaceAlt,
-        border: Border.all(color: c, width: 2),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.design.softSettingsPanels
+              ? retro.accent.withValues(alpha: 0.08)
+              : retro.surfaceAlt,
+          border: Border.all(
+            color: c,
+            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+          ),
+        ),
       ),
-      child: Icon(icon, color: c, size: 18),
+      child: MarioGameIcon(icon, color: c, size: 18),
     );
   }
 }
@@ -829,13 +639,22 @@ class _RetroSpinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
     return Container(
       width: 38,
       height: 38,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: retro.surfaceAlt,
-        border: Border.all(color: retro.accent, width: 2),
+      decoration: retro.gameDecoration(
+        BoxDecoration(
+          borderRadius: retro.radius,
+          color: retro.design.softSettingsPanels
+              ? retro.accent.withValues(alpha: 0.08)
+              : retro.surfaceAlt,
+          border: Border.all(
+            color: retro.accent,
+            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+          ),
+        ),
       ),
       child: SizedBox(
         width: 16,
@@ -873,351 +692,10 @@ class _SettingsTile extends StatelessWidget {
       title: title,
       titleColor: destructive ? retro.red : retro.ink,
       subtitle: subtitle,
-      trailing: Icon(
+      trailing: MarioGameIcon(
         Icons.chevron_right_rounded,
         color: retro.inkDim,
         size: 20,
-      ),
-    );
-  }
-}
-
-// ── Theme selector ────────────────────────────────────────────────────────────
-
-class _ThemeSelector extends ConsumerWidget {
-  const _ThemeSelector();
-
-  static const _options = [
-    (mode: ThemeMode.light, label: 'Light', icon: Icons.wb_sunny_rounded),
-    (mode: ThemeMode.dark, label: 'Dark', icon: Icons.nightlight_round),
-    (
-      mode: ThemeMode.system,
-      label: 'System',
-      icon: Icons.brightness_auto_rounded,
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        border: Border.all(color: retro.border, width: 2.5),
-        boxShadow: retro.hardShadow(dx: 3, dy: 3),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.palette_rounded, size: 14, color: retro.accent),
-              const SizedBox(width: 6),
-              Text(
-                l10n.settingsThemeMode,
-                style: TextStyle(
-                  color: retro.inkDim,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: _options.asMap().entries.map((entry) {
-              final i = entry.key;
-              final opt = entry.value;
-              final isSelected = themeMode == opt.mode;
-              return Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(left: i == 0 ? 0 : 8),
-                  child: _ThemeOptionTile(
-                    retro: retro,
-                    icon: opt.icon,
-                    label: opt.label,
-                    isSelected: isSelected,
-                    onTap: () => ref
-                        .read(themeModeProvider.notifier)
-                        .setThemeMode(opt.mode),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Language selector ─────────────────────────────────────────────────────────
-
-class _LocaleSelector extends ConsumerStatefulWidget {
-  const _LocaleSelector();
-
-  @override
-  ConsumerState<_LocaleSelector> createState() => _LocaleSelectorState();
-}
-
-class _LocaleSelectorState extends ConsumerState<_LocaleSelector> {
-  bool _expanded = false;
-
-  String _flag(String? tag) => switch (tag) {
-    null => '🌐',
-    'en_US' => '🇺🇸',
-    'es_419' => '🇲🇽',
-    'pt_BR' => '🇧🇷',
-    _ => '🌐',
-  };
-
-  String _currentLabel(AppLocalizations l10n, String? tag) => switch (tag) {
-    null => l10n.languageFollowSystem,
-    'en_US' => l10n.languageEnglish,
-    'es_419' => l10n.languageSpanish,
-    'pt_BR' => l10n.languagePortuguese,
-    _ => l10n.languageFollowSystem,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final localeTag = ref.watch(localeNotifierProvider);
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: retro.surface,
-        border: Border.all(color: retro.border, width: 2.5),
-        boxShadow: retro.hardShadow(dx: 3, dy: 3),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () => setState(() => _expanded = !_expanded),
-            behavior: HitTestBehavior.opaque,
-            child: Row(
-              children: [
-                Icon(Icons.translate_rounded, size: 14, color: retro.accent),
-                const SizedBox(width: 6),
-                Text(
-                  l10n.settingsLanguageMode,
-                  style: TextStyle(
-                    color: retro.inkDim,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-                const Spacer(),
-                Text(_flag(localeTag), style: const TextStyle(fontSize: 15)),
-                const SizedBox(width: 6),
-                Text(
-                  _currentLabel(l10n, localeTag),
-                  style: TextStyle(
-                    color: retro.ink,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                AnimatedRotation(
-                  turns: _expanded ? 0.5 : 0.0,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOutCubic,
-                  child: Icon(
-                    Icons.expand_more,
-                    size: 20,
-                    color: _expanded ? retro.accent : retro.inkDim,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 220),
-            curve: Curves.easeOutCubic,
-            alignment: Alignment.topCenter,
-            clipBehavior: Clip.hardEdge,
-            child: _expanded
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: _options(l10n).map((opt) {
-                        final isSelected = localeTag == opt.tag;
-                        return GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(localeNotifierProvider.notifier)
-                                .setLocale(opt.tag);
-                            setState(() => _expanded = false);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 4),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? retro.accent
-                                  : retro.surfaceAlt,
-                              border: Border.all(
-                                color: isSelected
-                                    ? retro.border
-                                    : retro.border.withValues(alpha: 0.4),
-                                width: isSelected ? 2 : 1.5,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  opt.flag,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    opt.label,
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? retro.background
-                                          : retro.ink,
-                                      fontSize: 13,
-                                      fontWeight: isSelected
-                                          ? FontWeight.w800
-                                          : FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                if (isSelected)
-                                  Icon(
-                                    Icons.check,
-                                    size: 16,
-                                    color: retro.background,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<({String? tag, String label, String flag})> _options(
-    AppLocalizations l10n,
-  ) {
-    return [
-      (tag: null, label: l10n.languageFollowSystem, flag: '🌐'),
-      (tag: 'en_US', label: l10n.languageEnglish, flag: '🇺🇸'),
-      (tag: 'es_419', label: l10n.languageSpanish, flag: '🇲🇽'),
-      (tag: 'pt_BR', label: l10n.languagePortuguese, flag: '🇧🇷'),
-    ];
-  }
-}
-
-class _ThemeOptionTile extends StatefulWidget {
-  const _ThemeOptionTile({
-    required this.retro,
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final RetroTheme retro;
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  State<_ThemeOptionTile> createState() => _ThemeOptionTileState();
-}
-
-class _ThemeOptionTileState extends State<_ThemeOptionTile>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pressCtrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _pressCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-  }
-
-  @override
-  void dispose() {
-    _pressCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = widget.retro;
-    final bg = widget.isSelected ? retro.accent : retro.surfaceAlt;
-    final fg = widget.isSelected ? retro.background : retro.inkDim;
-
-    return GestureDetector(
-      onTapDown: (_) => _pressCtrl.forward(),
-      onTapUp: (_) {
-        _pressCtrl.reverse();
-        widget.onTap();
-      },
-      onTapCancel: () => _pressCtrl.reverse(),
-      child: AnimatedBuilder(
-        animation: _pressCtrl,
-        builder: (context, child) {
-          final offset = 2.0 * _pressCtrl.value;
-          return Transform.translate(
-            offset: Offset(offset, offset),
-            child: child,
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: bg,
-            border: Border.all(
-              color: widget.isSelected
-                  ? retro.border
-                  : retro.border.withValues(alpha: 0.4),
-              width: widget.isSelected ? 2 : 1.5,
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(widget.icon, size: 18, color: fg),
-              const SizedBox(height: 5),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  color: fg,
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -1351,15 +829,6 @@ class _CheckUpdateTileState extends State<_CheckUpdateTile> {
 }
 
 // ── Shared helpers ──────────────────────────────────────────────────────────
-
-class _RetroGap extends StatelessWidget {
-  const _RetroGap({required this.height});
-  final double height;
-  @override
-  Widget build(BuildContext context) => SizedBox(height: height);
-}
-
-// ── Overlay toggle ──────────────────────────────────────────────────────────
 
 class _OverlayToggle extends ConsumerStatefulWidget {
   const _OverlayToggle();

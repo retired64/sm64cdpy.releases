@@ -81,3 +81,10 @@ La preferencia `auto_install_mods` tiene SharedPreferences como fuente persisten
 ## Estado conocido
 
 El flujo está implementado y contiene correcciones para redirects múltiples, descargas truncadas, reintentos acotados, Android 14 y progreso de 7z. No existe todavía una prueba de integración automatizada que cubra recreación del proceso, dos mods simultáneos, cancelación, pérdida de permisos SAF o todos los niveles de Android soportados. Por eso el overlay permanece etiquetado como experimental.
+
+## Conexión unificada del juego
+
+Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada,
+mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
+migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+Validación Actions pendiente; revisión física requerida.

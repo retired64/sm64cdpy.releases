@@ -14,22 +14,27 @@ assert SPEC.loader is not None
 SPEC.loader.exec_module(release_manifest)
 
 
+def current_manifest_path():
+    version, _ = release_manifest.read_pubspec_version(ROOT / "pubspec.yaml")
+    return ROOT / "release-manifests" / f"v{version}.json"
+
+
 class ReleaseManifestTest(unittest.TestCase):
     def test_current_manifest_matches_pubspec_and_renders_content(self):
         manifest = release_manifest.load_manifest(
-            ROOT / "release-manifests" / "v1.8.2.json"
+            current_manifest_path()
         )
         release_manifest.validate_manifest(manifest)
         release_manifest.validate_pubspec(manifest, ROOT / "pubspec.yaml")
 
         notes = release_manifest.render_markdown(manifest, "en", include_force=True)
-        self.assertIn("SM64CDPY v1.8.2", notes)
-        self.assertIn("Reliable downloads", notes)
-        self.assertNotIn("[FORCE]", notes)
+        self.assertIn(f"SM64CDPY v{manifest['version']}", notes)
+        self.assertIn(manifest["locales"]["en"]["summary"], notes)
+        self.assertEqual("[FORCE]" in notes, manifest["forceUpdate"])
 
     def test_empty_notes_are_rejected(self):
         manifest = release_manifest.load_manifest(
-            ROOT / "release-manifests" / "v1.8.2.json"
+            current_manifest_path()
         )
         manifest["locales"]["es"]["sections"] = []
         with self.assertRaises(release_manifest.ManifestError):
@@ -37,7 +42,7 @@ class ReleaseManifestTest(unittest.TestCase):
 
     def test_pubspec_mismatch_is_rejected(self):
         manifest = release_manifest.load_manifest(
-            ROOT / "release-manifests" / "v1.8.2.json"
+            current_manifest_path()
         )
         with tempfile.TemporaryDirectory() as directory:
             pubspec = Path(directory) / "pubspec.yaml"

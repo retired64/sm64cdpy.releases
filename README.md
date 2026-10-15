@@ -8,7 +8,7 @@ integration, and catalogue updates into a single mobile interface instead of
 requiring users to move repeatedly between a browser, file manager, and the
 game.
 
-The project is under active maintenance. Its declared version is **1.8.2+21**.
+The project is under active maintenance. Its declared version is **1.8.3+22**.
 The floating overlay introduced for the 1.7 line is implemented
 but remains experimental until it completes broader testing on real Android
 devices and across process recreation scenarios.
@@ -49,11 +49,12 @@ in-game mod workflow.
 - Browse dedicated VIP, DynOS, Touch Controls, OMM Rebirth, and Render96
   sections.
 - Save favourites locally and import or export them as JSON.
-- Review installed, recently changed, externally detected, and updateable
+- Review installed, recently changed, game-managed, and updateable
   content in the local Library.
-- Use English, Spanish, or Brazilian Portuguese with light and dark themes.
+- Use English, Spanish, or Brazilian Portuguese; select a bundled interface design (Retro Manga, Mario 64 or SM64 Intro) independently from light, dark, or system appearance. The floating panel keeps its fixed dark design.
+- Choosing Mario 64 or SM64 Intro prepares the original menu materials, game skies, HUD and ROM typography from the unmodified US .z64 ROM in your connected game folder once. Later selections reuse the private local resources. Cancelling keeps the previous theme. [Import details](docs/MARIO_ROM_THEME.md).
 - Refresh bundled catalogues from their remote JSON sources.
-- Select persistent destination folders with Android's system folder picker.
+- Connect the main com.maniscat2.sm64coopdx game folder once with Android's folder picker. Mods, DynOS/Touch Controls and ROM detection reuse that connection.
 - Resolve download links, including GitHub Release assets.
 - Download and install mods in the background using WorkManager.
 - Display foreground notifications, progress, errors, and cancellation actions.
@@ -151,3 +152,9 @@ names, images, and related content belong to their respective creators.
 
 [Discord](https://discord.com/invite/thuhUH2WNX) ·
 [GitHub profile](https://github.com/retired64)
+
+Library also configures compatible local Lua mods for the next game start through the selected main game folder, with verified saves and a private recovery backup. Close the game before editing. DynOS and Touch Controls packs in dynos/packs and user/dynos/packs have their own switches in the same Library, using the game’s dynos-pack configuration.
+
+Release 1.8.3 preparation includes game mod controls, the unified Library and Retro Manga/Mario 64/SM64 Intro themes. [Merge and release checklist](docs/RELEASE_1.8.3.md).
+
+Choose the main `com.maniscat2.sm64coopdx` folder to include mods and DynOS packs inside and outside `user`. Existing user-only connections can be upgraded in Settings. New installations, configuration and ROM stay under `user`.

@@ -105,8 +105,6 @@ class AppSnackbar {
     required Duration duration,
     SnackBarAction? action,
   }) {
-    final retro = RetroTheme.of(context);
-    final accent = accentOf(retro);
     final scaffold = ScaffoldMessenger.of(context);
 
     // Clear any existing snackbar first to avoid stacking
@@ -121,45 +119,57 @@ class AppSnackbar {
         padding: EdgeInsets.zero,
         action: action,
         margin: const EdgeInsets.fromLTRB(14, 0, 14, 16),
-        content: _BouncyToast(
-          child: Container(
-            decoration: BoxDecoration(
-              color: retro.surface,
-              border: Border.all(color: retro.border, width: 2.5),
-              boxShadow: retro.hardShadow(dx: 4, dy: 4),
-            ),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // ── Barra de acento sólida ──────────────────────
-                  Container(width: 5, color: accent),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 13, 14, 13),
-                      child: Row(
-                        children: [
-                          Icon(icon, size: 20, color: accent),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              message,
-                              style: TextStyle(
-                                color: retro.ink,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.1,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+        content: Builder(
+          builder: (context) {
+            final retro = RetroTheme.of(context);
+            final accent = accentOf(retro);
+            return _BouncyToast(
+              child: Container(
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surface,
+                    border: Border.all(
+                      color: retro.border,
+                      width: retro.borderWidth(2.5),
                     ),
+                    boxShadow: retro.hardShadow(dx: 4, dy: 4),
                   ),
-                ],
+                ),
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ── Barra de acento sólida ──────────────────────
+                      Container(width: 5, color: accent),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 13, 14, 13),
+                          child: Row(
+                            children: [
+                              MarioGameIcon(icon, size: 20, color: accent),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  message,
+                                  style: TextStyle(
+                                    color: retro.ink,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -0.1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -182,8 +192,11 @@ class _BouncyToast extends StatelessWidget {
       tween: Tween(begin: 0.85, end: 1.0),
       duration: const Duration(milliseconds: 320),
       curve: Curves.easeOutBack,
-      builder: (context, scale, child) =>
-          Transform.scale(scale: scale, alignment: Alignment.bottomCenter, child: child),
+      builder: (context, scale, child) => Transform.scale(
+        scale: scale,
+        alignment: Alignment.bottomCenter,
+        child: child,
+      ),
       child: child,
     );
   }

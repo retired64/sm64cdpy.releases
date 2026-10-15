@@ -1,9 +1,11 @@
 # Documentación de SM64CDPY
 
-Este directorio es el punto de entrada técnico del proyecto. Los documentos de la tabla siguiente se contrastaron con el código de la versión `1.8.2+21`.
+Este directorio es el punto de entrada técnico del proyecto. La arquitectura y el estado incluyen la preparación de `1.8.3+22` en `custom-themes`; no se ha fusionado ni publicado. Otros documentos conservan su fecha y alcance de revisión explícitos.
 
 | Documento | Propósito | Estado |
 |---|---|---|
+| [Preparación de release 1.8.3](RELEASE_1.8.3.md) | Versión/build, manifiesto EN/ES/PT-BR, validaciones y pasos de integración/publicación | Preparada en custom-themes; sin merge ni release |
+| [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Rama custom-themes; pendiente Actions y dispositivo |
 | [Arquitectura](ARCHITECTURE.md) | Componentes, engines, persistencia y flujo de datos | Vigente |
 | [Descargas y overlay](DOWNLOADS_AND_OVERLAY.md) | Flujo WorkManager/SAF, progreso y burbuja | Vigente |
 | [Contrato de la base de mods](CATALOG_DATABASE_CONTRACT.md) | Esquema v2, identidad durable, resolutores y publicación segura | Vigente |
@@ -21,4 +23,33 @@ Este directorio es el punto de entrada técnico del proyecto. Los documentos de 
 
 Cuando cambien versión mínima, dependencias, workers, canales de plataforma, persistencia, overlay o workflows, actualiza el documento correspondiente y la fecha de revisión del archivo. Las ideas y auditorías puntuales no deben presentarse como arquitectura vigente: deben añadirse al índice del archivo.
 
-Última revisión contra el código: **2026-09-27**.
+Última revisión para 1.8.3: **2026-10-14**.
+
+- [Activación de mods desde Biblioteca](GAME_MOD_ACTIVATION.md): contrato del juego, SAF, edición verificada, recuperación y pruebas.
+
+- [Preparación de merge/release 1.8.3](RELEASE_1.8.3.md): alcance final, previews EN/ES/PT-BR, evidencia, checklist y publicación autorizada.
+
+
+## Mario 64: recursos locales y menú original
+
+Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
+usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
+selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
+overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
+de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validado en [Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573): análisis, 83 tests Flutter,
+APK arm64 y tests Kotlin correctos para `f23034a`. Sigue pendiente la matriz
+física con ROM real; estos tests usan datos sintéticos y no una ROM del usuario.
+
+
+## Reconstrucción Mario 64 v2 — nueva validación pendiente
+
+Se sustituye la interpretación de 15 texturas débiles por 151 imágenes y tres
+fuentes privadas derivadas de ROM: materiales opacos, cielos Clouds/BBH, cursor,
+HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
+principales. La selección de Mario coordina importación antes de guardar tema;
+v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
+[MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.
+
+- [SM64 Intro: diseño e integración](SM64_INTRO_THEME.md).
+
+- [Conexión unificada de la carpeta del juego](UNIFIED_GAME_FOLDER.md).

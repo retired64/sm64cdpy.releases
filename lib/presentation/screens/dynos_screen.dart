@@ -485,27 +485,37 @@ class _DynosCardState extends ConsumerState<DynosCard>
           return Transform.translate(
             offset: Offset(offset, offset),
             child: Container(
-              decoration: BoxDecoration(
-                color: retro.surface,
-                borderRadius: RetroTheme.radius,
-                border: Border.all(color: retro.border, width: 3),
-                boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  color: retro.surface,
+                  borderRadius: retro.radius,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
+                ),
               ),
               child: child,
             ),
           );
         },
         child: ClipRRect(
-          borderRadius: RetroTheme.radius,
+          borderRadius: retro.radius,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Image banner (solo si hay URL, sin corazón encima) ──
               if (hasImage)
                 Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: retro.border, width: 3),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: retro.border,
+                          width: retro.borderWidth(3),
+                        ),
+                      ),
                     ),
                   ),
                   child: CachedNetworkImage(
@@ -521,7 +531,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
                       color: retro.surfaceAlt,
                       height: cardImageHeight,
                       alignment: Alignment.center,
-                      child: Icon(
+                      child: MarioGameIcon(
                         Icons.extension_rounded,
                         size: 30,
                         color: retro.inkDim,
@@ -569,7 +579,11 @@ class _DynosCardState extends ConsumerState<DynosCard>
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.star_rounded, size: 14, color: retro.blue),
+                          MarioGameIcon(
+                            Icons.star_rounded,
+                            size: 14,
+                            color: retro.blue,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             '${widget.mod.rating!.toStringAsFixed(1)} (${widget.mod.ratingCount})',
@@ -596,14 +610,17 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                   horizontal: 7,
                                   vertical: 3,
                                 ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: retro.blue,
-                                    width: 1.5,
+                                decoration: retro.gameDecoration(
+                                  BoxDecoration(
+                                    borderRadius: retro.radius,
+                                    border: Border.all(
+                                      color: retro.blue,
+                                      width: retro.borderWidth(1.5),
+                                    ),
                                   ),
                                 ),
                                 child: Text(
-                                  tag.toUpperCase(),
+                                  retro.displayLabel(tag),
                                   style: TextStyle(
                                     color: retro.blue,
                                     fontSize: 9.5,
@@ -638,9 +655,10 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                 ? l10n.sharedShowLess
                                 : l10n.sharedReadMore,
                             style: TextStyle(
+                              fontFamily: retro.headingFamily,
                               color: retro.blue,
                               fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: retro.design.headingWeight,
                               letterSpacing: 0.6,
                             ),
                           ),
@@ -653,7 +671,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
-                        icon: Icon(
+                        icon: MarioGameIcon(
                           isFav
                               ? Icons.favorite_rounded
                               : Icons.favorite_border_rounded,
@@ -673,9 +691,12 @@ class _DynosCardState extends ConsumerState<DynosCard>
                         onPressed: _toggleFavorite,
                         style: OutlinedButton.styleFrom(
                           foregroundColor: retro.blue,
-                          side: BorderSide(color: retro.blue, width: 2),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: RetroTheme.radius,
+                          side: BorderSide(
+                            color: retro.blue,
+                            width: retro.borderWidth(2),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: retro.radius,
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -688,11 +709,17 @@ class _DynosCardState extends ConsumerState<DynosCard>
                       width: double.infinity,
                       height: 50,
                       child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: retro.border, width: 3),
-                          boxShadow: isDownloading
-                              ? []
-                              : retro.hardShadow(dx: 4, dy: 4),
+                        decoration: retro.gameDecoration(
+                          BoxDecoration(
+                            borderRadius: retro.radius,
+                            border: Border.all(
+                              color: retro.border,
+                              width: retro.borderWidth(3),
+                            ),
+                            boxShadow: isDownloading
+                                ? []
+                                : retro.hardShadow(dx: 4, dy: 4),
+                          ),
                         ),
                         child: ElevatedButton(
                           onPressed:
@@ -710,13 +737,13 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                 ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: retro.blue,
-                            foregroundColor: Colors.white,
+                            foregroundColor: retro.onColor(retro.blue),
                             disabledBackgroundColor: retro.blue.withValues(
                               alpha: 0.55,
                             ),
                             elevation: 0,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: retro.radius,
                             ),
                           ),
                           child: isDownloading
@@ -725,9 +752,10 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                   children: [
                                     LinearProgressIndicator(
                                       value: visibleProgress,
-                                      backgroundColor: retro.inkOnAccent
+                                      backgroundColor: retro
+                                          .onColor(retro.blue)
                                           .withValues(alpha: 0.25),
-                                      color: retro.inkOnAccent,
+                                      color: retro.onColor(retro.blue),
                                       minHeight: 4,
                                     ),
                                     const SizedBox(height: 4),
@@ -736,9 +764,11 @@ class _DynosCardState extends ConsumerState<DynosCard>
                                           ? action.label(l10n)
                                           : '${(visibleProgress * 100).toStringAsFixed(0)}% · ${action.label(l10n)}',
                                       style: TextStyle(
+                                        fontFamily:
+                                            retro.design.headingFontFamily,
                                         fontSize: 13,
-                                        fontWeight: FontWeight.w900,
-                                        color: retro.inkOnAccent,
+                                        fontWeight: retro.design.headingWeight,
+                                        color: retro.onColor(retro.blue),
                                       ),
                                     ),
                                   ],
@@ -746,18 +776,20 @@ class _DynosCardState extends ConsumerState<DynosCard>
                               : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
+                                    MarioGameIcon(
                                       action.icon,
-                                      color: retro.inkOnAccent,
+                                      color: retro.onColor(retro.blue),
                                       size: 20,
                                     ),
                                     const SizedBox(width: 10),
                                     Text(
                                       action.label(l10n),
                                       style: TextStyle(
+                                        fontFamily:
+                                            retro.design.headingFontFamily,
                                         fontSize: 15,
-                                        fontWeight: FontWeight.w900,
-                                        color: retro.inkOnAccent,
+                                        fontWeight: retro.design.headingWeight,
+                                        color: retro.onColor(retro.blue),
                                       ),
                                     ),
                                   ],
@@ -770,7 +802,10 @@ class _DynosCardState extends ConsumerState<DynosCard>
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
                           onPressed: _download,
-                          icon: const Icon(Icons.refresh_rounded, size: 15),
+                          icon: const MarioGameIcon(
+                            Icons.refresh_rounded,
+                            size: 15,
+                          ),
                           label: Text(l10n.installationReinstall),
                         ),
                       ),
@@ -804,7 +839,7 @@ class _RetroMeta extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: accentColor),
+        MarioGameIcon(icon, size: 13, color: accentColor),
         const SizedBox(width: 4),
         Text(
           label,
@@ -837,12 +872,18 @@ class _EmptyView extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: BoxDecoration(
-                color: retro.surface,
-                border: Border.all(color: retro.border, width: 3),
-                boxShadow: retro.hardShadow(),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surface,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(),
+                ),
               ),
-              child: Icon(
+              child: MarioGameIcon(
                 Icons.rocket_launch_rounded,
                 size: 30,
                 color: retro.blue,
@@ -853,9 +894,10 @@ class _EmptyView extends StatelessWidget {
               l10n.dynosEmpty,
               textAlign: TextAlign.center,
               style: TextStyle(
+                fontFamily: retro.headingFamily,
                 color: retro.ink,
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: retro.design.headingWeight,
                 letterSpacing: 0.5,
               ),
             ),
@@ -911,10 +953,15 @@ class _Bone extends StatelessWidget {
       highlightColor: retro.surfaceAlt,
       child: Container(
         height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: retro.border, width: 3),
-          borderRadius: RetroTheme.radius,
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(3),
+            ),
+            borderRadius: retro.radius,
+          ),
         ),
       ),
     );
@@ -943,12 +990,18 @@ class _DynosError extends StatelessWidget {
               Container(
                 width: 64,
                 height: 64,
-                decoration: BoxDecoration(
-                  color: retro.surface,
-                  border: Border.all(color: retro.red, width: 3),
-                  boxShadow: retro.hardShadow(),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surface,
+                    border: Border.all(
+                      color: retro.red,
+                      width: retro.borderWidth(3),
+                    ),
+                    boxShadow: retro.hardShadow(),
+                  ),
                 ),
-                child: Icon(
+                child: MarioGameIcon(
                   Icons.error_outline_rounded,
                   size: 28,
                   color: retro.red,
@@ -959,9 +1012,10 @@ class _DynosError extends StatelessWidget {
                 l10n.dynosFailedToLoad,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: retro.headingFamily,
                   color: retro.ink,
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: retro.design.headingWeight,
                   letterSpacing: 0.4,
                 ),
               ),

@@ -332,3 +332,203 @@ Use this section as the checklist is executed.
 - Keep Komi Store, Floating Apps examples, `run-actions-github`, and other cloned references local and ignored. They are research material, not project modules.
 - Before changing any shared preference, cached flag, Worker identity or notification ID, follow the synchronization checklist in `AGENTS.md`.
 - Record every intentional fire-and-forget Future in the corresponding change summary.
+
+## Integración de temas — custom-themes (2026-10-13)
+
+- [x] Crear rama local desde main y descartar trabajo de flutter-termux solicitado.
+- [x] Implementar contrato/catálogo y definiciones incluidas.
+- [x] Conectar selección y modo independientes con un escritor Hive confirmado.
+- [x] Revisar las 14 pantallas, widgets y raíz compartida del overlay fijo.
+- [x] Añadir claves ARB EN/ES/es_419/PT/pt_BR sin editar generados manualmente.
+- [x] Preparar pruebas de tokens, persistencia/error/paralelismo y selector.
+- [x] Preparar generación/formato/tests y parche de fuentes en Actions.
+- [x] Documentar flujo, inventario de cada Dart y sincronización de estado.
+- [x] Ejecutar diff-check y comprobaciones JSON/YAML/contraste locales.
+- [ ] Ejecutar Actions: gen-l10n, dart format, analyze, tests y APK arm64.
+- [ ] Revisar/incorporar parche generado por el runner si corresponde.
+- [ ] Completar matriz física de temas, operaciones en curso y overlay fijo.
+
+No se instaló SDK ni se afirmó compilación local. Registro de cambios de
+esta rama y guía: [cuatom_themea.md](../cuatom_themea.md). La versión/manifiestos
+publicados permanecen sin cambios.
+
+### Primera build de custom-themes — corrección del análisis
+
+El log recibido detuvo `flutter analyze` por un inicializador autorreferente
+(`final retro = retro`) en Home. Corregido a `RetroTheme.of(context)` y revisado
+el mismo patrón en todos los Dart de lib/test. La nueva ejecución de Actions,
+tests y APK sigue pendiente; no se marca el release gate como completado.
+
+### Build #173 — regresión de decoración
+
+Análisis sin incidencias, 63 tests aprobados y una prueba de decoración fallida.
+Se corrigió el harness para esperar frames pendientes y limitar los finders a
+los componentes examinados; se añadió cobertura de los tres diseños sin manga
+y retorno a Retro. Testing adjunta ahora el log expandido de pruebas, conserva
+el exit code y no permite construir APK si los tests fallan. Pendiente repetir
+Actions: el resumen recibido no muestra la excepción/assertion original.
+
+### Simplificación de temas y coherencia de Ajustes
+
+El usuario confirmó la prueba anterior como funcional. Se retiraron Odyssey y
+GameCube del enum, catálogo, definiciones y ARB. Los IDs persistidos retirados
+recuperan Retro Manga sin perder modo; su siguiente confirmación guarda el ID
+válido incluso si visualmente ya coincide con el fallback.
+
+Tema de interfaz y modo usan el mismo componente expandible y opciones con
+marca de selección. Se adaptaron pruebas de persistencia, decoración y UI para
+los dos diseños y abrir/cerrar/cambiar modo. Pendiente nueva ejecución de Actions
+y revisión física de este ajuste; no se modificó overlay ni Android nativo.
+
+### Idioma y superficies de Ajustes Mario 64
+
+- [x] Reutilizar encabezado y opciones en tema, modo e idioma.
+- [x] Conservar giro 200 ms y expansión 220 ms del selector de idioma.
+- [x] Esperar setter existente y bloquear doble toque hasta finalizar.
+- [x] Aplicar suavizado local de tarjetas, diálogos, iconos y switches Mario.
+- [x] Mantener Retro y los flujos de SAF/WorkManager/overlay.
+- [x] Preparar prueba de UI de idioma y réplica de preferencias.
+- [ ] Ejecutar nueva Actions y verificar idioma/texto grande en dispositivo.
+
+## Preparación de versión oficial 1.8.3+22
+
+- [x] Confirmar éxito de Actions #177 para la base de idioma/Ajustes.
+- [x] Incrementar pubspec a 1.8.3+22; conservar versionCodes ABI derivados.
+- [x] Crear manifiesto canónico EN/ES/PT-BR con actualización opcional.
+- [x] Adaptar test de manifiesto actual para leer versión desde pubspec.
+- [x] Validar manifiestos y renderer con los tests Python disponibles.
+- [x] Alinear README, arquitectura, estado, CI/CD y guía de release.
+- [x] Testing: validación de versión/notas, previews y opción manual todas ABI.
+- [x] Release: stable solo en main y target_commitish sobre SHA construido.
+- [ ] Nueva Actions con build 22 aprobada.
+- [ ] Prueba física, tres ABI y recuperación/OTA desde 1.8.2.
+- [ ] Fijar publishedAt definitivo (el valor actual es provisional).
+- [ ] Autorizar y realizar merge a main; todavía no realizado.
+- [ ] Autorizar publicación y comprobar tag/assets/Discord/sitio; no iniciado.
+
+Fuente canónica: `release-manifests/v1.8.3.json`. Plan completo:
+[RELEASE_1.8.3.md](RELEASE_1.8.3.md). No se modifican releases históricas.
+
+## Activación de mods — candidata 1.8.3
+
+Biblioteca incluye una sección de unidades Lua del juego con switches de selección
+para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
+comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
+DynOS/Touch mantienen su directiva separada `dynos-pack:` dentro de Biblioteca. La validación física está pendiente.
+Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
+
+Biblioteca integra Mods del juego como pestaña nativa del sistema visual, con
+búsqueda y filtros locales, contador de activados, tarjetas adaptadas a cada
+diseño y confirmación de juego cerrado por visita (reiniciada al reanudar).
+Restaurar continúa exigiendo confirmación; cada escritura conserva la autoridad
+nativa. Ver [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md), integración visual.
+
+Mods del juego absorbe los datos útiles de Detectados: autor, categoría, versión
+informativa y descripción con detalles/búsqueda. Detectados ya no es una pestaña.
+La enumeración y los switches siguen las reglas del juego; no hay coincidencias
+por título ni otro escaneo automático de descubrimiento. Ver GAME_MOD_ACTIVATION.md.
+
+Mario 64 utiliza TypefaceMario64 de `fonts/` únicamente en títulos. El cuerpo y
+las descripciones mantienen la tipografía predeterminada; Roboto sirve de respaldo
+para los acentos ausentes en la fuente de títulos. Roles Material y helpers
+comparten esa definición. CI carga la fuente real para probar ancho estrecho y
+texto ampliado. Pendiente la revisión visual en dispositivo.
+
+## Puerta de salida consolidada 1.8.3 (2026-10-14)
+
+La preparación anterior queda consolidada en [RELEASE_1.8.3.md](RELEASE_1.8.3.md).
+Notas en tres idiomas y código generado/formateado del runner están alineados.
+Antes de merge/publicación quedan CI de las tres ABI, revisión física del APK
+final, fecha definitiva y autorizaciones respectivas. No marcar publicación
+completa únicamente porque la versión y las notas estén preparadas.
+
+
+## Mario 64: recursos locales y menú original
+
+Se integra la importación opcional de 15 texturas desde una ROM vanilla US del
+usuario, sin modificar el juego ni incluir imágenes extraídas en el APK. Marcos,
+selección, fondo de Biblioteca/Ajustes y contadores siguen el tema Mario; Retro y
+overlay conservan su diseño. Plan, contrato, persistencia, cancelación y matriz
+de pruebas en [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). Validado en [Testing #192](https://github.com/retired64/sm64cdpy.releases/actions/runs/38613827573): análisis, 83 tests Flutter,
+APK arm64 y tests Kotlin correctos para `f23034a`. Sigue pendiente la matriz
+física con ROM real; estos tests usan datos sintéticos y no una ROM del usuario.
+
+
+## Reconstrucción Mario 64 v2 — nueva validación pendiente
+
+Se sustituye la interpretación de 15 texturas débiles por 151 imágenes y tres
+fuentes privadas derivadas de ROM: materiales opacos, cielos Clouds/BBH, cursor,
+HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
+principales. La selección de Mario coordina importación antes de guardar tema;
+v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
+[MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.
+
+## Revisión de tipografía desde capturas — 14 octubre 2026
+
+Testing #198 completó análisis, 85 pruebas Flutter, APK arm64 y pruebas nativas.
+Las capturas locales mostraron encabezados del drawer divididos por letras: el
+separador ocupaba la mitad de la fila y cada sprite era un punto de salto. Mario
+ahora usa la fuente de menú para encabezados de sección, 13.5 puntos y todo el
+ancho disponible; los títulos destacados conservan los recursos HUD. El texto
+de diálogo compartido tiene mínimo 14 puntos, peso normal y tracking cero.
+Ajustes distingue opciones de 16 puntos y descripciones de 14; las rutas usan
+Roboto de 14 para lectura precisa. Retro Manga conserva su escala. No cambia
+la importación, el formato v2, preferencias, workers ni el engine del overlay.
+Las capturas no se incluyen en el commit. Validación visual física pendiente
+para el nuevo ajuste, incluidos claro/oscuro y escala de texto aumentada.
+
+## SM64 Intro
+
+Nuevo diseño `sm64_intro` con ambiente dorado en claro y azul nocturno en oscuro,
+paneles de menú y ranuras Mario activas/inactivas. Comparte el conjunto ROM v2
+con Mario 64, sin reimportación si ya está preparado. Plan, inventario de
+integración y validación: `docs/SM64_INTRO_THEME.md`. Testing pendiente.
+
+Validación: [Testing #206](https://github.com/retired64/sm64cdpy.releases/actions/runs/38636988190) completado correctamente: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas. Los commits posteriores solo sincronizan formato probado y documentación. Pendiente prueba visual física de SM64 Intro.
+
+## Ficha de mod y lectura
+
+Portada sin banner, navegación sin solapamientos, paneles y estadísticas
+adaptables. Mario eleva texto mínimo a 16 y descripción a 18 puntos.
+Plan técnico: `docs/MOD_DETAIL_DESIGN.md`. Testing pendiente.
+
+Validado en [Testing #213](https://github.com/retired64/sm64cdpy.releases/actions/runs/38641643668): formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas completados correctamente. Los commits posteriores sincronizan formato probado y documentación. Pendiente revisión visual física de la ficha en claro/oscuro.
+
+## Conexión unificada del juego
+
+Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada,
+mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
+migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+Validación Actions pendiente; revisión física requerida.
+
+Conexión guiada: superficies y acciones propias de cada tema, desplegable de
+Ajustes coherente con selectores y estados separados de configuración/ROM.
+Validado en [Testing #229](https://github.com/retired64/sm64cdpy.releases/actions/runs/38671162732): formato, análisis, pruebas Flutter (incluidos los seis casos de tema/brillo), APK arm64 y pruebas nativas correctos para `9b0b133`. Revisión visual física pendiente. Detalle en
+[UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
+
+Biblioteca integra packs DynOS/Touch Controls de user/dynos/packs mediante
+`dynos-pack:`; Lua conserva `enable-mod:`. Identidades por tipo/nombre, backup
+y guardado verificado compartidos. VIP/OMMR Pack retiran favoritos y gesto largo.
+Plan y límites: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
+Validado en [Testing #232](https://github.com/retired64/sm64cdpy.releases/actions/runs/38679650559) para `8ff4975`: traducciones, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Prueba física pendiente.
+
+## Resolución de rutas Android — esquema 2
+
+Selección principal de com.maniscat2.sm64coopdx, cuatro rutas de lectura y
+destinos de escritura en user. Lua prioriza user; DynOS prioriza raíz. Migración
+limitada desde user con aviso para ampliar permiso. Contrato vigente al inicio
+de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. No se fusionó a main ni se publicó release.
+
+## Apartados separados en Biblioteca
+
+Mods del juego muestra solo unidades Lua; DynOS / Touch Controls muestra packs.
+Cada apartado calcula su contador, búsqueda, filtros y paginación sobre su tipo.
+La sesión de búsqueda/filtro se conserva al alternarlos usando el mismo panel
+activo: no se duplican listeners, escaneos ni escritores. El bloqueo de guardado
+permanece al cambiar de apartado. La restauración sigue siendo global para el
+archivo compartido y se confirma como antes. Instalados, Actualizaciones e
+Historial conservan su finalidad. Se admiten enlaces ?view=dynos y
+?view=touch-controls; los enlaces game-mods/detected mantienen compatibilidad.
+No cambia Kotlin, las rutas, el backup ni las directivas del juego. Validación
+Actions validado en [Testing #240](https://github.com/retired64/sm64cdpy.releases/actions/runs/38684870621), commit `a18779d`: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Generados y formato del runner sincronizados posteriormente. Prueba física de los tres temas pendiente.

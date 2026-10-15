@@ -1,8 +1,14 @@
-name: Build Testing — Sm64CDPY (arm64 only)
+name: Build Testing — Sm64CDPY (arm64 by default)
 
 # ─── Triggers ────────────────────────────────────────────────────────────────
 on:
   workflow_dispatch:          # Lanzamiento manual desde la UI de GitHub Actions
+    inputs:
+      all_abis:
+        description: 'Compilar arm64, arm32 y x86_64 sin publicar (validación de release)'
+        type: boolean
+        required: false
+        default: false
   push:
     branches:
       - '**'                  # Cualquier rama; se filtra por mensaje de commit abajo
@@ -14,8 +20,11 @@ permissions:
 # ─── Job principal ────────────────────────────────────────────────────────────
 jobs:
   build-testing:
-    name: Build APK arm64 (testing)
+    name: Build APKs (testing)
     runs-on: ubuntu-latest
+    env:
+      # A release-validation push can exercise all ABIs without publication.
+      ALL_ABIS: ${{ inputs.all_abis == true || contains(github.event.head_commit.message, '[all-abis]') }}
     # Corre siempre en workflow_dispatch. En push, solo si el commit incluye [testing]
     if: >
       github.event_name == 'workflow_dispatch' ||
@@ -42,7 +51,7 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # ── 4. Extraer versión desde pubspec.yaml (solo para nombrar el artifact) ─
+      # ── 4. Extraer versión desde pubspec.yaml (validación y artifact) ─
       - name: Extraer versión de pubspec.yaml
         id: version
         run: |
@@ -50,6 +59,26 @@ jobs:
           VERSION=$(echo "$RAW" | cut -d'+' -f1)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Building versionName: $VERSION (testing build, sin tag/release)"
+
+      - name: Validar versión y notas de lanzamiento
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          python3 scripts/release_manifest.py "release-manifests/v${RELEASE_VERSION}.json" \
+            --pubspec pubspec.yaml \
+            --github-output "$RUNNER_TEMP/release-notes-en.md" \
+            --discord-output "$RUNNER_TEMP/release-notes-es.md"
+          python3 -m unittest discover -s test/scripts -p '*_test.py' -v
+
+      - name: Subir vista previa de notas de lanzamiento
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-preview-${{ steps.version.outputs.version }}
+          path: |
+            ${{ runner.temp }}/release-notes-en.md
+            ${{ runner.temp }}/release-notes-es.md
+            release-manifests/v${{ steps.version.outputs.version }}.json
+          retention-days: 7
 
       # ── 5. Keystore ───────────────────────────────────────────────────────
       - name: Decodificar Keystore
@@ -68,6 +97,25 @@ jobs:
       # ── 6. Dependencias ──────────────────────────────────────────────────
       - name: Instalar dependencias
         run: flutter pub get
+
+      - name: Generar traducciones
+        run: flutter gen-l10n
+
+      - name: Formatear fuentes Dart en el runner
+        run: dart format lib test/core/theme test/presentation
+
+      # Termux development can lack Dart. Keep generated sources/formatting
+      # reviewable as a patch rather than committing from the runner.
+      - name: Guardar parche de generación y formato
+        run: git diff -- lib test > flutter-source-sync.patch
+
+      - name: Subir parche de fuentes
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-source-sync
+          path: flutter-source-sync.patch
+          retention-days: 7
+
 
       # ── 7. Análisis estático ─────────────────────────────────────────────
       # No se corta el job acá aunque falle: se captura el exit code para
@@ -100,9 +148,34 @@ jobs:
           echo "flutter analyze falló (exit code ${{ steps.analyze.outputs.exit_code }}). Revisá el artifact 'flutter-analyze-log' para el detalle completo."
           exit 1
 
-      # ── 8. Build APK solo arm64 ───────────────────────────────────────────
-      - name: Build APK (arm64-v8a)
-        run: flutter build apk --release --target-platform=android-arm64 --split-per-abi
+      - name: Pruebas Flutter
+        run: |
+          set -o pipefail
+          flutter test --reporter expanded 2>&1 | tee flutter-test.log
+
+      - name: Subir log de pruebas Flutter
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-test-log
+          path: flutter-test.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+      # ── 8. Build APK arm64 por defecto / todas las ABI manualmente ───────────────────────────────────────────
+      - name: Build APKs de prueba
+        run: |
+          if [ "$ALL_ABIS" = 'true' ]; then
+            flutter build apk --release --split-per-abi
+          else
+            flutter build apk --release --target-platform=android-arm64 --split-per-abi
+          fi
+
+      # Flutter installs the wrapper and prepares local.properties during build.
+      # Reuse release compilation, and gate artifact upload/publication on tests.
+      - name: Pruebas nativas de configuración y biblioteca
+        working-directory: android
+        run: ./gradlew :app:testReleaseUnitTest
 
       # ── 8.5. Renombrar APK con short commit SHA ──────────────────────────
       - name: Renombrar APK con short commit SHA
@@ -112,6 +185,10 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           APK_NAME="cdpy-${SHORT_SHA}.apk"
           mv "$APK_DIR/app-arm64-v8a-release.apk" "$APK_DIR/$APK_NAME"
+          if [ "$ALL_ABIS" = 'true' ]; then
+            mv "$APK_DIR/app-armeabi-v7a-release.apk" "$APK_DIR/cdpy-${SHORT_SHA}-arm32.apk"
+            mv "$APK_DIR/app-x86_64-release.apk" "$APK_DIR/cdpy-${SHORT_SHA}-x86_64.apk"
+          fi
           echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
           echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "Renamed → $APK_NAME"
@@ -127,13 +204,18 @@ jobs:
           fi
           SIZE=$(du -h "$APK_DIR/$APK" | cut -f1)
           echo "$APK ($SIZE)"
+          if [ "$ALL_ABIS" = 'true' ]; then
+            for ABI in arm32 x86_64; do
+              test -s "$APK_DIR/cdpy-${{ steps.apk.outputs.short_sha }}-${ABI}.apk"
+            done
+          fi
 
       # ── 10. Subir APK como artifact ──────────────────────────────────────
       - name: Subir APK como artifact
         uses: actions/upload-artifact@v4
         with:
           name: cdpy-${{ steps.apk.outputs.short_sha }}-TESTING
-          path: build/app/outputs/flutter-apk/${{ steps.apk.outputs.apk_name }}
+          path: build/app/outputs/flutter-apk/cdpy-${{ steps.apk.outputs.short_sha }}*.apk
           retention-days: 7
 
       # ── 11. Limpiar keystore SIEMPRE ───────────────────────────────────────

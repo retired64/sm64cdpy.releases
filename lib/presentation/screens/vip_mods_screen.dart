@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -165,9 +163,6 @@ class _VipModCardState extends ConsumerState<VipModCard>
   late final AnimationController _pressCtrl;
   bool _isExpanded = false;
 
-  Timer? _longPressTimer;
-  bool _isLongPressing = false;
-
   bool _downloading = false;
   double _progress = 0.0;
 
@@ -189,45 +184,6 @@ class _VipModCardState extends ConsumerState<VipModCard>
     );
     // Pixel-press: en vez de un scale suave, el "press" retro se resuelve
     // en el build() desplazando la card estilo botón de arcade.
-  }
-
-  void _startLongPress() {
-    _longPressTimer?.cancel();
-    _isLongPressing = true;
-
-    _longPressTimer = Timer(const Duration(seconds: 2), _completeLongPress);
-  }
-
-  void _cancelLongPress() {
-    _longPressTimer?.cancel();
-    _longPressTimer = null;
-    if (_isLongPressing) {
-      setState(() {
-        _isLongPressing = false;
-      });
-    }
-  }
-
-  void _completeLongPress() {
-    _longPressTimer?.cancel();
-    _longPressTimer = null;
-    setState(() {
-      _isLongPressing = false;
-    });
-    _toggleFavorite();
-  }
-
-  Future<void> _toggleFavorite() async {
-    await toggleVipFavourite(ref, widget.mod.id);
-    if (!mounted) return;
-    final isNowFav = ref.read(vipFavouritesProvider).contains(widget.mod.id);
-    AppSnackbar.info(
-      context,
-      message: isNowFav
-          ? AppLocalizations.of(context).sharedAddedToFavorites
-          : AppLocalizations.of(context).sharedRemovedFromFavorites,
-      duration: const Duration(seconds: 1),
-    );
   }
 
   Future<void> _download() async {
@@ -437,7 +393,6 @@ class _VipModCardState extends ConsumerState<VipModCard>
   @override
   void dispose() {
     _pressCtrl.dispose();
-    _longPressTimer?.cancel();
     super.dispose();
   }
 
@@ -445,7 +400,6 @@ class _VipModCardState extends ConsumerState<VipModCard>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
-    final isFav = ref.watch(vipFavouritesProvider).contains(widget.mod.id);
     final actionState = ref.watch(installationActionProvider(_identity));
     final action = actionState.primaryAction;
     final isDownloading = _downloading || actionState.isOperationActive;
@@ -465,9 +419,6 @@ class _VipModCardState extends ConsumerState<VipModCard>
       onTapUp: (_) => _pressCtrl.reverse(),
       onTapCancel: () => _pressCtrl.reverse(),
       onTap: () => setState(() => _isExpanded = !_isExpanded),
-      onLongPressStart: (_) => _startLongPress(),
-      onLongPressEnd: (_) => _cancelLongPress(),
-      onLongPressMoveUpdate: (_) => _cancelLongPress(),
       child: AnimatedBuilder(
         animation: _pressCtrl,
         builder: (context, child) {
@@ -477,27 +428,37 @@ class _VipModCardState extends ConsumerState<VipModCard>
           return Transform.translate(
             offset: Offset(offset, offset),
             child: Container(
-              decoration: BoxDecoration(
-                color: retro.surface,
-                borderRadius: RetroTheme.radius,
-                border: Border.all(color: retro.border, width: 3),
-                boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  color: retro.surface,
+                  borderRadius: retro.radius,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(dx: 5 - offset, dy: 5 - offset),
+                ),
               ),
               child: child,
             ),
           );
         },
         child: ClipRRect(
-          borderRadius: RetroTheme.radius,
+          borderRadius: retro.radius,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Image banner (solo si hay URL, sin corazón encima) ──
               if (hasImage)
                 Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: retro.border, width: 3),
+                  decoration: retro.gameDecoration(
+                    BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: retro.border,
+                          width: retro.borderWidth(3),
+                        ),
+                      ),
                     ),
                   ),
                   child: CachedNetworkImage(
@@ -513,7 +474,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
                       color: retro.surfaceAlt,
                       height: cardImageHeight,
                       alignment: Alignment.center,
-                      child: Icon(
+                      child: MarioGameIcon(
                         Icons.extension_rounded,
                         size: 30,
                         color: retro.inkDim,
@@ -566,14 +527,17 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                   horizontal: 7,
                                   vertical: 3,
                                 ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: retro.amber,
-                                    width: 1.5,
+                                decoration: retro.gameDecoration(
+                                  BoxDecoration(
+                                    borderRadius: retro.radius,
+                                    border: Border.all(
+                                      color: retro.amber,
+                                      width: retro.borderWidth(1.5),
+                                    ),
                                   ),
                                 ),
                                 child: Text(
-                                  tag.toUpperCase(),
+                                  retro.displayLabel(tag),
                                   style: TextStyle(
                                     color: retro.amber,
                                     fontSize: 9.5,
@@ -608,9 +572,10 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                 ? l10n.sharedShowLess
                                 : l10n.sharedReadMore,
                             style: TextStyle(
+                              fontFamily: retro.headingFamily,
                               color: retro.amber,
                               fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: retro.design.headingWeight,
                               letterSpacing: 0.6,
                             ),
                           ),
@@ -619,50 +584,22 @@ class _VipModCardState extends ConsumerState<VipModCard>
 
                     const SizedBox(height: 18),
 
-                    // Favorite button
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        icon: Icon(
-                          isFav
-                              ? Icons.favorite_rounded
-                              : Icons.favorite_border_rounded,
-                          size: 16,
-                          color: retro.amber,
-                        ),
-                        label: Text(
-                          isFav
-                              ? l10n.sharedRemoveFromFavorites
-                              : l10n.sharedAddToFavorites,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        onPressed: _toggleFavorite,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: retro.amber,
-                          side: BorderSide(color: retro.amber, width: 2),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: RetroTheme.radius,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
                     // Download button — botón de arcade sólido dorado
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: retro.border, width: 3),
-                          boxShadow: isDownloading
-                              ? []
-                              : retro.hardShadow(dx: 4, dy: 4),
+                        decoration: retro.gameDecoration(
+                          BoxDecoration(
+                            borderRadius: retro.radius,
+                            border: Border.all(
+                              color: retro.border,
+                              width: retro.borderWidth(3),
+                            ),
+                            boxShadow: isDownloading
+                                ? []
+                                : retro.hardShadow(dx: 4, dy: 4),
+                          ),
                         ),
                         child: ElevatedButton(
                           onPressed:
@@ -685,8 +622,8 @@ class _VipModCardState extends ConsumerState<VipModCard>
                               alpha: 0.55,
                             ),
                             elevation: 0,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: retro.radius,
                             ),
                           ),
                           child: isDownloading
@@ -725,7 +662,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(
+                                      MarioGameIcon(
                                         action.icon,
                                         color: retro.onAmber,
                                         size: 20,
@@ -734,8 +671,11 @@ class _VipModCardState extends ConsumerState<VipModCard>
                                       Text(
                                         action.label(l10n),
                                         style: TextStyle(
+                                          fontFamily:
+                                              retro.design.headingFontFamily,
                                           fontSize: 15,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight:
+                                              retro.design.headingWeight,
                                           color: retro.onAmber,
                                         ),
                                       ),
@@ -750,7 +690,10 @@ class _VipModCardState extends ConsumerState<VipModCard>
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
                           onPressed: _download,
-                          icon: const Icon(Icons.refresh_rounded, size: 15),
+                          icon: const MarioGameIcon(
+                            Icons.refresh_rounded,
+                            size: 15,
+                          ),
                           label: Text(l10n.installationReinstall),
                         ),
                       ),
@@ -779,7 +722,7 @@ class _RetroMeta extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: retro.amber),
+        MarioGameIcon(icon, size: 13, color: retro.amber),
         const SizedBox(width: 4),
         Text(
           label,
@@ -812,12 +755,18 @@ class _EmptyView extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: BoxDecoration(
-                color: retro.surface,
-                border: Border.all(color: retro.border, width: 3),
-                boxShadow: retro.hardShadow(),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surface,
+                  border: Border.all(
+                    color: retro.border,
+                    width: retro.borderWidth(3),
+                  ),
+                  boxShadow: retro.hardShadow(),
+                ),
               ),
-              child: Icon(
+              child: MarioGameIcon(
                 Icons.workspace_premium_rounded,
                 size: 30,
                 color: retro.amber,
@@ -828,9 +777,10 @@ class _EmptyView extends StatelessWidget {
               l10n.vipEmpty,
               textAlign: TextAlign.center,
               style: TextStyle(
+                fontFamily: retro.headingFamily,
                 color: retro.ink,
                 fontSize: 14,
-                fontWeight: FontWeight.w900,
+                fontWeight: retro.design.headingWeight,
                 letterSpacing: 0.5,
               ),
             ),
@@ -886,10 +836,15 @@ class _Bone extends StatelessWidget {
       highlightColor: retro.surfaceAlt,
       child: Container(
         height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: retro.border, width: 3),
-          borderRadius: RetroTheme.radius,
+        decoration: retro.gameDecoration(
+          BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: retro.border,
+              width: retro.borderWidth(3),
+            ),
+            borderRadius: retro.radius,
+          ),
         ),
       ),
     );
@@ -918,12 +873,18 @@ class _VipError extends StatelessWidget {
               Container(
                 width: 64,
                 height: 64,
-                decoration: BoxDecoration(
-                  color: retro.surface,
-                  border: Border.all(color: retro.red, width: 3),
-                  boxShadow: retro.hardShadow(),
+                decoration: retro.gameDecoration(
+                  BoxDecoration(
+                    borderRadius: retro.radius,
+                    color: retro.surface,
+                    border: Border.all(
+                      color: retro.red,
+                      width: retro.borderWidth(3),
+                    ),
+                    boxShadow: retro.hardShadow(),
+                  ),
                 ),
-                child: Icon(
+                child: MarioGameIcon(
                   Icons.error_outline_rounded,
                   size: 28,
                   color: retro.red,
@@ -934,9 +895,10 @@ class _VipError extends StatelessWidget {
                 l10n.vipFailedToLoad,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: retro.headingFamily,
                   color: retro.ink,
                   fontSize: 13,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: retro.design.headingWeight,
                   letterSpacing: 0.4,
                 ),
               ),

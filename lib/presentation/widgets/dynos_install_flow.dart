@@ -40,32 +40,34 @@ Future<bool> _showFolderRequiredDialog(
             backgroundColor: Colors.transparent,
             child: Container(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: retro.surfaceAlt,
-                border: Border.all(color: retro.accent, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: retro.shadowColor,
-                    offset: const Offset(5, 5),
+              decoration: retro.gameDecoration(
+                BoxDecoration(
+                  borderRadius: retro.radius,
+                  color: retro.surfaceAlt,
+                  border: Border.all(
+                    color: retro.accent,
+                    width: retro.borderWidth(2),
                   ),
-                ],
+                  boxShadow: retro.hardShadow(dx: 5, dy: 5),
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(
+                  MarioGameIcon(
                     Icons.folder_open_rounded,
-                    color: retro.accent,
+                    color: retro.accentText,
                     size: 34,
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    title.toUpperCase(),
+                    retro.displayLabel(title),
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: retro.headingFamily,
                       color: retro.ink,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: retro.design.headingWeight,
                       letterSpacing: 1.1,
                     ),
                   ),
@@ -84,7 +86,7 @@ Future<bool> _showFolderRequiredDialog(
                       Expanded(
                         child: FilledButton.icon(
                           onPressed: () => Navigator.of(ctx).pop(true),
-                          icon: const Icon(Icons.settings, size: 16),
+                          icon: const MarioGameIcon(Icons.settings, size: 16),
                           label: Text(l10n.detailGoToSettings),
                         ),
                       ),
@@ -108,7 +110,7 @@ Future<bool> confirmDynosInstall(
         context: context,
         builder: (ctx) => AlertDialog(
           backgroundColor: RetroTheme.of(ctx).surfaceAlt,
-          icon: Icon(
+          icon: MarioGameIcon(
             Icons.install_mobile_rounded,
             color: RetroTheme.of(ctx).accent,
             size: 28,
@@ -131,7 +133,7 @@ Future<bool> confirmDynosInstall(
             ),
             FilledButton.icon(
               onPressed: () => Navigator.of(ctx).pop(true),
-              icon: const Icon(Icons.install_mobile_rounded, size: 16),
+              icon: const MarioGameIcon(Icons.install_mobile_rounded, size: 16),
               label: Text(l10n.detailInstallNow),
             ),
           ],
