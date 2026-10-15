@@ -38,6 +38,15 @@ class DelayedFolderRead extends GameFolderService {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test('recreated descendants change connection identity without changing the root grant', () {
+    GameFolderConnection read(String user, String mods) => GameFolderConnection.fromMap({
+      'rootUri': 'same-root', 'userUri': user, 'modsUri': mods, 'dynosUri': 'packs', 'fullAccess': true,
+    });
+    expect(read('user-1', 'mods-1').connectionKey, isNot(read('user-2', 'mods-2').connectionKey));
+    expect(read('user-1', 'mods-1').connectionKey, read('user-1', 'mods-1').connectionKey);
+    expect(read('user-1', 'mods-1').fullAccess, isTrue);
+    expect(GameFolderConnection.fromMap({}).fullAccess, isFalse);
+  });
   test('a stale refresh cannot overwrite a confirmed connection', () async {
     final service = DelayedFolderRead();
     final container = ProviderContainer(

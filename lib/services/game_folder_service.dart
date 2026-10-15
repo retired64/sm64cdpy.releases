@@ -24,7 +24,8 @@ class GameFolderConnection {
         config: value['config'] == true,
         rom: value['rom'] == true,
         status: value['status'] as String? ?? 'unselected',
-        connectionKey: value['rootUri'] as String?,
+        connectionKey: value['rootUri'] == null ? null :
+          '${value['rootUri']}|${value['userUri']}|${value['modsUri']}|${value['dynosUri']}',
       );
   final bool fullAccess;
   final bool connected, dismissed, unified, mods, dynos, config, rom;

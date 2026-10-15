@@ -80,11 +80,14 @@ internal object GameFolderStore {
     }
 
     fun root(context: Context): DocumentFile? {
-        val saved = prefs(context).getString(KEY, null) ?: return null
+        val preferences = prefs(context)
+        val parent = preferences.getString(ROOT_KEY, null)
+        val saved = parent ?: preferences.getString(KEY, null) ?: return null
         val uri = Uri.parse(saved)
-        return GameFolderAccess.resolve(context, uri)?.takeIf {
-            GameFolderAccess.hasGrant(context, uri, write = true) && it.isDirectory && it.name == "user" && it.canWrite()
-        }
+        if (!GameFolderAccess.hasGrant(context, uri, write = true)) return null
+        val selected = GameFolderAccess.resolve(context, uri) ?: return null
+        val user = if (parent != null) selected.findFile("user") else selected
+        return user?.takeIf { it.isDirectory && it.name == "user" && it.canRead() && it.canWrite() }
     }
 
     /** Null for legacy user-only grants. Never infer a parent URI or filesystem path. */
@@ -115,13 +118,13 @@ internal object GameFolderStore {
         val root = root(context)
         val actualMods = root?.findFile("mods")?.uri?.toString()
         val actualPacks = root?.findFile("dynos")?.takeIf { it.isDirectory }?.findFile("packs")?.uri?.toString()
-        if (root != null && (preferences.getInt("unified_game_folder_version", 0) != 2 ||
+        if (root != null && (root.uri.toString() != preferences.getString(KEY, null) || preferences.getInt("unified_game_folder_version", 0) != 2 ||
             actualMods != preferences.getString(ModInstallerPlugin.KEY_TREE_URI, null) ||
             actualPacks != preferences.getString(ModInstallerPlugin.KEY_DYNOS_TREE_URI, null) || actualMods == null || actualPacks == null)) {
             try { connect(context, Uri.parse(preferences.getString(ROOT_KEY, null) ?: saved!!), Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION, allowLegacy = true) }
             catch (error: Exception) { if (error.message != "installing") throw error }
         }
-        if (saved != null && root == null) {
+        if ((saved != null || preferences.contains(ROOT_KEY)) && root == null) {
             preferences.edit().remove(KEY).remove(ROOT_KEY).remove(ModInstallerPlugin.KEY_TREE_URI).remove(ModInstallerPlugin.KEY_DYNOS_TREE_URI)
                 .putBoolean(ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, true)
                 .putBoolean(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED, true).commit()
@@ -131,7 +134,7 @@ internal object GameFolderStore {
         val unified = root != null && mods != null && packs != null &&
             preferences.getString(ModInstallerPlugin.KEY_TREE_URI, null) == mods.uri.toString() &&
             preferences.getString(ModInstallerPlugin.KEY_DYNOS_TREE_URI, null) == packs.uri.toString()
-        mapOf("fullAccess" to (gameRoot(context) != null), "rootUri" to (if (root != null) preferences.getString(ROOT_KEY, null) ?: saved else null), "unified" to unified, "dismissed" to preferences.getBoolean("game_setup_dismissed", false), "connected" to (root != null), "status" to (if (root != null && !unified) "installing" else if (root != null) "ready" else if (saved != null || preferences.getBoolean(ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, false) || preferences.getBoolean(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED, false)) "access" else "unselected"),
+        mapOf("userUri" to root?.uri?.toString(), "fullAccess" to (gameRoot(context) != null), "rootUri" to (if (root != null) preferences.getString(ROOT_KEY, null) ?: preferences.getString(KEY, null) else null), "unified" to unified, "dismissed" to preferences.getBoolean("game_setup_dismissed", false), "connected" to (root != null), "status" to (if (root != null && !unified) "installing" else if (root != null) "ready" else if (saved != null || preferences.getBoolean(ModInstallerPlugin.KEY_TREE_PERMISSION_REVOKED, false) || preferences.getBoolean(ModInstallerPlugin.KEY_DYNOS_TREE_PERMISSION_REVOKED, false)) "access" else "unselected"),
             "mods" to (mods != null),
             "dynos" to (packs != null),
             "config" to (root?.findFile("sm64config.txt")?.isFile == true),

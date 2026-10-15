@@ -25,7 +25,7 @@ internal object GameModActivationStore {
         if (!granted) {
             throw SecurityException("access")
         }
-        val root = GameFolderAccess.resolve(context, uri) ?: error("access")
+        val root = GameFolderStore.root(context) ?: error("access")
         require(root.name == "user" && root.canRead() && root.canWrite()) { "folder" }
         val mods = root.findFile("mods") ?: error("folder")
         require(mods.isDirectory) { "folder" }

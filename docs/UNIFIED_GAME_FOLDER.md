@@ -29,7 +29,10 @@ Las selecciones antiguas de user se mantienen operativas en modo limitado,
 `fullAccess=false`, con aviso para ampliar acceso a la carpeta principal. No se
 abre el explorador automáticamente ni se inventa acceso a sus hermanas. El estado
 incluye fullAccess; cambiarlo invalida Biblioteca y su proyección al overlay. No
-hay caches de contenido nuevos. Revocación, desconexión y rollback incluyen la
+hay caches de contenido nuevos. Si user o sus destinos se recrean con nuevos IDs,
+se resuelven desde la raíz autorizada y se reconcilian las URI bajo los mismos
+locks. La identidad de conexión incluye los documentos derivados para invalidar
+las proyecciones aunque el permiso raíz siga siendo el mismo. Revocación, desconexión y rollback incluyen la
 nueva clave raíz, y conservan los locks y el bloqueo con instalaciones activas.
 
 El origen del snapshot es `user` o `root`, con user por defecto para compatibilidad.
