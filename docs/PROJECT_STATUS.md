@@ -222,4 +222,4 @@ archivo compartido y se confirma como antes. Instalados, Actualizaciones e
 Historial conservan su finalidad. Se admiten enlaces ?view=dynos y
 ?view=touch-controls; los enlaces game-mods/detected mantienen compatibilidad.
 No cambia Kotlin, las rutas, el backup ni las directivas del juego. Validación
-Actions de esta revisión pendiente; prueba física de los tres temas pendiente.
+Actions validado en [Testing #240](https://github.com/retired64/sm64cdpy.releases/actions/runs/38684870621), commit `a18779d`: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Generados y formato del runner sincronizados posteriormente. Prueba física de los tres temas pendiente.
