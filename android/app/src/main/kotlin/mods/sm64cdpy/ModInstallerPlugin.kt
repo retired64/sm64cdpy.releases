@@ -847,6 +847,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         WorkManager.getInstance(act).enqueue(request)
 
         result.success(workId.toString())
+        }
     }
 
     /**
@@ -858,7 +859,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      *
      * Retorna inmediatamente un mapa con downloadWorkId e installWorkId.
      */
-     private fun downloadAndInstallMod(call: MethodCall, result: Result) {
+    private fun downloadAndInstallMod(call: MethodCall, result: Result) {
         synchronized(InstallationSafAccessCoordinator.selectionLock) {
         val act = activity
         if (act == null) {
@@ -1077,9 +1078,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "downloadWorkId" to downloadId.toString(),
             "installWorkId" to installId.toString()
         ))
-            }
         }
-}
+    }
 
     /**
      * Cancela todas las operaciones asociadas a un mod por nombre.
