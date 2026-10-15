@@ -39,6 +39,19 @@ class GameModEntry {
   final String? category;
   final String? versionLabel;
   final String? description;
+
+  GameModEntry withEnabled(bool value) => GameModEntry(
+    kind: kind,
+    origin: origin,
+    name: name,
+    title: title,
+    enabled: value,
+    selectable: selectable,
+    author: author,
+    category: category,
+    versionLabel: versionLabel,
+    description: description,
+  );
 }
 
 class GameModSnapshot {
@@ -58,6 +71,23 @@ class GameModSnapshot {
   final String status;
   final bool backupAvailable;
   final List<GameModEntry> mods;
+
+  GameModSnapshot withActivation({
+    required String name,
+    required String kind,
+    required bool enabled,
+    bool? backupAvailable,
+  }) => GameModSnapshot(
+    status: status,
+    backupAvailable: backupAvailable ?? this.backupAvailable,
+    mods: mods
+        .map(
+          (mod) => mod.name == name && mod.kind == kind
+              ? mod.withEnabled(enabled)
+              : mod,
+        )
+        .toList(growable: false),
+  );
 }
 
 class GameModActivation {

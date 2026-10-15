@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -25,21 +23,44 @@ class LibraryScreen extends ConsumerStatefulWidget {
   ConsumerState<LibraryScreen> createState() => _LibraryScreenState();
 }
 
-class _LibraryScreenState extends ConsumerState<LibraryScreen> {
+class _LibraryScreenState extends ConsumerState<LibraryScreen>
+    with WidgetsBindingObserver {
   _LibraryView _view = _LibraryView.gameMods;
   bool get _isGameView =>
       _view == _LibraryView.gameMods || _view == _LibraryView.dynos;
   String? _section;
   String? _destination;
   bool _initialViewApplied = false;
+  bool _gameModsLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _gameModsLoaded) {
+      ref.read(gameModActivationProvider.notifier).invalidateFreshness();
+    }
+  }
 
   Future<void> _refresh() async {
-    try {
-      await ref.read(gameModActivationProvider.notifier).refresh();
-    } catch (_) {
-      /* Provider exposes the access error. */
+    if (_isGameView) {
+      try {
+        await ref.read(gameModActivationProvider.notifier).refresh();
+      } catch (_) {
+        /* Provider exposes the access error. */
+      }
+      return;
     }
-    if (_isGameView) return;
     ref.invalidate(allModsProvider);
     ref.invalidate(allVipModsProvider);
     ref.invalidate(allDynosProvider);
@@ -47,15 +68,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     ref.invalidate(allOmmRebirthProvider);
     ref.invalidate(allRender96Provider);
     await ref.read(installationLibraryProvider.notifier).refresh();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      unawaited(ref.read(installationLibraryProvider.notifier).refresh());
-    });
   }
 
   @override
@@ -87,8 +99,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
-    final value = ref.watch(installationLibraryProvider);
-    final updates = ref.watch(installationUpdatesProvider);
+    final value = _isGameView
+        ? const AsyncLoading<InstallationLibraryState>()
+        : ref.watch(installationLibraryProvider);
+    final updates = _view == _LibraryView.updates
+        ? ref.watch(installationUpdatesProvider)
+        : const AsyncLoading<List<InstallationUpdateCandidate>>();
+    final gameActivation = _isGameView
+        ? ref.watch(gameModActivationProvider)
+        : null;
+    if (gameActivation != null) _gameModsLoaded = true;
+    final gameEntries = gameActivation?.asData?.value.mods;
     return RefreshIndicator(
       onRefresh: _refresh,
       child: CustomScrollView(
@@ -131,6 +152,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     retro,
                     value.isLoading ? null : value.asData?.value.snapshot,
                     updates,
+                    luaCount: gameEntries
+                        ?.where((mod) => !mod.isDynos)
+                        .length,
+                    dynosCount: gameEntries
+                        ?.where((mod) => mod.isDynos)
+                        .length,
                   ),
                   const SizedBox(height: 18),
                 ],
@@ -191,8 +218,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     AppLocalizations l10n,
     RetroTheme retro,
     InstallationLibrarySnapshot? snapshot,
-    AsyncValue<List<InstallationUpdateCandidate>> updates,
-  ) {
+    AsyncValue<List<InstallationUpdateCandidate>> updates, {
+    int? luaCount,
+    int? dynosCount,
+  }) {
     final labels = [
       l10n.gameModsTitle,
       l10n.gameModsDynosType,
@@ -207,11 +236,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       Icons.system_update_alt_rounded,
       Icons.history_rounded,
     ];
-    final gameValue = ref.watch(gameModActivationProvider);
-    final entries = gameValue.isLoading ? null : gameValue.asData?.value.mods;
     final counts = <int?>[
-      entries?.where((mod) => !mod.isDynos).length,
-      entries?.where((mod) => mod.isDynos).length,
+      luaCount,
+      dynosCount,
       snapshot?.receipts.length,
       updates.asData?.value.length,
       snapshot?.history.length,

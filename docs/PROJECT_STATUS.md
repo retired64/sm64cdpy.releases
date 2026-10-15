@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado para la preparación de `1.8.3+22` en `custom-themes` el 2026-10-14; sin merge ni publicación.
+Revisado para `1.8.4+23` en `library-performance-1.8.4` el 2026-10-15. La 1.8.3 ya fue publicada oficialmente.
 
 ## Implementado
 
@@ -116,7 +116,7 @@ animaciones. Mario 64 usa paneles discretos, iconos/toggles redondeados y
 cabeceras limpias en Ajustes. Código y pruebas añadidos; nueva Actions y matriz
 física de idioma/tamaño de texto pendientes.
 
-## Preparación oficial 1.8.3+22
+## Release oficial 1.8.3+22
 
 - Notas finales EN/ES/PT-BR incluyen Biblioteca unificada, edición de mods,
   Retro/Mario, ajustes y fuente de títulos; previews generadas para revisión.
@@ -124,17 +124,29 @@ física de idioma/tamaño de texto pendientes.
 - Generación/formato de #187 incorporados solo en archivos del alcance.
 - Merge simulado contra main remoto `8bdc996` sin conflictos, sin fusionar.
 - Testing admite todas las ABI por input manual o `[testing] [all-abis]`.
-- Pendientes: ejecución consolidada, matriz física/ABIs, fecha final y
-  autorizaciones de merge/publicación. [Checklist](RELEASE_1.8.3.md).
+- La publicación oficial de 1.8.3 se completó. Alcance y notas localizadas:
+  [registro del release](RELEASE_1.8.3.md).
 
-## Activación de mods — candidata 1.8.3
+## Activación de mods — release 1.8.3
 
 Biblioteca incluye una sección de unidades Lua del juego con switches de selección
 para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
 comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
 DynOS/Touch mantienen su directiva separada `dynos-pack:` dentro de Biblioteca. La validación física está pendiente.
 Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
-Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
+Ambos workflows ejecutan también `:app:testReleaseUnitTest`. Esta implementación se publicó con 1.8.3.
+
+## Rendimiento de Biblioteca — 1.8.4+23
+
+Rama `library-performance-1.8.4`, creada desde `main` después de la publicación
+oficial de 1.8.3. Biblioteca carga recibos y catálogo de comparación bajo
+demanda; Mods del juego/DynOS reutiliza un snapshot reciente y actualiza
+visualmente el switch mientras Android confirma la escritura. El guardado ya no
+reconstruye todo el catálogo después de cada cambio y valida solo el objetivo y
+los mods activos relacionados, manteniendo respaldo, control de conflictos,
+tamaño Lua y bloqueo durante instalaciones. Actions y medición física quedan
+pendientes. Detalle: [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md) y
+[preparación 1.8.4](RELEASE_1.8.4.md).
 
 Biblioteca integra Mods del juego como pestaña nativa del sistema visual, con
 búsqueda y filtros locales, contador de activados, tarjetas adaptadas a cada
@@ -209,7 +221,7 @@ Validado en [Testing #232](https://github.com/retired64/sm64cdpy.releases/action
 Selección principal de com.maniscat2.sm64coopdx, cuatro rutas de lectura y
 destinos de escritura en user. Lua prioriza user; DynOS prioriza raíz. Migración
 limitada desde user con aviso para ampliar permiso. Contrato vigente al inicio
-de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. No se fusionó a main ni se publicó release.
+de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. El merge y la publicación se completaron posteriormente para 1.8.3.
 
 ## Apartados separados en Biblioteca
 

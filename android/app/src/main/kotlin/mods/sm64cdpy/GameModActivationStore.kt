@@ -136,60 +136,80 @@ internal object GameModActivationStore {
         return bytes
     }
 
+    private fun readMod(context: Context, child: DocumentFile, origin: String): Mod? {
+        val name = child.name ?: return null
+        if (!GameModConfig.validName(name)) return null
+        val script = when {
+            child.isFile && name.endsWith(".lua") -> child
+            child.isDirectory -> child.findFile("main.lua")?.takeIf { it.isFile }
+            else -> null
+        } ?: return null
+        var title = name
+        var safe = true
+        var tags = emptySet<String>()
+        var metadata = LuaModMetadata.Info()
+        try {
+            val lines = mutableListOf<String>()
+            context.contentResolver.openInputStream(script.uri)?.bufferedReader(Charsets.UTF_8)?.use { reader ->
+                var length = 0
+                while (true) {
+                    reader.mark(2)
+                    val first = reader.read()
+                    val second = reader.read()
+                    reader.reset()
+                    if (first != 45 || second != 45) break
+                    val lineBuffer = StringBuilder()
+                    var ended = false
+                    while (true) {
+                        val character = reader.read()
+                        if (character < 0) { ended = true; break }
+                        if (character == 10) break
+                        require(lineBuffer.length < 800) { "invalid" }
+                        lineBuffer.append(character.toChar())
+                    }
+                    if (ended && lineBuffer.isEmpty()) break
+                    val line = lineBuffer.toString().removeSuffix("\r")
+                    length += line.length + 1
+                    require(length <= 65536 && line.length <= 800) { "invalid" }
+                    if (!line.startsWith("--")) break
+                    lines += line
+                }
+            } ?: error("access")
+            metadata = LuaModMetadata.parse(lines.joinToString("\n"), name)
+            var foundTags = false
+            for (line in lines) {
+                if (title == name && line.startsWith("-- name:")) title = line.removePrefix("-- name:").trim().take(64)
+                if (!foundTags && line.startsWith("-- incompatible:")) {
+                    tags = line.removePrefix("-- incompatible:").trim().take(256).split(' ').filter { it.isNotEmpty() }.toSet()
+                    foundTags = true
+                }
+            }
+        } catch (_: Exception) { safe = false }
+        return Mod(name, metadata.name ?: LuaModMetadata.clean(title).ifBlank { name }, tags, safe, metadata, origin)
+    }
+
     private fun scan(context: Context, directory: DocumentFile, origin: String = "user"): List<Mod> {
         val children = directory.listFiles()
         require(children.size <= MAX_ENTRIES) { "limit" }
-        return children.mapNotNull { child ->
-            val name = child.name ?: return@mapNotNull null
-            if (!GameModConfig.validName(name)) return@mapNotNull null
-            val script = when {
-                child.isFile && name.endsWith(".lua") -> child
-                child.isDirectory -> child.findFile("main.lua")?.takeIf { it.isFile }
-                else -> null
-            } ?: return@mapNotNull null
-            var title = name
-            var safe = GameModConfig.validName(name)
-            var tags = emptySet<String>()
-            var metadata = LuaModMetadata.Info()
-            try {
-                val lines = mutableListOf<String>()
-                context.contentResolver.openInputStream(script.uri)?.bufferedReader(Charsets.UTF_8)?.use { reader ->
-                    var length = 0
-                    while (true) {
-                        reader.mark(2)
-                        val first = reader.read()
-                        val second = reader.read()
-                        reader.reset()
-                        if (first != 45 || second != 45) break
-                        val lineBuffer = StringBuilder()
-                        var ended = false
-                        while (true) {
-                            val character = reader.read()
-                            if (character < 0) { ended = true; break }
-                            if (character == 10) break
-                            require(lineBuffer.length < 800) { "invalid" }
-                            lineBuffer.append(character.toChar())
-                        }
-                        if (ended && lineBuffer.isEmpty()) break
-                        val line = lineBuffer.toString().removeSuffix("\r")
-                        length += line.length + 1
-                        require(length <= 65536 && line.length <= 800) { "invalid" }
-                        if (!line.startsWith("--")) break
-                        lines += line
-                    }
-                } ?: error("access")
-                metadata = LuaModMetadata.parse(lines.joinToString("\n"), name)
-                var foundTags = false
-                for (line in lines) {
-                    if (title == name && line.startsWith("-- name:")) title = line.removePrefix("-- name:").trim().take(64)
-                    if (!foundTags && line.startsWith("-- incompatible:")) {
-                        tags = line.removePrefix("-- incompatible:").trim().take(256).split(' ').filter { it.isNotEmpty() }.toSet()
-                        foundTags = true
-                    }
-                }
-            } catch (_: Exception) { safe = false }
-            Mod(name, metadata.name ?: LuaModMetadata.clean(title).ifBlank { name }, tags, safe, metadata, origin)
-        }.sortedBy { it.name }
+        return children.mapNotNull { readMod(context, it, origin) }.sortedBy { it.name }
+    }
+
+    private fun findMod(context: Context, user: DocumentFile, name: String): Mod? {
+        fun find(base: DocumentFile?, origin: String): Mod? {
+            val folder = base?.findFile("mods")?.takeIf { it.isDirectory && it.canRead() } ?: return null
+            val child = folder.findFile(name)?.takeIf { it.name == name } ?: return null
+            return readMod(context, child, origin)
+        }
+        return find(user, "user") ?: find(GameFolderStore.gameRoot(context), "root")
+    }
+
+    private fun findPack(context: Context, user: DocumentFile, name: String): Pack? {
+        fun find(base: DocumentFile?, origin: String): Pack? {
+            val folder = base?.findFile("dynos")?.findFile("packs") ?: return null
+            val child = folder.findFile(name)?.takeIf { it.name == name && it.isDirectory } ?: return null
+            return Pack(child, origin)
+        }
+        return find(GameFolderStore.gameRoot(context), "root") ?: find(user, "user")
     }
 
     private fun scanMods(context: Context, user: DocumentFile): List<Mod> {
@@ -229,13 +249,22 @@ internal object GameModActivationStore {
             val enabledPacks = GameDynosConfig.enabled(text)
             val dynos = packs(context, directory)
             val mods = scanMods(context, directory)
+            val activeMods = mods.filter { it.name in selected }
+            val conflictingNames = mutableSetOf<String>()
+            for (candidate in mods) {
+                if (activeMods.any { active ->
+                        active.name != candidate.name &&
+                            active.tags.intersect(candidate.tags).isNotEmpty()
+                    }) {
+                    conflictingNames += candidate.name
+                }
+            }
+            val allModsSafe = mods.all { it.safe }
             mapOf("status" to "ready", "backupAvailable" to (prefs(context).getString("game_mod_backup_document", null) == config.uri.toString()), "mods" to mods.map { mod ->
-                val conflict = mods.any { it.name != mod.name && it.name in selected &&
-                    it.tags.intersect(mod.tags).isNotEmpty() }
                 mapOf("kind" to "lua", "origin" to mod.origin, "name" to mod.name, "title" to mod.title,
                     "author" to mod.metadata.author, "category" to mod.metadata.category,
                     "versionLabel" to mod.metadata.version, "description" to mod.metadata.description, "enabled" to (mod.name in selected),
-                    "selectable" to (mod.name in selected || (mod.safe && mods.all { it.safe } && !conflict)))
+                    "selectable" to (mod.name in selected || (mod.safe && allModsSafe && mod.name !in conflictingNames)))
             } + dynos.map { pack ->
                 val name = pack.name
                 mapOf("kind" to "dynos", "origin" to pack.origin, "name" to name, "title" to name,
@@ -263,26 +292,36 @@ internal object GameModActivationStore {
             val text = original.toString(Charsets.UTF_8)
             requireNoInstall(context)
             val updated = if (dynos) {
-                require(packs(context, directory).count { it.name == name } == 1) { "invalid" }
+                if (enabled) require(findPack(context, directory, name) != null) { "invalid" }
                 GameDynosConfig.edit(text, name, enabled)
             } else {
-                val mods = scanMods(context, directory)
-                val target = mods.singleOrNull { it.name == name } ?: error("invalid")
-                if (enabled) require(target.safe && mods.all { it.safe }) { "invalid" }
                 val active = GameModConfig.enabled(text)
                 if (enabled) {
+                    val target = findMod(context, directory, name) ?: error("invalid")
+                    require(target.safe) { "invalid" }
+                    val activeMods = if (target.tags.isEmpty()) {
+                        emptyList()
+                    } else {
+                        require(active.size <= MAX_ENTRIES * 2) { "limit" }
+                        active.asSequence()
+                            .filter { it != name }
+                            .mapNotNull { findMod(context, directory, it) }
+                            .toList()
+                    }
+                    require(activeMods.all { it.safe }) { "invalid" }
                     val base = if (target.origin == "root") GameFolderStore.gameRoot(context) else directory
                     verifySize(context, base?.findFile("mods")?.findFile(name) ?: error("invalid"))
+                    require(activeMods.none { it.tags.intersect(target.tags).isNotEmpty() }) { "conflict" }
                 }
-                if (enabled) require(mods.none { it.name != name && it.name in active &&
-                    it.tags.intersect(target.tags).isNotEmpty() }) { "conflict" }
                 GameModConfig.edit(text, name, enabled)
             }.toByteArray(Charsets.UTF_8)
             require(updated.size <= MAX_CONFIG) { "limit" }
             if (original.contentEquals(updated)) {
-                val confirmed = snapshot(context)
-                require(confirmed["status"] == "ready") { "verify" }
-                return@synchronized confirmed
+                return@synchronized mapOf(
+                    "status" to "ready",
+                    "backupAvailable" to (prefs(context).getString("game_mod_backup_document", null) == file.uri.toString()),
+                    "mods" to emptyList<Any>(),
+                )
             }
             val backup = AtomicFile(backupFile(context, file.uri))
             val stream = backup.startWrite()
@@ -304,8 +343,10 @@ internal object GameModActivationStore {
                 // Backup remains intact; never overwrite a possible intervening game write.
                 throw IllegalStateException("write", error)
             }
-            val confirmed = snapshot(context)
-            require(confirmed["status"] == "ready") { "verify" }
-            confirmed
+            mapOf(
+                "status" to "ready",
+                "backupAvailable" to (prefs(context).getString("game_mod_backup_document", null) == file.uri.toString()),
+                "mods" to emptyList<Any>(),
+            )
         }
 }

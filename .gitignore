@@ -79,3 +79,5 @@ app.*.map.json
 /android/app/release
 guia_json_estructura.md
 release_apks/
+
+sm64coopdx/

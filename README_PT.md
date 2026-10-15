@@ -6,7 +6,7 @@ SM64CDPY é um navegador e gerenciador de mods não oficial, voltado para Androi
 para o **SM64CoopDX**. Ele reúne descoberta, download e instalação de conteúdo,
 integração com o jogo e atualização do catálogo em uma interface móvel.
 
-O projeto está em manutenção ativa. A versão declarada é **1.8.3+22**. A
+O projeto está em manutenção ativa. A versão de desenvolvimento é **1.8.4+23**. A
 bolha flutuante da linha 1.7 está implementada, mas continua experimental até a
 conclusão de testes em dispositivos Android reais.
 
@@ -96,6 +96,6 @@ os autores dos mods. O conteúdo pertence aos respectivos criadores.
 
 A Biblioteca também permite configurar mods Lua locais compatíveis para a próxima abertura do jogo, selecionando a pasta principal do jogo, com gravação verificada e backup privado. Feche o jogo antes de editar. Os pacotes DynOS e Touch Controls em dynos/packs e user/dynos/packs têm seus próprios controles na mesma Biblioteca, usando a configuração dynos-pack do jogo.
 
-A preparação de 1.8.3 inclui controle de mods, Biblioteca unificada e os temas Retro Manga/Mario 64/SM64 Intro. [Checklist de merge e publicação](docs/RELEASE_1.8.3.md).
+A versão 1.8.3 trouxe controles de mods, Biblioteca unificada e os temas Retro Manga/Mario 64/SM64 Intro. A versão 1.8.4 melhora a resposta da Biblioteca; consulte a [preparação do lançamento](docs/RELEASE_1.8.4.md) e as [notas de desempenho](docs/LIBRARY_PERFORMANCE.md).
 
 Escolha a pasta principal `com.maniscat2.sm64coopdx` para incluir mods e pacotes DynOS dentro e fora de `user`. Conexões antigas de user podem ser ampliadas nos Ajustes. Novas instalações, configuração e ROM permanecem em `user`.

@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado para la preparación de `1.8.3+22` en `custom-themes` el 2026-10-13; sin merge ni publicación.
+Revisado para el trabajo de rendimiento `1.8.4+23` el 2026-10-15.
 
 ## Alcance
 
@@ -156,14 +156,14 @@ habilita superficies suaves únicamente en Ajustes mediante `softSettingsPanels`
 Retro mantiene su estilo. `LocaleSelector` espera el setter de idioma existente
 antes de cerrar y controla loading local sin crear otra fuente persistente.
 
-## Activación de mods — candidata 1.8.3
+## Activación de mods — release 1.8.3
 
 Biblioteca incluye una sección de unidades Lua del juego con switches de selección
 para el próximo inicio. SAF autoriza `user`; el servicio nativo conserva ajustes,
 comprueba identidades/incompatibilidades/tamaño, crea respaldo y verifica la escritura.
 DynOS/Touch mantienen su directiva separada `dynos-pack:` dentro de Biblioteca. La validación física está pendiente.
 Plan, archivos, estados y matriz: [GAME_MOD_ACTIVATION.md](GAME_MOD_ACTIVATION.md).
-Ambos workflows ejecutan también `:app:testReleaseUnitTest`. No hay merge ni release.
+Ambos workflows ejecutan también `:app:testReleaseUnitTest`. Esta implementación se publicó con 1.8.3.
 
 Biblioteca integra Mods del juego como pestaña nativa del sistema visual, con
 búsqueda y filtros locales, contador de activados, tarjetas adaptadas a cada
@@ -216,4 +216,18 @@ Validado en [Testing #232](https://github.com/retired64/sm64cdpy.releases/action
 Selección principal de com.maniscat2.sm64coopdx, cuatro rutas de lectura y
 destinos de escritura en user. Lua prioriza user; DynOS prioriza raíz. Migración
 limitada desde user con aviso para ampliar permiso. Contrato vigente al inicio
-de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. No se fusionó a main ni se publicó release.
+de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. El merge y la publicación se completaron posteriormente para 1.8.3.
+
+
+## Rendimiento de Biblioteca — trabajo 1.8.4
+
+La vista de mods y DynOS conserva un snapshot reciente en Riverpod y lo
+reutiliza al alternar pestañas; al volver a montar el panel se revalida si supera
+30 segundos. Reanudar con el panel activo, instalar, cambiar carpeta o refrescar
+manualmente también actualiza el estado. Los recibos se cargan al visitar
+Instalados/Historial y el catálogo remoto al entrar a Actualizaciones. Tras la
+confirmación del usuario, el switch refleja el cambio temporalmente; Kotlin
+valida el objetivo, preserva `sm64config.txt`, verifica los bytes y devuelve
+una confirmación pequeña sin recorrer otra vez toda la biblioteca. Ante error,
+la UI recupera el último estado confirmado. Matriz y límites SAF:
+[LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md).

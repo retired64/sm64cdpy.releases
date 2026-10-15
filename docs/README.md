@@ -1,11 +1,13 @@
 # Documentación de SM64CDPY
 
-Este directorio es el punto de entrada técnico del proyecto. La arquitectura y el estado incluyen la preparación de `1.8.3+22` en `custom-themes`; no se ha fusionado ni publicado. Otros documentos conservan su fecha y alcance de revisión explícitos.
+Este directorio es el punto de entrada técnico del proyecto. `1.8.3+22` ya se publicó oficialmente; `1.8.4+23` está en preparación en `library-performance-1.8.4`, basada en `main`. Otros documentos conservan su fecha y alcance de revisión explícitos.
 
 | Documento | Propósito | Estado |
 |---|---|---|
-| [Preparación de release 1.8.3](RELEASE_1.8.3.md) | Versión/build, manifiesto EN/ES/PT-BR, validaciones y pasos de integración/publicación | Preparada en custom-themes; sin merge ni release |
-| [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Rama custom-themes; pendiente Actions y dispositivo |
+| [Release 1.8.3](RELEASE_1.8.3.md) | Alcance, notas localizadas y evidencia del lanzamiento oficial | Publicada; referencia histórica |
+| [Preparación de release 1.8.4](RELEASE_1.8.4.md) | Versión/build y mejoras de fluidez de Biblioteca | En desarrollo; pendiente de Actions y pruebas físicas |
+| [Rendimiento de Biblioteca](LIBRARY_PERFORMANCE.md) | Cargas diferidas, snapshot reutilizado, activación inmediata y consistencia SAF | Implementado en rama 1.8.4; medir en Android |
+| [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Incluidos desde 1.8.3; referencia técnica |
 | [Arquitectura](ARCHITECTURE.md) | Componentes, engines, persistencia y flujo de datos | Vigente |
 | [Descargas y overlay](DOWNLOADS_AND_OVERLAY.md) | Flujo WorkManager/SAF, progreso y burbuja | Vigente |
 | [Contrato de la base de mods](CATALOG_DATABASE_CONTRACT.md) | Esquema v2, identidad durable, resolutores y publicación segura | Vigente |
@@ -23,11 +25,12 @@ Este directorio es el punto de entrada técnico del proyecto. La arquitectura y 
 
 Cuando cambien versión mínima, dependencias, workers, canales de plataforma, persistencia, overlay o workflows, actualiza el documento correspondiente y la fecha de revisión del archivo. Las ideas y auditorías puntuales no deben presentarse como arquitectura vigente: deben añadirse al índice del archivo.
 
-Última revisión para 1.8.3: **2026-10-14**.
+Última revisión: **2026-10-15**.
 
 - [Activación de mods desde Biblioteca](GAME_MOD_ACTIVATION.md): contrato del juego, SAF, edición verificada, recuperación y pruebas.
 
 - [Preparación de merge/release 1.8.3](RELEASE_1.8.3.md): alcance final, previews EN/ES/PT-BR, evidencia, checklist y publicación autorizada.
+- [Mejoras de fluidez de Biblioteca 1.8.4](LIBRARY_PERFORMANCE.md): fuentes de demora, nueva política de carga/invalidación y límites de latencia SAF.
 
 
 ## Mario 64: recursos locales y menú original

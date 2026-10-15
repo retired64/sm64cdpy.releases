@@ -53,6 +53,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
 
   String? _savingName;
   String? _error;
+  final Map<String, bool> _pendingEnabled = {};
   StreamSubscription<BgInstallEvent>? _subscription;
   StreamSubscription<String>? _folderSubscription;
 
@@ -61,14 +62,23 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _folderSubscription = ModInstaller.libraryInvalidations.listen(
-      (_) => unawaited(_refresh()),
+      (reason) {
+        if (const {
+          'modsFolderChanged',
+          'dynosFolderChanged',
+          'modsFolderCleared',
+          'dynosFolderCleared',
+        }.contains(reason)) {
+          unawaited(_refreshInBackground());
+        }
+      },
     );
     _subscription = BackgroundInstallService.instance.events.listen((event) {
       if (mounted) setState(() {});
-      if (event is BgInstallCompleted) unawaited(_refresh());
+      if (event is BgInstallCompleted) unawaited(_refreshInBackground());
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) unawaited(_refresh());
+      if (mounted) unawaited(_refreshIfStale());
     });
   }
 
@@ -85,12 +95,28 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _closedGameConfirmed = false;
-      unawaited(_refresh());
+      unawaited(_refreshInBackground());
     }
   }
 
   Future<void> _refresh() =>
       _run(() => ref.read(gameModActivationProvider.notifier).refresh());
+
+  Future<void> _refreshIfStale() async {
+    try {
+      await ref.read(gameModActivationProvider.notifier).refreshIfStale();
+    } catch (_) {
+      // The provider exposes refresh errors while this screen stays mounted.
+    }
+  }
+
+  Future<void> _refreshInBackground() async {
+    try {
+      await ref.read(gameModActivationProvider.notifier).refresh();
+    } catch (_) {
+      // The provider exposes refresh errors while this screen stays mounted.
+    }
+  }
 
   Future<void> _run(
     Future<void> Function() action, {
@@ -228,6 +254,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
         return;
       _closedGameConfirmed = true;
     }
+    setState(() => _pendingEnabled[mod.keyName] = enabled);
     await _run(
       () => ref.read(gameModActivationProvider.notifier).perform(
         'setGameModActivation',
@@ -235,6 +262,9 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
       ),
       savingName: mod.keyName,
     );
+    if (mounted) {
+      setState(() => _pendingEnabled.remove(mod.keyName));
+    }
     if (mounted && _error == null)
       AppSnackbar.success(
         context,
@@ -309,6 +339,10 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
             snapshot?.status != 'ready' &&
             snapshot?.status != 'unselected');
     final mods = (snapshot?.mods ?? const <GameModEntry>[])
+        .map((mod) {
+          final pending = _pendingEnabled[mod.keyName];
+          return pending == null ? mod : mod.withEnabled(pending);
+        })
         .where((mod) => mod.isDynos == widget.dynosOnly)
         .toList(growable: false);
     final query = _search.text.trim().toLowerCase();
