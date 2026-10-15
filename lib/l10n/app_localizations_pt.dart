@@ -1735,6 +1735,157 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get gameDynosSearch => 'Buscar pacotes DynOS / Touch Controls…';
+
+  @override
+  String get navPlayer => 'Jogador';
+
+  @override
+  String get playerTitle => 'JOGADOR';
+
+  @override
+  String get playerName => 'Nome do jogador';
+
+  @override
+  String get playerNameHint => 'Nome exibido no SM64CoopDX';
+
+  @override
+  String get playerCloseGameHint =>
+      'Feche o SM64CoopDX antes de aplicar. As mudanças serão usadas na próxima inicialização.';
+
+  @override
+  String get playerPresets => 'PALETAS';
+
+  @override
+  String get playerParts => 'CORES DO MARIO';
+
+  @override
+  String get playerUnsavedTitle => 'Descartar alterações?';
+
+  @override
+  String get playerUnsavedBody =>
+      'As cores ou o nome do jogador ainda não foram aplicados ao jogo.';
+
+  @override
+  String get playerKeepEditing => 'Continuar editando';
+
+  @override
+  String get playerDiscard => 'Descartar';
+
+  @override
+  String get playerDeletePreset => 'Excluir paleta?';
+
+  @override
+  String playerDeletePresetBody(String name) {
+    return 'Excluir sua paleta “$name”?';
+  }
+
+  @override
+  String get playerCancel => 'Cancelar';
+
+  @override
+  String get playerDelete => 'Excluir';
+
+  @override
+  String get playerConflict =>
+      'A configuração do jogo mudou. Recarregue antes de aplicar o perfil.';
+
+  @override
+  String get playerInvalid =>
+      'Digite um nome e cores válidos. O nome não pode conter espaços e aceita até 63 bytes UTF-8.';
+
+  @override
+  String get playerPresetExists => 'Já existe uma paleta com esse nome.';
+
+  @override
+  String get playerAccessError =>
+      'A configuração do jogador não está disponível. Verifique a pasta conectada e a permissão.';
+
+  @override
+  String get playerSavePreset => 'Salvar paleta';
+
+  @override
+  String get playerPresetName => 'Nome da paleta';
+
+  @override
+  String get playerSave => 'Salvar';
+
+  @override
+  String playerOverwritePreset(String name) {
+    return 'Substituir sua paleta “$name”?';
+  }
+
+  @override
+  String get playerOverwrite => 'Substituir';
+
+  @override
+  String get playerPresetSaved => 'Paleta salva para o SM64CoopDX.';
+
+  @override
+  String get playerApplied =>
+      'Perfil salvo e verificado para a próxima inicialização do jogo.';
+
+  @override
+  String get playerConnectGame =>
+      'Conecte a pasta principal do SM64CoopDX para editar o jogador.';
+
+  @override
+  String get playerMissingConfig =>
+      'Abra o SM64CoopDX uma vez para criar user/sm64config.txt.';
+
+  @override
+  String get playerRetry => 'Tentar novamente';
+
+  @override
+  String get playerHex => 'Cor hexadecimal';
+
+  @override
+  String get playerRed => 'R';
+
+  @override
+  String get playerGreen => 'G';
+
+  @override
+  String get playerBlue => 'B';
+
+  @override
+  String get playerReset => 'Redefinir';
+
+  @override
+  String get playerApply => 'Aplicar ao jogo';
+
+  @override
+  String get playerPants => 'Macacão';
+
+  @override
+  String get playerShirt => 'Camisa';
+
+  @override
+  String get playerGloves => 'Luvas';
+
+  @override
+  String get playerShoes => 'Sapatos';
+
+  @override
+  String get playerHair => 'Cabelo';
+
+  @override
+  String get playerSkin => 'Pele';
+
+  @override
+  String get playerCap => 'Boné';
+
+  @override
+  String get playerEmblem => 'Emblema';
+
+  @override
+  String get playerRestore => 'Restaurar configuração anterior';
+
+  @override
+  String get playerRestoreBody =>
+      'Com o SM64CoopDX fechado, restaurar o backup privado anterior à última alteração de mods ou jogador? Toda a configuração será restaurada.';
+
+  @override
+  String get playerRestored => 'Configuração anterior do jogo restaurada.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3468,4 +3619,155 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get gameDynosSearch => 'Buscar pacotes DynOS / Touch Controls…';
+
+  @override
+  String get navPlayer => 'Jogador';
+
+  @override
+  String get playerTitle => 'JOGADOR';
+
+  @override
+  String get playerName => 'Nome do jogador';
+
+  @override
+  String get playerNameHint => 'Nome exibido no SM64CoopDX';
+
+  @override
+  String get playerCloseGameHint =>
+      'Feche o SM64CoopDX antes de aplicar. As mudanças serão usadas na próxima inicialização.';
+
+  @override
+  String get playerPresets => 'PALETAS';
+
+  @override
+  String get playerParts => 'CORES DO MARIO';
+
+  @override
+  String get playerUnsavedTitle => 'Descartar alterações?';
+
+  @override
+  String get playerUnsavedBody =>
+      'As cores ou o nome do jogador ainda não foram aplicados ao jogo.';
+
+  @override
+  String get playerKeepEditing => 'Continuar editando';
+
+  @override
+  String get playerDiscard => 'Descartar';
+
+  @override
+  String get playerDeletePreset => 'Excluir paleta?';
+
+  @override
+  String playerDeletePresetBody(String name) {
+    return 'Excluir sua paleta “$name”?';
+  }
+
+  @override
+  String get playerCancel => 'Cancelar';
+
+  @override
+  String get playerDelete => 'Excluir';
+
+  @override
+  String get playerConflict =>
+      'A configuração do jogo mudou. Recarregue antes de aplicar o perfil.';
+
+  @override
+  String get playerInvalid =>
+      'Digite um nome e cores válidos. O nome não pode conter espaços e aceita até 63 bytes UTF-8.';
+
+  @override
+  String get playerPresetExists => 'Já existe uma paleta com esse nome.';
+
+  @override
+  String get playerAccessError =>
+      'A configuração do jogador não está disponível. Verifique a pasta conectada e a permissão.';
+
+  @override
+  String get playerSavePreset => 'Salvar paleta';
+
+  @override
+  String get playerPresetName => 'Nome da paleta';
+
+  @override
+  String get playerSave => 'Salvar';
+
+  @override
+  String playerOverwritePreset(String name) {
+    return 'Substituir sua paleta “$name”?';
+  }
+
+  @override
+  String get playerOverwrite => 'Substituir';
+
+  @override
+  String get playerPresetSaved => 'Paleta salva para o SM64CoopDX.';
+
+  @override
+  String get playerApplied =>
+      'Perfil salvo e verificado para a próxima inicialização do jogo.';
+
+  @override
+  String get playerConnectGame =>
+      'Conecte a pasta principal do SM64CoopDX para editar o jogador.';
+
+  @override
+  String get playerMissingConfig =>
+      'Abra o SM64CoopDX uma vez para criar user/sm64config.txt.';
+
+  @override
+  String get playerRetry => 'Tentar novamente';
+
+  @override
+  String get playerHex => 'Cor hexadecimal';
+
+  @override
+  String get playerRed => 'R';
+
+  @override
+  String get playerGreen => 'G';
+
+  @override
+  String get playerBlue => 'B';
+
+  @override
+  String get playerReset => 'Redefinir';
+
+  @override
+  String get playerApply => 'Aplicar ao jogo';
+
+  @override
+  String get playerPants => 'Macacão';
+
+  @override
+  String get playerShirt => 'Camisa';
+
+  @override
+  String get playerGloves => 'Luvas';
+
+  @override
+  String get playerShoes => 'Sapatos';
+
+  @override
+  String get playerHair => 'Cabelo';
+
+  @override
+  String get playerSkin => 'Pele';
+
+  @override
+  String get playerCap => 'Boné';
+
+  @override
+  String get playerEmblem => 'Emblema';
+
+  @override
+  String get playerRestore => 'Restaurar configuração anterior';
+
+  @override
+  String get playerRestoreBody =>
+      'Com o SM64CoopDX fechado, restaurar o backup privado anterior à última alteração de mods ou jogador? Toda a configuração será restaurada.';
+
+  @override
+  String get playerRestored => 'Configuração anterior do jogo restaurada.';
 }
