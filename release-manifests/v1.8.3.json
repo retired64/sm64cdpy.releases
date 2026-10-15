@@ -25,7 +25,8 @@
             "Cards, controls, progress, dialogs and save feedback follow the selected interface theme. The retired discovery view no longer triggers a second automatic scan; installation receipts, update checks and history keep their distinct roles.",
             "One game user folder connects the Library, mods, DynOS/Touch Controls and ROM detection for Mario themes. Guided setup explains the folder picker; prepared themes reuse their private resources.",
             "Library also enables or disables DynOS and Touch Controls pack folders using the game’s dynos-pack directive, with legacy compatibility and independent Lua/pack identities. VIP and OMMR Pack no longer offer unused favorite buttons or long-press shortcuts.",
-            "Select the main game folder to discover Lua mods and DynOS packs both inside and outside user, respecting each subsystem’s duplicate-name priority. Existing user-only access can be upgraded; installations and ROM remain in user."
+            "Select the main game folder to discover Lua mods and DynOS packs both inside and outside user, respecting each subsystem’s duplicate-name priority. Existing user-only access can be upgraded; installations and ROM remain in user.",
+            "Library separates Lua Game mods from DynOS / Touch Controls packs, with independent counts, searches and filters while preserving verified activation."
           ]
         },
         {
@@ -86,7 +87,8 @@
             "Tarjetas, controles, progreso, diálogos y avisos de guardado siguen el tema elegido. La vista retirada ya no provoca otro escaneo automático; recibos de instalación, comprobación de actualizaciones e historial conservan sus funciones propias.",
             "Una sola carpeta user del juego conecta Biblioteca, mods, DynOS/Touch Controls y detección de ROM para temas Mario. La guía explica el selector; los temas preparados reutilizan sus recursos privados.",
             "Biblioteca también activa y desactiva carpetas de packs DynOS y Touch Controls mediante la directiva dynos-pack del juego, con compatibilidad legacy e identidades independientes de Lua. VIP y OMMR Pack retiran botones de favoritos y el gesto largo.",
-            "Selecciona la carpeta principal del juego para detectar mods Lua y packs DynOS dentro y fuera de user, respetando la prioridad de nombres duplicados de cada subsistema. El acceso antiguo a user se puede ampliar; instalaciones y ROM permanecen en user."
+            "Selecciona la carpeta principal del juego para detectar mods Lua y packs DynOS dentro y fuera de user, respetando la prioridad de nombres duplicados de cada subsistema. El acceso antiguo a user se puede ampliar; instalaciones y ROM permanecen en user.",
+            "Biblioteca separa Mods del juego Lua de los packs DynOS / Touch Controls, con contadores, búsquedas y filtros independientes y la misma activación verificada."
           ]
         },
         {
@@ -147,7 +149,8 @@
             "Cartões, controles, progresso, diálogos e avisos de gravação acompanham o tema escolhido. A aba removida não dispara outra busca automática; recibos de instalação, verificação de atualizações e histórico mantêm suas funções próprias.",
             "Uma única pasta user do jogo conecta a Biblioteca, mods, DynOS/Touch Controls e detecção de ROM dos temas Mario. A orientação explica o seletor; temas preparados reutilizam seus recursos privados.",
             "A Biblioteca também ativa e desativa pastas de pacotes DynOS e Touch Controls pela diretiva dynos-pack do jogo, com compatibilidade legada e identidades independentes de Lua. VIP e OMMR Pack removem botões de favoritos e o gesto de toque longo.",
-            "Selecione a pasta principal do jogo para detectar mods Lua e pacotes DynOS dentro e fora de user, respeitando a prioridade de nomes duplicados de cada subsistema. O acesso antigo a user pode ser ampliado; instalações e ROM permanecem em user."
+            "Selecione a pasta principal do jogo para detectar mods Lua e pacotes DynOS dentro e fora de user, respeitando a prioridade de nomes duplicados de cada subsistema. O acesso antigo a user pode ser ampliado; instalações e ROM permanecem em user.",
+            "A Biblioteca separa mods Lua dos pacotes DynOS / Touch Controls, com contagens, buscas e filtros independentes e a mesma ativação verificada."
           ]
         },
         {

@@ -17,7 +17,7 @@ import '../widgets/game_mod_activation_panel.dart';
 import '../providers/game_mod_activation_provider.dart';
 import '../widgets/installation_library_card.dart';
 
-enum _LibraryView { gameMods, installed, updates, recent }
+enum _LibraryView { gameMods, dynos, installed, updates, recent }
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -27,6 +27,7 @@ class LibraryScreen extends ConsumerStatefulWidget {
 
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   _LibraryView _view = _LibraryView.gameMods;
+  bool get _isGameView => _view == _LibraryView.gameMods || _view == _LibraryView.dynos;
   String? _section;
   String? _destination;
   bool _initialViewApplied = false;
@@ -37,7 +38,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     } catch (_) {
       /* Provider exposes the access error. */
     }
-    if (_view == _LibraryView.gameMods) return;
+    if (_isGameView) return;
     ref.invalidate(allModsProvider);
     ref.invalidate(allVipModsProvider);
     ref.invalidate(allDynosProvider);
@@ -69,6 +70,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         ].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
       _view = _LibraryView.gameMods;
     } else if (!_initialViewApplied &&
+        const ['dynos', 'touch-controls'].contains(GoRouterState.of(context).uri.queryParameters['view'])) {
+      _view = _LibraryView.dynos;
+    } else if (!_initialViewApplied &&
         GoRouterState.of(context).uri.queryParameters['view'] == 'installed') {
       _view = _LibraryView.installed;
     }
@@ -98,11 +102,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 padding: const EdgeInsetsDirectional.only(end: 14),
                 child: _RetroIconButton(
                   tooltip: l10n.libraryRefresh,
-                  onPressed: value.isLoading && _view != _LibraryView.gameMods
+                  onPressed: value.isLoading && !_isGameView
                       ? null
                       : _refresh,
                   icon: Icons.refresh_rounded,
-                  busy: value.isLoading && _view != _LibraryView.gameMods,
+                  busy: value.isLoading && !_isGameView,
                 ),
               ),
             ],
@@ -131,10 +135,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               ),
             ),
           ),
-          if (_view == _LibraryView.gameMods)
-            const SliverPadding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 40),
-              sliver: SliverToBoxAdapter(child: GameModActivationPanel()),
+          if (_isGameView)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+              sliver: SliverToBoxAdapter(child: GameModActivationPanel(dynosOnly: _view == _LibraryView.dynos)),
             )
           else
             value.when(
@@ -185,18 +189,23 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   ) {
     final labels = [
       l10n.gameModsTitle,
+      l10n.gameModsDynosType,
       l10n.libraryInstalled,
       l10n.libraryUpdates,
       l10n.libraryRecent,
     ];
     final icons = [
       Icons.sports_esports_rounded,
+      Icons.texture_rounded,
       Icons.inventory_2_outlined,
       Icons.system_update_alt_rounded,
       Icons.history_rounded,
     ];
+    final gameValue = ref.watch(gameModActivationProvider);
+    final entries = gameValue.isLoading ? null : gameValue.asData?.value.mods;
     final counts = <int?>[
-      ref.watch(gameModActivationProvider).asData?.value.mods.length,
+      entries?.where((mod) => !mod.isDynos).length,
+      entries?.where((mod) => mod.isDynos).length,
       snapshot?.receipts.length,
       updates.asData?.value.length,
       snapshot?.history.length,
@@ -245,7 +254,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             <String>{},
       _LibraryView.recent =>
         snapshot.history.map((item) => item.section).toSet(),
-      _LibraryView.gameMods => <String>{},
+      _LibraryView.gameMods || _LibraryView.dynos => <String>{},
     }.toList()..sort();
     final destinations = switch (_view) {
       _LibraryView.installed =>
@@ -257,7 +266,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             <String>{},
       _LibraryView.recent =>
         snapshot.history.map((item) => item.destination).toSet(),
-      _LibraryView.gameMods => <String>{},
+      _LibraryView.gameMods || _LibraryView.dynos => <String>{},
     }.toList()..sort();
     final showSection = sections.length > 1;
     final showDestination = destinations.length > 1;

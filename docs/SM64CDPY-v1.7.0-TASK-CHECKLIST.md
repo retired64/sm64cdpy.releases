@@ -519,3 +519,16 @@ Selección principal de com.maniscat2.sm64coopdx, cuatro rutas de lectura y
 destinos de escritura en user. Lua prioriza user; DynOS prioriza raíz. Migración
 limitada desde user con aviso para ampliar permiso. Contrato vigente al inicio
 de [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md). Validación del esquema 2: [Testing #237](https://github.com/retired64/sm64cdpy.releases/actions/runs/38682850283), commit `7c908c7`, completado correctamente: traducciones, formato, análisis, pruebas Flutter, compilación APK arm64 y pruebas nativas. El commit posterior solo sincroniza formato del mismo runner. Cuatro pruebas locales de scripts y `git diff --check` correctos. La matriz física sigue pendiente. No se fusionó a main ni se publicó release.
+
+## Apartados separados en Biblioteca
+
+Mods del juego muestra solo unidades Lua; DynOS / Touch Controls muestra packs.
+Cada apartado calcula su contador, búsqueda, filtros y paginación sobre su tipo.
+La sesión de búsqueda/filtro se conserva al alternarlos usando el mismo panel
+activo: no se duplican listeners, escaneos ni escritores. El bloqueo de guardado
+permanece al cambiar de apartado. La restauración sigue siendo global para el
+archivo compartido y se confirma como antes. Instalados, Actualizaciones e
+Historial conservan su finalidad. Se admiten enlaces ?view=dynos y
+?view=touch-controls; los enlaces game-mods/detected mantienen compatibilidad.
+No cambia Kotlin, las rutas, el backup ni las directivas del juego. Validación
+Actions de esta revisión pendiente; prueba física de los tres temas pendiente.

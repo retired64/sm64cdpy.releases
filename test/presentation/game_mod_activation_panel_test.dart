@@ -93,6 +93,7 @@ Future<void> _mount(
   _Gateway gateway,
   AppThemeId design, {
   bool dark = false,
+  bool dynosOnly = false,
   double scale = 1,
 }) async {
   await _loadBundledFonts(tester);
@@ -113,11 +114,11 @@ Future<void> _mount(
           ).copyWith(textScaler: TextScaler.linear(scale)),
           child: child!,
         ),
-        home: const Scaffold(
+        home: Scaffold(
           body: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(16),
-              child: GameModActivationPanel(),
+              padding: const EdgeInsets.all(16),
+              child: GameModActivationPanel(dynosOnly: dynosOnly),
             ),
           ),
         ),
@@ -168,12 +169,9 @@ void main() {
           ),
         ],
       );
-      await _mount(tester, gateway, AppThemeId.sm64Intro);
-      expect(find.byKey(const ValueKey('game-mod-card-Same')), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('game-mod-card-dynos:Same')),
-        findsOneWidget,
-      );
+      await _mount(tester, gateway, AppThemeId.sm64Intro, dynosOnly: true);
+      expect(find.byKey(const ValueKey('game-mod-card-Same')), findsNothing);
+      expect(find.byKey(const ValueKey('game-mod-card-dynos:Same')), findsOneWidget);
       expect(find.text('dynos/packs/Same'), findsOneWidget);
       await _toggle(tester, 'dynos:Same');
       await _apply(tester);
@@ -185,6 +183,9 @@ void main() {
       });
       expect(gateway.current.mods.first.enabled, isFalse);
       expect(gateway.current.mods.last.enabled, isTrue);
+      await _mount(tester, gateway, AppThemeId.sm64Intro);
+      expect(find.byKey(const ValueKey('game-mod-card-Same')), findsOneWidget);
+      expect(find.byKey(const ValueKey('game-mod-card-dynos:Same')), findsNothing);
       await _toggle(tester, 'Same');
       await tester.pumpAndSettle();
       expect(gateway.lastWrite, {
@@ -198,6 +199,24 @@ void main() {
     },
   );
 
+  testWidgets('section searches remain independent when switching Lua and DynOS', (tester) async {
+    final gateway = _Gateway();
+    await _mount(tester, gateway, AppThemeId.mario64);
+    final search = find.byKey(const ValueKey('game-mods-search'));
+    await tester.ensureVisible(search);
+    await tester.enterText(search, 'beta');
+    await tester.pumpAndSettle();
+    await _mount(tester, gateway, AppThemeId.mario64, dynosOnly: true);
+    expect(tester.widget<TextField>(search).controller!.text, isEmpty);
+    expect(find.byKey(const ValueKey('game-mod-card-beta.lua')), findsNothing);
+    await _mount(tester, gateway, AppThemeId.mario64);
+    expect(tester.widget<TextField>(search).controller!.text, 'beta');
+    expect(find.byKey(const ValueKey('game-mod-card-beta.lua')), findsOneWidget);
+    expect(find.byKey(const ValueKey('game-mod-card-alpha')), findsNothing);
+    expect(gateway.writes, 0);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
   for (final design in AppThemeId.values) {
     for (final dark in [false, true]) {
       testWidgets(

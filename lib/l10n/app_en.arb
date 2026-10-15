@@ -1682,7 +1682,7 @@
   "gameModsRestore": "Restore previous configuration",
   "gameModsRestoreConfirm": "With the game closed, replace the configuration with the private backup from before the last edit? This also restores its other settings.",
   "gameModsInstalling": "Wait for downloads and installations to finish before changing game mods.",
-  "gameModsEmpty": "No compatible Lua mods or DynOS/Touch Controls pack folders were found.",
+  "gameModsEmpty": "No compatible Lua mods were found in the game folders.",
   "gameModsEnabled": "Enabled for next start",
   "gameModsDisabled": "Disabled for next start",
   "gameModsMore": "Show more",
@@ -1743,5 +1743,7 @@
   "gameFolderBusy": "Wait for downloads and installations to finish before changing the game folder.",
   "gameModsLuaType": "Lua mods",
   "gameModsDynosType": "DynOS / Touch Controls",
-  "gameFolderUpgrade": "Access is limited to user. Choose the main game folder to include mods and DynOS packs outside user too."
+  "gameFolderUpgrade": "Access is limited to user. Choose the main game folder to include mods and DynOS packs outside user too.",
+  "gameDynosEmpty": "No DynOS / Touch Controls pack folders were found in the game folders.",
+  "gameDynosSearch": "Search DynOS / Touch Controls packs…"
 }

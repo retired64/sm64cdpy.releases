@@ -481,7 +481,7 @@
   "gameModsRestore": "Restaurar configuração anterior",
   "gameModsRestoreConfirm": "Com o jogo fechado, substituir a configuração pelo backup privado anterior à última edição? Isso também restaura as outras opções.",
   "gameModsInstalling": "Aguarde o fim dos downloads e instalações antes de alterar os mods do jogo.",
-  "gameModsEmpty": "Nenhum mod Lua compatível ou pasta de pacote DynOS/Touch Controls foi encontrado.",
+  "gameModsEmpty": "Nenhum mod Lua compatível foi encontrado nas pastas do jogo.",
   "gameModsEnabled": "Ativado para a próxima abertura",
   "gameModsDisabled": "Desativado para a próxima abertura",
   "gameModsMore": "Mostrar mais",
@@ -542,5 +542,7 @@
   "gameFolderBusy": "Espere os downloads e instalações terminarem antes de mudar a pasta do jogo.",
   "gameModsLuaType": "Mods Lua",
   "gameModsDynosType": "DynOS / Touch Controls",
-  "gameFolderUpgrade": "O acesso está limitado a user. Escolha a pasta principal do jogo para incluir também os mods e pacotes DynOS fora de user."
+  "gameFolderUpgrade": "O acesso está limitado a user. Escolha a pasta principal do jogo para incluir também os mods e pacotes DynOS fora de user.",
+  "gameDynosEmpty": "Nenhuma pasta de pacote DynOS / Touch Controls foi encontrada nas pastas do jogo.",
+  "gameDynosSearch": "Buscar pacotes DynOS / Touch Controls…"
 }

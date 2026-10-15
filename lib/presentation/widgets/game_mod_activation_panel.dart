@@ -19,7 +19,8 @@ enum _AccessAction { select, disconnect, restore }
 
 /// Library presentation only. Native SAF remains the authority for every save.
 class GameModActivationPanel extends ConsumerStatefulWidget {
-  const GameModActivationPanel({super.key});
+  const GameModActivationPanel({super.key, this.dynosOnly = false});
+  final bool dynosOnly;
   @override
   ConsumerState<GameModActivationPanel> createState() =>
       _GameModActivationPanelState();
@@ -33,6 +34,22 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
   bool _closedGameConfirmed = false;
   int _visible = 20;
   _ModFilter _filter = _ModFilter.all;
+  final _queries = <bool, String>{};
+  final _filters = <bool, _ModFilter>{};
+  final _limits = <bool, int>{};
+  @override
+  void didUpdateWidget(covariant GameModActivationPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.dynosOnly == widget.dynosOnly) return;
+    _queries[oldWidget.dynosOnly] = _search.text;
+    _filters[oldWidget.dynosOnly] = _filter;
+    _limits[oldWidget.dynosOnly] = _visible;
+    _search.text = _queries[widget.dynosOnly] ?? '';
+    _filter = _filters[widget.dynosOnly] ?? _ModFilter.all;
+    _visible = _limits[widget.dynosOnly] ?? 20;
+    // Keep the pending operation and close-game confirmation: both sections
+    // share one configuration and one writer, even while switching views.
+  }
   String? _savingName;
   String? _error;
   StreamSubscription<BgInstallEvent>? _subscription;
@@ -142,7 +159,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                     Semantics(
                       namesRoute: true,
                       child: Text(
-                        restore ? l10n.gameModsRestore : l10n.gameModsTitle,
+                        restore ? l10n.gameModsRestore : (widget.dynosOnly ? l10n.gameModsDynosType : l10n.gameModsTitle),
                         style: retro.heading(size: 20),
                       ),
                     ),
@@ -286,7 +303,8 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
         (!value.isLoading &&
             snapshot?.status != 'ready' &&
             snapshot?.status != 'unselected');
-    final mods = snapshot?.mods ?? const <GameModEntry>[];
+    final mods = (snapshot?.mods ?? const <GameModEntry>[])
+        .where((mod) => mod.isDynos == widget.dynosOnly).toList(growable: false);
     final query = _search.text.trim().toLowerCase();
     final filtered = mods
         .where(
@@ -370,7 +388,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          retro.displayLabel(l10n.gameModsTitle),
+                          retro.displayLabel(widget.dynosOnly ? l10n.gameModsDynosType : l10n.gameModsTitle),
                           style: retro.heading(size: 18),
                         ),
                         const SizedBox(height: 5),
@@ -473,7 +491,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
             style: retro.body(size: 14),
             onChanged: (_) => setState(() => _visible = 20),
             decoration: InputDecoration(
-              hintText: l10n.gameModsSearch,
+              hintText: widget.dynosOnly ? l10n.gameDynosSearch : l10n.gameModsSearch,
               hintStyle: retro.body(size: 12, color: retro.inkDim),
               filled: true,
               fillColor: retro.surface,
@@ -559,7 +577,7 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    mods.isEmpty ? l10n.gameModsEmpty : l10n.gameModsNoResults,
+                    mods.isEmpty ? (widget.dynosOnly ? l10n.gameDynosEmpty : l10n.gameModsEmpty) : l10n.gameModsNoResults,
                     textAlign: TextAlign.center,
                     style: retro.body(size: 14),
                   ),

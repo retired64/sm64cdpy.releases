@@ -12,6 +12,7 @@ La versión 1.8.3 incorpora activación verificada de mods desde Biblioteca, re�
 - Una sola carpeta user del juego conecta Biblioteca, mods, DynOS/Touch Controls y detección de ROM para temas Mario. La guía explica el selector; los temas preparados reutilizan sus recursos privados.
 - Biblioteca también activa y desactiva carpetas de packs DynOS y Touch Controls mediante la directiva dynos-pack del juego, con compatibilidad legacy e identidades independientes de Lua. VIP y OMMR Pack retiran botones de favoritos y el gesto largo.
 - Selecciona la carpeta principal del juego para detectar mods Lua y packs DynOS dentro y fuera de user, respetando la prioridad de nombres duplicados de cada subsistema. El acceso antiguo a user se puede ampliar; instalaciones y ROM permanecen en user.
+- Biblioteca separa Mods del juego Lua de los packs DynOS / Touch Controls, con contadores, búsquedas y filtros independientes y la misma activación verificada.
 
 ### Temas Retro Manga y Mario 64
 
