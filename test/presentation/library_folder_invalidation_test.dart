@@ -36,7 +36,15 @@ void main() {
     ModInstaller.invalidateInstallationLibrary('gameFolderChanged');
     await Future<void>.delayed(Duration.zero);
     expect(container.read(installationLibraryProvider).isLoading, isTrue);
-    expect(container.read(installationLibraryProvider).value, isNull);
+    // Riverpod retains previous data during loading. Consumers must choose
+    // the loading branch instead of rendering that retained projection.
+    expect(container.read(installationLibraryProvider).when(
+      skipLoadingOnRefresh: false,
+      skipLoadingOnReload: false,
+      loading: () => 'loading',
+      error: (_, _) => 'error',
+      data: (_) => 'data',
+    ), 'loading');
     repo.oldResult.complete(before);
     await Future<void>.delayed(Duration.zero);
     expect(container.read(installationLibraryProvider).isLoading, isTrue);

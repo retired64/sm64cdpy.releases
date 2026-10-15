@@ -123,7 +123,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   _viewSelector(
                     l10n,
                     retro,
-                    value.asData?.value.snapshot,
+                    value.isLoading ? null : value.asData?.value.snapshot,
                     updates,
                   ),
                   const SizedBox(height: 18),
@@ -138,6 +138,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             )
           else
             value.when(
+              skipLoadingOnRefresh: false,
+              skipLoadingOnReload: false,
               loading: () => SliverFillRemaining(
                 hasScrollBody: false,
                 child: Center(
