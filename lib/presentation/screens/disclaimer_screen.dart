@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/retro_theme.dart';
@@ -113,7 +112,6 @@ class _DisclaimerBody extends StatelessWidget {
         _SectionLabel(l10n.disclaimerDeveloperContact),
         const SizedBox(height: 12),
         _ContactButton(
-          asset: 'assets/icons/discord-chat.svg',
           platform: l10n.disclaimerDiscord,
           handle: l10n.disclaimerDiscordReach,
           url: 'https://discord.com/invite/thuhUH2WNX',
@@ -317,13 +315,11 @@ class _SectionLabel extends StatelessWidget {
 
 class _ContactButton extends StatefulWidget {
   const _ContactButton({
-    required this.asset,
     required this.platform,
     required this.handle,
     required this.url,
     required this.l10n,
   });
-  final String asset;
   final String platform;
   final String handle;
   final String url;
@@ -393,11 +389,11 @@ class _ContactButtonState extends State<_ContactButton>
           children: [
             SizedBox(
               width: double.infinity,
-              child: SvgPicture.asset(
-                widget.asset,
-                height: 100,
-                fit: BoxFit.contain,
-                alignment: Alignment.centerLeft,
+              child: Icon(
+                Icons.forum_outlined,
+                size: 56,
+                color: retro.discordBrand,
+                textDirection: TextDirection.ltr,
               ),
             ),
             const SizedBox(height: 12),

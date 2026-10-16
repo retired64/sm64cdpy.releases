@@ -1465,6 +1465,9 @@ class AppLocalizationsPt extends AppLocalizations {
       'Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.';
 
   @override
+  String get themeMinimal => 'Minimalista';
+
+  @override
   String get themeRetroManga => 'Retro Manga';
 
   @override
@@ -3357,6 +3360,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get settingsInterfaceThemeDesc =>
       'Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.';
+
+  @override
+  String get themeMinimal => 'Minimalista';
 
   @override
   String get themeRetroManga => 'Retro Manga';

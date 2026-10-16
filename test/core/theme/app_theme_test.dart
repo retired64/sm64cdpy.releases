@@ -11,13 +11,23 @@ double contrast(Color a, Color b) {
 }
 
 void main() {
-  test('unknown/absent IDs preserve Retro for old installations', () {
-    expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);
-    expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);
+  test('unknown/absent IDs use the low-cost default design', () {
+    expect(AppThemeId.fromStorage(null), AppThemeId.minimal);
+    expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.minimal);
     expect(
       AppThemeCatalog.designs.map((d) => d.id).toSet().length,
       AppThemeId.values.length,
     );
+  });
+
+  test('minimal default disables decorative rendering work', () {
+    final design = AppThemeCatalog.resolve(AppThemeId.minimal);
+    expect(design.backdropStyle, AppBackdropStyle.none);
+    expect(design.halftone, isFalse);
+    expect(design.stripes, isFalse);
+    expect(design.chipSkew, 0);
+    expect(design.shadowBlur, 0);
+    expect(design.shadowOffsetScale, 0);
   });
 
   for (final design in AppThemeCatalog.designs) {

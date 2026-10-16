@@ -76,7 +76,6 @@ class _ModCardState extends ConsumerState<ModCard>
               // ── Thumbnail ──────────────────────────────────────
               _Thumbnail(
                 imageUrl: widget.mod.imageUrl,
-                modId: widget.mod.id,
                 featured: widget.mod.isFeatured,
                 retro: retro,
               ),
@@ -177,13 +176,11 @@ class _ModCardState extends ConsumerState<ModCard>
 class _Thumbnail extends StatelessWidget {
   const _Thumbnail({
     this.imageUrl,
-    required this.modId,
     required this.featured,
     required this.retro,
   });
 
   final String? imageUrl;
-  final String modId;
   final bool featured;
   final RetroTheme retro;
 
@@ -218,19 +215,16 @@ class _Thumbnail extends StatelessWidget {
                     ),
                   ),
                 ),
-          child: Hero(
-            tag: 'mod_img_$modId',
-            child: hasImage
-                ? CachedNetworkImage(
-                    imageUrl: imageUrl!,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        _ShimmerBox(width: _size, height: _size),
-                    errorWidget: (context, url, error) =>
-                        _StripedPlaceholder(size: _size, retro: retro),
-                  )
-                : _StripedPlaceholder(size: _size, retro: retro),
-          ),
+          child: hasImage
+              ? CachedNetworkImage(
+                  imageUrl: imageUrl!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                      _ShimmerBox(width: _size, height: _size),
+                  errorWidget: (context, url, error) =>
+                      _StripedPlaceholder(size: _size, retro: retro),
+                )
+              : _StripedPlaceholder(size: _size, retro: retro),
         ),
 
         // Badge tipo "verificado" en la esquina — solo si el mod es

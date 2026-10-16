@@ -20,6 +20,7 @@ class AppearanceSelector extends ConsumerWidget {
   const AppearanceSelector({super.key});
 
   String _name(AppLocalizations l10n, AppThemeId id) => switch (id) {
+    AppThemeId.minimal => l10n.themeMinimal,
     AppThemeId.retroManga => l10n.themeRetroManga,
     AppThemeId.mario64 => l10n.themeMario64,
     AppThemeId.sm64Intro => l10n.themeSm64Intro,

@@ -1474,6 +1474,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.';
 
   @override
+  String get themeMinimal => 'Minimalista';
+
+  @override
   String get themeRetroManga => 'Retro Manga';
 
   @override
@@ -3375,6 +3378,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get settingsInterfaceThemeDesc =>
       'Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.';
+
+  @override
+  String get themeMinimal => 'Minimalista';
 
   @override
   String get themeRetroManga => 'Retro Manga';

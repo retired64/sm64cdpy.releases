@@ -24,7 +24,7 @@ String? _readSetting(String key) {
 @immutable
 class AppearanceSettings {
   const AppearanceSettings({
-    this.themeId = AppThemeId.retroManga,
+    this.themeId = AppThemeId.minimal,
     this.mode = ThemeMode.system,
     this.isSaving = false,
   });

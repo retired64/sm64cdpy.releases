@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.6",
+  "build": 25,
+  "publishedAt": "2026-10-16T00:00:00Z",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "A lighter, faster interface",
+      "summary": "Version 1.8.6 introduces a low-cost Minimal design and streamlines navigation and mod details for smoother use on entry-level Android devices.",
+      "highlights": [
+        "Minimal is now the default design for new installations.",
+        "The drawer no longer loads SVG artwork or per-item press animations.",
+        "Opening mod details no longer stacks page, fade and image transitions."
+      ],
+      "sections": [
+        {
+          "heading": "Minimal by default",
+          "items": [
+            "The new default uses flat colors, simple typography and no backdrop painters, skewed controls or decorative shadows.",
+            "Retro Manga, Mario 64 and SM64 Intro remain available as optional interface designs.",
+            "Existing valid theme selections remain unchanged; new or unknown selections use Minimal safely."
+          ]
+        },
+        {
+          "heading": "Faster navigation",
+          "items": [
+            "Drawer destinations use lightweight Material glyphs for optional themes and text-only rows in Minimal.",
+            "SVG UI assets and their rendering dependency have been removed.",
+            "Route changes are immediate instead of running a combined scale and fade transition."
+          ]
+        },
+        {
+          "heading": "Simpler mod details",
+          "items": [
+            "The detail screen renders immediately without its previous entrance fade.",
+            "Mod images no longer start a Hero animation between catalogue cards and details.",
+            "Content, installation actions, favourites and sharing keep their existing behavior."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Una interfaz más ligera y rápida",
+      "summary": "La versión 1.8.6 incorpora un diseño Minimalista de bajo costo y simplifica la navegación y los detalles de mods para funcionar con mayor fluidez en dispositivos Android de gama baja.",
+      "highlights": [
+        "Minimalista es ahora el diseño predeterminado para instalaciones nuevas.",
+        "El drawer ya no carga gráficos SVG ni animaciones de presión por elemento.",
+        "Abrir los detalles de un mod ya no encadena transiciones de página, fade e imagen."
+      ],
+      "sections": [
+        {
+          "heading": "Minimalista por defecto",
+          "items": [
+            "El nuevo diseño predeterminado usa colores planos, tipografía simple y no dibuja fondos, controles inclinados ni sombras decorativas.",
+            "Retro Manga, Mario 64 y SM64 Intro siguen disponibles como diseños opcionales.",
+            "Las selecciones válidas existentes se conservan; una selección nueva o desconocida usa Minimalista de forma segura."
+          ]
+        },
+        {
+          "heading": "Navegación más rápida",
+          "items": [
+            "Los destinos del drawer usan símbolos Material ligeros en los temas opcionales y filas de solo texto en Minimalista.",
+            "Se eliminaron los assets SVG de interfaz y su dependencia de renderizado.",
+            "Los cambios de ruta son inmediatos en lugar de ejecutar una transición combinada de escala y fade."
+          ]
+        },
+        {
+          "heading": "Detalles de mods más simples",
+          "items": [
+            "La pantalla de detalle se dibuja inmediatamente sin su anterior fade de entrada.",
+            "Las imágenes ya no inician una animación Hero entre las tarjetas del catálogo y el detalle.",
+            "El contenido, las acciones de instalación, los favoritos y compartir conservan su funcionamiento."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Uma interface mais leve e rápida",
+      "summary": "A versão 1.8.6 adiciona um visual Minimalista de baixo custo e simplifica a navegação e os detalhes dos mods para maior fluidez em dispositivos Android básicos.",
+      "highlights": [
+        "Minimalista agora é o visual padrão para novas instalações.",
+        "O drawer não carrega mais imagens SVG nem animações de toque por item.",
+        "Abrir os detalhes de um mod não combina mais transições de página, fade e imagem."
+      ],
+      "sections": [
+        {
+          "heading": "Minimalista por padrão",
+          "items": [
+            "O novo visual padrão usa cores planas, tipografia simples e não desenha fundos, controles inclinados nem sombras decorativas.",
+            "Retro Manga, Mario 64 e SM64 Intro continuam disponíveis como visuais opcionais.",
+            "As seleções válidas existentes são mantidas; uma seleção nova ou desconhecida usa Minimalista com segurança."
+          ]
+        },
+        {
+          "heading": "Navegação mais rápida",
+          "items": [
+            "Os destinos do drawer usam símbolos Material leves nos temas opcionais e linhas somente com texto no Minimalista.",
+            "Os assets SVG da interface e sua dependência de renderização foram removidos.",
+            "As mudanças de rota são imediatas em vez de executar uma transição combinada de escala e fade."
+          ]
+        },
+        {
+          "heading": "Detalhes de mods mais simples",
+          "items": [
+            "A tela de detalhes aparece imediatamente sem o fade de entrada anterior.",
+            "As imagens não iniciam mais uma animação Hero entre os cards do catálogo e os detalhes.",
+            "O conteúdo, as ações de instalação, os favoritos e o compartilhamento mantêm o comportamento existente."
+          ]
+        }
+      ]
+    }
+  }
+}

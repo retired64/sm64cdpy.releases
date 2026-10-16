@@ -1455,6 +1455,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Choose an included design. Applies to the app; the floating panel keeps its dark design.';
 
   @override
+  String get themeMinimal => 'Minimal';
+
+  @override
   String get themeRetroManga => 'Retro Manga';
 
   @override

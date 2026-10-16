@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/category_constants.dart';
+import '../../core/theme/app_theme_design.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../presentation/providers/mod_providers.dart';
@@ -68,30 +68,30 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 ),
 
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/m64.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.home_outlined,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navHome,
                   route: '/',
                   isActive: currentRoute == '/',
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/catalog.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.grid_view_outlined,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navCatalog,
                   route: '/catalogue',
                   isActive: currentRoute == '/catalogue',
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/favorites.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.favorite_border,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navFavourites,
                   route: '/favourites',
@@ -118,11 +118,8 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   isActive: currentRoute == '/player',
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/popular.svg',
-                    width: 19,
-                    height: 19,
-                  ),
+                  iconBuilder: (color) =>
+                      MarioGameIcon(Icons.trending_up, size: 19, color: color),
                   label: l10n.navPopular,
                   route: '/popular',
                   isActive: currentRoute == '/popular',
@@ -140,10 +137,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   ),
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/render96.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.auto_awesome_outlined,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navRender96,
                   route: '/render96',
@@ -151,10 +148,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   accentColor: retro.amber,
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/vip.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.workspace_premium_outlined,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navVIPMods,
                   route: '/vip',
@@ -162,10 +159,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   accentColor: retro.amber,
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/dynos.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.extension_outlined,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navDynOS,
                   route: '/dynos',
@@ -173,20 +170,20 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   accentColor: retro.blue,
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/controls.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.gamepad_outlined,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navTouchControls,
                   route: '/touch-controls',
                   isActive: currentRoute == '/touch-controls',
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/omm.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.sports_esports_outlined,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navOmmRebirth,
                   route: '/omm-rebirth',
@@ -199,30 +196,24 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 const _SocialLinks(),
                 _RetroDivider(retro: retro),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/links-resource.svg',
-                    width: 19,
-                    height: 19,
-                  ),
+                  iconBuilder: (color) =>
+                      MarioGameIcon(Icons.link, size: 19, color: color),
                   label: l10n.navLinksResource,
                   route: '/links-resource',
                   isActive: currentRoute == '/links-resource',
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/disclaimer.svg',
-                    width: 19,
-                    height: 19,
-                  ),
+                  iconBuilder: (color) =>
+                      MarioGameIcon(Icons.info_outline, size: 19, color: color),
                   label: l10n.navDisclaimer,
                   route: '/disclaimer',
                   isActive: currentRoute == '/disclaimer',
                 ),
                 _NavItem(
-                  iconBuilder: (color) => SvgPicture.asset(
-                    'assets/icons/menu/settings.svg',
-                    width: 19,
-                    height: 19,
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.settings_outlined,
+                    size: 19,
+                    color: color,
                   ),
                   label: l10n.navSettings,
                   route: '/settings',
@@ -291,12 +282,10 @@ class _DrawerHeader extends StatelessWidget {
                 boxShadow: retro.hardShadow(dx: 3, dy: 3),
               ),
             ),
-            child: RepaintBoundary(
-              child: SvgPicture.asset(
-                'assets/icons/logo.svg',
-                width: 27,
-                height: 27,
-              ),
+            child: MarioGameIcon(
+              Icons.sports_esports,
+              size: 27,
+              color: retro.accentText,
             ),
           ),
           const SizedBox(width: 14),
@@ -333,7 +322,7 @@ class _DrawerHeader extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // NavItem — estado activo = relleno sólido de acento + texto invertido.
 // ─────────────────────────────────────────────────────────────────────────────
-class _NavItem extends StatefulWidget {
+class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.iconBuilder,
     required this.label,
@@ -349,117 +338,40 @@ class _NavItem extends StatefulWidget {
   final Color? accentColor;
 
   @override
-  State<_NavItem> createState() => _NavItemState();
-}
-
-class _NavItemState extends State<_NavItem>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pressCtrl;
-  late final Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _pressCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 80),
-      reverseDuration: const Duration(milliseconds: 140),
-    );
-    _scale = Tween<double>(
-      begin: 1.0,
-      end: 0.965,
-    ).animate(CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut));
-  }
-
-  @override
-  void dispose() {
-    _pressCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final accent = widget.accentColor ?? retro.accent;
-    final fg = widget.isActive ? retro.onColor(accent) : retro.inkDim;
+    final accent = accentColor ?? retro.accent;
+    final fg = isActive ? retro.onColor(accent) : retro.ink;
+    final minimal = retro.design.id == AppThemeId.minimal;
 
-    return GestureDetector(
-      onTapDown: (_) => _pressCtrl.forward(),
-      onTapCancel: () => _pressCtrl.reverse(),
-      onTapUp: (_) {
-        _pressCtrl.reverse();
-        widget.isActive
-            ? Navigator.of(context).pop()
-            : _navigateTo(context, widget.route);
-      },
-      child: ScaleTransition(
-        scale: _scale,
-        child: AnimatedContainer(
-          duration: _kItemDuration,
-          curve: _kCurve,
+    return Semantics(
+      button: true,
+      selected: isActive,
+      child: InkWell(
+        onTap: isActive
+            ? () => Navigator.of(context).pop()
+            : () => _navigateTo(context, route),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 48),
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-          decoration: retro.gameDecoration(
-            BoxDecoration(
-              borderRadius: retro.radius,
-              color: widget.isActive ? accent : Colors.transparent,
-              border: widget.isActive
-                  ? Border.all(color: retro.border, width: retro.borderWidth(2))
-                  : null,
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            borderRadius: retro.radius,
+            color: isActive ? accent : Colors.transparent,
           ),
           child: Row(
             children: [
-              AnimatedContainer(
-                duration: _kItemDuration,
-                curve: _kCurve,
-                width: 3,
-                height: widget.isActive ? 26 : 0,
-                color: widget.isActive
-                    ? retro.onColor(accent)
-                    : Colors.transparent,
-              ),
+              if (!minimal) ...[
+                SizedBox(width: 19, height: 19, child: iconBuilder(fg)),
+                const SizedBox(width: 12),
+              ],
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 19,
-                        height: 19,
-                        // RepaintBoundary: el SVG se cachea como textura y en
-                        // el scroll del drawer solo se recompone (barato) en
-                        // vez de volver a ejecutar los draw calls vectoriales
-                        // en cada frame (caro, sobre todo en gama baja).
-                        child: RepaintBoundary(
-                          child: widget.isActive && retro.isMario
-                              ? MarioMenuGlyph(
-                                  retro: retro,
-                                  asset: 'hand',
-                                  fallback: Icons.pan_tool_alt_rounded,
-                                  size: 19,
-                                  color: fg,
-                                )
-                              : widget.iconBuilder(fg),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      AnimatedDefaultTextStyle(
-                        duration: _kItemDuration,
-                        curve: _kCurve,
-                        style: TextStyle(
-                          color: fg,
-                          fontSize: 13.5,
-                          fontWeight: widget.isActive
-                              ? FontWeight.w800
-                              : FontWeight.w600,
-                          letterSpacing: 0.1,
-                        ),
-                        child: Text(widget.label),
-                      ),
-                    ],
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: fg,
+                    fontSize: 14,
+                    fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),
               ),
@@ -503,12 +415,10 @@ class _CategoryListState extends ConsumerState<_CategoryList> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                RepaintBoundary(
-                  child: SvgPicture.asset(
-                    'assets/icons/menu/categorias.svg',
-                    width: 19,
-                    height: 19,
-                  ),
+                MarioGameIcon(
+                  Icons.category_outlined,
+                  size: 19,
+                  color: retro.inkDim,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -910,17 +820,17 @@ class _SocialLinks extends StatelessWidget {
 
     final links = [
       _SocialLinkData(
-        asset: 'assets/icons/youtube.svg',
+        icon: Icons.play_circle_outline,
         url: AppConstants.youtubeUrl,
         tooltip: l10n.socialYouTube,
       ),
       _SocialLinkData(
-        asset: 'assets/icons/discord.svg',
+        icon: Icons.forum_outlined,
         url: AppConstants.discordUrl,
         tooltip: l10n.socialDiscord,
       ),
       _SocialLinkData(
-        asset: 'assets/icons/github.svg',
+        icon: Icons.code,
         url: AppConstants.githubUrl,
         tooltip: l10n.socialGitHub,
       ),
@@ -951,51 +861,22 @@ class _SocialLinks extends StatelessWidget {
 
 class _SocialLinkData {
   const _SocialLinkData({
-    required this.asset,
+    required this.icon,
     required this.url,
     required this.tooltip,
   });
 
-  final String asset;
+  final IconData icon;
   final String url;
   final String tooltip;
 }
 
-class _SocialButton extends StatefulWidget {
+class _SocialButton extends StatelessWidget {
   const _SocialButton({required this.link});
   final _SocialLinkData link;
 
-  @override
-  State<_SocialButton> createState() => _SocialButtonState();
-}
-
-class _SocialButtonState extends State<_SocialButton>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pressCtrl;
-  late final Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _pressCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 80),
-      reverseDuration: const Duration(milliseconds: 160),
-    );
-    _scale = Tween<double>(
-      begin: 1.0,
-      end: 0.88,
-    ).animate(CurvedAnimation(parent: _pressCtrl, curve: Curves.easeOut));
-  }
-
-  @override
-  void dispose() {
-    _pressCtrl.dispose();
-    super.dispose();
-  }
-
-  Future<void> _launch() async {
-    final uri = Uri.parse(widget.link.url);
+  Future<void> _launch(BuildContext context) async {
+    final uri = Uri.parse(link.url);
     final messenger = ScaffoldMessenger.of(context);
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -1011,43 +892,23 @@ class _SocialButtonState extends State<_SocialButton>
     final retro = RetroTheme.of(context);
 
     return Tooltip(
-      message: widget.link.tooltip,
-      child: GestureDetector(
-        onTapDown: (_) => _pressCtrl.forward(),
-        onTapCancel: () => _pressCtrl.reverse(),
-        onTapUp: (_) {
-          _pressCtrl.reverse();
-          _launch();
-        },
-        child: ScaleTransition(
-          scale: _scale,
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: retro.gameDecoration(
-              BoxDecoration(
-                borderRadius: retro.radius,
-                color: retro.surfaceAlt,
-                border: Border.all(
-                  color: retro.border,
-                  width: retro.borderWidth(2),
-                ),
-              ),
-            ),
-            child: Center(
-              child: RepaintBoundary(
-                child: SvgPicture.asset(
-                  widget.link.asset,
-                  width: 20,
-                  height: 20,
-                  colorFilter:
-                      retro.isDark && widget.link.asset.contains('github')
-                      ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
-                      : null,
-                ),
+      message: link.tooltip,
+      child: InkWell(
+        onTap: () => _launch(context),
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: retro.gameDecoration(
+            BoxDecoration(
+              borderRadius: retro.radius,
+              color: retro.surfaceAlt,
+              border: Border.all(
+                color: retro.border,
+                width: retro.borderWidth(2),
               ),
             ),
           ),
+          child: Center(child: Icon(link.icon, size: 20, color: retro.ink)),
         ),
       ),
     );

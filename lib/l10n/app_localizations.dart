@@ -2652,6 +2652,12 @@ abstract class AppLocalizations {
   /// **'Choose an included design. Applies to the app; the floating panel keeps its dark design.'**
   String get settingsInterfaceThemeDesc;
 
+  /// No description provided for @themeMinimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimal'**
+  String get themeMinimal;
+
   /// No description provided for @themeRetroManga.
   ///
   /// In en, this message translates to:
