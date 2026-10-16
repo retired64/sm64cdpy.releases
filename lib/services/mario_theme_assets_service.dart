@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import '../domain/entities/mario_theme_assets.dart';
 
@@ -28,9 +27,4 @@ class MarioThemeAssetsService {
   }
 
   Future<void> cancel() => _channel.invokeMethod<void>('cancel');
-
-  Future<String?> renderPlayer(List<int> colors) =>
-      _channel.invokeMethod<String>('renderPlayer', {
-        'colors': colors.map((value) => value & 0xFFFFFF).toList(),
-      });
 }

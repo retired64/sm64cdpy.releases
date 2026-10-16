@@ -41,7 +41,6 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
         channel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "read" -> runOperation(result) { snapshot() }
-                "renderPlayer" -> renderPlayer(call.arguments, result)
                 "remove" -> runOperation(result) {
                     val previous = preferences.getString("generation", null)
                     if (!preferences.edit().remove("generation").commit()) {
@@ -155,31 +154,6 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
                 decoded.recycle(); valid
             } == true)
         } finally { bitmap.recycle() }
-    }
-
-    private fun renderPlayer(arguments: Any?, result: MethodChannel.Result) {
-        val map = arguments as? Map<*, *>
-        val colors = (map?.get("colors") as? List<*>)?.mapNotNull { (it as? Number)?.toInt() }?.toIntArray()
-        if (colors == null || colors.size != 8) {
-            result.error("invalid", "Eight player colors are required", null)
-            return
-        }
-        executor.execute {
-            try {
-                val generation = preferences.getString("generation", null) ?: error("rom_missing")
-                val model = File(File(root, generation), "player_model.bin")
-                require(model.isFile && model.length() in 1..524288)
-                val cache = File(root, "player_previews")
-                val output = File(cache, MarioPlayerPreviewRenderer.cacheName(generation, colors))
-                if (!output.isFile || output.length() !in 1..1048576) {
-                    MarioPlayerPreviewRenderer.render(model.readBytes(), colors, output)
-                    cache.listFiles()?.sortedByDescending { it.lastModified() }?.drop(24)?.forEach { it.delete() }
-                }
-                main.post { if (attached) result.success(output.absolutePath) }
-            } catch (error: Exception) {
-                main.post { if (attached) result.error(if (error.message == "rom_missing") "rom_missing" else "render", error.javaClass.simpleName, null) }
-            }
-        }
     }
 
     private fun runOperation(result: MethodChannel.Result, operation: () -> Map<String, Any>) {

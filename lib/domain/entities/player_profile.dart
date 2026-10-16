@@ -48,10 +48,10 @@ class PlayerProfile {
   final String name;
   final int model;
   final PlayerPalette palette;
-  PlayerProfile copyWith({String? name, PlayerPalette? palette}) =>
+  PlayerProfile copyWith({String? name, int? model, PlayerPalette? palette}) =>
       PlayerProfile(
         name: name ?? this.name,
-        model: model,
+        model: model ?? this.model,
         palette: palette ?? this.palette,
       );
   @override

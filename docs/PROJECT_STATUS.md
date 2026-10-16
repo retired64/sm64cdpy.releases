@@ -55,15 +55,15 @@ Revisado para `1.8.4+23` en `library-performance-1.8.4` el 2026-10-15. La 1.8.3 
 - Resolución en tiempo de descarga para páginas estables de MediaFire,
   GameBanana y archivos de Google Drive; las carpetas Drive no resolubles se
   presentan como enlace de origen sin afirmar que fueron instaladas.
-- Pantalla principal Jugador en desarrollo para editar el nombre y los ocho
-  grupos RGB que SM64CoopDX guarda en `user/sm64config.txt`. Android comparte
-  bloqueo, respaldo y verificación con la activación de mods; Riverpod conserva
-  un borrador y aplica el perfil en una sola transacción. Los presets se leen en
-  formato `[PALETTE]` y los personales se guardan en `user/palettes`. La primera
-  vista previa se rasteriza desde los vértices, UV y texturas del segmento Mario
-  de la ROM del usuario. Una pose fija aplica los ocho grupos de SM64CoopDX y se
-  cachea por generación de ROM y combinación de colores, sin incluir el modelo
-  ni imágenes extraídas en el APK.
+- Pantalla Jugador para editar nombre, modelo Mario/Luigi/Toad/Waluigi/Wario y
+  ocho grupos RGB de `user/sm64config.txt`. Android comparte bloqueo, respaldo,
+  revisión y verificación con la activación de mods; Riverpod conserva un
+  borrador y aplica todo el perfil en una transacción. Los presets usan
+  `[PALETTE]` en `user/palettes`. La vista previa anterior PNG/pose fija fue
+  retirada: un PlatformView Android aislado reconstruye en WebGL el modelo real
+  desde `libmain.so` del juego instalado y la ROM USA autorizada, permite giro e
+  intercambia la paleta en vivo. No se incluyen modelos, texturas, ROM ni binario
+  del juego en el APK. Arquitectura y evidencia: [PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md).
 
 ## Temas incluidos en custom-themes (2026-10-13)
 
@@ -95,6 +95,8 @@ Revisado para `1.8.4+23` en `library-performance-1.8.4` el 2026-10-15. La 1.8.3 
 - Restauración visual de trabajos activos después de reiniciar la app/engine.
 - Proveedores SAF distintos (Files de Google, fabricantes y almacenamiento externo).
 - URLs externas no cubiertas por la resolución especializada.
+- Jugador 3D: pendiente matriz física en varios GPU/WebView, incluyendo pérdida
+  de permiso SAF, juego ausente, ROM inválida, rotación y regreso desde segundo plano.
 
 ## Deuda priorizada para retomar el proyecto
 

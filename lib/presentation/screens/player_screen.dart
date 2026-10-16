@@ -1,7 +1,4 @@
-import 'dart:io';
 import 'dart:convert';
-import 'dart:async';
-import 'dart:ui' show FontFeature;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,9 +8,9 @@ import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/player_profile.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
-import '../providers/mario_theme_assets_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/player_3d_preview.dart';
 import '../widgets/settings_expansion_group.dart';
 
 class PlayerScreen extends ConsumerStatefulWidget {
@@ -61,19 +58,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await ref.read(playerProfileProvider.notifier).load();
         if (!mounted) return;
-        await ref.read(marioThemeAssetsProvider.notifier).initialize();
-        if (mounted && !ref.read(marioThemeAssetsProvider).assets.complete) {
-          await ref.read(marioThemeAssetsProvider.notifier).perform('import');
-        }
       });
     }
     final draft = state.draft;
-    if (draft != null && _name.text != draft.name && !_nameFocus.hasFocus)
+    if (draft != null && _name.text != draft.name && !_nameFocus.hasFocus) {
       _name.text = draft.name;
+    }
     return PopScope(
       canPop: !state.dirty,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && state.dirty) _confirmDiscard(context);
+        if (!didPop && state.dirty) _confirmDiscard();
       },
       child: RefreshIndicator(
         onRefresh: () =>
@@ -116,12 +110,27 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                   if (draft != null) ...[
                     _PlayerPreview(profile: draft),
                     const SizedBox(height: 12),
+                    SectionKicker(
+                      retro: retro,
+                      label: retro.displayLabel(l10n.playerCharacter),
+                    ),
+                    const SizedBox(height: 8),
+                    _ModelSelector(
+                      model: draft.model,
+                      onChanged: ref
+                          .read(playerProfileProvider.notifier)
+                          .setModel,
+                    ),
+                    const SizedBox(height: 12),
+                    SectionKicker(
+                      retro: retro,
+                      label: retro.displayLabel(l10n.playerName),
+                    ),
+                    const SizedBox(height: 8),
                     _Panel(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(l10n.playerName, style: retro.heading(size: 15)),
-                          const SizedBox(height: 4),
                           TextField(
                             controller: _name,
                             focusNode: _nameFocus,
@@ -144,7 +153,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(l10n.playerPresets, style: retro.heading(size: 16)),
+                    SectionKicker(
+                      retro: retro,
+                      label: retro.displayLabel(l10n.playerPresets),
+                    ),
                     const SizedBox(height: 8),
                     SizedBox(
                       height: 72,
@@ -169,7 +181,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                       ),
                     ),
                     const SizedBox(height: 14),
-                    Text(l10n.playerParts, style: retro.heading(size: 16)),
+                    SectionKicker(
+                      retro: retro,
+                      label: retro.displayLabel(l10n.playerParts),
+                    ),
                     const SizedBox(height: 8),
                     GridView.builder(
                       shrinkWrap: true,
@@ -201,42 +216,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                           .setColor(_part, color),
                     ),
                     const SizedBox(height: 14),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      alignment: WrapAlignment.end,
-                      children: [
-                        if (state.backupAvailable)
-                          OutlinedButton.icon(
-                            onPressed: state.busy ? null : _restore,
-                            icon: const Icon(Icons.restore),
-                            label: Text(l10n.playerRestore),
-                          ),
-                        OutlinedButton.icon(
-                          onPressed: state.busy || !state.dirty
-                              ? null
-                              : ref.read(playerProfileProvider.notifier).reset,
-                          icon: const Icon(Icons.undo),
-                          label: Text(l10n.playerReset),
-                        ),
-                        OutlinedButton.icon(
-                          onPressed: state.busy ? null : _savePreset,
-                          icon: const Icon(Icons.palette_outlined),
-                          label: Text(l10n.playerSavePreset),
-                        ),
-                        FilledButton.icon(
-                          onPressed: state.busy || !state.dirty ? null : _apply,
-                          icon: state.busy
-                              ? const SizedBox.square(
-                                  dimension: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(Icons.check),
-                          label: Text(l10n.playerApply),
-                        ),
-                      ],
+                    _PlayerActions(
+                      busy: state.busy,
+                      dirty: state.dirty,
+                      backupAvailable: state.backupAvailable,
+                      onReset: ref.read(playerProfileProvider.notifier).reset,
+                      onSavePreset: _savePreset,
+                      onApply: _apply,
+                      onRestore: _restore,
                     ),
                     if (state.error != null)
                       Padding(
@@ -259,7 +246,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     );
   }
 
-  Future<void> _confirmDiscard(BuildContext context) async {
+  Future<void> _confirmDiscard() async {
     final l10n = AppLocalizations.of(context);
     final discard = await showDialog<bool>(
       context: context,
@@ -278,7 +265,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
         ],
       ),
     );
-    if (discard == true && mounted) {
+    if (!mounted) return;
+    if (discard == true) {
       ref.read(playerProfileProvider.notifier).reset();
       Navigator.of(context).maybePop();
     }
@@ -303,8 +291,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
         ],
       ),
     );
-    if (confirmed == true)
+    if (confirmed == true) {
       await ref.read(playerProfileProvider.notifier).deletePalette(preset.id);
+    }
   }
 
   String _errorMessage(AppLocalizations l10n, String code) => switch (code) {
@@ -366,13 +355,15 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
           ],
         ),
       );
-      if (overwrite == true)
+      if (overwrite == true) {
         success = await ref
             .read(playerProfileProvider.notifier)
             .savePalette(name, overwrite: true);
+      }
     }
-    if (success && mounted)
+    if (success && mounted) {
       AppSnackbar.success(context, message: l10n.playerPresetSaved);
+    }
   }
 
   Future<void> _apply() async {
@@ -386,8 +377,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       return;
     }
     final success = await ref.read(playerProfileProvider.notifier).apply();
-    if (success && mounted)
+    if (success && mounted) {
       AppSnackbar.success(context, message: l10n.playerApplied);
+    }
   }
 
   Future<void> _restore() async {
@@ -411,8 +403,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     );
     if (confirmed != true) return;
     final restored = await ref.read(playerProfileProvider.notifier).restore();
-    if (restored && mounted)
+    if (restored && mounted) {
       AppSnackbar.success(context, message: l10n.playerRestored);
+    }
   }
 }
 
@@ -463,99 +456,35 @@ class _Unavailable extends StatelessWidget {
   }
 }
 
-class _PlayerPreview extends ConsumerStatefulWidget {
+class _PlayerPreview extends StatelessWidget {
   const _PlayerPreview({required this.profile});
   final PlayerProfile profile;
-
-  @override
-  ConsumerState<_PlayerPreview> createState() => _PlayerPreviewState();
-}
-
-class _PlayerPreviewState extends ConsumerState<_PlayerPreview> {
-  Timer? _timer;
-  String? _path;
-  String? _generation;
-  int _request = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _schedule(Duration.zero);
-  }
-
-  @override
-  void didUpdateWidget(covariant _PlayerPreview oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.profile.palette != widget.profile.palette) {
-      _schedule(const Duration(milliseconds: 90));
-    }
-  }
-
-  void _schedule(Duration delay) {
-    _timer?.cancel();
-    final request = ++_request;
-    _timer = Timer(delay, () async {
-      try {
-        final path = await ref
-            .read(marioThemeAssetsServiceProvider)
-            .renderPlayer(widget.profile.palette.platformColors);
-        if (mounted && request == _request && path != null) {
-          setState(() => _path = path);
-        }
-      } catch (_) {
-        // A missing ROM keeps the explicit unavailable preview below.
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final generation = ref.watch(marioThemeAssetsProvider).assets.generation;
-    if (generation != _generation) {
-      _generation = generation;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _schedule(Duration.zero);
-      });
-    }
+    final l10n = AppLocalizations.of(context);
     return Container(
-      height: 250,
+      height: 310,
       decoration: retro.settingsPanel(width: 3, dx: 5, dy: 5),
       child: ClipRect(
         child: Stack(
           fit: StackFit.expand,
           children: [
             const ThemeBackdrop(menuSurface: true),
-            if (_path != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(18, 8, 18, 32),
-                child: Image.file(
-                  File(_path!),
-                  fit: BoxFit.contain,
-                  gaplessPlayback: true,
-                  filterQuality: FilterQuality.medium,
-                ),
-              )
-            else
-              Center(
-                child: Icon(
-                  Icons.person_search_outlined,
-                  size: 72,
-                  color: retro.inkDim,
-                ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 42),
+              child: Player3DPreview(
+                profile: profile,
+                loadingLabel: l10n.player3DLoading,
+                unavailableLabel: l10n.player3DUnavailable,
               ),
+            ),
             Positioned(
               left: 12,
               right: 12,
               bottom: 10,
               child: Text(
-                widget.profile.name,
+                profile.name,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -564,6 +493,119 @@ class _PlayerPreviewState extends ConsumerState<_PlayerPreview> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ModelSelector extends StatelessWidget {
+  const _ModelSelector({required this.model, required this.onChanged});
+
+  final int model;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    const names = ['Mario', 'Luigi', 'Toad', 'Waluigi', 'Wario'];
+    return SizedBox(
+      height: 48,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(5, 2, 8, 5),
+        itemCount: names.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (context, index) => Semantics(
+          button: true,
+          selected: model == index,
+          label: names[index],
+          child: SkewChip(
+            retro: retro,
+            label: names[index],
+            icon: model == index ? Icons.sports_esports : Icons.person_outline,
+            selected: model == index,
+            dense: true,
+            onTap: () => onChanged(index),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PlayerActions extends StatelessWidget {
+  const _PlayerActions({
+    required this.busy,
+    required this.dirty,
+    required this.backupAvailable,
+    required this.onReset,
+    required this.onSavePreset,
+    required this.onApply,
+    required this.onRestore,
+  });
+
+  final bool busy;
+  final bool dirty;
+  final bool backupAvailable;
+  final VoidCallback onReset;
+  final VoidCallback onSavePreset;
+  final VoidCallback onApply;
+  final VoidCallback onRestore;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FilledButton.icon(
+            onPressed: busy || !dirty ? null : onApply,
+            icon: busy
+                ? const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.check_circle_outline),
+            label: Text(l10n.playerApply),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: busy || !dirty ? null : onReset,
+                  icon: const Icon(Icons.undo, size: 18),
+                  label: Text(
+                    l10n.playerReset,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: busy ? null : onSavePreset,
+                  icon: const Icon(Icons.palette_outlined, size: 18),
+                  label: Text(
+                    l10n.playerSavePreset,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (backupAvailable) ...[
+            const SizedBox(height: 2),
+            TextButton.icon(
+              onPressed: busy ? null : onRestore,
+              icon: const Icon(Icons.history, size: 18),
+              label: Text(l10n.playerRestore),
+            ),
+          ],
+        ],
       ),
     );
   }

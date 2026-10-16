@@ -192,6 +192,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 GameModActivationStore.applyPlayer(
                     applicationContext,
                     call.argument<String>("name") ?: error("invalid"),
+                    call.argument<Int>("model") ?: error("invalid"),
                     colors,
                     call.argument<String>("revision") ?: error("invalid"),
                 )

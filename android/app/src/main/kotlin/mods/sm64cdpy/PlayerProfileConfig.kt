@@ -31,14 +31,15 @@ internal object PlayerProfileConfig {
         return Profile(name, model, colors)
     }
 
-    fun edit(text: String, name: String, colors: List<Int>): String {
-        require(validName(name) && colors.size == parts.size && colors.all { it in 0..0xffffff }) { "invalid" }
+    fun edit(text: String, name: String, model: Int, colors: List<Int>): String {
+        require(validName(name) && model in 0..4 && colors.size == parts.size && colors.all { it in 0..0xffffff }) { "invalid" }
         val newline = if (text.contains("\r\n")) "\r\n" else "\n"
         val trailing = text.endsWith("\n") || text.endsWith("\r")
         val lines = text.split(Regex("\\r?\\n")).toMutableList()
         if (trailing && lines.lastOrNull()?.isEmpty() == true) lines.removeAt(lines.lastIndex)
         val replacements = linkedMapOf<String, String>()
         replacements["coop_player_name"] = "coop_player_name $name"
+        replacements["coop_player_model"] = "coop_player_model $model"
         for ((index, part) in parts.withIndex()) {
             val color = colors[index]
             replacements["coop_player_palette_$part"] = "coop_player_palette_$part %02x %02x %02x".format(

@@ -1731,6 +1731,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerTitle => 'PLAYER';
 
   @override
+  String get playerCharacter => 'CHARACTER';
+
+  @override
+  String get player3DLoading => 'Building your character from the game…';
+
+  @override
+  String get player3DUnavailable =>
+      'The 3D preview is unavailable. Check that SM64CoopDX and a supported US ROM are connected.';
+
+  @override
   String get playerName => 'Player name';
 
   @override
@@ -1744,7 +1754,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerPresets => 'PALETTES';
 
   @override
-  String get playerParts => 'MARIO COLORS';
+  String get playerParts => 'CHARACTER COLORS';
 
   @override
   String get playerUnsavedTitle => 'Discard changes?';

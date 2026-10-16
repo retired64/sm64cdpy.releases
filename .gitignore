@@ -1,3 +1,4 @@
+docs/PLAYER_3D_RENDERER.md
 floating-apps-examples/
 app-flotante.md
 source-code.zip
@@ -8,6 +9,7 @@ coopdx64.py
 docs/*
 !docs/README.md
 !docs/ARCHITECTURE.md
+!docs/PLAYER_3D_RENDERER.md
 !docs/DOWNLOADS_AND_OVERLAY.md
 !docs/PROJECT_STATUS.md
 !docs/CI_CD.md

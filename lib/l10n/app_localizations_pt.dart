@@ -1743,6 +1743,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get playerTitle => 'JOGADOR';
 
   @override
+  String get playerCharacter => 'PERSONAGEM';
+
+  @override
+  String get player3DLoading => 'Preparando o seu personagem a partir do jogo…';
+
+  @override
+  String get player3DUnavailable =>
+      'A prévia 3D não está disponível. Verifique se o SM64CoopDX e uma ROM americana compatível estão conectados.';
+
+  @override
   String get playerName => 'Nome do jogador';
 
   @override
@@ -1756,7 +1766,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get playerPresets => 'PALETAS';
 
   @override
-  String get playerParts => 'CORES DO MARIO';
+  String get playerParts => 'CORES DO PERSONAGEM';
 
   @override
   String get playerUnsavedTitle => 'Descartar alterações?';
@@ -3627,6 +3637,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get playerTitle => 'JOGADOR';
 
   @override
+  String get playerCharacter => 'PERSONAGEM';
+
+  @override
+  String get player3DLoading => 'Preparando seu personagem a partir do jogo…';
+
+  @override
+  String get player3DUnavailable =>
+      'A prévia 3D não está disponível. Verifique se o SM64CoopDX e uma ROM americana compatível estão conectados.';
+
+  @override
   String get playerName => 'Nome do jogador';
 
   @override
@@ -3640,7 +3660,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get playerPresets => 'PALETAS';
 
   @override
-  String get playerParts => 'CORES DO MARIO';
+  String get playerParts => 'CORES DO PERSONAGEM';
 
   @override
   String get playerUnsavedTitle => 'Descartar alterações?';

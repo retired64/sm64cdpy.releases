@@ -13,6 +13,7 @@ class PlayerProfileService {
     required String revision,
   }) => _call('applyPlayerProfile', {
     'name': profile.name,
+    'model': profile.model,
     'colors': profile.palette.platformColors,
     'revision': revision,
   });

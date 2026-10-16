@@ -3138,6 +3138,24 @@ abstract class AppLocalizations {
   /// **'PLAYER'**
   String get playerTitle;
 
+  /// No description provided for @playerCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'CHARACTER'**
+  String get playerCharacter;
+
+  /// No description provided for @player3DLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Building your character from the game…'**
+  String get player3DLoading;
+
+  /// No description provided for @player3DUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The 3D preview is unavailable. Check that SM64CoopDX and a supported US ROM are connected.'**
+  String get player3DUnavailable;
+
   /// No description provided for @playerName.
   ///
   /// In en, this message translates to:
@@ -3165,7 +3183,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerParts.
   ///
   /// In en, this message translates to:
-  /// **'MARIO COLORS'**
+  /// **'CHARACTER COLORS'**
   String get playerParts;
 
   /// No description provided for @playerUnsavedTitle.

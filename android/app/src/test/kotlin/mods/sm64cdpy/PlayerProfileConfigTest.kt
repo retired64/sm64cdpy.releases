@@ -22,14 +22,15 @@ class PlayerProfileConfigTest {
     }
 
     @Test
-    fun `editing preserves unrelated lines model and CRLF`() {
+    fun `editing preserves unrelated lines and CRLF while changing model`() {
         val original = "unknown_setting 7\r\ncoop_player_model 4\r\ncoop_player_name Old\r\n# keep me\r\n"
         val colors = List(8) { 0x102030 + it }
-        val edited = PlayerProfileConfig.edit(original, "New", colors)
+        val edited = PlayerProfileConfig.edit(original, "New", 2, colors)
         assertTrue(edited.contains("unknown_setting 7\r\n"))
-        assertTrue(edited.contains("coop_player_model 4\r\n"))
+        assertTrue(edited.contains("coop_player_model 2\r\n"))
         assertTrue(edited.contains("# keep me\r\n"))
         assertEquals("New", PlayerProfileConfig.parse(edited).name)
+        assertEquals(2, PlayerProfileConfig.parse(edited).model)
         assertEquals(colors, PlayerProfileConfig.parse(edited).colors)
     }
 
@@ -42,7 +43,7 @@ class PlayerProfileConfigTest {
     @Test
     fun `editing duplicate keys cannot leave a later stale game value`() {
         val original = "coop_player_name First\ncoop_player_name Last\n"
-        val edited = PlayerProfileConfig.edit(original, "Mario", List(8) { it })
+        val edited = PlayerProfileConfig.edit(original, "Mario", 0, List(8) { it })
         assertEquals(2, edited.lineSequence().count { it == "coop_player_name Mario" })
         assertEquals("Mario", PlayerProfileConfig.parse(edited).name)
     }

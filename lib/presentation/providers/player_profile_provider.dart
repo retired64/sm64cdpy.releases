@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/player_profile.dart';
@@ -85,6 +84,13 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
   void setName(String value) {
     final draft = state.draft;
     if (draft != null) state = _copy(draft: draft.copyWith(name: value));
+  }
+
+  void setModel(int value) {
+    final draft = state.draft;
+    if (draft != null && value >= 0 && value <= 4) {
+      state = _copy(draft: draft.copyWith(model: value));
+    }
   }
 
   void setColor(PlayerPart part, Color color) {

@@ -440,9 +440,9 @@ EMBLEM_B=0
         }
     }
 
-    fun applyPlayer(context: Context, name: String, colors: List<Int>, expectedRevision: String): Map<String, Any?> =
+    fun applyPlayer(context: Context, name: String, model: Int, colors: List<Int>, expectedRevision: String): Map<String, Any?> =
         synchronized(InstallationSafAccessCoordinator.lock) {
-            require(PlayerProfileConfig.validName(name) && colors.size == PlayerProfileConfig.parts.size) { "invalid" }
+            require(PlayerProfileConfig.validName(name) && model in 0..4 && colors.size == PlayerProfileConfig.parts.size) { "invalid" }
             val saved = prefs(context).getString(KEY, null) ?: error("access")
             val directory = root(context, Uri.parse(saved))
             val file = directory.findFile("sm64config.txt") ?: error("missing")
@@ -450,7 +450,7 @@ EMBLEM_B=0
             requireNoInstall(context)
             val original = read(context, file)
             require(revision(original) == expectedRevision) { "conflict" }
-            val updated = PlayerProfileConfig.edit(original.toString(Charsets.UTF_8), name, colors).toByteArray(Charsets.UTF_8)
+            val updated = PlayerProfileConfig.edit(original.toString(Charsets.UTF_8), name, model, colors).toByteArray(Charsets.UTF_8)
             require(updated.size <= MAX_CONFIG) { "limit" }
             if (!original.contentEquals(updated)) {
                 val backup = AtomicFile(backupFile(context, file.uri))
