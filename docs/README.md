@@ -1,12 +1,16 @@
 # Documentación de SM64CDPY
 
-Este directorio es el punto de entrada técnico del proyecto. `1.8.3+22` ya se publicó oficialmente; `1.8.4+23` está en preparación en `library-performance-1.8.4`, basada en `main`. Otros documentos conservan su fecha y alcance de revisión explícitos.
+Este directorio es el punto de entrada técnico del proyecto. `1.8.4+23` ya se
+publicó oficialmente; `1.8.5+24` está preparada en `main`. Otros documentos
+conservan su fecha y alcance de revisión explícitos.
 
 | Documento | Propósito | Estado |
 |---|---|---|
 | [Release 1.8.3](RELEASE_1.8.3.md) | Alcance, notas localizadas y evidencia del lanzamiento oficial | Publicada; referencia histórica |
-| [Preparación de release 1.8.4](RELEASE_1.8.4.md) | Versión/build y mejoras de fluidez de Biblioteca | En desarrollo; pendiente de Actions y pruebas físicas |
-| [Rendimiento de Biblioteca](LIBRARY_PERFORMANCE.md) | Cargas diferidas, snapshot reutilizado, activación inmediata y consistencia SAF | Implementado en rama 1.8.4; medir en Android |
+| [Preparación de release 1.8.4](RELEASE_1.8.4.md) | Versión/build y mejoras de fluidez de Biblioteca | Publicada; referencia histórica |
+| [Rendimiento de Biblioteca](LIBRARY_PERFORMANCE.md) | Cargas diferidas, snapshot reutilizado, activación inmediata y consistencia SAF | Incluido desde 1.8.4; referencia técnica |
+| [Preparación de release 1.8.5](RELEASE_1.8.5.md) | Versión/build, pantalla Jugador, vista 3D y puerta de publicación | Preparada en `main`; pendiente del workflow final |
+| [Renderizador 3D de Jugador](PLAYER_3D_RENDERER.md) | Arquitectura, recursos locales, ciclo de vida y límites de la vista previa | Implementado; ampliar matriz física de GPU/WebView |
 | [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Incluidos desde 1.8.3; referencia técnica |
 | [Arquitectura](ARCHITECTURE.md) | Componentes, engines, persistencia y flujo de datos | Vigente |
 | [Descargas y overlay](DOWNLOADS_AND_OVERLAY.md) | Flujo WorkManager/SAF, progreso y burbuja | Vigente |

@@ -8,7 +8,7 @@ integration, and catalogue updates into a single mobile interface instead of
 requiring users to move repeatedly between a browser, file manager, and the
 game.
 
-The project is under active maintenance. Its current development version is **1.8.4+23**.
+The project is under active maintenance. Its current development version is **1.8.5+24**.
 The floating overlay introduced for the 1.7 line is implemented
 but remains experimental until it completes broader testing on real Android
 devices and across process recreation scenarios.
@@ -62,6 +62,9 @@ in-game mod workflow.
 - Launch SM64CoopDX from the app when it is installed.
 - Check GitHub Releases for an APK matching the device ABI and perform OTA
   updates.
+- Edit the in-game player name, character and palette, manage reusable presets,
+  and inspect changes in an interactive 3D preview built from the user's
+  connected local game resources.
 
 ## Floating overlay
 
@@ -88,8 +91,8 @@ the technical flow.
 - **App updates:** implemented through GitHub Releases and per-ABI APKs.
 - **Supported platform:** Android 7.0 or newer (`minSdk 24`). The generated
   Linux scaffold is not a supported product target.
-- **Automated tests:** no `test/` or `integration_test/` suite currently exists.
-  Static analysis and CI builds are the existing automated checks.
+- **Automated tests:** Flutter unit/widget tests, Python release-manifest tests
+  and Android native unit tests run alongside static analysis in CI.
 
 Read [Project status and next steps](docs/PROJECT_STATUS.md) before starting new
 implementation work.
@@ -155,6 +158,8 @@ names, images, and related content belong to their respective creators.
 
 Library also configures compatible local Lua mods for the next game start through the selected main game folder, with verified saves and a private recovery backup. Close the game before editing. DynOS and Touch Controls packs in dynos/packs and user/dynos/packs have their own switches in the same Library, using the game’s dynos-pack configuration.
 
-Version 1.8.3 delivered game mod controls, the unified Library and Retro Manga/Mario 64/SM64 Intro themes. Version 1.8.4 is improving Library responsiveness; see the [release preparation](docs/RELEASE_1.8.4.md) and [performance notes](docs/LIBRARY_PERFORMANCE.md).
+Version 1.8.4 improved Library responsiveness. Version 1.8.5 adds the Player
+workspace and interactive 3D preview; see the [release preparation](docs/RELEASE_1.8.5.md)
+and [renderer architecture](docs/PLAYER_3D_RENDERER.md).
 
 Choose the main `com.maniscat2.sm64coopdx` folder to include mods and DynOS packs inside and outside `user`. Existing user-only connections can be upgraded in Settings. New installations, configuration and ROM stay under `user`.

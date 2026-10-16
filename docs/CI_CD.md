@@ -1,6 +1,6 @@
 # GitHub Actions y releases
 
-Revisado para 1.8.4 el 2026-10-15.
+Revisado para 1.8.5 el 2026-10-15.
 
 > **Fuente canónica:** la aplicación ya no incluye una pantalla de changelog ni
 > muestra el cuerpo del GitHub Release. Cada lanzamiento tiene un manifiesto
@@ -84,18 +84,18 @@ Revisado para 1.8.4 el 2026-10-15.
    `releases/latest/download/Sm64CDPY-arm64.apk`, evento hacia la web, PR
    generado y OTA por ABI.
 
-## Desarrollo desde Termux
+## Desarrollo y pruebas remotas
 
-La rama `library-performance-1.8.4` se desarrolla sin Flutter/Dart local. Ambos workflows
-hacen `flutter pub get` → `flutter gen-l10n` → Dart format → análisis antes del
-build; testing también ejecuta ahora `flutter test`. El formato del runner no
-crea commits. El artifact `flutter-source-sync` permite revisar e incorporar el
-parche de generación/formato en el mismo commit desde Termux.
+Ambos workflows hacen `flutter pub get` → `flutter gen-l10n` → Dart format →
+análisis antes del build; testing también ejecuta `flutter test`. El formato del
+runner no crea commits. El artifact `flutter-source-sync` permite revisar e
+incorporar el parche de generación/formato cuando el entorno local no dispone
+del SDK completo.
 
-Para probar, seleccionar `library-performance-1.8.4` en el workflow manual de testing o
-subir un commit con `[testing]`. Continúan siendo necesarios los secretos de
-firma existentes. No usar el workflow de publicación para obtener una prueba.
-La compilación se ejecuta en Actions; candidata actual en [RELEASE_1.8.4.md](RELEASE_1.8.4.md).
+Para probar 1.8.5, seleccionar `main` en el workflow manual de testing.
+Continúan siendo necesarios los secretos de firma existentes. No usar el
+workflow de publicación para obtener una prueba. La candidata actual se
+describe en [RELEASE_1.8.5.md](RELEASE_1.8.5.md).
 Ver [flujo y validación de temas](../cuatom_themea.md).
 
 ## Release oficial 1.8.3+22
@@ -108,7 +108,7 @@ Una ejecución manual con `all_abis: true`, o un push `[testing] [all-abis]`, pe
 APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
-flujo manual autorizado. La candidata siguiente es [1.8.4](RELEASE_1.8.4.md).
+flujo manual autorizado. La candidata siguiente es [1.8.5](RELEASE_1.8.5.md).
 
 ## Activación de mods — release 1.8.3
 

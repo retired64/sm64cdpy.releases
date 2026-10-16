@@ -7,7 +7,7 @@ SM64CDPY es un navegador y gestor de mods no oficial, orientado a Android, para
 la integración con el juego y la actualización del catálogo en una interfaz
 móvil.
 
-El proyecto está en mantenimiento activo. Su versión de desarrollo es **1.8.4+23**.
+El proyecto está en mantenimiento activo. Su versión de desarrollo es **1.8.5+24**.
 La burbuja flotante de la línea 1.7 está implementada, pero sigue siendo
 experimental hasta completar pruebas en dispositivos Android reales.
 
@@ -44,6 +44,9 @@ descarga e instalación.
 - Descarga e instalación mediante WorkManager con progreso y cancelación.
 - Copia de archivos sueltos y extracción de ZIP/7z.
 - Lanzamiento de SM64CoopDX y actualización OTA de la aplicación.
+- Espacio de Jugador para editar nombre, personaje y paleta dentro del juego,
+  administrar presets reutilizables y revisar los cambios en una vista 3D
+  interactiva generada desde los recursos locales conectados por el usuario.
 
 ## Burbuja flotante
 
@@ -58,7 +61,8 @@ Android 7–16.
 - Catálogo, descargas, instalación y actualización OTA: implementados.
 - Overlay: implementado, en estabilización y pruebas.
 - Plataforma soportada: Android 7.0 o superior (`minSdk 24`).
-- Pruebas automatizadas: todavía no hay suites `test/` o `integration_test/`.
+- Pruebas automatizadas: pruebas unitarias/widgets de Flutter, contrato Python
+  de manifiestos y pruebas unitarias nativas de Android ejecutadas en CI.
 
 Consulta [Estado y próximos pasos](docs/PROJECT_STATUS.md).
 
@@ -97,6 +101,8 @@ los autores de mods. El contenido pertenece a sus respectivos creadores.
 
 Biblioteca también permite configurar mods Lua locales compatibles para el próximo inicio del juego, seleccionando la carpeta principal del juego, con guardado verificado y respaldo privado. Cierra el juego antes de editar. Los packs DynOS y Touch Controls de dynos/packs y user/dynos/packs tienen sus propios interruptores en la misma Biblioteca, usando la configuración dynos-pack del juego.
 
-La versión 1.8.3 incorporó controles de mods, Biblioteca unificada y los temas Retro Manga/Mario 64/SM64 Intro. La versión 1.8.4 mejora la respuesta de Biblioteca; consulta la [preparación del lanzamiento](docs/RELEASE_1.8.4.md) y las [notas de rendimiento](docs/LIBRARY_PERFORMANCE.md).
+La versión 1.8.4 mejoró la respuesta de Biblioteca. La versión 1.8.5 añade el
+espacio de Jugador y la vista 3D interactiva; consulta la [preparación del lanzamiento](docs/RELEASE_1.8.5.md)
+y la [arquitectura del renderizador](docs/PLAYER_3D_RENDERER.md).
 
 Elige la carpeta principal `com.maniscat2.sm64coopdx` para incluir mods y packs DynOS dentro y fuera de `user`. Las conexiones antiguas de user se pueden ampliar desde Ajustes. Instalaciones nuevas, configuración y ROM permanecen en `user`.

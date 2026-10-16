@@ -550,3 +550,22 @@ La 1.8.3 se fusionó y publicó oficialmente después de la instantánea de esta
 registrada en la sección anterior. La versión vigente en esta rama es 1.8.4+23.
 Detalle: [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md) y
 [RELEASE_1.8.4.md](RELEASE_1.8.4.md).
+
+## Preparación de versión 1.8.5+24 — Jugador
+
+- [x] Incrementar `pubspec.yaml` a `1.8.5+24`.
+- [x] Integrar la pantalla Jugador en `main` y conservar el acceso desde drawer.
+- [x] Editar nombre, personaje y ocho grupos de color como borrador único.
+- [x] Cargar y guardar presets de paleta compatibles con el juego.
+- [x] Renderizar la vista 3D desde recursos locales conectados por el usuario.
+- [x] Mantener una vista compacta al desplazarse y evitar recargas por scroll.
+- [x] Aplicar el perfil con bloqueo, respaldo, relectura y verificación nativa.
+- [x] Crear el manifiesto canónico EN/ES/PT-BR con actualización opcional.
+- [x] Documentar build base 24, versionCodes `241/242/243` y nombres de APK.
+- [x] Alinear README, índice técnico, estado y CI/CD con la candidata 1.8.5.
+- [ ] Ejecutar el workflow de testing sobre el commit final de `main`.
+- [ ] Completar matriz física de GPU/WebView, estados SAF y dispositivos lentos.
+- [ ] Fijar `publishedAt` real y autorizar el workflow de publicación.
+
+Fuente canónica: `release-manifests/v1.8.5.json`. Puerta completa:
+[RELEASE_1.8.5.md](RELEASE_1.8.5.md).

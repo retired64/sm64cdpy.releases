@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.5",
+  "build": 24,
+  "publishedAt": "2026-10-15T00:00:00Z",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "Build and preview your player",
+      "summary": "Version 1.8.5 adds a complete Player workspace for customizing your in-game identity and previewing palette changes on an interactive 3D character before applying them.",
+      "highlights": [
+        "Edit your player name, character and eight color groups from a dedicated Player screen.",
+        "Rotate an interactive 3D preview and see character and palette changes immediately.",
+        "Load and save palette presets, then apply the complete profile safely for the next game start."
+      ],
+      "sections": [
+        {
+          "heading": "A complete Player workspace",
+          "items": [
+            "Choose Mario, Luigi, Toad, Waluigi or Wario and edit the player name from one focused screen.",
+            "Customize the cap, hair, skin, gloves, overalls, shirt, shoes and emblem with precise RGB and hexadecimal color controls.",
+            "Reset the draft, load an existing palette or save the current colors as a reusable preset without leaving the editor."
+          ]
+        },
+        {
+          "heading": "Interactive 3D preview",
+          "items": [
+            "The preview builds the selected character from the locally installed game and the user's connected US ROM; the APK does not include game models, textures or ROM data.",
+            "Character and palette changes update in place, and the model can be rotated to inspect the result from different angles.",
+            "A compact preview remains visible while editing controls farther down the screen, and the renderer is kept alive to avoid repeated loading while scrolling."
+          ]
+        },
+        {
+          "heading": "Safe game integration",
+          "items": [
+            "The editor keeps changes in a draft until you choose Apply to game; the game uses the saved profile on its next start.",
+            "Applying a profile uses the same ordered configuration lock, private backup and byte verification as Library mod controls.",
+            "Clear setup and recovery states explain when the game folder, game installation or compatible ROM must be connected."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Crea y visualiza tu jugador",
+      "summary": "La versión 1.8.5 añade un espacio completo de Jugador para personalizar tu identidad dentro del juego y previsualizar los cambios de paleta en un personaje 3D interactivo antes de aplicarlos.",
+      "highlights": [
+        "Edita el nombre, el personaje y ocho grupos de color desde una pantalla dedicada de Jugador.",
+        "Gira una vista 3D interactiva y observa al instante los cambios de personaje y paleta.",
+        "Carga y guarda presets de paleta y aplica el perfil completo de forma segura para el próximo inicio del juego."
+      ],
+      "sections": [
+        {
+          "heading": "Un espacio completo de Jugador",
+          "items": [
+            "Elige a Mario, Luigi, Toad, Waluigi o Wario y edita el nombre del jugador desde una sola pantalla.",
+            "Personaliza gorra, cabello, piel, guantes, overol, camisa, zapatos y emblema con controles precisos RGB y hexadecimales.",
+            "Restablece el borrador, carga una paleta existente o guarda los colores actuales como un preset reutilizable sin salir del editor."
+          ]
+        },
+        {
+          "heading": "Vista 3D interactiva",
+          "items": [
+            "La vista construye el personaje seleccionado desde el juego instalado localmente y la ROM estadounidense conectada por el usuario; el APK no incluye modelos, texturas ni datos de la ROM del juego.",
+            "Los cambios de personaje y paleta se reflejan en el momento, y el modelo se puede girar para revisar el resultado desde distintos ángulos.",
+            "Una vista compacta permanece visible mientras editas controles más abajo, y el renderizador se conserva activo para evitar cargas repetidas al desplazarte."
+          ]
+        },
+        {
+          "heading": "Integración segura con el juego",
+          "items": [
+            "El editor conserva los cambios como borrador hasta que eliges Aplicar al juego; el juego utiliza el perfil guardado en su próximo inicio.",
+            "Aplicar un perfil usa el mismo bloqueo ordenado de configuración, respaldo privado y verificación de bytes que los controles de mods de Biblioteca.",
+            "Los estados de configuración y recuperación explican cuándo hace falta conectar la carpeta, la instalación del juego o una ROM compatible."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Crie e visualize seu jogador",
+      "summary": "A versão 1.8.5 adiciona um espaço completo de Jogador para personalizar sua identidade no jogo e visualizar as mudanças de paleta em um personagem 3D interativo antes de aplicá-las.",
+      "highlights": [
+        "Edite o nome, o personagem e oito grupos de cores em uma tela dedicada de Jogador.",
+        "Gire uma visualização 3D interativa e veja imediatamente as mudanças de personagem e paleta.",
+        "Carregue e salve presets de paleta e aplique o perfil completo com segurança na próxima inicialização do jogo."
+      ],
+      "sections": [
+        {
+          "heading": "Um espaço completo de Jogador",
+          "items": [
+            "Escolha Mario, Luigi, Toad, Waluigi ou Wario e edite o nome do jogador em uma única tela.",
+            "Personalize boné, cabelo, pele, luvas, macacão, camisa, sapatos e emblema com controles RGB e hexadecimais precisos.",
+            "Redefina o rascunho, carregue uma paleta existente ou salve as cores atuais como um preset reutilizável sem sair do editor."
+          ]
+        },
+        {
+          "heading": "Visualização 3D interativa",
+          "items": [
+            "A visualização constrói o personagem escolhido a partir do jogo instalado localmente e da ROM americana conectada pelo usuário; o APK não inclui modelos, texturas nem dados da ROM do jogo.",
+            "As mudanças de personagem e paleta aparecem na hora, e o modelo pode ser girado para conferir o resultado de diferentes ângulos.",
+            "Uma visualização compacta continua visível ao editar os controles mais abaixo, e o renderizador permanece ativo para evitar recarregamentos repetidos durante a rolagem."
+          ]
+        },
+        {
+          "heading": "Integração segura com o jogo",
+          "items": [
+            "O editor mantém as mudanças como rascunho até você escolher Aplicar ao jogo; o jogo usa o perfil salvo na próxima inicialização.",
+            "Aplicar um perfil usa o mesmo bloqueio ordenado da configuração, backup privado e verificação de bytes dos controles de mods da Biblioteca.",
+            "Os estados de configuração e recuperação explicam quando é necessário conectar a pasta, a instalação do jogo ou uma ROM compatível."
+          ]
+        }
+      ]
+    }
+  }
+}

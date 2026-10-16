@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado para el trabajo de rendimiento `1.8.4+23` el 2026-10-15.
+Revisado para `1.8.5+24` en `main` el 2026-10-15.
 
 ## Alcance
 
