@@ -3125,6 +3125,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search DynOS / Touch Controls packs…'**
   String get gameDynosSearch;
+
+  /// No description provided for @navPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Player'**
+  String get navPlayer;
+
+  /// No description provided for @playerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PLAYER'**
+  String get playerTitle;
+
+  /// No description provided for @playerCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'CHARACTER'**
+  String get playerCharacter;
+
+  /// No description provided for @player3DLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Building your character from the game…'**
+  String get player3DLoading;
+
+  /// No description provided for @player3DUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The 3D preview is unavailable. Check that SM64CoopDX and a supported US ROM are connected.'**
+  String get player3DUnavailable;
+
+  /// No description provided for @playerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Player name'**
+  String get playerName;
+
+  /// No description provided for @playerNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name shown in SM64CoopDX'**
+  String get playerNameHint;
+
+  /// No description provided for @playerCloseGameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Close SM64CoopDX before applying. Changes are used on the next start.'**
+  String get playerCloseGameHint;
+
+  /// No description provided for @playerPresets.
+  ///
+  /// In en, this message translates to:
+  /// **'PALETTES'**
+  String get playerPresets;
+
+  /// No description provided for @playerParts.
+  ///
+  /// In en, this message translates to:
+  /// **'CHARACTER COLORS'**
+  String get playerParts;
+
+  /// No description provided for @playerUnsavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get playerUnsavedTitle;
+
+  /// No description provided for @playerUnsavedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your player colors or name have not been applied to the game.'**
+  String get playerUnsavedBody;
+
+  /// No description provided for @playerKeepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get playerKeepEditing;
+
+  /// No description provided for @playerDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get playerDiscard;
+
+  /// No description provided for @playerDeletePreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete palette?'**
+  String get playerDeletePreset;
+
+  /// No description provided for @playerDeletePresetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your palette “{name}”?'**
+  String playerDeletePresetBody(String name);
+
+  /// No description provided for @playerCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get playerCancel;
+
+  /// No description provided for @playerDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get playerDelete;
+
+  /// No description provided for @playerConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'The game configuration changed. Reload it before applying your profile.'**
+  String get playerConflict;
+
+  /// No description provided for @playerInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid name and colors. Names cannot contain spaces and can use up to 63 UTF-8 bytes.'**
+  String get playerInvalid;
+
+  /// No description provided for @playerPresetExists.
+  ///
+  /// In en, this message translates to:
+  /// **'A palette with this name already exists.'**
+  String get playerPresetExists;
+
+  /// No description provided for @playerAccessError.
+  ///
+  /// In en, this message translates to:
+  /// **'The player configuration is unavailable. Check the connected game folder and its permission.'**
+  String get playerAccessError;
+
+  /// No description provided for @playerSavePreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Save palette'**
+  String get playerSavePreset;
+
+  /// No description provided for @playerPresetName.
+  ///
+  /// In en, this message translates to:
+  /// **'Palette name'**
+  String get playerPresetName;
+
+  /// No description provided for @playerSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get playerSave;
+
+  /// No description provided for @playerOverwritePreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace your palette “{name}”?'**
+  String playerOverwritePreset(String name);
+
+  /// No description provided for @playerOverwrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get playerOverwrite;
+
+  /// No description provided for @playerPresetSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Palette saved for SM64CoopDX.'**
+  String get playerPresetSaved;
+
+  /// No description provided for @playerApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Player profile saved and verified for the next game start.'**
+  String get playerApplied;
+
+  /// No description provided for @playerConnectGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the main SM64CoopDX folder to edit the player.'**
+  String get playerConnectGame;
+
+  /// No description provided for @playerMissingConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Open SM64CoopDX once to create user/sm64config.txt.'**
+  String get playerMissingConfig;
+
+  /// No description provided for @playerRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get playerRetry;
+
+  /// No description provided for @playerHex.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex color'**
+  String get playerHex;
+
+  /// No description provided for @playerRed.
+  ///
+  /// In en, this message translates to:
+  /// **'R'**
+  String get playerRed;
+
+  /// No description provided for @playerGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'G'**
+  String get playerGreen;
+
+  /// No description provided for @playerBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'B'**
+  String get playerBlue;
+
+  /// No description provided for @playerReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get playerReset;
+
+  /// No description provided for @playerApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to game'**
+  String get playerApply;
+
+  /// No description provided for @playerPants.
+  ///
+  /// In en, this message translates to:
+  /// **'Overalls'**
+  String get playerPants;
+
+  /// No description provided for @playerShirt.
+  ///
+  /// In en, this message translates to:
+  /// **'Shirt'**
+  String get playerShirt;
+
+  /// No description provided for @playerGloves.
+  ///
+  /// In en, this message translates to:
+  /// **'Gloves'**
+  String get playerGloves;
+
+  /// No description provided for @playerShoes.
+  ///
+  /// In en, this message translates to:
+  /// **'Shoes'**
+  String get playerShoes;
+
+  /// No description provided for @playerHair.
+  ///
+  /// In en, this message translates to:
+  /// **'Hair'**
+  String get playerHair;
+
+  /// No description provided for @playerSkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Skin'**
+  String get playerSkin;
+
+  /// No description provided for @playerCap.
+  ///
+  /// In en, this message translates to:
+  /// **'Cap'**
+  String get playerCap;
+
+  /// No description provided for @playerEmblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Emblem'**
+  String get playerEmblem;
+
+  /// No description provided for @playerRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore previous configuration'**
+  String get playerRestore;
+
+  /// No description provided for @playerRestoreBody.
+  ///
+  /// In en, this message translates to:
+  /// **'With SM64CoopDX closed, restore the private backup from before the last mod or player edit? This restores the whole configuration.'**
+  String get playerRestoreBody;
+
+  /// No description provided for @playerRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous game configuration restored.'**
+  String get playerRestored;
 }
 
 class _AppLocalizationsDelegate

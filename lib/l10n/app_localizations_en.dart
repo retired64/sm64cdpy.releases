@@ -1723,4 +1723,165 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameDynosSearch => 'Search DynOS / Touch Controls packs…';
+
+  @override
+  String get navPlayer => 'Player';
+
+  @override
+  String get playerTitle => 'PLAYER';
+
+  @override
+  String get playerCharacter => 'CHARACTER';
+
+  @override
+  String get player3DLoading => 'Building your character from the game…';
+
+  @override
+  String get player3DUnavailable =>
+      'The 3D preview is unavailable. Check that SM64CoopDX and a supported US ROM are connected.';
+
+  @override
+  String get playerName => 'Player name';
+
+  @override
+  String get playerNameHint => 'Name shown in SM64CoopDX';
+
+  @override
+  String get playerCloseGameHint =>
+      'Close SM64CoopDX before applying. Changes are used on the next start.';
+
+  @override
+  String get playerPresets => 'PALETTES';
+
+  @override
+  String get playerParts => 'CHARACTER COLORS';
+
+  @override
+  String get playerUnsavedTitle => 'Discard changes?';
+
+  @override
+  String get playerUnsavedBody =>
+      'Your player colors or name have not been applied to the game.';
+
+  @override
+  String get playerKeepEditing => 'Keep editing';
+
+  @override
+  String get playerDiscard => 'Discard';
+
+  @override
+  String get playerDeletePreset => 'Delete palette?';
+
+  @override
+  String playerDeletePresetBody(String name) {
+    return 'Delete your palette “$name”?';
+  }
+
+  @override
+  String get playerCancel => 'Cancel';
+
+  @override
+  String get playerDelete => 'Delete';
+
+  @override
+  String get playerConflict =>
+      'The game configuration changed. Reload it before applying your profile.';
+
+  @override
+  String get playerInvalid =>
+      'Enter a valid name and colors. Names cannot contain spaces and can use up to 63 UTF-8 bytes.';
+
+  @override
+  String get playerPresetExists => 'A palette with this name already exists.';
+
+  @override
+  String get playerAccessError =>
+      'The player configuration is unavailable. Check the connected game folder and its permission.';
+
+  @override
+  String get playerSavePreset => 'Save palette';
+
+  @override
+  String get playerPresetName => 'Palette name';
+
+  @override
+  String get playerSave => 'Save';
+
+  @override
+  String playerOverwritePreset(String name) {
+    return 'Replace your palette “$name”?';
+  }
+
+  @override
+  String get playerOverwrite => 'Replace';
+
+  @override
+  String get playerPresetSaved => 'Palette saved for SM64CoopDX.';
+
+  @override
+  String get playerApplied =>
+      'Player profile saved and verified for the next game start.';
+
+  @override
+  String get playerConnectGame =>
+      'Connect the main SM64CoopDX folder to edit the player.';
+
+  @override
+  String get playerMissingConfig =>
+      'Open SM64CoopDX once to create user/sm64config.txt.';
+
+  @override
+  String get playerRetry => 'Try again';
+
+  @override
+  String get playerHex => 'Hex color';
+
+  @override
+  String get playerRed => 'R';
+
+  @override
+  String get playerGreen => 'G';
+
+  @override
+  String get playerBlue => 'B';
+
+  @override
+  String get playerReset => 'Reset';
+
+  @override
+  String get playerApply => 'Apply to game';
+
+  @override
+  String get playerPants => 'Overalls';
+
+  @override
+  String get playerShirt => 'Shirt';
+
+  @override
+  String get playerGloves => 'Gloves';
+
+  @override
+  String get playerShoes => 'Shoes';
+
+  @override
+  String get playerHair => 'Hair';
+
+  @override
+  String get playerSkin => 'Skin';
+
+  @override
+  String get playerCap => 'Cap';
+
+  @override
+  String get playerEmblem => 'Emblem';
+
+  @override
+  String get playerRestore => 'Restore previous configuration';
+
+  @override
+  String get playerRestoreBody =>
+      'With SM64CoopDX closed, restore the private backup from before the last mod or player edit? This restores the whole configuration.';
+
+  @override
+  String get playerRestored => 'Previous game configuration restored.';
 }

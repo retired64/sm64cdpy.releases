@@ -1,0 +1,125 @@
+# Jugador 3D: arquitectura, evidencia y operación
+
+## Decisión
+
+La pantalla Jugador reemplaza completamente la previsualización PNG 2.5D por el
+pipeline 3D observado en CoopModLoader Android 1.0.3. No distribuye contenido de
+Nintendo ni de SM64CoopDX: reconstruye el personaje durante la ejecución usando
+la ROM USA autorizada por el usuario y `libmain.so` del juego instalado.
+
+La implementación deliberadamente no usa el segmento `player_model.bin` del
+tema Mario. Ese recurso queda como compatibilidad de generaciones de tema v3 y
+no es una segunda fuente de verdad para Jugador.
+
+## Evidencia de ingeniería inversa
+
+| Artefacto | Evidencia |
+|---|---|
+| APK analizado | SHA-256 `c958bfb16653d497b0c6072dacaaaa7721b5d2417b3e4ff83b3f0701fc77e3d8` |
+| bundle principal original | SHA-256 `4073350ff2351b9f4eb65f34c159d6fe0541629d597d9820b60c8939ac05a700` |
+| renderer `mario3d-1-EgvJu5.js` | SHA-256 `ac136b94fb6ee1726c0681077d1e49df0b5ad9e4e03210974b9c0346c2388ed9` |
+| modelo | símbolos `mario_geo`, `luigi_geo`, `toad_player_geo`, `waluigi_geo`, `wario_geo` |
+| almacenamiento del perfil | claves `coop_player_*` en `user/sm64config.txt` |
+
+El análisis estático confirmó Three.js r186, cámara en perspectiva, shaders que
+reproducen el combinador N64, drag horizontal, inercia, giro automático,
+actualización de colores por uniformes y liberación explícita del contexto WebGL.
+También confirmó que el APK origen extrae `lib/<ABI>/libmain.so` desde
+`com.maniscat2.sm64coopdx` y combina ese binario con `baserom.us.z64`.
+
+## Flujo implementado
+
+```text
+PlayerScreen / Riverpod draft
+        │ modelo 0..4 + ocho colores RGB
+        ▼
+Player3DPreview (AndroidView)
+        │ canal por viewId
+        ▼
+Player3DPlugin / WebView local aislado
+        ├── Player3DSource ── APK instalado ── libmain.so
+        ├── Player3DSource ── SAF raíz juego ─ baserom.us.z64 validada
+        └── https://player3d.local
+              ├── parser GeoLayout/Fast3D
+              ├── pose y modelo del personaje
+              └── Three.js + shaders N64 ── canvas interactivo
+```
+
+`Player3DSource` copia ambos insumos a caché privada mediante archivo temporal y
+rename. La biblioteca se limita a 160 MiB y se invalida con la ruta, tamaño y
+fecha de los APK base/split. La ROM debe tener el tamaño y MD5 ya aceptados por
+`MarioRomDecoder`; se consideran como máximo ocho `.z64` de la raíz SAF y se
+prioriza `baserom.us.z64`.
+
+El WebView no tiene acceso a archivos ni `content://`, no usa DOM storage, no
+acepta contenido mixto y bloquea recursos/navegación fuera del host virtual
+`player3d.local`. Solo expone seis recursos locales auditados: HTML, adaptador,
+dos bundles y los dos binarios efímeros. Los streams binarios no se insertan en
+JavaScript ni se escriben en el árbol visible del usuario.
+
+Al primer render se analiza el binario y la ROM una sola vez por PlatformView.
+Cambiar colores llama `setColors` y actualiza uniformes sin reconstruir geometría.
+Cambiar personaje reconstruye los grupos usando el parser ya cargado y un lector
+de pose nuevo: ese lector es consumible y reutilizarlo desplaza las articulaciones
+del siguiente personaje. Se retienen como máximo dos modelos reconstruidos para
+acelerar alternancias sin agotar memoria en equipos modestos. Al salir,
+Flutter desconecta el canal y Android detiene/destruye el WebView; el renderer
+libera geometrías, materiales, texturas y fuerza la pérdida del contexto WebGL.
+
+## Perfil y persistencia
+
+| índice | personaje |
+|---:|---|
+| 0 | Mario |
+| 1 | Luigi |
+| 2 | Toad |
+| 3 | Waluigi |
+| 4 | Wario |
+
+La selección modifica el borrador Riverpod inmediatamente para actualizar el
+preview. No toca el juego hasta **Aplicar**. Después, nombre, modelo y ocho
+colores viajan juntos por `PlayerProfileService` a
+`GameModActivationStore.applyPlayer`. El guardado conserva líneas ajenas,
+respeta CRLF/LF, usa la revisión digest compare-and-swap, crea el respaldo común
+y relee el archivo para confirmar lo escrito. `sm64config.txt` confirmado es la
+fuente de verdad; el canvas nunca persiste estado del juego.
+
+## Rendimiento y experiencia
+
+- La carga costosa sucede una vez al crear la vista, no en cada cambio de color.
+- El PlatformView solicita keep-alive dentro del sliver: desplazarlo fuera de la
+  pantalla ya no destruye WebView, parser, modelos ni contexto WebGL.
+- `IntersectionObserver` pausa el loop de frames fuera del viewport y lo reanuda
+  sobre el mismo canvas al volver, sin círculo de carga ni reconstrucción.
+- GPU Android Adreno/Mali/PowerVR entra en una clasificación móvil conservadora;
+  los equipos débiles renderizan a escala 0.7 y el pixel ratio se limita a 1.5.
+- Los cambios de paleta no muestran una pantalla global de carga.
+- El overlay de carga pertenece solo al rectángulo del preview.
+- Un error de juego ausente, permiso, ROM o WebGL deja el editor disponible y
+  muestra el mensaje localizado de vista previa no disponible.
+- El estado nativo se puede consultar con `getState`, evitando perder un error
+  emitido antes de que Flutter conecte su handler.
+- La vista respeta el renderer original: giro por drag, inercia, auto-rotación y
+  adaptación de FPS/pixel ratio.
+
+## Archivos responsables
+
+- `lib/presentation/screens/player_screen.dart`: composición y selector de modelo.
+- `lib/presentation/widgets/player_3d_preview.dart`: PlatformView y estado visual.
+- `android/app/src/main/kotlin/mods/sm64cdpy/Player3DPlugin.kt`: aislamiento WebView.
+- `android/app/src/main/kotlin/mods/sm64cdpy/Player3DSource.kt`: insumos verificados.
+- `assets/player3d/app.js`: ciclo de vida parser/renderer y actualización en vivo.
+- `assets/player3d/NOTICE.md`: procedencia, hashes y licencia.
+
+## Matriz de aceptación pendiente en dispositivo
+
+1. Mario/Luigi/Toad/Waluigi/Wario aparecen y giran sin geometría faltante.
+2. Cada uno de los ocho colores cambia en vivo sin recargar la pantalla.
+3. Aplicar, cerrar app, iniciar juego y volver conserva modelo/nombre/paleta.
+4. Juego ausente, ROM ausente/incorrecta y permiso SAF revocado degradan con UI útil.
+5. Rotación, background/foreground y 20 entradas/salidas no filtran contextos WebGL.
+6. Validar Android 7, 10, 13, 14 y 16 en GPU baja/media/alta.
+
+La instalación permanente de JADX/REA y la inspección DEX ampliada quedan como
+seguimiento explícito; no bloquean este pipeline porque las rutas críticas se
+confirmaron por bundle, DEX disponible y código fuente del juego.

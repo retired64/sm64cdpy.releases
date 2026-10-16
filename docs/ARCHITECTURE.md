@@ -112,6 +112,22 @@ no se adjunta a las instantáneas de recibos. El endpoint/modelo de descubrimien
 anterior permanece para compatibilidad técnica, sin consumidores visuales.
 DynOS/Touch conservan su contrato independiente `dynos-pack:` con switches propios en Biblioteca.
 
+La pantalla Jugador reutiliza esa misma autoridad nativa y el mismo bloqueo SAF
+para leer y modificar las claves `coop_player_*` de `user/sm64config.txt`. Un
+digest del documento actúa como revisión compare-and-swap: si el juego u otra
+función cambia el archivo después de la lectura, la aplicación rechaza la
+escritura y solicita refrescar. Nombre y ocho colores se confirman en una única
+transacción con el respaldo común de la activación de mods. El modelo 0..4 forma
+parte de esa misma transacción. Riverpod conserva
+por separado el perfil confirmado y el borrador, por lo que sliders y presets
+actualizan la vista previa sin I/O nativo. Las paletas incluidas son de solo
+lectura; las personales usan el formato real `[PALETTE]` en `user/palettes`.
+Cambiar la carpeta unificada invalida tanto la proyección de mods como la de
+Jugador. La vista previa es un PlatformView Android con WebView local y WebGL:
+reconstruye el modelo desde `libmain.so` de SM64CoopDX y la ROM USA autorizada,
+actualiza los uniformes de paleta sin generar PNG y libera el contexto al salir.
+El contrato completo está en [PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md).
+
 ## Navegación y estado
 
 GoRouter define un `ShellRoute` para las pantallas principales y una ruta de detalle fuera del shell. Riverpod administra catálogo, filtros, paginación, favoritos, tema e idioma.
@@ -197,6 +213,12 @@ HUD, tipografías y marcos cuadrados. Se conectan todas las pantallas y widgets
 principales. La selección de Mario coordina importación antes de guardar tema;
 v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 [MARIO_ROM_THEME.md](MARIO_ROM_THEME.md). La evidencia #192 valida v1, no este cambio v2.
+
+La generación privada v3 del tema conserva además un segmento Mario para
+compatibilidad con generaciones importadas. Ya no alimenta la pantalla Jugador:
+el rasterizador de pose fija y su caché PNG fueron retirados. Jugador usa la
+biblioteca instalada del juego, la ROM autorizada y el renderer WebGL descrito
+en [PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md).
 
 ## Conexión unificada del juego
 

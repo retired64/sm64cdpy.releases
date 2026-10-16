@@ -60,6 +60,7 @@ flutter:
     - assets/db/render96.json
     - assets/icons/
     - assets/icons/menu/
+    - assets/player3d/
 
   fonts:
     - family: TypefaceMario64
