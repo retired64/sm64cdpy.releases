@@ -11,6 +11,7 @@ import '../../presentation/screens/links_resource_screen.dart';
 import '../../presentation/screens/library_screen.dart';
 import '../../presentation/screens/mod_detail_screen.dart';
 import '../../presentation/screens/popular_screen.dart';
+import '../../presentation/screens/player_screen.dart';
 import '../../presentation/screens/settings_screen.dart';
 import '../../presentation/screens/touch_controls_screen.dart';
 import '../../presentation/screens/vip_mods_screen.dart';
@@ -37,6 +38,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/library',
           pageBuilder: (_, s) => _page(const LibraryScreen(), s),
+        ),
+        GoRoute(
+          path: '/player',
+          pageBuilder: (_, s) => _page(const PlayerScreen(), s),
         ),
         GoRoute(
           path: '/popular',

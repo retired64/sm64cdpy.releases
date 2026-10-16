@@ -108,6 +108,16 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   isActive: currentRoute == '/library',
                 ),
                 _NavItem(
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.person_outline_rounded,
+                    size: 19,
+                    color: color,
+                  ),
+                  label: l10n.navPlayer,
+                  route: '/player',
+                  isActive: currentRoute == '/player',
+                ),
+                _NavItem(
                   iconBuilder: (color) => SvgPicture.asset(
                     'assets/icons/menu/popular.svg',
                     width: 19,

@@ -86,7 +86,7 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
         executor.execute {
             root.mkdirs()
             val active = preferences.getString("generation", null)
-            root.listFiles()?.filter { it.name != active }?.forEach { it.deleteRecursively() }
+            root.listFiles()?.filter { it.name != active && it.name != "player_previews" }?.forEach { it.deleteRecursively() }
             if (active == null || File(root, active).isDirectory) {
                 File(context.noBackupFilesDir, "mario_theme_v1").listFiles()?.forEach { it.deleteRecursively() }
             }
@@ -104,10 +104,17 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
         if (version == 1) directory = File(File(context.noBackupFilesDir, "mario_theme_v1"), name)
         val specs = if (version == 1) MarioRomDecoder.legacyTextures else MarioRomDecoder.textures
         val dimensions = specs.associate { it.id to (it.width to it.height) }.toMutableMap()
-        if (version == 2) {
+        if (version >= 2) {
             dimensions["panel_light"] = 32 to 32
             dimensions["panel_dark"] = 32 to 32
             MarioRomDecoder.skies.forEach { dimensions[it.id] = 256 to 256 }
+        }
+        if (version >= 3) {
+            val model = File(directory, "player_model.bin")
+            if (!model.isFile || model.length() !in 1..524288) {
+                if (clearInvalid) preferences.edit().remove("generation").commit()
+                return emptyMap()
+            }
         }
         val files = dimensions.keys.associateWith { File(directory, "$it.png") }.toMutableMap()
         if (dimensions.any { (id, size) ->
@@ -122,7 +129,7 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
             if (clearInvalid) preferences.edit().remove("generation").commit()
             return emptyMap()
         }
-        if (version == 2) {
+        if (version >= 2) {
             for (id in MarioRomDecoder.fontIds) {
                 val file = File(directory, "$id.ttf")
                 if (!file.isFile || file.length() !in 1..1048576) {
@@ -221,6 +228,11 @@ class MarioAssetsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.ActivityR
                 fun segment(address: Int, length: Int): ByteArray = segments.getOrPut(address) {
                     require(address.toLong() + length <= bytes.size)
                     MarioRomDecoder.decompress(bytes.copyOfRange(address, address + length))
+                }
+                val playerSegment = segment(MarioRomDecoder.PLAYER_SEGMENT, MarioRomDecoder.PLAYER_SEGMENT_BYTES)
+                File(directory, "player_model.bin").outputStream().use {
+                    it.write(playerSegment)
+                    it.fd.sync()
                 }
                 for (texture in MarioRomDecoder.textures) {
                     checkCancelled()
