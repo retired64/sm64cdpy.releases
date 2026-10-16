@@ -1,31 +1,29 @@
-# Jugador 3D: arquitectura, evidencia y operación
+# Jugador 3D: arquitectura y operación
 
 ## Decisión
 
-La pantalla Jugador reemplaza completamente la previsualización PNG 2.5D por el
-pipeline 3D observado en CoopModLoader Android 1.0.3. No distribuye contenido de
-Nintendo ni de SM64CoopDX: reconstruye el personaje durante la ejecución usando
-la ROM USA autorizada por el usuario y `libmain.so` del juego instalado.
+La pantalla Jugador reemplaza completamente la previsualización PNG 2.5D por un
+pipeline 3D compatible con SM64CoopDX. No distribuye contenido de Nintendo ni de
+SM64CoopDX: reconstruye el personaje durante la ejecución usando la ROM USA
+autorizada por el usuario y `libmain.so` del juego instalado.
 
 La implementación deliberadamente no usa el segmento `player_model.bin` del
 tema Mario. Ese recurso queda como compatibilidad de generaciones de tema v3 y
 no es una segunda fuente de verdad para Jugador.
 
-## Evidencia de ingeniería inversa
+## Contrato técnico
 
-| Artefacto | Evidencia |
+| Área | Contrato |
 |---|---|
-| APK analizado | SHA-256 `c958bfb16653d497b0c6072dacaaaa7721b5d2417b3e4ff83b3f0701fc77e3d8` |
-| bundle principal original | SHA-256 `4073350ff2351b9f4eb65f34c159d6fe0541629d597d9820b60c8939ac05a700` |
-| renderer `mario3d-1-EgvJu5.js` | SHA-256 `ac136b94fb6ee1726c0681077d1e49df0b5ad9e4e03210974b9c0346c2388ed9` |
-| modelo | símbolos `mario_geo`, `luigi_geo`, `toad_player_geo`, `waluigi_geo`, `wario_geo` |
-| almacenamiento del perfil | claves `coop_player_*` en `user/sm64config.txt` |
+| Render | Three.js r186, cámara en perspectiva y shaders N64 |
+| Modelos | `mario_geo`, `luigi_geo`, `toad_player_geo`, `waluigi_geo`, `wario_geo` |
+| Perfil | claves `coop_player_*` en `user/sm64config.txt` |
+| Entradas locales | `libmain.so` del juego y `baserom.us.z64` autorizada |
 
-El análisis estático confirmó Three.js r186, cámara en perspectiva, shaders que
-reproducen el combinador N64, drag horizontal, inercia, giro automático,
-actualización de colores por uniformes y liberación explícita del contexto WebGL.
-También confirmó que el APK origen extrae `lib/<ABI>/libmain.so` desde
-`com.maniscat2.sm64coopdx` y combina ese binario con `baserom.us.z64`.
+El renderer ofrece drag horizontal, inercia, giro automático, actualización de
+colores por uniformes y liberación explícita del contexto WebGL. Android extrae
+`lib/<ABI>/libmain.so` desde `com.maniscat2.sm64coopdx` y combina ese binario con
+`baserom.us.z64` sin publicar copias en el almacenamiento del usuario.
 
 ## Flujo implementado
 
@@ -123,7 +121,3 @@ fuente de verdad; el canvas nunca persiste estado del juego.
 4. Juego ausente, ROM ausente/incorrecta y permiso SAF revocado degradan con UI útil.
 5. Rotación, background/foreground y 20 entradas/salidas no filtran contextos WebGL.
 6. Validar Android 7, 10, 13, 14 y 16 en GPU baja/media/alta.
-
-La instalación permanente de JADX/REA y la inspección DEX ampliada quedan como
-seguimiento explícito; no bloquean este pipeline porque las rutas críticas se
-confirmaron por bundle, DEX disponible y código fuente del juego.
