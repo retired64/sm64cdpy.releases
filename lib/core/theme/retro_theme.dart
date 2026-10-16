@@ -60,6 +60,18 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   /// All main-engine panels use the same full-opacity material. Photo gradients,
   /// circular badges and semantic colored fills keep their own foreground contract.
   BoxDecoration gameDecoration(BoxDecoration value) {
+    if (usesMinimalSurfaces &&
+        value.shape == BoxShape.rectangle &&
+        value.image == null &&
+        value.gradient == null &&
+        _isNeutralSurface(value.color)) {
+      return BoxDecoration(
+        color: value.color == surface || value.color == background
+            ? Colors.transparent
+            : value.color,
+        borderRadius: value.borderRadius ?? radius,
+      );
+    }
     if (!isMario ||
         value.shape != BoxShape.rectangle ||
         value.image != null ||
@@ -161,6 +173,14 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   bool get showN64Backdrop => design.backdropStyle == AppBackdropStyle.n64Sky;
   bool get usesBeveledSurfaces =>
       design.surfaceTreatment == AppSurfaceTreatment.beveled;
+  bool get usesMinimalSurfaces =>
+      design.surfaceTreatment == AppSurfaceTreatment.minimal;
+
+  bool _isNeutralSurface(Color? color) =>
+      color == null ||
+      color == surface ||
+      color == surfaceAlt ||
+      color == background;
 
   List<BoxShadow> hardShadow({double dx = 4, double dy = 4}) => [
     if (usesBeveledSurfaces)
@@ -185,37 +205,44 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     double border = 2,
     double shadowDx = 4,
     double shadowDy = 4,
-  }) => gameDecoration(
-    BoxDecoration(
-      color: color ?? surface,
-      borderRadius: radius,
-      border: Border(
-        top: BorderSide(
-          color: usesBeveledSurfaces
-              ? surfaceHighlight
-              : borderColor ?? this.border,
-          width: borderWidth(border),
-        ),
-        left: BorderSide(
-          color: usesBeveledSurfaces
-              ? surfaceHighlight
-              : borderColor ?? this.border,
-          width: borderWidth(border),
-        ),
-        bottom: BorderSide(
-          color:
-              borderColor ?? (usesBeveledSurfaces ? surfaceShade : this.border),
-          width: borderWidth(border),
-        ),
-        right: BorderSide(
-          color:
-              borderColor ?? (usesBeveledSurfaces ? surfaceShade : this.border),
-          width: borderWidth(border),
-        ),
-      ),
-      boxShadow: hardShadow(dx: shadowDx, dy: shadowDy),
-    ),
-  );
+  }) => usesMinimalSurfaces
+      ? BoxDecoration(
+          color: color == null || color == surface ? Colors.transparent : color,
+          borderRadius: radius,
+        )
+      : gameDecoration(
+          BoxDecoration(
+            color: color ?? surface,
+            borderRadius: radius,
+            border: Border(
+              top: BorderSide(
+                color: usesBeveledSurfaces
+                    ? surfaceHighlight
+                    : borderColor ?? this.border,
+                width: borderWidth(border),
+              ),
+              left: BorderSide(
+                color: usesBeveledSurfaces
+                    ? surfaceHighlight
+                    : borderColor ?? this.border,
+                width: borderWidth(border),
+              ),
+              bottom: BorderSide(
+                color:
+                    borderColor ??
+                    (usesBeveledSurfaces ? surfaceShade : this.border),
+                width: borderWidth(border),
+              ),
+              right: BorderSide(
+                color:
+                    borderColor ??
+                    (usesBeveledSurfaces ? surfaceShade : this.border),
+                width: borderWidth(border),
+              ),
+            ),
+            boxShadow: hardShadow(dx: shadowDx, dy: shadowDy),
+          ),
+        );
 
   TextStyle heading({
     required double size,
@@ -337,8 +364,37 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         style: OutlinedButton.styleFrom(
           shape: shape,
           foregroundColor: accentText,
+          side: usesMinimalSurfaces
+              ? BorderSide(color: border, width: 1)
+              : null,
         ),
       ),
+      cardTheme: CardThemeData(
+        color: usesMinimalSurfaces ? Colors.transparent : surface,
+        elevation: 0,
+        margin: usesMinimalSurfaces ? EdgeInsets.zero : null,
+        shape: shape,
+      ),
+      dividerTheme: DividerThemeData(
+        color: border.withValues(alpha: usesMinimalSurfaces ? 0.65 : 1),
+        thickness: usesMinimalSurfaces ? 0.5 : 1,
+        space: usesMinimalSurfaces ? 1 : 16,
+      ),
+      inputDecorationTheme: usesMinimalSurfaces
+          ? InputDecorationTheme(
+              filled: false,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 0,
+                vertical: 12,
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: border, width: 1),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: accent, width: 1.5),
+              ),
+            )
+          : null,
     );
     if (isMario) {
       ButtonStyle originalControl(ButtonStyle? base, {bool filled = false}) =>

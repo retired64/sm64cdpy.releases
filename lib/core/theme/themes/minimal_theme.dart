@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_theme_design.dart';
 
-/// Low-cost default design: flat colors, no backdrop painters, skew or shadow.
+/// Low-cost design driven by whitespace and typography instead of containers.
 const minimalTheme = AppThemeDesign(
   id: AppThemeId.minimal,
   light: AppThemePalette(
@@ -29,7 +29,7 @@ const minimalTheme = AppThemeDesign(
     onAccent: Color(0xFF0D1B33),
     accentText: Color(0xFF8DB3FF),
   ),
-  cornerRadius: 8,
+  cornerRadius: 6,
   borderScale: 0.5,
   shadowBlur: 0,
   shadowOffsetScale: 0,
@@ -39,7 +39,7 @@ const minimalTheme = AppThemeDesign(
   halftone: false,
   stripes: false,
   uppercaseLabels: false,
-  softSettingsPanels: true,
+  softSettingsPanels: false,
   backdropStyle: AppBackdropStyle.none,
-  surfaceTreatment: AppSurfaceTreatment.flat,
+  surfaceTreatment: AppSurfaceTreatment.minimal,
 );

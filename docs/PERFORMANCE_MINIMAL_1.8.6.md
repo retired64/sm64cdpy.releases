@@ -15,8 +15,10 @@ drawer y entrar al detalle de un mod.
 
 `retro_manga` vuelve a ser el diseño predeterminado porque las optimizaciones
 del drawer y navegación eliminaron su latencia perceptible. `minimal` permanece
-como alternativa de bajo costo en Ajustes. Usa colores planos, radio discreto, tipografía del sistema, borde
-fino y cero sombra, inclinación, trama, franjas o painter de fondo. En este tema
+como alternativa de bajo costo en Ajustes. Usa un lienzo continuo, espacio y
+tipografía del sistema como jerarquía; las superficies neutras ya no dibujan
+tarjetas, marcos ni sombras. Los bordes quedan limitados a foco, separación o
+estado, y no hay inclinación, trama, franjas ni painter de fondo. En este tema
 los destinos del drawer son filas de texto sin iconos.
 
 Una preferencia válida ya guardada no se migra: Minimalista, Retro Manga, Mario

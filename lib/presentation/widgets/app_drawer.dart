@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/category_constants.dart';
-import '../../core/theme/app_theme_design.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../presentation/providers/mod_providers.dart';
@@ -323,8 +322,10 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final accent = accentColor ?? retro.accent;
-    final fg = isActive ? retro.onColor(accent) : retro.ink;
-    final minimal = retro.design.id == AppThemeId.minimal;
+    final minimal = retro.usesMinimalSurfaces;
+    final fg = isActive
+        ? (minimal ? accent : retro.onColor(accent))
+        : retro.ink;
 
     return Semantics(
       button: true,
@@ -338,8 +339,11 @@ class _NavItem extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            borderRadius: retro.radius,
-            color: isActive ? accent : Colors.transparent,
+            border: minimal && isActive
+                ? Border(left: BorderSide(color: accent, width: 2))
+                : null,
+            borderRadius: minimal ? null : retro.radius,
+            color: isActive && !minimal ? accent : Colors.transparent,
           ),
           child: Row(
             children: [
@@ -488,6 +492,8 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
     final isSelected = widget.selectedCategory == widget.category;
     final icon = CategoryConstants.getIconForCategory(widget.category);
     final catColor = CategoryConstants.getColorForCategory(widget.category);
+    final minimal = retro.usesMinimalSurfaces;
+    final selectedForeground = minimal ? catColor : retro.onColor(catColor);
 
     return GestureDetector(
       onTapDown: (_) => _pressCtrl.forward(),
@@ -519,8 +525,8 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           decoration: retro.gameDecoration(
             BoxDecoration(
               borderRadius: retro.radius,
-              color: isSelected ? catColor : Colors.transparent,
-              border: isSelected
+              color: isSelected && !minimal ? catColor : Colors.transparent,
+              border: isSelected && !minimal
                   ? Border.all(
                       color: retro.border,
                       width: retro.borderWidth(1.5),
@@ -533,13 +539,13 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
               Container(
                 width: 7,
                 height: 7,
-                color: isSelected ? retro.onColor(catColor) : catColor,
+                color: isSelected ? selectedForeground : catColor,
               ),
               const SizedBox(width: 10),
               MarioGameIcon(
                 icon,
                 size: 15,
-                color: isSelected ? retro.onColor(catColor) : catColor,
+                color: isSelected ? selectedForeground : catColor,
               ),
               const SizedBox(width: 9),
               Expanded(
@@ -547,7 +553,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
                   duration: _kItemDuration,
                   curve: _kCurve,
                   style: TextStyle(
-                    color: isSelected ? retro.onColor(catColor) : retro.inkDim,
+                    color: isSelected ? selectedForeground : retro.inkDim,
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     fontSize: 12.5,
                   ),
@@ -562,7 +568,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
                 child: MarioGameIcon(
                   Icons.check,
                   size: 14,
-                  color: retro.onColor(catColor),
+                  color: selectedForeground,
                 ),
               ),
             ],

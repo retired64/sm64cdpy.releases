@@ -28,6 +28,25 @@ void main() {
     expect(design.chipSkew, 0);
     expect(design.shadowBlur, 0);
     expect(design.shadowOffsetScale, 0);
+    expect(design.surfaceTreatment, AppSurfaceTreatment.minimal);
+    expect(design.softSettingsPanels, isFalse);
+
+    final retro = RetroTheme(false, design: design);
+    final surface = retro.surfaceDecoration();
+    expect(surface.color, Colors.transparent);
+    expect(surface.border, isNull);
+    expect(surface.boxShadow, isNull);
+
+    final neutral = retro.gameDecoration(
+      BoxDecoration(
+        color: retro.surface,
+        border: Border.all(color: retro.border),
+        boxShadow: const [BoxShadow(blurRadius: 8)],
+      ),
+    );
+    expect(neutral.color, Colors.transparent);
+    expect(neutral.border, isNull);
+    expect(neutral.boxShadow, isNull);
   });
 
   for (final design in AppThemeCatalog.designs) {

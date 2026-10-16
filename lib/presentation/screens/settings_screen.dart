@@ -338,7 +338,7 @@ class _RetroSectionKicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    if (retro.design.softSettingsPanels) {
+    if (retro.design.softSettingsPanels || retro.usesMinimalSurfaces) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
         child: Row(
@@ -423,7 +423,8 @@ class _RetroSwitch extends StatelessWidget {
           decoration: retro.gameDecoration(
             BoxDecoration(
               color: value ? retro.inkOnAccent : retro.inkDim,
-              borderRadius: retro.design.softSettingsPanels
+              borderRadius:
+                  retro.design.softSettingsPanels || retro.usesMinimalSurfaces
                   ? BorderRadius.circular(8)
                   : BorderRadius.zero,
             ),
@@ -530,7 +531,10 @@ class _RetroTileShell extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.all(retro.design.softSettingsPanels ? 14 : 12),
+          padding: EdgeInsets.symmetric(
+            horizontal: retro.usesMinimalSurfaces ? 4 : 12,
+            vertical: retro.usesMinimalSurfaces ? 12 : 12,
+          ),
           decoration: retro.settingsPanel(
             borderColor: accentColor,
             width: accentColor != null ? 2.5 : 2,
@@ -598,12 +602,16 @@ class _RetroIconBox extends StatelessWidget {
       decoration: retro.gameDecoration(
         BoxDecoration(
           borderRadius: retro.radius,
-          color: retro.design.softSettingsPanels
+          color: retro.design.softSettingsPanels || retro.usesMinimalSurfaces
               ? retro.accent.withValues(alpha: 0.08)
               : retro.surfaceAlt,
           border: Border.all(
             color: c,
-            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+            width: retro.borderWidth(
+              retro.design.softSettingsPanels || retro.usesMinimalSurfaces
+                  ? 1
+                  : 2,
+            ),
           ),
         ),
       ),
@@ -627,12 +635,16 @@ class _RetroSpinner extends StatelessWidget {
       decoration: retro.gameDecoration(
         BoxDecoration(
           borderRadius: retro.radius,
-          color: retro.design.softSettingsPanels
+          color: retro.design.softSettingsPanels || retro.usesMinimalSurfaces
               ? retro.accent.withValues(alpha: 0.08)
               : retro.surfaceAlt,
           border: Border.all(
             color: retro.accent,
-            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+            width: retro.borderWidth(
+              retro.design.softSettingsPanels || retro.usesMinimalSurfaces
+                  ? 1
+                  : 2,
+            ),
           ),
         ),
       ),

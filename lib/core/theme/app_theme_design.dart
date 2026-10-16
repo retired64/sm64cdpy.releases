@@ -24,7 +24,7 @@ enum AppThemeId {
 enum AppBackdropStyle { none, halftone, n64Sky, introMenu }
 
 /// Surface language shared by cards, chips, buttons and settings panels.
-enum AppSurfaceTreatment { flat, beveled }
+enum AppSurfaceTreatment { minimal, flat, beveled }
 
 /// Every surface has an explicit text role. Semantic and brand colors remain
 /// separate from the selected interface accent.
