@@ -30,7 +30,7 @@ void main() {
     await box.put('theme_mode', 'dark');
     await box.put('theme_id', 'future-or-retired');
     expect(container.read(themeModeProvider), ThemeMode.dark);
-    expect(container.read(themeDesignProvider).id, AppThemeId.minimal);
+    expect(container.read(themeDesignProvider).id, AppThemeId.retroManga);
   });
 
   for (final removed in ['odyssey', 'gamecube']) {
@@ -39,15 +39,15 @@ void main() {
       () async {
         final box = Hive.box<String>(AppConstants.settingsBoxKey);
         await box.putAll({'theme_id': removed, 'theme_mode': 'dark'});
-        expect(container.read(themeDesignProvider).id, AppThemeId.minimal);
+        expect(container.read(themeDesignProvider).id, AppThemeId.retroManga);
         expect(container.read(themeModeProvider), ThemeMode.dark);
         expect(
           await container
               .read(appearanceProvider.notifier)
-              .setTheme(AppThemeId.minimal),
+              .setTheme(AppThemeId.retroManga),
           isTrue,
         );
-        expect(box.get('theme_id'), 'minimal');
+        expect(box.get('theme_id'), 'retro_manga');
         expect(box.get('theme_mode'), 'dark');
       },
     );
@@ -102,7 +102,7 @@ void main() {
     'startup without an open settings box has safe appearance and locale',
     () async {
       await Hive.close();
-      expect(container.read(themeDesignProvider).id, AppThemeId.minimal);
+      expect(container.read(themeDesignProvider).id, AppThemeId.retroManga);
       expect(container.read(themeModeProvider), ThemeMode.system);
       expect(container.read(localeNotifierProvider), isNull);
     },

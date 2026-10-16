@@ -5,26 +5,30 @@ Versión de desarrollo: `1.8.6+25`.
 
 ## Objetivo
 
-Ofrecer una interfaz predeterminada de bajo costo para Android de gama baja,
-sin retirar Retro Manga, Mario 64 ni SM64 Intro. La optimización se concentra
+Ofrecer una interfaz opcional de bajo costo para Android de gama baja y hacer
+que Retro Manga sea fluido como diseño predeterminado, sin retirar Mario 64 ni
+SM64 Intro. La optimización se concentra
 primero en las dos rutas que mostraban mayor latencia perceptible: abrir el
 drawer y entrar al detalle de un mod.
 
 ## Tema predeterminado
 
-`minimal` es el fallback para instalaciones nuevas, preferencias ausentes e IDs
-desconocidos. Usa colores planos, radio discreto, tipografía del sistema, borde
+`retro_manga` vuelve a ser el diseño predeterminado porque las optimizaciones
+del drawer y navegación eliminaron su latencia perceptible. `minimal` permanece
+como alternativa de bajo costo en Ajustes. Usa colores planos, radio discreto, tipografía del sistema, borde
 fino y cero sombra, inclinación, trama, franjas o painter de fondo. En este tema
 los destinos del drawer son filas de texto sin iconos.
 
-Una preferencia válida ya guardada no se migra: Retro Manga, Mario 64 y SM64
-Intro continúan seleccionables y se restauran normalmente. Esto evita cambiar
-la apariencia elegida por usuarios existentes.
+Una preferencia válida ya guardada no se migra: Minimalista, Retro Manga, Mario
+64 y SM64 Intro se restauran normalmente. Preferencias ausentes o desconocidas
+usan Retro Manga.
 
 ## Drawer
 
 - Se sustituyeron todos los SVG por símbolos Material en los temas opcionales.
 - Minimalista no construye iconos de destino.
+- El encabezado recupera el logo raster de la app sin reintroducir SVG.
+- Los enlaces sociales se retiraron del drawer y viven en Enlaces y recursos.
 - Cada destino dejó de mantener un `AnimationController`, `ScaleTransition`,
   `AnimatedContainer` y `AnimatedDefaultTextStyle` propios.
 - Selección y toque usan `InkWell` y decoración estática.

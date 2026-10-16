@@ -9,24 +9,24 @@
       "title": "A lighter, faster interface",
       "summary": "Version 1.8.6 introduces a low-cost Minimal design and streamlines navigation and mod details for smoother use on entry-level Android devices.",
       "highlights": [
-        "Minimal is now the default design for new installations.",
+        "Minimal is available as a low-cost option while Retro Manga remains the default.",
         "The drawer no longer loads SVG artwork or per-item press animations.",
         "Opening mod details no longer stacks page, fade and image transitions."
       ],
       "sections": [
         {
-          "heading": "Minimal by default",
+          "heading": "A lightweight option",
           "items": [
-            "The new default uses flat colors, simple typography and no backdrop painters, skewed controls or decorative shadows.",
-            "Retro Manga, Mario 64 and SM64 Intro remain available as optional interface designs.",
-            "Existing valid theme selections remain unchanged; new or unknown selections use Minimal safely."
+            "Minimal uses flat colors, simple typography and no backdrop painters, skewed controls or decorative shadows.",
+            "Retro Manga remains the default; Minimal, Mario 64 and SM64 Intro are available in Settings.",
+            "Existing valid theme selections remain unchanged, and missing or unknown selections use Retro Manga."
           ]
         },
         {
           "heading": "Faster navigation",
           "items": [
             "Drawer destinations use lightweight Material glyphs for optional themes and text-only rows in Minimal.",
-            "SVG UI assets and their rendering dependency have been removed.",
+            "SVG UI assets and their rendering dependency have been removed; the header uses one lightweight raster app logo.",
             "Route changes are immediate instead of running a combined scale and fade transition."
           ]
         },
@@ -44,24 +44,24 @@
       "title": "Una interfaz más ligera y rápida",
       "summary": "La versión 1.8.6 incorpora un diseño Minimalista de bajo costo y simplifica la navegación y los detalles de mods para funcionar con mayor fluidez en dispositivos Android de gama baja.",
       "highlights": [
-        "Minimalista es ahora el diseño predeterminado para instalaciones nuevas.",
+        "Minimalista está disponible como opción ligera y Retro Manga permanece como predeterminado.",
         "El drawer ya no carga gráficos SVG ni animaciones de presión por elemento.",
         "Abrir los detalles de un mod ya no encadena transiciones de página, fade e imagen."
       ],
       "sections": [
         {
-          "heading": "Minimalista por defecto",
+          "heading": "Una opción ligera",
           "items": [
-            "El nuevo diseño predeterminado usa colores planos, tipografía simple y no dibuja fondos, controles inclinados ni sombras decorativas.",
-            "Retro Manga, Mario 64 y SM64 Intro siguen disponibles como diseños opcionales.",
-            "Las selecciones válidas existentes se conservan; una selección nueva o desconocida usa Minimalista de forma segura."
+            "Minimalista usa colores planos, tipografía simple y no dibuja fondos, controles inclinados ni sombras decorativas.",
+            "Retro Manga permanece como predeterminado; Minimalista, Mario 64 y SM64 Intro están disponibles en Ajustes.",
+            "Las selecciones válidas existentes se conservan; una selección ausente o desconocida usa Retro Manga."
           ]
         },
         {
           "heading": "Navegación más rápida",
           "items": [
             "Los destinos del drawer usan símbolos Material ligeros en los temas opcionales y filas de solo texto en Minimalista.",
-            "Se eliminaron los assets SVG de interfaz y su dependencia de renderizado.",
+            "Se eliminaron los assets SVG y su dependencia; el encabezado utiliza un único logo raster ligero de la app.",
             "Los cambios de ruta son inmediatos en lugar de ejecutar una transición combinada de escala y fade."
           ]
         },
@@ -79,24 +79,24 @@
       "title": "Uma interface mais leve e rápida",
       "summary": "A versão 1.8.6 adiciona um visual Minimalista de baixo custo e simplifica a navegação e os detalhes dos mods para maior fluidez em dispositivos Android básicos.",
       "highlights": [
-        "Minimalista agora é o visual padrão para novas instalações.",
+        "Minimalista está disponível como opção leve e Retro Manga continua como padrão.",
         "O drawer não carrega mais imagens SVG nem animações de toque por item.",
         "Abrir os detalhes de um mod não combina mais transições de página, fade e imagem."
       ],
       "sections": [
         {
-          "heading": "Minimalista por padrão",
+          "heading": "Uma opção leve",
           "items": [
-            "O novo visual padrão usa cores planas, tipografia simples e não desenha fundos, controles inclinados nem sombras decorativas.",
-            "Retro Manga, Mario 64 e SM64 Intro continuam disponíveis como visuais opcionais.",
-            "As seleções válidas existentes são mantidas; uma seleção nova ou desconhecida usa Minimalista com segurança."
+            "Minimalista usa cores planas, tipografia simples e não desenha fundos, controles inclinados nem sombras decorativas.",
+            "Retro Manga continua como padrão; Minimalista, Mario 64 e SM64 Intro estão disponíveis nos Ajustes.",
+            "As seleções válidas existentes são mantidas; uma seleção ausente ou desconhecida usa Retro Manga."
           ]
         },
         {
           "heading": "Navegação mais rápida",
           "items": [
             "Os destinos do drawer usam símbolos Material leves nos temas opcionais e linhas somente com texto no Minimalista.",
-            "Os assets SVG da interface e sua dependência de renderização foram removidos.",
+            "Os assets SVG e sua dependência foram removidos; o cabeçalho usa um único logo raster leve do app.",
             "As mudanças de rota são imediatas em vez de executar uma transição combinada de escala e fade."
           ]
         },

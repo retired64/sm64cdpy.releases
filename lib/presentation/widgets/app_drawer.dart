@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../../core/constants/app_constants.dart';
 import '../../core/constants/category_constants.dart';
 import '../../core/theme/app_theme_design.dart';
 import '../../core/theme/retro_theme.dart';
@@ -193,8 +191,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
 
                 // Footer
                 _RetroDivider(retro: retro),
-                const _SocialLinks(),
-                _RetroDivider(retro: retro),
                 _NavItem(
                   iconBuilder: (color) =>
                       MarioGameIcon(Icons.link, size: 19, color: color),
@@ -267,26 +263,12 @@ class _DrawerHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
       child: Row(
         children: [
-          Container(
+          Image.asset(
+            'assets/icons/logo.png',
             width: 44,
             height: 44,
-            alignment: Alignment.center,
-            decoration: retro.gameDecoration(
-              BoxDecoration(
-                borderRadius: retro.radius,
-                color: retro.surface,
-                border: Border.all(
-                  color: retro.border,
-                  width: retro.borderWidth(2.5),
-                ),
-                boxShadow: retro.hardShadow(dx: 3, dy: 3),
-              ),
-            ),
-            child: MarioGameIcon(
-              Icons.sports_esports,
-              size: 27,
-              color: retro.accentText,
-            ),
+            filterQuality: FilterQuality.low,
+            excludeFromSemantics: true,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -802,114 +784,6 @@ class _ExpandArrow extends StatelessWidget {
         Icons.expand_more,
         size: 20,
         color: expanded ? retro.accentText : retro.inkDim,
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Social Links
-// ─────────────────────────────────────────────────────────────────────────────
-class _SocialLinks extends StatelessWidget {
-  const _SocialLinks();
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    final links = [
-      _SocialLinkData(
-        icon: Icons.play_circle_outline,
-        url: AppConstants.youtubeUrl,
-        tooltip: l10n.socialYouTube,
-      ),
-      _SocialLinkData(
-        icon: Icons.forum_outlined,
-        url: AppConstants.discordUrl,
-        tooltip: l10n.socialDiscord,
-      ),
-      _SocialLinkData(
-        icon: Icons.code,
-        url: AppConstants.githubUrl,
-        tooltip: l10n.socialGitHub,
-      ),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionKicker(retro: retro, label: l10n.sectionSocialLinks),
-          const SizedBox(height: 10),
-          Row(
-            children: links
-                .map(
-                  (link) => Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _SocialButton(link: link),
-                  ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SocialLinkData {
-  const _SocialLinkData({
-    required this.icon,
-    required this.url,
-    required this.tooltip,
-  });
-
-  final IconData icon;
-  final String url;
-  final String tooltip;
-}
-
-class _SocialButton extends StatelessWidget {
-  const _SocialButton({required this.link});
-  final _SocialLinkData link;
-
-  Future<void> _launch(BuildContext context) async {
-    final uri = Uri.parse(link.url);
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Could not open link')),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-
-    return Tooltip(
-      message: link.tooltip,
-      child: InkWell(
-        onTap: () => _launch(context),
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: retro.gameDecoration(
-            BoxDecoration(
-              borderRadius: retro.radius,
-              color: retro.surfaceAlt,
-              border: Border.all(
-                color: retro.border,
-                width: retro.borderWidth(2),
-              ),
-            ),
-          ),
-          child: Center(child: Icon(link.icon, size: 20, color: retro.ink)),
-        ),
       ),
     );
   }

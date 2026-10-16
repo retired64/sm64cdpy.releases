@@ -65,8 +65,8 @@ in-game mod workflow.
 - Edit the in-game player name, character and palette, manage reusable presets,
   and inspect changes in an interactive 3D preview built from the user's
   connected local game resources.
-- Use the low-cost Minimal interface by default; Retro Manga, Mario 64 and SM64
-  Intro remain optional designs.
+- Choose the low-cost Minimal interface when needed; Retro Manga is the default,
+  while Mario 64 and SM64 Intro remain optional designs.
 
 ## Floating overlay
 

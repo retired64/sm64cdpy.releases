@@ -11,16 +11,16 @@ double contrast(Color a, Color b) {
 }
 
 void main() {
-  test('unknown/absent IDs use the low-cost default design', () {
-    expect(AppThemeId.fromStorage(null), AppThemeId.minimal);
-    expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.minimal);
+  test('unknown/absent IDs use Retro Manga by default', () {
+    expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);
+    expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);
     expect(
       AppThemeCatalog.designs.map((d) => d.id).toSet().length,
       AppThemeId.values.length,
     );
   });
 
-  test('minimal default disables decorative rendering work', () {
+  test('minimal option disables decorative rendering work', () {
     final design = AppThemeCatalog.resolve(AppThemeId.minimal);
     expect(design.backdropStyle, AppBackdropStyle.none);
     expect(design.halftone, isFalse);

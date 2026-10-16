@@ -4,10 +4,10 @@ Revisado para `1.8.6+25` en `performance-minimal-1.8.6` el 2026-10-16. La 1.8.5 
 
 ## Implementado
 
-- Tema Minimalista de bajo costo como valor predeterminado para instalaciones
-  nuevas, sin fondos pintados, sombras, inclinaciones ni iconos en el drawer.
-  Los tres diseños anteriores siguen disponibles y las preferencias válidas se
-  conservan. Drawer y detalle eliminan SVG y transiciones superpuestas.
+- Tema Minimalista de bajo costo disponible en Ajustes, sin fondos pintados,
+  sombras, inclinaciones ni iconos en el drawer. Retro Manga es nuevamente el
+  predeterminado; los cuatro diseños y las preferencias válidas se conservan.
+  Drawer y detalle eliminan SVG y transiciones superpuestas.
 
 - Catálogo principal y colecciones auxiliares desde JSON local/remoto.
 - Búsqueda, filtros, orden, paginación, favoritos e importación/exportación.

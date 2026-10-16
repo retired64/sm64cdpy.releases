@@ -52,6 +52,18 @@ class LinksResourceScreen extends StatelessWidget {
       subtitle: l10n.linksYoutubeHandle,
       icon: Icons.play_circle_rounded,
     ),
+    _LinkData(
+      title: l10n.linksDiscordServer,
+      url: AppConstants.discordUrl,
+      subtitle: l10n.linksDiscordCommunity,
+      icon: Icons.chat_rounded,
+    ),
+    _LinkData(
+      title: l10n.linksGithubRepo,
+      url: AppConstants.githubUrl,
+      subtitle: l10n.linksGithubDesc,
+      icon: Icons.code_rounded,
+    ),
   ];
 
   List<_LinkData> _buildResourceLinks(AppLocalizations l10n) => [

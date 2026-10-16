@@ -46,8 +46,8 @@ progresso do download e da instalação.
 - Espaço de Jogador para editar nome, personagem e paleta dentro do jogo,
   gerenciar presets reutilizáveis e conferir as mudanças em uma visualização 3D
   interativa gerada a partir dos recursos locais conectados pelo usuário.
-- Interface Minimalista de baixo custo como visual padrão; Retro Manga, Mario
-  64 e SM64 Intro continuam disponíveis como opções.
+- Interface Minimalista de baixo custo disponível nos Ajustes; Retro Manga
+  volta a ser o visual padrão e Mario 64/SM64 Intro continuam como opções.
 
 ## Bolha flutuante
 

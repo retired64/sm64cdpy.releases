@@ -573,11 +573,12 @@ Fuente canónica: `release-manifests/v1.8.5.json`. Puerta completa:
 ## Rendimiento visual y Minimalista — 1.8.6+25
 
 - [x] Crear `performance-minimal-1.8.6` desde `main` después de 1.8.5.
-- [x] Añadir Minimalista como diseño predeterminado de bajo costo.
-- [x] Conservar Retro Manga, Mario 64 y SM64 Intro como opciones.
+- [x] Añadir Minimalista como diseño opcional de bajo costo.
+- [x] Conservar Retro Manga como predeterminado y los cuatro diseños seleccionables.
 - [x] Mantener selecciones válidas ya persistidas sin migración forzada.
 - [x] Retirar SVG, `flutter_svg` y controladores de animación de destinos del drawer.
 - [x] Usar filas sin iconos en el drawer Minimalista.
+- [x] Restaurar el logo raster y mover enlaces sociales a Enlaces y recursos.
 - [x] Quitar transición global de rutas, fade interno y Hero del detalle.
 - [x] Incrementar a `1.8.6+25` y crear manifiesto localizado.
 - [x] Validar análisis, 121 tests Flutter y contrato de manifiestos.

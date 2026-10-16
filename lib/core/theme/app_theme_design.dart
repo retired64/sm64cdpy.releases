@@ -14,7 +14,7 @@ enum AppThemeId {
     for (final id in values) {
       if (id.storageKey == value) return id;
     }
-    return minimal;
+    return retroManga;
   }
 }
 
