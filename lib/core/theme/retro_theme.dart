@@ -607,6 +607,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         backdropStyle: selected.design.backdropStyle,
         surfaceTreatment: selected.design.surfaceTreatment,
         playfulSelection: selected.design.playfulSelection,
+        drawerRasterIcons: selected.design.drawerRasterIcons,
       ),
       backgroundOverride: Color.lerp(background, other.background, t),
       surfaceOverride: Color.lerp(surface, other.surface, t),

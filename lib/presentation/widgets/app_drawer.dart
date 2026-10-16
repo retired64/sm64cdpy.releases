@@ -65,6 +65,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 ),
 
                 _NavItem(
+                  retroIconAsset: 'm64',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.home_outlined,
                     size: 19,
@@ -75,6 +76,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   isActive: currentRoute == '/',
                 ),
                 _NavItem(
+                  retroIconAsset: 'catalog',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.grid_view_outlined,
                     size: 19,
@@ -85,6 +87,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   isActive: currentRoute == '/catalogue',
                 ),
                 _NavItem(
+                  retroIconAsset: 'favorites',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.favorite_border,
                     size: 19,
@@ -115,6 +118,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   isActive: currentRoute == '/player',
                 ),
                 _NavItem(
+                  retroIconAsset: 'popular',
                   iconBuilder: (color) =>
                       MarioGameIcon(Icons.trending_up, size: 19, color: color),
                   label: l10n.navPopular,
@@ -134,6 +138,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   ),
                 ),
                 _NavItem(
+                  retroIconAsset: 'render96',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.auto_awesome_outlined,
                     size: 19,
@@ -145,6 +150,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   accentColor: retro.amber,
                 ),
                 _NavItem(
+                  retroIconAsset: 'vip',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.workspace_premium_outlined,
                     size: 19,
@@ -156,6 +162,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   accentColor: retro.amber,
                 ),
                 _NavItem(
+                  retroIconAsset: 'dynos',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.extension_outlined,
                     size: 19,
@@ -167,6 +174,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   accentColor: retro.blue,
                 ),
                 _NavItem(
+                  retroIconAsset: 'controls',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.gamepad_outlined,
                     size: 19,
@@ -177,6 +185,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   isActive: currentRoute == '/touch-controls',
                 ),
                 _NavItem(
+                  retroIconAsset: 'omm',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.sports_esports_outlined,
                     size: 19,
@@ -191,6 +200,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 // Footer
                 _RetroDivider(retro: retro),
                 _NavItem(
+                  retroIconAsset: 'links-resource',
                   iconBuilder: (color) =>
                       MarioGameIcon(Icons.link, size: 19, color: color),
                   label: l10n.navLinksResource,
@@ -198,6 +208,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   isActive: currentRoute == '/links-resource',
                 ),
                 _NavItem(
+                  retroIconAsset: 'disclaimer',
                   iconBuilder: (color) =>
                       MarioGameIcon(Icons.info_outline, size: 19, color: color),
                   label: l10n.navDisclaimer,
@@ -205,6 +216,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   isActive: currentRoute == '/disclaimer',
                 ),
                 _NavItem(
+                  retroIconAsset: 'settings',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.settings_outlined,
                     size: 19,
@@ -310,6 +322,7 @@ class _NavItem extends StatelessWidget {
     required this.route,
     required this.isActive,
     this.accentColor,
+    this.retroIconAsset,
   });
 
   final Widget Function(Color color) iconBuilder;
@@ -317,6 +330,7 @@ class _NavItem extends StatelessWidget {
   final String route;
   final bool isActive;
   final Color? accentColor;
+  final String? retroIconAsset;
 
   @override
   Widget build(BuildContext context) {
@@ -348,7 +362,23 @@ class _NavItem extends StatelessWidget {
           child: Row(
             children: [
               if (!minimal) ...[
-                SizedBox(width: 19, height: 19, child: iconBuilder(fg)),
+                SizedBox(
+                  width: 22,
+                  height: 22,
+                  child:
+                      retro.design.drawerRasterIcons && retroIconAsset != null
+                      ? Image.asset(
+                          'assets/icons/menu/$retroIconAsset.png',
+                          width: 22,
+                          height: 22,
+                          cacheWidth: 64,
+                          cacheHeight: 64,
+                          filterQuality: FilterQuality.low,
+                          gaplessPlayback: true,
+                          excludeFromSemantics: true,
+                        )
+                      : Center(child: iconBuilder(fg)),
+                ),
                 const SizedBox(width: 12),
               ],
               Expanded(
@@ -401,11 +431,22 @@ class _CategoryListState extends ConsumerState<_CategoryList> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                MarioGameIcon(
-                  Icons.category_outlined,
-                  size: 19,
-                  color: retro.inkDim,
-                ),
+                if (retro.design.drawerRasterIcons)
+                  Image.asset(
+                    'assets/icons/menu/categorias.png',
+                    width: 22,
+                    height: 22,
+                    cacheWidth: 64,
+                    cacheHeight: 64,
+                    filterQuality: FilterQuality.low,
+                    excludeFromSemantics: true,
+                  )
+                else
+                  MarioGameIcon(
+                    Icons.category_outlined,
+                    size: 19,
+                    color: retro.inkDim,
+                  ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(

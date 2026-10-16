@@ -114,6 +114,7 @@ class AppThemeDesign {
     this.backdropStyle = AppBackdropStyle.halftone,
     this.surfaceTreatment = AppSurfaceTreatment.flat,
     this.playfulSelection = false,
+    this.drawerRasterIcons = false,
   });
 
   final AppThemeId id;
@@ -136,6 +137,7 @@ class AppThemeDesign {
   final AppBackdropStyle backdropStyle;
   final AppSurfaceTreatment surfaceTreatment;
   final bool playfulSelection;
+  final bool drawerRasterIcons;
 
   AppThemePalette palette(bool isDark) => isDark ? dark : light;
 }

@@ -28,4 +28,5 @@ const retroMangaTheme = AppThemeDesign(
     accentText: Color(0xFFA7DEE1),
     onAccent: Color(0xFF20232E),
   ),
+  drawerRasterIcons: true,
 );

@@ -134,6 +134,15 @@ void main() {
     expect(retro.design.playfulSelection, isFalse);
     expect(retro.showHalftone, isTrue);
     expect(retro.showN64Backdrop, isFalse);
+    expect(retro.design.drawerRasterIcons, isTrue);
+    expect(
+      AppThemeCatalog.resolve(AppThemeId.minimal).drawerRasterIcons,
+      isFalse,
+    );
+    expect(
+      AppThemeCatalog.resolve(AppThemeId.mario64).drawerRasterIcons,
+      isFalse,
+    );
   });
 
   test('overlay keeps its fixed palette regardless of catalogue selection', () {
