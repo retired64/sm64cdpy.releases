@@ -83,6 +83,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                 style: retro.heading(size: 18, color: retro.accentText),
               ),
             ),
+            if (draft != null)
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _PlayerPreviewHeader(profile: draft),
+              ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 96),
               sliver: SliverList.list(
@@ -108,8 +113,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                       },
                     ),
                   if (draft != null) ...[
-                    _PlayerPreview(profile: draft),
-                    const SizedBox(height: 12),
                     SectionKicker(
                       retro: retro,
                       label: retro.displayLabel(l10n.playerCharacter),
@@ -457,14 +460,14 @@ class _Unavailable extends StatelessWidget {
 }
 
 class _PlayerPreview extends StatelessWidget {
-  const _PlayerPreview({required this.profile});
+  const _PlayerPreview({required this.profile, required this.compact});
   final PlayerProfile profile;
+  final bool compact;
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     return Container(
-      height: 310,
       decoration: retro.settingsPanel(width: 3, dx: 5, dy: 5),
       child: ClipRect(
         child: Stack(
@@ -472,7 +475,7 @@ class _PlayerPreview extends StatelessWidget {
           children: [
             const ThemeBackdrop(menuSurface: true),
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 42),
+              padding: EdgeInsets.fromLTRB(8, 4, 8, compact ? 28 : 42),
               child: Player3DPreview(
                 profile: profile,
                 loadingLabel: l10n.player3DLoading,
@@ -482,13 +485,16 @@ class _PlayerPreview extends StatelessWidget {
             Positioned(
               left: 12,
               right: 12,
-              bottom: 10,
+              bottom: compact ? 5 : 10,
               child: Text(
                 profile.name,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: retro.heading(size: 20, color: retro.accentText),
+                style: retro.heading(
+                  size: compact ? 12 : 20,
+                  color: retro.accentText,
+                ),
               ),
             ),
           ],
@@ -496,6 +502,58 @@ class _PlayerPreview extends StatelessWidget {
       ),
     );
   }
+}
+
+class _PlayerPreviewHeader extends SliverPersistentHeaderDelegate {
+  const _PlayerPreviewHeader({required this.profile});
+
+  final PlayerProfile profile;
+
+  static const _expandedHeight = 322.0;
+  static const _compactHeight = 158.0;
+
+  @override
+  double get maxExtent => _expandedHeight;
+
+  @override
+  double get minExtent => _compactHeight;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final expandedWidth = screenWidth - 28;
+    final compactWidth = expandedWidth.clamp(156.0, 176.0);
+    final width = expandedWidth + (compactWidth - expandedWidth) * progress;
+    final height = 310 + (148 - 310) * progress;
+    final top = 6 + 4 * progress;
+
+    return IgnorePointer(
+      ignoring: false,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            top: top,
+            right: 14,
+            width: width,
+            height: height,
+            child: RepaintBoundary(
+              child: _PlayerPreview(profile: profile, compact: progress > 0.55),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _PlayerPreviewHeader oldDelegate) =>
+      oldDelegate.profile != profile;
 }
 
 class _ModelSelector extends StatelessWidget {

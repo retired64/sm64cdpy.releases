@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado para `1.8.4+23` en `library-performance-1.8.4` el 2026-10-15. La 1.8.3 ya fue publicada oficialmente.
+Revisado para `1.8.5+24` en `player-1.8.5` el 2026-10-15. La 1.8.4 ya fue publicada oficialmente.
 
 ## Implementado
 

@@ -91,6 +91,10 @@ fuente de verdad; el canvas nunca persiste estado del juego.
   pantalla ya no destruye WebView, parser, modelos ni contexto WebGL.
 - `IntersectionObserver` pausa el loop de frames fuera del viewport y lo reanuda
   sobre el mismo canvas al volver, sin círculo de carga ni reconstrucción.
+- Player aloja esa única instancia en un `SliverPersistentHeader`: el preview
+  comienza a tamaño completo y se contrae hasta 158 px, alineado a la derecha,
+  para seguir mostrando cambios de paleta mientras se editan controles inferiores.
+  La transición no clona ni vuelve a crear el PlatformView.
 - GPU Android Adreno/Mali/PowerVR entra en una clasificación móvil conservadora;
   los equipos débiles renderizan a escala 0.7 y el pixel ratio se limita a 1.5.
 - Los cambios de paleta no muestran una pantalla global de carga.
