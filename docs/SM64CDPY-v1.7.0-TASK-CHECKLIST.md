@@ -586,3 +586,4 @@ Fuente canónica: `release-manifests/v1.8.5.json`. Puerta completa:
 - [ ] Validar visualmente los cuatro diseños, claro/oscuro y texto grande.
 
 Detalle y límites: [PERFORMANCE_MINIMAL_1.8.6.md](PERFORMANCE_MINIMAL_1.8.6.md).
+Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).

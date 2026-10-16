@@ -17,7 +17,7 @@
         {
           "heading": "A lightweight option",
           "items": [
-            "Minimal uses flat colors, simple typography and no backdrop painters, skewed controls or decorative shadows.",
+            "Minimal uses whitespace and typography instead of neutral cards, with no backdrop painters, skewed controls or decorative shadows.",
             "Retro Manga remains the default; Minimal, Mario 64 and SM64 Intro are available in Settings.",
             "Existing valid theme selections remain unchanged, and missing or unknown selections use Retro Manga."
           ]
@@ -52,7 +52,7 @@
         {
           "heading": "Una opción ligera",
           "items": [
-            "Minimalista usa colores planos, tipografía simple y no dibuja fondos, controles inclinados ni sombras decorativas.",
+            "Minimalista usa espacio y tipografía en lugar de tarjetas neutras, sin fondos dibujados, controles inclinados ni sombras decorativas.",
             "Retro Manga permanece como predeterminado; Minimalista, Mario 64 y SM64 Intro están disponibles en Ajustes.",
             "Las selecciones válidas existentes se conservan; una selección ausente o desconocida usa Retro Manga."
           ]
@@ -87,7 +87,7 @@
         {
           "heading": "Uma opção leve",
           "items": [
-            "Minimalista usa cores planas, tipografia simples e não desenha fundos, controles inclinados nem sombras decorativas.",
+            "Minimalista usa espaço e tipografia no lugar de cartões neutros, sem fundos desenhados, controles inclinados ou sombras decorativas.",
             "Retro Manga continua como padrão; Minimalista, Mario 64 e SM64 Intro estão disponíveis nos Ajustes.",
             "As seleções válidas existentes são mantidas; uma seleção ausente ou desconhecida usa Retro Manga."
           ]
