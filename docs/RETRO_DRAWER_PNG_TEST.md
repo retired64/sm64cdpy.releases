@@ -11,6 +11,9 @@ pruebe en hardware de bajos recursos.
   Material, por lo que la prueba no altera sus contratos visuales.
 - Los SVG históricos se rasterizaron una sola vez a PNG de 64 × 64, con canal
   alfa, paleta indexada de hasta 128 colores y metadatos eliminados.
+- El lienzo se crea transparente antes de interpretar cada SVG; los 13 PNG
+  fueron verificados con alfa real en sus esquinas para evitar recuadros blancos
+  en el modo oscuro.
 - Flutter solicita una decodificación acotada a 64 × 64 mediante `cacheWidth`
   y `cacheHeight`; no se añade `flutter_svg` ni parseo vectorial en ejecución.
 - Los destinos siguen siendo widgets estáticos: no regresan los controladores,
