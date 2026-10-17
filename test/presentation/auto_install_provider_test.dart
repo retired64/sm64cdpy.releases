@@ -8,8 +8,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sm64cdpy/core/constants/app_constants.dart';
 import 'package:sm64cdpy/l10n/app_localizations.dart';
 import 'package:sm64cdpy/presentation/providers/auto_install_provider.dart';
+import 'package:sm64cdpy/presentation/providers/game_folder_provider.dart';
 import 'package:sm64cdpy/presentation/widgets/app_shell.dart';
+import 'package:sm64cdpy/presentation/widgets/game_setup_widgets.dart';
 import 'package:sm64cdpy/services/auto_install_preference_service.dart';
+import 'package:sm64cdpy/services/game_folder_service.dart';
+
+class _OnboardingFolderService extends GameFolderService {
+  bool dismissed = false;
+
+  @override
+  Future<GameFolderConnection?> call(String method) async {
+    if (method == 'dismissGameFolderGuide') dismissed = true;
+    return GameFolderConnection(dismissed: dismissed);
+  }
+}
 
 void main() {
   late Directory directory;
@@ -128,11 +141,14 @@ void main() {
     );
   });
 
-  testWidgets('the undecided banner exposes both explicit choices', (
+  testWidgets('first-run decisions appear as two sequential dialogs', (
     tester,
   ) async {
     await AutoInstallPreferenceService.init();
-    final container = ProviderContainer();
+    final folderService = _OnboardingFolderService();
+    final container = ProviderContainer(
+      overrides: [gameFolderServiceProvider.overrideWithValue(folderService)],
+    );
     addTearDown(container.dispose);
 
     await tester.pumpWidget(
@@ -147,8 +163,28 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.byType(Dialog), findsOneWidget);
+    expect(find.byType(MaterialBanner), findsNothing);
     expect(find.text('Install mods after downloading?'), findsOneWidget);
-    expect(find.widgetWithText(TextButton, 'Download only'), findsOneWidget);
-    expect(find.widgetWithText(FilledButton, 'Turn on'), findsOneWidget);
+    expect(find.byType(GameSetupAction), findsNWidgets(2));
+
+    await tester.tap(find.byType(GameSetupAction).first);
+    await tester.pump();
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Dialog), findsOneWidget);
+    expect(find.text('Connect SM64CoopDX'), findsOneWidget);
+    expect(find.text('Install mods after downloading?'), findsNothing);
+
+    final notNow = find.byType(GameSetupAction).last;
+    await tester.ensureVisible(notNow);
+    await tester.tap(notNow);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Dialog), findsNothing);
+    expect(folderService.dismissed, isTrue);
   });
 }
