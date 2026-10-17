@@ -48,14 +48,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   bool get isIntro => design.id == AppThemeId.sm64Intro;
   bool get isMario => design.id == AppThemeId.mario64 || isIntro;
   String? marioAsset(String id) => isMario ? marioAssets.files[id] : null;
-  String? get headingFamily => isMario && marioAssets.complete
-      ? 'MarioRomHudV2'
-      : design.headingFontFamily;
-  String? get bodyFamily => isMario && marioAssets.complete
-      ? 'MarioRomDialogV2'
-      : design.bodyFontFamily;
-  String? get menuFamily =>
-      isMario && marioAssets.complete ? 'MarioRomMenuV2' : headingFamily;
+  String? get headingFamily => design.headingFontFamily;
+  String? get bodyFamily => design.bodyFontFamily;
+  String? get menuFamily => headingFamily;
 
   /// All main-engine panels use the same full-opacity material. Photo gradients,
   /// circular badges and semantic colored fills keep their own foreground contract.
@@ -72,43 +67,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         borderRadius: value.borderRadius ?? radius,
       );
     }
-    if (!isMario ||
-        value.shape != BoxShape.rectangle ||
-        value.image != null ||
-        value.gradient != null ||
-        value.color == null ||
-        value.color!.a < 0.85)
-      return value;
-    final color = value.color!;
-    if (color != surface &&
-        color != surfaceAlt &&
-        color != background &&
-        color != Colors.white &&
-        color != Colors.black)
-      return value;
-    if (isIntro) return value;
-    final id = marioAssets.complete
-        ? (isDark ? 'panel_dark' : 'panel_light')
-        : (isDark ? 'stone_dark' : 'stone');
-    final path = marioAsset(id);
-    return value.copyWith(
-      borderRadius: value.borderRadius ?? radius,
-      image: path == null
-          ? null
-          : DecorationImage(
-              image: FileImage(File(path)),
-              repeat: ImageRepeat.repeat,
-              filterQuality: FilterQuality.none,
-              opacity: 1,
-              colorFilter: marioAssets.complete
-                  ? null
-                  : ColorFilter.mode(
-                      surface.withValues(alpha: 0.62),
-                      BlendMode.srcATop,
-                    ),
-              onError: (error, stack) {},
-            ),
-    );
+    return value;
   }
 
   final Color? _backgroundOverride;
@@ -277,10 +236,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     color: color ?? inkDim,
     fontFamily: bodyFamily,
     fontFamilyFallback: const ['Roboto'],
-    fontSize: isMario && marioAssets.complete
-        ? size.clamp(16.0, double.infinity)
-        : size,
-    fontWeight: isMario && marioAssets.complete ? FontWeight.w400 : weight,
+    fontSize: size,
+    fontWeight: weight,
     letterSpacing: isMario ? 0 : null,
     height: height,
   );
@@ -418,57 +375,17 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
                       const TextStyle(inherit: false, fontSize: 14))
                   .copyWith(
                     inherit: false,
-                    fontSize: isMario && marioAssets.complete ? 16 : 14,
+                    fontSize: 14,
                     height: 1.4,
                     letterSpacing: 0.1,
                     textBaseline: TextBaseline.alphabetic,
                     leadingDistribution: TextLeadingDistribution.even,
-                    fontFamily: isMario && marioAssets.complete
-                        ? bodyFamily
-                        : menuFamily,
+                    fontFamily: menuFamily,
                     fontFamilyFallback: const ['Roboto'],
                     fontWeight: FontWeight.w400,
                   ),
             ),
             minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
-            backgroundBuilder: (context, states, child) {
-              final texture = marioAsset(isDark ? 'stone_dark' : 'stone');
-              return Stack(
-                fit: StackFit.passthrough,
-                children: [
-                  if (texture != null)
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: ClipPath(
-                          clipper: const MarioControlFrameClipper(),
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: FileImage(File(texture)),
-                                repeat: ImageRepeat.repeat,
-                                filterQuality: FilterQuality.none,
-                                colorFilter: isIntro
-                                    ? ColorFilter.mode(
-                                        const Color(
-                                          0xFF244BC0,
-                                        ).withValues(alpha: 0.7),
-                                        BlendMode.srcATop,
-                                      )
-                                    : null,
-                                opacity: states.contains(WidgetState.disabled)
-                                    ? 0.5
-                                    : 1,
-                                onError: (error, stack) {},
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  child ?? const SizedBox.shrink(),
-                ],
-              );
-            },
           );
       theme = theme.copyWith(
         filledButtonTheme: FilledButtonThemeData(
@@ -653,34 +570,6 @@ class ThemeBackdrop extends StatelessWidget {
                       Color(0xFFE6A700),
                     ],
             ),
-          ),
-        ),
-      );
-    }
-    if (retro.isMario && retro.marioAssets.complete) {
-      final sky = retro.marioAsset(retro.isDark ? 'sky_night' : 'sky_day')!;
-      return IgnorePointer(
-        child: RepaintBoundary(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.file(
-                File(sky),
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
-                filterQuality: FilterQuality.none,
-                errorBuilder: (_, error, stack) =>
-                    ColoredBox(color: retro.background),
-              ),
-              if (menuSurface)
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: retro.background.withValues(
-                      alpha: retro.isDark ? 0.45 : 0.22,
-                    ),
-                  ),
-                ),
-            ],
           ),
         ),
       );
@@ -1316,48 +1205,12 @@ class MarioHudNumber extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = value.toString();
-    if (!retro.isMario ||
-        !retro.marioAssets.available ||
-        value < 0 ||
-        text.length > 6) {
-      return Text(text, style: retro.heading(size: size));
-    }
-    return Semantics(
-      label: text,
-      child: ExcludeSemantics(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final digit in text.split(''))
-              Image.file(
-                File(retro.marioAsset('digit_$digit')!),
-                width: size,
-                height: size,
-                filterQuality: FilterQuality.none,
-                errorBuilder: (_, error, stack) =>
-                    Text(digit, style: retro.heading(size: size)),
-              ),
-          ],
-        ),
-      ),
-    );
+    return Text(text, style: retro.heading(size: size));
   }
 }
 
-/// Only the frame uses raw stone, so filled controls keep their semantic contrast.
-class MarioControlFrameClipper extends CustomClipper<Path> {
-  const MarioControlFrameClipper();
-  @override
-  Path getClip(Size size) => Path()
-    ..fillType = PathFillType.evenOdd
-    ..addRect(Offset.zero & size)
-    ..addRect((Offset.zero & size).deflate(4));
-  @override
-  bool shouldReclip(covariant MarioControlFrameClipper oldClipper) => false;
-}
-
-/// Original colored HUD glyphs for prominent menu headings. Missing HUD letters
-/// use the ROM's complete file-select alphabet; unsupported accents use font fallback.
+/// Readable themed title. Game glyphs are intentionally reserved for icons so
+/// every locale and character keeps consistent typography.
 class MarioGameTitle extends StatelessWidget {
   const MarioGameTitle({
     super.key,
@@ -1377,63 +1230,7 @@ class MarioGameTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = retro.heading(size: size, color: color);
-    if (!retro.isMario || !retro.marioAssets.complete)
-      return Text(text, style: style, maxLines: maxLines, overflow: overflow);
-    final pixels = MediaQuery.textScalerOf(context).scale(size);
-    return Semantics(
-      label: text,
-      child: ExcludeSemantics(
-        child: Text.rich(
-          TextSpan(
-            children: [
-              for (final character in text.split('')) ...[
-                if (character == ' ')
-                  WidgetSpan(child: SizedBox(width: pixels * 0.4))
-                else if (retro.marioAsset(
-                          'hud_glyph_${character.toUpperCase()}',
-                        ) !=
-                        null ||
-                    retro.marioAsset('digit_$character') != null ||
-                    retro.marioAsset('menu_glyph_${character.toUpperCase()}') !=
-                        null)
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: Image.file(
-                      File(
-                        retro.marioAsset(
-                              'hud_glyph_${character.toUpperCase()}',
-                            ) ??
-                            retro.marioAsset('digit_$character') ??
-                            retro.marioAsset(
-                              'menu_glyph_${character.toUpperCase()}',
-                            )!,
-                      ),
-                      width: pixels * 0.88,
-                      height: pixels,
-                      filterQuality: FilterQuality.none,
-                      color:
-                          retro.marioAsset(
-                                    'hud_glyph_${character.toUpperCase()}',
-                                  ) ==
-                                  null &&
-                              retro.marioAsset('digit_$character') == null
-                          ? color ?? retro.ink
-                          : null,
-                      errorBuilder: (_, error, stack) =>
-                          Text(character, style: style),
-                    ),
-                  )
-                else
-                  TextSpan(text: character),
-              ],
-            ],
-          ),
-          style: style,
-          maxLines: maxLines,
-          overflow: overflow,
-        ),
-      ),
-    );
+    return Text(text, style: style, maxLines: maxLines, overflow: overflow);
   }
 }
 

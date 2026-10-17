@@ -33,7 +33,7 @@ void main() {
       expect(label.style!.fontSize, 13.5);
       expect(tester.getSize(find.text('NAVIGATION')).width, 210);
       expect(find.byType(MarioGameTitle), findsNothing);
-      expect(mario.body(size: 11).fontSize, 16);
+      expect(mario.body(size: 11).fontSize, 11);
       expect(mario.body(size: 16).fontSize, 16);
       expect(mario.body(size: 11).letterSpacing, 0);
       expect(const RetroTheme(false).body(size: 11).fontSize, 11);
@@ -89,29 +89,37 @@ void main() {
       expect(mario.surfaceDecoration().gradient, isNull);
     },
   );
-  test(
-    'full Mario scenes use opaque ROM materials and original font roles in both modes',
-    () {
-      final assets = completeMarioFixture();
-      for (final dark in [false, true]) {
-        final mario = RetroTheme(
-          dark,
-          design: AppThemeCatalog.resolve(AppThemeId.mario64),
-          marioAssets: assets,
-        );
-        expect(mario.headingFamily, 'MarioRomHudV2');
-        expect(mario.bodyFamily, 'MarioRomDialogV2');
-        expect(mario.menuFamily, 'MarioRomMenuV2');
-        expect(mario.surfaceDecoration().image!.opacity, 1);
-        expect(
-          mario.toMaterialTheme().filledButtonTheme.style!.backgroundBuilder,
-          isNotNull,
-        );
-        expect(mario.surfaceDecoration(color: mario.accent).image, isNull);
-        expect(mario.marioAsset(dark ? 'sky_night' : 'sky_day'), isNotNull);
-      }
-      expect(RetroTheme.overlay().bodyFamily, isNull);
-      expect(const RetroTheme(false).surfaceDecoration().image, isNull);
-    },
-  );
+  test('prepared files cannot replace built-in typography or surfaces', () {
+    final assets = completeMarioFixture();
+    for (final dark in [false, true]) {
+      final mario = RetroTheme(
+        dark,
+        design: AppThemeCatalog.resolve(AppThemeId.mario64),
+        marioAssets: assets,
+      );
+      expect(mario.headingFamily, 'TypefaceMario64');
+      expect(mario.bodyFamily, isNull);
+      expect(mario.menuFamily, 'TypefaceMario64');
+      expect(mario.surfaceDecoration().image, isNull);
+      expect(mario.surfaceDecoration(color: mario.accent).image, isNull);
+    }
+    expect(RetroTheme.overlay().bodyFamily, isNull);
+    expect(const RetroTheme(false).surfaceDecoration().image, isNull);
+  });
+
+  testWidgets('Mario titles keep complete readable letters', (tester) async {
+    final mario = RetroTheme(
+      false,
+      design: AppThemeCatalog.resolve(AppThemeId.mario64),
+      marioAssets: completeMarioFixture(),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MarioGameTitle(text: 'JXZ', retro: mario, size: 18),
+      ),
+    );
+
+    expect(find.text('JXZ'), findsOneWidget);
+    expect(find.byType(Image), findsNothing);
+  });
 }

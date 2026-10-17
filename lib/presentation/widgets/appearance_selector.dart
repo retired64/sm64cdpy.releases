@@ -1,6 +1,3 @@
-import '../providers/game_folder_provider.dart';
-import 'game_folder_card.dart';
-import 'game_setup_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,10 +6,8 @@ import '../../core/theme/app_theme_design.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/theme_provider.dart';
-import '../providers/mario_theme_assets_provider.dart';
 import 'app_snackbar.dart';
 import 'settings_expansion_group.dart';
-import 'mario_rom_assets_panel.dart';
 
 /// Bundled designs and brightness are independent choices. Saving is owned by
 /// the provider, so rebuilding/navigating never creates a second writer.
@@ -32,28 +27,9 @@ class AppearanceSelector extends ConsumerWidget {
     AppThemeId? id,
     ThemeMode? mode,
   }) async {
-    if ((id == AppThemeId.mario64 || id == AppThemeId.sm64Intro) &&
-        !ref.read(marioThemeAssetsProvider).assets.complete) {
-      await ref.read(gameFolderProvider.notifier).initialize();
-      if (!context.mounted) return;
-      if (!ref.read(gameFolderProvider).connection.connected) {
-        if (!await connectGameFolder(context, ref) || !context.mounted) return;
-      } else {
-        final l10n = AppLocalizations.of(context);
-        final accepted = await showGameSetupDialog(
-          context,
-          title: l10n.gameFolderPrepareTitle,
-          body: l10n.gameFolderPrepareBody,
-          confirm: l10n.gameFolderPrepare,
-          cancel: l10n.gameFolderLater,
-          icon: Icons.videogame_asset_outlined,
-        );
-        if (!context.mounted || accepted != true) return;
-      }
-    }
     final notifier = ref.read(appearanceProvider.notifier);
     final saved = id != null
-        ? await notifier.selectThemeWithRom(id)
+        ? await notifier.setTheme(id)
         : await notifier.setThemeMode(mode!);
     if (!context.mounted) return;
     if (saved == false) {
@@ -67,7 +43,6 @@ class AppearanceSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(appearanceProvider);
-    final preparingRom = ref.watch(marioThemeAssetsProvider).busy;
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
     final modes = [
@@ -122,13 +97,10 @@ class AppearanceSelector extends ConsumerWidget {
               ),
           ],
         ),
-        const MarioRomAssetsPanel(),
         if (settings.isSaving) ...[
           const SizedBox(height: 12),
           LinearProgressIndicator(
-            semanticsLabel: preparingRom
-                ? l10n.marioRomPreparing
-                : l10n.themeSaving,
+            semanticsLabel: l10n.themeSaving,
             color: retro.accent,
           ),
         ],

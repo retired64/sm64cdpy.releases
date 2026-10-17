@@ -71,8 +71,11 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.byType(SettingsExpansionGroup), findsNWidgets(4));
-        expect(find.byKey(const PageStorageKey('mario-rom-assets')), findsOneWidget);
+        expect(find.byType(SettingsExpansionGroup), findsNWidgets(3));
+        expect(
+          find.byKey(const PageStorageKey('mario-rom-assets')),
+          findsNothing,
+        );
         final group = find.byKey(const PageStorageKey('locale-selector'));
         final arrow = find.descendant(
           of: group,

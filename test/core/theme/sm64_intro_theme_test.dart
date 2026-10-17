@@ -6,7 +6,7 @@ import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import '../../presentation/mario_rom_fixture.dart';
 
 void main() {
-  test('Intro persists independently and reuses prepared ROM fonts', () {
+  test('Intro persists independently and keeps bundled typography', () {
     expect(AppThemeId.fromStorage('sm64_intro'), AppThemeId.sm64Intro);
     for (final dark in [false, true]) {
       final intro = RetroTheme(
@@ -15,9 +15,9 @@ void main() {
         marioAssets: completeMarioFixture(),
       );
       expect(intro.isIntro, isTrue);
-      expect(intro.headingFamily, 'MarioRomHudV2');
-      expect(intro.bodyFamily, 'MarioRomDialogV2');
-      expect(intro.menuFamily, 'MarioRomMenuV2');
+      expect(intro.headingFamily, 'TypefaceMario64');
+      expect(intro.bodyFamily, isNull);
+      expect(intro.menuFamily, 'TypefaceMario64');
       final button = intro.toMaterialTheme().filledButtonTheme.style!;
       expect(button.backgroundColor!.resolve({}), const Color(0xFF24479B));
       expect(button.foregroundColor!.resolve({}), Colors.white);
