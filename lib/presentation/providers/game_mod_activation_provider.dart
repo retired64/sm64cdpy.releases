@@ -20,8 +20,10 @@ class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
   StreamSubscription<BgInstallEvent>? _installSubscription;
   StreamSubscription<String>? _invalidationSubscription;
   @override
-  Future<GameModSnapshot> build() {
-    _installSubscription = BackgroundInstallService.instance.events.listen((event) {
+  Future<GameModSnapshot> build() async {
+    _installSubscription = BackgroundInstallService.instance.events.listen((
+      event,
+    ) {
       if (event is BgInstallCompleted) _lastLoadedAt = null;
     });
     _invalidationSubscription = ModInstaller.libraryInvalidations.listen((_) {
@@ -39,12 +41,37 @@ class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
       }
       _invalidationSubscription = null;
     });
-    final initial = ref.read(gameModGatewayProvider).read().then((snapshot) {
+    final gateway = ref.read(gameModGatewayProvider);
+    final cached = await gateway.readCached();
+    if (cached != null) {
+      _startup = Future<void>.value();
+      unawaited(
+        Future<void>.delayed(
+          Duration.zero,
+        ).then((_) => _refreshCachedStartup()).catchError((Object _) {}),
+      );
+      return cached;
+    }
+    final initial = gateway.read().then((snapshot) async {
       _lastLoadedAt = DateTime.now();
+      await gateway.writeCached(snapshot);
       return snapshot;
     });
     _startup = _settled(initial);
     return initial;
+  }
+
+  Future<void> _refreshCachedStartup() async {
+    if (!ref.mounted) return;
+    try {
+      final result = await ref.read(gameModGatewayProvider).read();
+      if (!ref.mounted) return;
+      _lastLoadedAt = DateTime.now();
+      state = AsyncData(result);
+      await ref.read(gameModGatewayProvider).writeCached(result);
+    } catch (_) {
+      // The persisted projection stays visible when background SAF I/O fails.
+    }
   }
 
   Future<void> _settled(Future<GameModSnapshot> initial) async {
@@ -80,6 +107,7 @@ class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
       if (ref.mounted) {
         _lastLoadedAt = DateTime.now();
         state = AsyncData(result);
+        await ref.read(gameModGatewayProvider).writeCached(result);
       }
     } catch (error, stack) {
       if (ref.mounted) state = AsyncError(error, stack);
@@ -92,7 +120,9 @@ class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
   }) async {
     await _startup;
     final loadedAt = _lastLoadedAt;
-    if (loadedAt != null && DateTime.now().difference(loadedAt) < maxAge) return;
+    if (loadedAt != null && DateTime.now().difference(loadedAt) < maxAge) {
+      return;
+    }
     await refresh();
   }
 
@@ -134,6 +164,7 @@ class GameModActivationNotifier extends AsyncNotifier<GameModSnapshot> {
           state = AsyncData(result);
         }
         _lastLoadedAt = DateTime.now();
+        await ref.read(gameModGatewayProvider).writeCached(state.requireValue);
       }
     } finally {
       _busy = false;

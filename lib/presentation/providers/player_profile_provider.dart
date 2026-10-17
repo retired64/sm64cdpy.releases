@@ -38,6 +38,7 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
   PlayerProfileState build() => const PlayerProfileState();
 
   Future<void> load({bool force = false}) {
+    if (!force && state.draft != null) return Future<void>.value();
     if (!force && _loading != null) return _loading!;
     final operation = _load();
     _loading = operation;
@@ -69,7 +70,7 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
         backupAvailable: value.backupAvailable,
       );
     } on PlatformException catch (error) {
-      if (ref.mounted)
+      if (ref.mounted) {
         state = PlayerProfileState(
           status: state.status,
           confirmed: state.confirmed,
@@ -78,6 +79,7 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
           presets: state.presets,
           error: error.code,
         );
+      }
     }
   }
 
@@ -95,16 +97,18 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
 
   void setColor(PlayerPart part, Color color) {
     final draft = state.draft;
-    if (draft != null)
+    if (draft != null) {
       state = _copy(
         draft: draft.copyWith(palette: draft.palette.replace(part, color)),
       );
+    }
   }
 
   void usePreset(PlayerPalettePreset preset) {
     final draft = state.draft;
-    if (draft != null)
+    if (draft != null) {
       state = _copy(draft: draft.copyWith(palette: preset.palette));
+    }
   }
 
   void reset() {

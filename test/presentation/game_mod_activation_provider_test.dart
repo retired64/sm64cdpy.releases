@@ -7,11 +7,30 @@ import 'package:sm64cdpy/presentation/providers/game_mod_activation_provider.dar
 
 class FakeGateway extends GameModActivation {
   GameModSnapshot current = const GameModSnapshot(status: 'ready');
+  GameModSnapshot? cached;
+  Completer<GameModSnapshot>? pendingRead;
   Completer<GameModSnapshot?>? pending;
   bool fail = false;
   int writes = 0;
+  int reads = 0;
   @override
-  Future<GameModSnapshot> read() async => current;
+  Future<GameModSnapshot> read() async {
+    reads++;
+    return pendingRead == null ? current : await pendingRead!.future;
+  }
+
+  @override
+  Future<GameModSnapshot?> readCached() async => cached;
+  @override
+  Future<void> writeCached(GameModSnapshot snapshot) async {
+    cached = snapshot;
+  }
+
+  @override
+  Future<void> clearCached() async {
+    cached = null;
+  }
+
   @override
   Future<GameModSnapshot?> call(
     String method, [
@@ -33,6 +52,47 @@ void main() {
     );
   });
   tearDown(() => container.dispose());
+
+  test('shows persisted projection before background reconciliation', () async {
+    gateway.cached = const GameModSnapshot(
+      status: 'ready',
+      mods: [
+        GameModEntry(
+          name: 'cached',
+          title: 'Cached',
+          enabled: true,
+          selectable: true,
+        ),
+      ],
+    );
+    gateway.pendingRead = Completer<GameModSnapshot>();
+
+    final initial = await container.read(gameModActivationProvider.future);
+    expect(initial.mods.single.name, 'cached');
+
+    gateway.pendingRead!.complete(
+      const GameModSnapshot(
+        status: 'ready',
+        mods: [
+          GameModEntry(
+            name: 'fresh',
+            title: 'Fresh',
+            enabled: false,
+            selectable: true,
+          ),
+        ],
+      ),
+    );
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(
+      container.read(gameModActivationProvider).requireValue.mods.single.name,
+      'fresh',
+    );
+    expect(gateway.cached!.mods.single.name, 'fresh');
+    expect(gateway.reads, 1);
+  });
 
   test(
     'selection changes only after native confirmation and blocks parallel mutations',

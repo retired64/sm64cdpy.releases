@@ -138,7 +138,7 @@ class _Player3DPreviewState extends State<Player3DPreview>
 
   void _acceptState(Map<Object?, Object?> value) {
     final next = switch (value['state']) {
-      'ready' => Player3DStatus.ready,
+      'preview' || 'ready' => Player3DStatus.ready,
       'error' => Player3DStatus.unavailable,
       _ => Player3DStatus.loading,
     };

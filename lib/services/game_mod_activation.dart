@@ -1,4 +1,7 @@
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import '../core/constants/app_constants.dart';
 
 class GameModEntry {
   const GameModEntry({
@@ -40,6 +43,19 @@ class GameModEntry {
   final String? versionLabel;
   final String? description;
 
+  Map<String, Object?> toMap() => {
+    'kind': kind,
+    'origin': origin,
+    'name': name,
+    'title': title,
+    'enabled': enabled,
+    'selectable': selectable,
+    'author': author,
+    'category': category,
+    'versionLabel': versionLabel,
+    'description': description,
+  };
+
   GameModEntry withEnabled(bool value) => GameModEntry(
     kind: kind,
     origin: origin,
@@ -72,6 +88,12 @@ class GameModSnapshot {
   final bool backupAvailable;
   final List<GameModEntry> mods;
 
+  Map<String, Object?> toMap() => {
+    'status': status,
+    'backupAvailable': backupAvailable,
+    'mods': mods.map((mod) => mod.toMap()).toList(growable: false),
+  };
+
   GameModSnapshot withActivation({
     required String name,
     required String kind,
@@ -92,6 +114,7 @@ class GameModSnapshot {
 
 class GameModActivation {
   static const _channel = MethodChannel('mods.sm64cdpy/mod_installer');
+  static const _cacheKey = 'game_mod_activation_snapshot_v1';
   Future<GameModSnapshot?> call(
     String method, [
     Map<String, Object>? arguments,
@@ -104,4 +127,32 @@ class GameModActivation {
   }
 
   Future<GameModSnapshot> read() async => (await call('getGameModActivation'))!;
+
+  Future<GameModSnapshot?> readCached() async {
+    if (!Hive.isBoxOpen(AppConstants.installationLibraryBoxKey)) return null;
+    final value = Hive.box<dynamic>(
+      AppConstants.installationLibraryBoxKey,
+    ).get(_cacheKey);
+    if (value is! Map) return null;
+    try {
+      return GameModSnapshot.fromMap(value);
+    } catch (_) {
+      await clearCached();
+      return null;
+    }
+  }
+
+  Future<void> writeCached(GameModSnapshot snapshot) async {
+    if (!Hive.isBoxOpen(AppConstants.installationLibraryBoxKey)) return;
+    await Hive.box<dynamic>(
+      AppConstants.installationLibraryBoxKey,
+    ).put(_cacheKey, snapshot.toMap());
+  }
+
+  Future<void> clearCached() async {
+    if (!Hive.isBoxOpen(AppConstants.installationLibraryBoxKey)) return;
+    await Hive.box<dynamic>(
+      AppConstants.installationLibraryBoxKey,
+    ).delete(_cacheKey);
+  }
 }
