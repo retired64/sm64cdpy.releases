@@ -930,6 +930,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAutoInstallOff => 'You will be asked after each download';
 
   @override
+  String get autoInstallPromptTitle => 'Install mods after downloading?';
+
+  @override
+  String get autoInstallPromptBody =>
+      'Turn on auto-install to place downloaded mods in their configured game folder. You can change this later in Settings.';
+
+  @override
+  String get autoInstallPromptEnable => 'Turn on';
+
+  @override
+  String get autoInstallPromptDownloadOnly => 'Download only';
+
+  @override
   String get settingsThemeMode => 'Theme mode';
 
   @override
@@ -1453,6 +1466,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsInterfaceThemeDesc =>
       'Choose an included design. Applies to the app; the floating panel keeps its dark design.';
+
+  @override
+  String get themeMinimal => 'Minimal';
 
   @override
   String get themeRetroManga => 'Retro Manga';

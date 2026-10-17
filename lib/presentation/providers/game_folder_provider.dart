@@ -66,18 +66,20 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
             state.connection.connectionKey != value.connectionKey;
         state = GameFolderState(initialized: true, connection: value);
         if (changed) {
+          await ref.read(gameModGatewayProvider).clearCached();
           ref.invalidate(gameModActivationProvider);
           ref.invalidate(playerProfileProvider);
           ModInstaller.invalidateInstallationLibrary('gameFolderAccessChanged');
         }
       }
     } catch (_) {
-      if (ref.mounted && !state.busy && revision == _revision)
+      if (ref.mounted && !state.busy && revision == _revision) {
         state = GameFolderState(
           initialized: true,
           connection: state.connection,
           error: 'access',
         );
+      }
     }
   }
 
@@ -96,26 +98,29 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
       if (!ref.mounted) return false;
       state = GameFolderState(initialized: true, connection: value ?? previous);
       if (value != null && method != 'dismissGameFolderGuide') {
+        await ref.read(gameModGatewayProvider).clearCached();
         ref.invalidate(gameModActivationProvider);
         ref.invalidate(playerProfileProvider);
         ModInstaller.invalidateInstallationLibrary('gameFolderChanged');
       }
       return value != null;
     } catch (error) {
-      if (ref.mounted)
+      if (ref.mounted) {
         state = GameFolderState(
           initialized: true,
           connection: previous,
           error: error is PlatformException ? error.code : 'access',
         );
+      }
       return false;
     } finally {
-      if (ref.mounted && state.busy)
+      if (ref.mounted && state.busy) {
         state = GameFolderState(
           initialized: true,
           connection: state.connection,
           error: state.error,
         );
+      }
     }
   }
 }

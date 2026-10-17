@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../app_theme_design.dart';
 
-/// File-select stone, colored HUD and dark pause-menu language.
-/// Original textures and fonts are supplied privately by the user's ROM.
+/// Built-in N64-inspired surfaces with optional game symbols for decoration.
 const mario64Theme = AppThemeDesign(
   id: AppThemeId.mario64,
   cornerRadius: 0,

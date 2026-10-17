@@ -45,6 +45,7 @@ private class Player3DViewFactory(private val messenger: BinaryMessenger) :
 }
 
 @SuppressLint("SetJavaScriptEnabled")
+@Suppress("DEPRECATION")
 private class Player3DView(
     private val context: Context,
     messenger: BinaryMessenger,
@@ -62,6 +63,7 @@ private class Player3DView(
         setBackgroundColor(Color.TRANSPARENT)
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = false
+        settings.databaseEnabled = true
         settings.allowFileAccess = false
         settings.allowContentAccess = false
         settings.cacheMode = WebSettings.LOAD_NO_CACHE
@@ -160,6 +162,7 @@ private class Player3DView(
                     "app.js" -> asset("app.js", "application/javascript")
                     "player3d-index.js" -> asset("player3d-index.js", "application/javascript")
                     "player3d-renderer.js" -> asset("player3d-renderer.js", "application/javascript")
+                    "source-key.txt" -> text(requireNotNull(inputs).cacheKey)
                     "game.bin" -> file(requireNotNull(inputs).game, "application/octet-stream")
                     "rom.bin" -> file(requireNotNull(inputs).rom, "application/octet-stream")
                     else -> forbidden()
@@ -176,6 +179,8 @@ private class Player3DView(
         )
 
         private fun file(file: File, mime: String) = response(FileInputStream(file), mime)
+
+        private fun text(value: String) = response(value.byteInputStream(), "text/plain")
 
         private fun response(stream: InputStream, mime: String) = WebResourceResponse(
             mime,

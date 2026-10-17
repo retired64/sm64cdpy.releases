@@ -935,6 +935,19 @@ class AppLocalizationsPt extends AppLocalizations {
       'Você será perguntado após cada download';
 
   @override
+  String get autoInstallPromptTitle => 'Instalar os mods depois de baixá-los?';
+
+  @override
+  String get autoInstallPromptBody =>
+      'Ative a instalação automática para colocar os mods baixados na pasta configurada do jogo. Você pode alterar isso depois nos Ajustes.';
+
+  @override
+  String get autoInstallPromptEnable => 'Ativar';
+
+  @override
+  String get autoInstallPromptDownloadOnly => 'Apenas baixar';
+
+  @override
   String get settingsThemeMode => 'Modo do tema';
 
   @override
@@ -1463,6 +1476,9 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get settingsInterfaceThemeDesc =>
       'Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.';
+
+  @override
+  String get themeMinimal => 'Minimalista';
 
   @override
   String get themeRetroManga => 'Retro Manga';
@@ -2829,6 +2845,19 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Você será perguntado após cada download';
 
   @override
+  String get autoInstallPromptTitle => 'Instalar os mods depois de baixá-los?';
+
+  @override
+  String get autoInstallPromptBody =>
+      'Ative a instalação automática para colocar os mods baixados na pasta configurada do jogo. Você pode alterar isso depois nos Ajustes.';
+
+  @override
+  String get autoInstallPromptEnable => 'Ativar';
+
+  @override
+  String get autoInstallPromptDownloadOnly => 'Apenas baixar';
+
+  @override
   String get settingsThemeMode => 'Modo do tema';
 
   @override
@@ -3357,6 +3386,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get settingsInterfaceThemeDesc =>
       'Escolha um visual incluído. Ele se aplica ao app; o painel flutuante mantém seu visual escuro.';
+
+  @override
+  String get themeMinimal => 'Minimalista';
 
   @override
   String get themeRetroManga => 'Retro Manga';

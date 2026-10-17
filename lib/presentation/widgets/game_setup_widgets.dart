@@ -149,75 +149,87 @@ Future<bool?> showGameSetupDialog(
   required String cancel,
   required IconData icon,
   bool showFolder = false,
+  bool barrierDismissible = true,
 }) {
   return showDialog<bool>(
     context: context,
+    barrierDismissible: barrierDismissible,
     builder: (dialogContext) {
       final retro = RetroTheme.of(dialogContext);
-      return Dialog(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 440),
-          decoration: retro.surfaceDecoration(shadowDx: 5, shadowDy: 5),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: MarioGameIcon(icon, color: retro.accentText, size: 36),
-                ),
-                const SizedBox(height: 16),
-                Semantics(
-                  namesRoute: true,
-                  child: MarioGameTitle(text: title, retro: retro, size: 20),
-                ),
-                if (showFolder) ...[
-                  const SizedBox(height: 18),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: retro.surfaceDecoration(
-                      color: retro.surfaceAlt,
-                      shadowDx: 1,
-                      shadowDy: 1,
-                    ),
-                    child: Row(
-                      children: [
-                        MarioGameIcon(
-                          Icons.folder_open_rounded,
-                          color: retro.accentText,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'com.maniscat2.sm64coopdx/',
-                            style: retro.body(size: 16, height: 1.5),
-                          ),
-                        ),
-                      ],
+      return PopScope(
+        canPop: barrierDismissible,
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 24,
+          ),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 440),
+            decoration: retro.surfaceDecoration(shadowDx: 5, shadowDy: 5),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: MarioGameIcon(
+                      icon,
+                      color: retro.accentText,
+                      size: 36,
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  Semantics(
+                    namesRoute: true,
+                    child: MarioGameTitle(text: title, retro: retro, size: 20),
+                  ),
+                  if (showFolder) ...[
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: retro.surfaceDecoration(
+                        color: retro.surfaceAlt,
+                        shadowDx: 1,
+                        shadowDy: 1,
+                      ),
+                      child: Row(
+                        children: [
+                          MarioGameIcon(
+                            Icons.folder_open_rounded,
+                            color: retro.accentText,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'com.maniscat2.sm64coopdx/',
+                              style: retro.body(size: 16, height: 1.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 18),
+                  Text(body, style: retro.body(size: 16, height: 1.5)),
+                  const SizedBox(height: 24),
+                  GameSetupAction(
+                    label: confirm,
+                    icon: icon,
+                    primary: true,
+                    onPressed: () => Navigator.pop(dialogContext, true),
+                  ),
+                  const SizedBox(height: 12),
+                  GameSetupAction(
+                    label: cancel,
+                    icon: Icons.close_rounded,
+                    onPressed: () => Navigator.pop(dialogContext, false),
+                  ),
                 ],
-                const SizedBox(height: 18),
-                Text(body, style: retro.body(size: 16, height: 1.5)),
-                const SizedBox(height: 24),
-                GameSetupAction(
-                  label: confirm,
-                  icon: icon,
-                  primary: true,
-                  onPressed: () => Navigator.pop(dialogContext, true),
-                ),
-                const SizedBox(height: 12),
-                GameSetupAction(
-                  label: cancel,
-                  icon: Icons.close_rounded,
-                  onPressed: () => Navigator.pop(dialogContext, false),
-                ),
-              ],
+              ),
             ),
           ),
         ),

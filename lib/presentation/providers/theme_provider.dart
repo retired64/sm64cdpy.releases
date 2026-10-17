@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme_catalog.dart';
 import '../../core/theme/app_theme_design.dart';
-import 'mario_theme_assets_provider.dart';
 
 const _themeIdKey = 'theme_id';
 const _themeModeKey = 'theme_mode';
@@ -46,32 +45,6 @@ class AppearanceNotifier extends Notifier<AppearanceSettings> {
       _ => ThemeMode.system,
     },
   );
-
-  /// UI selection requires a complete ROM pack before changing into Mario.
-  /// null means the picker was cancelled/import failed; the ROM coordinator owns feedback.
-  Future<bool?> selectThemeWithRom(AppThemeId id) async {
-    if (state.isSaving) return null;
-    if ((id != AppThemeId.mario64 && id != AppThemeId.sm64Intro) ||
-        ref.read(marioThemeAssetsProvider).assets.complete)
-      return setTheme(id);
-    final previous = state;
-    state = AppearanceSettings(
-      themeId: previous.themeId,
-      mode: previous.mode,
-      isSaving: true,
-    );
-    try {
-      await ref.read(marioThemeAssetsProvider.notifier).perform('import');
-      if (!ref.mounted || !ref.read(marioThemeAssetsProvider).assets.complete)
-        return null;
-      state = previous;
-      return await setTheme(id);
-    } finally {
-      if (ref.mounted && state.isSaving) {
-        state = AppearanceSettings(themeId: state.themeId, mode: state.mode);
-      }
-    }
-  }
 
   Future<bool> setTheme(AppThemeId id) => _save(themeId: id);
   Future<bool> setThemeMode(ThemeMode mode) => _save(mode: mode);

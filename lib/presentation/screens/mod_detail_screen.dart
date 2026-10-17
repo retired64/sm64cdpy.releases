@@ -61,11 +61,8 @@ class _DetailScaffold extends ConsumerStatefulWidget {
   ConsumerState<_DetailScaffold> createState() => _DetailScaffoldState();
 }
 
-class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
-    with SingleTickerProviderStateMixin {
+class _DetailScaffoldState extends ConsumerState<_DetailScaffold> {
   late final ScrollController _scrollCtrl;
-  late final AnimationController _fadeCtrl;
-  late final Animation<double> _fadeAnim;
 
   bool _descExpanded = false;
   bool _changelogExpanded = false;
@@ -74,19 +71,11 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
   void initState() {
     super.initState();
     _scrollCtrl = ScrollController();
-
-    _fadeCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    )..forward();
-
-    _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
   }
 
   @override
   void dispose() {
     _scrollCtrl.dispose();
-    _fadeCtrl.dispose();
     super.dispose();
   }
 
@@ -98,33 +87,30 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
     return Scaffold(
       backgroundColor: retro.isMario ? Colors.transparent : retro.background,
       appBar: _buildAppBar(retro, isFav),
-      body: FadeTransition(
-        opacity: _fadeAnim,
-        child: CustomScrollView(
-          controller: _scrollCtrl,
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: _ModHeader(mod: widget.mod),
-              ),
+      body: CustomScrollView(
+        controller: _scrollCtrl,
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: _ModHeader(mod: widget.mod),
             ),
-            SliverToBoxAdapter(
-              child: _ContentCard(
-                mod: widget.mod,
-                descExpanded: _descExpanded,
-                changelogExpanded: _changelogExpanded,
-                onExpandDesc: () =>
-                    setState(() => _descExpanded = !_descExpanded),
-                onExpandChangelog: () =>
-                    setState(() => _changelogExpanded = !_changelogExpanded),
-              ),
+          ),
+          SliverToBoxAdapter(
+            child: _ContentCard(
+              mod: widget.mod,
+              descExpanded: _descExpanded,
+              changelogExpanded: _changelogExpanded,
+              onExpandDesc: () =>
+                  setState(() => _descExpanded = !_descExpanded),
+              onExpandChangelog: () =>
+                  setState(() => _changelogExpanded = !_changelogExpanded),
             ),
+          ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-          ],
-        ),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        ],
       ),
     );
   }
@@ -136,8 +122,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold>
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: retro.systemUiStyle,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+        child: Container(
           color: bgColor,
           child: SafeArea(
             child: Padding(
@@ -254,14 +239,11 @@ class _ModHeader extends StatelessWidget {
       padding: const EdgeInsets.all(3),
       decoration: retro.surfaceDecoration(border: 2, shadowDx: 2, shadowDy: 2),
       child: hasImage
-          ? Hero(
-              tag: 'mod_img_${mod.id}',
-              child: CachedNetworkImage(
-                imageUrl: mod.imageUrl!,
-                fit: BoxFit.contain,
-                placeholder: (_, _) => _HeroPlaceholder(retro: retro),
-                errorWidget: (_, _, _) => _HeroPlaceholder(retro: retro),
-              ),
+          ? CachedNetworkImage(
+              imageUrl: mod.imageUrl!,
+              fit: BoxFit.contain,
+              placeholder: (_, _) => _HeroPlaceholder(retro: retro),
+              errorWidget: (_, _, _) => _HeroPlaceholder(retro: retro),
             )
           : _HeroPlaceholder(retro: retro),
     );

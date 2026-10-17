@@ -12,6 +12,13 @@ extension SettingsSurfaces on RetroTheme {
     double dy = 2,
   }) {
     final soft = design.softSettingsPanels;
+    if (usesMinimalSurfaces) {
+      return BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: border.withValues(alpha: 0.65), width: 0.5),
+        ),
+      );
+    }
     if (usesBeveledSurfaces) {
       return surfaceDecoration(
         borderColor: border.withValues(alpha: 0.75),
@@ -151,7 +158,7 @@ class _SettingsExpansionGroupState extends State<SettingsExpansionGroup> {
     return Material(
       color: Colors.transparent,
       child: Ink(
-        decoration: retro.design.softSettingsPanels
+        decoration: retro.design.softSettingsPanels || retro.usesMinimalSurfaces
             ? retro.settingsPanel()
             : const BoxDecoration(),
         child: content,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../app_theme_design.dart';
 
 /// Saturated intro/file-select colors, dark menu panels and square slot frames.
-/// ROM artwork and fonts reuse the same private, validated Mario resource pack.
 const sm64IntroTheme = AppThemeDesign(
   id: AppThemeId.sm64Intro,
   cornerRadius: 0,

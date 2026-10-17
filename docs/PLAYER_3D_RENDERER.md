@@ -64,6 +64,16 @@ acelerar alternancias sin agotar memoria en equipos modestos. Al salir,
 Flutter desconecta el canal y Android detiene/destruye el WebView; el renderer
 libera geometrías, materiales, texturas y fuerza la pérdida del contexto WebGL.
 
+El modelo derivado de cada personaje se persiste en IndexedDB bajo una huella
+que combina la versión del esquema del renderer y el sello del APK instalado.
+En visitas posteriores el WebView reconstruye Three.js desde ese modelo ya
+procesado, sin volver a leer ni analizar `libmain.so` y la ROM. También conserva
+un fotograma WebP por modelo y paleta: se muestra en cuanto abre el visor y se
+reemplaza silenciosamente por el canvas interactivo. Cambiar el APK del juego o
+el esquema del renderer produce una huella nueva y deja de reutilizar entradas
+incompatibles. Los binarios y perfiles originales continúan siendo las fuentes
+de verdad; IndexedDB solo contiene una proyección regenerable.
+
 ## Perfil y persistencia
 
 | índice | personaje |

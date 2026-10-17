@@ -11,13 +11,42 @@ double contrast(Color a, Color b) {
 }
 
 void main() {
-  test('unknown/absent IDs preserve Retro for old installations', () {
+  test('unknown/absent IDs use Retro Manga by default', () {
     expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);
     expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);
     expect(
       AppThemeCatalog.designs.map((d) => d.id).toSet().length,
       AppThemeId.values.length,
     );
+  });
+
+  test('minimal option disables decorative rendering work', () {
+    final design = AppThemeCatalog.resolve(AppThemeId.minimal);
+    expect(design.backdropStyle, AppBackdropStyle.none);
+    expect(design.halftone, isFalse);
+    expect(design.stripes, isFalse);
+    expect(design.chipSkew, 0);
+    expect(design.shadowBlur, 0);
+    expect(design.shadowOffsetScale, 0);
+    expect(design.surfaceTreatment, AppSurfaceTreatment.minimal);
+    expect(design.softSettingsPanels, isFalse);
+
+    final retro = RetroTheme(false, design: design);
+    final surface = retro.surfaceDecoration();
+    expect(surface.color, Colors.transparent);
+    expect(surface.border, isNull);
+    expect(surface.boxShadow, isNull);
+
+    final neutral = retro.gameDecoration(
+      BoxDecoration(
+        color: retro.surface,
+        border: Border.all(color: retro.border),
+        boxShadow: const [BoxShadow(blurRadius: 8)],
+      ),
+    );
+    expect(neutral.color, Colors.transparent);
+    expect(neutral.border, isNull);
+    expect(neutral.boxShadow, isNull);
   });
 
   for (final design in AppThemeCatalog.designs) {
@@ -105,6 +134,15 @@ void main() {
     expect(retro.design.playfulSelection, isFalse);
     expect(retro.showHalftone, isTrue);
     expect(retro.showN64Backdrop, isFalse);
+    expect(retro.design.drawerRasterIcons, isTrue);
+    expect(
+      AppThemeCatalog.resolve(AppThemeId.minimal).drawerRasterIcons,
+      isFalse,
+    );
+    expect(
+      AppThemeCatalog.resolve(AppThemeId.mario64).drawerRasterIcons,
+      isFalse,
+    );
   });
 
   test('overlay keeps its fixed palette regardless of catalogue selection', () {

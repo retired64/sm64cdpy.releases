@@ -569,3 +569,21 @@ Detalle: [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md) y
 
 Fuente canónica: `release-manifests/v1.8.5.json`. Puerta completa:
 [RELEASE_1.8.5.md](RELEASE_1.8.5.md).
+
+## Rendimiento visual y Minimalista — 1.8.6+25
+
+- [x] Crear `performance-minimal-1.8.6` desde `main` después de 1.8.5.
+- [x] Añadir Minimalista como diseño opcional de bajo costo.
+- [x] Conservar Retro Manga como predeterminado y los cuatro diseños seleccionables.
+- [x] Mantener selecciones válidas ya persistidas sin migración forzada.
+- [x] Retirar SVG, `flutter_svg` y controladores de animación de destinos del drawer.
+- [x] Usar filas sin iconos en el drawer Minimalista.
+- [x] Restaurar el logo raster y mover enlaces sociales a Enlaces y recursos.
+- [x] Quitar transición global de rutas, fade interno y Hero del detalle.
+- [x] Incrementar a `1.8.6+25` y crear manifiesto localizado.
+- [x] Validar análisis, 121 tests Flutter y contrato de manifiestos.
+- [ ] Perfilar drawer y detalle en hardware de gama baja.
+- [ ] Validar visualmente los cuatro diseños, claro/oscuro y texto grande.
+
+Detalle y límites: [PERFORMANCE_MINIMAL_1.8.6.md](PERFORMANCE_MINIMAL_1.8.6.md).
+Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).

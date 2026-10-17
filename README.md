@@ -8,7 +8,7 @@ integration, and catalogue updates into a single mobile interface instead of
 requiring users to move repeatedly between a browser, file manager, and the
 game.
 
-The project is under active maintenance. Its current development version is **1.8.5+24**.
+The project is under active maintenance. Its current development version is **1.8.6+25**.
 The floating overlay introduced for the 1.7 line is implemented
 but remains experimental until it completes broader testing on real Android
 devices and across process recreation scenarios.
@@ -65,6 +65,8 @@ in-game mod workflow.
 - Edit the in-game player name, character and palette, manage reusable presets,
   and inspect changes in an interactive 3D preview built from the user's
   connected local game resources.
+- Choose the low-cost Minimal interface when needed; Retro Manga is the default,
+  while Mario 64 and SM64 Intro remain optional designs.
 
 ## Floating overlay
 

@@ -1692,6 +1692,30 @@ abstract class AppLocalizations {
   /// **'You will be asked after each download'**
   String get settingsAutoInstallOff;
 
+  /// One-time auto-install choice banner title
+  ///
+  /// In en, this message translates to:
+  /// **'Install mods after downloading?'**
+  String get autoInstallPromptTitle;
+
+  /// One-time auto-install choice banner explanation
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on auto-install to place downloaded mods in their configured game folder. You can change this later in Settings.'**
+  String get autoInstallPromptBody;
+
+  /// Enables auto-install from the one-time banner
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get autoInstallPromptEnable;
+
+  /// Keeps auto-install disabled from the one-time banner
+  ///
+  /// In en, this message translates to:
+  /// **'Download only'**
+  String get autoInstallPromptDownloadOnly;
+
   /// Settings screen section header for theme mode selection
   ///
   /// In en, this message translates to:
@@ -2651,6 +2675,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose an included design. Applies to the app; the floating panel keeps its dark design.'**
   String get settingsInterfaceThemeDesc;
+
+  /// No description provided for @themeMinimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimal'**
+  String get themeMinimal;
 
   /// No description provided for @themeRetroManga.
   ///

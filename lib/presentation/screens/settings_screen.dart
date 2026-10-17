@@ -4,17 +4,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:floaty_chatheads/floaty_chatheads.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../core/constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
-import '../../overlay/overlay_bridge.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../services/update_service.dart';
 import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
+import '../providers/auto_install_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/appearance_selector.dart';
@@ -338,7 +337,7 @@ class _RetroSectionKicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    if (retro.design.softSettingsPanels) {
+    if (retro.design.softSettingsPanels || retro.usesMinimalSurfaces) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
         child: Row(
@@ -423,7 +422,8 @@ class _RetroSwitch extends StatelessWidget {
           decoration: retro.gameDecoration(
             BoxDecoration(
               color: value ? retro.inkOnAccent : retro.inkDim,
-              borderRadius: retro.design.softSettingsPanels
+              borderRadius:
+                  retro.design.softSettingsPanels || retro.usesMinimalSurfaces
                   ? BorderRadius.circular(8)
                   : BorderRadius.zero,
             ),
@@ -438,60 +438,36 @@ class _RetroSwitch extends StatelessWidget {
 
 // ── Auto-install toggle ────────────────────────────────────────────────────
 
-class _AutoInstallToggle extends ConsumerStatefulWidget {
+class _AutoInstallToggle extends ConsumerWidget {
   const _AutoInstallToggle();
 
   @override
-  ConsumerState<_AutoInstallToggle> createState() => _AutoInstallToggleState();
-}
-
-class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
-  bool _autoInstall = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPref();
-  }
-
-  Future<void> _loadPref() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {
-        _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
-      });
-    }
-  }
-
-  Future<void> _toggle(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.autoInstallModsKey, value);
-    OverlayBridge.refreshAutoInstall();
-    setState(() => _autoInstall = value);
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    final preference = ref.watch(autoInstallProvider);
+    final autoInstall = preference.isEnabled;
+    void toggle(bool value) {
+      ref.read(autoInstallProvider.notifier).setEnabled(value);
+    }
 
     return _RetroTileShell(
       retro: retro,
-      onTap: () => _toggle(!_autoInstall),
-      accentColor: _autoInstall ? retro.accent : null,
+      onTap: preference.isSaving ? null : () => toggle(!autoInstall),
+      accentColor: autoInstall ? retro.accent : null,
       leading: _RetroIconBox(
         retro: retro,
         icon: Icons.auto_mode_rounded,
-        accentColor: _autoInstall ? retro.accent : null,
+        accentColor: autoInstall ? retro.accent : null,
       ),
       title: l10n.settingsAutoInstall,
-      subtitle: _autoInstall
+      subtitle: autoInstall
           ? l10n.settingsAutoInstallOn
           : l10n.settingsAutoInstallOff,
       trailing: _RetroSwitch(
         retro: retro,
-        value: _autoInstall,
-        onChanged: _toggle,
+        value: autoInstall,
+        onChanged: preference.isSaving ? (_) {} : toggle,
       ),
     );
   }
@@ -530,7 +506,10 @@ class _RetroTileShell extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.all(retro.design.softSettingsPanels ? 14 : 12),
+          padding: EdgeInsets.symmetric(
+            horizontal: retro.usesMinimalSurfaces ? 4 : 12,
+            vertical: retro.usesMinimalSurfaces ? 12 : 12,
+          ),
           decoration: retro.settingsPanel(
             borderColor: accentColor,
             width: accentColor != null ? 2.5 : 2,
@@ -598,12 +577,16 @@ class _RetroIconBox extends StatelessWidget {
       decoration: retro.gameDecoration(
         BoxDecoration(
           borderRadius: retro.radius,
-          color: retro.design.softSettingsPanels
+          color: retro.design.softSettingsPanels || retro.usesMinimalSurfaces
               ? retro.accent.withValues(alpha: 0.08)
               : retro.surfaceAlt,
           border: Border.all(
             color: c,
-            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+            width: retro.borderWidth(
+              retro.design.softSettingsPanels || retro.usesMinimalSurfaces
+                  ? 1
+                  : 2,
+            ),
           ),
         ),
       ),
@@ -627,12 +610,16 @@ class _RetroSpinner extends StatelessWidget {
       decoration: retro.gameDecoration(
         BoxDecoration(
           borderRadius: retro.radius,
-          color: retro.design.softSettingsPanels
+          color: retro.design.softSettingsPanels || retro.usesMinimalSurfaces
               ? retro.accent.withValues(alpha: 0.08)
               : retro.surfaceAlt,
           border: Border.all(
             color: retro.accent,
-            width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
+            width: retro.borderWidth(
+              retro.design.softSettingsPanels || retro.usesMinimalSurfaces
+                  ? 1
+                  : 2,
+            ),
           ),
         ),
       ),

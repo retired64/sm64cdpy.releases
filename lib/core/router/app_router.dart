@@ -1,4 +1,3 @@
-import '../theme/retro_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -92,41 +91,9 @@ final appRouter = GoRouter(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Transición "página que aparece" — fade + micro-scale desde 0.97 → 1.0
+// Root and detail routes render immediately; motion stays inside interactions
+// where it communicates state instead of delaying navigation.
 // ─────────────────────────────────────────────────────────────────────────────
-CustomTransitionPage<void> _page(Widget child, GoRouterState state) {
-  return CustomTransitionPage<void>(
-    key: state.pageKey,
-    child: child,
-    transitionDuration: const Duration(milliseconds: 300),
-    reverseTransitionDuration: const Duration(milliseconds: 260),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final retro = RetroTheme.of(context);
-      final reduceMotion = MediaQuery.disableAnimationsOf(context);
-      if (reduceMotion) return child;
-      final enterFade = CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeOutCubic,
-      );
-      final enterScale = Tween<double>(
-        begin: retro.isMario ? 0.91 : 0.97,
-        end: 1.0,
-      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
-
-      final exitFade = Tween<double>(begin: 1.0, end: 0.0).animate(
-        CurvedAnimation(
-          parent: secondaryAnimation,
-          curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
-        ),
-      );
-
-      return FadeTransition(
-        opacity: exitFade,
-        child: FadeTransition(
-          opacity: enterFade,
-          child: ScaleTransition(scale: enterScale, child: child),
-        ),
-      );
-    },
-  );
+NoTransitionPage<void> _page(Widget child, GoRouterState state) {
+  return NoTransitionPage<void>(key: state.pageKey, child: child);
 }

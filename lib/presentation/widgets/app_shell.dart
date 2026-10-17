@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/retro_theme.dart';
+import '../../l10n/app_localizations.dart';
+import '../providers/auto_install_provider.dart';
 import '../providers/extra_providers.dart';
+import '../providers/game_folder_provider.dart';
 import 'app_drawer.dart';
+import 'game_folder_card.dart';
+import 'game_setup_widgets.dart';
 
 const _noHalftoneRoutes = {'/', '/favourites', '/disclaimer'};
 
@@ -19,6 +24,62 @@ class AppShell extends ConsumerStatefulWidget {
 
 class _AppShellState extends ConsumerState<AppShell> {
   final ScrollController _drawerScrollController = ScrollController();
+  bool _setupFlowScheduled = false;
+  bool _setupFlowRunning = false;
+
+  void _scheduleSetupFlow(AutoInstallSettings autoInstall) {
+    if (widget.currentRoute != '/' ||
+        _setupFlowScheduled ||
+        _setupFlowRunning ||
+        autoInstall.isSaving) {
+      return;
+    }
+    final folder = ref.read(gameFolderProvider);
+    final folderPending =
+        !folder.initialized ||
+        (!folder.connection.connected && !folder.connection.dismissed);
+    if (!autoInstall.needsDecision && !folderPending) return;
+
+    _setupFlowScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _setupFlowScheduled = false;
+      if (!mounted || _setupFlowRunning) return;
+      _setupFlowRunning = true;
+      try {
+        if (ref.read(autoInstallProvider).needsDecision) {
+          final l10n = AppLocalizations.of(context);
+          final enable = await showGameSetupDialog(
+            context,
+            title: l10n.autoInstallPromptTitle,
+            body: l10n.autoInstallPromptBody,
+            confirm: l10n.autoInstallPromptEnable,
+            cancel: l10n.autoInstallPromptDownloadOnly,
+            icon: Icons.auto_mode_rounded,
+            barrierDismissible: false,
+          );
+          if (!mounted || enable == null) return;
+          final saved = await ref
+              .read(autoInstallProvider.notifier)
+              .setEnabled(enable);
+          if (!mounted || !saved) return;
+        }
+
+        await ref.read(gameFolderProvider.notifier).initialize();
+        if (!mounted) return;
+        final connection = ref.read(gameFolderProvider).connection;
+        if (!connection.connected && !connection.dismissed) {
+          await connectGameFolder(
+            context,
+            ref,
+            dismissOnCancel: true,
+            barrierDismissible: false,
+          );
+        }
+      } finally {
+        _setupFlowRunning = false;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -39,6 +100,9 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final autoInstall = ref.watch(autoInstallProvider);
+    ref.watch(gameFolderProvider);
+    _scheduleSetupFlow(autoInstall);
     final showBackdrop =
         retro.isIntro ||
         retro.showN64Backdrop ||

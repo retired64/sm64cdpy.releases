@@ -13,7 +13,7 @@ internal object Player3DSource {
     private const val GAME_PACKAGE = "com.maniscat2.sm64coopdx"
     private const val MAX_LIBRARY_BYTES = 160L * 1024 * 1024
 
-    data class Inputs(val game: File, val rom: File)
+    data class Inputs(val game: File, val rom: File, val cacheKey: String)
 
     fun prepare(context: Context): Inputs {
         val directory = File(context.cacheDir, "player3d").apply { mkdirs() }
@@ -27,7 +27,7 @@ internal object Player3DSource {
         }
         val rom = File(directory, "baserom.us.z64")
         if (!validRom(rom)) copyRom(context, rom)
-        return Inputs(game, rom)
+        return Inputs(game, rom, "android-v1-${game.nameWithoutExtension}")
     }
 
     private fun copyGameLibrary(base: String, splits: List<String>, output: File) {

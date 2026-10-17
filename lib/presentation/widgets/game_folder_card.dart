@@ -9,7 +9,12 @@ import 'game_setup_widgets.dart';
 import 'settings_expansion_group.dart';
 
 /// Every entry point explains why the system folder picker is being opened.
-Future<bool> connectGameFolder(BuildContext context, WidgetRef ref) async {
+Future<bool> connectGameFolder(
+  BuildContext context,
+  WidgetRef ref, {
+  bool dismissOnCancel = false,
+  bool barrierDismissible = true,
+}) async {
   final l10n = AppLocalizations.of(context);
   final confirmed = await showGameSetupDialog(
     context,
@@ -19,8 +24,17 @@ Future<bool> connectGameFolder(BuildContext context, WidgetRef ref) async {
     cancel: l10n.gameFolderLater,
     icon: Icons.folder_open_rounded,
     showFolder: true,
+    barrierDismissible: barrierDismissible,
   );
-  if (!context.mounted || confirmed != true) return false;
+  if (!context.mounted) return false;
+  if (confirmed != true) {
+    if (dismissOnCancel) {
+      await ref
+          .read(gameFolderProvider.notifier)
+          .perform('dismissGameFolderGuide');
+    }
+    return false;
+  }
   final result = await ref
       .read(gameFolderProvider.notifier)
       .perform('connectGameFolder');

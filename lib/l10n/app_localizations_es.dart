@@ -942,6 +942,20 @@ class AppLocalizationsEs extends AppLocalizations {
       'Se te preguntará después de cada descarga';
 
   @override
+  String get autoInstallPromptTitle =>
+      '¿Instalar los mods después de descargarlos?';
+
+  @override
+  String get autoInstallPromptBody =>
+      'Activa la instalación automática para colocar los mods descargados en la carpeta configurada del juego. Puedes cambiarlo después en Ajustes.';
+
+  @override
+  String get autoInstallPromptEnable => 'Activar';
+
+  @override
+  String get autoInstallPromptDownloadOnly => 'Solo descargar';
+
+  @override
   String get settingsThemeMode => 'Modo de tema';
 
   @override
@@ -1472,6 +1486,9 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get settingsInterfaceThemeDesc =>
       'Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.';
+
+  @override
+  String get themeMinimal => 'Minimalista';
 
   @override
   String get themeRetroManga => 'Retro Manga';
@@ -2845,6 +2862,20 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
       'Se te preguntará después de cada descarga';
 
   @override
+  String get autoInstallPromptTitle =>
+      '¿Instalar los mods después de descargarlos?';
+
+  @override
+  String get autoInstallPromptBody =>
+      'Activa la instalación automática para colocar los mods descargados en la carpeta configurada del juego. Puedes cambiarlo después en Ajustes.';
+
+  @override
+  String get autoInstallPromptEnable => 'Activar';
+
+  @override
+  String get autoInstallPromptDownloadOnly => 'Solo descargar';
+
+  @override
   String get settingsThemeMode => 'Modo de tema';
 
   @override
@@ -3375,6 +3406,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get settingsInterfaceThemeDesc =>
       'Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.';
+
+  @override
+  String get themeMinimal => 'Minimalista';
 
   @override
   String get themeRetroManga => 'Retro Manga';

@@ -254,3 +254,12 @@ preserva `sm64config.txt`, verifica los bytes y devuelve
 una confirmación pequeña sin recorrer otra vez toda la biblioteca. Ante error,
 la UI recupera el último estado confirmado y avisa. Matriz y límites SAF:
 [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md).
+
+Desde 1.8.6 la proyección de Mods del juego/DynOS también se conserva en Hive.
+Al abrir Biblioteca se presenta ese snapshot sin esperar el recorrido SAF y se
+reconcilia silenciosamente con `sm64config.txt` y las carpetas del juego. La
+respuesta nativa verificada reemplaza y vuelve a persistir la proyección; si la
+verificación en segundo plano falla, el último estado confirmado permanece
+visible. Conectar, desconectar o cambiar la carpeta del juego elimina la caché
+antes de invalidar el provider. El archivo del juego continúa siendo la fuente
+de verdad y Hive nunca autoriza una escritura.

@@ -293,6 +293,10 @@
   "settingsAutoInstall": "Auto-instalar después de descargar",
   "settingsAutoInstallOn": "Las descargas se instalarán automáticamente en la carpeta del juego configurada",
   "settingsAutoInstallOff": "Se te preguntará después de cada descarga",
+  "autoInstallPromptTitle": "¿Instalar los mods después de descargarlos?",
+  "autoInstallPromptBody": "Activa la instalación automática para colocar los mods descargados en la carpeta configurada del juego. Puedes cambiarlo después en Ajustes.",
+  "autoInstallPromptEnable": "Activar",
+  "autoInstallPromptDownloadOnly": "Solo descargar",
   "settingsThemeMode": "Modo de tema",
   "settingsDatabaseUpdated": "Base de datos actualizada · {count} mods{date}",
   "settingsUnknownError": "Error desconocido",
@@ -455,6 +459,7 @@
 
   "settingsInterfaceTheme": "Tema de interfaz",
   "settingsInterfaceThemeDesc": "Elige un diseño incluido. Se aplica a la app; el panel flotante conserva su diseño oscuro.",
+  "themeMinimal": "Minimalista",
   "themeRetroManga": "Retro Manga",
   "themeMario64": "Mario 64",
   "themeSm64Intro": "SM64 Intro",

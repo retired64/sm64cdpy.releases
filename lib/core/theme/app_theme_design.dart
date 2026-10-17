@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Persisted IDs are independent from localized names and catalogue ordering.
 enum AppThemeId {
+  minimal('minimal'),
   retroManga('retro_manga'),
   mario64('mario64'),
   sm64Intro('sm64_intro');
@@ -23,7 +24,7 @@ enum AppThemeId {
 enum AppBackdropStyle { none, halftone, n64Sky, introMenu }
 
 /// Surface language shared by cards, chips, buttons and settings panels.
-enum AppSurfaceTreatment { flat, beveled }
+enum AppSurfaceTreatment { minimal, flat, beveled }
 
 /// Every surface has an explicit text role. Semantic and brand colors remain
 /// separate from the selected interface accent.
@@ -113,6 +114,7 @@ class AppThemeDesign {
     this.backdropStyle = AppBackdropStyle.halftone,
     this.surfaceTreatment = AppSurfaceTreatment.flat,
     this.playfulSelection = false,
+    this.drawerRasterIcons = false,
   });
 
   final AppThemeId id;
@@ -135,6 +137,7 @@ class AppThemeDesign {
   final AppBackdropStyle backdropStyle;
   final AppSurfaceTreatment surfaceTreatment;
   final bool playfulSelection;
+  final bool drawerRasterIcons;
 
   AppThemePalette palette(bool isDark) => isDark ? dark : light;
 }
