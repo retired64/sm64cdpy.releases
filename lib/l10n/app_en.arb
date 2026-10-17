@@ -1134,6 +1134,22 @@
   "@settingsAutoInstallOff": {
     "description": "Settings screen message when auto-install is off"
   },
+  "autoInstallPromptTitle": "Install mods after downloading?",
+  "@autoInstallPromptTitle": {
+    "description": "One-time auto-install choice banner title"
+  },
+  "autoInstallPromptBody": "Turn on auto-install to place downloaded mods in their configured game folder. You can change this later in Settings.",
+  "@autoInstallPromptBody": {
+    "description": "One-time auto-install choice banner explanation"
+  },
+  "autoInstallPromptEnable": "Turn on",
+  "@autoInstallPromptEnable": {
+    "description": "Enables auto-install from the one-time banner"
+  },
+  "autoInstallPromptDownloadOnly": "Download only",
+  "@autoInstallPromptDownloadOnly": {
+    "description": "Keeps auto-install disabled from the one-time banner"
+  },
   "settingsThemeMode": "Theme mode",
   "@settingsThemeMode": {
     "description": "Settings screen section header for theme mode selection"

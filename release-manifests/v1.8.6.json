@@ -19,7 +19,8 @@
           "items": [
             "Minimal uses whitespace and typography instead of neutral cards, with no backdrop painters, skewed controls or decorative shadows.",
             "Retro Manga remains the default; Minimal, Mario 64 and SM64 Intro are available in Settings.",
-            "Existing valid theme selections remain unchanged, and missing or unknown selections use Retro Manga."
+            "Existing valid theme selections remain unchanged, and missing or unknown selections use Retro Manga.",
+            "When no previous choice exists, a one-time banner lets users turn on automatic installation after downloads or keep download-only behavior."
           ]
         },
         {
@@ -54,7 +55,8 @@
           "items": [
             "Minimalista usa espacio y tipografía en lugar de tarjetas neutras, sin fondos dibujados, controles inclinados ni sombras decorativas.",
             "Retro Manga permanece como predeterminado; Minimalista, Mario 64 y SM64 Intro están disponibles en Ajustes.",
-            "Las selecciones válidas existentes se conservan; una selección ausente o desconocida usa Retro Manga."
+            "Las selecciones válidas existentes se conservan; una selección ausente o desconocida usa Retro Manga.",
+            "Cuando no existe una elección previa, un aviso único permite activar la instalación automática tras las descargas o conservar solo la descarga."
           ]
         },
         {
@@ -89,7 +91,8 @@
           "items": [
             "Minimalista usa espaço e tipografia no lugar de cartões neutros, sem fundos desenhados, controles inclinados ou sombras decorativas.",
             "Retro Manga continua como padrão; Minimalista, Mario 64 e SM64 Intro estão disponíveis nos Ajustes.",
-            "As seleções válidas existentes são mantidas; uma seleção ausente ou desconhecida usa Retro Manga."
+            "As seleções válidas existentes são mantidas; uma seleção ausente ou desconhecida usa Retro Manga.",
+            "Quando não existe uma escolha anterior, um aviso único permite ativar a instalação automática após os downloads ou manter apenas o download."
           ]
         },
         {

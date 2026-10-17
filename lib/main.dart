@@ -20,6 +20,7 @@ import 'presentation/providers/mario_theme_assets_provider.dart';
 import 'presentation/widgets/background_operation_coordinator.dart';
 import 'presentation/widgets/mario_assets_coordinator.dart';
 import 'services/background_install_service.dart';
+import 'services/auto_install_preference_service.dart';
 import 'services/installation_library_projection_service.dart';
 import 'services/update_service.dart';
 
@@ -85,6 +86,10 @@ Future<void> _bootstrapMainApp() async {
     debugPrint('Hive initialization failed: $e');
     // Continue without Hive (favourites won't persist)
   }
+
+  // Migrate any explicit legacy boolean and expose undecided installs to the
+  // main UI before providers are created.
+  await AutoInstallPreferenceService.init();
 
   // OTA — Obtiene versión instalada para comparar con GitHub Releases
   await UpdateService.init();

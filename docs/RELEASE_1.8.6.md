@@ -18,6 +18,8 @@ no crea el tag y no publica la release.
    Hero del detalle de mods.
 6. Preservar los cuatro diseños, sus modos claro/oscuro y cualquier selección
    válida ya guardada.
+7. Ofrecer una decisión única y no bloqueante para instalar automáticamente
+   después de descargar, conservando las elecciones de versiones anteriores.
 
 ## Versión y distribución
 
@@ -42,7 +44,8 @@ actualizarse si la publicación ocurre en otra fecha.
 
 - [x] `flutter analyze lib --no-fatal-infos`: sin errores ni warnings; conserva
   23 avisos informativos preexistentes.
-- [x] `flutter test`: 121 pruebas aprobadas.
+- [x] `flutter test`: incluye migración, sincronización y flujo visible de la
+  decisión de instalación automática.
 - [x] Cuatro pruebas Python del contrato de manifiestos aprobadas.
 - [x] Manifiesto validado contra `pubspec.yaml`.
 - [x] APK debug construido localmente.

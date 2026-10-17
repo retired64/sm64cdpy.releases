@@ -942,6 +942,20 @@ class AppLocalizationsEs extends AppLocalizations {
       'Se te preguntará después de cada descarga';
 
   @override
+  String get autoInstallPromptTitle =>
+      '¿Instalar los mods después de descargarlos?';
+
+  @override
+  String get autoInstallPromptBody =>
+      'Activa la instalación automática para colocar los mods descargados en la carpeta configurada del juego. Puedes cambiarlo después en Ajustes.';
+
+  @override
+  String get autoInstallPromptEnable => 'Activar';
+
+  @override
+  String get autoInstallPromptDownloadOnly => 'Solo descargar';
+
+  @override
   String get settingsThemeMode => 'Modo de tema';
 
   @override
@@ -2846,6 +2860,20 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get settingsAutoInstallOff =>
       'Se te preguntará después de cada descarga';
+
+  @override
+  String get autoInstallPromptTitle =>
+      '¿Instalar los mods después de descargarlos?';
+
+  @override
+  String get autoInstallPromptBody =>
+      'Activa la instalación automática para colocar los mods descargados en la carpeta configurada del juego. Puedes cambiarlo después en Ajustes.';
+
+  @override
+  String get autoInstallPromptEnable => 'Activar';
+
+  @override
+  String get autoInstallPromptDownloadOnly => 'Solo descargar';
 
   @override
   String get settingsThemeMode => 'Modo de tema';

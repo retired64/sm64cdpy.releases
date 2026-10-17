@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../providers/extra_providers.dart';
+import '../providers/auto_install_provider.dart';
+import '../../l10n/app_localizations.dart';
 import 'app_drawer.dart';
 
 const _noHalftoneRoutes = {'/', '/favourites', '/disclaimer'};
@@ -19,6 +21,56 @@ class AppShell extends ConsumerStatefulWidget {
 
 class _AppShellState extends ConsumerState<AppShell> {
   final ScrollController _drawerScrollController = ScrollController();
+  bool _autoInstallPromptVisible = false;
+  bool _autoInstallPromptScheduled = false;
+
+  void _syncAutoInstallPrompt(AutoInstallSettings preference) {
+    if (_autoInstallPromptScheduled) return;
+    final shouldShow = preference.needsDecision && !preference.isSaving;
+    if (shouldShow == _autoInstallPromptVisible) return;
+    _autoInstallPromptScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _autoInstallPromptScheduled = false;
+      if (!mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      if (!shouldShow) {
+        messenger.hideCurrentMaterialBanner();
+        _autoInstallPromptVisible = false;
+        return;
+      }
+      final l10n = AppLocalizations.of(context);
+      final retro = RetroTheme.of(context);
+      _autoInstallPromptVisible = true;
+      messenger.showMaterialBanner(
+        MaterialBanner(
+          backgroundColor: retro.surface,
+          dividerColor: retro.border,
+          leading: Icon(Icons.auto_mode_rounded, color: retro.accentText),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.autoInstallPromptTitle, style: retro.heading(size: 14)),
+              const SizedBox(height: 4),
+              Text(l10n.autoInstallPromptBody, style: retro.body(size: 12)),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () =>
+                  ref.read(autoInstallProvider.notifier).setEnabled(false),
+              child: Text(l10n.autoInstallPromptDownloadOnly),
+            ),
+            FilledButton(
+              onPressed: () =>
+                  ref.read(autoInstallProvider.notifier).setEnabled(true),
+              child: Text(l10n.autoInstallPromptEnable),
+            ),
+          ],
+        ),
+      );
+    });
+  }
 
   @override
   void dispose() {
@@ -39,6 +91,8 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final autoInstall = ref.watch(autoInstallProvider);
+    _syncAutoInstallPrompt(autoInstall);
     final showBackdrop =
         retro.isIntro ||
         retro.showN64Backdrop ||

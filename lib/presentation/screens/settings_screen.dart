@@ -4,17 +4,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:floaty_chatheads/floaty_chatheads.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../core/constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
-import '../../overlay/overlay_bridge.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../services/update_service.dart';
 import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
+import '../providers/auto_install_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/appearance_selector.dart';
@@ -439,60 +438,36 @@ class _RetroSwitch extends StatelessWidget {
 
 // ── Auto-install toggle ────────────────────────────────────────────────────
 
-class _AutoInstallToggle extends ConsumerStatefulWidget {
+class _AutoInstallToggle extends ConsumerWidget {
   const _AutoInstallToggle();
 
   @override
-  ConsumerState<_AutoInstallToggle> createState() => _AutoInstallToggleState();
-}
-
-class _AutoInstallToggleState extends ConsumerState<_AutoInstallToggle> {
-  bool _autoInstall = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPref();
-  }
-
-  Future<void> _loadPref() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {
-        _autoInstall = prefs.getBool(AppConstants.autoInstallModsKey) ?? false;
-      });
-    }
-  }
-
-  Future<void> _toggle(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.autoInstallModsKey, value);
-    OverlayBridge.refreshAutoInstall();
-    setState(() => _autoInstall = value);
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    final preference = ref.watch(autoInstallProvider);
+    final autoInstall = preference.isEnabled;
+    void toggle(bool value) {
+      ref.read(autoInstallProvider.notifier).setEnabled(value);
+    }
 
     return _RetroTileShell(
       retro: retro,
-      onTap: () => _toggle(!_autoInstall),
-      accentColor: _autoInstall ? retro.accent : null,
+      onTap: preference.isSaving ? null : () => toggle(!autoInstall),
+      accentColor: autoInstall ? retro.accent : null,
       leading: _RetroIconBox(
         retro: retro,
         icon: Icons.auto_mode_rounded,
-        accentColor: _autoInstall ? retro.accent : null,
+        accentColor: autoInstall ? retro.accent : null,
       ),
       title: l10n.settingsAutoInstall,
-      subtitle: _autoInstall
+      subtitle: autoInstall
           ? l10n.settingsAutoInstallOn
           : l10n.settingsAutoInstallOff,
       trailing: _RetroSwitch(
         retro: retro,
-        value: _autoInstall,
-        onChanged: _toggle,
+        value: autoInstall,
+        onChanged: preference.isSaving ? (_) {} : toggle,
       ),
     );
   }
