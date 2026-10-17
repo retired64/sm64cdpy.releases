@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -21,6 +22,32 @@ class _OnboardingFolderService extends GameFolderService {
   Future<GameFolderConnection?> call(String method) async {
     if (method == 'dismissGameFolderGuide') dismissed = true;
     return GameFolderConnection(dismissed: dismissed);
+  }
+}
+
+// The widget test controls persistence completion explicitly. Real Hive and
+// SharedPreferences persistence are covered by the provider tests below.
+class _OnboardingAutoInstallNotifier extends AutoInstallNotifier {
+  final saved = Completer<void>();
+  bool? selected;
+
+  @override
+  AutoInstallSettings build() => const AutoInstallSettings(
+    decision: AutoInstallDecision.undecided,
+  );
+
+  @override
+  Future<bool> setEnabled(bool enabled) async {
+    selected = enabled;
+    state = AutoInstallSettings(decision: state.decision, isSaving: true);
+    await saved.future;
+    if (!ref.mounted) return false;
+    state = AutoInstallSettings(
+      decision: enabled
+          ? AutoInstallDecision.enabled
+          : AutoInstallDecision.disabled,
+    );
+    return true;
   }
 }
 
@@ -144,12 +171,13 @@ void main() {
   testWidgets('first-run decisions appear as two sequential dialogs', (
     tester,
   ) async {
-    // SharedPreferences initialization and Hive disk I/O must run outside
-    // the widget test's fake clock. Pumping frames cannot complete real I/O.
-    await tester.runAsync(AutoInstallPreferenceService.init);
+    final preference = _OnboardingAutoInstallNotifier();
     final folderService = _OnboardingFolderService();
     final container = ProviderContainer(
-      overrides: [gameFolderServiceProvider.overrideWithValue(folderService)],
+      overrides: [
+        autoInstallProvider.overrideWith(() => preference),
+        gameFolderServiceProvider.overrideWithValue(folderService),
+      ],
     );
     addTearDown(container.dispose);
 
@@ -170,18 +198,15 @@ void main() {
     expect(find.text('Install mods after downloading?'), findsOneWidget);
     expect(find.byType(GameSetupAction), findsNWidgets(2));
 
-    await tester.runAsync(() async {
-      await tester.tap(find.byType(GameSetupAction).first);
-      await Hive.box<String>(AppConstants.settingsBoxKey).flush();
-      final deadline = DateTime.now().add(const Duration(seconds: 5));
-      while (container.read(autoInstallProvider).needsDecision ||
-          container.read(autoInstallProvider).isSaving) {
-        if (DateTime.now().isAfter(deadline)) {
-          fail('The first-run auto-install decision did not finish saving.');
-        }
-        await Future<void>.delayed(const Duration(milliseconds: 10));
-      }
-    });
+    await tester.tap(find.byType(GameSetupAction).first);
+    await tester.pumpAndSettle();
+
+    expect(preference.selected, isTrue);
+    expect(container.read(autoInstallProvider).isSaving, isTrue);
+    expect(find.text('Connect SM64CoopDX'), findsNothing);
+
+    // Only the persistence acknowledgement allows the folder dialog to open.
+    preference.saved.complete();
     await tester.pumpAndSettle();
 
     expect(find.byType(Dialog), findsOneWidget);
@@ -196,16 +221,10 @@ void main() {
     expect(find.byType(Dialog), findsNothing);
     expect(folderService.dismissed, isTrue);
     expect(container.read(autoInstallProvider).isEnabled, isTrue);
-    expect(
-      Hive.box<String>(AppConstants.settingsBoxKey).get(
-        AutoInstallPreferenceService.hiveKey,
-      ),
-      'enabled',
-    );
     expect(tester.takeException(), isNull);
 
     // Dispose routes/providers before the shared tearDown closes Hive.
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpAndSettle();
-  });
+  }, timeout: const Timeout(Duration(seconds: 30)));
 }
