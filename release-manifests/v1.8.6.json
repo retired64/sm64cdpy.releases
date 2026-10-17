@@ -11,7 +11,8 @@
       "highlights": [
         "Minimal is available as a low-cost option while Retro Manga remains the default.",
         "The drawer no longer loads SVG artwork or per-item press animations.",
-        "Opening mod details no longer stacks page, fade and image transitions."
+        "Opening mod details no longer stacks page, fade and image transitions.",
+        "Player previews and the game-mod library reopen from persistent caches while their sources are verified in the background."
       ],
       "sections": [
         {
@@ -38,6 +39,14 @@
             "Mod images no longer start a Hero animation between catalogue cards and details.",
             "Content, installation actions, favourites and sharing keep their existing behavior."
           ]
+        },
+        {
+          "heading": "Faster repeat visits",
+          "items": [
+            "Player stores regenerated character models and one matching preview frame, avoiding repeated ROM and game-library parsing.",
+            "The game-mod library shows its last confirmed snapshot immediately and reconciles it with the game files in the background.",
+            "Changing the game folder, game build or renderer schema invalidates the affected cache automatically."
+          ]
         }
       ]
     },
@@ -47,7 +56,8 @@
       "highlights": [
         "Minimalista está disponible como opción ligera y Retro Manga permanece como predeterminado.",
         "El drawer ya no carga gráficos SVG ni animaciones de presión por elemento.",
-        "Abrir los detalles de un mod ya no encadena transiciones de página, fade e imagen."
+        "Abrir los detalles de un mod ya no encadena transiciones de página, fade e imagen.",
+        "El visor de Player y la biblioteca de mods reabren desde cachés persistentes mientras verifican sus fuentes en segundo plano."
       ],
       "sections": [
         {
@@ -74,6 +84,14 @@
             "Las imágenes ya no inician una animación Hero entre las tarjetas del catálogo y el detalle.",
             "El contenido, las acciones de instalación, los favoritos y compartir conservan su funcionamiento."
           ]
+        },
+        {
+          "heading": "Visitas posteriores más rápidas",
+          "items": [
+            "Player conserva los modelos regenerados y un fotograma compatible para evitar analizar repetidamente la ROM y la biblioteca del juego.",
+            "La biblioteca de mods muestra inmediatamente su último snapshot confirmado y lo reconcilia con los archivos del juego en segundo plano.",
+            "Cambiar la carpeta, la versión del juego o el esquema del renderizador invalida automáticamente la caché correspondiente."
+          ]
         }
       ]
     },
@@ -83,7 +101,8 @@
       "highlights": [
         "Minimalista está disponível como opção leve e Retro Manga continua como padrão.",
         "O drawer não carrega mais imagens SVG nem animações de toque por item.",
-        "Abrir os detalhes de um mod não combina mais transições de página, fade e imagem."
+        "Abrir os detalhes de um mod não combina mais transições de página, fade e imagem.",
+        "A prévia do Player e a biblioteca de mods reabrem usando caches persistentes enquanto verificam suas fontes em segundo plano."
       ],
       "sections": [
         {
@@ -109,6 +128,14 @@
             "A tela de detalhes aparece imediatamente sem o fade de entrada anterior.",
             "As imagens não iniciam mais uma animação Hero entre os cards do catálogo e os detalhes.",
             "O conteúdo, as ações de instalação, os favoritos e o compartilhamento mantêm o comportamento existente."
+          ]
+        },
+        {
+          "heading": "Retornos mais rápidos",
+          "items": [
+            "Player mantém os modelos regenerados e um quadro compatível para evitar analisar repetidamente a ROM e a biblioteca do jogo.",
+            "A biblioteca de mods mostra imediatamente o último snapshot confirmado e o reconcilia com os arquivos do jogo em segundo plano.",
+            "Alterar a pasta, a versão do jogo ou o esquema do renderizador invalida automaticamente o cache correspondente."
           ]
         }
       ]

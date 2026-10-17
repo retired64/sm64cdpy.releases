@@ -1,8 +1,7 @@
 # SM64CDPY 1.8.6 — preparación de rendimiento visual
 
-Versión preparada en `performance-minimal-1.8.6`: `1.8.6+25`. Esta guía reúne
-el alcance, los datos de distribución y la puerta de salida; no fusiona `main`,
-no crea el tag y no publica la release.
+Versión integrada en `main`: `1.8.6+25`. Esta guía reúne el alcance, los datos
+de distribución y la puerta de salida; no crea el tag ni publica la release.
 
 ## Alcance
 
@@ -20,6 +19,10 @@ no crea el tag y no publica la release.
    válida ya guardada.
 7. Ofrecer una decisión única y no bloqueante para instalar automáticamente
    después de descargar, conservando las elecciones de versiones anteriores.
+8. Reabrir Player desde modelos y fotogramas persistentes, evitando reconstruir
+   el personaje desde la ROM cuando sus fuentes no cambiaron.
+9. Mostrar inmediatamente el último snapshot confirmado de Mods del juego y
+   DynOS mientras la verificación SAF continúa en segundo plano.
 
 ## Versión y distribución
 
@@ -44,18 +47,19 @@ actualizarse si la publicación ocurre en otra fecha.
 
 - [x] `flutter analyze lib --no-fatal-infos`: sin errores ni warnings; conserva
   23 avisos informativos preexistentes.
-- [x] `flutter test`: incluye migración, sincronización y flujo visible de la
-  decisión de instalación automática.
+- [x] Pruebas focalizadas de Player y Biblioteca: 8 aprobadas tras el merge.
+- [ ] La suite Flutter completa llega a 131 pruebas y queda detenida en el caso
+  de diálogos iniciales; debe corregirse o aislarse antes del workflow final.
 - [x] Cuatro pruebas Python del contrato de manifiestos aprobadas.
 - [x] Manifiesto validado contra `pubspec.yaml`.
 - [x] APK debug construido localmente.
-- [x] `main` es ancestro directo de la rama; no requiere resolver divergencias.
+- [x] Rama 1.8.6 fusionada en `main` junto con el catálogo remoto más reciente.
 
 ## Puerta de salida
 
 - [ ] Probar drawer, detalle y Minimalista en al menos un Android de gama baja.
 - [ ] Revisar los cuatro diseños en claro/oscuro, texto grande y pantalla estrecha.
-- [ ] Fusionar `performance-minimal-1.8.6` a `main` sin crear todavía el tag.
+- [x] Fusionar el trabajo 1.8.6 a `main` sin crear todavía el tag.
 - [ ] Ejecutar el workflow de testing sobre el commit final de `main`.
 - [ ] Descargar e instalar el APK arm64 firmado del workflow de testing.
 - [ ] Confirmar secretos, firma y las tres ABI.
