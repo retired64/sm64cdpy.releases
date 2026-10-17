@@ -144,7 +144,9 @@ void main() {
   testWidgets('first-run decisions appear as two sequential dialogs', (
     tester,
   ) async {
-    await AutoInstallPreferenceService.init();
+    // SharedPreferences initialization and Hive disk I/O must run outside
+    // the widget test's fake clock. Pumping frames cannot complete real I/O.
+    await tester.runAsync(AutoInstallPreferenceService.init);
     final folderService = _OnboardingFolderService();
     final container = ProviderContainer(
       overrides: [gameFolderServiceProvider.overrideWithValue(folderService)],
@@ -168,11 +170,18 @@ void main() {
     expect(find.text('Install mods after downloading?'), findsOneWidget);
     expect(find.byType(GameSetupAction), findsNWidgets(2));
 
-    await tester.tap(find.byType(GameSetupAction).first);
-    await tester.pump();
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 50)),
-    );
+    await tester.runAsync(() async {
+      await tester.tap(find.byType(GameSetupAction).first);
+      await Hive.box<String>(AppConstants.settingsBoxKey).flush();
+      final deadline = DateTime.now().add(const Duration(seconds: 5));
+      while (container.read(autoInstallProvider).needsDecision ||
+          container.read(autoInstallProvider).isSaving) {
+        if (DateTime.now().isAfter(deadline)) {
+          fail('The first-run auto-install decision did not finish saving.');
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+    });
     await tester.pumpAndSettle();
 
     expect(find.byType(Dialog), findsOneWidget);
@@ -186,5 +195,17 @@ void main() {
 
     expect(find.byType(Dialog), findsNothing);
     expect(folderService.dismissed, isTrue);
+    expect(container.read(autoInstallProvider).isEnabled, isTrue);
+    expect(
+      Hive.box<String>(AppConstants.settingsBoxKey).get(
+        AutoInstallPreferenceService.hiveKey,
+      ),
+      'enabled',
+    );
+    expect(tester.takeException(), isNull);
+
+    // Dispose routes/providers before the shared tearDown closes Hive.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
   });
 }
