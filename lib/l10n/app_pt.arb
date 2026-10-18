@@ -602,5 +602,15 @@
   "playerEmblem": "Emblema",
   "playerRestore": "Restaurar configuração anterior",
   "playerRestoreBody": "Com o SM64CoopDX fechado, restaurar o backup privado anterior à última alteração de mods ou jogador? Toda a configuração será restaurada.",
-  "playerRestored": "Configuração anterior do jogo restaurada."
+  "playerRestored": "Configuração anterior do jogo restaurada.",
+  "retroAccentTitle": "Destaque do Retro Manga",
+  "retroAccentDescription": "Escolha a cor de destaque. O contraste do texto se adapta aos modos claro e escuro. Os outros temas mantêm suas cores.",
+  "retroAccentCyan": "Ciano (original)",
+  "retroAccentBlue": "Azul",
+  "retroAccentViolet": "Violeta",
+  "retroAccentPink": "Rosa",
+  "retroAccentCoral": "Coral",
+  "retroAccentAmber": "Âmbar",
+  "retroAccentGreen": "Verde",
+  "retroAccentLime": "Lima"
 }

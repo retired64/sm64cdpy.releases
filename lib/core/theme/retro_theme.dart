@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app_theme_design.dart';
+import 'retro_accent.dart';
 import 'themes/retro_manga_theme.dart';
 
 /// Compatibility facade and ThemeExtension for every interface design.
@@ -16,6 +17,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   const RetroTheme(
     this.isDark, {
     this.design = retroMangaTheme,
+    this.retroAccent = RetroAccent.cyan,
     this.marioAssets = const MarioThemeAssets(),
     Color? backgroundOverride,
     Color? surfaceOverride,
@@ -44,6 +46,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
 
   final bool isDark;
   final AppThemeDesign design;
+  final RetroAccent retroAccent;
+  bool get _customAccent => design.id == AppThemeId.retroManga && retroAccent != RetroAccent.cyan;
   final MarioThemeAssets marioAssets;
   bool get isIntro => design.id == AppThemeId.sm64Intro;
   bool get isMario => design.id == AppThemeId.mario64 || isIntro;
@@ -84,9 +88,13 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   Color get shadowColor => _shadowColorOverride ?? _palette.shadow;
   Color get ink => _palette.ink;
   Color get inkDim => _palette.inkDim;
-  Color get accent => _palette.accent;
+  Color get accent => _customAccent ? retroAccent.color : _palette.accent;
   Color get inkOnAccent => _palette.onAccent;
-  Color get accentText => _palette.accentText;
+  Color get accentText => !_customAccent
+      ? _palette.accentText
+      : isDark
+      ? retroAccent.color
+      : retroAccent.textOn([background, surface, surfaceAlt]);
   Color get secondaryAccent => _palette.secondaryAccent ?? amber;
   Color get surfaceHighlight =>
       _palette.surfaceHighlight ??
@@ -558,10 +566,12 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   static ThemeData materialTheme(
     bool isDark, {
     AppThemeDesign design = retroMangaTheme,
+    RetroAccent retroAccent = RetroAccent.cyan,
     MarioThemeAssets marioAssets = const MarioThemeAssets(),
   }) => RetroTheme(
     isDark,
     design: design,
+    retroAccent: retroAccent,
     marioAssets: marioAssets,
   ).toMaterialTheme();
 
@@ -569,6 +579,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   RetroTheme copyWith({
     bool? isDark,
     AppThemeDesign? design,
+    RetroAccent? retroAccent,
     MarioThemeAssets? marioAssets,
     Color? backgroundOverride,
     Color? surfaceOverride,
@@ -578,6 +589,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   }) => RetroTheme(
     isDark ?? this.isDark,
     design: design ?? this.design,
+    retroAccent: retroAccent ?? this.retroAccent,
     marioAssets: marioAssets ?? this.marioAssets,
     backgroundOverride: backgroundOverride ?? _backgroundOverride,
     surfaceOverride: surfaceOverride ?? _surfaceOverride,

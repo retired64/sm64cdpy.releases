@@ -587,3 +587,12 @@ Fuente canónica: `release-manifests/v1.8.5.json`. Puerta completa:
 
 Detalle y límites: [PERFORMANCE_MINIMAL_1.8.6.md](PERFORMANCE_MINIMAL_1.8.6.md).
 Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
+
+## Retro Manga: selector de acento
+
+- [x] Rama independiente desde main; IDs persistentes y cian compatible.
+- [x] Selector de Ajustes, nombres en cinco ARB y roles claro/oscuro.
+- [x] Otros diseños y overlay conservan sus colores.
+- [x] Pruebas de contraste y persistencia preparadas.
+- [ ] Ejecutar gen-l10n, dart format, análisis y pruebas Flutter en CI.
+- [ ] Revisar físicamente navegación, reapertura y texto ampliado.

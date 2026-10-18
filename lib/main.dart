@@ -1,3 +1,4 @@
+import 'presentation/providers/retro_accent_provider.dart';
 import 'presentation/providers/game_folder_provider.dart';
 import 'dart:async';
 
@@ -125,6 +126,7 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final design = ref.watch(themeDesignProvider);
+    final retroAccent = ref.watch(retroAccentProvider);
     final marioAssets = ref.watch(marioThemeAssetsProvider).assets;
     final localeTag = ref.watch(localeNotifierProvider);
     final locale = localeTag != null
@@ -140,11 +142,13 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
       theme: RetroTheme.materialTheme(
         false,
         design: design,
+        retroAccent: retroAccent,
         marioAssets: marioAssets,
       ),
       darkTheme: RetroTheme.materialTheme(
         true,
         design: design,
+        retroAccent: retroAccent,
         marioAssets: marioAssets,
       ),
       themeMode: themeMode,
