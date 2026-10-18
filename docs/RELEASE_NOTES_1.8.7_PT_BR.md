@@ -25,3 +25,5 @@ A versão 1.8.7 adiciona os visuais Minish Cap e Mario Kart 64 e permite persona
 - Cada gravação verificada cria antes um backup local completo e rejeita alterações baseadas em um arquivo desatualizado. Restaurar substitui os quatro slots. Feche o jogo antes de aplicar alterações.
 
 - GameTool reúne Biblioteca, Jogador e Save File. Toque em uma partida para editar seu progresso; completar 120 estrelas é uma ação explícita, e as cópias secundárias ficam como opção avançada explicada.
+
+- O menu lateral reúne as categorias exclusivas em um submenu, coloca Popular acima de GameTool e simplifica os nomes Mods e Omm Pack.

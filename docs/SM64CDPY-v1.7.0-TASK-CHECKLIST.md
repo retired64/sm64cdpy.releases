@@ -627,3 +627,5 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Tap a slot card to edit it; identify its copy and live draft star count.
 - [x] Move secondary copies to explained advanced controls and label the 120-star preset as an action.
 - [ ] Check card taps, draft cancellation and explicit Apply in light/dark on device.
+
+- [x] Group Exclusive categories in a themed drawer submenu and place Popular above GameTool; preserve existing routes and localized category labels.

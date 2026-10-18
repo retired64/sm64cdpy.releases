@@ -97,6 +97,14 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   route: '/favourites',
                   isActive: currentRoute == '/favourites',
                 ),
+                _NavItem(
+                  retroIconAsset: 'popular',
+                  iconBuilder: (color) =>
+                      MarioGameIcon(Icons.trending_up, size: 19, color: color),
+                  label: l10n.navPopular,
+                  route: '/popular',
+                  isActive: currentRoute == '/popular',
+                ),
                 ExpansionTile(
                   key: const PageStorageKey('game-tool-drawer'),
                   initiallyExpanded:
@@ -145,84 +153,83 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                     ),
                   ],
                 ),
-                _NavItem(
-                  retroIconAsset: 'popular',
-                  iconBuilder: (color) =>
-                      MarioGameIcon(Icons.trending_up, size: 19, color: color),
-                  label: l10n.navPopular,
-                  route: '/popular',
-                  isActive: currentRoute == '/popular',
-                ),
+
 
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
                   child: _RetroDivider(retro: retro),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 6),
-                  child: SectionKicker(
-                    retro: retro,
-                    label: l10n.sectionExclusive,
-                  ),
-                ),
-                _NavItem(
-                  retroIconAsset: 'render96',
-                  iconBuilder: (color) => MarioGameIcon(
+                ExpansionTile(
+                  key: const PageStorageKey('exclusive-drawer'),
+                  initiallyExpanded: const [
+                    '/render96', '/vip', '/dynos', '/touch-controls', '/omm-rebirth',
+                  ].contains(currentRoute),
+                  leading: MarioGameIcon(
                     Icons.auto_awesome_outlined,
-                    size: 19,
-                    color: color,
+                    color: retro.accentText,
                   ),
-                  label: l10n.navRender96,
-                  route: '/render96',
-                  isActive: currentRoute == '/render96',
-                  accentColor: retro.amber,
-                ),
-                _NavItem(
-                  retroIconAsset: 'vip',
-                  iconBuilder: (color) => MarioGameIcon(
-                    Icons.workspace_premium_outlined,
-                    size: 19,
-                    color: color,
-                  ),
-                  label: l10n.navVIPMods,
-                  route: '/vip',
-                  isActive: currentRoute == '/vip',
-                  accentColor: retro.amber,
-                ),
-                _NavItem(
-                  retroIconAsset: 'dynos',
-                  iconBuilder: (color) => MarioGameIcon(
-                    Icons.extension_outlined,
-                    size: 19,
-                    color: color,
-                  ),
-                  label: l10n.navDynOS,
-                  route: '/dynos',
-                  isActive: currentRoute == '/dynos',
-                  accentColor: retro.blue,
-                ),
-                _NavItem(
-                  retroIconAsset: 'controls',
-                  iconBuilder: (color) => MarioGameIcon(
-                    Icons.gamepad_outlined,
-                    size: 19,
-                    color: color,
-                  ),
-                  label: l10n.navTouchControls,
-                  route: '/touch-controls',
-                  isActive: currentRoute == '/touch-controls',
-                ),
-                _NavItem(
-                  retroIconAsset: 'omm',
-                  iconBuilder: (color) => MarioGameIcon(
-                    Icons.sports_esports_outlined,
-                    size: 19,
-                    color: color,
-                  ),
-                  label: l10n.navOmmRebirth,
-                  route: '/omm-rebirth',
-                  isActive: currentRoute == '/omm-rebirth',
-                  accentColor: retro.red,
+                  title: Text(l10n.sectionExclusive, style: retro.heading(size: 15)),
+                  children: [
+                    _NavItem(
+                      retroIconAsset: 'render96',
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.auto_awesome_outlined,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navRender96,
+                      route: '/render96',
+                      isActive: currentRoute == '/render96',
+                      accentColor: retro.amber,
+                    ),
+                    _NavItem(
+                      retroIconAsset: 'vip',
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.workspace_premium_outlined,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navVIPMods,
+                      route: '/vip',
+                      isActive: currentRoute == '/vip',
+                      accentColor: retro.amber,
+                    ),
+                    _NavItem(
+                      retroIconAsset: 'dynos',
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.extension_outlined,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navDynOS,
+                      route: '/dynos',
+                      isActive: currentRoute == '/dynos',
+                      accentColor: retro.blue,
+                    ),
+                    _NavItem(
+                      retroIconAsset: 'controls',
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.gamepad_outlined,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navTouchControls,
+                      route: '/touch-controls',
+                      isActive: currentRoute == '/touch-controls',
+                    ),
+                    _NavItem(
+                      retroIconAsset: 'omm',
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.sports_esports_outlined,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navOmmRebirth,
+                      route: '/omm-rebirth',
+                      isActive: currentRoute == '/omm-rebirth',
+                      accentColor: retro.red,
+                    ),
+                  ],
                 ),
 
                 // Footer

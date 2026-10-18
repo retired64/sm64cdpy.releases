@@ -282,3 +282,5 @@ validation and physical review pending. See GAME_SAVE_FILE.md.
 Save File menu polish: Library and Player now share the GameTool submenu.
 Tappable slot cards lead to a draft with its own star total; 120-star completion
 is an explicit action. Secondary internal copies are an explained advanced option.
+
+Drawer navigation: Popular precedes GameTool. Exclusive is a collapsible submenu containing Render96, Mods (existing VIP route), DynOS, Touch Controls and Omm Pack; route identities remain unchanged.

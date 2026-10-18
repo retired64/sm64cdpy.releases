@@ -20,7 +20,7 @@
   "@navPopular": {
     "description": "Drawer navigation label for the popular screen"
   },
-  "navVIPMods": "VIP Mods",
+  "navVIPMods": "Mods",
   "@navVIPMods": {
     "description": "Drawer navigation label for the VIP mods screen"
   },
@@ -32,7 +32,7 @@
   "@navTouchControls": {
     "description": "Drawer navigation label for the touch controls screen"
   },
-  "navOmmRebirth": "OMMR PACK",
+  "navOmmRebirth": "Omm Pack",
   "@navOmmRebirth": {
     "description": "Drawer navigation label for the OMM Rebirth screen"
   },
@@ -49,7 +49,7 @@
     "description": "Drawer navigation label for the settings screen"
   },
 
-  "sectionExclusive": "EXCLUSIVE",
+  "sectionExclusive": "Exclusive",
   "sectionNavigation": "NAVIGATION",
   "@sectionNavigation": {
     "description": "Section header for the primary navigation items in the drawer"

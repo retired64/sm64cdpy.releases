@@ -25,3 +25,5 @@ Version 1.8.7 adds Minish Cap and Mario Kart 64 interface designs and lets you p
 - Verified writes create a full local backup first and reject changes based on an outdated file. Restoring a backup replaces all four slots. Close the game before applying changes.
 
 - GameTool groups Library, Player and Save File. Tap a file card to edit its own progress; 120-star completion is an explicit action, and secondary copies are an explained advanced option.
+
+- The drawer groups exclusive categories in one expandable menu, places Popular above GameTool and simplifies the Mods and Omm Pack labels.
