@@ -51,7 +51,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get sectionNavigation => 'NAVEGAÇÃO';
 
   @override
-  String get sectionExplore => 'EXPLORAR';
+  String get sectionExplore => 'Explorar';
 
   @override
   String get sectionCategories => 'CATEGORIAS';
@@ -2059,6 +2059,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get saveFileDraft => 'Prévia · salva somente ao aplicar';
+
+  @override
+  String get drawerResources => 'Recursos';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2108,7 +2111,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get sectionNavigation => 'NAVEGAÇÃO';
 
   @override
-  String get sectionExplore => 'EXPLORAR';
+  String get sectionExplore => 'Explorar';
 
   @override
   String get sectionCategories => 'CATEGORIAS';
@@ -4116,4 +4119,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get saveFileDraft => 'Prévia · salva somente ao aplicar';
+
+  @override
+  String get drawerResources => 'Recursos';
 }

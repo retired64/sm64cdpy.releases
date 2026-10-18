@@ -51,7 +51,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sectionNavigation => 'NAVEGACIÓN';
 
   @override
-  String get sectionExplore => 'EXPLORAR';
+  String get sectionExplore => 'Explorar';
 
   @override
   String get sectionCategories => 'CATEGORÍAS';
@@ -2069,6 +2069,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get saveFileDraft => 'Vista previa · se guarda al aplicar';
+
+  @override
+  String get drawerResources => 'Recursos';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2118,7 +2121,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get sectionNavigation => 'NAVEGACIÓN';
 
   @override
-  String get sectionExplore => 'EXPLORAR';
+  String get sectionExplore => 'Explorar';
 
   @override
   String get sectionCategories => 'CATEGORÍAS';
@@ -4136,4 +4139,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get saveFileDraft => 'Vista previa · se guarda al aplicar';
+
+  @override
+  String get drawerResources => 'Recursos';
 }

@@ -51,7 +51,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionNavigation => 'NAVIGATION';
 
   @override
-  String get sectionExplore => 'EXPLORE';
+  String get sectionExplore => 'Explore';
 
   @override
   String get sectionCategories => 'CATEGORIES';
@@ -2047,4 +2047,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saveFileDraft => 'Preview · saved only after Apply';
+
+  @override
+  String get drawerResources => 'Resources';
 }

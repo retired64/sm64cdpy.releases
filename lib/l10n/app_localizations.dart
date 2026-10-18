@@ -189,7 +189,7 @@ abstract class AppLocalizations {
   /// Section header in the drawer for category browsing
   ///
   /// In en, this message translates to:
-  /// **'EXPLORE'**
+  /// **'Explore'**
   String get sectionExplore;
 
   /// Expandable section header in the drawer for category filters
@@ -3731,6 +3731,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preview · saved only after Apply'**
   String get saveFileDraft;
+
+  /// No description provided for @drawerResources.
+  ///
+  /// In en, this message translates to:
+  /// **'Resources'**
+  String get drawerResources;
 }
 
 class _AppLocalizationsDelegate
