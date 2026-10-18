@@ -106,6 +106,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     final showBackdrop =
         retro.isIntro ||
         retro.showN64Backdrop ||
+        retro.showParchmentBackdrop ||
         (retro.showHalftone &&
             !_noHalftoneRoutes.contains(widget.currentRoute));
 

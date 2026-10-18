@@ -49,6 +49,22 @@ void main() {
     expect(neutral.boxShadow, isNull);
   });
 
+  test('Minish Cap uses the optimized folio rendering contract', () {
+    final design = AppThemeCatalog.resolve(AppThemeId.minishCap);
+    final minish = RetroTheme(false, design: design);
+
+    expect(design.backdropStyle, AppBackdropStyle.parchment);
+    expect(design.surfaceTreatment, AppSurfaceTreatment.folio);
+    expect(design.brandAsset, 'assets/themes/minish/minish.webp');
+    expect(design.halftone, isFalse);
+    expect(design.stripes, isFalse);
+    expect(design.shadowBlur, 0);
+    expect(minish.showParchmentBackdrop, isTrue);
+    expect(minish.usesFolioSurfaces, isTrue);
+    expect(minish.showHalftone, isFalse);
+    expect(minish.showN64Backdrop, isFalse);
+  });
+
   for (final design in AppThemeCatalog.designs) {
     for (final dark in [false, true]) {
       test(

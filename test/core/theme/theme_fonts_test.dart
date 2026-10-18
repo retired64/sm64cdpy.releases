@@ -5,6 +5,24 @@ import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
 
 void main() {
+  test('Minish typography follows booklet heading and body roles', () {
+    final minish = RetroTheme(
+      false,
+      design: AppThemeCatalog.resolve(AppThemeId.minishCap),
+    );
+
+    expect(minish.heading(size: 24).fontFamily, 'MinishFondamento');
+    expect(minish.body(size: 14).fontFamily, 'MinishBarlow');
+    expect(
+      minish.toMaterialTheme().textTheme.bodyMedium!.fontFamily,
+      'MinishBarlow',
+    );
+    expect(
+      minish.toMaterialTheme().textTheme.titleLarge!.fontFamily,
+      'MinishFondamento',
+    );
+  });
+
   for (final dark in [false, true]) {
     test('Mario fonts follow heading/body roles in $dark appearance', () {
       final mario = RetroTheme(

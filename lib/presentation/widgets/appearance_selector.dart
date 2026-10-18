@@ -17,6 +17,7 @@ class AppearanceSelector extends ConsumerWidget {
   String _name(AppLocalizations l10n, AppThemeId id) => switch (id) {
     AppThemeId.minimal => l10n.themeMinimal,
     AppThemeId.retroManga => l10n.themeRetroManga,
+    AppThemeId.minishCap => l10n.themeMinishCap,
     AppThemeId.mario64 => l10n.themeMario64,
     AppThemeId.sm64Intro => l10n.themeSm64Intro,
   };
@@ -139,15 +140,25 @@ class _ThemePreview extends StatelessWidget {
                   shadowDy: 2,
                 ),
                 child: Center(
-                  child: MarioGameIcon(
-                    preview.design.playfulSelection
-                        ? Icons.star_rounded
-                        : Icons.star,
-                    color: preview.design.playfulSelection
-                        ? preview.secondaryAccent
-                        : preview.accentText,
-                    size: 18,
-                  ),
+                  child: preview.design.brandAsset == null
+                      ? MarioGameIcon(
+                          preview.design.playfulSelection
+                              ? Icons.star_rounded
+                              : Icons.star,
+                          color: preview.design.playfulSelection
+                              ? preview.secondaryAccent
+                              : preview.accentText,
+                          size: 18,
+                        )
+                      : Image.asset(
+                          preview.design.brandAsset!,
+                          width: 24,
+                          height: 24,
+                          cacheWidth: 48,
+                          cacheHeight: 48,
+                          filterQuality: FilterQuality.low,
+                          excludeFromSemantics: true,
+                        ),
                 ),
               ),
             ),

@@ -60,9 +60,22 @@ flutter:
     - assets/icons/
     - assets/icons/menu/
     - assets/player3d/
+    - assets/themes/minish/
 
   fonts:
     - family: TypefaceMario64
       fonts:
         - asset: fonts/TypefaceMario64.otf
+          weight: 400
+    - family: MinishBarlow
+      fonts:
+        - asset: fonts/minish/BarlowSemiCondensed-Regular.ttf
+          weight: 400
+        - asset: fonts/minish/BarlowSemiCondensed-SemiBold.ttf
+          weight: 600
+        - asset: fonts/minish/BarlowSemiCondensed-Bold.ttf
+          weight: 700
+    - family: MinishFondamento
+      fonts:
+        - asset: fonts/minish/Fondamento-Regular.ttf
           weight: 400

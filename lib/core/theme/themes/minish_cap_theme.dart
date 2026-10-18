@@ -1,0 +1,57 @@
+import 'package:flutter/material.dart';
+
+import '../app_theme_design.dart';
+
+/// A low-cost interpretation of the Minish instruction-booklet language:
+/// warm paper, forest cloth, brown ink and ochre chapter ribbons.
+const minishCapTheme = AppThemeDesign(
+  id: AppThemeId.minishCap,
+  cornerRadius: 3,
+  borderScale: 0.75,
+  shadowBlur: 0,
+  shadowOffsetScale: 0.75,
+  chipSkew: 0,
+  headingWeight: FontWeight.w400,
+  headingTracking: 0,
+  headingFontFamily: 'MinishFondamento',
+  headingFontFamilyFallback: ['serif'],
+  bodyFontFamily: 'MinishBarlow',
+  halftone: false,
+  stripes: false,
+  uppercaseLabels: false,
+  softSettingsPanels: true,
+  backdropStyle: AppBackdropStyle.parchment,
+  surfaceTreatment: AppSurfaceTreatment.folio,
+  playfulSelection: true,
+  brandAsset: 'assets/themes/minish/minish.webp',
+  light: AppThemePalette(
+    background: Color(0xFFF3E4A1),
+    surface: Color(0xFFFFF4C4),
+    surfaceAlt: Color(0xFFE7D48A),
+    border: Color(0xFF503416),
+    shadow: Color(0xFF243C17),
+    ink: Color(0xFF392B16),
+    inkDim: Color(0xFF68552F),
+    accent: Color(0xFF327637),
+    onAccent: Color(0xFFFFF6D3),
+    accentText: Color(0xFF285E2C),
+    secondaryAccent: Color(0xFFB0781B),
+    surfaceHighlight: Color(0xFFFFF8D2),
+    surfaceShade: Color(0xFF9D7A33),
+  ),
+  dark: AppThemePalette(
+    background: Color(0xFF182419),
+    surface: Color(0xFF233324),
+    surfaceAlt: Color(0xFF2D422C),
+    border: Color(0xFF91A65C),
+    shadow: Color(0xFF0E1C11),
+    ink: Color(0xFFFFF6D3),
+    inkDim: Color(0xFFD9CDA5),
+    accent: Color(0xFFC3D876),
+    onAccent: Color(0xFF172218),
+    accentText: Color(0xFFD3E58B),
+    secondaryAccent: Color(0xFFE1B758),
+    surfaceHighlight: Color(0xFF52683D),
+    surfaceShade: Color(0xFF101A11),
+  ),
+);

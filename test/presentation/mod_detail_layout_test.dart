@@ -35,6 +35,7 @@ const mod = ModEntity(
 void main() {
   for (final id in [
     AppThemeId.retroManga,
+    AppThemeId.minishCap,
     AppThemeId.mario64,
     AppThemeId.sm64Intro,
   ]) {

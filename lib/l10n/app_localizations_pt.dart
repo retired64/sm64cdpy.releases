@@ -1484,6 +1484,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get themeRetroManga => 'Retro Manga';
 
   @override
+  String get themeMinishCap => 'The Minish Cap';
+
+  @override
   String get themeMario64 => 'Mario 64';
 
   @override
@@ -3392,6 +3395,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get themeRetroManga => 'Retro Manga';
+
+  @override
+  String get themeMinishCap => 'The Minish Cap';
 
   @override
   String get themeMario64 => 'Mario 64';
