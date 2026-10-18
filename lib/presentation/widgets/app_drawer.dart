@@ -58,9 +58,14 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 _RetroDivider(retro: retro),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
-                  child: SectionKicker(
-                    retro: retro,
-                    label: l10n.sectionNavigation,
+                  child: Text(
+                    l10n.sectionNavigation,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: retro.body(size: 11, color: retro.inkDim).copyWith(
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.6,
+                    ),
                   ),
                 ),
 
@@ -68,9 +73,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   retroIconAsset: 'm64',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.home_outlined,
-                    size: 19,
+                    size: 22,
                     color: color,
                   ),
+                  isTopLevel: true,
                   label: l10n.navHome,
                   route: '/',
                   isActive: currentRoute == '/',
@@ -175,7 +181,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 _DrawerGroup(
                   key: const PageStorageKey('exclusive-drawer'),
                   title: l10n.sectionExclusive,
-                  icon: Icons.auto_awesome_outlined,
+                  icon: Icons.collections_bookmark_outlined,
                   activeRoute:
                       const [
                         '/render96',
@@ -188,9 +194,8 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                       : null,
                   children: [
                     _NavItem(
-                      retroIconAsset: 'render96',
                       iconBuilder: (color) => MarioGameIcon(
-                        Icons.auto_awesome_outlined,
+                        Icons.view_in_ar_outlined,
                         size: 19,
                         color: color,
                       ),
@@ -289,9 +294,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   retroIconAsset: 'settings',
                   iconBuilder: (color) => MarioGameIcon(
                     Icons.settings_outlined,
-                    size: 19,
+                    size: 22,
                     color: color,
                   ),
+                  isTopLevel: true,
                   label: l10n.navSettings,
                   route: '/settings',
                   isActive: currentRoute == '/settings',
@@ -505,6 +511,7 @@ class _NavItem extends StatelessWidget {
     required this.isActive,
     this.accentColor,
     this.retroIconAsset,
+    this.isTopLevel = false,
   });
 
   final Widget Function(Color color) iconBuilder;
@@ -513,6 +520,7 @@ class _NavItem extends StatelessWidget {
   final bool isActive;
   final Color? accentColor;
   final String? retroIconAsset;
+  final bool isTopLevel;
 
   @override
   Widget build(BuildContext context) {
@@ -531,9 +539,9 @@ class _NavItem extends StatelessWidget {
             ? () => Navigator.of(context).pop()
             : () => _navigateTo(context, route),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 48),
-          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          constraints: BoxConstraints(minHeight: isTopLevel ? 52 : 48),
+          margin: EdgeInsets.symmetric(horizontal: 10, vertical: isTopLevel ? 2 : 1),
+          padding: EdgeInsets.symmetric(horizontal: 14, vertical: isTopLevel ? 12 : 0),
           decoration: BoxDecoration(
             border: minimal && isActive
                 ? Border(left: BorderSide(color: accent, width: 2))
@@ -566,11 +574,11 @@ class _NavItem extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
-                    color: fg,
-                    fontSize: 14,
-                    fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                  ),
+                  style: isTopLevel
+                      ? retro.heading(size: 15, color: fg)
+                      : retro.body(size: 14, color: fg).copyWith(
+                          fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                        ),
                 ),
               ),
             ],
