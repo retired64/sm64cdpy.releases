@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../providers/game_save_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/settings_expansion_group.dart';
 
 const _courses = [
   'BOB',
