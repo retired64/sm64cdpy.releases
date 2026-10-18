@@ -63,3 +63,9 @@ copies; both modes of all six themes; text scale; cancel draft/confirmation;
 refresh/resume; concurrent folder change; verified backup/restore; failed write.
 Compatibility is limited to original SM64 course semantics; a 512-byte ROM-hack
 save is not proof that its levels or progress match the original game.
+
+Menu regression checks passed in Testing run 39172228152: Flutter analysis and
+the Flutter suite, including opening slot B independently from a completed A,
+previewing 120 stars and cancelling without changing confirmed progress across
+all six designs. Generated localization and Dart formatting are synced from the
+runner. Device checks and light/dark visual review remain necessary.

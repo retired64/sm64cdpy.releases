@@ -1957,7 +1957,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get saveFileTitle => 'Save File';
 
   @override
-  String get saveFileHint => 'Jogo original · 120 estrelas';
+  String get saveFileHint => 'Escolha uma partida · jogo original';
 
   @override
   String get saveFileConfirm =>
@@ -1978,7 +1978,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get saveFilePrimary => 'Principal';
 
   @override
-  String get saveFileAlternate => 'Alternativa';
+  String get saveFileAlternate => 'Secundária';
 
   @override
   String get saveFileEmpty => 'Vazia';
@@ -2035,7 +2035,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get saveFileMoat => 'Esvaziar fosso';
 
   @override
-  String get saveFileComplete => '120 estrelas';
+  String get saveFileComplete => 'Completar progresso: 120 estrelas';
 
   @override
   String get saveFileClearStars => 'Remover estrelas';
@@ -2043,6 +2043,22 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get saveFileCourseNames =>
       'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+
+  @override
+  String get saveFileCopies => 'Cópias internas';
+
+  @override
+  String get saveFileCopiesHint =>
+      'O arquivo guarda duas cópias de cada partida. Edite a principal normalmente; a secundária é uma opção avançada, não um backup por data.';
+
+  @override
+  String get saveFileOpenSlot => 'Toque para editar';
+
+  @override
+  String get saveFileActions => 'Ações da partida';
+
+  @override
+  String get saveFileDraft => 'Prévia · salva somente ao aplicar';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3998,7 +4014,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get saveFileTitle => 'Save File';
 
   @override
-  String get saveFileHint => 'Jogo original · 120 estrelas';
+  String get saveFileHint => 'Escolha uma partida · jogo original';
 
   @override
   String get saveFileConfirm =>
@@ -4019,7 +4035,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get saveFilePrimary => 'Principal';
 
   @override
-  String get saveFileAlternate => 'Alternativa';
+  String get saveFileAlternate => 'Secundária';
 
   @override
   String get saveFileEmpty => 'Vazia';
@@ -4076,7 +4092,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get saveFileMoat => 'Esvaziar fosso';
 
   @override
-  String get saveFileComplete => '120 estrelas';
+  String get saveFileComplete => 'Completar progresso: 120 estrelas';
 
   @override
   String get saveFileClearStars => 'Remover estrelas';
@@ -4084,4 +4100,20 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get saveFileCourseNames =>
       'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+
+  @override
+  String get saveFileCopies => 'Cópias internas';
+
+  @override
+  String get saveFileCopiesHint =>
+      'O arquivo guarda duas cópias de cada partida. Edite a principal normalmente; a secundária é uma opção avançada, não um backup por data.';
+
+  @override
+  String get saveFileOpenSlot => 'Toque para editar';
+
+  @override
+  String get saveFileActions => 'Ações da partida';
+
+  @override
+  String get saveFileDraft => 'Prévia · salva somente ao aplicar';
 }

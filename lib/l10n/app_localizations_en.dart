@@ -1945,7 +1945,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveFileTitle => 'Save File';
 
   @override
-  String get saveFileHint => 'Original game · 120 stars';
+  String get saveFileHint => 'Choose a file · original game';
 
   @override
   String get saveFileConfirm =>
@@ -1963,10 +1963,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not verify or save the file. Refresh and try again; recovery copies are kept in Backups.';
 
   @override
-  String get saveFilePrimary => 'Main';
+  String get saveFilePrimary => 'Main copy';
 
   @override
-  String get saveFileAlternate => 'Alternate';
+  String get saveFileAlternate => 'Secondary copy';
 
   @override
   String get saveFileEmpty => 'Empty';
@@ -2023,7 +2023,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveFileMoat => 'Drain moat';
 
   @override
-  String get saveFileComplete => '120 stars';
+  String get saveFileComplete => 'Complete progress: 120 stars';
 
   @override
   String get saveFileClearStars => 'Clear stars';
@@ -2031,4 +2031,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get saveFileCourseNames =>
       'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+
+  @override
+  String get saveFileCopies => 'Internal copies';
+
+  @override
+  String get saveFileCopiesHint =>
+      'The file stores two copies of each slot. Use the main copy for normal editing; the secondary copy is an advanced option, not a dated backup.';
+
+  @override
+  String get saveFileOpenSlot => 'Tap to edit';
+
+  @override
+  String get saveFileActions => 'Slot actions';
+
+  @override
+  String get saveFileDraft => 'Preview · saved only after Apply';
 }

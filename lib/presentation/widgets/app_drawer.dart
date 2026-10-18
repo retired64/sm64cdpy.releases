@@ -99,8 +99,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 ),
                 ExpansionTile(
                   key: const PageStorageKey('game-tool-drawer'),
-                  initiallyExpanded: currentRoute.startsWith('/game-tool/') ||
-                      currentRoute == '/library' || currentRoute == '/player',
+                  initiallyExpanded:
+                      currentRoute.startsWith('/game-tool/') ||
+                      currentRoute == '/library' ||
+                      currentRoute == '/player',
                   leading: MarioGameIcon(
                     Icons.sports_esports_outlined,
                     color: retro.accentText,
@@ -110,26 +112,26 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                     style: retro.heading(size: 15),
                   ),
                   children: [
-                _NavItem(
-                  iconBuilder: (color) => MarioGameIcon(
-                    Icons.inventory_2_outlined,
-                    size: 19,
-                    color: color,
-                  ),
-                  label: l10n.navLibrary,
-                  route: '/library',
-                  isActive: currentRoute == '/library',
-                ),
-                _NavItem(
-                  iconBuilder: (color) => MarioGameIcon(
-                    Icons.person_outline_rounded,
-                    size: 19,
-                    color: color,
-                  ),
-                  label: l10n.navPlayer,
-                  route: '/player',
-                  isActive: currentRoute == '/player',
-                ),
+                    _NavItem(
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.inventory_2_outlined,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navLibrary,
+                      route: '/library',
+                      isActive: currentRoute == '/library',
+                    ),
+                    _NavItem(
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.person_outline_rounded,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navPlayer,
+                      route: '/player',
+                      isActive: currentRoute == '/player',
+                    ),
 
                     _NavItem(
                       iconBuilder: (color) => MarioGameIcon(

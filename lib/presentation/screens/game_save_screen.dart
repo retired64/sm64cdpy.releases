@@ -124,7 +124,8 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
     final l = AppLocalizations.of(context);
     final title = switch (action['action']) {
       'erase' => '${l.playerDelete} · ${'ABCD'[action['slot'] as int]}',
-      'copy' => '${l.saveFileCopy} · ${'ABCD'[action['slot'] as int]} → ${'ABCD'[action['destination'] as int]}',
+      'copy' =>
+        '${l.saveFileCopy} · ${'ABCD'[action['slot'] as int]} → ${'ABCD'[action['destination'] as int]}',
       'restore' => l.playerRestore,
       _ => l.playerApply,
     };
@@ -156,18 +157,24 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
       AppSnackbar.success(context, message: l.saveFileDone);
     } else {
       final error = ref.read(gameSaveProvider).error;
-      AppSnackbar.error(context, message: switch (error) {
-        'conflict' => l.playerConflict,
-        'installing' => l.gameModsInstalling,
-        _ => l.saveFileError,
-      });
+      AppSnackbar.error(
+        context,
+        message: switch (error) {
+          'conflict' => l.playerConflict,
+          'installing' => l.gameModsInstalling,
+          _ => l.saveFileError,
+        },
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(gameSaveProvider);
-    if (state.data == null && !state.busy && state.error == null && !_loadScheduled) {
+    if (state.data == null &&
+        !state.busy &&
+        state.error == null &&
+        !_loadScheduled) {
       _loadScheduled = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _loadScheduled = false;
@@ -244,12 +251,19 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                       const SizedBox(height: 12),
                       SegmentedButton<int>(
                         segments: [
-                          ButtonSegment(value: 0, label: Text(l.saveFilePrimary)),
-                          ButtonSegment(value: 1, label: Text(l.saveFileAlternate)),
+                          ButtonSegment(
+                            value: 0,
+                            label: Text(l.saveFilePrimary),
+                          ),
+                          ButtonSegment(
+                            value: 1,
+                            label: Text(l.saveFileAlternate),
+                          ),
                         ],
                         selected: {_bank},
-                        onSelectionChanged: state.busy ? null :
-                          (v) => setState(() => _bank = v.first),
+                        onSelectionChanged: state.busy
+                            ? null
+                            : (v) => setState(() => _bank = v.first),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -264,7 +278,9 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                         type: MaterialType.transparency,
                         child: InkWell(
                           borderRadius: retro.radius,
-                          onTap: state.busy ? null : () => _openSlot(slot, state.data),
+                          onTap: state.busy
+                              ? null
+                              : () => _openSlot(slot, state.data),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -281,20 +297,34 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                         borderRadius: retro.radius,
                                         border: Border.all(color: retro.border),
                                       ),
-                                      child: Text('ABCD'[slot['slot'] as int],
-                                        style: retro.heading(size: 30, color: retro.accentText)),
+                                      child: Text(
+                                        'ABCD'[slot['slot'] as int],
+                                        style: retro.heading(
+                                          size: 30,
+                                          color: retro.accentText,
+                                        ),
+                                      ),
                                     ),
                                     const SizedBox(width: 16),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Text(slot['empty'] == true ? l.saveFileEmpty :
-                                            '★ ${slot['total']} / 120',
-                                            style: retro.heading(size: 20)),
+                                          Text(
+                                            slot['empty'] == true
+                                                ? l.saveFileEmpty
+                                                : '★ ${slot['total']} / 120',
+                                            style: retro.heading(size: 20),
+                                          ),
                                           const SizedBox(height: 4),
-                                          Text(l.saveFileOpenSlot,
-                                            style: retro.body(size: 14, color: retro.inkDim)),
+                                          Text(
+                                            l.saveFileOpenSlot,
+                                            style: retro.body(
+                                              size: 14,
+                                              color: retro.inkDim,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -304,21 +334,31 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                       tooltip: l.saveFileActions,
                                       itemBuilder: (_) => [
                                         for (var i = 0; i < 4; i++)
-                                          if (i != slot['slot']) PopupMenuItem(
-                                            value: i,
-                                            child: Text('${l.saveFileCopy} ${'ABCD'[slot['slot'] as int]} → ${'ABCD'[i]}'),
-                                          ),
+                                          if (i != slot['slot'])
+                                            PopupMenuItem(
+                                              value: i,
+                                              child: Text(
+                                                '${l.saveFileCopy} ${'ABCD'[slot['slot'] as int]} → ${'ABCD'[i]}',
+                                              ),
+                                            ),
                                         const PopupMenuDivider(),
-                                        PopupMenuItem(value: 4,
-                                          child: Text('${l.playerDelete} · ${'ABCD'[slot['slot'] as int]}',
-                                            style: TextStyle(color: retro.red))),
+                                        PopupMenuItem(
+                                          value: 4,
+                                          child: Text(
+                                            '${l.playerDelete} · ${'ABCD'[slot['slot'] as int]}',
+                                            style: TextStyle(color: retro.red),
+                                          ),
+                                        ),
                                       ],
                                       onSelected: (destination) => _change({
                                         'revision': state.data?['revision'],
                                         'identity': state.data?['identity'],
-                                        'action': destination == 4 ? 'erase' : 'copy',
+                                        'action': destination == 4
+                                            ? 'erase'
+                                            : 'copy',
                                         'slot': slot['slot'],
-                                        if (destination != 4) 'destination': destination,
+                                        if (destination != 4)
+                                          'destination': destination,
                                       }),
                                     ),
                                   ],
@@ -328,12 +368,22 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                   borderRadius: BorderRadius.circular(8),
                                   child: LinearProgressIndicator(
                                     minHeight: 6,
-                                    value: ((slot['total'] as num).toDouble() / 120).clamp(0, 1),
+                                    value:
+                                        ((slot['total'] as num).toDouble() /
+                                                120)
+                                            .clamp(0, 1),
                                   ),
                                 ),
-                                if (slot['valid'] != true && slot['empty'] != true) ...[
+                                if (slot['valid'] != true &&
+                                    slot['empty'] != true) ...[
                                   const SizedBox(height: 8),
-                                  Text(l.saveFileUnsigned, style: retro.body(size: 13, color: retro.red)),
+                                  Text(
+                                    l.saveFileUnsigned,
+                                    style: retro.body(
+                                      size: 13,
+                                      color: retro.red,
+                                    ),
+                                  ),
                                 ],
                               ],
                             ),
@@ -417,10 +467,17 @@ class _SaveEditorState extends State<_SaveEditor> {
   );
   late int castle = (widget.slot['flags'] as int) >> 24 & 31;
   late int unlocks = (widget.slot['flags'] as int) & 0x10ffff;
-  int get total => stars.asMap().entries.fold<int>(0,
-    (sum, entry) => sum + (entry.value & ((1 << _maxStars[entry.key]) - 1))
-      .toRadixString(2).replaceAll('0', '').length) +
-    castle.toRadixString(2).replaceAll('0', '').length;
+  int get total =>
+      stars.asMap().entries.fold<int>(
+        0,
+        (sum, entry) =>
+            sum +
+            (entry.value & ((1 << _maxStars[entry.key]) - 1))
+                .toRadixString(2)
+                .replaceAll('0', '')
+                .length,
+      ) +
+      castle.toRadixString(2).replaceAll('0', '').length;
 
   @override
   Widget build(BuildContext context) {
@@ -459,8 +516,17 @@ class _SaveEditorState extends State<_SaveEditor> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('★ $total / 120', style: retro.heading(size: 24, color: retro.accentText)),
-                        Text(l.saveFileDraft, style: retro.body(size: 13, color: retro.inkDim)),
+                        Text(
+                          '★ $total / 120',
+                          style: retro.heading(
+                            size: 24,
+                            color: retro.accentText,
+                          ),
+                        ),
+                        Text(
+                          l.saveFileDraft,
+                          style: retro.body(size: 13, color: retro.inkDim),
+                        ),
                       ],
                     ),
                   ),
@@ -468,7 +534,10 @@ class _SaveEditorState extends State<_SaveEditor> {
                     tooltip: l.saveFileActions,
                     itemBuilder: (_) => [
                       PopupMenuItem(value: 0, child: Text(l.saveFileComplete)),
-                      PopupMenuItem(value: 1, child: Text(l.saveFileClearStars)),
+                      PopupMenuItem(
+                        value: 1,
+                        child: Text(l.saveFileClearStars),
+                      ),
                     ],
                     onSelected: (action) => setState(() {
                       if (action == 0) {
@@ -482,7 +551,9 @@ class _SaveEditorState extends State<_SaveEditor> {
                         castle = 31;
                         unlocks = 0x10ffff;
                       } else {
-                        for (var i = 0; i < 25; i++) { stars[i] = 0; }
+                        for (var i = 0; i < 25; i++) {
+                          stars[i] = 0;
+                        }
                         castle = 0;
                       }
                     }),
@@ -499,12 +570,17 @@ class _SaveEditorState extends State<_SaveEditor> {
                   ExpansionTile(
                     collapsedBackgroundColor: retro.surfaceAlt,
                     backgroundColor: retro.surface,
-                    collapsedShape: RoundedRectangleBorder(borderRadius: retro.radius),
+                    collapsedShape: RoundedRectangleBorder(
+                      borderRadius: retro.radius,
+                    ),
                     shape: RoundedRectangleBorder(borderRadius: retro.radius),
                     leading: CircleAvatar(
                       radius: 16,
                       backgroundColor: retro.surface,
-                      child: Text('${i + 1}', style: retro.body(size: 13, color: retro.accentText)),
+                      child: Text(
+                        '${i + 1}',
+                        style: retro.body(size: 13, color: retro.accentText),
+                      ),
                     ),
                     title: Text(
                       l.saveFileCourseNames.split('|')[i],
@@ -522,11 +598,13 @@ class _SaveEditorState extends State<_SaveEditor> {
                             FilterChip(
                               label: Text('${n + 1} ★'),
                               selected: stars[i] & (1 << n) != 0,
-                              onSelected: (_) =>
-                                  setState(() {
-                                    stars[i] ^= 1 << n;
-                                    if (i < 15 && stars[i] & 64 != 0 && coins[i] < 100) coins[i] = 100;
-                                  }),
+                              onSelected: (_) => setState(() {
+                                stars[i] ^= 1 << n;
+                                if (i < 15 &&
+                                    stars[i] & 64 != 0 &&
+                                    coins[i] < 100)
+                                  coins[i] = 100;
+                              }),
                             ),
                         ],
                       ),
@@ -545,8 +623,11 @@ class _SaveEditorState extends State<_SaveEditor> {
                                 min: 0,
                                 max: 255,
                                 divisions: 255,
-                                onChanged: (v) =>
-                                    setState(() => coins[i] = stars[i] & 64 != 0 && v < 100 ? 100 : v.round()),
+                                onChanged: (v) => setState(
+                                  () => coins[i] = stars[i] & 64 != 0 && v < 100
+                                      ? 100
+                                      : v.round(),
+                                ),
                               ),
                             ),
                           ],

@@ -3537,7 +3537,7 @@ abstract class AppLocalizations {
   /// No description provided for @saveFileHint.
   ///
   /// In en, this message translates to:
-  /// **'Original game · 120 stars'**
+  /// **'Choose a file · original game'**
   String get saveFileHint;
 
   /// No description provided for @saveFileConfirm.
@@ -3567,13 +3567,13 @@ abstract class AppLocalizations {
   /// No description provided for @saveFilePrimary.
   ///
   /// In en, this message translates to:
-  /// **'Main'**
+  /// **'Main copy'**
   String get saveFilePrimary;
 
   /// No description provided for @saveFileAlternate.
   ///
   /// In en, this message translates to:
-  /// **'Alternate'**
+  /// **'Secondary copy'**
   String get saveFileAlternate;
 
   /// No description provided for @saveFileEmpty.
@@ -3687,7 +3687,7 @@ abstract class AppLocalizations {
   /// No description provided for @saveFileComplete.
   ///
   /// In en, this message translates to:
-  /// **'120 stars'**
+  /// **'Complete progress: 120 stars'**
   String get saveFileComplete;
 
   /// No description provided for @saveFileClearStars.
@@ -3701,6 +3701,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium'**
   String get saveFileCourseNames;
+
+  /// No description provided for @saveFileCopies.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal copies'**
+  String get saveFileCopies;
+
+  /// No description provided for @saveFileCopiesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The file stores two copies of each slot. Use the main copy for normal editing; the secondary copy is an advanced option, not a dated backup.'**
+  String get saveFileCopiesHint;
+
+  /// No description provided for @saveFileOpenSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to edit'**
+  String get saveFileOpenSlot;
+
+  /// No description provided for @saveFileActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot actions'**
+  String get saveFileActions;
+
+  /// No description provided for @saveFileDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview · saved only after Apply'**
+  String get saveFileDraft;
 }
 
 class _AppLocalizationsDelegate

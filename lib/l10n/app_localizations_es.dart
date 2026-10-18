@@ -1967,7 +1967,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get saveFileTitle => 'Save File';
 
   @override
-  String get saveFileHint => 'Juego original · 120 estrellas';
+  String get saveFileHint => 'Elige una partida · juego original';
 
   @override
   String get saveFileConfirm =>
@@ -1988,7 +1988,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get saveFilePrimary => 'Principal';
 
   @override
-  String get saveFileAlternate => 'Alternativa';
+  String get saveFileAlternate => 'Secundaria';
 
   @override
   String get saveFileEmpty => 'Vacía';
@@ -2045,7 +2045,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get saveFileMoat => 'Vaciar foso';
 
   @override
-  String get saveFileComplete => '120 estrellas';
+  String get saveFileComplete => 'Completar progreso: 120 estrellas';
 
   @override
   String get saveFileClearStars => 'Quitar estrellas';
@@ -2053,6 +2053,22 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get saveFileCourseNames =>
       'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+
+  @override
+  String get saveFileCopies => 'Copias internas';
+
+  @override
+  String get saveFileCopiesHint =>
+      'El archivo guarda dos copias de cada partida. Edita la principal normalmente; la secundaria es una opción avanzada, no un respaldo por fecha.';
+
+  @override
+  String get saveFileOpenSlot => 'Toca para editar';
+
+  @override
+  String get saveFileActions => 'Acciones de partida';
+
+  @override
+  String get saveFileDraft => 'Vista previa · se guarda al aplicar';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -4018,7 +4034,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get saveFileTitle => 'Save File';
 
   @override
-  String get saveFileHint => 'Juego original · 120 estrellas';
+  String get saveFileHint => 'Elige una partida · juego original';
 
   @override
   String get saveFileConfirm =>
@@ -4039,7 +4055,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get saveFilePrimary => 'Principal';
 
   @override
-  String get saveFileAlternate => 'Alternativa';
+  String get saveFileAlternate => 'Secundaria';
 
   @override
   String get saveFileEmpty => 'Vacía';
@@ -4096,7 +4112,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get saveFileMoat => 'Vaciar foso';
 
   @override
-  String get saveFileComplete => '120 estrellas';
+  String get saveFileComplete => 'Completar progreso: 120 estrellas';
 
   @override
   String get saveFileClearStars => 'Quitar estrellas';
@@ -4104,4 +4120,20 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get saveFileCourseNames =>
       'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+
+  @override
+  String get saveFileCopies => 'Copias internas';
+
+  @override
+  String get saveFileCopiesHint =>
+      'El archivo guarda dos copias de cada partida. Edita la principal normalmente; la secundaria es una opción avanzada, no un respaldo por fecha.';
+
+  @override
+  String get saveFileOpenSlot => 'Toca para editar';
+
+  @override
+  String get saveFileActions => 'Acciones de partida';
+
+  @override
+  String get saveFileDraft => 'Vista previa · se guarda al aplicar';
 }
