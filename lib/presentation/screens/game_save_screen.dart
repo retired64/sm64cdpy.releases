@@ -73,13 +73,11 @@ class GameSaveScreen extends ConsumerStatefulWidget {
 class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
     with WidgetsBindingObserver {
   int _bank = 0;
+  bool _loadScheduled = false;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) unawaited(ref.read(gameSaveProvider.notifier).run());
-    });
   }
 
   @override
@@ -152,6 +150,17 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(gameSaveProvider);
+    if (state.data == null && !state.busy && state.error == null && !_loadScheduled) {
+      _loadScheduled = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadScheduled = false;
+        if (!mounted) return;
+        final current = ref.read(gameSaveProvider);
+        if (current.data == null && !current.busy && current.error == null) {
+          unawaited(ref.read(gameSaveProvider.notifier).run());
+        }
+      });
+    }
     final retro = RetroTheme.of(context);
     final l = AppLocalizations.of(context);
     final slots = (state.data?['slots'] as List? ?? []).cast<Map>();
