@@ -17,7 +17,7 @@
 
   "sectionExclusive": "Exclusivo",
   "sectionNavigation": "NAVEGAÇÃO",
-  "sectionExplore": "EXPLORAR",
+  "sectionExplore": "Explorar",
   "sectionCategories": "CATEGORIAS",
   "sectionSortBy": "ORDENAR POR",
   "sectionSocialLinks": "REDES SOCIAIS",
@@ -647,5 +647,6 @@
   "saveFileCopiesHint": "O arquivo guarda duas cópias de cada partida. Edite a principal normalmente; a secundária é uma opção avançada, não um backup por data.",
   "saveFileOpenSlot": "Toque para editar",
   "saveFileActions": "Ações da partida",
-  "saveFileDraft": "Prévia · salva somente ao aplicar"
+  "saveFileDraft": "Prévia · salva somente ao aplicar",
+  "drawerResources": "Recursos"
 }

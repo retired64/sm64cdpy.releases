@@ -75,50 +75,49 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   route: '/',
                   isActive: currentRoute == '/',
                 ),
-                _NavItem(
-                  retroIconAsset: 'catalog',
-                  iconBuilder: (color) => MarioGameIcon(
-                    Icons.grid_view_outlined,
-                    size: 19,
-                    color: color,
-                  ),
-                  label: l10n.navCatalog,
-                  route: '/catalogue',
-                  isActive: currentRoute == '/catalogue',
+                _DrawerGroup(
+                  key: const PageStorageKey('explore-drawer'),
+                  title: l10n.sectionExplore,
+                  icon: Icons.explore_outlined,
+                  activeRoute: const ['/catalogue', '/popular', '/favourites'].contains(currentRoute) ? currentRoute : null,
+                  children: [
+                    _NavItem(
+                      retroIconAsset: 'catalog',
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.grid_view_outlined,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navCatalog,
+                      route: '/catalogue',
+                      isActive: currentRoute == '/catalogue',
+                    ),
+                    _NavItem(
+                      retroIconAsset: 'popular',
+                      iconBuilder: (color) =>
+                          MarioGameIcon(Icons.trending_up, size: 19, color: color),
+                      label: l10n.navPopular,
+                      route: '/popular',
+                      isActive: currentRoute == '/popular',
+                    ),
+                    _NavItem(
+                      retroIconAsset: 'favorites',
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.favorite_border,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.navFavourites,
+                      route: '/favourites',
+                      isActive: currentRoute == '/favourites',
+                    ),
+                  ],
                 ),
-                _NavItem(
-                  retroIconAsset: 'favorites',
-                  iconBuilder: (color) => MarioGameIcon(
-                    Icons.favorite_border,
-                    size: 19,
-                    color: color,
-                  ),
-                  label: l10n.navFavourites,
-                  route: '/favourites',
-                  isActive: currentRoute == '/favourites',
-                ),
-                _NavItem(
-                  retroIconAsset: 'popular',
-                  iconBuilder: (color) =>
-                      MarioGameIcon(Icons.trending_up, size: 19, color: color),
-                  label: l10n.navPopular,
-                  route: '/popular',
-                  isActive: currentRoute == '/popular',
-                ),
-                ExpansionTile(
+                _DrawerGroup(
                   key: const PageStorageKey('game-tool-drawer'),
-                  initiallyExpanded:
-                      currentRoute.startsWith('/game-tool/') ||
-                      currentRoute == '/library' ||
-                      currentRoute == '/player',
-                  leading: MarioGameIcon(
-                    Icons.sports_esports_outlined,
-                    color: retro.accentText,
-                  ),
-                  title: Text(
-                    l10n.gameToolTitle,
-                    style: retro.heading(size: 15),
-                  ),
+                  title: l10n.gameToolTitle,
+                  icon: Icons.sports_esports_outlined,
+                  activeRoute: currentRoute.startsWith('/game-tool/') || currentRoute == '/library' || currentRoute == '/player' ? currentRoute : null,
                   children: [
                     _NavItem(
                       iconBuilder: (color) => MarioGameIcon(
@@ -158,23 +157,11 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
                   child: _RetroDivider(retro: retro),
                 ),
-                ExpansionTile(
+                _DrawerGroup(
                   key: const PageStorageKey('exclusive-drawer'),
-                  initiallyExpanded: const [
-                    '/render96',
-                    '/vip',
-                    '/dynos',
-                    '/touch-controls',
-                    '/omm-rebirth',
-                  ].contains(currentRoute),
-                  leading: MarioGameIcon(
-                    Icons.auto_awesome_outlined,
-                    color: retro.accentText,
-                  ),
-                  title: Text(
-                    l10n.sectionExclusive,
-                    style: retro.heading(size: 15),
-                  ),
+                  title: l10n.sectionExclusive,
+                  icon: Icons.auto_awesome_outlined,
+                  activeRoute: const ['/render96', '/vip', '/dynos', '/touch-controls', '/omm-rebirth'].contains(currentRoute) ? currentRoute : null,
                   children: [
                     _NavItem(
                       retroIconAsset: 'render96',
@@ -240,22 +227,31 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
 
                 // Footer
                 _RetroDivider(retro: retro),
-                _NavItem(
-                  retroIconAsset: 'links-resource',
-                  iconBuilder: (color) =>
-                      MarioGameIcon(Icons.link, size: 19, color: color),
-                  label: l10n.navLinksResource,
-                  route: '/links-resource',
-                  isActive: currentRoute == '/links-resource',
+                _DrawerGroup(
+                  key: const PageStorageKey('resources-drawer'),
+                  title: l10n.drawerResources,
+                  icon: Icons.help_outline_rounded,
+                  activeRoute: const ['/links-resource', '/disclaimer'].contains(currentRoute) ? currentRoute : null,
+                  children: [
+                    _NavItem(
+                      retroIconAsset: 'links-resource',
+                      iconBuilder: (color) =>
+                          MarioGameIcon(Icons.link, size: 19, color: color),
+                      label: l10n.navLinksResource,
+                      route: '/links-resource',
+                      isActive: currentRoute == '/links-resource',
+                    ),
+                    _NavItem(
+                      retroIconAsset: 'disclaimer',
+                      iconBuilder: (color) =>
+                          MarioGameIcon(Icons.info_outline, size: 19, color: color),
+                      label: l10n.navDisclaimer,
+                      route: '/disclaimer',
+                      isActive: currentRoute == '/disclaimer',
+                    ),
+                  ],
                 ),
-                _NavItem(
-                  retroIconAsset: 'disclaimer',
-                  iconBuilder: (color) =>
-                      MarioGameIcon(Icons.info_outline, size: 19, color: color),
-                  label: l10n.navDisclaimer,
-                  route: '/disclaimer',
-                  isActive: currentRoute == '/disclaimer',
-                ),
+                _RetroDivider(retro: retro),
                 _NavItem(
                   retroIconAsset: 'settings',
                   iconBuilder: (color) => MarioGameIcon(
@@ -284,6 +280,98 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Expansion is local navigation state, retained independently per group for
+/// this drawer's PageStorage lifetime. Entering a child route reveals its group.
+class _DrawerGroup extends StatefulWidget {
+  const _DrawerGroup({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.activeRoute,
+    required this.children,
+  });
+  final String title;
+  final IconData icon;
+  final String? activeRoute;
+  final List<Widget> children;
+
+  @override
+  State<_DrawerGroup> createState() => _DrawerGroupState();
+}
+
+class _DrawerGroupState extends State<_DrawerGroup> {
+  bool _expanded = false;
+  bool _restored = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_restored) return;
+    _restored = true;
+    final saved = PageStorage.maybeOf(context)?.readState(context);
+    _expanded = widget.activeRoute != null || saved == true;
+  }
+
+  @override
+  void didUpdateWidget(covariant _DrawerGroup oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.activeRoute != null && widget.activeRoute != oldWidget.activeRoute) {
+      _expanded = true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final active = widget.activeRoute != null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          button: true,
+          selected: active,
+          expanded: _expanded,
+          child: InkWell(
+            onTap: () {
+              setState(() => _expanded = !_expanded);
+              PageStorage.maybeOf(context)?.writeState(context, _expanded);
+            },
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 52),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: active ? retro.surfaceAlt : Colors.transparent,
+                borderRadius: retro.radius,
+                border: active ? Border.all(color: retro.accentText, width: 1) : null,
+              ),
+              child: Row(
+                children: [
+                  MarioGameIcon(widget.icon, color: active ? retro.accentText : retro.inkDim, size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(widget.title,
+                    style: retro.heading(size: 15, color: active ? retro.accentText : retro.ink))),
+                  const SizedBox(width: 8),
+                  _ExpandArrow(expanded: _expanded, retro: retro),
+                ],
+              ),
+            ),
+          ),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 220),
+          curve: _kCurve,
+          alignment: Alignment.topCenter,
+          child: _expanded
+            ? Padding(padding: const EdgeInsets.only(left: 12, bottom: 6),
+                child: Column(children: widget.children))
+            : const SizedBox(width: double.infinity),
+        ),
+      ],
     );
   }
 }

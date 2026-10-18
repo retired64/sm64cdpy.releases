@@ -283,4 +283,4 @@ Save File menu polish: Library and Player now share the GameTool submenu.
 Tappable slot cards lead to a draft with its own star total; 120-star completion
 is an explicit action. Secondary internal copies are an explained advanced option.
 
-Drawer navigation: Popular precedes GameTool. Exclusive is a collapsible submenu containing Render96, Mods (existing VIP route), DynOS, Touch Controls and Omm Pack; route identities remain unchanged.
+Drawer navigation: Home and Settings remain direct links. Explore groups Catalog, Popular and Favourites; GameTool groups Library, Player and Save File; Exclusive groups Render96, Mods, DynOS, Touch Controls and Omm Pack; Resources groups Links and Disclaimer. Each group expands independently and highlights its active route. Existing routes remain unchanged.

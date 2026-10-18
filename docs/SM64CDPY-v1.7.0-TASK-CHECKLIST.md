@@ -629,3 +629,7 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [ ] Check card taps, draft cancellation and explicit Apply in light/dark on device.
 
 - [x] Group Exclusive categories in a themed drawer submenu and place Popular above GameTool; preserve existing routes and localized category labels.
+
+- [x] Complete drawer groups: Explore (Catalog, Popular, Favourites), GameTool, Exclusive and Resources; Home/Settings stay direct.
+- [x] Share themed group headers, independent expansion and active-route highlighting without adding persistent preferences.
+- [ ] Verify drawer expansion, screen-reader announcements and text scaling on device in each theme.

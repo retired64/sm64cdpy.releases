@@ -292,3 +292,13 @@ The main engine projects GameSaveStore through gameSaveProvider. Native Kotlin
 owns byte-order-aware EEPROM parsing, document identity/revision checks, private
 backups and verified SAF writes. Original-game semantics and lifecycle contracts
 are documented in [GAME_SAVE_FILE.md](GAME_SAVE_FILE.md). Overlay has no save editor.
+
+## Drawer navigation groups
+
+`AppDrawer` groups exploration, game tools, exclusive content and resources using
+a shared themed header. `currentRouteProvider` remains the navigation projection
+written by AppShell and read by the drawer; entering a child route expands and
+highlights its group. Group expansion is independent local UI state, remembered
+by PageStorage for its existing navigation lifetime, not durable user settings or
+a cross-engine cache. Home and Settings stay direct links. No routes, Workers,
+SAF grants or overlay messages change.

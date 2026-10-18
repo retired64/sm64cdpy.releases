@@ -57,7 +57,7 @@
   "@sectionExclusive": {
     "description": "Section header in the drawer for exclusive content items"
   },
-  "sectionExplore": "EXPLORE",
+  "sectionExplore": "Explore",
   "@sectionExplore": {
     "description": "Section header in the drawer for category browsing"
   },
@@ -1860,5 +1860,6 @@
   "saveFileCopiesHint": "The file stores two copies of each slot. Use the main copy for normal editing; the secondary copy is an advanced option, not a dated backup.",
   "saveFileOpenSlot": "Tap to edit",
   "saveFileActions": "Slot actions",
-  "saveFileDraft": "Preview · saved only after Apply"
+  "saveFileDraft": "Preview · saved only after Apply",
+  "drawerResources": "Resources"
 }
