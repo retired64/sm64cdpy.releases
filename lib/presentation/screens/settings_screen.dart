@@ -370,8 +370,10 @@ class _RetroSectionKicker extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(japanese, style: retro.body(size: 11)),
-          const SizedBox(height: 4),
+          if (retro.showJapaneseDecorations) ...[
+            Text(japanese, style: retro.body(size: 11)),
+            const SizedBox(height: 4),
+          ],
           SectionKicker(retro: retro, label: label),
         ],
       ),

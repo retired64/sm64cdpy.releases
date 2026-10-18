@@ -1,3 +1,4 @@
+import '../../presentation/screens/game_save_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,6 +38,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/library',
           pageBuilder: (_, s) => _page(const LibraryScreen(), s),
+        ),
+        GoRoute(
+          path: '/game-tool/save-file',
+          pageBuilder: (_, s) => _page(const GameSaveScreen(), s),
         ),
         GoRoute(
           path: '/player',

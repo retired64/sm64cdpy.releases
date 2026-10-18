@@ -267,3 +267,20 @@ integrados en main. Manifiesto canónico: `release-manifests/v1.8.7.json`; notas
 EN/ES/PT-BR generadas desde ese archivo. La fecha es provisional hasta publicar.
 Testing de acentos aprobado en da7c12f (run 39142810984); usuario confirmó su
 funcionamiento. Validación de la candidata final y publicación manual pendientes.
+
+La rama de accesibilidad reserva las leyendas japonesas decorativas a Retro
+Manga en todas las pantallas compartidas. Incluye prueba de encabezados para
+cada diseño en ambos modos; validación remota pendiente.
+
+## GameTool Save File — Testing candidate
+
+New drawer submenu and original-game save editor: four slots with independent
+copies, course stars, cannon state, coin scores, castle stars and unlocks.
+Private full backups precede verified mutations. Native tests prepared; remote
+validation and physical review pending. See GAME_SAVE_FILE.md.
+
+Save File menu polish: Library and Player now share the GameTool submenu.
+Tappable slot cards lead to a draft with its own star total; 120-star completion
+is an explicit action. Secondary internal copies are an explained advanced option.
+
+Drawer navigation: Home and Settings remain direct links. Explore groups Catalog, Popular and Favourites; GameTool groups Library, Player and Save File; Exclusive groups Render96, Mods, DynOS, Touch Controls and Omm Pack; Resources groups Links and Disclaimer. Each group expands independently and highlights its active route. Existing routes remain unchanged.

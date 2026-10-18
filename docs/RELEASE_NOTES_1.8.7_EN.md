@@ -17,3 +17,15 @@ Version 1.8.7 adds Minish Cap and Mario Kart 64 interface designs and lets you p
 - Settings now offers cyan (original), blue, violet, pink, coral, amber, green and lime accents for Retro Manga.
 - The selection is saved between sessions and retained when switching themes or brightness modes.
 - Accent text adapts for readability; other themes, semantic colors and the floating overlay keep their own palettes.
+
+### GameTool: manage original-game saves
+
+- Open GameTool → Save File from the drawer to inspect the four original-game slots and their independent alternate copies.
+- Edit stars, castle rewards, coins, cannons and unlocks with an explicit Apply action.
+- Verified writes create a full local backup first and reject changes based on an outdated file. Restoring a backup replaces all four slots. Close the game before applying changes.
+
+- GameTool groups Library, Player and Save File. Tap a file card to edit its own progress; 120-star completion is an explicit action, and secondary copies are an explained advanced option.
+
+- The drawer groups exclusive categories in one expandable menu, places Popular above GameTool and simplifies the Mods and Omm Pack labels.
+
+- Explore now groups Catalog, Popular and Favourites; Resources groups Links and Disclaimer. Home and Settings stay direct, with independent animated groups and active-route highlighting.

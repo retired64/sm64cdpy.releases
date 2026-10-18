@@ -101,6 +101,7 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
           _CatalogueAppBar(searchCtrl: _searchCtrl, onClear: _clearSearch),
 
           // ── Section label ─────────────────────────────────
+          if (retro.showJapaneseDecorations)
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),

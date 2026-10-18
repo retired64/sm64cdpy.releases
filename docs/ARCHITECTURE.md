@@ -277,3 +277,28 @@ En claro, los textos destacados se ajustan a contraste 4,5:1 sobre las tres
 superficies neutras; los rellenos pastel mantienen tinta oscura en ambos modos.
 El cache de colores de texto deriva exclusivamente del acento y las superficies:
 no guarda preferencias y una combinación distinta produce otra clave.
+
+## Decoración japonesa por diseño
+
+`RetroTheme.showJapaneseDecorations` permite subtítulos japoneses únicamente
+cuando el ID es `retro_manga`. SectionKicker, el drawer y las leyendas de
+catálogo/VIP/DynOS/Touch Controls/OMM/Render96/enlaces/ajustes usan esta regla.
+Se oculta también el espacio de las leyendas independientes; el contenido de
+mods y los nombres proporcionados por usuarios o autores no se filtran.
+
+## GameTool Save File
+
+The main engine projects GameSaveStore through gameSaveProvider. Native Kotlin
+owns byte-order-aware EEPROM parsing, document identity/revision checks, private
+backups and verified SAF writes. Original-game semantics and lifecycle contracts
+are documented in [GAME_SAVE_FILE.md](GAME_SAVE_FILE.md). Overlay has no save editor.
+
+## Drawer navigation groups
+
+`AppDrawer` groups exploration, game tools, exclusive content and resources using
+a shared themed header. `currentRouteProvider` remains the navigation projection
+written by AppShell and read by the drawer; entering a child route expands and
+highlights its group. Group expansion is independent local UI state, remembered
+by PageStorage for its existing navigation lifetime, not durable user settings or
+a cross-engine cache. Home and Settings stay direct links. No routes, Workers,
+SAF grants or overlay messages change.

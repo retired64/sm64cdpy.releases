@@ -24,7 +24,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get navPopular => 'Populares';
 
   @override
-  String get navVIPMods => 'Mods VIP';
+  String get navVIPMods => 'Mods';
 
   @override
   String get navDynOS => 'DynOS';
@@ -33,7 +33,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get navTouchControls => 'Controles de Toque';
 
   @override
-  String get navOmmRebirth => 'OMMR PACK';
+  String get navOmmRebirth => 'Omm Pack';
 
   @override
   String get navLinksResource => 'Links & Recursos';
@@ -45,13 +45,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get navSettings => 'Configurações';
 
   @override
-  String get sectionExclusive => 'EXCLUSIVO';
+  String get sectionExclusive => 'Exclusivo';
 
   @override
   String get sectionNavigation => 'NAVEGAÇÃO';
 
   @override
-  String get sectionExplore => 'EXPLORAR';
+  String get sectionExplore => 'Explorar';
 
   @override
   String get sectionCategories => 'CATEGORIAS';
@@ -1918,6 +1918,150 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get playerRestored => 'Configuração anterior do jogo restaurada.';
+
+  @override
+  String get retroAccentTitle => 'Destaque do Retro Manga';
+
+  @override
+  String get retroAccentDescription =>
+      'Escolha a cor de destaque. O contraste do texto se adapta aos modos claro e escuro. Os outros temas mantêm suas cores.';
+
+  @override
+  String get retroAccentCyan => 'Ciano (original)';
+
+  @override
+  String get retroAccentBlue => 'Azul';
+
+  @override
+  String get retroAccentViolet => 'Violeta';
+
+  @override
+  String get retroAccentPink => 'Rosa';
+
+  @override
+  String get retroAccentCoral => 'Coral';
+
+  @override
+  String get retroAccentAmber => 'Âmbar';
+
+  @override
+  String get retroAccentGreen => 'Verde';
+
+  @override
+  String get retroAccentLime => 'Lima';
+
+  @override
+  String get gameToolTitle => 'GameTool';
+
+  @override
+  String get saveFileTitle => 'Save File';
+
+  @override
+  String get saveFileHint => 'Escolha uma partida · jogo original';
+
+  @override
+  String get saveFileConfirm =>
+      'Feche o SM64CoopDX primeiro. As alterações valem na próxima abertura. Copiar e apagar afetam as duas cópias do slot. Restaurar substitui os quatro slots. Um backup completo é salvo antes da gravação.';
+
+  @override
+  String get saveFileDone => 'Salvo';
+
+  @override
+  String get saveFileMissing =>
+      'Conecte a pasta do jogo e inicie o jogo uma vez para criar o arquivo de progresso.';
+
+  @override
+  String get saveFileError =>
+      'Não foi possível verificar ou salvar o arquivo. Atualize e tente novamente; as cópias de recuperação ficam em Backups.';
+
+  @override
+  String get saveFilePrimary => 'Principal';
+
+  @override
+  String get saveFileAlternate => 'Secundária';
+
+  @override
+  String get saveFileEmpty => 'Vazia';
+
+  @override
+  String get saveFileUnsigned => 'Cópia sem assinatura ou danificada';
+
+  @override
+  String get saveFileCopy => 'Copiar';
+
+  @override
+  String get saveFileProgress => 'Progresso';
+
+  @override
+  String get saveFileBackup => 'Criar backup';
+
+  @override
+  String get saveFileBackups => 'Backups';
+
+  @override
+  String get saveFileCannon => 'Canhão';
+
+  @override
+  String get saveFileCoins => 'Moedas';
+
+  @override
+  String get saveFileCastle => 'Estrelas do castelo';
+
+  @override
+  String get saveFileUnlocks => 'Desbloqueios';
+
+  @override
+  String get saveFileWing => 'Boné alado';
+
+  @override
+  String get saveFileMetal => 'Boné de metal';
+
+  @override
+  String get saveFileVanish => 'Boné invisível';
+
+  @override
+  String get saveFileKey1 => 'Primeira chave';
+
+  @override
+  String get saveFileKey2 => 'Segunda chave';
+
+  @override
+  String get saveFileBasement => 'Porta do porão';
+
+  @override
+  String get saveFileUpstairs => 'Porta do andar superior';
+
+  @override
+  String get saveFileMoat => 'Esvaziar fosso';
+
+  @override
+  String get saveFileComplete => 'Completar progresso: 120 estrelas';
+
+  @override
+  String get saveFileClearStars => 'Remover estrelas';
+
+  @override
+  String get saveFileCourseNames =>
+      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+
+  @override
+  String get saveFileCopies => 'Cópias internas';
+
+  @override
+  String get saveFileCopiesHint =>
+      'O arquivo guarda duas cópias de cada partida. Edite a principal normalmente; a secundária é uma opção avançada, não um backup por data.';
+
+  @override
+  String get saveFileOpenSlot => 'Toque para editar';
+
+  @override
+  String get saveFileActions => 'Ações da partida';
+
+  @override
+  String get saveFileDraft => 'Prévia · salva somente ao aplicar';
+
+  @override
+  String get drawerResources => 'Recursos';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1940,7 +2084,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get navPopular => 'Populares';
 
   @override
-  String get navVIPMods => 'Mods VIP';
+  String get navVIPMods => 'Mods';
 
   @override
   String get navDynOS => 'DynOS';
@@ -1949,7 +2093,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get navTouchControls => 'Controles de Toque';
 
   @override
-  String get navOmmRebirth => 'OMMR PACK';
+  String get navOmmRebirth => 'Omm Pack';
 
   @override
   String get navLinksResource => 'Links & Recursos';
@@ -1961,13 +2105,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get navSettings => 'Configurações';
 
   @override
-  String get sectionExclusive => 'EXCLUSIVO';
+  String get sectionExclusive => 'Exclusivo';
 
   @override
   String get sectionNavigation => 'NAVEGAÇÃO';
 
   @override
-  String get sectionExplore => 'EXPLORAR';
+  String get sectionExplore => 'Explorar';
 
   @override
   String get sectionCategories => 'CATEGORIAS';
@@ -3834,4 +3978,148 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get playerRestored => 'Configuração anterior do jogo restaurada.';
+
+  @override
+  String get retroAccentTitle => 'Destaque do Retro Manga';
+
+  @override
+  String get retroAccentDescription =>
+      'Escolha a cor de destaque. O contraste do texto se adapta aos modos claro e escuro. Os outros temas mantêm suas cores.';
+
+  @override
+  String get retroAccentCyan => 'Ciano (original)';
+
+  @override
+  String get retroAccentBlue => 'Azul';
+
+  @override
+  String get retroAccentViolet => 'Violeta';
+
+  @override
+  String get retroAccentPink => 'Rosa';
+
+  @override
+  String get retroAccentCoral => 'Coral';
+
+  @override
+  String get retroAccentAmber => 'Âmbar';
+
+  @override
+  String get retroAccentGreen => 'Verde';
+
+  @override
+  String get retroAccentLime => 'Lima';
+
+  @override
+  String get gameToolTitle => 'GameTool';
+
+  @override
+  String get saveFileTitle => 'Save File';
+
+  @override
+  String get saveFileHint => 'Escolha uma partida · jogo original';
+
+  @override
+  String get saveFileConfirm =>
+      'Feche o SM64CoopDX primeiro. As alterações valem na próxima abertura. Copiar e apagar afetam as duas cópias do slot. Restaurar substitui os quatro slots. Um backup completo é salvo antes da gravação.';
+
+  @override
+  String get saveFileDone => 'Salvo';
+
+  @override
+  String get saveFileMissing =>
+      'Conecte a pasta do jogo e inicie o jogo uma vez para criar o arquivo de progresso.';
+
+  @override
+  String get saveFileError =>
+      'Não foi possível verificar ou salvar o arquivo. Atualize e tente novamente; as cópias de recuperação ficam em Backups.';
+
+  @override
+  String get saveFilePrimary => 'Principal';
+
+  @override
+  String get saveFileAlternate => 'Secundária';
+
+  @override
+  String get saveFileEmpty => 'Vazia';
+
+  @override
+  String get saveFileUnsigned => 'Cópia sem assinatura ou danificada';
+
+  @override
+  String get saveFileCopy => 'Copiar';
+
+  @override
+  String get saveFileProgress => 'Progresso';
+
+  @override
+  String get saveFileBackup => 'Criar backup';
+
+  @override
+  String get saveFileBackups => 'Backups';
+
+  @override
+  String get saveFileCannon => 'Canhão';
+
+  @override
+  String get saveFileCoins => 'Moedas';
+
+  @override
+  String get saveFileCastle => 'Estrelas do castelo';
+
+  @override
+  String get saveFileUnlocks => 'Desbloqueios';
+
+  @override
+  String get saveFileWing => 'Boné alado';
+
+  @override
+  String get saveFileMetal => 'Boné de metal';
+
+  @override
+  String get saveFileVanish => 'Boné invisível';
+
+  @override
+  String get saveFileKey1 => 'Primeira chave';
+
+  @override
+  String get saveFileKey2 => 'Segunda chave';
+
+  @override
+  String get saveFileBasement => 'Porta do porão';
+
+  @override
+  String get saveFileUpstairs => 'Porta do andar superior';
+
+  @override
+  String get saveFileMoat => 'Esvaziar fosso';
+
+  @override
+  String get saveFileComplete => 'Completar progresso: 120 estrelas';
+
+  @override
+  String get saveFileClearStars => 'Remover estrelas';
+
+  @override
+  String get saveFileCourseNames =>
+      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+
+  @override
+  String get saveFileCopies => 'Cópias internas';
+
+  @override
+  String get saveFileCopiesHint =>
+      'O arquivo guarda duas cópias de cada partida. Edite a principal normalmente; a secundária é uma opção avançada, não um backup por data.';
+
+  @override
+  String get saveFileOpenSlot => 'Toque para editar';
+
+  @override
+  String get saveFileActions => 'Ações da partida';
+
+  @override
+  String get saveFileDraft => 'Prévia · salva somente ao aplicar';
+
+  @override
+  String get drawerResources => 'Recursos';
 }

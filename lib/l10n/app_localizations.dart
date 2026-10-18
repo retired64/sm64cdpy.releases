@@ -135,7 +135,7 @@ abstract class AppLocalizations {
   /// Drawer navigation label for the VIP mods screen
   ///
   /// In en, this message translates to:
-  /// **'VIP Mods'**
+  /// **'Mods'**
   String get navVIPMods;
 
   /// Drawer navigation label for the DynOS screen
@@ -153,7 +153,7 @@ abstract class AppLocalizations {
   /// Drawer navigation label for the OMM Rebirth screen
   ///
   /// In en, this message translates to:
-  /// **'OMMR PACK'**
+  /// **'Omm Pack'**
   String get navOmmRebirth;
 
   /// Drawer navigation label for the links & resources screen
@@ -177,7 +177,7 @@ abstract class AppLocalizations {
   /// Section header in the drawer for exclusive content items
   ///
   /// In en, this message translates to:
-  /// **'EXCLUSIVE'**
+  /// **'Exclusive'**
   String get sectionExclusive;
 
   /// Section header for the primary navigation items in the drawer
@@ -189,7 +189,7 @@ abstract class AppLocalizations {
   /// Section header in the drawer for category browsing
   ///
   /// In en, this message translates to:
-  /// **'EXPLORE'**
+  /// **'Explore'**
   String get sectionExplore;
 
   /// Expandable section header in the drawer for category filters
@@ -3461,6 +3461,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Previous game configuration restored.'**
   String get playerRestored;
+
+  /// No description provided for @retroAccentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Retro Manga accent'**
+  String get retroAccentTitle;
+
+  /// No description provided for @retroAccentDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the highlight color. Text contrast adapts to light and dark mode. Other themes keep their own colors.'**
+  String get retroAccentDescription;
+
+  /// No description provided for @retroAccentCyan.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyan (original)'**
+  String get retroAccentCyan;
+
+  /// No description provided for @retroAccentBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get retroAccentBlue;
+
+  /// No description provided for @retroAccentViolet.
+  ///
+  /// In en, this message translates to:
+  /// **'Violet'**
+  String get retroAccentViolet;
+
+  /// No description provided for @retroAccentPink.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get retroAccentPink;
+
+  /// No description provided for @retroAccentCoral.
+  ///
+  /// In en, this message translates to:
+  /// **'Coral'**
+  String get retroAccentCoral;
+
+  /// No description provided for @retroAccentAmber.
+  ///
+  /// In en, this message translates to:
+  /// **'Amber'**
+  String get retroAccentAmber;
+
+  /// No description provided for @retroAccentGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get retroAccentGreen;
+
+  /// No description provided for @retroAccentLime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lime'**
+  String get retroAccentLime;
+
+  /// No description provided for @gameToolTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GameTool'**
+  String get gameToolTitle;
+
+  /// No description provided for @saveFileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save File'**
+  String get saveFileTitle;
+
+  /// No description provided for @saveFileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file · original game'**
+  String get saveFileHint;
+
+  /// No description provided for @saveFileConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Close SM64CoopDX first. Changes apply on the next launch. Copy and erase affect both copies of the selected slot. Restore replaces all four slots. A full backup is saved before writing.'**
+  String get saveFileConfirm;
+
+  /// No description provided for @saveFileDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saveFileDone;
+
+  /// No description provided for @saveFileMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the game folder and start the game once to create its save file.'**
+  String get saveFileMissing;
+
+  /// No description provided for @saveFileError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not verify or save the file. Refresh and try again; recovery copies are kept in Backups.'**
+  String get saveFileError;
+
+  /// No description provided for @saveFilePrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Main copy'**
+  String get saveFilePrimary;
+
+  /// No description provided for @saveFileAlternate.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary copy'**
+  String get saveFileAlternate;
+
+  /// No description provided for @saveFileEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty'**
+  String get saveFileEmpty;
+
+  /// No description provided for @saveFileUnsigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsigned or damaged copy'**
+  String get saveFileUnsigned;
+
+  /// No description provided for @saveFileCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get saveFileCopy;
+
+  /// No description provided for @saveFileProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get saveFileProgress;
+
+  /// No description provided for @saveFileBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create backup'**
+  String get saveFileBackup;
+
+  /// No description provided for @saveFileBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'Backups'**
+  String get saveFileBackups;
+
+  /// No description provided for @saveFileCannon.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannon'**
+  String get saveFileCannon;
+
+  /// No description provided for @saveFileCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins'**
+  String get saveFileCoins;
+
+  /// No description provided for @saveFileCastle.
+  ///
+  /// In en, this message translates to:
+  /// **'Castle stars'**
+  String get saveFileCastle;
+
+  /// No description provided for @saveFileUnlocks.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocks'**
+  String get saveFileUnlocks;
+
+  /// No description provided for @saveFileWing.
+  ///
+  /// In en, this message translates to:
+  /// **'Wing Cap'**
+  String get saveFileWing;
+
+  /// No description provided for @saveFileMetal.
+  ///
+  /// In en, this message translates to:
+  /// **'Metal Cap'**
+  String get saveFileMetal;
+
+  /// No description provided for @saveFileVanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Vanish Cap'**
+  String get saveFileVanish;
+
+  /// No description provided for @saveFileKey1.
+  ///
+  /// In en, this message translates to:
+  /// **'First key'**
+  String get saveFileKey1;
+
+  /// No description provided for @saveFileKey2.
+  ///
+  /// In en, this message translates to:
+  /// **'Second key'**
+  String get saveFileKey2;
+
+  /// No description provided for @saveFileBasement.
+  ///
+  /// In en, this message translates to:
+  /// **'Basement door'**
+  String get saveFileBasement;
+
+  /// No description provided for @saveFileUpstairs.
+  ///
+  /// In en, this message translates to:
+  /// **'Upstairs door'**
+  String get saveFileUpstairs;
+
+  /// No description provided for @saveFileMoat.
+  ///
+  /// In en, this message translates to:
+  /// **'Drain moat'**
+  String get saveFileMoat;
+
+  /// No description provided for @saveFileComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete progress: 120 stars'**
+  String get saveFileComplete;
+
+  /// No description provided for @saveFileClearStars.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear stars'**
+  String get saveFileClearStars;
+
+  /// No description provided for @saveFileCourseNames.
+  ///
+  /// In en, this message translates to:
+  /// **'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium'**
+  String get saveFileCourseNames;
+
+  /// No description provided for @saveFileCopies.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal copies'**
+  String get saveFileCopies;
+
+  /// No description provided for @saveFileCopiesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The file stores two copies of each slot. Use the main copy for normal editing; the secondary copy is an advanced option, not a dated backup.'**
+  String get saveFileCopiesHint;
+
+  /// No description provided for @saveFileOpenSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to edit'**
+  String get saveFileOpenSlot;
+
+  /// No description provided for @saveFileActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot actions'**
+  String get saveFileActions;
+
+  /// No description provided for @saveFileDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview · saved only after Apply'**
+  String get saveFileDraft;
+
+  /// No description provided for @drawerResources.
+  ///
+  /// In en, this message translates to:
+  /// **'Resources'**
+  String get drawerResources;
 }
 
 class _AppLocalizationsDelegate

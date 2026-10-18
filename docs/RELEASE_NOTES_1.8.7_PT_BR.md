@@ -17,3 +17,15 @@ A versão 1.8.7 adiciona os visuais Minish Cap e Mario Kart 64 e permite persona
 - Os Ajustes oferecem ciano (original), azul, violeta, rosa, coral, âmbar, verde e lima para o Retro Manga.
 - A seleção é salva entre sessões e mantida ao trocar de tema ou modo de brilho.
 - O texto de destaque se adapta para manter a legibilidade; os outros temas, as cores semânticas e a bolha flutuante mantêm suas paletas.
+
+### GameTool: gerencie os saves do jogo original
+
+- Abra GameTool → Save File no menu lateral para consultar os quatro slots e suas cópias alternativas independentes.
+- Edite estrelas, recompensas do castelo, moedas, canhões e desbloqueios com uma ação explícita de Aplicar.
+- Cada gravação verificada cria antes um backup local completo e rejeita alterações baseadas em um arquivo desatualizado. Restaurar substitui os quatro slots. Feche o jogo antes de aplicar alterações.
+
+- GameTool reúne Biblioteca, Jogador e Save File. Toque em uma partida para editar seu progresso; completar 120 estrelas é uma ação explícita, e as cópias secundárias ficam como opção avançada explicada.
+
+- O menu lateral reúne as categorias exclusivas em um submenu, coloca Popular acima de GameTool e simplifica os nomes Mods e Omm Pack.
+
+- Explorar reúne Catálogo, Popular e Favoritos; Recursos reúne Links e Aviso legal. Início e Configurações continuam diretos, com grupos animados independentes e destaque da seção ativa.

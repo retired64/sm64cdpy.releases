@@ -605,3 +605,31 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [ ] Validar Testing sobre la candidata final.
 - [ ] Confirmar fecha publishedAt al publicar.
 - [ ] Ejecutar manualmente Build & Release con autorización del usuario.
+
+## Decoración exclusiva de Retro Manga
+
+- [x] Regla común para leyendas japonesas y espacios asociados.
+- [x] Revisar drawer, ajustes, catálogo y secciones hermanas.
+- [x] Preparar pruebas para los seis temas en claro y oscuro.
+- [ ] Ejecutar Testing y revisar visualmente el APK.
+
+## GameTool Save File
+
+- [x] Kotlin EEPROM codec, bounded SAF store, identity/revision checks and backups.
+- [x] Drawer submenu, themed screen, independent copies and editable progress.
+- [x] Five ARB locales and native regression cases.
+- [ ] Testing generation, analysis, Flutter/native tests and arm64 APK.
+- [ ] Physical write/restore and all-theme validation with game closed.
+
+### Save File menu clarity
+
+- [x] Group Library, Player and Save File under GameTool; retain existing routes.
+- [x] Tap a slot card to edit it; identify its copy and live draft star count.
+- [x] Move secondary copies to explained advanced controls and label the 120-star preset as an action.
+- [ ] Check card taps, draft cancellation and explicit Apply in light/dark on device.
+
+- [x] Group Exclusive categories in a themed drawer submenu and place Popular above GameTool; preserve existing routes and localized category labels.
+
+- [x] Complete drawer groups: Explore (Catalog, Popular, Favourites), GameTool, Exclusive and Resources; Home/Settings stay direct.
+- [x] Share themed group headers, independent expansion and active-route highlighting without adding persistent preferences.
+- [ ] Verify drawer expansion, screen-reader announcements and text scaling on device in each theme.

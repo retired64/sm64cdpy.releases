@@ -115,7 +115,8 @@ class LinksResourceScreen extends StatelessWidget {
         ),
 
         // ── Kicker: 発見 = "descubre" / リンク = "link" ──────────
-        SliverToBoxAdapter(
+        if (retro.showJapaneseDecorations)
+          SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
             child: Text(
