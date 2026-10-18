@@ -1815,5 +1815,15 @@
   "playerEmblem": "Emblem",
   "playerRestore": "Restore previous configuration",
   "playerRestoreBody": "With SM64CoopDX closed, restore the private backup from before the last mod or player edit? This restores the whole configuration.",
-  "playerRestored": "Previous game configuration restored."
+  "playerRestored": "Previous game configuration restored.",
+  "retroAccentTitle": "Retro Manga accent",
+  "retroAccentDescription": "Choose the highlight color. Text contrast adapts to light and dark mode. Other themes keep their own colors.",
+  "retroAccentCyan": "Cyan (original)",
+  "retroAccentBlue": "Blue",
+  "retroAccentViolet": "Violet",
+  "retroAccentPink": "Pink",
+  "retroAccentCoral": "Coral",
+  "retroAccentAmber": "Amber",
+  "retroAccentGreen": "Green",
+  "retroAccentLime": "Lime"
 }

@@ -263,3 +263,17 @@ verificación en segundo plano falla, el último estado confirmado permanece
 visible. Conectar, desconectar o cambiar la carpeta del juego elimina la caché
 antes de invalidar el provider. El archivo del juego continúa siendo la fuente
 de verdad y Hive nunca autoriza una escritura.
+
+## Acento accesible de Retro Manga
+
+`retroAccentProvider` es el único escritor de `retro_manga_accent` en la caja
+Hive de ajustes. Publica el color después de confirmar la escritura y rechaza
+escrituras simultáneas. Una clave desconocida o ausente conserva cian; cambiar de
+diseño o brillo no borra la selección. `SM64CoopDXApp` conecta el valor a los dos
+ThemeData. `RetroTheme` aplica el acento solamente a `retro_manga`; colores
+semánticos, marcas y el engine independiente del overlay conservan sus roles.
+El selector expandible incluye nombre, muestra de color y marca de selección.
+En claro, los textos destacados se ajustan a contraste 4,5:1 sobre las tres
+superficies neutras; los rellenos pastel mantienen tinta oscura en ambos modos.
+El cache de colores de texto deriva exclusivamente del acento y las superficies:
+no guarda preferencias y una combinación distinta produce otra clave.

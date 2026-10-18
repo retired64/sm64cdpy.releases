@@ -251,3 +251,11 @@ Historial conservan su finalidad. Se admiten enlaces ?view=dynos y
 ?view=touch-controls; los enlaces game-mods/detected mantienen compatibilidad.
 No cambia Kotlin, las rutas, el backup ni las directivas del juego. Validación
 Actions validado en [Testing #240](https://github.com/retired64/sm64cdpy.releases/actions/runs/38684870621), commit `a18779d`: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Generados y formato del runner sincronizados posteriormente. Prueba física de los tres temas pendiente.
+
+## Retro Manga: acentos personales
+
+Rama `retro-manga-accent-accessibility` desde main: Ajustes ofrece ocho acentos
+persistentes exclusivos de Retro Manga, con texto ajustado para contraste y
+selección independiente del modo claro/oscuro. Incluye pruebas de contraste,
+aislamiento de otros temas y restauración. Pendiente validar generación l10n,
+análisis y pruebas Flutter en CI, además de revisión física con texto ampliado.
