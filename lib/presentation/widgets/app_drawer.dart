@@ -62,10 +62,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                     l10n.sectionNavigation,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: retro.body(size: 11, color: retro.inkDim).copyWith(
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.6,
-                    ),
+                    style: retro
+                        .body(size: 11, color: retro.inkDim)
+                        .copyWith(
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.6,
+                        ),
                   ),
                 ),
 
@@ -540,8 +542,14 @@ class _NavItem extends StatelessWidget {
             : () => _navigateTo(context, route),
         child: Container(
           constraints: BoxConstraints(minHeight: isTopLevel ? 52 : 48),
-          margin: EdgeInsets.symmetric(horizontal: 10, vertical: isTopLevel ? 2 : 1),
-          padding: EdgeInsets.symmetric(horizontal: 14, vertical: isTopLevel ? 12 : 0),
+          margin: EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: isTopLevel ? 2 : 1,
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: isTopLevel ? 12 : 0,
+          ),
           decoration: BoxDecoration(
             border: minimal && isActive
                 ? Border(left: BorderSide(color: accent, width: 2))
@@ -576,9 +584,13 @@ class _NavItem extends StatelessWidget {
                   label,
                   style: isTopLevel
                       ? retro.heading(size: 15, color: fg)
-                      : retro.body(size: 14, color: fg).copyWith(
-                          fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                        ),
+                      : retro
+                            .body(size: 14, color: fg)
+                            .copyWith(
+                              fontWeight: isActive
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                            ),
                 ),
               ),
             ],
