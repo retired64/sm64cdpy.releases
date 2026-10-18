@@ -123,14 +123,30 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
       'identity': snapshot?['identity'],
       ...action,
     };
-    if (!await _confirm(AppLocalizations.of(context).saveFileTitle) || !mounted)
-      return;
+    final l = AppLocalizations.of(context);
+    final title = switch (action['action']) {
+      'erase' => '${l.playerDelete} · ${'ABCD'[action['slot'] as int]}',
+      'copy' => '${l.saveFileCopy} · ${'ABCD'[action['slot'] as int]} → ${'ABCD'[action['destination'] as int]}',
+      'restore' => l.playerRestore,
+      _ => l.playerApply,
+    };
+    if (!await _confirm(title) || !mounted) return;
     final ok = await ref.read(gameSaveProvider.notifier).run(action);
-    if (mounted && ok)
-      AppSnackbar.success(
-        context,
-        message: AppLocalizations.of(context).saveFileDone,
-      );
+    if (mounted) _feedback(ok);
+  }
+
+  void _feedback(bool ok) {
+    final l = AppLocalizations.of(context);
+    if (ok) {
+      AppSnackbar.success(context, message: l.saveFileDone);
+    } else {
+      final error = ref.read(gameSaveProvider).error;
+      AppSnackbar.error(context, message: switch (error) {
+        'conflict' => l.playerConflict,
+        'installing' => l.gameModsInstalling,
+        _ => l.saveFileError,
+      });
+    }
   }
 
   @override
@@ -317,11 +333,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                             final ok = await ref
                                 .read(gameSaveProvider.notifier)
                                 .run({'action': 'backup'});
-                            if (context.mounted && ok)
-                              AppSnackbar.success(
-                                context,
-                                message: l.saveFileDone,
-                              );
+                            if (mounted) _feedback(ok);
                           },
                   ),
                   const SizedBox(height: 14),
