@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado para `1.8.6+25` en `performance-minimal-1.8.6` el 2026-10-16. La 1.8.5 ya fue publicada oficialmente.
+Revisado para la candidata `1.8.7+26` en `main` el 2026-10-18. La 1.8.6 es la versión anterior.
 
 ## Implementado
 
@@ -259,3 +259,11 @@ persistentes exclusivos de Retro Manga, con texto ajustado para contraste y
 selección independiente del modo claro/oscuro. Incluye pruebas de contraste,
 aislamiento de otros temas y restauración. Pendiente validar generación l10n,
 análisis y pruebas Flutter en CI, además de revisión física con texto ampliado.
+
+## Candidata 1.8.7+26
+
+Minish Cap, Mario Kart 64 y los ocho acentos accesibles de Retro Manga están
+integrados en main. Manifiesto canónico: `release-manifests/v1.8.7.json`; notas
+EN/ES/PT-BR generadas desde ese archivo. La fecha es provisional hasta publicar.
+Testing de acentos aprobado en da7c12f (run 39142810984); usuario confirmó su
+funcionamiento. Validación de la candidata final y publicación manual pendientes.

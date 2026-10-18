@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.7",
+  "build": 26,
+  "publishedAt": "2026-10-18T00:00:00Z",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "Two new themes and your own Retro Manga accent",
+      "summary": "Version 1.8.7 adds Minish Cap and Mario Kart 64 interface designs and lets you personalize the accent color of Retro Manga.",
+      "highlights": [
+        "Minish Cap brings warm paper surfaces, forest greens and dedicated typography.",
+        "Mario Kart 64 introduces racing panels, checkered backgrounds and its own title font.",
+        "Choose from eight Retro Manga accent colors with readable light and dark variants."
+      ],
+      "sections": [
+        {
+          "heading": "Minish Cap",
+          "items": [
+            "Select Minish Cap in Settings for parchment-style surfaces, green and ochre details, and dedicated heading and body fonts.",
+            "Light and dark modes share the same design language across navigation, settings and content."
+          ]
+        },
+        {
+          "heading": "Mario Kart 64",
+          "items": [
+            "Select Mario Kart 64 in Settings for racing-style panels, checkered backgrounds and dedicated title typography.",
+            "Both light and dark variants use lightweight native surfaces."
+          ]
+        },
+        {
+          "heading": "Personalize Retro Manga",
+          "items": [
+            "Settings now offers cyan (original), blue, violet, pink, coral, amber, green and lime accents for Retro Manga.",
+            "The selection is saved between sessions and retained when switching themes or brightness modes.",
+            "Accent text adapts for readability; other themes, semantic colors and the floating overlay keep their own palettes."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Dos temas nuevos y tu propio acento de Retro Manga",
+      "summary": "La versión 1.8.7 incorpora los diseños de interfaz Minish Cap y Mario Kart 64 y permite personalizar el color de acento de Retro Manga.",
+      "highlights": [
+        "Minish Cap combina superficies de papel cálido, verdes de bosque y tipografía propia.",
+        "Mario Kart 64 incorpora paneles de carreras, fondos a cuadros y su propia fuente de títulos.",
+        "Elige entre ocho acentos de Retro Manga con variantes legibles en claro y oscuro."
+      ],
+      "sections": [
+        {
+          "heading": "Minish Cap",
+          "items": [
+            "Selecciona Minish Cap en Ajustes para usar superficies de pergamino, detalles verdes y ocres y fuentes propias para títulos y texto.",
+            "Los modos claro y oscuro comparten el mismo lenguaje visual en navegación, ajustes y contenido."
+          ]
+        },
+        {
+          "heading": "Mario Kart 64",
+          "items": [
+            "Selecciona Mario Kart 64 en Ajustes para usar paneles de carreras, fondos a cuadros y tipografía propia en los títulos.",
+            "Sus variantes clara y oscura utilizan superficies nativas ligeras."
+          ]
+        },
+        {
+          "heading": "Personaliza Retro Manga",
+          "items": [
+            "Ajustes ofrece los acentos cian (original), azul, violeta, rosa, coral, ámbar, verde y lima para Retro Manga.",
+            "La selección se guarda entre sesiones y se conserva al cambiar de tema o modo de brillo.",
+            "El texto de acento se adapta para mantener la legibilidad; los demás temas, colores semánticos y la burbuja flotante conservan sus paletas."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Dois novos temas e sua própria cor de destaque no Retro Manga",
+      "summary": "A versão 1.8.7 adiciona os visuais Minish Cap e Mario Kart 64 e permite personalizar a cor de destaque do Retro Manga.",
+      "highlights": [
+        "Minish Cap combina superfícies de papel em tons quentes, verde-floresta e tipografia própria.",
+        "Mario Kart 64 traz painéis de corrida, fundos quadriculados e uma fonte própria para títulos.",
+        "Escolha entre oito cores de destaque do Retro Manga com variantes legíveis nos modos claro e escuro."
+      ],
+      "sections": [
+        {
+          "heading": "Minish Cap",
+          "items": [
+            "Selecione Minish Cap nos Ajustes para usar superfícies de pergaminho, detalhes verdes e ocres e fontes próprias para títulos e texto.",
+            "Os modos claro e escuro compartilham a mesma linguagem visual na navegação, nos ajustes e no conteúdo."
+          ]
+        },
+        {
+          "heading": "Mario Kart 64",
+          "items": [
+            "Selecione Mario Kart 64 nos Ajustes para usar painéis de corrida, fundos quadriculados e tipografia própria nos títulos.",
+            "As variantes clara e escura usam superfícies nativas leves."
+          ]
+        },
+        {
+          "heading": "Personalize o Retro Manga",
+          "items": [
+            "Os Ajustes oferecem ciano (original), azul, violeta, rosa, coral, âmbar, verde e lima para o Retro Manga.",
+            "A seleção é salva entre sessões e mantida ao trocar de tema ou modo de brilho.",
+            "O texto de destaque se adapta para manter a legibilidade; os outros temas, as cores semânticas e a bolha flutuante mantêm suas paletas."
+          ]
+        }
+      ]
+    }
+  }
+}

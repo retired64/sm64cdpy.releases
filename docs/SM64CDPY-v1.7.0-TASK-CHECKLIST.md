@@ -596,3 +596,12 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Pruebas de contraste y persistencia preparadas.
 - [ ] Ejecutar gen-l10n, dart format, análisis y pruebas Flutter en CI.
 - [ ] Revisar físicamente navegación, reapertura y texto ampliado.
+
+## Preparación de release 1.8.7
+
+- [x] Fusionar acentos de Retro Manga a main; Minish Cap y MK64 ya integrados.
+- [x] Subir pubspec a 1.8.7+26 y preparar manifiesto y notas EN/ES/PT-BR.
+- [x] Mantener forceUpdate desactivado y nombres canónicos de APK.
+- [ ] Validar Testing sobre la candidata final.
+- [ ] Confirmar fecha publishedAt al publicar.
+- [ ] Ejecutar manualmente Build & Release con autorización del usuario.

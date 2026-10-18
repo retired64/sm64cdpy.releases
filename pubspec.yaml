@@ -1,6 +1,6 @@
 name: sm64cdpy
 description: "A mod catalog for SM64 Coop DX — browse, favorite, and explore mods including DynOS packs, touch controls, and more."
-version: 1.8.6+25
+version: 1.8.7+26
 
 environment:
   sdk: ^3.11.0
