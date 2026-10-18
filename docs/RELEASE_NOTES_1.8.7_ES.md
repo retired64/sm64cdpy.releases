@@ -23,3 +23,5 @@ La versión 1.8.7 incorpora los diseños de interfaz Minish Cap y Mario Kart 64 
 - Abre GameTool → Save File en el menú lateral para consultar las cuatro ranuras y sus copias alternativas independientes.
 - Edita estrellas, premios del castillo, monedas, cañones y desbloqueos con una acción explícita de Aplicar.
 - Cada escritura verificada crea antes un respaldo local completo y rechaza cambios sobre un archivo desactualizado. Restaurar reemplaza las cuatro ranuras. Cierra el juego antes de aplicar cambios.
+
+- GameTool agrupa Biblioteca, Jugador y Save File. Toca una partida para editar su progreso; completar 120 estrellas es una acción explícita y las copias secundarias quedan como opción avanzada explicada.

@@ -43,7 +43,13 @@ Folder changes reset its projection and retire old responses. Draft editors
 capture the original document identity and revision; refresh/resume cannot
 silently rebase a stale draft. The UI uses RetroTheme panels/typography and
 Material semantic controls for all six themes, with primary/alternate selection,
-four slots, expandable course details, confirmation and timestamped backups.
+four tappable file cards, expandable course details, confirmation and timestamped backups.
+Library and Player also live under GameTool; their existing routes stay compatible.
+The main copy is the default. Secondary copies are tucked inside an explained
+advanced section; they are not dated application backups. Each editor identifies
+the selected slot and copy, shows a live draft star total, and saves only after
+Apply plus confirmation. Completing 120 stars is an explicit overflow-menu
+action, never a status badge. Clearing stars changes the draft only.
 No Python runtime is included; sm64_savetool.py remains a reference outside the
 product build. No state is shared with the independent overlay engine.
 

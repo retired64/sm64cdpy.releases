@@ -133,6 +133,23 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
     if (mounted) _feedback(ok);
   }
 
+  Future<void> _openSlot(Map slot, Map? snapshot) async {
+    if (ref.read(gameSaveProvider).busy) return;
+    final change = await showModalBottomSheet<Map<String, dynamic>>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => _SaveEditor(slot: slot),
+    );
+    if (change != null && mounted) {
+      await _change({
+        'revision': snapshot?['revision'],
+        'identity': snapshot?['identity'],
+        ...change,
+      });
+    }
+  }
+
   void _feedback(bool ok) {
     final l = AppLocalizations.of(context);
     if (ok) {
@@ -215,124 +232,113 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                     style: retro.body(color: retro.red, size: 14),
                   ),
                 if (state.data != null) ...[
-                  SegmentedButton<int>(
-                    segments: [
-                      ButtonSegment(value: 0, label: Text(l.saveFilePrimary)),
-                      ButtonSegment(value: 1, label: Text(l.saveFileAlternate)),
+                  ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    title: Text(l.saveFileCopies, style: retro.body(size: 14)),
+                    subtitle: Text(
+                      _bank == 0 ? l.saveFilePrimary : l.saveFileAlternate,
+                      style: retro.body(size: 13, color: retro.inkDim),
+                    ),
+                    children: [
+                      Text(l.saveFileCopiesHint, style: retro.body(size: 14)),
+                      const SizedBox(height: 12),
+                      SegmentedButton<int>(
+                        segments: [
+                          ButtonSegment(value: 0, label: Text(l.saveFilePrimary)),
+                          ButtonSegment(value: 1, label: Text(l.saveFileAlternate)),
+                        ],
+                        selected: {_bank},
+                        onSelectionChanged: state.busy ? null :
+                          (v) => setState(() => _bank = v.first),
+                      ),
+                      const SizedBox(height: 12),
                     ],
-                    selected: {_bank},
-                    onSelectionChanged: state.busy
-                        ? null
-                        : (v) => setState(() => _bank = v.first),
                   ),
                   const SizedBox(height: 16),
                   for (final slot in slots.where(
                     (s) => s['bank'] == _bank,
                   )) ...[
                     Container(
-                      padding: const EdgeInsets.all(14),
                       decoration: retro.settingsPanel(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'ABCD'[slot['slot'] as int],
-                                style: retro.heading(
-                                  size: 28,
-                                  color: retro.accentText,
-                                ),
-                              ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Text(
-                                  slot['empty'] == true
-                                      ? l.saveFileEmpty
-                                      : '${slot['total']} ★',
-                                  style: retro.heading(size: 20),
-                                ),
-                              ),
-                              if (slot['valid'] != true)
-                                Tooltip(
-                                  message: l.saveFileUnsigned,
-                                  child: const Icon(Icons.info_outline),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          LinearProgressIndicator(
-                            value: ((slot['total'] as num).toDouble() / 120)
-                                .clamp(0, 1),
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            children: [
-                              TextButton.icon(
-                                icon: const Icon(Icons.tune),
-                                label: Text(l.saveFileProgress),
-                                onPressed: state.busy
-                                    ? null
-                                    : () async {
-                                        final change =
-                                            await showModalBottomSheet<
-                                              Map<String, dynamic>
-                                            >(
-                                              context: context,
-                                              isScrollControlled: true,
-                                              useSafeArea: true,
-                                              builder: (_) =>
-                                                  _SaveEditor(slot: slot),
-                                            );
-                                        if (change != null && mounted)
-                                          await _change({
-                                            'revision': state.data?['revision'],
-                                            'identity': state.data?['identity'],
-                                            ...change,
-                                          });
-                                      },
-                              ),
-                              PopupMenuButton<int>(
-                                enabled: !state.busy,
-                                icon: const Icon(Icons.copy_outlined),
-                                tooltip: l.saveFileCopy,
-                                itemBuilder: (_) => [
-                                  for (var i = 0; i < 4; i++)
-                                    if (i != slot['slot'])
-                                      PopupMenuItem(
-                                        value: i,
-                                        child: Text(
-                                          '${l.saveFileCopy} → ${'ABCD'[i]}',
-                                        ),
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(
+                          borderRadius: retro.radius,
+                          onTap: state.busy ? null : () => _openSlot(slot, state.data),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 56,
+                                      height: 56,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: retro.surfaceAlt,
+                                        borderRadius: retro.radius,
+                                        border: Border.all(color: retro.border),
                                       ),
-                                ],
-                                onSelected: (destination) => _change({
-                                  'revision': state.data?['revision'],
-                                  'identity': state.data?['identity'],
-                                  'action': 'copy',
-                                  'slot': slot['slot'],
-                                  'destination': destination,
-                                }),
-                              ),
-                              IconButton(
-                                tooltip: l.playerDelete,
-                                icon: Icon(
-                                  Icons.delete_outline,
-                                  color: retro.red,
-                                ),
-                                onPressed: state.busy
-                                    ? null
-                                    : () => _change({
+                                      child: Text('ABCD'[slot['slot'] as int],
+                                        style: retro.heading(size: 30, color: retro.accentText)),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(slot['empty'] == true ? l.saveFileEmpty :
+                                            '★ ${slot['total']} / 120',
+                                            style: retro.heading(size: 20)),
+                                          const SizedBox(height: 4),
+                                          Text(l.saveFileOpenSlot,
+                                            style: retro.body(size: 14, color: retro.inkDim)),
+                                        ],
+                                      ),
+                                    ),
+                                    const Icon(Icons.chevron_right),
+                                    PopupMenuButton<int>(
+                                      enabled: !state.busy,
+                                      tooltip: l.saveFileActions,
+                                      itemBuilder: (_) => [
+                                        for (var i = 0; i < 4; i++)
+                                          if (i != slot['slot']) PopupMenuItem(
+                                            value: i,
+                                            child: Text('${l.saveFileCopy} ${'ABCD'[slot['slot'] as int]} → ${'ABCD'[i]}'),
+                                          ),
+                                        const PopupMenuDivider(),
+                                        PopupMenuItem(value: 4,
+                                          child: Text('${l.playerDelete} · ${'ABCD'[slot['slot'] as int]}',
+                                            style: TextStyle(color: retro.red))),
+                                      ],
+                                      onSelected: (destination) => _change({
                                         'revision': state.data?['revision'],
                                         'identity': state.data?['identity'],
-                                        'action': 'erase',
+                                        'action': destination == 4 ? 'erase' : 'copy',
                                         'slot': slot['slot'],
+                                        if (destination != 4) 'destination': destination,
                                       }),
-                              ),
-                            ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 14),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: LinearProgressIndicator(
+                                    minHeight: 6,
+                                    value: ((slot['total'] as num).toDouble() / 120).clamp(0, 1),
+                                  ),
+                                ),
+                                if (slot['valid'] != true && slot['empty'] != true) ...[
+                                  const SizedBox(height: 8),
+                                  Text(l.saveFileUnsigned, style: retro.body(size: 13, color: retro.red)),
+                                ],
+                              ],
+                            ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -411,6 +417,11 @@ class _SaveEditorState extends State<_SaveEditor> {
   );
   late int castle = (widget.slot['flags'] as int) >> 24 & 31;
   late int unlocks = (widget.slot['flags'] as int) & 0x10ffff;
+  int get total => stars.asMap().entries.fold<int>(0,
+    (sum, entry) => sum + (entry.value & ((1 << _maxStars[entry.key]) - 1))
+      .toRadixString(2).replaceAll('0', '').length) +
+    castle.toRadixString(2).replaceAll('0', '').length;
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -425,7 +436,7 @@ class _SaveEditorState extends State<_SaveEditor> {
               children: [
                 Expanded(
                   child: Text(
-                    '${l.saveFileProgress} · ${'ABCD'[widget.slot['slot'] as int]}',
+                    '${l.saveFileTitle} ${'ABCD'[widget.slot['slot'] as int]} · ${widget.slot['bank'] == 0 ? l.saveFilePrimary : l.saveFileAlternate}',
                     style: retro.heading(size: 18),
                   ),
                 ),
@@ -438,32 +449,46 @@ class _SaveEditorState extends State<_SaveEditor> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    icon: const Icon(Icons.star),
-                    label: Text(l.saveFileComplete),
-                    onPressed: () => setState(() {
-                      for (var i = 0; i < 25; i++)
-                        stars[i] = (1 << _maxStars[i]) - 1;
-                      for (var i = 0; i < 15; i++) cannons[i] = true;
-                      castle = 31;
-                      unlocks = 0x10ffff;
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: retro.settingsPanel(),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('★ $total / 120', style: retro.heading(size: 24, color: retro.accentText)),
+                        Text(l.saveFileDraft, style: retro.body(size: 13, color: retro.inkDim)),
+                      ],
+                    ),
+                  ),
+                  PopupMenuButton<int>(
+                    tooltip: l.saveFileActions,
+                    itemBuilder: (_) => [
+                      PopupMenuItem(value: 0, child: Text(l.saveFileComplete)),
+                      PopupMenuItem(value: 1, child: Text(l.saveFileClearStars)),
+                    ],
+                    onSelected: (action) => setState(() {
+                      if (action == 0) {
+                        for (var i = 0; i < 25; i++) {
+                          stars[i] = (1 << _maxStars[i]) - 1;
+                        }
+                        for (var i = 0; i < 15; i++) {
+                          cannons[i] = true;
+                          coins[i] = coins[i] < 100 ? 100 : coins[i];
+                        }
+                        castle = 31;
+                        unlocks = 0x10ffff;
+                      } else {
+                        for (var i = 0; i < 25; i++) { stars[i] = 0; }
+                        castle = 0;
+                      }
                     }),
                   ),
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  tooltip: l.saveFileClearStars,
-                  icon: const Icon(Icons.restart_alt),
-                  onPressed: () => setState(() {
-                    for (var i = 0; i < 25; i++) stars[i] = 0;
-                    castle = 0;
-                  }),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -472,6 +497,15 @@ class _SaveEditorState extends State<_SaveEditor> {
               children: [
                 for (var i = 0; i < 24; i++)
                   ExpansionTile(
+                    collapsedBackgroundColor: retro.surfaceAlt,
+                    backgroundColor: retro.surface,
+                    collapsedShape: RoundedRectangleBorder(borderRadius: retro.radius),
+                    shape: RoundedRectangleBorder(borderRadius: retro.radius),
+                    leading: CircleAvatar(
+                      radius: 16,
+                      backgroundColor: retro.surface,
+                      child: Text('${i + 1}', style: retro.body(size: 13, color: retro.accentText)),
+                    ),
                     title: Text(
                       l.saveFileCourseNames.split('|')[i],
                       style: retro.heading(size: 16),
@@ -489,7 +523,10 @@ class _SaveEditorState extends State<_SaveEditor> {
                               label: Text('${n + 1} ★'),
                               selected: stars[i] & (1 << n) != 0,
                               onSelected: (_) =>
-                                  setState(() => stars[i] ^= 1 << n),
+                                  setState(() {
+                                    stars[i] ^= 1 << n;
+                                    if (i < 15 && stars[i] & 64 != 0 && coins[i] < 100) coins[i] = 100;
+                                  }),
                             ),
                         ],
                       ),
@@ -509,7 +546,7 @@ class _SaveEditorState extends State<_SaveEditor> {
                                 max: 255,
                                 divisions: 255,
                                 onChanged: (v) =>
-                                    setState(() => coins[i] = v.round()),
+                                    setState(() => coins[i] = stars[i] & 64 != 0 && v < 100 ? 100 : v.round()),
                               ),
                             ),
                           ],

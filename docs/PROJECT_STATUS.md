@@ -278,3 +278,7 @@ New drawer submenu and original-game save editor: four slots with independent
 copies, course stars, cannon state, coin scores, castle stars and unlocks.
 Private full backups precede verified mutations. Native tests prepared; remote
 validation and physical review pending. See GAME_SAVE_FILE.md.
+
+Save File menu polish: Library and Player now share the GameTool submenu.
+Tappable slot cards lead to a draft with its own star total; 120-star completion
+is an explicit action. Secondary internal copies are an explained advanced option.

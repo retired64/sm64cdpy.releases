@@ -620,3 +620,10 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Five ARB locales and native regression cases.
 - [ ] Testing generation, analysis, Flutter/native tests and arm64 APK.
 - [ ] Physical write/restore and all-theme validation with game closed.
+
+### Save File menu clarity
+
+- [x] Group Library, Player and Save File under GameTool; retain existing routes.
+- [x] Tap a slot card to edit it; identify its copy and live draft star count.
+- [x] Move secondary copies to explained advanced controls and label the 120-star preset as an action.
+- [ ] Check card taps, draft cancellation and explicit Apply in light/dark on device.
