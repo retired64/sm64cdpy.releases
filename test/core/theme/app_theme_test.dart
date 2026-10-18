@@ -49,6 +49,38 @@ void main() {
     expect(neutral.boxShadow, isNull);
   });
 
+  test('Minish Cap uses the optimized folio rendering contract', () {
+    final design = AppThemeCatalog.resolve(AppThemeId.minishCap);
+    final minish = RetroTheme(false, design: design);
+
+    expect(design.backdropStyle, AppBackdropStyle.parchment);
+    expect(design.surfaceTreatment, AppSurfaceTreatment.folio);
+    expect(design.brandAsset, 'assets/themes/minish/minish.webp');
+    expect(design.halftone, isFalse);
+    expect(design.stripes, isFalse);
+    expect(design.shadowBlur, 0);
+    expect(minish.showParchmentBackdrop, isTrue);
+    expect(minish.usesFolioSurfaces, isTrue);
+    expect(minish.showHalftone, isFalse);
+    expect(minish.showN64Backdrop, isFalse);
+  });
+
+  test('Mario Kart 64 uses the optimized racing rendering contract', () {
+    final design = AppThemeCatalog.resolve(AppThemeId.marioKart64);
+    final kart = RetroTheme(false, design: design);
+
+    expect(design.backdropStyle, AppBackdropStyle.checkered);
+    expect(design.surfaceTreatment, AppSurfaceTreatment.racing);
+    expect(design.brandAsset, 'assets/themes/mk64/mk64.webp');
+    expect(design.halftone, isFalse);
+    expect(design.stripes, isFalse);
+    expect(design.shadowBlur, 0);
+    expect(kart.showCheckeredBackdrop, isTrue);
+    expect(kart.usesRacingSurfaces, isTrue);
+    expect(kart.showHalftone, isFalse);
+    expect(kart.showN64Backdrop, isFalse);
+  });
+
   for (final design in AppThemeCatalog.designs) {
     for (final dark in [false, true]) {
       test(

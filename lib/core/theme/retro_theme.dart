@@ -130,10 +130,18 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       design.halftone && design.backdropStyle == AppBackdropStyle.halftone;
   bool get showStripes => design.stripes;
   bool get showN64Backdrop => design.backdropStyle == AppBackdropStyle.n64Sky;
+  bool get showParchmentBackdrop =>
+      design.backdropStyle == AppBackdropStyle.parchment;
+  bool get showCheckeredBackdrop =>
+      design.backdropStyle == AppBackdropStyle.checkered;
   bool get usesBeveledSurfaces =>
       design.surfaceTreatment == AppSurfaceTreatment.beveled;
   bool get usesMinimalSurfaces =>
       design.surfaceTreatment == AppSurfaceTreatment.minimal;
+  bool get usesFolioSurfaces =>
+      design.surfaceTreatment == AppSurfaceTreatment.folio;
+  bool get usesRacingSurfaces =>
+      design.surfaceTreatment == AppSurfaceTreatment.racing;
 
   bool _isNeutralSurface(Color? color) =>
       color == null ||
@@ -149,7 +157,11 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         blurRadius: design.shadowBlur,
       ),
     BoxShadow(
-      color: shadowColor.withValues(alpha: usesBeveledSurfaces ? 0.72 : 1),
+      color: shadowColor.withValues(
+        alpha: usesBeveledSurfaces
+            ? 0.72
+            : ((usesFolioSurfaces || usesRacingSurfaces) ? 0.42 : 1),
+      ),
       offset: Offset(
         dx * design.shadowOffsetScale,
         dy * design.shadowOffsetScale,
@@ -353,6 +365,111 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
             )
           : null,
     );
+    if (usesFolioSurfaces) {
+      final folioShape = RoundedRectangleBorder(
+        borderRadius: radius,
+        side: BorderSide(color: border, width: borderWidth(2)),
+      );
+      final labelStyle = TextStyle(
+        fontFamily: headingFamily,
+        fontFamilyFallback: design.headingFontFamilyFallback,
+        fontWeight: FontWeight.w400,
+        fontSize: 16,
+      );
+      theme = theme.copyWith(
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            shape: folioShape,
+            elevation: 0,
+            minimumSize: const Size(48, 48),
+            textStyle: labelStyle,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: folioShape,
+            elevation: 0,
+            minimumSize: const Size(48, 48),
+            textStyle: labelStyle,
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            shape: folioShape,
+            foregroundColor: accentText,
+            minimumSize: const Size(48, 48),
+            textStyle: labelStyle,
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: surfaceAlt,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(color: border, width: borderWidth(1.5)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(color: accent, width: borderWidth(2)),
+          ),
+        ),
+      );
+    }
+    if (usesRacingSurfaces) {
+      final racingShape = RoundedRectangleBorder(
+        borderRadius: radius,
+        side: BorderSide(color: border, width: borderWidth(2)),
+      );
+      final labelStyle = TextStyle(
+        fontFamily: headingFamily,
+        fontFamilyFallback: design.headingFontFamilyFallback,
+        fontWeight: FontWeight.w400,
+        fontSize: 16,
+        letterSpacing: -0.3,
+      );
+      theme = theme.copyWith(
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: secondaryAccent,
+            foregroundColor: onColor(secondaryAccent),
+            shape: racingShape,
+            elevation: 0,
+            minimumSize: const Size(48, 48),
+            textStyle: labelStyle,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: secondaryAccent,
+            foregroundColor: onColor(secondaryAccent),
+            shape: racingShape,
+            elevation: 0,
+            minimumSize: const Size(48, 48),
+            textStyle: labelStyle,
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            shape: racingShape,
+            foregroundColor: accentText,
+            minimumSize: const Size(48, 48),
+            textStyle: labelStyle,
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: surfaceAlt,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(color: border, width: borderWidth(1.5)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(color: accent, width: borderWidth(2.5)),
+          ),
+        ),
+      );
+    }
     if (isMario) {
       ButtonStyle originalControl(ButtonStyle? base, {bool filled = false}) =>
           (base ?? const ButtonStyle()).copyWith(
@@ -525,6 +642,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         surfaceTreatment: selected.design.surfaceTreatment,
         playfulSelection: selected.design.playfulSelection,
         drawerRasterIcons: selected.design.drawerRasterIcons,
+        brandAsset: selected.design.brandAsset,
       ),
       backgroundOverride: Color.lerp(background, other.background, t),
       surfaceOverride: Color.lerp(surface, other.surface, t),
@@ -591,6 +709,26 @@ class ThemeBackdrop extends StatelessWidget {
         ),
       );
     }
+    if (retro.showParchmentBackdrop) {
+      return IgnorePointer(
+        child: RepaintBoundary(
+          child: CustomPaint(
+            size: Size.infinite,
+            painter: _ParchmentBackdropPainter(retro: retro),
+          ),
+        ),
+      );
+    }
+    if (retro.showCheckeredBackdrop) {
+      return IgnorePointer(
+        child: RepaintBoundary(
+          child: CustomPaint(
+            size: Size.infinite,
+            painter: _CheckeredBackdropPainter(retro: retro),
+          ),
+        ),
+      );
+    }
     if (allowHalftone && retro.showHalftone) {
       return HalftoneBackground(
         color: retro.ink.withValues(alpha: retro.isDark ? 0.035 : 0.08),
@@ -598,6 +736,69 @@ class ThemeBackdrop extends StatelessWidget {
     }
     return const SizedBox.shrink();
   }
+}
+
+/// Static cloth grain: a handful of opaque strokes, no images, blur or
+/// animation. It is isolated behind a repaint boundary and only repaints when
+/// the selected palette changes.
+class _ParchmentBackdropPainter extends CustomPainter {
+  const _ParchmentBackdropPainter({required this.retro});
+
+  final RetroTheme retro;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, Paint()..color = retro.background);
+    final dark = Paint()
+      ..color = retro.shadowColor.withValues(alpha: 0.12)
+      ..strokeWidth = 1;
+    final light = Paint()
+      ..color = retro.surfaceHighlight.withValues(alpha: 0.045)
+      ..strokeWidth = 1;
+    for (double x = 20; x < size.width; x += 44) {
+      canvas.drawLine(Offset(x, 0), Offset(x - 14, size.height), dark);
+    }
+    for (double y = 28; y < size.height; y += 52) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y + 9), light);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ParchmentBackdropPainter oldDelegate) =>
+      oldDelegate.retro.background != retro.background ||
+      oldDelegate.retro.shadowColor != retro.shadowColor;
+}
+
+/// Fixed start-grid pattern made from a single cached picture. Its tile count
+/// is bounded by the viewport and it performs no image decoding or animation.
+class _CheckeredBackdropPainter extends CustomPainter {
+  const _CheckeredBackdropPainter({required this.retro});
+
+  final RetroTheme retro;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, Paint()..color = retro.background);
+    const tile = 28.0;
+    final checker = Paint()
+      ..color = retro.border.withValues(alpha: retro.isDark ? 0.12 : 0.055);
+    for (double y = 0; y < size.height; y += tile) {
+      final row = (y / tile).floor();
+      for (double x = row.isEven ? 0 : tile; x < size.width; x += tile * 2) {
+        canvas.drawRect(Rect.fromLTWH(x, y, tile, tile), checker);
+      }
+    }
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, 7),
+      Paint()..color = retro.accent,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _CheckeredBackdropPainter oldDelegate) =>
+      oldDelegate.retro.background != retro.background ||
+      oldDelegate.retro.border != retro.border ||
+      oldDelegate.retro.accent != retro.accent;
 }
 
 class _N64SkyPainter extends CustomPainter {

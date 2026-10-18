@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 enum AppThemeId {
   minimal('minimal'),
   retroManga('retro_manga'),
+  minishCap('minish_cap'),
+  marioKart64('mario_kart_64'),
   mario64('mario64'),
   sm64Intro('sm64_intro');
 
@@ -21,10 +23,17 @@ enum AppThemeId {
 /// Code-native backdrop families. They intentionally describe a visual
 /// treatment instead of a product/theme ID so shared widgets never need to
 /// branch on `mario64`.
-enum AppBackdropStyle { none, halftone, n64Sky, introMenu }
+enum AppBackdropStyle {
+  none,
+  halftone,
+  parchment,
+  checkered,
+  n64Sky,
+  introMenu,
+}
 
 /// Surface language shared by cards, chips, buttons and settings panels.
-enum AppSurfaceTreatment { minimal, flat, beveled }
+enum AppSurfaceTreatment { minimal, flat, folio, racing, beveled }
 
 /// Every surface has an explicit text role. Semantic and brand colors remain
 /// separate from the selected interface accent.
@@ -115,6 +124,7 @@ class AppThemeDesign {
     this.surfaceTreatment = AppSurfaceTreatment.flat,
     this.playfulSelection = false,
     this.drawerRasterIcons = false,
+    this.brandAsset,
   });
 
   final AppThemeId id;
@@ -138,6 +148,7 @@ class AppThemeDesign {
   final AppSurfaceTreatment surfaceTreatment;
   final bool playfulSelection;
   final bool drawerRasterIcons;
+  final String? brandAsset;
 
   AppThemePalette palette(bool isDark) => isDark ? dark : light;
 }

@@ -2688,6 +2688,18 @@ abstract class AppLocalizations {
   /// **'Retro Manga'**
   String get themeRetroManga;
 
+  /// No description provided for @themeMinishCap.
+  ///
+  /// In en, this message translates to:
+  /// **'The Minish Cap'**
+  String get themeMinishCap;
+
+  /// No description provided for @themeMarioKart64.
+  ///
+  /// In en, this message translates to:
+  /// **'Mario Kart 64'**
+  String get themeMarioKart64;
+
   /// No description provided for @themeMario64.
   ///
   /// In en, this message translates to:
