@@ -39,7 +39,10 @@ final appRouter = GoRouter(
           path: '/library',
           pageBuilder: (_, s) => _page(const LibraryScreen(), s),
         ),
-        GoRoute(path: '/game-tool/save-file', pageBuilder: (_, s) => _page(const GameSaveScreen(), s)),
+        GoRoute(
+          path: '/game-tool/save-file',
+          pageBuilder: (_, s) => _page(const GameSaveScreen(), s),
+        ),
         GoRoute(
           path: '/player',
           pageBuilder: (_, s) => _page(const PlayerScreen(), s),

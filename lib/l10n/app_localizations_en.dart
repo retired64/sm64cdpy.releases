@@ -1906,4 +1906,129 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerRestored => 'Previous game configuration restored.';
+
+  @override
+  String get retroAccentTitle => 'Retro Manga accent';
+
+  @override
+  String get retroAccentDescription =>
+      'Choose the highlight color. Text contrast adapts to light and dark mode. Other themes keep their own colors.';
+
+  @override
+  String get retroAccentCyan => 'Cyan (original)';
+
+  @override
+  String get retroAccentBlue => 'Blue';
+
+  @override
+  String get retroAccentViolet => 'Violet';
+
+  @override
+  String get retroAccentPink => 'Pink';
+
+  @override
+  String get retroAccentCoral => 'Coral';
+
+  @override
+  String get retroAccentAmber => 'Amber';
+
+  @override
+  String get retroAccentGreen => 'Green';
+
+  @override
+  String get retroAccentLime => 'Lime';
+
+  @override
+  String get gameToolTitle => 'GameTool';
+
+  @override
+  String get saveFileTitle => 'Save File';
+
+  @override
+  String get saveFileHint => 'Original game · 120 stars';
+
+  @override
+  String get saveFileConfirm =>
+      'Close SM64CoopDX first. Changes apply on the next launch. Copy and erase affect both copies of the selected slot. Restore replaces all four slots. A full backup is saved before writing.';
+
+  @override
+  String get saveFileDone => 'Saved';
+
+  @override
+  String get saveFileMissing =>
+      'Connect the game folder and start the game once to create its save file.';
+
+  @override
+  String get saveFileError =>
+      'Could not verify or save the file. Refresh and try again; recovery copies are kept in Backups.';
+
+  @override
+  String get saveFilePrimary => 'Main';
+
+  @override
+  String get saveFileAlternate => 'Alternate';
+
+  @override
+  String get saveFileEmpty => 'Empty';
+
+  @override
+  String get saveFileUnsigned => 'Unsigned or damaged copy';
+
+  @override
+  String get saveFileCopy => 'Copy';
+
+  @override
+  String get saveFileProgress => 'Progress';
+
+  @override
+  String get saveFileBackup => 'Create backup';
+
+  @override
+  String get saveFileBackups => 'Backups';
+
+  @override
+  String get saveFileCannon => 'Cannon';
+
+  @override
+  String get saveFileCoins => 'Coins';
+
+  @override
+  String get saveFileCastle => 'Castle stars';
+
+  @override
+  String get saveFileUnlocks => 'Unlocks';
+
+  @override
+  String get saveFileWing => 'Wing Cap';
+
+  @override
+  String get saveFileMetal => 'Metal Cap';
+
+  @override
+  String get saveFileVanish => 'Vanish Cap';
+
+  @override
+  String get saveFileKey1 => 'First key';
+
+  @override
+  String get saveFileKey2 => 'Second key';
+
+  @override
+  String get saveFileBasement => 'Basement door';
+
+  @override
+  String get saveFileUpstairs => 'Upstairs door';
+
+  @override
+  String get saveFileMoat => 'Drain moat';
+
+  @override
+  String get saveFileComplete => '120 stars';
+
+  @override
+  String get saveFileClearStars => 'Clear stars';
+
+  @override
+  String get saveFileCourseNames =>
+      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
 }

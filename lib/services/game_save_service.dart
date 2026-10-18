@@ -6,5 +6,10 @@ class GameSaveService {
     (await _channel.invokeMapMethod<String, dynamic>('getGameSave'))!,
   );
   Future<Map<String, dynamic>> change(Map<String, dynamic> data) async =>
-      Map<String, dynamic>.from((await _channel.invokeMapMethod<String, dynamic>('changeGameSave', data))!);
+      Map<String, dynamic>.from(
+        (await _channel.invokeMapMethod<String, dynamic>(
+          'changeGameSave',
+          data,
+        ))!,
+      );
 }

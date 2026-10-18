@@ -1928,6 +1928,131 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get playerRestored => 'Configuración anterior del juego restaurada.';
+
+  @override
+  String get retroAccentTitle => 'Acento de Retro Manga';
+
+  @override
+  String get retroAccentDescription =>
+      'Elige el color de los elementos destacados. El contraste del texto se adapta al modo claro y oscuro. Los demás temas conservan sus colores.';
+
+  @override
+  String get retroAccentCyan => 'Cian (original)';
+
+  @override
+  String get retroAccentBlue => 'Azul';
+
+  @override
+  String get retroAccentViolet => 'Violeta';
+
+  @override
+  String get retroAccentPink => 'Rosa';
+
+  @override
+  String get retroAccentCoral => 'Coral';
+
+  @override
+  String get retroAccentAmber => 'Ámbar';
+
+  @override
+  String get retroAccentGreen => 'Verde';
+
+  @override
+  String get retroAccentLime => 'Lima';
+
+  @override
+  String get gameToolTitle => 'GameTool';
+
+  @override
+  String get saveFileTitle => 'Save File';
+
+  @override
+  String get saveFileHint => 'Juego original · 120 estrellas';
+
+  @override
+  String get saveFileConfirm =>
+      'Cierra SM64CoopDX primero. Los cambios se aplican al volver a abrirlo. Copiar y borrar afectan ambas copias de la ranura. Restaurar reemplaza las cuatro ranuras. Se guarda un respaldo completo antes de escribir.';
+
+  @override
+  String get saveFileDone => 'Guardado';
+
+  @override
+  String get saveFileMissing =>
+      'Conecta la carpeta del juego e inicia el juego una vez para crear su partida.';
+
+  @override
+  String get saveFileError =>
+      'No se pudo verificar o guardar el archivo. Actualiza e inténtalo de nuevo; las copias de recuperación se conservan en Respaldos.';
+
+  @override
+  String get saveFilePrimary => 'Principal';
+
+  @override
+  String get saveFileAlternate => 'Alternativa';
+
+  @override
+  String get saveFileEmpty => 'Vacía';
+
+  @override
+  String get saveFileUnsigned => 'Copia sin firma o dañada';
+
+  @override
+  String get saveFileCopy => 'Copiar';
+
+  @override
+  String get saveFileProgress => 'Progreso';
+
+  @override
+  String get saveFileBackup => 'Crear respaldo';
+
+  @override
+  String get saveFileBackups => 'Respaldos';
+
+  @override
+  String get saveFileCannon => 'Cañón';
+
+  @override
+  String get saveFileCoins => 'Monedas';
+
+  @override
+  String get saveFileCastle => 'Estrellas del castillo';
+
+  @override
+  String get saveFileUnlocks => 'Desbloqueos';
+
+  @override
+  String get saveFileWing => 'Gorra alada';
+
+  @override
+  String get saveFileMetal => 'Gorra metálica';
+
+  @override
+  String get saveFileVanish => 'Gorra invisible';
+
+  @override
+  String get saveFileKey1 => 'Primera llave';
+
+  @override
+  String get saveFileKey2 => 'Segunda llave';
+
+  @override
+  String get saveFileBasement => 'Puerta del sótano';
+
+  @override
+  String get saveFileUpstairs => 'Puerta de la planta superior';
+
+  @override
+  String get saveFileMoat => 'Vaciar foso';
+
+  @override
+  String get saveFileComplete => '120 estrellas';
+
+  @override
+  String get saveFileClearStars => 'Quitar estrellas';
+
+  @override
+  String get saveFileCourseNames =>
+      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -3854,4 +3979,129 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get playerRestored => 'Configuración anterior del juego restaurada.';
+
+  @override
+  String get retroAccentTitle => 'Acento de Retro Manga';
+
+  @override
+  String get retroAccentDescription =>
+      'Elige el color de los elementos destacados. El contraste del texto se adapta al modo claro y oscuro. Los demás temas conservan sus colores.';
+
+  @override
+  String get retroAccentCyan => 'Cian (original)';
+
+  @override
+  String get retroAccentBlue => 'Azul';
+
+  @override
+  String get retroAccentViolet => 'Violeta';
+
+  @override
+  String get retroAccentPink => 'Rosa';
+
+  @override
+  String get retroAccentCoral => 'Coral';
+
+  @override
+  String get retroAccentAmber => 'Ámbar';
+
+  @override
+  String get retroAccentGreen => 'Verde';
+
+  @override
+  String get retroAccentLime => 'Lima';
+
+  @override
+  String get gameToolTitle => 'GameTool';
+
+  @override
+  String get saveFileTitle => 'Save File';
+
+  @override
+  String get saveFileHint => 'Juego original · 120 estrellas';
+
+  @override
+  String get saveFileConfirm =>
+      'Cierra SM64CoopDX primero. Los cambios se aplican al volver a abrirlo. Copiar y borrar afectan ambas copias de la ranura. Restaurar reemplaza las cuatro ranuras. Se guarda un respaldo completo antes de escribir.';
+
+  @override
+  String get saveFileDone => 'Guardado';
+
+  @override
+  String get saveFileMissing =>
+      'Conecta la carpeta del juego e inicia el juego una vez para crear su partida.';
+
+  @override
+  String get saveFileError =>
+      'No se pudo verificar o guardar el archivo. Actualiza e inténtalo de nuevo; las copias de recuperación se conservan en Respaldos.';
+
+  @override
+  String get saveFilePrimary => 'Principal';
+
+  @override
+  String get saveFileAlternate => 'Alternativa';
+
+  @override
+  String get saveFileEmpty => 'Vacía';
+
+  @override
+  String get saveFileUnsigned => 'Copia sin firma o dañada';
+
+  @override
+  String get saveFileCopy => 'Copiar';
+
+  @override
+  String get saveFileProgress => 'Progreso';
+
+  @override
+  String get saveFileBackup => 'Crear respaldo';
+
+  @override
+  String get saveFileBackups => 'Respaldos';
+
+  @override
+  String get saveFileCannon => 'Cañón';
+
+  @override
+  String get saveFileCoins => 'Monedas';
+
+  @override
+  String get saveFileCastle => 'Estrellas del castillo';
+
+  @override
+  String get saveFileUnlocks => 'Desbloqueos';
+
+  @override
+  String get saveFileWing => 'Gorra alada';
+
+  @override
+  String get saveFileMetal => 'Gorra metálica';
+
+  @override
+  String get saveFileVanish => 'Gorra invisible';
+
+  @override
+  String get saveFileKey1 => 'Primera llave';
+
+  @override
+  String get saveFileKey2 => 'Segunda llave';
+
+  @override
+  String get saveFileBasement => 'Puerta del sótano';
+
+  @override
+  String get saveFileUpstairs => 'Puerta de la planta superior';
+
+  @override
+  String get saveFileMoat => 'Vaciar foso';
+
+  @override
+  String get saveFileComplete => '120 estrellas';
+
+  @override
+  String get saveFileClearStars => 'Quitar estrellas';
+
+  @override
+  String get saveFileCourseNames =>
+      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
 }
