@@ -37,7 +37,10 @@ internal class GameSaveCodec(input: ByteArray) {
     fun empty(slot: Int, bank: Int) = bytes.sliceArray(offset(slot, bank) until offset(slot, bank) + 56).all { it == 0.toByte() }
     fun flags(slot: Int, bank: Int) = buffer().getInt(offset(slot, bank) + 8)
     fun stars(slot: Int, bank: Int) = (0..24).map { bytes[offset(slot, bank) + 12 + it].toInt() and 127 }
-    fun coins(slot: Int, bank: Int) = (0..14).map { bytes[offset(slot, bank) + 37 + it].toInt() and 255 }
+    fun coins(slot: Int, bank: Int) = (0..14).map {
+        val raw = bytes[offset(slot, bank) + 37 + it].toInt() and 255
+        raw.coerceAtLeast(if (bytes[offset(slot, bank) + 12 + it].toInt() and 64 != 0) 100 else 0)
+    }
     fun cannons(slot: Int, bank: Int) = (1..15).map { bytes[offset(slot, bank) + 12 + it].toInt() and 128 != 0 }
     fun total(slot: Int, bank: Int) = stars(slot, bank).sumOf { Integer.bitCount(it) } + Integer.bitCount(flags(slot, bank) ushr 24 and 127)
     fun edit(slot: Int, bank: Int, stars: List<Int>, coins: List<Int>, cannons: List<Boolean>, castle: Int, unlocks: Int) {
@@ -68,12 +71,17 @@ internal class GameSaveCodec(input: ByteArray) {
     }
     private fun touchAges(slot: Int) {
         // Main menu copies follow the game's own save_main_menu_data policy.
+        // CoopDX disables vanilla menu recovery: a new save can legitimately
+        // retain an all-zero menu. Its zero ages need no update.
+        if (bytes.sliceArray(448 until 480).all { it == 0.toByte() }) return
         require(buffer().getShort(476).toInt() and 65535 == 0x4849 &&
             buffer().getShort(478).toInt() and 65535 == checksum(448, 32)) { "format" }
+        var changed = false
         for (course in 0..14) {
             val shift = course * 2
             val age = buffer().getInt(448 + slot * 4) ushr shift and 3
             if (age == 0) continue
+            changed = true
             for (other in 0..3) {
                 val at = 448 + other * 4
                 val old = buffer().getInt(at)
@@ -82,6 +90,7 @@ internal class GameSaveCodec(input: ByteArray) {
                 buffer().putInt(at, (old and (3 shl shift).inv()) or (next shl shift))
             }
         }
+        if (!changed) return
         sign(448, 32, 0x4849)
         bytes.copyInto(bytes, 480, 448, 480)
     }

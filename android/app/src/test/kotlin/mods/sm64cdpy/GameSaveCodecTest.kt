@@ -49,6 +49,19 @@ class GameSaveCodecTest {
         assertTrue(codec.valid(2, 0)); assertTrue(codec.empty(2, 1))
         assertEquals(0, codec.total(2, 0))
     }
+    @Test fun `fresh zero menu is preserved when copying and erasing`() {
+        val bytes = fixture()
+        bytes.fill(0, 448, 512)
+        val codec = GameSaveCodec(bytes)
+        codec.copy(0, 1)
+        codec.erase(1)
+        assertArrayEquals(ByteArray(64), codec.bytes.sliceArray(448..511))
+    }
+    @Test fun `coin display matches game minimum for hundred coin star`() {
+        val bytes = fixture()
+        bytes[12] = 64
+        assertEquals(100, GameSaveCodec(bytes).coins(0, 0)[0])
+    }
     @Test(expected = IllegalArgumentException::class) fun `rejects wrong size`() { GameSaveCodec(ByteArray(513)) }
     @Test(expected = IllegalArgumentException::class) fun `rejects corrupt source instead of signing it`() {
         val bytes = fixture(); bytes[3] = 11

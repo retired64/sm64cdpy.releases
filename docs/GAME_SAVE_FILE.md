@@ -11,10 +11,11 @@ bytes and the independent primary/alternate copies. It uses four pairs of
 Cannons use course number (BOB=1), while stars use course index (BOB=0).
 Castle stars use flag bits 24–28; unknown flag bits survive editing. Completing
 120 stars is an explicit draft action and does not write until Apply is confirmed.
-100-coin stars enforce a minimum visible coin score of 100 as the game does.
+100-coin stars enforce a minimum visible coin score of 100 as the game does,
+including saves produced by external editors with a raw score below 100.
 Copy preserves the distinct alternate copy. Erase clears both copies and signs
-the primary. Copy/erase update menu score ages and both menu copies, requiring a
-valid primary menu block. Invalid nonempty slot blocks cannot be edited/copied.
+the primary. Copy/erase update menu score ages and both menu copies only when ages change,
+requiring a valid or untouched all-zero primary menu block. Invalid nonempty slot blocks cannot be edited/copied.
 
 `GameSaveStore` resolves `user/sm64_save_file.bin` from the existing SAF grant.
 It never creates a missing game save and does not search arbitrary paths. Read
