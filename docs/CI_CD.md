@@ -86,6 +86,13 @@ Revisado para 1.8.5 el 2026-10-15.
 
 ## Desarrollo y pruebas remotas
 
+La prueba de los dos diálogos del primer inicio controla explícitamente la
+confirmación del guardado mediante un provider de prueba: comprueba que el
+segundo diálogo espera al primero y a la persistencia. Las pruebas independientes
+del provider verifican las escrituras reales en Hive y SharedPreferences.
+No se usa una espera fija ni polling de disco dentro del reloj simulado de
+Flutter; `runAsync` por sí solo no avanza las continuaciones del flujo visual.
+
 Ambos workflows hacen `flutter pub get` → `flutter gen-l10n` → Dart format →
 análisis antes del build; testing también ejecuta `flutter test`. El formato del
 runner no crea commits. El artifact `flutter-source-sync` permite revisar e
