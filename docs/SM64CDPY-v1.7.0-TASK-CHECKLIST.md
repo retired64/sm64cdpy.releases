@@ -605,3 +605,10 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [ ] Validar Testing sobre la candidata final.
 - [ ] Confirmar fecha publishedAt al publicar.
 - [ ] Ejecutar manualmente Build & Release con autorización del usuario.
+
+## Decoración exclusiva de Retro Manga
+
+- [x] Regla común para leyendas japonesas y espacios asociados.
+- [x] Revisar drawer, ajustes, catálogo y secciones hermanas.
+- [x] Preparar pruebas para los seis temas en claro y oscuro.
+- [ ] Ejecutar Testing y revisar visualmente el APK.

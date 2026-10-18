@@ -108,7 +108,8 @@ class _VipBody extends StatelessWidget {
         ),
 
         // ── Section label ─────────────────────────────────────
-        SliverToBoxAdapter(
+        if (retro.showJapaneseDecorations)
+          SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
             child: Text('限定・プレミアムコンテンツ', style: retro.body(size: 12)),

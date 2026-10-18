@@ -293,8 +293,10 @@ class _DrawerHeader extends StatelessWidget {
                   'CoopDX',
                   style: retro.heading(size: 16, color: retro.accentText),
                 ),
-                const SizedBox(height: 3),
-                Text('モッド・カタログ', style: retro.body(size: 10.5)),
+                if (retro.showJapaneseDecorations) ...[
+                  const SizedBox(height: 3),
+                  Text('モッド・カタログ', style: retro.body(size: 10.5)),
+                ],
               ],
             ),
           ),

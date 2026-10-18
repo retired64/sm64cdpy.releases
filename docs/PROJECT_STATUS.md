@@ -267,3 +267,7 @@ integrados en main. Manifiesto canónico: `release-manifests/v1.8.7.json`; notas
 EN/ES/PT-BR generadas desde ese archivo. La fecha es provisional hasta publicar.
 Testing de acentos aprobado en da7c12f (run 39142810984); usuario confirmó su
 funcionamiento. Validación de la candidata final y publicación manual pendientes.
+
+La rama de accesibilidad reserva las leyendas japonesas decorativas a Retro
+Manga en todas las pantallas compartidas. Incluye prueba de encabezados para
+cada diseño en ambos modos; validación remota pendiente.

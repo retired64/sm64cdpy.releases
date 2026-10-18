@@ -49,6 +49,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   final RetroAccent retroAccent;
   bool get _customAccent => design.id == AppThemeId.retroManga && retroAccent != RetroAccent.cyan;
   final MarioThemeAssets marioAssets;
+  /// Japanese captions are decoration exclusive to the manga design.
+  bool get showJapaneseDecorations => design.id == AppThemeId.retroManga;
   bool get isIntro => design.id == AppThemeId.sm64Intro;
   bool get isMario => design.id == AppThemeId.mario64 || isIntro;
   String? marioAsset(String id) => isMario ? marioAssets.files[id] : null;
@@ -1031,7 +1033,7 @@ class SectionKicker extends StatelessWidget {
           Flexible(
             child: MarioGameTitle(text: label, retro: retro, size: 17),
           ),
-        if (japanese != null) ...[
+        if (retro.showJapaneseDecorations && japanese != null) ...[
           const SizedBox(width: 8),
           Text(japanese!, style: retro.body(size: 13, color: retro.inkDim)),
         ],

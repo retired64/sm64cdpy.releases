@@ -277,3 +277,11 @@ En claro, los textos destacados se ajustan a contraste 4,5:1 sobre las tres
 superficies neutras; los rellenos pastel mantienen tinta oscura en ambos modos.
 El cache de colores de texto deriva exclusivamente del acento y las superficies:
 no guarda preferencias y una combinación distinta produce otra clave.
+
+## Decoración japonesa por diseño
+
+`RetroTheme.showJapaneseDecorations` permite subtítulos japoneses únicamente
+cuando el ID es `retro_manga`. SectionKicker, el drawer y las leyendas de
+catálogo/VIP/DynOS/Touch Controls/OMM/Render96/enlaces/ajustes usan esta regla.
+Se oculta también el espacio de las leyendas independientes; el contenido de
+mods y los nombres proporcionados por usuarios o autores no se filtran.

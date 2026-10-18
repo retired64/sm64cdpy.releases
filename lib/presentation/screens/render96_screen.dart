@@ -216,11 +216,13 @@ class _Render96Hero extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'リリース',
-                    style: retro.body(size: 13, color: retro.inkDim),
-                  ),
+                  if (retro.showJapaneseDecorations) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      'リリース',
+                      style: retro.body(size: 13, color: retro.inkDim),
+                    ),
+                  ],
                 ],
               ),
             ),
