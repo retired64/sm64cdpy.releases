@@ -46,7 +46,7 @@ internal object GameSaveStore {
         if (action == "backup") { backup(context, file, before); return@synchronized snapshot(context) }
         val next = if (action == "restore") {
             val id = arguments["backup"] as? String ?: error("invalid")
-            require(Regex("[0-9]+-[a-f0-9-]{36}\.bin").matches(id)) { "invalid" }
+            require(Regex("""[0-9]+-[a-f0-9-]{36}\.bin""").matches(id)) { "invalid" }
             val source = File(directory(context, file), id); require(source.isFile && source.length() == 512L) { "missing" }
             source.readBytes().also { GameSaveCodec(it) }
         } else {
