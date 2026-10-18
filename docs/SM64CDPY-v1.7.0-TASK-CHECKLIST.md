@@ -612,3 +612,11 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Revisar drawer, ajustes, catálogo y secciones hermanas.
 - [x] Preparar pruebas para los seis temas en claro y oscuro.
 - [ ] Ejecutar Testing y revisar visualmente el APK.
+
+## GameTool Save File
+
+- [x] Kotlin EEPROM codec, bounded SAF store, identity/revision checks and backups.
+- [x] Drawer submenu, themed screen, independent copies and editable progress.
+- [x] Five ARB locales and native regression cases.
+- [ ] Testing generation, analysis, Flutter/native tests and arm64 APK.
+- [ ] Physical write/restore and all-theme validation with game closed.

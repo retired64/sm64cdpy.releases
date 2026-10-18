@@ -117,6 +117,20 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   route: '/player',
                   isActive: currentRoute == '/player',
                 ),
+                ExpansionTile(
+                  key: const PageStorageKey('game-tool-drawer'),
+                  initiallyExpanded: currentRoute.startsWith('/game-tool/'),
+                  leading: MarioGameIcon(Icons.sports_esports_outlined, color: retro.accentText),
+                  title: Text(l10n.gameToolTitle, style: retro.heading(size: 15)),
+                  children: [
+                    _NavItem(
+                      iconBuilder: (color) => MarioGameIcon(Icons.save_outlined, size: 19, color: color),
+                      label: l10n.saveFileTitle,
+                      route: '/game-tool/save-file',
+                      isActive: currentRoute == '/game-tool/save-file',
+                    ),
+                  ],
+                ),
                 _NavItem(
                   retroIconAsset: 'popular',
                   iconBuilder: (color) =>

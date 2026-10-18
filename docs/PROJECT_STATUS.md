@@ -271,3 +271,10 @@ funcionamiento. Validación de la candidata final y publicación manual pendient
 La rama de accesibilidad reserva las leyendas japonesas decorativas a Retro
 Manga en todas las pantallas compartidas. Incluye prueba de encabezados para
 cada diseño en ambos modos; validación remota pendiente.
+
+## GameTool Save File — Testing candidate
+
+New drawer submenu and original-game save editor: four slots with independent
+copies, course stars, cannon state, coin scores, castle stars and unlocks.
+Private full backups precede verified mutations. Native tests prepared; remote
+validation and physical review pending. See GAME_SAVE_FILE.md.

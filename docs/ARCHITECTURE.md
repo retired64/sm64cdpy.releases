@@ -285,3 +285,10 @@ cuando el ID es `retro_manga`. SectionKicker, el drawer y las leyendas de
 catálogo/VIP/DynOS/Touch Controls/OMM/Render96/enlaces/ajustes usan esta regla.
 Se oculta también el espacio de las leyendas independientes; el contenido de
 mods y los nombres proporcionados por usuarios o autores no se filtran.
+
+## GameTool Save File
+
+The main engine projects GameSaveStore through gameSaveProvider. Native Kotlin
+owns byte-order-aware EEPROM parsing, document identity/revision checks, private
+backups and verified SAF writes. Original-game semantics and lifecycle contracts
+are documented in [GAME_SAVE_FILE.md](GAME_SAVE_FILE.md). Overlay has no save editor.
