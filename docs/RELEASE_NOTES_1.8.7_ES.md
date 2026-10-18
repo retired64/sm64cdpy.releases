@@ -17,3 +17,9 @@ La versión 1.8.7 incorpora los diseños de interfaz Minish Cap y Mario Kart 64 
 - Ajustes ofrece los acentos cian (original), azul, violeta, rosa, coral, ámbar, verde y lima para Retro Manga.
 - La selección se guarda entre sesiones y se conserva al cambiar de tema o modo de brillo.
 - El texto de acento se adapta para mantener la legibilidad; los demás temas, colores semánticos y la burbuja flotante conservan sus paletas.
+
+### GameTool: administra las partidas originales
+
+- Abre GameTool → Save File en el menú lateral para consultar las cuatro ranuras y sus copias alternativas independientes.
+- Edita estrellas, premios del castillo, monedas, cañones y desbloqueos con una acción explícita de Aplicar.
+- Cada escritura verificada crea antes un respaldo local completo y rechaza cambios sobre un archivo desactualizado. Restaurar reemplaza las cuatro ranuras. Cierra el juego antes de aplicar cambios.

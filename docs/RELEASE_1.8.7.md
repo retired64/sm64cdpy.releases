@@ -14,6 +14,9 @@ como parte de esta preparación.
 - Cambiar de diseño o brillo conserva el acento; otros temas y overlay mantienen
   sus paletas. Los colores semánticos siguen siendo independientes.
 
+- GameTool → Save File: gestor de partidas originales con copias independientes,
+  progreso editable y respaldos completos antes de cada escritura verificada.
+
 ## Distribución
 
 | Campo | Valor |

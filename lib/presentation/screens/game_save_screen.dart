@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,13 +22,13 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen> with WidgetsBin
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) { if (mounted) ref.read(gameSaveProvider.notifier).run(); });
+    WidgetsBinding.instance.addPostFrameCallback((_) { if (mounted) unawaited(ref.read(gameSaveProvider.notifier).run()); });
   }
   @override
   void dispose() { WidgetsBinding.instance.removeObserver(this); super.dispose(); }
   @override
   void didChangeAppLifecycleState(AppLifecycleState value) {
-    if (value == AppLifecycleState.resumed) ref.read(gameSaveProvider.notifier).run();
+    if (value == AppLifecycleState.resumed) unawaited(ref.read(gameSaveProvider.notifier).run());
   }
   Future<bool> _confirm(String action) async {
     final l = AppLocalizations.of(context);
@@ -153,14 +154,15 @@ class _SaveEditorState extends State<_SaveEditor> {
           castle = 31; unlocks = 0x10ffff;
         }))),
         const SizedBox(width: 8),
-        IconButton(tooltip: l.playerReset, icon: const Icon(Icons.restart_alt), onPressed: () => setState(() {
+        IconButton(tooltip: l.saveFileClearStars, icon: const Icon(Icons.restart_alt), onPressed: () => setState(() {
           for (var i = 0; i < 25; i++) stars[i] = 0;
           castle = 0;
         })),
       ])),
       Expanded(child: ListView(padding: const EdgeInsets.symmetric(horizontal: 16), children: [
         for (var i = 0; i < 24; i++) ExpansionTile(
-          title: Text(_courses[i], style: retro.heading(size: 16)),
+          title: Text(l.saveFileCourseNames.split('|')[i], style: retro.heading(size: 16)),
+          subtitle: Text(_courses[i]),
           trailing: Text('${stars[i].toRadixString(2).replaceAll('0','').length}/${_maxStars[i]} ★'),
           children: [
             Wrap(spacing: 6, children: [for (var n = 0; n < _maxStars[i]; n++) FilterChip(
