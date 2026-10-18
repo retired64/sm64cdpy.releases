@@ -308,6 +308,8 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                       ),
                                 ],
                                 onSelected: (destination) => _change({
+                                  'revision': state.data?['revision'],
+                                  'identity': state.data?['identity'],
                                   'action': 'copy',
                                   'slot': slot['slot'],
                                   'destination': destination,
@@ -322,6 +324,8 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                 onPressed: state.busy
                                     ? null
                                     : () => _change({
+                                        'revision': state.data?['revision'],
+                                        'identity': state.data?['identity'],
                                         'action': 'erase',
                                         'slot': slot['slot'],
                                       }),
@@ -374,6 +378,8 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                             onPressed: state.busy
                                 ? null
                                 : () => _change({
+                                    'revision': state.data?['revision'],
+                                    'identity': state.data?['identity'],
                                     'action': 'restore',
                                     'backup': backup['id'],
                                   }),
