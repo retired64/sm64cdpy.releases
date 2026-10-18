@@ -61,6 +61,7 @@ flutter:
     - assets/icons/menu/
     - assets/player3d/
     - assets/themes/minish/
+    - assets/themes/mk64/
 
   fonts:
     - family: TypefaceMario64
@@ -78,4 +79,8 @@ flutter:
     - family: MinishFondamento
       fonts:
         - asset: fonts/minish/Fondamento-Regular.ttf
+          weight: 400
+    - family: Mk64Racing
+      fonts:
+        - asset: fonts/mk64/RacingSansOne-Regular.ttf
           weight: 400

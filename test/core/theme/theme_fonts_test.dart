@@ -5,6 +5,20 @@ import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
 
 void main() {
+  test('Mario Kart typography uses the racing display face', () {
+    final kart = RetroTheme(
+      false,
+      design: AppThemeCatalog.resolve(AppThemeId.marioKart64),
+    );
+
+    expect(kart.heading(size: 24).fontFamily, 'Mk64Racing');
+    expect(kart.body(size: 14).fontFamily, isNull);
+    expect(
+      kart.toMaterialTheme().textTheme.titleLarge!.fontFamily,
+      'Mk64Racing',
+    );
+  });
+
   test('Minish typography follows booklet heading and body roles', () {
     final minish = RetroTheme(
       false,

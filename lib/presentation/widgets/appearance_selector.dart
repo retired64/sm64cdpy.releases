@@ -18,6 +18,7 @@ class AppearanceSelector extends ConsumerWidget {
     AppThemeId.minimal => l10n.themeMinimal,
     AppThemeId.retroManga => l10n.themeRetroManga,
     AppThemeId.minishCap => l10n.themeMinishCap,
+    AppThemeId.marioKart64 => l10n.themeMarioKart64,
     AppThemeId.mario64 => l10n.themeMario64,
     AppThemeId.sm64Intro => l10n.themeSm64Intro,
   };

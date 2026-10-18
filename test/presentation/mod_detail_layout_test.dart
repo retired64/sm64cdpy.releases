@@ -36,6 +36,7 @@ void main() {
   for (final id in [
     AppThemeId.retroManga,
     AppThemeId.minishCap,
+    AppThemeId.marioKart64,
     AppThemeId.mario64,
     AppThemeId.sm64Intro,
   ]) {
