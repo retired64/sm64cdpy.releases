@@ -24,7 +24,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navPopular => 'Popular';
 
   @override
-  String get navVIPMods => 'VIP Mods';
+  String get navVIPMods => 'Mods';
 
   @override
   String get navDynOS => 'DynOS';
@@ -33,7 +33,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navTouchControls => 'Controles Táctiles';
 
   @override
-  String get navOmmRebirth => 'OMMR PACK';
+  String get navOmmRebirth => 'Omm Pack';
 
   @override
   String get navLinksResource => 'Enlaces y Recursos';
@@ -45,7 +45,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navSettings => 'Ajustes';
 
   @override
-  String get sectionExclusive => 'EXCLUSIVO';
+  String get sectionExclusive => 'Exclusivo';
 
   @override
   String get sectionNavigation => 'NAVEGACIÓN';
@@ -2091,7 +2091,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get navPopular => 'Popular';
 
   @override
-  String get navVIPMods => 'VIP Mods';
+  String get navVIPMods => 'Mods';
 
   @override
   String get navDynOS => 'DynOS';
@@ -2100,7 +2100,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get navTouchControls => 'Controles Táctiles';
 
   @override
-  String get navOmmRebirth => 'OMMR PACK';
+  String get navOmmRebirth => 'Omm Pack';
 
   @override
   String get navLinksResource => 'Enlaces y Recursos';
@@ -2112,7 +2112,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get navSettings => 'Ajustes';
 
   @override
-  String get sectionExclusive => 'EXCLUSIVO';
+  String get sectionExclusive => 'Exclusivo';
 
   @override
   String get sectionNavigation => 'NAVEGACIÓN';

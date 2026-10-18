@@ -24,7 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navPopular => 'Popular';
 
   @override
-  String get navVIPMods => 'VIP Mods';
+  String get navVIPMods => 'Mods';
 
   @override
   String get navDynOS => 'DynOS';
@@ -33,7 +33,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navTouchControls => 'Touch Controls';
 
   @override
-  String get navOmmRebirth => 'OMMR PACK';
+  String get navOmmRebirth => 'Omm Pack';
 
   @override
   String get navLinksResource => 'Links Resource';
@@ -45,7 +45,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navSettings => 'Settings';
 
   @override
-  String get sectionExclusive => 'EXCLUSIVE';
+  String get sectionExclusive => 'Exclusive';
 
   @override
   String get sectionNavigation => 'NAVIGATION';

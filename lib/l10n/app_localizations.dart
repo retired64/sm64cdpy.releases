@@ -135,7 +135,7 @@ abstract class AppLocalizations {
   /// Drawer navigation label for the VIP mods screen
   ///
   /// In en, this message translates to:
-  /// **'VIP Mods'**
+  /// **'Mods'**
   String get navVIPMods;
 
   /// Drawer navigation label for the DynOS screen
@@ -153,7 +153,7 @@ abstract class AppLocalizations {
   /// Drawer navigation label for the OMM Rebirth screen
   ///
   /// In en, this message translates to:
-  /// **'OMMR PACK'**
+  /// **'Omm Pack'**
   String get navOmmRebirth;
 
   /// Drawer navigation label for the links & resources screen
@@ -177,7 +177,7 @@ abstract class AppLocalizations {
   /// Section header in the drawer for exclusive content items
   ///
   /// In en, this message translates to:
-  /// **'EXCLUSIVE'**
+  /// **'Exclusive'**
   String get sectionExclusive;
 
   /// Section header for the primary navigation items in the drawer

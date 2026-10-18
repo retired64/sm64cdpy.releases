@@ -154,7 +154,6 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   ],
                 ),
 
-
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
                   child: _RetroDivider(retro: retro),
@@ -162,13 +161,20 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                 ExpansionTile(
                   key: const PageStorageKey('exclusive-drawer'),
                   initiallyExpanded: const [
-                    '/render96', '/vip', '/dynos', '/touch-controls', '/omm-rebirth',
+                    '/render96',
+                    '/vip',
+                    '/dynos',
+                    '/touch-controls',
+                    '/omm-rebirth',
                   ].contains(currentRoute),
                   leading: MarioGameIcon(
                     Icons.auto_awesome_outlined,
                     color: retro.accentText,
                   ),
-                  title: Text(l10n.sectionExclusive, style: retro.heading(size: 15)),
+                  title: Text(
+                    l10n.sectionExclusive,
+                    style: retro.heading(size: 15),
+                  ),
                   children: [
                     _NavItem(
                       retroIconAsset: 'render96',
