@@ -31,3 +31,5 @@ A versão 1.8.7 adiciona os visuais Minish Cap e Mario Kart 64 e permite persona
 - Explorar reúne Catálogo, Popular e Favoritos; Recursos reúne Links e Aviso legal. Início e Configurações continuam diretos, com grupos animados independentes e destaque da seção ativa.
 
 - Início e Configurações seguem o estilo dos grupos do menu; o rótulo de navegação se adapta a telas pequenas, e Exclusivo e Render96 têm ícones distintos.
+
+- O menu mostra Ferramentas, Dados salvos e Links; os nomes também foram traduzidos para espanhol.
