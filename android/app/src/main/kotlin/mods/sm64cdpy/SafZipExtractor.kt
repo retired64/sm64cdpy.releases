@@ -648,9 +648,8 @@ object SafZipExtractor {
      * del archivo (que ya trae la extensión correcta, ver ModDownloadWorker /
      * capa Dart que arma el fileName).
      *
-     * Retorna null si no se pudo crear o escribir el archivo destino — el
-     * caller decide cómo reportar el fallo (ModInstallWorker lo convierte en
-     * Result.failure, así que el error no es silencioso).
+     * Mantiene el tipo nullable por compatibilidad con callers existentes;
+     * los fallos de escritura, permiso y cancelación se propagan al caller.
      */
     fun copyFileToTree(
         sourceFile: File,
@@ -938,55 +937,55 @@ object SafZipExtractor {
                 }
 
                 val producer = async {
-                try {
-                    val seen = HashSet<String>()
-                    var entry: SevenZArchiveEntry? = szf.nextEntry
-                    while (entry != null) {
-                        ensureActive()
-                        val current: SevenZArchiveEntry = entry
-                        val path = sanitizeEntryName(current.name)
-                        if (!current.isDirectory && path.isNotEmpty() && seen.add(path)) {
-                            val size = current.size
-                            require(size >= 0) { "Invalid 7z entry size" }
-                            if (size <= SMALL_ENTRY_LIMIT) {
-                                val bytes = ByteArray(size.toInt())
-                                var off = 0
-                                while (off < bytes.size) {
-                                    ensureActive()
-                                    val n = szf.read(bytes, off, bytes.size - off)
-                                    if (n <= 0) throw IOException("Unexpected end of 7z entry: $path")
-                                    off += n
-                                }
-                                queue.send(path to bytes)
-                            } else {
-                                val job = currentCoroutineContext()[Job]
-                                val buf = copyBuffers.get()!!
-                                writer.writeFile(
-                                    path.substringBeforeLast('/', ""),
-                                    path.substringAfterLast('/'),
-                                    path
-                                ) { out ->
-                                    var read = 0L
-                                    while (read < size) {
-                                        val n = szf.read(
-                                            buf, 0, minOf(buf.size.toLong(), size - read).toInt()
-                                        )
+                    try {
+                        val seen = HashSet<String>()
+                        var entry: SevenZArchiveEntry? = szf.nextEntry
+                        while (entry != null) {
+                            ensureActive()
+                            val current: SevenZArchiveEntry = entry
+                            val path = sanitizeEntryName(current.name)
+                            if (!current.isDirectory && path.isNotEmpty() && seen.add(path)) {
+                                val size = current.size
+                                require(size >= 0) { "Invalid 7z entry size" }
+                                if (size <= SMALL_ENTRY_LIMIT) {
+                                    val bytes = ByteArray(size.toInt())
+                                    var off = 0
+                                    while (off < bytes.size) {
+                                        ensureActive()
+                                        val n = szf.read(bytes, off, bytes.size - off)
                                         if (n <= 0) throw IOException("Unexpected end of 7z entry: $path")
-                                        out.write(buf, 0, n)
-                                        read += n
-                                        doneBytes.addAndGet(n.toLong())
-                                        job?.ensureActive()
+                                        off += n
                                     }
+                                    queue.send(path to bytes)
+                                } else {
+                                    val job = currentCoroutineContext()[Job]
+                                    val buf = copyBuffers.get()!!
+                                    writer.writeFile(
+                                        path.substringBeforeLast('/', ""),
+                                        path.substringAfterLast('/'),
+                                        path
+                                    ) { out ->
+                                        var read = 0L
+                                        while (read < size) {
+                                            val n = szf.read(
+                                                buf, 0, minOf(buf.size.toLong(), size - read).toInt()
+                                            )
+                                            if (n <= 0) throw IOException("Unexpected end of 7z entry: $path")
+                                            out.write(buf, 0, n)
+                                            read += n
+                                            doneBytes.addAndGet(n.toLong())
+                                            job?.ensureActive()
+                                        }
+                                    }
+                                    synchronized(manifest) { manifest.record(path) }
+                                    report()
                                 }
-                                synchronized(manifest) { manifest.record(path) }
-                                report()
                             }
+                            entry = szf.nextEntry
                         }
-                        entry = szf.nextEntry
+                    } finally {
+                        queue.close()
                     }
-                } finally {
-                    queue.close()
-                }
                 }
                 (writers + producer).awaitAll()
             }
