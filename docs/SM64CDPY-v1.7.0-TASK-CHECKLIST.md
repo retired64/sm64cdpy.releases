@@ -636,3 +636,5 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 
 - [x] Unify root drawer typography and row sizing; prevent decorative navigation-title wrapping; distinguish Exclusive and Render96 icons.
 - [ ] Review narrow-screen and enlarged-text drawer presentation on device across themes.
+
+- [x] Localize the game-tools group and save-file destination in both Spanish and Portuguese variants; shorten the Links navigation label across languages.

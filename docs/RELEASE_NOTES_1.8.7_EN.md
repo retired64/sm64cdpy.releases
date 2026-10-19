@@ -31,3 +31,5 @@ Version 1.8.7 adds Minish Cap and Mario Kart 64 interface designs and lets you p
 - Explore now groups Catalog, Popular and Favourites; Resources groups Links and Disclaimer. Home and Settings stay direct, with independent animated groups and active-route highlighting.
 
 - Drawer Home and Settings now match the group headings; navigation labels fit narrow screens, with distinct Exclusive and Render96 icons.
+
+- Game tools and save-file labels are translated into Spanish and Portuguese; the Links label is shorter.

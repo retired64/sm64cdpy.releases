@@ -36,7 +36,7 @@
   "@navOmmRebirth": {
     "description": "Drawer navigation label for the OMM Rebirth screen"
   },
-  "navLinksResource": "Links Resource",
+  "navLinksResource": "Links",
   "@navLinksResource": {
     "description": "Drawer navigation label for the links & resources screen"
   },

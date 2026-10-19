@@ -36,7 +36,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get navOmmRebirth => 'Omm Pack';
 
   @override
-  String get navLinksResource => 'Links & Recursos';
+  String get navLinksResource => 'Links';
 
   @override
   String get navDisclaimer => 'Aviso Legal';
@@ -1951,10 +1951,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get retroAccentLime => 'Lima';
 
   @override
-  String get gameToolTitle => 'GameTool';
+  String get gameToolTitle => 'Ferramentas';
 
   @override
-  String get saveFileTitle => 'Save File';
+  String get saveFileTitle => 'Dados salvos';
 
   @override
   String get saveFileHint => 'Escolha uma partida · jogo original';
@@ -2096,7 +2096,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get navOmmRebirth => 'Omm Pack';
 
   @override
-  String get navLinksResource => 'Links & Recursos';
+  String get navLinksResource => 'Links';
 
   @override
   String get navDisclaimer => 'Aviso Legal';
@@ -4011,10 +4011,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get retroAccentLime => 'Lima';
 
   @override
-  String get gameToolTitle => 'GameTool';
+  String get gameToolTitle => 'Ferramentas';
 
   @override
-  String get saveFileTitle => 'Save File';
+  String get saveFileTitle => 'Dados salvos';
 
   @override
   String get saveFileHint => 'Escolha uma partida · jogo original';

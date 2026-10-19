@@ -286,3 +286,5 @@ is an explicit action. Secondary internal copies are an explained advanced optio
 Drawer navigation: Home and Settings remain direct links. Explore groups Catalog, Popular and Favourites; GameTool groups Library, Player and Save File; Exclusive groups Render96, Mods, DynOS, Touch Controls and Omm Pack; Resources groups Links and Disclaimer. Each group expands independently and highlights its active route. Existing routes remain unchanged.
 
 Drawer visual polish: consistent Home/Settings and group-header typography, a compact navigation caption for narrow screens, and separate collection/3D-model icons for Exclusive/Render96.
+
+Drawer localization: Spanish uses Herramientas / Partidas / Enlaces; Portuguese uses Ferramentas / Dados salvos / Links. English keeps GameTool / Save File and shortens Links. Save screen headings share the same translated label; routes remain unchanged.
