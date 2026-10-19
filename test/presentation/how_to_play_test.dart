@@ -56,6 +56,17 @@ void main() {
               await tester.tap(chip);
               await tester.pumpAndSettle();
               expect(tester.takeException(), isNull);
+              if (step == 1 || step == 4) {
+                final help = find.descendant(
+                  of: find.byKey(PageStorageKey('guide-chapter-$step')),
+                  matching: find.byType(ExpansionTile),
+                );
+                await tester.ensureVisible(help);
+                await tester.pumpAndSettle();
+                await tester.tap(help);
+                await tester.pumpAndSettle();
+                expect(tester.takeException(), isNull);
+              }
             }
             final pager = find.byKey(const ValueKey('guide-pager'));
             await tester.drag(pager, const Offset(300, 0));
