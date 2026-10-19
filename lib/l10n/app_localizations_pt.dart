@@ -1920,14 +1920,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get playerRestored => 'Configuração anterior do jogo restaurada.';
 
   @override
-  String get retroAccentTitle => 'Destaque do Retro Manga';
+  String get retroAccentTitle => 'Destaque da interface';
 
   @override
   String get retroAccentDescription =>
-      'Escolha a cor de destaque. O contraste do texto se adapta aos modos claro e escuro. Os outros temas mantêm suas cores.';
+      'Escolha a cor de destaque do Retro Manga ou Mario Kart 64. O MK64 também coordena o fundo, os painéis e a grade de corrida.';
 
   @override
-  String get retroAccentCyan => 'Ciano (original)';
+  String get retroAccentCyan => 'Ciano';
 
   @override
   String get retroAccentBlue => 'Azul';
@@ -2062,6 +2062,17 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get drawerResources => 'Recursos';
+
+  @override
+  String get fastInstallTitle => 'Ativar instalação rápida';
+
+  @override
+  String get fastInstallDescription =>
+      'Opcional: permita o acesso a todos os arquivos no Android para acelerar a instalação em pastas compatíveis do jogo. Sem isso, você pode continuar instalando normalmente.';
+
+  @override
+  String get fastInstallAccessError =>
+      'Não foi possível abrir as permissões. Você pode continuar instalando normalmente.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3980,14 +3991,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get playerRestored => 'Configuração anterior do jogo restaurada.';
 
   @override
-  String get retroAccentTitle => 'Destaque do Retro Manga';
+  String get retroAccentTitle => 'Destaque da interface';
 
   @override
   String get retroAccentDescription =>
-      'Escolha a cor de destaque. O contraste do texto se adapta aos modos claro e escuro. Os outros temas mantêm suas cores.';
+      'Escolha a cor de destaque do Retro Manga ou Mario Kart 64. O MK64 também coordena o fundo, os painéis e a grade de corrida.';
 
   @override
-  String get retroAccentCyan => 'Ciano (original)';
+  String get retroAccentCyan => 'Ciano';
 
   @override
   String get retroAccentBlue => 'Azul';
@@ -4122,4 +4133,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get drawerResources => 'Recursos';
+
+  @override
+  String get fastInstallTitle => 'Ativar instalação rápida';
+
+  @override
+  String get fastInstallDescription =>
+      'Opcional: permita o acesso a todos os arquivos no Android para acelerar a instalação em pastas compatíveis do jogo. Sem isso, você pode continuar instalando normalmente.';
+
+  @override
+  String get fastInstallAccessError =>
+      'Não foi possível abrir as permissões. Você pode continuar instalando normalmente.';
 }

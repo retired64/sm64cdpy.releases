@@ -27,6 +27,14 @@ extension SettingsSurfaces on RetroTheme {
         shadowDy: dy,
       );
     }
+    if (usesFolioSurfaces) {
+      return surfaceDecoration(
+        borderColor: borderColor ?? border.withValues(alpha: 0.78),
+        border: 1.5,
+        shadowDx: dx,
+        shadowDy: dy,
+      );
+    }
     return BoxDecoration(
       color: surface,
       borderRadius: radius,

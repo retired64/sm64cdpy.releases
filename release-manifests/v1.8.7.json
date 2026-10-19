@@ -53,6 +53,13 @@
             "Groups expand independently, reveal the active destination and use each theme’s visual style. Home and Settings share the group-heading typography; the compact navigation label fits narrow screens, with distinct collection and 3D-model icons.",
             "Game-tool and save-file labels are localized in Spanish and Portuguese. Japanese decorative captions appear only in Retro Manga."
           ]
+        },
+        {
+          "heading": "Optional faster installation",
+          "items": [
+            "Settings offers optional storage access to accelerate installation in compatible primary-storage game folders. ZIP, 7z, mods, DynOS and Touch Controls share the same writer; ordinary SAF remains available without the extra permission.",
+            "Parallel extraction retains bounded memory, cancellation checks, archive validation and verified installation receipts. The library refreshes after automatic and manual installations."
+          ]
         }
       ]
     },
@@ -104,6 +111,13 @@
             "Los grupos se despliegan de forma independiente, muestran el destino activo y respetan el diseño de cada tema. Inicio y Ajustes comparten la tipografía de los grupos; el rótulo de navegación se adapta a pantallas pequeñas, con iconos distintos de colección y modelo 3D.",
             "Los nombres de las herramientas y las partidas están traducidos al español y portugués. Los caracteres japoneses decorativos aparecen únicamente en Retro Manga."
           ]
+        },
+        {
+          "heading": "Instalación rápida opcional",
+          "items": [
+            "Ajustes ofrece acceso de almacenamiento opcional para acelerar la instalación en carpetas compatibles del almacenamiento principal. ZIP, 7z, mods, DynOS y Touch Controls comparten el mismo escritor; SAF sigue disponible sin el permiso adicional.",
+            "La extracción paralela conserva memoria acotada, comprobaciones de cancelación, validación de archivos y recibos de instalación confirmada. La biblioteca se actualiza tras instalaciones automáticas y manuales."
+          ]
         }
       ]
     },
@@ -154,6 +168,13 @@
             "Exclusivo reúne Render96, Mods, DynOS, Touch Controls e Omm Pack; Recursos agrupa Links e Aviso legal. Início e Configurações mantêm o acesso direto.",
             "Os grupos se expandem de forma independente, mostram o destino ativo e seguem o visual de cada tema. Início e Configurações compartilham a tipografia dos grupos; o rótulo de navegação se adapta a telas pequenas, com ícones distintos de coleção e modelo 3D.",
             "Os nomes das ferramentas e dos dados salvos estão traduzidos para espanhol e português. Os caracteres japoneses decorativos aparecem somente no Retro Manga."
+          ]
+        },
+        {
+          "heading": "Instalação rápida opcional",
+          "items": [
+            "Os Ajustes oferecem acesso opcional ao armazenamento para acelerar a instalação em pastas compatíveis do armazenamento principal. ZIP, 7z, mods, DynOS e Touch Controls compartilham o mesmo gravador; SAF continua disponível sem a permissão adicional.",
+            "A extração paralela mantém memória limitada, verificações de cancelamento, validação de arquivos e recibos de instalação confirmada. A biblioteca é atualizada após instalações automáticas e manuais."
           ]
         }
       ]

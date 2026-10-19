@@ -24,6 +24,7 @@ descarga e instalación.
 - Gestor de descargas en segundo plano con progreso, cancelación y
   notificaciones.
 - Instalador de ZIP, 7z y archivos sueltos mediante Storage Access Framework.
+- La instalación rápida opcional usa escritura directa en carpetas compatibles del juego tras conceder el acceso en Ajustes; la instalación normal mediante SAF sigue disponible.
 - Burbuja flotante accesible mientras el juego está abierto.
 - Actualización de catálogos y de APK por arquitectura del dispositivo.
 - Base para mejorar la instalación automática, recuperación tras cierres de

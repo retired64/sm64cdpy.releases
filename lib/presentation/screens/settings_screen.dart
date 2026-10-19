@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../services/update_service.dart';
+import '../../services/fast_install_access.dart';
 import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
@@ -81,6 +82,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
               const GameFolderCard(),
+              const _FastInstallTile(),
               _AutoInstallToggle(),
               _OverlayToggle(),
 
@@ -630,6 +632,85 @@ class _RetroSpinner extends StatelessWidget {
         height: 16,
         child: CircularProgressIndicator(strokeWidth: 2, color: retro.accent),
       ),
+    );
+  }
+}
+
+/// Optional acceleration. Denial never blocks the existing SAF workflow.
+class _FastInstallTile extends StatefulWidget {
+  const _FastInstallTile();
+  @override
+  State<_FastInstallTile> createState() => _FastInstallTileState();
+}
+
+class _FastInstallTileState extends State<_FastInstallTile>
+    with WidgetsBindingObserver {
+  final _access = FastInstallAccess();
+  bool _visible = false;
+  bool _launching = false;
+  int _generation = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    unawaited(_refresh());
+  }
+
+  @override
+  void dispose() {
+    ++_generation;
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) unawaited(_refresh());
+  }
+
+  Future<void> _refresh() async {
+    final generation = ++_generation;
+    try {
+      final supported = await _access.supported();
+      final granted = supported && await _access.granted();
+      if (mounted && generation == _generation) {
+        setState(() => _visible = supported && !granted);
+      }
+    } catch (_) {
+      // Missing/unavailable platform support leaves ordinary SAF installation usable.
+      if (mounted && generation == _generation)
+        setState(() => _visible = false);
+    }
+  }
+
+  Future<void> _request() async {
+    if (_launching) return;
+    setState(() => _launching = true);
+    try {
+      await _access.request();
+      if (!mounted) return;
+      await _refresh();
+    } catch (_) {
+      if (mounted)
+        AppSnackbar.error(
+          context,
+          message: AppLocalizations.of(context).fastInstallAccessError,
+        );
+    } finally {
+      if (mounted) setState(() => _launching = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_visible) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context);
+    return _SettingsTile(
+      icon: Icons.speed_rounded,
+      title: l.fastInstallTitle,
+      subtitle: l.fastInstallDescription,
+      onTap: _launching ? null : () => unawaited(_request()),
     );
   }
 }

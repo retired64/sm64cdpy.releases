@@ -1,14 +1,41 @@
 package mods.sm64cdpy
 
+import android.content.ContentResolver
 import android.content.Context
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.os.SystemClock
+import android.provider.DocumentsContract
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
+import java.io.ByteArrayInputStream
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
+import java.util.zip.CheckedInputStream
+import java.util.zip.CRC32
 import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry
 import org.apache.commons.compress.archivers.sevenz.SevenZFile
 
@@ -37,6 +64,15 @@ import org.apache.commons.compress.archivers.sevenz.SevenZFile
 object SafZipExtractor {
     const val MAX_SENTINELS = 32
 
+    /** Workers escribiendo a SAF en paralelo (cada llamada es un IPC al provider). */
+    private val PARALLELISM = Runtime.getRuntime().availableProcessors().coerceIn(4, 8)
+    private const val COPY_BUFFER = 256 * 1024
+    /** En .7z, entradas <= este tamaño se leen a memoria y se escriben en paralelo. */
+    private const val SMALL_ENTRY_LIMIT = 1L * 1024 * 1024
+    private const val PROGRESS_INTERVAL_MS = 250L
+    private val copyBuffers: ThreadLocal<ByteArray> =
+        ThreadLocal.withInitial { ByteArray(COPY_BUFFER) }
+
     enum class PackageShape(val wireValue: String) {
         LOOSE_FILE("loose_file"),
         SINGLE_ROOT("single_root"),
@@ -61,6 +97,10 @@ object SafZipExtractor {
         private val newFiles = linkedSetOf<String>()
         private val newDirectories = linkedSetOf<String>()
         private var rolledBack = false
+        private var directRoot: File? = null
+
+        @Synchronized
+        internal fun useDirectRoot(root: File) { directRoot = root.canonicalFile }
 
         @Synchronized
         internal fun recordFile(path: String, existedBefore: Boolean) {
@@ -94,6 +134,13 @@ object SafZipExtractor {
 
         private fun safeDeletePath(root: DocumentFile, path: String, directory: Boolean) {
             try {
+                directRoot?.let { direct ->
+                    val target = DirectInstallPaths.child(direct, path)
+                    if (!directory || (target.isDirectory && target.list()?.isEmpty() == true)) {
+                        if (target.exists() && !target.delete()) throw IOException("Cannot remove partial file")
+                    }
+                    return
+                }
                 val segments = path.split('/').filter(String::isNotEmpty)
                 if (segments.isEmpty()) return
                 var parent = root
@@ -209,6 +256,7 @@ object SafZipExtractor {
      * llamar setProgress/setForeground desde él. ModInstallerPlugin lo invoca
      * sin callback (o con uno no-suspend vía runBlocking).
      */
+
     @Throws(IOException::class, SecurityException::class)
     suspend fun extractZipToTree(
         zipFile: File,
@@ -217,59 +265,380 @@ object SafZipExtractor {
         journal: WriteJournal? = null,
         onProgress: (suspend (fileCount: Int) -> Unit)? = null
     ): WriteManifest {
+        // ZipFile lee el directorio central (acceso aleatorio): permite
+        // descomprimir varias entradas a la vez. Si el ZIP es raro y no abre,
+        // se cae al extractor secuencial de siempre.
+        return withContext(Dispatchers.IO) {
+            val zf = try { ZipFile(zipFile) } catch (_: IOException) {
+                return@withContext extractZipToTreeStreaming(zipFile, targetDir, context, journal, onProgress)
+            }
+            zf.use { extractZipFast(it, targetDir, context, journal, onProgress) }.also {
+                requireTreeGrant(context, targetDir)
+            }
+        }
+    }
+
+    private suspend fun extractZipFast(
+        zf: ZipFile,
+        targetDir: DocumentFile,
+        context: Context,
+        journal: WriteJournal?,
+        onProgress: (suspend (fileCount: Int) -> Unit)?
+    ): WriteManifest {
+        val plan = LinkedHashMap<String, ZipEntry>()
+        val entries = zf.entries()
+        while (entries.hasMoreElements()) {
+            currentCoroutineContext().ensureActive()
+            val ze = entries.nextElement()
+            if (ze.isDirectory) continue
+            val path = sanitizeEntryName(ze.name)
+            if (path.isNotEmpty()) plan[path] = ze   // dedupe: la última gana
+        }
+
+        val writer = openSink(context, targetDir, journal)
+        writer.prepareDirs(plan.keys.map { it.substringBeforeLast('/', "") }.toSet())
+
+        // Los archivos grandes primero: mejor balance entre workers.
+        val ordered = plan.entries.sortedByDescending { it.value.size }
         val manifest = ManifestBuilder()
-        val createdDirs = mutableMapOf<String, DocumentFile>()
+        val progress = ProgressGate(onProgress)
 
+        forEachParallel(ordered, PARALLELISM) { item ->
+            val path = item.key
+            val ze = item.value
+            val job = currentCoroutineContext()[Job]
+            val buf = copyBuffers.get()!!
+            writer.writeFile(
+                path.substringBeforeLast('/', ""),
+                path.substringAfterLast('/'),
+                path
+            ) { out ->
+                zf.getInputStream(ze).use { input ->
+                    val checksum = CRC32()
+                    val size = pump(CheckedInputStream(input, checksum), out, buf, job)
+                    if ((ze.size >= 0 && size != ze.size) || (ze.crc >= 0 && checksum.value != ze.crc)) {
+                        throw IOException("Corrupt ZIP entry: $path")
+                    }
+                }
+            }
+            val count = synchronized(manifest) {
+                manifest.record(path)
+                manifest.currentFileCount
+            }
+            progress.emit(count)
+        }
+        return manifest.build()
+    }
+
+    private fun pump(input: InputStream, out: OutputStream, buf: ByteArray, job: Job?): Long {
+        var total = 0L
+        while (true) {
+            job?.ensureActive()
+            val n = input.read(buf)
+            if (n < 0) break
+            out.write(buf, 0, n)
+            total += n
+            job?.ensureActive()
+        }
+        return total
+    }
+
+    /** Reparte [items] entre [parallelism] workers; el primer fallo cancela al resto. */
+    internal suspend fun <T> forEachParallel(
+        items: List<T>,
+        parallelism: Int,
+        block: suspend (T) -> Unit
+    ) {
+        if (items.isEmpty()) return
+        coroutineScope {
+            val next = AtomicInteger(0)
+            List(minOf(parallelism, items.size)) {
+                async(Dispatchers.IO) {
+                    while (true) {
+                        ensureActive()
+                        val i = next.getAndIncrement()
+                        if (i >= items.size) break
+                        block(items[i])
+                    }
+                }
+            }.awaitAll()
+        }
+    }
+
+    /** Emite progreso como máximo cada [PROGRESS_INTERVAL_MS], de forma serializada. */
+    private class ProgressGate(private val sink: (suspend (Int) -> Unit)?) {
+        private val last = AtomicLong(0L)
+        private val mutex = Mutex()
+        private var emitted = -1
+
+        suspend fun emit(value: Int) {
+            val target = sink ?: return
+            val now = SystemClock.elapsedRealtime()
+            val prev = last.get()
+            if (now - prev < PROGRESS_INTERVAL_MS || !last.compareAndSet(prev, now)) return
+            mutex.withLock {
+                if (value > emitted) { target(value); emitted = value }
+            }
+        }
+    }
+
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Ruta directa por java.io.File (la más rápida)
+    // ─────────────────────────────────────────────────────────────────────
+
+    private interface TreeSink {
+        suspend fun prepareDirs(dirPaths: Collection<String>)
+        fun writeFile(dirPath: String, name: String, entryPath: String, copy: (OutputStream) -> Unit)
+    }
+
+    /** ¿Puede la app escribir por ruta en almacenamiento compartido? */
+    fun hasAllFilesAccess(context: Context): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+        } else {
+            Build.VERSION.SDK_INT <= 28 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                android.content.pm.PackageManager.PERMISSION_GRANTED
+        }
+
+    /**
+     * Si [targetDir] vive en el almacenamiento principal fuera de Android/
+     * (p. ej. /sdcard/com.maniscat2.sm64coopdx/mods) y la app tiene acceso a
+     * todos los archivos, devuelve su File real. Si no, null => se usa SAF.
+     * Android/data y Android/obb nunca se tocan por ruta (el sistema lo bloquea).
+     */
+    internal fun resolveDirectDir(context: Context, targetDir: DocumentFile): File? = try {
+        val uri = targetDir.uri
+        if (uri.authority != "com.android.externalstorage.documents" || !hasAllFilesAccess(context)) {
+            null
+        } else {
+            val docId = if (DocumentsContract.isDocumentUri(context, uri))
+                DocumentsContract.getDocumentId(uri) else DocumentsContract.getTreeDocumentId(uri)
+            @Suppress("DEPRECATION")
+            val dir = DirectInstallPaths.root(Environment.getExternalStorageDirectory(), docId)
+            dir?.takeIf { it.isDirectory && it.canWrite() && GameFolderAccess.hasGrant(context, uri, write = true) }
+
+        }
+    } catch (_: Exception) {
+        null
+    }
+
+    private fun requireTreeGrant(context: Context, root: DocumentFile) {
+        if (!GameFolderAccess.hasGrant(context, root.uri, write = true)) {
+            throw SecurityException("Lost selected folder permission")
+        }
+    }
+
+    private fun openSink(context: Context, targetDir: DocumentFile, journal: WriteJournal?): TreeSink {
+        requireTreeGrant(context, targetDir)
+        val direct = resolveDirectDir(context, targetDir)
+        if (direct != null) {
+            Log.i("ModInstall", "Direct file extraction: ${direct.path}")
+            journal?.useDirectRoot(direct)
+            return DirectTreeWriter(direct, journal)
+        }
+        return SafTreeWriter(context, targetDir, journal)
+    }
+
+    private class DirectTreeWriter(
+        private val root: File,
+        private val journal: WriteJournal?
+    ) : TreeSink {
+        override suspend fun prepareDirs(dirPaths: Collection<String>) {
+            val all = HashSet<String>()
+            for (p in dirPaths) {
+                var cur = p
+                while (cur.isNotEmpty() && all.add(cur)) cur = cur.substringBeforeLast('/', "")
+            }
+            // Padres antes que hijos.
+            for (path in all.sortedBy { it.count { c -> c == '/' } }) {
+                currentCoroutineContext().ensureActive()
+                val dir = DirectInstallPaths.child(root, path)
+                val existedBefore = dir.isDirectory
+                if (!existedBefore) {
+                    if (dir.exists()) throw IOException("File occupies directory: $path")
+                    if (!dir.mkdir() && !dir.isDirectory) {
+                        throw IOException("Cannot create directory: $path")
+                    }
+                }
+                journal?.recordDirectory(path, existedBefore)
+            }
+        }
+
+        override fun writeFile(
+            dirPath: String, name: String, entryPath: String, copy: (OutputStream) -> Unit
+        ) {
+            val target = DirectInstallPaths.child(root, entryPath)
+            if (target.isDirectory) throw IOException("Directory occupies file: $entryPath")
+            val existedBefore = target.exists()
+            journal?.recordFile(entryPath, existedBefore)
+            FileOutputStream(target).use {   // sobreescribe/trunca
+                copy(it)
+            }
+        }
+    }
+
+    /**
+     * Escritor SAF de bajo costo. Usa DocumentsContract directamente:
+     *  - lista cada carpeta existente UNA sola vez (en vez de findFile() por archivo),
+     *  - nunca lista carpetas que creó en esta instalación (están vacías),
+     *  - crea carpetas en paralelo por niveles,
+     *  - 2 llamadas IPC por archivo (createDocument + openOutputStream).
+     * Mantiene "delete-before-create", fallo explícito si se pierde el permiso
+     * y el journal de rollback.
+     */
+    private class SafTreeWriter(
+        context: Context,
+        targetDir: DocumentFile,
+        private val journal: WriteJournal?
+    ) : TreeSink {
+        private val resolver: ContentResolver = context.contentResolver
+        private val treeUri: Uri = GameFolderAccess.grantUri(targetDir.uri)
+
+        class Kid(val docId: String, val isDir: Boolean)
+
+        inner class Node(val docId: String, private val fresh: Boolean) {
+            val kids: ConcurrentHashMap<String, Kid> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+                if (fresh) ConcurrentHashMap() else listChildren(docId)
+            }
+        }
+
+        private val nodes = ConcurrentHashMap<String, Node>()
+
+        init {
+            nodes[""] = Node(DocumentsContract.getDocumentId(targetDir.uri), fresh = false)
+        }
+
+        private fun docUri(docId: String): Uri =
+            DocumentsContract.buildDocumentUriUsingTree(treeUri, docId)
+
+        private fun listChildren(parentId: String): ConcurrentHashMap<String, Kid> {
+            val map = ConcurrentHashMap<String, Kid>()
+            val uri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, parentId)
+            val cursor = resolver.query(
+                uri,
+                arrayOf(
+                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                    DocumentsContract.Document.COLUMN_MIME_TYPE
+                ),
+                null, null, null
+            ) ?: throw SecurityException("Lost SAF access during extraction: cannot list directory")
+            cursor.use { c ->
+                while (c.moveToNext()) {
+                    val name = c.getString(1) ?: continue
+                    val id = c.getString(0) ?: continue
+                    map[name] = Kid(
+                        id,
+                        c.getString(2) == DocumentsContract.Document.MIME_TYPE_DIR
+                    )
+                }
+            }
+            return map
+        }
+
+        /** Crea (o reutiliza) todas las carpetas necesarias, nivel por nivel. */
+        override suspend fun prepareDirs(dirPaths: Collection<String>) {
+            val all = HashSet<String>()
+            for (p in dirPaths) {
+                var cur = p
+                while (cur.isNotEmpty() && all.add(cur)) cur = cur.substringBeforeLast('/', "")
+            }
+            val levels = all.groupBy { path -> path.count { it == '/' } }.toSortedMap()
+            for ((_, paths) in levels) {
+                forEachParallel(paths, PARALLELISM) { ensureDir(it) }
+            }
+        }
+
+        private fun ensureDir(path: String) {
+            if (nodes.containsKey(path)) return
+            val parent = nodes[path.substringBeforeLast('/', "")]
+                ?: throw IOException("Parent directory not prepared for $path")
+            val name = path.substringAfterLast('/')
+
+            var existing = parent.kids[name]
+            if (existing != null && !existing.isDir) {
+                throw IOException("File occupies directory: $path")
+            }
+            val existedBefore = existing != null
+            val node = if (existing != null) {
+                Node(existing.docId, fresh = false)
+            } else {
+                val uri = DocumentsContract.createDocument(
+                    resolver, docUri(parent.docId),
+                    DocumentsContract.Document.MIME_TYPE_DIR, name
+                ) ?: throw SecurityException(
+                    "Lost SAF access during extraction: cannot create directory $path"
+                )
+                val id = DocumentsContract.getDocumentId(uri)
+                parent.kids[name] = Kid(id, true)
+                Node(id, fresh = true)
+            }
+            journal?.recordDirectory(path, existedBefore)
+            nodes[path] = node
+        }
+
+        /** Escribe un archivo; [copy] vuelca el contenido en el OutputStream. */
+        override fun writeFile(dirPath: String, name: String, entryPath: String, copy: (OutputStream) -> Unit) {
+            val dir = nodes[dirPath] ?: throw IOException("Directory not prepared: $dirPath")
+            val existing = dir.kids[name]
+            if (existing != null) {
+                if (existing.isDir) throw IOException("Directory occupies file: $entryPath")
+                if (!DocumentsContract.deleteDocument(resolver, docUri(existing.docId))) {
+                    throw IOException("Cannot replace existing file: $entryPath")
+                }
+                dir.kids.remove(name)
+            }
+            val uri = DocumentsContract.createDocument(
+                resolver, docUri(dir.docId), "application/octet-stream", name
+            ) ?: throw SecurityException(
+                "Lost SAF access during extraction: cannot create $name"
+            )
+            dir.kids[name] = Kid(DocumentsContract.getDocumentId(uri), false)
+            journal?.recordFile(entryPath, existing != null)
+            val os = resolver.openOutputStream(uri) ?: throw SecurityException(
+                "Lost SAF access during extraction: cannot open $name"
+            )
+            os.use {
+                copy(it)
+                it.flush()
+            }
+        }
+    }
+
+    /** Extractor secuencial original; solo se usa si ZipFile no puede abrir el archivo. */
+    @Throws(IOException::class, SecurityException::class)
+    private suspend fun extractZipToTreeStreaming(
+        zipFile: File,
+        targetDir: DocumentFile,
+        context: Context,
+        journal: WriteJournal? = null,
+        onProgress: (suspend (fileCount: Int) -> Unit)? = null
+    ): WriteManifest {
+        val manifest = ManifestBuilder()
+        val writer = openSink(context, targetDir, journal)
+        val progress = ProgressGate(onProgress)
+        val job = currentCoroutineContext()[Job]
         ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
-            var entry: ZipEntry? = zis.nextEntry
+            var entry = zis.nextEntry
             while (entry != null) {
+                job?.ensureActive()
                 if (!entry.isDirectory) {
-                    val entryName = sanitizeEntryName(entry.name)
-                    if (entryName.isNotEmpty() && !entryName.endsWith("/")) {
-                        val slashIdx = entryName.lastIndexOf('/')
-                        val parentDir: DocumentFile
-                        val fileName: String
-
-                        if (slashIdx > 0) {
-                            val dirPath = entryName.substring(0, slashIdx)
-                            val simpleName = entryName.substring(slashIdx + 1)
-                            parentDir = getOrCreateDir(createdDirs, targetDir, dirPath, journal)
-                            fileName = simpleName
-                        } else {
-                            parentDir = targetDir
-                            fileName = entryName
+                    val path = sanitizeEntryName(entry.name)
+                    if (path.isNotEmpty()) {
+                        val parent = path.substringBeforeLast('/', "")
+                        writer.prepareDirs(listOf(parent))
+                        writer.writeFile(parent, path.substringAfterLast('/'), path) { out ->
+                            pump(zis, out, copyBuffers.get()!!, job)
                         }
-
-                        if (parentDir == targetDir || (parentDir.exists() && parentDir.isDirectory)) {
-                            val existing = parentDir.findFile(fileName)
-                            val existedBefore = existing != null
-                            existing?.delete()
-
-                            val outputFile = parentDir.createFile(
-                                "application/octet-stream", fileName
-                            ) ?: throw SecurityException(
-                                "Lost SAF access during extraction: cannot create $fileName"
-                            )
-                            journal?.recordFile(entryName, existedBefore)
-
-                            context.contentResolver
-                                .openOutputStream(outputFile.uri)?.use { os ->
-                                    zis.copyTo(os)
-                                    os.flush()
-                                }
-                                ?: throw SecurityException(
-                                    "Lost SAF access during extraction: cannot open $fileName"
-                                )
-
-                            manifest.record(entryName)
-                            onProgress?.invoke(manifest.currentFileCount)
-                        }
+                        manifest.record(path)
+                        progress.emit(manifest.currentFileCount)
                     }
                 }
                 entry = zis.nextEntry
             }
         }
-
+        requireTreeGrant(context, targetDir)
         return manifest.build()
     }
 
@@ -279,36 +648,35 @@ object SafZipExtractor {
      * del archivo (que ya trae la extensión correcta, ver ModDownloadWorker /
      * capa Dart que arma el fileName).
      *
-     * Retorna null si no se pudo crear o escribir el archivo destino — el
-     * caller decide cómo reportar el fallo (ModInstallWorker lo convierte en
-     * Result.failure, así que el error no es silencioso).
+     * Mantiene el tipo nullable por compatibilidad con callers existentes;
+     * los fallos de escritura, permiso y cancelación se propagan al caller.
      */
     fun copyFileToTree(
         sourceFile: File,
         targetDir: DocumentFile,
         context: Context,
-        journal: WriteJournal? = null
+        journal: WriteJournal? = null,
+        targetName: String = sourceFile.name,
+        checkCancelled: () -> Unit = {}
     ): WriteManifest? {
-        return try {
-            val mimeType = guessMimeType(sourceFile.name)
-            val existing = targetDir.findFile(sourceFile.name)
-            val existedBefore = existing != null
-            existing?.delete()
-            val outputFile = targetDir.createFile(mimeType, sourceFile.name)
-                ?: return null
-            journal?.recordFile(sourceFile.name, existedBefore)
-
-            context.contentResolver.openOutputStream(outputFile.uri)?.use { os ->
-                FileInputStream(sourceFile).use { input ->
-                    input.copyTo(os)
+        val name = sanitizeEntryName(targetName)
+        require(name == targetName && name.isNotEmpty() && !name.contains('/')) { "Invalid target name" }
+        checkCancelled()
+        val writer = openSink(context, targetDir, journal)
+        writer.writeFile("", name, name) { out ->
+            FileInputStream(sourceFile).use { input ->
+                val buffer = copyBuffers.get()!!
+                while (true) {
+                    checkCancelled()
+                    val read = input.read(buffer)
+                    if (read < 0) break
+                    out.write(buffer, 0, read)
                 }
-                os.flush()
-            } ?: return null
-
-            ManifestBuilder(looseFile = true).apply { record(sourceFile.name) }.build()
-        } catch (_: Exception) {
-            null
+            }
         }
+        checkCancelled()
+        requireTreeGrant(context, targetDir)
+        return ManifestBuilder(looseFile = true).apply { record(name) }.build()
     }
 
     /**
@@ -328,12 +696,8 @@ object SafZipExtractor {
         var total = 0L
         try {
             SevenZFile.builder().setFile(zipFile).get().use { szf ->
-                var entry: SevenZArchiveEntry? = szf.nextEntry
-                while (entry != null) {
-                    if (!entry.isDirectory) {
-                        total += entry.size
-                    }
-                    entry = szf.nextEntry
+                for (entry in szf.entries) {
+                    if (!entry.isDirectory) total += entry.size
                 }
             }
         } catch (e: Exception) {
@@ -345,6 +709,21 @@ object SafZipExtractor {
 
     @Throws(IOException::class)
     fun countZipEntries(zipFile: File): Int {
+        try {
+            ZipFile(zipFile).use { zf ->
+                var count = 0
+                val entries = zf.entries()
+                while (entries.hasMoreElements()) {
+                    if (!entries.nextElement().isDirectory) count++
+                }
+                return count
+            }
+        } catch (_: Exception) {
+            return countZipEntriesStreaming(zipFile)
+        }
+    }
+
+    private fun countZipEntriesStreaming(zipFile: File): Int {
         var count = 0
         try {
             ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
@@ -368,6 +747,27 @@ object SafZipExtractor {
      * raíz o hay más de un directorio top-level.
      */
     fun detectTopLevelDir(zipFile: File): String? {
+        try {
+            ZipFile(zipFile).use { zf ->
+                var common: String? = null
+                val entries = zf.entries()
+                while (entries.hasMoreElements()) {
+                    val name = sanitizeEntryName(entries.nextElement().name)
+                    if (name.isNotEmpty() && !name.endsWith("/")) {
+                        val slashIdx = name.indexOf('/')
+                        if (slashIdx <= 0) return null
+                        val top = name.substring(0, slashIdx)
+                        if (common == null) common = top else if (common != top) return null
+                    }
+                }
+                return common
+            }
+        } catch (_: Exception) {
+            return detectTopLevelDirStreaming(zipFile)
+        }
+    }
+
+    private fun detectTopLevelDirStreaming(zipFile: File): String? {
         var commonPrefix: String? = null
 
         try {
@@ -493,83 +893,105 @@ object SafZipExtractor {
         totalBytes: Long = 0L,
         journal: WriteJournal? = null,
         onProgress: (suspend (percent: Int) -> Unit)? = null
-    ): WriteManifest {
+    ): WriteManifest = withContext(Dispatchers.IO) {
         val manifest = ManifestBuilder()
-        var bytesReadSoFar = 0L
-        val createdDirs = mutableMapOf<String, DocumentFile>()
+        val writer = openSink(context, targetDir, journal)
+        val progress = ProgressGate(onProgress)
+        val doneBytes = AtomicLong(0L)
 
-        SevenZFile.builder().setFile(zipFile).get().use { szf ->
-            var entry: SevenZArchiveEntry? = szf.nextEntry
-            while (entry != null) {
-                if (!entry.isDirectory) {
-                    val entryName = sanitizeEntryName(entry.name)
-                    if (entryName.isNotEmpty() && !entryName.endsWith("/")) {
-                        val slashIdx = entryName.lastIndexOf('/')
-                        val parentDir: DocumentFile
-                        val fileName: String
-
-                        if (slashIdx > 0) {
-                            val dirPath = entryName.substring(0, slashIdx)
-                            val simpleName = entryName.substring(slashIdx + 1)
-                            parentDir = getOrCreateDir(createdDirs, targetDir, dirPath, journal)
-                            fileName = simpleName
-                        } else {
-                            parentDir = targetDir
-                            fileName = entryName
-                        }
-
-                        if (parentDir == targetDir || (parentDir.exists() && parentDir.isDirectory)) {
-                            val existing = parentDir.findFile(fileName)
-                            val existedBefore = existing != null
-                            existing?.delete()
-
-                            val outputFile = parentDir.createFile(
-                                "application/octet-stream", fileName
-                            ) ?: throw SecurityException(
-                                "Lost SAF access during 7z extraction: cannot create $fileName"
-                            )
-                            journal?.recordFile(entryName, existedBefore)
-
-                            context.contentResolver
-                                .openOutputStream(outputFile.uri)?.use { os ->
-                                    val entrySize = entry.size
-                                    val buffer = ByteArray(8192)
-                                    var read: Long = 0
-
-                                    // Mismo fix de loop infinito que antes (condición de
-                                    // corte por bytes leídos, no por valor de retorno),
-                                    // más el tracking de bytesReadSoFar ACUMULADO entre
-                                    // entradas (fuera de este scope) para el progreso real.
-                                    while (read < entrySize) {
-                                        val toRead = minOf(
-                                            buffer.size.toLong(),
-                                            entrySize - read
-                                        ).toInt()
-                                        val n = szf.read(buffer, 0, toRead)
-                                        if (n <= 0) break
-                                        os.write(buffer, 0, n)
-                                        read += n
-                                        bytesReadSoFar += n
-                                        if (totalBytes > 0) {
-                                            onProgress?.invoke(
-                                                ((bytesReadSoFar * 100) / totalBytes).toInt()
-                                            )
-                                        }
-                                    }
-                                    os.flush()
-                                }
-                                ?: throw SecurityException(
-                                    "Lost SAF access during 7z extraction: cannot open $fileName"
-                                )
-
-                            manifest.record(entryName)
-                        }
-                    }
-                }
-                entry = szf.nextEntry
+        suspend fun report() {
+            if (totalBytes > 0) {
+                progress.emit(((doneBytes.get() * 100) / totalBytes).coerceIn(0L, 100L).toInt())
             }
         }
 
-        return manifest.build()
+        SevenZFile.builder().setFile(zipFile).get().use { szf ->
+            // Pase de metadata: crear todas las carpetas por adelantado, en paralelo.
+            val dirs = HashSet<String>()
+            for (e in szf.entries) {
+                if (e.isDirectory) continue
+                val p = sanitizeEntryName(e.name)
+                if (p.isNotEmpty()) dirs += p.substringBeforeLast('/', "")
+            }
+            writer.prepareDirs(dirs)
+
+            coroutineScope {
+                // Entradas pequeñas: se leen a memoria (lectura 7z es secuencial) y
+                // se escriben a SAF en paralelo. Cola acotada => memoria acotada.
+                val queue = Channel<Pair<String, ByteArray>>(16)
+                val writers = List(PARALLELISM) {
+                    async(Dispatchers.IO) {
+                        for ((path, bytes) in queue) {
+                            ensureActive()
+                            val currentJob = currentCoroutineContext()[Job]
+                            writer.writeFile(
+                                path.substringBeforeLast('/', ""),
+                                path.substringAfterLast('/'),
+                                path
+                            ) { out -> pump(ByteArrayInputStream(bytes), out, copyBuffers.get()!!, currentJob) }
+                            synchronized(manifest) { manifest.record(path) }
+                            doneBytes.addAndGet(bytes.size.toLong())
+                            report()
+                        }
+                    }
+                }
+
+                val producer = async {
+                    try {
+                        val seen = HashSet<String>()
+                        var entry: SevenZArchiveEntry? = szf.nextEntry
+                        while (entry != null) {
+                            ensureActive()
+                            val current: SevenZArchiveEntry = entry
+                            val path = sanitizeEntryName(current.name)
+                            if (!current.isDirectory && path.isNotEmpty() && seen.add(path)) {
+                                val size = current.size
+                                require(size >= 0) { "Invalid 7z entry size" }
+                                if (size <= SMALL_ENTRY_LIMIT) {
+                                    val bytes = ByteArray(size.toInt())
+                                    var off = 0
+                                    while (off < bytes.size) {
+                                        ensureActive()
+                                        val n = szf.read(bytes, off, bytes.size - off)
+                                        if (n <= 0) throw IOException("Unexpected end of 7z entry: $path")
+                                        off += n
+                                    }
+                                    queue.send(path to bytes)
+                                } else {
+                                    val job = currentCoroutineContext()[Job]
+                                    val buf = copyBuffers.get()!!
+                                    writer.writeFile(
+                                        path.substringBeforeLast('/', ""),
+                                        path.substringAfterLast('/'),
+                                        path
+                                    ) { out ->
+                                        var read = 0L
+                                        while (read < size) {
+                                            val n = szf.read(
+                                                buf, 0, minOf(buf.size.toLong(), size - read).toInt()
+                                            )
+                                            if (n <= 0) throw IOException("Unexpected end of 7z entry: $path")
+                                            out.write(buf, 0, n)
+                                            read += n
+                                            doneBytes.addAndGet(n.toLong())
+                                            job?.ensureActive()
+                                        }
+                                    }
+                                    synchronized(manifest) { manifest.record(path) }
+                                    report()
+                                }
+                            }
+                            entry = szf.nextEntry
+                        }
+                    } finally {
+                        queue.close()
+                    }
+                }
+                (writers + producer).awaitAll()
+            }
+        }
+
+        requireTreeGrant(context, targetDir)
+        manifest.build()
     }
 }

@@ -56,13 +56,46 @@ void main() {
     expect(design.backdropStyle, AppBackdropStyle.parchment);
     expect(design.surfaceTreatment, AppSurfaceTreatment.folio);
     expect(design.brandAsset, 'assets/themes/minish/minish.webp');
+    expect(design.pageTextureAsset, 'assets/themes/minish/manual-paper.webp');
     expect(design.halftone, isFalse);
     expect(design.stripes, isFalse);
     expect(design.shadowBlur, 0);
     expect(minish.showParchmentBackdrop, isTrue);
     expect(minish.usesFolioSurfaces, isTrue);
+    expect(minish.pageTextureAsset, design.pageTextureAsset);
     expect(minish.showHalftone, isFalse);
     expect(minish.showN64Backdrop, isFalse);
+    expect(minish.surfaceDecoration().color, minish.folioWood);
+    expect(
+      minish.surfaceDecoration(color: minish.surface).color,
+      minish.surface,
+    );
+    expect(contrast(minish.ink, minish.folioWood), greaterThanOrEqualTo(4.5));
+  });
+
+  testWidgets('Minish frame is isolated from every other interface theme', (
+    tester,
+  ) async {
+    Future<void> render(AppThemeId id) async {
+      final retro = RetroTheme(false, design: AppThemeCatalog.resolve(id));
+      await tester.pumpWidget(
+        MaterialApp(
+          key: ValueKey(id),
+          theme: retro.toMaterialTheme(),
+          home: const ThemePageFrame(child: Text('page')),
+        ),
+      );
+    }
+
+    await render(AppThemeId.minishCap);
+    expect(find.byType(ClipPath), findsNothing);
+    const frameKey = ValueKey('minish-folio-frame');
+    expect(find.byKey(frameKey), findsOneWidget);
+
+    await render(AppThemeId.retroManga);
+    expect(find.byType(ClipPath), findsNothing);
+    expect(find.byKey(frameKey), findsNothing);
+    expect(find.text('page'), findsOneWidget);
   });
 
   test('Mario Kart 64 uses the optimized racing rendering contract', () {

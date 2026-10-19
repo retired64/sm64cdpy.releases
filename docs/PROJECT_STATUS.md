@@ -295,3 +295,5 @@ Save File no longer exposes coin editing. Progress edits omit coin records so Ko
 Save progress terminology now uses Normal / Alternative under Game progress in all five locales. The explained alternative belongs to some mod-specific modes; it is distinct from dated backups and does not select a game mode. Native bank mapping is unchanged.
 
 The drawer header always shows the SM64CDPY application logo, including Minish Cap and Mario Kart 64; theme artwork remains available for theme-specific presentation elsewhere.
+
+Pending Testing: optional faster installation in Settings, contained primary-storage direct writes for ZIP/7z/loose files, preserved SAF fallback, direct rollback of new entries, and discovery invalidation after installs. Android 10 deliberately remains on SAF. No on-device speed claim yet.

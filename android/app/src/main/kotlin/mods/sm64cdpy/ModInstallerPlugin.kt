@@ -114,6 +114,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     // ── ActivityAware ───────────────────────────────────────────────────────
 
+    private var pendingStoragePermission: Result? = null
+    private val storagePermissionRequest = 7301
+
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
         binding.addActivityResultListener { requestCode, resultCode, data ->
@@ -139,11 +142,18 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 result.success(granted)
                 return@addRequestPermissionsResultListener true
             }
+            if (requestCode == storagePermissionRequest) {
+                pendingStoragePermission?.success(SafZipExtractor.hasAllFilesAccess(applicationContext))
+                pendingStoragePermission = null
+                return@addRequestPermissionsResultListener true
+            }
             false
         }
     }
 
     override fun onDetachedFromActivity() {
+        pendingStoragePermission?.error("NO_ACTIVITY", "Activity detached", null)
+        pendingStoragePermission = null
         pendingGamePickerResult?.error("access", "access", null)
         pendingGamePickerResult = null
         cleanupObservers()
@@ -230,6 +240,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "removeInstallationHistoryEvent" -> removeInstallationHistoryEvent(call, result)
             "isDirectorySelected" -> isDirectorySelected(result)
             "clearDirectorySelection" -> disconnectFolders(result)
+            "hasAllFilesAccess" -> result.success(SafZipExtractor.hasAllFilesAccess(applicationContext))
+            "supportsAllFilesAccess" -> result.success(Build.VERSION.SDK_INT != 29)
+            "requestAllFilesAccess" -> requestAllFilesAccess(result)
             "hasNotificationPermission" -> hasNotificationPermission(result)
             "requestNotificationPermission" -> requestNotificationPermission(result)
             "shouldShowNotificationRationale" -> shouldShowNotificationRationale(result)
@@ -482,6 +495,31 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * Checks if POST_NOTIFICATIONS permission is granted.
      * Always returns true on Android < 13.
      */
+    private fun requestAllFilesAccess(result: Result) {
+        val owner = activity ?: run { result.error("NO_ACTIVITY", "Activity unavailable", null); return }
+        if (SafZipExtractor.hasAllFilesAccess(owner)) { result.success(true); return }
+        // Scoped Android 10 stays on SAF; do not request an ineffective legacy grant.
+        if (Build.VERSION.SDK_INT == 29) { result.success(false); return }
+        if (pendingStoragePermission != null) { result.error("BUSY", "Permission request pending", null); return }
+        try {
+            if (Build.VERSION.SDK_INT >= 30) {
+                val intent = Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                    Uri.parse("package:${owner.packageName}"))
+                try { owner.startActivity(intent) } catch (_: android.content.ActivityNotFoundException) {
+                    owner.startActivity(Intent(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+                }
+                // Opening Settings does not mean permission has been granted.
+                result.success(false)
+            } else {
+                pendingStoragePermission = result
+                ActivityCompat.requestPermissions(owner, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), storagePermissionRequest)
+            }
+        } catch (error: Exception) {
+            pendingStoragePermission = null
+            result.error("SETTINGS_ERROR", "Could not open storage permission settings", null)
+        }
+    }
+
     private fun hasNotificationPermission(result: Result) {
         val act = activity
         if (act == null) {
@@ -544,64 +582,34 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * Used when auto-install is OFF — just place the ZIP in the mods folder
      * without extracting it, so the user can manage it manually later.
      */
-    private fun copyFileToModsFolder(call: MethodCall, result: Result) {
-        val act = activity
-        if (act == null) {
-            result.error("NO_ACTIVITY", "Activity not available", null)
-            return
-        }
+    private fun copyFileToModsFolder(call: MethodCall, result: Result) = copyLooseFile(call, result, false)
 
-        val prefs = getPrefs()
-        val treeUriString = prefs.getString(KEY_TREE_URI, null)
-        if (treeUriString == null) {
-            result.error("NO_DIRECTORY", "No mods directory selected.", null)
-            return
-        }
-
-        val treeUri = Uri.parse(treeUriString)
-        if (!isTreeAccessible(treeUri)) {
-            markTreePermissionRevoked(prefs, "mods")
-            result.error(
-                "DIR_NOT_ACCESSIBLE",
-                "The selected directory is no longer accessible.",
-                null
-            )
-            return
-        }
-
+    private fun copyLooseFile(call: MethodCall, result: Result, dynos: Boolean) {
         val sourcePath = call.argument<String>("sourcePath")
-        val targetName = call.argument<String>("targetName")
-        if (sourcePath == null || targetName == null) {
-            result.error("INVALID_ARGS", "sourcePath and targetName are required", null)
-            return
+        val name = call.argument<String>("targetName")
+        val uri = getPrefs().getString(if (dynos) KEY_DYNOS_TREE_URI else KEY_TREE_URI, null)
+        if (sourcePath == null || name == null || uri == null) {
+            result.error("INVALID_ARGS", "Select the destination folder first", null); return
         }
-
-        val sourceFile = java.io.File(sourcePath)
-        if (!sourceFile.exists()) {
-            result.error("FILE_NOT_FOUND", "Source file not found: $sourcePath", null)
-            return
-        }
-
-        try {
+        thread(name = "manual-mod-copy") {
             synchronized(InstallationSafAccessCoordinator.lock) {
-            val treeDoc = GameFolderAccess.resolve(act, treeUri)
-                ?: throw java.io.IOException("Could not access the selected directory tree.")
-
-            val outputFile = treeDoc.createFile("application/octet-stream", targetName)
-                ?: throw java.io.IOException("Failed to create file in SAF directory.")
-
-            act.contentResolver.openOutputStream(outputFile.uri).let { checkNotNull(it) { "Could not open destination" } }.use { os ->
-                sourceFile.inputStream().use { input ->
-                    input.copyTo(os)
+                val journal = SafZipExtractor.WriteJournal()
+                var root: DocumentFile? = null
+                try {
+                    root = GameFolderAccess.resolve(applicationContext, Uri.parse(uri))
+                        ?: throw SecurityException("Selected folder unavailable")
+                    val source = File(sourcePath)
+                    require(source.isFile) { "Source file missing" }
+                    checkNotNull(SafZipExtractor.copyFileToTree(source, root, applicationContext, journal, name))
+                    InstallationDiscoveryScanner.invalidate(applicationContext)
+                    source.delete()
+                    Handler(Looper.getMainLooper()).post { result.success(true) }
+                } catch (error: Exception) {
+                    root?.let { journal.rollback(it) }
+                    InstallationDiscoveryScanner.invalidate(applicationContext)
+                    Handler(Looper.getMainLooper()).post { result.error("COPY_ERROR", error.message, null) }
                 }
-                os.flush()
             }
-
-            sourceFile.delete()
-            result.success(true)
-            }
-        } catch (e: Exception) {
-            result.error("COPY_ERROR", e.message ?: "Failed to copy file to mods folder", null)
         }
     }
 
@@ -650,6 +658,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         Thread {
             synchronized(InstallationSafAccessCoordinator.lock) {
+            val journal = SafZipExtractor.WriteJournal()
+            var rollbackRoot: DocumentFile? = null
             try {
                 val treeDoc = GameFolderAccess.resolve(act, treeUri)
                 if (treeDoc == null) {
@@ -659,9 +669,14 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
+                rollbackRoot = treeDoc
                 val manifest = runBlocking {
-                    SafZipExtractor.extractZipToTree(zipFile, treeDoc, act)
+                    if (SafZipExtractor.isSevenZipFile(zipFile))
+                        SafZipExtractor.extractSevenZToTree(zipFile, treeDoc, act, journal = journal)
+                    else SafZipExtractor.extractZipToTree(zipFile, treeDoc, act, journal)
                 }
+                check(manifest.fileCount > 0) { "No files extracted" }
+                InstallationDiscoveryScanner.invalidate(applicationContext)
                 val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
                 val displayDir = topDir ?: modName
                 zipFile.delete()
@@ -674,6 +689,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     ))
                 }
             } catch (e: Exception) {
+                rollbackRoot?.let { journal.rollback(it) }
+                InstallationDiscoveryScanner.invalidate(applicationContext)
                 act.runOnUiThread {
                     result.error("INSTALL_ERROR", e.message ?: "Unknown error during installation", null)
                 }
@@ -728,6 +745,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         Thread {
             synchronized(InstallationSafAccessCoordinator.lock) {
+            val journal = SafZipExtractor.WriteJournal()
+            var rollbackRoot: DocumentFile? = null
             try {
                 val treeDoc = GameFolderAccess.resolve(act, treeUri)
                 if (treeDoc == null) {
@@ -737,9 +756,14 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@Thread
                 }
 
+                rollbackRoot = treeDoc
                 val manifest = runBlocking {
-                    SafZipExtractor.extractZipToTree(zipFile, treeDoc, act)
+                    if (SafZipExtractor.isSevenZipFile(zipFile))
+                        SafZipExtractor.extractSevenZToTree(zipFile, treeDoc, act, journal = journal)
+                    else SafZipExtractor.extractZipToTree(zipFile, treeDoc, act, journal)
                 }
+                check(manifest.fileCount > 0) { "No files extracted" }
+                InstallationDiscoveryScanner.invalidate(applicationContext)
                 val topDir = SafZipExtractor.detectTopLevelDir(zipFile)
                 val displayDir = topDir ?: modName
                 zipFile.delete()
@@ -752,6 +776,8 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     ))
                 }
             } catch (e: Exception) {
+                rollbackRoot?.let { journal.rollback(it) }
+                InstallationDiscoveryScanner.invalidate(applicationContext)
                 act.runOnUiThread {
                     result.error("INSTALL_ERROR", e.message ?: "Unknown error during installation", null)
                 }
@@ -1371,62 +1397,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     /**
      * Copia un archivo local al directorio SAF de dynos.
      */
-    private fun copyFileToDynosFolder(call: MethodCall, result: Result) {
-        val act = activity
-        if (act == null) {
-            result.error("NO_ACTIVITY", "Activity not available", null)
-            return
-        }
-
-        val prefs = getPrefs()
-        val treeUriString = prefs.getString(KEY_DYNOS_TREE_URI, null)
-        if (treeUriString == null) {
-            result.error("NO_DIRECTORY", "No DynOS directory selected.", null)
-            return
-        }
-
-        val treeUri = Uri.parse(treeUriString)
-        if (!isTreeAccessible(treeUri)) {
-            markTreePermissionRevoked(prefs, "dynos")
-            result.error("DIR_NOT_ACCESSIBLE", "The selected DynOS directory is no longer accessible.", null)
-            return
-        }
-
-        val sourcePath = call.argument<String>("sourcePath")
-        val targetName = call.argument<String>("targetName")
-        if (sourcePath == null || targetName == null) {
-            result.error("INVALID_ARGS", "sourcePath and targetName are required", null)
-            return
-        }
-
-        val sourceFile = java.io.File(sourcePath)
-        if (!sourceFile.exists()) {
-            result.error("FILE_NOT_FOUND", "Source file not found: $sourcePath", null)
-            return
-        }
-
-        try {
-            synchronized(InstallationSafAccessCoordinator.lock) {
-            val treeDoc = GameFolderAccess.resolve(act, treeUri)
-                ?: throw java.io.IOException("Could not access the selected DynOS directory tree.")
-
-            val outputFile = treeDoc.createFile("application/octet-stream", targetName)
-                ?: throw java.io.IOException("Failed to create file in DynOS SAF directory.")
-
-            act.contentResolver.openOutputStream(outputFile.uri).let { checkNotNull(it) { "Could not open destination" } }.use { os ->
-                sourceFile.inputStream().use { input ->
-                    input.copyTo(os)
-                }
-                os.flush()
-            }
-
-            sourceFile.delete()
-            result.success(true)
-            }
-        } catch (e: Exception) {
-            result.error("COPY_ERROR", e.message ?: "Failed to copy file to DynOS folder", null)
-        }
-    }
+    private fun copyFileToDynosFolder(call: MethodCall, result: Result) = copyLooseFile(call, result, true)
 
     /**
      * Limpia la selección de directorio dynos (revoca permisos).

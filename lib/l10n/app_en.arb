@@ -1816,9 +1816,9 @@
   "playerRestore": "Restore previous configuration",
   "playerRestoreBody": "With SM64CoopDX closed, restore the private backup from before the last mod or player edit? This restores the whole configuration.",
   "playerRestored": "Previous game configuration restored.",
-  "retroAccentTitle": "Retro Manga accent",
-  "retroAccentDescription": "Choose the highlight color. Text contrast adapts to light and dark mode. Other themes keep their own colors.",
-  "retroAccentCyan": "Cyan (original)",
+  "retroAccentTitle": "Interface accent",
+  "retroAccentDescription": "Choose the highlight color for Retro Manga or Mario Kart 64. MK64 also coordinates its background, panels and racing grid with it.",
+  "retroAccentCyan": "Cyan",
   "retroAccentBlue": "Blue",
   "retroAccentViolet": "Violet",
   "retroAccentPink": "Pink",
@@ -1861,5 +1861,8 @@
   "saveFileOpenSlot": "Tap to edit",
   "saveFileActions": "Slot actions",
   "saveFileDraft": "Preview · saved only after Apply",
-  "drawerResources": "Resources"
+  "drawerResources": "Resources",
+  "fastInstallTitle": "Enable faster installation",
+  "fastInstallDescription": "Optional: allow all-files access in Android to speed up installation in compatible game folders. Without it, installation still works normally.",
+  "fastInstallAccessError": "Could not open permission settings. You can keep installing normally."
 }

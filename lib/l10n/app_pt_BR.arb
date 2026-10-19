@@ -603,9 +603,9 @@
   "playerRestore": "Restaurar configuração anterior",
   "playerRestoreBody": "Com o SM64CoopDX fechado, restaurar o backup privado anterior à última alteração de mods ou jogador? Toda a configuração será restaurada.",
   "playerRestored": "Configuração anterior do jogo restaurada.",
-  "retroAccentTitle": "Destaque do Retro Manga",
-  "retroAccentDescription": "Escolha a cor de destaque. O contraste do texto se adapta aos modos claro e escuro. Os outros temas mantêm suas cores.",
-  "retroAccentCyan": "Ciano (original)",
+  "retroAccentTitle": "Destaque da interface",
+  "retroAccentDescription": "Escolha a cor de destaque do Retro Manga ou Mario Kart 64. O MK64 também coordena o fundo, os painéis e a grade de corrida.",
+  "retroAccentCyan": "Ciano",
   "retroAccentBlue": "Azul",
   "retroAccentViolet": "Violeta",
   "retroAccentPink": "Rosa",
@@ -648,5 +648,8 @@
   "saveFileOpenSlot": "Toque para editar",
   "saveFileActions": "Ações da partida",
   "saveFileDraft": "Prévia · salva somente ao aplicar",
-  "drawerResources": "Recursos"
+  "drawerResources": "Recursos",
+  "fastInstallTitle": "Ativar instalação rápida",
+  "fastInstallDescription": "Opcional: permita o acesso a todos os arquivos no Android para acelerar a instalação em pastas compatíveis do jogo. Sem isso, você pode continuar instalando normalmente.",
+  "fastInstallAccessError": "Não foi possível abrir as permissões. Você pode continuar instalando normalmente."
 }

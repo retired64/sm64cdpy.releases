@@ -44,9 +44,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
       shape: Border(
         right: BorderSide(color: retro.border, width: retro.borderWidth(2)),
       ),
-      child: DecoratedBox(
-        decoration: retro.surfaceDecoration(shadowDx: 0, shadowDy: 0),
-        child: SafeArea(
+      child: SafeArea(
+        maintainBottomViewPadding: true,
+        child: DecoratedBox(
+          decoration: retro.surfaceDecoration(shadowDx: 0, shadowDy: 0),
           child: SingleChildScrollView(
             controller: widget.scrollController,
             physics: const ClampingScrollPhysics(),

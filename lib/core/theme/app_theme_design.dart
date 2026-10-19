@@ -125,6 +125,7 @@ class AppThemeDesign {
     this.playfulSelection = false,
     this.drawerRasterIcons = false,
     this.brandAsset,
+    this.pageTextureAsset,
   });
 
   final AppThemeId id;
@@ -149,6 +150,7 @@ class AppThemeDesign {
   final bool playfulSelection;
   final bool drawerRasterIcons;
   final String? brandAsset;
+  final String? pageTextureAsset;
 
   AppThemePalette palette(bool isDark) => isDark ? dark : light;
 }

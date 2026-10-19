@@ -304,3 +304,5 @@ a cross-engine cache. Home and Settings stay direct links. No routes, Workers,
 SAF grants or overlay messages change.
 
 Drawer root links use the same themed heading size, icon bounds and minimum row height as group headers. Nested destinations keep body typography. The navigation caption uses a compact single-line body label instead of the shared decorative section heading, so narrow drawers do not split it. Exclusive uses a collection icon; Render96 uses a distinct 3D-model icon in every theme.
+
+Optional accelerated installation selects a contained direct writer for eligible primary-storage document destinations with all-files access. SAF remains the fallback and folder grant remains required. ZIP, 7z and loose files share one sink abstraction; permission is read from Android per operation. See FAST_INSTALLATION.md for platform boundaries, cache invalidation and rollback limits.

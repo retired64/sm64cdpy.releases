@@ -1908,14 +1908,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerRestored => 'Previous game configuration restored.';
 
   @override
-  String get retroAccentTitle => 'Retro Manga accent';
+  String get retroAccentTitle => 'Interface accent';
 
   @override
   String get retroAccentDescription =>
-      'Choose the highlight color. Text contrast adapts to light and dark mode. Other themes keep their own colors.';
+      'Choose the highlight color for Retro Manga or Mario Kart 64. MK64 also coordinates its background, panels and racing grid with it.';
 
   @override
-  String get retroAccentCyan => 'Cyan (original)';
+  String get retroAccentCyan => 'Cyan';
 
   @override
   String get retroAccentBlue => 'Blue';
@@ -2050,4 +2050,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get drawerResources => 'Resources';
+
+  @override
+  String get fastInstallTitle => 'Enable faster installation';
+
+  @override
+  String get fastInstallDescription =>
+      'Optional: allow all-files access in Android to speed up installation in compatible game folders. Without it, installation still works normally.';
+
+  @override
+  String get fastInstallAccessError =>
+      'Could not open permission settings. You can keep installing normally.';
 }

@@ -652,3 +652,14 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Replace confusing internal-copy labels with Game progress → Normal / Alternative; explain mod usage and preserve bank identity and explicit copy/erase scope.
 
 - [x] Keep the SM64CDPY drawer-header logo consistent when switching between Retro Manga, Minish Cap and Mario Kart 64.
+
+
+## Optional fast installation
+
+- [x] Integrate example writer behind shared ZIP/7z/loose-file sinks.
+- [x] Validate all four destination layouts and reject Android/, nonprimary IDs, traversal and symlinks.
+- [x] Reuse manual copy logic, preserve cancellation, receipts and terminal events.
+- [x] Optional localized permission action with resume recheck; Android 10 stays SAF.
+- [x] Invalidate native discovery after installation; notify Flutter on manual success.
+- [ ] Full Testing compilation and suites.
+- [ ] Device performance, permission revocation, reinstall, cancellation and app/overlay matrix in FAST_INSTALLATION.md.
