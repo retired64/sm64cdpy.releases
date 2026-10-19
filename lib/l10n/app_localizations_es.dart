@@ -1930,14 +1930,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get playerRestored => 'Configuración anterior del juego restaurada.';
 
   @override
-  String get retroAccentTitle => 'Acento de Retro Manga';
+  String get retroAccentTitle => 'Acento de interfaz';
 
   @override
   String get retroAccentDescription =>
-      'Elige el color de los elementos destacados. El contraste del texto se adapta al modo claro y oscuro. Los demás temas conservan sus colores.';
+      'Elige el color destacado de Retro Manga o Mario Kart 64. MK64 también coordina el fondo, los paneles y la cuadrícula de carrera.';
 
   @override
-  String get retroAccentCyan => 'Cian (original)';
+  String get retroAccentCyan => 'Cian';
 
   @override
   String get retroAccentBlue => 'Azul';
@@ -4000,14 +4000,14 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get playerRestored => 'Configuración anterior del juego restaurada.';
 
   @override
-  String get retroAccentTitle => 'Acento de Retro Manga';
+  String get retroAccentTitle => 'Acento de interfaz';
 
   @override
   String get retroAccentDescription =>
-      'Elige el color de los elementos destacados. El contraste del texto se adapta al modo claro y oscuro. Los demás temas conservan sus colores.';
+      'Elige el color destacado de Retro Manga o Mario Kart 64. MK64 también coordina el fondo, los paneles y la cuadrícula de carrera.';
 
   @override
-  String get retroAccentCyan => 'Cian (original)';
+  String get retroAccentCyan => 'Cian';
 
   @override
   String get retroAccentBlue => 'Azul';

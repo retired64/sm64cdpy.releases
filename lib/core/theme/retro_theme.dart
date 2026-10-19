@@ -47,8 +47,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   final bool isDark;
   final AppThemeDesign design;
   final RetroAccent retroAccent;
-  bool get _customAccent =>
-      design.id == AppThemeId.retroManga && retroAccent != RetroAccent.cyan;
+  bool get supportsAdaptiveAccent =>
+      design.id == AppThemeId.retroManga || design.id == AppThemeId.marioKart64;
+  bool get _adaptiveRacingPalette => design.id == AppThemeId.marioKart64;
   final MarioThemeAssets marioAssets;
 
   /// Japanese captions are decoration exclusive to the manga design.
@@ -85,21 +86,48 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   final Color? _shadowColorOverride;
 
   AppThemePalette get _palette => design.palette(isDark);
-  Color get background => _backgroundOverride ?? _palette.background;
-  Color get surface => _surfaceOverride ?? _palette.surface;
-  Color get surfaceAlt => _surfaceAltOverride ?? _palette.surfaceAlt;
-  Color get border => _borderOverride ?? _palette.border;
+  Color _racingTint(Color base, double lightAmount, double darkAmount) =>
+      Color.lerp(base, retroAccent.color, isDark ? darkAmount : lightAmount)!;
+  Color get background =>
+      _backgroundOverride ??
+      (_adaptiveRacingPalette
+          ? _racingTint(_palette.background, 0.13, 0.07)
+          : _palette.background);
+  Color get surface =>
+      _surfaceOverride ??
+      (_adaptiveRacingPalette
+          ? _racingTint(_palette.surface, 0.1, 0.1)
+          : _palette.surface);
+  Color get surfaceAlt =>
+      _surfaceAltOverride ??
+      (_adaptiveRacingPalette
+          ? _racingTint(_palette.surfaceAlt, 0.24, 0.18)
+          : _palette.surfaceAlt);
+  Color get border =>
+      _borderOverride ??
+      (_adaptiveRacingPalette
+          ? (isDark
+                ? Color.lerp(retroAccent.color, Colors.white, 0.16)!
+                : retroAccent.textOn([background]))
+          : _palette.border);
   Color get shadowColor => _shadowColorOverride ?? _palette.shadow;
   Color get ink => _palette.ink;
   Color get inkDim => _palette.inkDim;
-  Color get accent => _customAccent ? retroAccent.color : _palette.accent;
-  Color get inkOnAccent => _palette.onAccent;
-  Color get accentText => !_customAccent
+  Color get accent =>
+      supportsAdaptiveAccent ? retroAccent.color : _palette.accent;
+  Color get inkOnAccent => supportsAdaptiveAccent
+      ? (RetroAccent.contrast(accent, _palette.ink) >= 4.5
+            ? _palette.ink
+            : _palette.onAccent)
+      : _palette.onAccent;
+  Color get accentText => !supportsAdaptiveAccent
       ? _palette.accentText
       : isDark
       ? retroAccent.color
       : retroAccent.textOn([background, surface, surfaceAlt]);
-  Color get secondaryAccent => _palette.secondaryAccent ?? amber;
+  Color get secondaryAccent => _adaptiveRacingPalette
+      ? Color.lerp(retroAccent.color, _palette.secondaryAccent ?? amber, 0.25)!
+      : _palette.secondaryAccent ?? amber;
   Color get surfaceHighlight =>
       _palette.surfaceHighlight ??
       Color.lerp(surface, Colors.white, isDark ? 0.12 : 0.45)!;
