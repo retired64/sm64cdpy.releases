@@ -645,3 +645,6 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Consolidar las notas de temas, acentos, Partidas y navegación en el manifiesto canónico.
 - [x] Regenerar previews EN/ES/PT-BR y validar versión 1.8.7+26 y contrato Python.
 - [ ] Ejecutar manualmente Build & Release cuando el propietario decida publicar; revisar fecha real y las tres ABI.
+
+- [x] Give save-editor coin sliders a visible empty track, themed fill, numeric indicator and 0/255 endpoints.
+- [ ] Verify zero, midrange and 255 visually in light/dark on device; applying/cancelling retains the existing save workflow.

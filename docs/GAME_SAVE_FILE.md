@@ -69,3 +69,5 @@ the Flutter suite, including opening slot B independently from a completed A,
 previewing 120 stars and cancelling without changing confirmed progress across
 all six designs. Generated localization and Dart formatting are synced from the
 runner. Device checks and light/dark visual review remain necessary.
+
+Coin sliders use an explicit eight-pixel rounded track: muted ink blended onto the themed surface for the remaining range, theme accent for the filled range, and visible 0/255 endpoints plus a current/255 counter. The full-width control and numeric value indicator improve discovery at zero. These are draft-only visuals; the existing 100-coin-star minimum and native verified-write contract are unchanged.

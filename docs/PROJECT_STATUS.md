@@ -288,3 +288,5 @@ Drawer navigation: Home and Settings remain direct links. Explore groups Catalog
 Drawer visual polish: consistent Home/Settings and group-header typography, a compact navigation caption for narrow screens, and separate collection/3D-model icons for Exclusive/Render96.
 
 Drawer localization: Spanish uses Herramientas / Partidas / Enlaces; Portuguese uses Ferramentas / Dados salvos / Links. English keeps GameTool / Save File and shortens Links. Save screen headings share the same translated label; routes remain unchanged.
+
+Save File coin controls now expose a visible neutral track even at zero, themed fill, current/255 count and endpoint labels. The draft and native persistence rules are unchanged.
