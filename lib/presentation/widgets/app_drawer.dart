@@ -265,12 +265,20 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   icon: Icons.help_outline_rounded,
                   activeRoute:
                       const [
+                        '/how-to-play',
                         '/links-resource',
                         '/disclaimer',
                       ].contains(currentRoute)
                       ? currentRoute
                       : null,
                   children: [
+                    _NavItem(
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.menu_book_rounded, size: 19, color: color),
+                      label: l10n.playGuideTitle,
+                      route: '/how-to-play',
+                      isActive: currentRoute == '/how-to-play',
+                    ),
                     _NavItem(
                       retroIconAsset: 'links-resource',
                       iconBuilder: (color) =>

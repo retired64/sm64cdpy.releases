@@ -38,6 +38,12 @@
             "ZIP, 7z and loose-file installation share bounded parallel extraction, cancellation checks, path validation, rollback and verified receipts.",
             "The library invalidates stale discovery results after automatic and manual installations so the installed state refreshes coherently."
           ]
+        },
+        {
+          "heading": "Getting started",
+          "items": [
+            "A localized How to Play guide explains Android game installation, your USA ROM, game folders and the first mod. Launching without the game offers the guide."
+          ]
         }
       ]
     },
@@ -74,6 +80,12 @@
             "ZIP, 7z y archivos sueltos comparten extracción paralela con memoria acotada, cancelación, validación de rutas, rollback y recibos verificados.",
             "La biblioteca invalida resultados de detección antiguos tras instalaciones automáticas y manuales para refrescar coherentemente el estado instalado."
           ]
+        },
+        {
+          "heading": "Primeros pasos",
+          "items": [
+            "La guía Cómo jugar explica la instalación del juego Android, tu ROM USA, las carpetas y el primer mod. Al abrir sin el juego instalado se ofrece la guía."
+          ]
         }
       ]
     },
@@ -109,6 +121,12 @@
             "A permissão não é obrigatória: quem recusar continuará usando o seletor de pastas do Android e o fluxo SAF existente.",
             "ZIP, 7z e arquivos avulsos compartilham extração paralela com memória limitada, cancelamento, validação de caminhos, rollback e recibos verificados.",
             "A biblioteca invalida resultados antigos de detecção após instalações automáticas e manuais para atualizar de forma coerente o estado instalado."
+          ]
+        },
+        {
+          "heading": "Primeiros passos",
+          "items": [
+            "O guia Como jogar explica a instalação do jogo Android, sua ROM dos EUA, as pastas e o primeiro mod. Abrir sem o jogo instalado oferece o guia."
           ]
         }
       ]

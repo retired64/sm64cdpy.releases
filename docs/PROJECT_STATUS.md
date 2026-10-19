@@ -308,3 +308,10 @@ de administrar todos los archivos; SAF continúa como ruta estándar y fallback.
 
 Manifiesto canónico: `release-manifests/v1.8.8.json`. Notas EN/ES/PT-BR,
 validación final, APK de prueba y matriz física de permisos/extracción pendientes.
+
+## Guía de inicio — rama how-to-play-guide
+
+Seis pasos EN/ES/PT-BR en Recursos, instalación del port Android, ROM USA .z64,
+conversión explicada, conexión unificada y primeros mods. Lanzamiento fallido
+ofrece guía si falta el juego. Validación remota y física pendientes.
+Contrato y matriz: [HOW_TO_PLAY.md](HOW_TO_PLAY.md).

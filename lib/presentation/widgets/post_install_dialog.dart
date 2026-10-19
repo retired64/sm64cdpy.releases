@@ -1,3 +1,4 @@
+import 'game_launch_flow.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/retro_theme.dart';
@@ -9,7 +10,7 @@ Future<void> showPostInstallDialog(BuildContext context) async {
 
   if (!context.mounted) return;
 
-  await showDialog<void>(
+  final shouldLaunch = await showDialog<bool>(
     context: context,
     barrierDismissible: false,
     builder: (ctx) {
@@ -74,8 +75,7 @@ Future<void> showPostInstallDialog(BuildContext context) async {
           if (isGameInstalled)
             TextButton(
               onPressed: () {
-                Navigator.pop(ctx);
-                GameLauncherService.launch();
+                Navigator.pop(ctx, true);
               },
               child: Text(
                 l10n.postInstallLaunchGame,
@@ -90,4 +90,7 @@ Future<void> showPostInstallDialog(BuildContext context) async {
       );
     },
   );
+  if (context.mounted && shouldLaunch == true) {
+    await launchGameWithGuide(context);
+  }
 }

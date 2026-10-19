@@ -67,3 +67,5 @@ v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 - [Conexión unificada de la carpeta del juego](UNIFIED_GAME_FOLDER.md).
 
 - [Optional fast installation](FAST_INSTALLATION.md): direct/SAF selection, permissions, cancellation and device validation.
+
+- [Guía de inicio para jugar](HOW_TO_PLAY.md): instalación Android, ROM, carpetas y primeros mods.
