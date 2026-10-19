@@ -103,8 +103,15 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(BottomSheet), findsOneWidget);
       final target = find.byKey(const ValueKey('guide-map-3'));
-      final mapScroll = find.descendant(of: find.byType(BottomSheet), matching: find.byType(Scrollable)).first;
+      final mapScroll = find
+          .descendant(
+            of: find.byType(BottomSheet),
+            matching: find.byType(Scrollable),
+          )
+          .first;
       await tester.scrollUntilVisible(target, 100, scrollable: mapScroll);
+      await tester.pumpAndSettle();
+      expect(target.hitTestable(), findsOneWidget);
       await tester.tap(target);
       await tester.pumpAndSettle();
       expect(find.byType(BottomSheet), findsNothing);
@@ -116,7 +123,8 @@ void main() {
       await tester.tap(find.byTooltip(l10n.playGuideOverview));
       await tester.pumpAndSettle();
       final handle =
-          tester.getTopLeft(find.byType(BottomSheet)) + Offset(tester.getSize(find.byType(BottomSheet)).width / 2, 16);
+          tester.getTopLeft(find.byType(BottomSheet)) +
+          Offset(tester.getSize(find.byType(BottomSheet)).width / 2, 16);
       await tester.dragFrom(handle, const Offset(0, 400));
       await tester.pumpAndSettle();
       expect(find.byType(BottomSheet), findsNothing);

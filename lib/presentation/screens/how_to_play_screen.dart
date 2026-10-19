@@ -113,7 +113,7 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: ListTile(
-                    key: ValueKey('guide-map-$i'),
+                      key: ValueKey('guide-map-$i'),
                       shape: RoundedRectangleBorder(
                         borderRadius: retro.radius,
                         side: BorderSide(
