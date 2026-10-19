@@ -37,7 +37,7 @@ navegador externo y ofrece un error recuperable si no puede abrirse.
 - Futures de lifecycle usan `unawaited(_refresh())` con errores capturados;
   acciones se esperan con guard busy y finally. No hay éxito inventado.
 - El diálogo postinstalación devuelve intención de lanzamiento antes de abrir
-  otro diálogo; ya no dispara un Future de lanzamiento sin esperar su resultado.
+  otro diálogo y ofrece guía cuando falta el juego; ya no dispara un Future de lanzamiento sin esperar su resultado.
 
 ## Contratos contrastados
 

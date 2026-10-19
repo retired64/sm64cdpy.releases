@@ -274,7 +274,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   children: [
                     _NavItem(
                       iconBuilder: (color) => MarioGameIcon(
-                        Icons.menu_book_rounded, size: 19, color: color),
+                        Icons.menu_book_rounded,
+                        size: 19,
+                        color: color,
+                      ),
                       label: l10n.playGuideTitle,
                       route: '/how-to-play',
                       isActive: currentRoute == '/how-to-play',

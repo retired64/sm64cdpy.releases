@@ -125,17 +125,20 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
       Icons.extension_outlined,
       Icons.flag_outlined,
     ];
-    Widget action(String label, IconData icon, Future<void> Function() run,
-            {bool primary = false}) =>
-        Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: GameSetupAction(
-            label: label,
-            icon: icon,
-            primary: primary,
-            onPressed: _busy ? null : () => _action(run),
-          ),
-        );
+    Widget action(
+      String label,
+      IconData icon,
+      Future<void> Function() run, {
+      bool primary = false,
+    }) => Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: GameSetupAction(
+        label: label,
+        icon: icon,
+        primary: primary,
+        onPressed: _busy ? null : () => _action(run),
+      ),
+    );
     return CustomScrollView(
       controller: _scroll,
       slivers: [
@@ -159,83 +162,152 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: List.generate(titles.length, (i) => ChoiceChip(
-                        label: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: (MediaQuery.sizeOf(context).width - 120).clamp(100, 240).toDouble()),
-                          child: Text('${i + 1}. ${titles[i]}'),
+                      children: List.generate(
+                        titles.length,
+                        (i) => ChoiceChip(
+                          label: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: (MediaQuery.sizeOf(context).width - 120)
+                                  .clamp(100, 240)
+                                  .toDouble(),
+                            ),
+                            child: Text('${i + 1}. ${titles[i]}'),
+                          ),
+                          selected: _step == i,
+                          onSelected: (_) => _select(i),
                         ),
-                        selected: _step == i,
-                        onSelected: (_) => _select(i),
-                      )),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Container(
                       key: ValueKey(_step),
                       padding: const EdgeInsets.all(18),
-                      decoration: retro.surfaceDecoration(shadowDx: 3, shadowDy: 3),
+                      decoration: retro.surfaceDecoration(
+                        shadowDx: 3,
+                        shadowDy: 3,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Row(children: [
-                            MarioGameIcon(icons[_step], size: 30, color: retro.accentText),
-                            const SizedBox(width: 12),
-                            Expanded(child: Text('${_step + 1}. ${titles[_step]}',
-                                style: retro.heading(size: 22))),
-                          ]),
+                          Row(
+                            children: [
+                              MarioGameIcon(
+                                icons[_step],
+                                size: 30,
+                                color: retro.accentText,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  '${_step + 1}. ${titles[_step]}',
+                                  style: retro.heading(size: 22),
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 18),
-                          SelectableText(bodies[_step], style: retro.body(size: 16, height: 1.55)),
+                          SelectableText(
+                            bodies[_step],
+                            style: retro.body(size: 16, height: 1.55),
+                          ),
                           if (_step == 0) ...[
                             if (_installed != null)
                               GameSetupStatus(
-                                label: _installed! ? l10n.playGuideInstalled : l10n.playGuideNotInstalled,
+                                label: _installed!
+                                    ? l10n.playGuideInstalled
+                                    : l10n.playGuideNotInstalled,
                                 icon: Icons.sports_esports_outlined,
                                 ready: _installed,
                               ),
-                            action(l10n.playGuideOpenDownload, Icons.open_in_browser,
-                                () => _open(AppConstants.androidGameReleasesUrl), primary: true),
-                            action(l10n.playGuideRepository, Icons.code,
-                                () => _open(AppConstants.maniscat2Github)),
+                            action(
+                              l10n.playGuideOpenDownload,
+                              Icons.open_in_browser,
+                              () => _open(AppConstants.androidGameReleasesUrl),
+                              primary: true,
+                            ),
+                            action(
+                              l10n.playGuideRepository,
+                              Icons.code,
+                              () => _open(AppConstants.maniscat2Github),
+                            ),
                           ],
                           if (_step == 1)
                             ExpansionTile(
                               tilePadding: EdgeInsets.zero,
-                              title: Text(l10n.playGuideConvertTitle, style: retro.heading(size: 17)),
+                              title: Text(
+                                l10n.playGuideConvertTitle,
+                                style: retro.heading(size: 17),
+                              ),
                               children: [
-                                SelectableText(l10n.playGuideConvertBody,
-                                    style: retro.body(size: 16, height: 1.55)),
-                                action(l10n.playGuideConverter, Icons.swap_horiz,
-                                    () => _open(AppConstants.romConverterUrl)),
+                                SelectableText(
+                                  l10n.playGuideConvertBody,
+                                  style: retro.body(size: 16, height: 1.55),
+                                ),
+                                action(
+                                  l10n.playGuideConverter,
+                                  Icons.swap_horiz,
+                                  () => _open(AppConstants.romConverterUrl),
+                                ),
                               ],
                             ),
                           if (_step == 2 || _step == 5)
-                            action(l10n.playGuideLaunch, Icons.play_arrow_rounded,
-                                () => launchGameWithGuide(context), primary: true),
+                            action(
+                              l10n.playGuideLaunch,
+                              Icons.play_arrow_rounded,
+                              () => launchGameWithGuide(context),
+                              primary: true,
+                            ),
                           if (_step == 3) ...[
                             if (folder.initialized)
                               GameSetupStatus(
-                                label: folder.connection.connected && folder.connection.fullAccess
-                                    ? l10n.playGuideConnected : l10n.playGuideNotConnected,
+                                label:
+                                    folder.connection.connected &&
+                                        folder.connection.fullAccess
+                                    ? l10n.playGuideConnected
+                                    : l10n.playGuideNotConnected,
                                 icon: Icons.folder_open_rounded,
-                                ready: folder.connection.connected && folder.connection.fullAccess,
+                                ready:
+                                    folder.connection.connected &&
+                                    folder.connection.fullAccess,
                               ),
-                            action(l10n.playGuideConnect, Icons.folder_open_rounded, () async {
-                              await connectGameFolder(context, ref);
-                            }, primary: true),
+                            action(
+                              l10n.playGuideConnect,
+                              Icons.folder_open_rounded,
+                              () async {
+                                await connectGameFolder(context, ref);
+                              },
+                              primary: true,
+                            ),
                           ],
                           if (_step == 4) ...[
-                            action(l10n.playGuideLibrary, Icons.inventory_2_outlined, () async {
-                              context.go('/library?view=game-mods');
-                            }, primary: true),
+                            action(
+                              l10n.playGuideLibrary,
+                              Icons.inventory_2_outlined,
+                              () async {
+                                context.go('/library?view=game-mods');
+                              },
+                              primary: true,
+                            ),
                             ExpansionTile(
                               tilePadding: EdgeInsets.zero,
-                              title: Text(l10n.playGuidePathsTitle, style: retro.heading(size: 17)),
-                              children: [SelectableText(l10n.playGuidePathsBody,
-                                  style: retro.body(size: 16, height: 1.55))],
+                              title: Text(
+                                l10n.playGuidePathsTitle,
+                                style: retro.heading(size: 17),
+                              ),
+                              children: [
+                                SelectableText(
+                                  l10n.playGuidePathsBody,
+                                  style: retro.body(size: 16, height: 1.55),
+                                ),
+                              ],
                             ),
                           ],
                           if (_step == 5) ...[
                             const SizedBox(height: 18),
-                            Text(l10n.playGuideReady, style: retro.body(size: 16)),
+                            Text(
+                              l10n.playGuideReady,
+                              style: retro.body(size: 16),
+                            ),
                           ],
                         ],
                       ),
