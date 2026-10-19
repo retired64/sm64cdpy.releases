@@ -695,5 +695,6 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 
 - [x] Identificar fallo de build Player como descarga NDK inválida.
 - [x] Preparación compartida del NDK y ocho pruebas Python aprobadas.
-- [ ] Reproducir y corregir expansión de conversión/rutas en todos los temas.
+- [x] Reproducir colisión bool/double en PageStorage y separar claves de expansión/texto/lista.
+- [ ] Verificar regresión de expansión/restauración en seis temas y tres idiomas.
 - [ ] Testing nuevo con APK y pruebas nativas completos.

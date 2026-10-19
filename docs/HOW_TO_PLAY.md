@@ -130,3 +130,26 @@ la única fuente de instrucciones. Cuatro pruebas Python y diff-check correctos.
 La conexión ya preparada ofrece Biblioteca; el juego instalado ofrece abrirlo
 en lugar de repetir su instalación. APK arm64 compilándose al registrar esta
 evidencia. Sigue pendiente revisión visual y de gestos en dispositivo real.
+
+## Corrección de pantalla gris al expandir conversión / rutas
+
+Reproducción confirmada en Testing 39343990411: al expandir la ayuda,
+`SelectableText` fallaba con `type 'bool' is not a subtype of type 'double?'`
+en `ScrollPosition.restoreScrollOffset`. El estado booleano del ExpansionTile
+se escribía en el espacio de PageStorage heredado por el capítulo; los scrolls
+internos de los textos intentaban restaurarlo como offset numérico.
+
+Conversión y rutas ahora tienen PageStorageKey propios. Cada texto seleccionable
+tiene además su clave de offset, compuesta por capítulo, ayuda (si aplica) y
+número de tarjeta. No comparte almacenamiento con el booleano de expansión ni
+con el scroll de la lista. No cambia el diseño ni el contenido, y no toca ROMs.
+La cobertura abre, cierra, reabre ambas ayudas y vuelve al capítulo tras cambiar
+de página; comprueba restauración sin excepciones en seis temas y tres idiomas.
+
+Estos estados solo viven en PageStorage de navegación; no crean persistencia
+nativa, caches del juego, preferencias ni mensajes entre engines. El motor de
+la pantalla escribe/lee cada offset y ExpansionTile su propio booleano. El
+teardown de ruta descarta esta proyección visual; PageController/observer siguen
+liberándose en dispose. No hay nuevos Futures sin esperar. Guía de conversión y
+ayuda de rutas revisadas a la vez; otros ExpansionTile de Save File no contienen
+SelectableText y conservan su implementación.

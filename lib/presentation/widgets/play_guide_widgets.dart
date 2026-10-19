@@ -145,6 +145,8 @@ class PlayGuideCard extends StatelessWidget {
             const SizedBox(height: 12),
             SelectableText(
               text,
+              // Keep the text scroll offset separate from ExpansionTile's bool.
+              key: PageStorageKey('guide-card-text-$number'),
               style: retro.body(size: 16, color: retro.ink, height: 1.45),
             ),
           ],

@@ -332,3 +332,7 @@ Corrección de build pendiente de Testing: la descarga del NDK falló con ZIP
 inválido en 39342619343. Ambos workflows ahora preparan/verifican el NDK exacto
 de Flutter con tres intentos acotados. Se investiga además el desplegable de
 conversión de ROM; la captura confirma ErrorWidget gris dentro de la guía.
+
+Pantalla gris de conversión reproducida: colisión PageStorage entre booleano
+de ExpansionTile y offset de SelectableText. Claves separadas para conversión,
+rutas y cada texto; regresión ampliada pendiente de Testing final.

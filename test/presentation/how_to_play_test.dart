@@ -66,6 +66,17 @@ void main() {
                 await tester.tap(help);
                 await tester.pumpAndSettle();
                 expect(tester.takeException(), isNull);
+                final strings = AppLocalizations.of(tester.element(help));
+                final heading = find.descendant(of: help,
+                  matching: find.text(step == 1 ? strings.playGuideConvertTitle : strings.playGuidePathsTitle));
+                await tester.ensureVisible(heading);
+                await tester.pumpAndSettle();
+                await tester.tap(heading);
+                await tester.pumpAndSettle();
+                expect(tester.takeException(), isNull);
+                await tester.tap(heading);
+                await tester.pumpAndSettle();
+                expect(tester.takeException(), isNull);
               }
             }
             final pager = find.byKey(const ValueKey('guide-pager'));
@@ -76,6 +87,11 @@ void main() {
             await tester.pumpAndSettle();
             expect(tester.widget<PageView>(pager).controller!.page, 3);
             expect(tester.takeException(), isNull);
+            await tester.tap(find.byKey(const ValueKey('guide-stage-1')));
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            final restoredHelp = find.byKey(const PageStorageKey('guide-conversion-help'));
+            expect(find.descendant(of: restoredHelp, matching: find.byType(SelectableText)), findsNWidgets(6));
             await tester.pumpWidget(const SizedBox.shrink());
             await tester.pumpAndSettle();
           },
