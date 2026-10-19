@@ -34,6 +34,7 @@ The application can serve as:
 - A download manager with background progress, cancellation, and notifications.
 - An installer for ZIP, 7z, and standalone files through Android's Storage
   Access Framework.
+- Optional faster installation can use direct writes in compatible game folders after granting storage access in Settings; ordinary SAF installation remains available.
 - A launcher and companion overlay that can remain accessible while the game is
   open.
 - A delivery channel for refreshed catalogues and ABI-specific app updates.

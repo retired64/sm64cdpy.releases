@@ -29,6 +29,11 @@ object InstallationDiscoveryScanner {
 
     private const val CACHE_FILE = "installation_discoveries_v1.json"
 
+    /** A replacement inside an existing directory may not change root metadata. */
+    fun invalidate(context: Context) = synchronized(InstallationSafAccessCoordinator.lock) {
+        AtomicFile(File(context.filesDir, CACHE_FILE)).delete()
+    }
+
     private data class Candidate(
         val file: DocumentFile,
         val relativePath: String,

@@ -64,3 +64,5 @@ v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 - [SM64 Intro: diseño e integración](SM64_INTRO_THEME.md).
 
 - [Conexión unificada de la carpeta del juego](UNIFIED_GAME_FOLDER.md).
+
+- [Optional fast installation](FAST_INSTALLATION.md): direct/SAF selection, permissions, cancellation and device validation.

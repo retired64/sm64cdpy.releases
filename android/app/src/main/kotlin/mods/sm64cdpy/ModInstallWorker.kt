@@ -113,7 +113,8 @@ class ModInstallWorker(
                 )
 
                 val manifest = SafZipExtractor.copyFileToTree(
-                    zipFile, treeDoc, applicationContext, writeJournal
+                    zipFile, treeDoc, applicationContext, writeJournal,
+                    checkCancelled = { if (isStopped) throw CancellationException("Installation cancelled") }
                 )
                 if (manifest == null) {
                     writeJournal.rollback(treeDoc)
@@ -329,6 +330,7 @@ class ModInstallWorker(
             return Result.failure(workDataOf("error" to "Installation was cancelled"))
         }
 
+        InstallationDiscoveryScanner.invalidate(applicationContext)
         val receipt = if (identity != null) {
             try {
                 InstallationReceiptStore.writeConfirmed(

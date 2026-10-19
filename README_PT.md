@@ -23,6 +23,7 @@ progresso do download e da instalação.
 - Gerenciador de downloads em segundo plano com progresso, cancelamento e
   notificações.
 - Instalador de ZIP, 7z e arquivos avulsos por meio do Storage Access Framework.
+- A instalação rápida opcional usa gravação direta em pastas compatíveis do jogo após conceder o acesso nos Ajustes; a instalação normal por SAF continua disponível.
 - Bolha flutuante acessível enquanto o jogo está aberto.
 - Atualização de catálogos e do APK conforme a arquitetura do dispositivo.
 - Base para melhorar a instalação automática, a recuperação após encerramentos

@@ -158,6 +158,7 @@ class ModInstaller {
 
       final success = result['success'] as bool? ?? false;
       if (success) {
+        invalidateInstallationLibrary('manualInstallCompleted');
         return ModInstallResult.ok(
           targetDir: result['targetDir'] as String? ?? modName,
           fileCount: result['fileCount'] as int? ?? 0,
@@ -262,6 +263,7 @@ class ModInstaller {
     if (result != true) {
       throw const ModInstallerException('Failed to copy file to mods folder');
     }
+    invalidateInstallationLibrary('manualInstallCompleted');
   }
 
   /// Returns true if POST_NOTIFICATIONS is granted (always true on Android < 13).
@@ -350,6 +352,7 @@ class ModInstaller {
     if (result != true) {
       throw const ModInstallerException('Failed to copy file to DynOS folder');
     }
+    invalidateInstallationLibrary('manualInstallCompleted');
   }
 
   /// Instala un mod en la carpeta DynOS: extrae el ZIP en [zipPath] dentro
@@ -377,6 +380,7 @@ class ModInstaller {
 
       final success = result['success'] as bool? ?? false;
       if (success) {
+        invalidateInstallationLibrary('manualInstallCompleted');
         return ModInstallResult.ok(
           targetDir: result['targetDir'] as String? ?? modName,
           fileCount: result['fileCount'] as int? ?? 0,

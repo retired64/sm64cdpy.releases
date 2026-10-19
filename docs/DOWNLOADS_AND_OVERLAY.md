@@ -88,3 +88,5 @@ Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada
 mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
 migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
 Validación Actions pendiente; revisión física requerida.
+
+The optional direct writer targets the same files as the selected SAF descendant, including DynOS/Touch Controls. WorkManager identities, terminal events, receipts and overlay transport are unchanged. Manual loose-file copies now reuse the extractor off the main thread; successful installs invalidate discovery. See FAST_INSTALLATION.md.

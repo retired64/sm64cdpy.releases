@@ -648,5 +648,8 @@
   "saveFileOpenSlot": "Toque para editar",
   "saveFileActions": "Ações da partida",
   "saveFileDraft": "Prévia · salva somente ao aplicar",
-  "drawerResources": "Recursos"
+  "drawerResources": "Recursos",
+  "fastInstallTitle": "Ativar instalação rápida",
+  "fastInstallDescription": "Opcional: permita o acesso a todos os arquivos no Android para acelerar a instalação em pastas compatíveis do jogo. Sem isso, você pode continuar instalando normalmente.",
+  "fastInstallAccessError": "Não foi possível abrir as permissões. Você pode continuar instalando normalmente."
 }

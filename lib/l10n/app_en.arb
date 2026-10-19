@@ -1861,5 +1861,8 @@
   "saveFileOpenSlot": "Tap to edit",
   "saveFileActions": "Slot actions",
   "saveFileDraft": "Preview · saved only after Apply",
-  "drawerResources": "Resources"
+  "drawerResources": "Resources",
+  "fastInstallTitle": "Enable faster installation",
+  "fastInstallDescription": "Optional: allow all-files access in Android to speed up installation in compatible game folders. Without it, installation still works normally.",
+  "fastInstallAccessError": "Could not open permission settings. You can keep installing normally."
 }
