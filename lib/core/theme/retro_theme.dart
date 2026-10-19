@@ -1345,6 +1345,7 @@ class SkewChip extends StatelessWidget {
     required this.label,
     this.selected = false,
     this.icon,
+    this.leading,
     this.trailing,
     this.onTap,
     this.dense = false,
@@ -1355,6 +1356,9 @@ class SkewChip extends StatelessWidget {
   final String label;
   final bool selected;
   final IconData? icon;
+
+  /// Optional original artwork; takes precedence over the monochrome icon.
+  final Widget? leading;
   final IconData? trailing;
   final VoidCallback? onTap;
   final bool dense;
@@ -1393,7 +1397,10 @@ class SkewChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (icon != null) ...[
+              if (leading != null) ...[
+                leading!,
+                const SizedBox(width: 8),
+              ] else if (icon != null) ...[
                 Icon(icon, size: dense ? 13 : 15, color: fg),
                 const SizedBox(width: 6),
               ],

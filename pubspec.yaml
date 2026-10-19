@@ -59,6 +59,7 @@ flutter:
     - assets/db/render96.json
     - assets/icons/
     - assets/icons/menu/
+    - assets/icons/player/
     - assets/player3d/
     - assets/themes/minish/
     - assets/themes/mk64/

@@ -131,3 +131,21 @@ fuente de verdad; el canvas nunca persiste estado del juego.
 4. Juego ausente, ROM ausente/incorrecta y permiso SAF revocado degradan con UI útil.
 5. Rotación, background/foreground y 20 entradas/salidas no filtran contextos WebGL.
 6. Validar Android 7, 10, 13, 14 y 16 en GPU baja/media/alta.
+
+## Iconos del selector de personaje
+
+Jugador usa los cinco PNG originales del usuario en `assets/icons/player/`,
+registrados en pubspec. La correspondencia conserva los IDs del juego:
+0 Mario, 1 Luigi, 2 Toad, 3 Waluigi, 4 Wario. Cada imagen nativa de 16×16
+se muestra a 32×32 con vecino más cercano, sin tintes ni animaciones.
+`Image.asset` reutiliza ImageCache de Flutter con decodificación limitada a
+16×16 (1 KiB RGBA por icono; cinco iconos suman 5 KiB sin contar overhead).
+No hay lectura externa, requests, timers, precarga masiva ni cache persistente.
+El nombre proporciona la etiqueta accesible y la imagen es decorativa.
+
+SkewChip acepta un leading opcional; los demás consumidores mantienen iconos
+Material y el mismo comportamiento. El selector crece a 64 puntos para respetar
+el tamaño de los iconos y área táctil, manteniendo scroll horizontal y colores
+de selección de cada tema. No cambia perfil, guardado, renderer 3D ni su cache.
+La optimización del spinner/carga de entrada se pospone por petición del usuario.
+Validación física pendiente: nombres e iconos, selección y texto ampliado.

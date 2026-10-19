@@ -569,8 +569,10 @@ class _ModelSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     const names = ['Mario', 'Luigi', 'Toad', 'Waluigi', 'Wario'];
+    const assets = ['mario', 'luigi', 'toad', 'waluigi', 'wario'];
+    final labelHeight = MediaQuery.textScalerOf(context).scale(12.5) * 1.4;
     return SizedBox(
-      height: 48,
+      height: (labelHeight + 30).clamp(64.0, double.infinity).toDouble(),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.fromLTRB(5, 2, 8, 5),
@@ -583,9 +585,18 @@ class _ModelSelector extends StatelessWidget {
           child: SkewChip(
             retro: retro,
             label: names[index],
-            icon: model == index ? Icons.sports_esports : Icons.person_outline,
+            leading: Image.asset(
+              'assets/icons/player/${assets[index]}.png',
+              width: 32,
+              height: 32,
+              cacheWidth: 16,
+              cacheHeight: 16,
+              filterQuality: FilterQuality.none,
+              excludeFromSemantics: true,
+              gaplessPlayback: true,
+            ),
             selected: model == index,
-            dense: true,
+            dense: false,
             onTap: () => onChanged(index),
           ),
         ),
