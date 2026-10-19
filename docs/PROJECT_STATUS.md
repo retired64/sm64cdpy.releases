@@ -293,3 +293,5 @@ Drawer localization: Spanish uses Herramientas / Partidas / Enlaces; Portuguese 
 Save File no longer exposes coin editing. Progress edits omit coin records so Kotlin preserves their original bytes; stars, cannons, unlocks, copy/erase and backups remain available.
 
 Save progress terminology now uses Normal / Alternative under Game progress in all five locales. The explained alternative belongs to some mod-specific modes; it is distinct from dated backups and does not select a game mode. Native bank mapping is unchanged.
+
+The drawer header always shows the SM64CDPY application logo, including Minish Cap and Mario Kart 64; theme artwork remains available for theme-specific presentation elsewhere.
