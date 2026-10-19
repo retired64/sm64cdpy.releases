@@ -19,6 +19,7 @@ não apenas uma lista de mods. Ele pode conectar o processo de encontrar
 conteúdo, baixá-lo e colocá-lo em uma pasta acessível ao jogo, mostrando o
 progresso do download e da instalação.
 
+- O guia **Como jogar**, em Recursos, explica como instalar o jogo Android, preparar sua ROM dos EUA, conectar a pasta e adicionar o primeiro mod.
 - Catálogo comunitário com pesquisa, categorias, filtros e favoritos.
 - Gerenciador de downloads em segundo plano com progresso, cancelamento e
   notificações.

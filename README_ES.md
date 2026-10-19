@@ -20,6 +20,7 @@ una lista de mods. Puede unir el proceso de encontrar contenido, descargarlo y
 colocarlo en una carpeta accesible para el juego, mostrando el progreso de
 descarga e instalación.
 
+- La guía **Cómo jugar**, en Recursos, explica paso a paso cómo instalar el juego Android, preparar tu ROM USA, conectar la carpeta y añadir el primer mod.
 - Catálogo comunitario con búsqueda, categorías, filtros y favoritos.
 - Gestor de descargas en segundo plano con progreso, cancelación y
   notificaciones.

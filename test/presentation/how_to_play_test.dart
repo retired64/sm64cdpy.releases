@@ -123,15 +123,17 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Launch'));
         await tester.pumpAndSettle();
-        final l10n = AppLocalizations.of(tester.element(find.byType(Dialog)));
+        final dialogContext = tester.element(find.byType(Dialog));
+        final l10n = AppLocalizations.of(dialogContext);
+        final retro = RetroTheme.of(dialogContext);
         expect(find.text(l10n.playGuideMissingTitle), findsOneWidget);
         expect(find.text('Guide destination'), findsNothing);
-        await tester.tap(find.text(l10n.playGuideLater));
+        await tester.tap(find.text(retro.displayLabel(l10n.playGuideLater)));
         await tester.pumpAndSettle();
         expect(find.byType(Dialog), findsNothing);
         await tester.tap(find.text('Launch'));
         await tester.pumpAndSettle();
-        await tester.tap(find.text(l10n.playGuideRead));
+        await tester.tap(find.text(retro.displayLabel(l10n.playGuideRead)));
         await tester.pumpAndSettle();
         expect(find.text('Guide destination'), findsOneWidget);
       },

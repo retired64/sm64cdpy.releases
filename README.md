@@ -29,6 +29,7 @@ folder while keeping the user informed of download and extraction progress.
 
 The application can serve as:
 
+- A built-in **How to Play** guide in Resources walks new players through Android game installation, their USA ROM, the game folder and the first mod.
 - A searchable, categorized catalogue of community content.
 - A local favourites library that can be exported and restored.
 - A download manager with background progress, cancellation, and notifications.
