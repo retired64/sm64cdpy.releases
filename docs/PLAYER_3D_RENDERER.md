@@ -149,3 +149,10 @@ el tamaño de los iconos y área táctil, manteniendo scroll horizontal y colore
 de selección de cada tema. No cambia perfil, guardado, renderer 3D ni su cache.
 La optimización del spinner/carga de entrada se pospone por petición del usuario.
 Validación física pendiente: nombres e iconos, selección y texto ampliado.
+
+Validación de iconos: cinco originales copiados byte a byte, 1803 bytes en total,
+IHDR de 16×16 verificado. [Testing 39342619343](https://github.com/retired64/sm64cdpy.releases/actions/runs/39342619343)
+aprobó generación, formato, análisis y pruebas Flutter para `f929c9b`.
+Los Dart modificados ya coinciden con el formato del runner; no se importa el
+reformateo de archivos ajenos. APK arm64 en compilación al registrar esta nota.
+El rendimiento real y el aspecto siguen pendientes de comprobación en teléfono.

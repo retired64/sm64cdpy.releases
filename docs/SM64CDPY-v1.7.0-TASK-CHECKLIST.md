@@ -690,3 +690,5 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Sustituir iconos genéricos de personajes por cinco PNG locales pequeños.
 - [ ] Validar visualmente selector de Jugador en dispositivo y texto ampliado.
 - [ ] Optimización del spinner de Jugador: pospuesta por el usuario.
+
+- [x] Análisis, formato y pruebas Flutter para retratos: Testing 39342619343.
