@@ -138,7 +138,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                     ),
                   ),
                 ),
-                widget.child,
+                ThemePageFrame(child: widget.child),
               ],
             )
           : widget.child,

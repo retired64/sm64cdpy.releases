@@ -47,8 +47,10 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   final bool isDark;
   final AppThemeDesign design;
   final RetroAccent retroAccent;
-  bool get _customAccent => design.id == AppThemeId.retroManga && retroAccent != RetroAccent.cyan;
+  bool get _customAccent =>
+      design.id == AppThemeId.retroManga && retroAccent != RetroAccent.cyan;
   final MarioThemeAssets marioAssets;
+
   /// Japanese captions are decoration exclusive to the manga design.
   bool get showJapaneseDecorations => design.id == AppThemeId.retroManga;
   bool get isIntro => design.id == AppThemeId.sm64Intro;
@@ -152,6 +154,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       design.surfaceTreatment == AppSurfaceTreatment.folio;
   bool get usesRacingSurfaces =>
       design.surfaceTreatment == AppSurfaceTreatment.racing;
+  String? get pageTextureAsset => design.pageTextureAsset;
 
   bool _isNeutralSurface(Color? color) =>
       color == null ||
@@ -376,8 +379,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
           : null,
     );
     if (usesFolioSurfaces) {
-      final folioShape = RoundedRectangleBorder(
-        borderRadius: radius,
+      final folioShape = _FolioButtonBorder(
         side: BorderSide(color: border, width: borderWidth(2)),
       );
       final labelStyle = TextStyle(
@@ -389,6 +391,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       theme = theme.copyWith(
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
+            backgroundColor: accent,
+            foregroundColor: inkOnAccent,
             shape: folioShape,
             elevation: 0,
             minimumSize: const Size(48, 48),
@@ -397,6 +401,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            backgroundColor: accent,
+            foregroundColor: inkOnAccent,
             shape: folioShape,
             elevation: 0,
             minimumSize: const Size(48, 48),
@@ -422,6 +428,34 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
             borderRadius: radius,
             borderSide: BorderSide(color: accent, width: borderWidth(2)),
           ),
+        ),
+        cardTheme: CardThemeData(
+          color: surface,
+          elevation: 0,
+          shape: folioShape,
+        ),
+        dialogTheme: DialogThemeData(
+          backgroundColor: surface,
+          shape: folioShape,
+        ),
+        chipTheme: theme.chipTheme.copyWith(
+          backgroundColor: surfaceAlt,
+          selectedColor: accent,
+          side: BorderSide(color: border, width: borderWidth(1)),
+          shape: folioShape,
+          labelStyle: body(size: 13, color: ink),
+          secondaryLabelStyle: body(size: 13, color: inkOnAccent),
+        ),
+        switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateProperty.resolveWith(
+            (states) =>
+                states.contains(WidgetState.selected) ? inkOnAccent : inkDim,
+          ),
+          trackColor: WidgetStateProperty.resolveWith(
+            (states) =>
+                states.contains(WidgetState.selected) ? accent : surfaceAlt,
+          ),
+          trackOutlineColor: WidgetStatePropertyAll(border),
         ),
       );
     }
@@ -657,6 +691,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         playfulSelection: selected.design.playfulSelection,
         drawerRasterIcons: selected.design.drawerRasterIcons,
         brandAsset: selected.design.brandAsset,
+        pageTextureAsset: selected.design.pageTextureAsset,
       ),
       backgroundOverride: Color.lerp(background, other.background, t),
       surfaceOverride: Color.lerp(surface, other.surface, t),
@@ -665,6 +700,53 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       shadowColorOverride: Color.lerp(shadowColor, other.shadowColor, t),
     );
   }
+}
+
+/// Low-cost irregular outline shared by Minish controls. The eight-segment
+/// path mirrors a hand-cut manual label without runtime shaders or clipping
+/// masks from raster assets.
+class _FolioButtonBorder extends OutlinedBorder {
+  const _FolioButtonBorder({super.side});
+
+  @override
+  OutlinedBorder copyWith({BorderSide? side}) =>
+      _FolioButtonBorder(side: side ?? this.side);
+
+  Path _path(Rect rect) {
+    final notch = (rect.size.shortestSide * 0.1).clamp(3.0, 7.0);
+    return Path()
+      ..moveTo(rect.left + notch, rect.top)
+      ..lineTo(rect.right - notch * 0.7, rect.top + 1)
+      ..lineTo(rect.right, rect.top + notch)
+      ..lineTo(rect.right - 1, rect.bottom - notch)
+      ..lineTo(rect.right - notch, rect.bottom)
+      ..lineTo(rect.left + notch * 0.7, rect.bottom - 1)
+      ..lineTo(rect.left, rect.bottom - notch)
+      ..lineTo(rect.left + 1, rect.top + notch)
+      ..close();
+  }
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) => _path(rect);
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) =>
+      _path(rect.deflate(side.width));
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
+    if (side.style == BorderStyle.none || side.width == 0) return;
+    canvas.drawPath(
+      _path(rect.deflate(side.width / 2)),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = side.width
+        ..color = side.color,
+    );
+  }
+
+  @override
+  ShapeBorder scale(double t) => _FolioButtonBorder(side: side.scale(t));
 }
 
 /// Shared scenic canvas used by [AppShell]. The painter is intentionally
@@ -726,9 +808,22 @@ class ThemeBackdrop extends StatelessWidget {
     if (retro.showParchmentBackdrop) {
       return IgnorePointer(
         child: RepaintBoundary(
-          child: CustomPaint(
-            size: Size.infinite,
-            painter: _ParchmentBackdropPainter(retro: retro),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: retro.shadowColor,
+              image: retro.pageTextureAsset == null
+                  ? null
+                  : DecorationImage(
+                      image: AssetImage(retro.pageTextureAsset!),
+                      repeat: ImageRepeat.repeat,
+                      opacity: retro.isDark ? 0.08 : 0.16,
+                      colorFilter: ColorFilter.mode(
+                        retro.shadowColor,
+                        BlendMode.multiply,
+                      ),
+                      filterQuality: FilterQuality.low,
+                    ),
+            ),
           ),
         ),
       );
@@ -752,37 +847,88 @@ class ThemeBackdrop extends StatelessWidget {
   }
 }
 
-/// Static cloth grain: a handful of opaque strokes, no images, blur or
-/// animation. It is isolated behind a repaint boundary and only repaints when
-/// the selected palette changes.
-class _ParchmentBackdropPainter extends CustomPainter {
-  const _ParchmentBackdropPainter({required this.retro});
+/// Frames the active destination like one page of the printed Minish manual.
+/// Only one hard-edge clip is present for the whole screen, independent of
+/// list length, and the 5 KB texture is shared by Flutter's image cache.
+class ThemePageFrame extends StatelessWidget {
+  const ThemePageFrame({super.key, required this.child});
 
-  final RetroTheme retro;
+  final Widget child;
 
   @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = retro.background);
-    final dark = Paint()
-      ..color = retro.shadowColor.withValues(alpha: 0.12)
-      ..strokeWidth = 1;
-    final light = Paint()
-      ..color = retro.surfaceHighlight.withValues(alpha: 0.045)
-      ..strokeWidth = 1;
-    for (double x = 20; x < size.width; x += 44) {
-      canvas.drawLine(Offset(x, 0), Offset(x - 14, size.height), dark);
-    }
-    for (double y = 28; y < size.height; y += 52) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y + 9), light);
-    }
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    if (!retro.usesFolioSurfaces) return child;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5, 4, 5, 3),
+      child: ClipPath(
+        clipper: const _FolioPageClipper(),
+        clipBehavior: Clip.hardEdge,
+        child: ColoredBox(
+          color: retro.border,
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: ClipPath(
+              clipper: const _FolioPageClipper(inset: true),
+              clipBehavior: Clip.hardEdge,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: retro.surface,
+                  image: retro.pageTextureAsset == null
+                      ? null
+                      : DecorationImage(
+                          image: AssetImage(retro.pageTextureAsset!),
+                          repeat: ImageRepeat.repeat,
+                          opacity: retro.isDark ? 0.05 : 0.48,
+                          filterQuality: FilterQuality.low,
+                        ),
+                ),
+                child: child,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FolioPageClipper extends CustomClipper<Path> {
+  const _FolioPageClipper({this.inset = false});
+
+  final bool inset;
+
+  @override
+  Path getClip(Size size) {
+    final notch = inset ? 5.0 : 8.0;
+    return Path()
+      ..moveTo(notch, 0)
+      ..lineTo(size.width * 0.22, 0)
+      ..lineTo(size.width * 0.235, notch * 0.55)
+      ..lineTo(size.width * 0.47, notch * 0.2)
+      ..lineTo(size.width * 0.485, 0)
+      ..lineTo(size.width - notch, notch * 0.25)
+      ..lineTo(size.width, notch)
+      ..lineTo(size.width - 1, size.height * 0.34)
+      ..lineTo(size.width, size.height * 0.36)
+      ..lineTo(size.width - 1, size.height - notch)
+      ..lineTo(size.width - notch, size.height)
+      ..lineTo(notch, size.height - 1)
+      ..lineTo(0, size.height - notch)
+      ..lineTo(1, size.height * 0.67)
+      ..lineTo(0, size.height * 0.65)
+      ..lineTo(1, notch)
+      ..close();
   }
 
   @override
-  bool shouldRepaint(covariant _ParchmentBackdropPainter oldDelegate) =>
-      oldDelegate.retro.background != retro.background ||
-      oldDelegate.retro.shadowColor != retro.shadowColor;
+  bool shouldReclip(covariant _FolioPageClipper oldClipper) =>
+      oldClipper.inset != inset;
 }
 
+/// Static cloth grain: a handful of opaque strokes, no images, blur or
+/// animation. It is isolated behind a repaint boundary and only repaints when
+/// the selected palette changes.
 /// Fixed start-grid pattern made from a single cached picture. Its tile count
 /// is bounded by the viewport and it performs no image decoding or animation.
 class _CheckeredBackdropPainter extends CustomPainter {
@@ -999,6 +1145,9 @@ class SectionKicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (retro.usesFolioSurfaces) {
+      return _FolioSectionKicker(retro: retro, label: label);
+    }
     return Row(
       children: [
         if (retro.design.playfulSelection)
@@ -1049,6 +1198,116 @@ class SectionKicker extends StatelessWidget {
       ],
     );
   }
+}
+
+class _FolioSectionKicker extends StatelessWidget {
+  const _FolioSectionKicker({required this.retro, required this.label});
+
+  final RetroTheme retro;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      SizedBox(
+        width: 34,
+        height: 34,
+        child: CustomPaint(
+          painter: _CloverBadgePainter(
+            fill: retro.accent,
+            outline: retro.border,
+          ),
+          child: Icon(Icons.circle, size: 7, color: retro.inkOnAccent),
+        ),
+      ),
+      const SizedBox(width: 7),
+      Expanded(
+        child: ClipPath(
+          clipper: const _RibbonClipper(),
+          clipBehavior: Clip.hardEdge,
+          child: ColoredBox(
+            color: retro.secondaryAccent,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(15, 8, 18, 9),
+              child: Text(
+                label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: retro.heading(
+                  size: 17,
+                  color: const Color(0xFFFFF6D3),
+                  height: 1.1,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+class _CloverBadgePainter extends CustomPainter {
+  const _CloverBadgePainter({required this.fill, required this.outline});
+
+  final Color fill;
+  final Color outline;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = size.shortestSide * 0.23;
+    final distance = size.shortestSide * 0.18;
+    final path = Path();
+    for (final offset in const [
+      Offset(0, -1),
+      Offset(1, 0),
+      Offset(0, 1),
+      Offset(-1, 0),
+    ]) {
+      path.addOval(
+        Rect.fromCircle(center: center + offset * distance, radius: radius),
+      );
+    }
+    canvas.drawPath(path, Paint()..color = outline);
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.scale(0.88);
+    canvas.translate(-center.dx, -center.dy);
+    canvas.drawPath(path, Paint()..color = fill);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _CloverBadgePainter oldDelegate) =>
+      oldDelegate.fill != fill || oldDelegate.outline != outline;
+}
+
+class _RibbonClipper extends CustomClipper<Path> {
+  const _RibbonClipper();
+
+  @override
+  Path getClip(Size size) => Path()
+    ..moveTo(3, 0)
+    ..lineTo(size.width * 0.28, 2)
+    ..lineTo(size.width * 0.31, 0)
+    ..lineTo(size.width * 0.66, 2)
+    ..lineTo(size.width * 0.7, 0)
+    ..lineTo(size.width - 2, 2)
+    ..lineTo(size.width, size.height * 0.24)
+    ..lineTo(size.width - 2, size.height * 0.64)
+    ..lineTo(size.width, size.height - 2)
+    ..lineTo(size.width * 0.72, size.height)
+    ..lineTo(size.width * 0.68, size.height - 2)
+    ..lineTo(size.width * 0.3, size.height)
+    ..lineTo(size.width * 0.27, size.height - 2)
+    ..lineTo(0, size.height)
+    ..lineTo(2, size.height * 0.6)
+    ..lineTo(0, size.height * 0.26)
+    ..close();
+
+  @override
+  bool shouldReclip(covariant _RibbonClipper oldClipper) => false;
 }
 
 // ── Skewed chip ──────────────────────────────────────────────────────────────
@@ -1508,7 +1767,7 @@ class MarioGameIcon extends StatelessWidget {
     final retro = RetroTheme.of(context);
     final asset = _sprites[icon];
     final path = asset == null ? null : retro.marioAsset(asset);
-    if (path == null)
+    if (path == null) {
       return Icon(
         icon,
         size: size,
@@ -1522,6 +1781,7 @@ class MarioGameIcon extends StatelessWidget {
         shadows: shadows,
         applyTextScaling: applyTextScaling,
       );
+    }
     final dimension = size ?? IconTheme.of(context).size ?? 24;
     final image = Image.file(
       File(path),

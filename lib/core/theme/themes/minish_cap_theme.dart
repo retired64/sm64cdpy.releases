@@ -24,6 +24,7 @@ const minishCapTheme = AppThemeDesign(
   surfaceTreatment: AppSurfaceTreatment.folio,
   playfulSelection: true,
   brandAsset: 'assets/themes/minish/minish.webp',
+  pageTextureAsset: 'assets/themes/minish/manual-paper.webp',
   light: AppThemePalette(
     background: Color(0xFFF3E4A1),
     surface: Color(0xFFFFF4C4),
