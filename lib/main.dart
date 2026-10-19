@@ -157,9 +157,15 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
       routerConfig: appRouter,
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: RetroTheme.of(context).systemUiStyle,
-        child: MarioAssetsCoordinator(
-          child: BackgroundOperationCoordinator(
-            child: child ?? const SizedBox.shrink(),
+        child: ColoredBox(
+          color: RetroTheme.of(context).background,
+          child: SafeArea(
+            bottom: false,
+            child: MarioAssetsCoordinator(
+              child: BackgroundOperationCoordinator(
+                child: child ?? const SizedBox.shrink(),
+              ),
+            ),
           ),
         ),
       ),
