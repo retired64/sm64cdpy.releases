@@ -31,7 +31,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -343,7 +344,7 @@ object SafZipExtractor {
     }
 
     /** Reparte [items] entre [parallelism] workers; el primer fallo cancela al resto. */
-    private suspend fun <T> forEachParallel(
+    internal suspend fun <T> forEachParallel(
         items: List<T>,
         parallelism: Int,
         block: suspend (T) -> Unit
@@ -351,8 +352,8 @@ object SafZipExtractor {
         if (items.isEmpty()) return
         coroutineScope {
             val next = AtomicInteger(0)
-            repeat(minOf(parallelism, items.size)) {
-                launch(Dispatchers.IO) {
+            List(minOf(parallelism, items.size)) {
+                async(Dispatchers.IO) {
                     while (true) {
                         ensureActive()
                         val i = next.getAndIncrement()
@@ -360,7 +361,7 @@ object SafZipExtractor {
                         block(items[i])
                     }
                 }
-            }
+            }.awaitAll()
         }
     }
 
@@ -919,8 +920,8 @@ object SafZipExtractor {
                 // Entradas pequeñas: se leen a memoria (lectura 7z es secuencial) y
                 // se escriben a SAF en paralelo. Cola acotada => memoria acotada.
                 val queue = Channel<Pair<String, ByteArray>>(16)
-                repeat(PARALLELISM) {
-                    launch(Dispatchers.IO) {
+                val writers = List(PARALLELISM) {
+                    async(Dispatchers.IO) {
                         for ((path, bytes) in queue) {
                             ensureActive()
                             val currentJob = currentCoroutineContext()[Job]
@@ -936,6 +937,7 @@ object SafZipExtractor {
                     }
                 }
 
+                val producer = async {
                 try {
                     val seen = HashSet<String>()
                     var entry: SevenZArchiveEntry? = szf.nextEntry
@@ -985,6 +987,8 @@ object SafZipExtractor {
                 } finally {
                     queue.close()
                 }
+                }
+                (writers + producer).awaitAll()
             }
         }
 

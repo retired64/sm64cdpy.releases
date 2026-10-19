@@ -49,8 +49,10 @@ The existing ZIP path already used ZipFile and parallel SAF before integration;
 this change does not claim those earlier improvements as newly measured work.
 Concurrency remains bounded to 4–8 workers, with a 256 KiB buffer per thread.
 7z has a bounded small-entry queue; reading and writing check cancellation.
-ZIP fallback and loose-file chunks are cancellation-aware too. Coroutine scopes
-wait for child writers before the caller performs rollback. Worker completion
+ZIP fallback and loose-file chunks are cancellation-aware too. Deferred writers
+and the 7z producer are awaited together: even a child CancellationException
+fails the extraction instead of silently retiring one writer. Coroutine scopes
+wait for all child writers before the caller performs rollback. Worker completion
 still requires a persisted receipt; a full progress bar is not terminal success.
 
 Direct paths are canonically contained below the selected directory. Directory
@@ -102,3 +104,9 @@ Device matrix (not executable from this Termux session):
 - Two different installs concurrently; change screens, minimize and reopen.
 - Fresh library and existing folder replacement; app and floating overlay.
 - Android 7–9 permission dialog, Android 10 SAF, Android 11+ Settings return.
+
+Local verification completed: pure Kotlin path policy checks, plus the real
+extractor compiled against Android stubs and exercised with a 500-file ZIP, exact
+reinstallation, renamed loose file, small/large 7z entries, child cancellation and
+direct journal cleanup. Android calls were stubbed; these checks do not measure
+SAF IPC, permission dialogs or physical-device speed.
