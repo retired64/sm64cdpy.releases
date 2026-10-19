@@ -648,3 +648,5 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 
 
 - [x] Remove unsupported coin editing and preserve raw coin records in progress-only writes; add both-endian preservation regression coverage.
+
+- [x] Replace confusing internal-copy labels with Game progress → Normal / Alternative; explain mod usage and preserve bank identity and explicit copy/erase scope.

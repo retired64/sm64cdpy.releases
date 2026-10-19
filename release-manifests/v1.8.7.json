@@ -40,7 +40,7 @@
         {
           "heading": "GameTool: manage original-game saves",
           "items": [
-            "Open GameTool → Save File to manage the four original-game slots. Tap a file card to edit its own progress; secondary internal copies are an explained advanced option.",
+            "Open GameTool → Save File to manage the four original-game slots. Tap a file card to edit its own progress. Game progress offers Normal and Alternative; some mods use Alternative for special modes, not as a dated backup.",
             "Edit stars, castle rewards, cannons and unlocks. A live preview shows the selected slot’s star count; completing 120 stars is an explicit menu action. Changes are saved only after Apply and confirmation.",
             "Copy or erase slots and create full local backups. Every verified write first creates a backup and rejects edits based on an outdated file. Restoring replaces all four slots; close the game before applying changes."
           ]
@@ -91,7 +91,7 @@
         {
           "heading": "Herramientas: administra las partidas originales",
           "items": [
-            "Abre Herramientas → Partidas para administrar las cuatro partidas del juego original. Toca una tarjeta para editar su propio progreso; las copias internas secundarias quedan en una opción avanzada explicada.",
+            "Abre Herramientas → Partidas para administrar las cuatro partidas del juego original. Toca una tarjeta para editar su propio progreso. Progreso del juego ofrece Normal y Alternativo; algunos mods usan el alternativo para modos especiales, no como respaldo por fecha.",
             "Edita estrellas, premios del castillo, cañones y desbloqueos. La vista previa muestra las estrellas de la partida elegida; completar 120 estrellas es una acción explícita del menú. Los cambios solo se guardan al aplicar y confirmar.",
             "Copia o borra partidas y crea respaldos locales completos. Cada escritura verificada crea antes un respaldo y rechaza cambios sobre un archivo desactualizado. Restaurar reemplaza las cuatro partidas; cierra el juego antes de aplicar cambios."
           ]
@@ -142,7 +142,7 @@
         {
           "heading": "Ferramentas: gerencie as partidas originais",
           "items": [
-            "Abra Ferramentas → Dados salvos para gerenciar as quatro partidas do jogo original. Toque em um cartão para editar seu próprio progresso; as cópias internas secundárias ficam em uma opção avançada explicada.",
+            "Abra Ferramentas → Dados salvos para gerenciar as quatro partidas do jogo original. Toque em um cartão para editar seu próprio progresso. Progresso do jogo oferece Normal e Alternativo; alguns mods usam o alternativo para modos especiais, não como backup por data.",
             "Edite estrelas, recompensas do castelo, canhões e desbloqueios. A prévia mostra as estrelas da partida selecionada; completar 120 estrelas é uma ação explícita do menu. As alterações só são salvas ao aplicar e confirmar.",
             "Copie ou apague partidas e crie backups locais completos. Cada gravação verificada cria antes um backup e rejeita alterações baseadas em um arquivo desatualizado. Restaurar substitui as quatro partidas; feche o jogo antes de aplicar alterações."
           ]

@@ -20,7 +20,7 @@ Version 1.8.7 adds Minish Cap and Mario Kart 64 themes, customizable Retro Manga
 
 ### GameTool: manage original-game saves
 
-- Open GameTool → Save File to manage the four original-game slots. Tap a file card to edit its own progress; secondary internal copies are an explained advanced option.
+- Open GameTool → Save File to manage the four original-game slots. Tap a file card to edit its own progress. Game progress offers Normal and Alternative; some mods use Alternative for special modes, not as a dated backup.
 - Edit stars, castle rewards, cannons and unlocks. A live preview shows the selected slot’s star count; completing 120 stars is an explicit menu action. Changes are saved only after Apply and confirmation.
 - Copy or erase slots and create full local backups. Every verified write first creates a backup and rejects edits based on an outdated file. Restoring replaces all four slots; close the game before applying changes.
 

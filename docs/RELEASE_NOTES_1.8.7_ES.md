@@ -20,7 +20,7 @@ La versión 1.8.7 incorpora los temas Minish Cap y Mario Kart 64, acentos person
 
 ### Herramientas: administra las partidas originales
 
-- Abre Herramientas → Partidas para administrar las cuatro partidas del juego original. Toca una tarjeta para editar su propio progreso; las copias internas secundarias quedan en una opción avanzada explicada.
+- Abre Herramientas → Partidas para administrar las cuatro partidas del juego original. Toca una tarjeta para editar su propio progreso. Progreso del juego ofrece Normal y Alternativo; algunos mods usan el alternativo para modos especiales, no como respaldo por fecha.
 - Edita estrellas, premios del castillo, cañones y desbloqueos. La vista previa muestra las estrellas de la partida elegida; completar 120 estrellas es una acción explícita del menú. Los cambios solo se guardan al aplicar y confirmar.
 - Copia o borra partidas y crea respaldos locales completos. Cada escritura verificada crea antes un respaldo y rechaza cambios sobre un archivo desactualizado. Restaurar reemplaza las cuatro partidas; cierra el juego antes de aplicar cambios.
 
