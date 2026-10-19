@@ -681,3 +681,7 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Conexión existente y estado comprobado al reanudar, sin cache nuevo.
 - [x] Generación l10n, formato, análisis y 250 pruebas Flutter en Testing 39337289411.
 - [ ] Prueba física desde juego ausente hasta primer mod activo.
+
+- [x] Revisar capturas y sustituir bloque largo por tarjetas tituladas y capítulos deslizables.
+- [x] Mapa modal, navegación fija y estructura visual por tema.
+- [ ] Validar guía v2 con gestos, texto ampliado y landscape.

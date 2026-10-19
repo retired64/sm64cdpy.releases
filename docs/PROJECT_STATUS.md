@@ -317,3 +317,7 @@ ofrece guía si falta el juego. Testing 39337289411 aprobó generación l10n,
 formato, análisis sin errores nuevos y 250 pruebas Flutter. APK en compilación;
 validación física pendiente.
 Contrato y matriz: [HOW_TO_PLAY.md](HOW_TO_PLAY.md).
+
+Guía v2: capítulos deslizables, mapa modal y 32 tarjetas tituladas con materiales
+propios de cada tema. Navegación fija y layout compacto en landscape.
+Pendiente Testing nuevo; la evidencia anterior valida la primera estructura.

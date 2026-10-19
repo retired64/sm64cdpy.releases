@@ -51,12 +51,20 @@ void main() {
             );
             await tester.pumpAndSettle();
             for (var step = 0; step < 6; step++) {
-              final chip = find.byType(ChoiceChip).at(step);
+              final chip = find.byKey(ValueKey('guide-stage-$step'));
               await tester.ensureVisible(chip);
               await tester.tap(chip);
               await tester.pumpAndSettle();
               expect(tester.takeException(), isNull);
             }
+            final pager = find.byKey(const ValueKey('guide-pager'));
+            await tester.drag(pager, const Offset(300, 0));
+            await tester.pumpAndSettle();
+            expect(tester.widget<PageView>(pager).controller!.page, 4);
+            await tester.tap(find.byKey(const ValueKey('guide-previous')));
+            await tester.pumpAndSettle();
+            expect(tester.widget<PageView>(pager).controller!.page, 3);
+            expect(tester.takeException(), isNull);
             await tester.pumpWidget(const SizedBox.shrink());
             await tester.pumpAndSettle();
           },

@@ -83,3 +83,33 @@ generó traducciones, aplicó formato y pasó análisis sin errores nuevos y las
 sin modificar archivos ajenos a esta tarea. APK arm64 en compilación al registrar
 esta evidencia; validación física pendiente. Validación local: cinco ARB JSON
 con 38 claves coherentes, cuatro pruebas Python del manifiesto y diff-check.
+
+## Segunda iteración visual — capturas revisadas el 2026-10-19
+
+Las dos capturas del usuario muestran un selector de seis etiquetas que ocupa
+la entrada y un único bloque largo que deja los botones fuera del primer
+vistazo. Se sustituye por PageView horizontal, mapa en bottom sheet con
+asa nativa y seis anclas compactas. Pie fijo con anterior/siguiente y apertura
+del juego al final; cada capítulo conserva su scroll vertical durante la visita.
+
+Las instrucciones se representan con 32 tarjetas con título propio, texto local
+y numeración; no se fragmentan traducciones por heurísticas en runtime.
+Conversión y mapa de rutas también usan tarjetas individuales. Acciones reales
+aparecen antes de la lectura, los consejos tienen otro tratamiento y los estados
+comprobados siguen separados de la posición de lectura. No se marca un capítulo
+como instalación completada por visitarlo.
+
+Lenguajes visuales: Retro Manga usa viñetas, acento, tinta, insignias y sombras
+desplazadas; Minimal usa tarjetas con borde fino y jerarquía limpia; Mario Kart
+64 incorpora una franja de bandera a cuadros y sus colores de contraste; Minish
+Cap conserva encabezados de madera, separadores de capítulo y papel; Mario 64 y
+SM64 Intro reutilizan sus marcos, glifos y tipografía preparados. Inspiración
+cartoon mediante geometría propia, sin copiar assets de Friday Night Funkin.
+No hay imágenes nuevas, blur ni animaciones infinitas.
+
+El indicador usa botones accesibles; no exige deslizar. El mapa es desplazable
+y cerrable con atrás o arrastre. En landscape/split-screen se compacta la
+cabecera para conservar espacio de lectura. Se liberan PageController y observer;
+no se añaden preferencias, caches ni cambios en permisos/Workers/overlay.
+Validación nueva pendiente: análisis, generación, pruebas de deslizamiento,
+controles, seis temas, tres idiomas y tamaños estrechos/texto ampliado.

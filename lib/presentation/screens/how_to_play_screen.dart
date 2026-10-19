@@ -16,6 +16,7 @@ import '../widgets/app_snackbar.dart';
 import '../widgets/game_folder_card.dart';
 import '../widgets/game_launch_flow.dart';
 import '../widgets/game_setup_widgets.dart';
+import '../widgets/play_guide_widgets.dart';
 
 class HowToPlayScreen extends ConsumerStatefulWidget {
   const HowToPlayScreen({super.key});
@@ -26,7 +27,7 @@ class HowToPlayScreen extends ConsumerStatefulWidget {
 
 class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
     with WidgetsBindingObserver {
-  final _scroll = ScrollController();
+  final _pages = PageController();
   int _step = 0;
   bool? _installed;
   bool _busy = false;
@@ -84,15 +85,52 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
   }
 
   void _select(int step) {
-    setState(() => _step = step);
-    if (_scroll.hasClients) _scroll.jumpTo(0);
+    if (_busy || !_pages.hasClients) return;
+    _pages.jumpToPage(step);
+  }
+
+  Future<void> _overview(List<String> titles) async {
+    final l10n = AppLocalizations.of(context);
+    final selected = await showModalBottomSheet<int>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      backgroundColor: RetroTheme.of(context).background,
+      builder: (sheetContext) {
+        final retro = RetroTheme.of(sheetContext);
+        return SafeArea(child: FractionallySizedBox(heightFactor: 0.8,
+          child: ListView(padding: const EdgeInsets.fromLTRB(20, 0, 20, 24), children: [
+            Text(l10n.playGuideMap, style: retro.heading(size: 22)),
+            const SizedBox(height: 12),
+            Text(l10n.playGuideIntro, style: retro.body(size: 16)),
+            const SizedBox(height: 16),
+            for (var i = 0; i < titles.length; i++)
+              Padding(padding: const EdgeInsets.only(bottom: 10),
+                child: ListTile(
+                  shape: RoundedRectangleBorder(borderRadius: retro.radius,
+                    side: BorderSide(color: retro.border, width: retro.borderWidth(1))),
+                  tileColor: i == _step ? retro.accent : retro.surface,
+                  textColor: i == _step ? retro.inkOnAccent : retro.ink,
+                  leading: Text('${i + 1}', style: retro.heading(size: 22,
+                    color: i == _step ? retro.inkOnAccent : retro.accentText)),
+                  title: Text(titles[i], style: retro.body(size: 16,
+                    color: i == _step ? retro.inkOnAccent : retro.ink)),
+                  trailing: Icon(Icons.arrow_forward_rounded,
+                    color: i == _step ? retro.inkOnAccent : retro.ink),
+                  onTap: () => Navigator.pop(sheetContext, i),
+                )),
+          ]),
+        ));
+      },
+    );
+    if (mounted && selected != null) _select(selected);
   }
 
   @override
   void dispose() {
     ++_refreshRevision;
     WidgetsBinding.instance.removeObserver(this);
-    _scroll.dispose();
+    _pages.dispose();
     super.dispose();
   }
 
@@ -109,13 +147,21 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
       l10n.playGuideStep5Title,
       l10n.playGuideStep6Title,
     ];
-    final bodies = [
-      l10n.playGuideStep1Body,
-      l10n.playGuideStep2Body,
-      l10n.playGuideStep3Body,
-      l10n.playGuideStep4Body,
-      l10n.playGuideStep5Body,
-      l10n.playGuideStep6Body,
+    final cards = [
+      [l10n.playGuideS1Card1, l10n.playGuideS1Card2, l10n.playGuideS1Card3, l10n.playGuideS1Card4, l10n.playGuideS1Card5, l10n.playGuideS1Card6],
+      [l10n.playGuideS2Card1, l10n.playGuideS2Card2, l10n.playGuideS2Card3, l10n.playGuideS2Card4, l10n.playGuideS2Card5],
+      [l10n.playGuideS3Card1, l10n.playGuideS3Card2, l10n.playGuideS3Card3, l10n.playGuideS3Card4, l10n.playGuideS3Card5],
+      [l10n.playGuideS4Card1, l10n.playGuideS4Card2, l10n.playGuideS4Card3, l10n.playGuideS4Card4, l10n.playGuideS4Card5],
+      [l10n.playGuideS5Card1, l10n.playGuideS5Card2, l10n.playGuideS5Card3, l10n.playGuideS5Card4, l10n.playGuideS5Card5],
+      [l10n.playGuideS6Card1, l10n.playGuideS6Card2, l10n.playGuideS6Card3, l10n.playGuideS6Card4, l10n.playGuideS6Card5, l10n.playGuideS6Card6],
+    ];
+    final cardTitles = [
+      [l10n.playGuideS1Title1, l10n.playGuideS1Title2, l10n.playGuideS1Title3, l10n.playGuideS1Title4, l10n.playGuideS1Title5, l10n.playGuideS1Title6],
+      [l10n.playGuideS2Title1, l10n.playGuideS2Title2, l10n.playGuideS2Title3, l10n.playGuideS2Title4, l10n.playGuideS2Title5],
+      [l10n.playGuideS3Title1, l10n.playGuideS3Title2, l10n.playGuideS3Title3, l10n.playGuideS3Title4, l10n.playGuideS3Title5],
+      [l10n.playGuideS4Title1, l10n.playGuideS4Title2, l10n.playGuideS4Title3, l10n.playGuideS4Title4, l10n.playGuideS4Title5],
+      [l10n.playGuideS5Title1, l10n.playGuideS5Title2, l10n.playGuideS5Title3, l10n.playGuideS5Title4, l10n.playGuideS5Title5],
+      [l10n.playGuideS6Title1, l10n.playGuideS6Title2, l10n.playGuideS6Title3, l10n.playGuideS6Title4, l10n.playGuideS6Title5, l10n.playGuideS6Title6],
     ];
     const icons = [
       Icons.downloading_rounded,
@@ -139,78 +185,47 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
         onPressed: _busy ? null : () => _action(run),
       ),
     );
-    return CustomScrollView(
-      controller: _scroll,
-      slivers: [
-        RetroPinnedAppBar(
-          title: Text(l10n.playGuideTitle, style: retro.heading(size: 22)),
+    return RetroFixedHeaderView(
+      title: Text(l10n.playGuideTitle, style: retro.heading(size: 22)),
+      child: SafeArea(top: false, child: LayoutBuilder(builder: (context, constraints) {
+        final compact = constraints.maxHeight < 400;
+        return Column(children: [
+        Container(
+          color: retro.background,
+          padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+          child: Column(children: [
+            if (!compact) Row(children: [
+              Expanded(child: Text(l10n.playGuideSwipe,
+                style: retro.body(size: 12))),
+              TextButton.icon(
+                onPressed: _busy ? null : () => _overview(titles),
+                icon: const Icon(Icons.map_outlined, size: 18),
+                label: Text(l10n.playGuideOverview),
+              ),
+            ]),
+            Row(children: [Expanded(child: PlayGuideRail(titles: titles, selected: _step,
+              onSelected: _busy ? null : _select)),
+              if (compact) IconButton(tooltip: l10n.playGuideOverview,
+                onPressed: _busy ? null : () => _overview(titles),
+                icon: const Icon(Icons.map_outlined)),
+            ]),
+          ]),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-          sliver: SliverToBoxAdapter(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 680),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(l10n.playGuideIntro, style: retro.body(size: 16)),
-                    const SizedBox(height: 18),
-                    Text(l10n.playGuideSteps, style: retro.heading(size: 16)),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: List.generate(
-                        titles.length,
-                        (i) => ChoiceChip(
-                          label: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: (MediaQuery.sizeOf(context).width - 120)
-                                  .clamp(100, 240)
-                                  .toDouble(),
-                            ),
-                            child: Text('${i + 1}. ${titles[i]}'),
-                          ),
-                          selected: _step == i,
-                          onSelected: (_) => _select(i),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      key: ValueKey(_step),
-                      padding: const EdgeInsets.all(18),
-                      decoration: retro.surfaceDecoration(
-                        shadowDx: 3,
-                        shadowDy: 3,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            children: [
-                              MarioGameIcon(
-                                icons[_step],
-                                size: 30,
-                                color: retro.accentText,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  '${_step + 1}. ${titles[_step]}',
-                                  style: retro.heading(size: 22),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 18),
-                          SelectableText(
-                            bodies[_step],
-                            style: retro.body(size: 16, height: 1.55),
-                          ),
-                          if (_step == 0) ...[
+        Expanded(child: PageView.builder(
+          key: const ValueKey('guide-pager'),
+          controller: _pages,
+          itemCount: titles.length,
+          physics: _busy ? const NeverScrollableScrollPhysics() : const PageScrollPhysics(),
+          onPageChanged: (page) => setState(() => _step = page),
+          itemBuilder: (context, index) => ListView(
+            key: PageStorageKey('guide-chapter-$index'),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            children: [Align(alignment: Alignment.topCenter,
+              child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 680),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  PlayGuideChapter(number: index + 1, label: l10n.playGuideChapter,
+                    title: titles[index], icon: icons[index]),
+                          if (index == 0) ...[
                             if (_installed != null)
                               GameSetupStatus(
                                 label: _installed!
@@ -231,7 +246,7 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                               () => _open(AppConstants.maniscat2Github),
                             ),
                           ],
-                          if (_step == 1)
+                          if (index == 1)
                             ExpansionTile(
                               tilePadding: EdgeInsets.zero,
                               title: Text(
@@ -239,10 +254,14 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                 style: retro.heading(size: 17),
                               ),
                               children: [
-                                SelectableText(
-                                  l10n.playGuideConvertBody,
-                                  style: retro.body(size: 16, height: 1.55),
-                                ),
+                                Column(children: [
+PlayGuideCard(text: l10n.playGuideConvertCard1, number: 1),
+PlayGuideCard(text: l10n.playGuideConvertCard2, number: 2),
+PlayGuideCard(text: l10n.playGuideConvertCard3, number: 3),
+PlayGuideCard(text: l10n.playGuideConvertCard4, number: 4),
+PlayGuideCard(text: l10n.playGuideConvertCard5, number: 5),
+PlayGuideCard(text: l10n.playGuideConvertCard6, number: 6)
+]),
                                 action(
                                   l10n.playGuideConverter,
                                   Icons.swap_horiz,
@@ -250,14 +269,14 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                 ),
                               ],
                             ),
-                          if (_step == 2 || _step == 5)
+                          if (index == 2)
                             action(
                               l10n.playGuideLaunch,
                               Icons.play_arrow_rounded,
                               () => launchGameWithGuide(context),
                               primary: true,
                             ),
-                          if (_step == 3) ...[
+                          if (index == 3) ...[
                             if (folder.initialized)
                               GameSetupStatus(
                                 label:
@@ -279,7 +298,7 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                               primary: true,
                             ),
                           ],
-                          if (_step == 4) ...[
+                          if (index == 4) ...[
                             action(
                               l10n.playGuideLibrary,
                               Icons.inventory_2_outlined,
@@ -295,46 +314,64 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                 style: retro.heading(size: 17),
                               ),
                               children: [
-                                SelectableText(
-                                  l10n.playGuidePathsBody,
-                                  style: retro.body(size: 16, height: 1.55),
-                                ),
+                                Column(children: [
+PlayGuideCard(text: l10n.playGuidePathsCard1, number: 1),
+PlayGuideCard(text: l10n.playGuidePathsCard2, number: 2),
+PlayGuideCard(text: l10n.playGuidePathsCard3, number: 3),
+PlayGuideCard(text: l10n.playGuidePathsCard4, number: 4),
+PlayGuideCard(text: l10n.playGuidePathsCard5, number: 5),
+PlayGuideCard(text: l10n.playGuidePathsCard6, number: 6)
+]),
                               ],
                             ),
                           ],
-                          if (_step == 5) ...[
+                          if (index == 5) ...[
                             const SizedBox(height: 18),
                             Text(
                               l10n.playGuideReady,
                               style: retro.body(size: 16),
                             ),
                           ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    if (_step < 5)
-                      GameSetupAction(
-                        label: l10n.playGuideNext,
-                        icon: Icons.arrow_forward_rounded,
-                        primary: true,
-                        onPressed: _busy ? null : () => _select(_step + 1),
-                      ),
-                    if (_step > 0) ...[
-                      const SizedBox(height: 12),
-                      GameSetupAction(
-                        label: l10n.playGuideBack,
-                        icon: Icons.arrow_back_rounded,
-                        onPressed: _busy ? null : () => _select(_step - 1),
-                      ),
-                    ],
-                  ],
-                ),
+
+                  const SizedBox(height: 20),
+                  for (var card = 0; card < cards[index].length; card++)
+                    PlayGuideCard(text: cards[index][card], title: cardTitles[index][card], number: card + 1,
+                      tipLabel: (card == cards[index].length - 1 && [0, 2, 3, 5].contains(index))
+                        ? l10n.playGuideTip : null),
+                ]),
               ),
-            ),
+            )],
           ),
+        )),
+        Container(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+          decoration: BoxDecoration(color: retro.background,
+            border: Border(top: BorderSide(color: retro.border, width: retro.borderWidth(1)))),
+          child: Row(children: [
+            IconButton.outlined(
+              key: const ValueKey('guide-previous'),
+              tooltip: l10n.playGuideBack,
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 52),
+              onPressed: _busy || _step == 0 ? null : () => _select(_step - 1),
+              icon: const Icon(Icons.arrow_back_rounded),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: GameSetupAction(
+              label: _step == 5 ? l10n.playGuideLaunch : l10n.playGuideNext,
+              icon: _step == 5 ? Icons.play_arrow_rounded : Icons.menu_book_rounded,
+              primary: true,
+              onPressed: _busy ? null : () {
+                if (_step == 5) {
+                  _action(() => launchGameWithGuide(context));
+                } else {
+                  _select(_step + 1);
+                }
+              },
+            )),
+          ]),
         ),
-      ],
+      ]);
+      })),
     );
   }
 }
