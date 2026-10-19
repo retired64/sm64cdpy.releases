@@ -133,6 +133,10 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       Color.lerp(surface, Colors.white, isDark ? 0.12 : 0.45)!;
   Color get surfaceShade =>
       _palette.surfaceShade ?? Color.lerp(surface, shadowColor, 0.7)!;
+  Color get folioWood =>
+      isDark ? const Color(0xFF4C321C) : const Color(0xFFD6A45B);
+  Color get folioWoodHighlight =>
+      isDark ? const Color(0xFF76502A) : const Color(0xFFF0C97F);
   String displayLabel(String value) =>
       design.uppercaseLabels ? value.toUpperCase() : value;
 
@@ -211,13 +215,43 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
     ),
   ];
 
+  BoxDecoration woodSignDecoration({
+    Color? color,
+    Color? borderColor,
+    double border = 2,
+    double shadowDx = 4,
+    double shadowDy = 4,
+  }) => BoxDecoration(
+    color: color ?? folioWood,
+    border: Border(
+      top: BorderSide(color: folioWoodHighlight, width: borderWidth(border)),
+      left: BorderSide(color: folioWoodHighlight, width: borderWidth(border)),
+      right: BorderSide(
+        color: borderColor ?? this.border,
+        width: borderWidth(border),
+      ),
+      bottom: BorderSide(
+        color: borderColor ?? this.border,
+        width: borderWidth(border),
+      ),
+    ),
+    boxShadow: hardShadow(dx: shadowDx, dy: shadowDy),
+  );
+
   BoxDecoration surfaceDecoration({
     Color? color,
     Color? borderColor,
     double border = 2,
     double shadowDx = 4,
     double shadowDy = 4,
-  }) => usesMinimalSurfaces
+  }) => usesFolioSurfaces && color == null
+      ? woodSignDecoration(
+          borderColor: borderColor,
+          border: border,
+          shadowDx: shadowDx,
+          shadowDy: shadowDy,
+        )
+      : usesMinimalSurfaces
       ? BoxDecoration(
           color: color == null || color == surface ? Colors.transparent : color,
           borderRadius: radius,
@@ -875,9 +909,9 @@ class ThemeBackdrop extends StatelessWidget {
   }
 }
 
-/// Frames the active destination like one page of the printed Minish manual.
-/// Only one hard-edge clip is present for the whole screen, independent of
-/// list length, and the 5 KB texture is shared by Flutter's image cache.
+/// Draws the page edge without clipping the destination. Keeping the Android
+/// platform view outside a ClipPath avoids an extra compositing layer on the
+/// Player screen, especially noticeable on low-end GPUs.
 class ThemePageFrame extends StatelessWidget {
   const ThemePageFrame({super.key, required this.child});
 
@@ -887,71 +921,32 @@ class ThemePageFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     if (!retro.usesFolioSurfaces) return child;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(5, 4, 5, 3),
-      child: ClipPath(
-        clipper: const _FolioPageClipper(),
-        clipBehavior: Clip.hardEdge,
-        child: ColoredBox(
-          color: retro.border,
-          child: Padding(
-            padding: const EdgeInsets.all(4),
-            child: ClipPath(
-              clipper: const _FolioPageClipper(inset: true),
-              clipBehavior: Clip.hardEdge,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: retro.surface,
-                  image: retro.pageTextureAsset == null
-                      ? null
-                      : DecorationImage(
-                          image: AssetImage(retro.pageTextureAsset!),
-                          repeat: ImageRepeat.repeat,
-                          opacity: retro.isDark ? 0.05 : 0.48,
-                          filterQuality: FilterQuality.low,
-                        ),
-                ),
-                child: child,
-              ),
-            ),
-          ),
-        ),
-      ),
+    return CustomPaint(
+      key: const ValueKey('minish-folio-frame'),
+      foregroundPainter: _FolioFramePainter(color: retro.border),
+      child: child,
     );
   }
 }
 
-class _FolioPageClipper extends CustomClipper<Path> {
-  const _FolioPageClipper({this.inset = false});
+class _FolioFramePainter extends CustomPainter {
+  const _FolioFramePainter({required this.color});
 
-  final bool inset;
+  final Color color;
 
   @override
-  Path getClip(Size size) {
-    final notch = inset ? 5.0 : 8.0;
-    return Path()
-      ..moveTo(notch, 0)
-      ..lineTo(size.width * 0.22, 0)
-      ..lineTo(size.width * 0.235, notch * 0.55)
-      ..lineTo(size.width * 0.47, notch * 0.2)
-      ..lineTo(size.width * 0.485, 0)
-      ..lineTo(size.width - notch, notch * 0.25)
-      ..lineTo(size.width, notch)
-      ..lineTo(size.width - 1, size.height * 0.34)
-      ..lineTo(size.width, size.height * 0.36)
-      ..lineTo(size.width - 1, size.height - notch)
-      ..lineTo(size.width - notch, size.height)
-      ..lineTo(notch, size.height - 1)
-      ..lineTo(0, size.height - notch)
-      ..lineTo(1, size.height * 0.67)
-      ..lineTo(0, size.height * 0.65)
-      ..lineTo(1, notch)
-      ..close();
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4
+      ..isAntiAlias = false;
+    canvas.drawRect(Offset.zero & size, paint);
   }
 
   @override
-  bool shouldReclip(covariant _FolioPageClipper oldClipper) =>
-      oldClipper.inset != inset;
+  bool shouldRepaint(covariant _FolioFramePainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 /// Static cloth grain: a handful of opaque strokes, no images, blur or

@@ -473,7 +473,10 @@ class _PlayerPreview extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const ThemeBackdrop(menuSurface: true),
+            if (!retro.usesFolioSurfaces)
+              const ThemeBackdrop(menuSurface: true)
+            else
+              ColoredBox(color: retro.folioWood),
             Padding(
               padding: EdgeInsets.fromLTRB(8, 4, 8, compact ? 28 : 42),
               child: Player3DPreview(

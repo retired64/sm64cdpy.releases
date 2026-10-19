@@ -65,6 +65,12 @@ void main() {
     expect(minish.pageTextureAsset, design.pageTextureAsset);
     expect(minish.showHalftone, isFalse);
     expect(minish.showN64Backdrop, isFalse);
+    expect(minish.surfaceDecoration().color, minish.folioWood);
+    expect(
+      minish.surfaceDecoration(color: minish.surface).color,
+      minish.surface,
+    );
+    expect(contrast(minish.ink, minish.folioWood), greaterThanOrEqualTo(4.5));
   });
 
   testWidgets('Minish frame is isolated from every other interface theme', (
@@ -82,11 +88,13 @@ void main() {
     }
 
     await render(AppThemeId.minishCap);
-    expect(find.byType(ClipPath), findsNWidgets(2));
-    expect(find.byType(DecoratedBox), findsOneWidget);
+    expect(find.byType(ClipPath), findsNothing);
+    const frameKey = ValueKey('minish-folio-frame');
+    expect(find.byKey(frameKey), findsOneWidget);
 
     await render(AppThemeId.retroManga);
     expect(find.byType(ClipPath), findsNothing);
+    expect(find.byKey(frameKey), findsNothing);
     expect(find.text('page'), findsOneWidget);
   });
 
