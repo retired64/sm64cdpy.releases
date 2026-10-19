@@ -110,3 +110,9 @@ extractor compiled against Android stubs and exercised with a 500-file ZIP, exac
 reinstallation, renamed loose file, small/large 7z entries, child cancellation and
 direct journal cleanup. Android calls were stubbed; these checks do not measure
 SAF IPC, permission dialogs or physical-device speed.
+
+Testing evidence (2026-10-19): runs 39275161830 and 39275966525 completed
+successfully with Flutter analysis/tests, arm64 APK compilation and native tests.
+Run 39276597027 covers the final async cancellation regression; at the last
+check it was still in progress and GitHub jobs queries returned 502/timeouts.
+Do not treat the earlier APKs as containing that final cancellation correction.
