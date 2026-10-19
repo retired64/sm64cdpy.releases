@@ -621,27 +621,41 @@ class _SaveEditorState extends State<_SaveEditor> {
                             children: [
                               Row(
                                 children: [
-                                  Expanded(child: Text(l.saveFileCoins,
-                                    style: retro.body(size: 15))),
-                                  Text('${coins[i]} / 255',
-                                    style: retro.body(size: 15, color: retro.accentText)
-                                      .copyWith(fontWeight: FontWeight.w700)),
+                                  Expanded(
+                                    child: Text(
+                                      l.saveFileCoins,
+                                      style: retro.body(size: 15),
+                                    ),
+                                  ),
+                                  Text(
+                                    '${coins[i]} / 255',
+                                    style: retro
+                                        .body(size: 15, color: retro.accentText)
+                                        .copyWith(fontWeight: FontWeight.w700),
+                                  ),
                                 ],
                               ),
                               SliderTheme(
                                 data: SliderTheme.of(context).copyWith(
                                   trackHeight: 8,
-                                  trackShape: const RoundedRectSliderTrackShape(),
+                                  trackShape:
+                                      const RoundedRectSliderTrackShape(),
                                   inactiveTrackColor: Color.alphaBlend(
-                                    retro.ink.withValues(alpha: 0.28), retro.surface),
+                                    retro.ink.withValues(alpha: 0.28),
+                                    retro.surface,
+                                  ),
                                   activeTrackColor: retro.accent,
                                   thumbColor: retro.accent,
-                                  overlayColor: retro.accent.withValues(alpha: 0.16),
+                                  overlayColor: retro.accent.withValues(
+                                    alpha: 0.16,
+                                  ),
                                   activeTickMarkColor: Colors.transparent,
                                   inactiveTickMarkColor: Colors.transparent,
                                   valueIndicatorColor: retro.accent,
                                   valueIndicatorTextStyle: retro.body(
-                                    size: 14, color: retro.onColor(retro.accent)),
+                                    size: 14,
+                                    color: retro.onColor(retro.accent),
+                                  ),
                                 ),
                                 child: Slider(
                                   value: coins[i].toDouble(),
@@ -650,19 +664,33 @@ class _SaveEditorState extends State<_SaveEditor> {
                                   divisions: 255,
                                   label: '${coins[i]}',
                                   semanticFormatterCallback: (value) =>
-                                    '${l.saveFileCoins} ${value.round()}',
+                                      '${l.saveFileCoins} ${value.round()}',
                                   onChanged: (v) => setState(
-                                    () => coins[i] = stars[i] & 64 != 0 && v < 100
+                                    () =>
+                                        coins[i] = stars[i] & 64 != 0 && v < 100
                                         ? 100
                                         : v.round(),
                                   ),
                                 ),
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('0', style: retro.body(size: 12, color: retro.inkDim)),
-                                  Text('255', style: retro.body(size: 12, color: retro.inkDim)),
+                                  Text(
+                                    '0',
+                                    style: retro.body(
+                                      size: 12,
+                                      color: retro.inkDim,
+                                    ),
+                                  ),
+                                  Text(
+                                    '255',
+                                    style: retro.body(
+                                      size: 12,
+                                      color: retro.inkDim,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
