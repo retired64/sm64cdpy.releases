@@ -138,3 +138,23 @@ Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada
 mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
 migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
 Validación Actions pendiente; revisión física requerida.
+
+## Preparación del NDK y descarga incompleta
+
+El fallo de Testing 39342619343 ocurrió al instalar NDK 28.2.13676358:
+`Archive is not a ZIP archive`. Análisis y pruebas Flutter habían pasado; el
+error fue la descarga de herramientas nativas, no el selector de Jugador.
+
+Ambos workflows ejecutan `scripts/prepare_android_ndk.py` inmediatamente después
+de configurar Flutter. El script lee la versión exacta de `FlutterExtension.kt`
+del SDK instalado (misma autoridad que `flutter.ndkVersion`), comprueba revisión,
+toolchain CMake y clang, y reutiliza una instalación completa. Si falta o está
+incompleta, usa sdkmanager con hasta tres intentos y pausas acotadas. Solo limpia
+el directorio incompleto de esa versión, nunca otra versión ni un symlink.
+Agotar los intentos falla el workflow antes de generar/firma/compilar; no se
+ocultan errores ni se publican APK incompletos. No cambia Flutter, Dart, Java,
+NDK requerido por el proyecto ni permisos de la aplicación.
+
+Contrato de instalación: [sdkmanager oficial](https://developer.android.com/tools/sdkmanager).
+Pruebas Python: reutilización sin red, instalación fallida seguida de éxito,
+límite de intentos y rechazo de limpieza fuera del SDK mediante symlink.

@@ -56,6 +56,9 @@ jobs:
           channel: 'stable'
           cache: true          # Cachea el SDK para builds más rápidos
 
+      - name: Preparar NDK de Flutter con reintentos
+        run: python3 scripts/prepare_android_ndk.py
+
       # ── 4. Extraer versión desde pubspec.yaml ─────────────────────────────
       - name: Extraer versión de pubspec.yaml
         id: version

@@ -327,3 +327,8 @@ pendiente; la evidencia anterior valida la primera estructura.
 Jugador: selector con PNG originales de Mario/Luigi/Toad/Waluigi/Wario,
 renderizados a 32 puntos desde imágenes de 16×16 cacheadas por Flutter.
 Se conserva la lógica del perfil. Optimización de carga/spinner pospuesta.
+
+Corrección de build pendiente de Testing: la descarga del NDK falló con ZIP
+inválido en 39342619343. Ambos workflows ahora preparan/verifican el NDK exacto
+de Flutter con tres intentos acotados. Se investiga además el desplegable de
+conversión de ROM; la captura confirma ErrorWidget gris dentro de la guía.

@@ -692,3 +692,8 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [ ] Optimización del spinner de Jugador: pospuesta por el usuario.
 
 - [x] Análisis, formato y pruebas Flutter para retratos: Testing 39342619343.
+
+- [x] Identificar fallo de build Player como descarga NDK inválida.
+- [x] Preparación compartida del NDK y ocho pruebas Python aprobadas.
+- [ ] Reproducir y corregir expansión de conversión/rutas en todos los temas.
+- [ ] Testing nuevo con APK y pruebas nativas completos.
