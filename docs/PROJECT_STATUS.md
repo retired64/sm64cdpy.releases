@@ -313,5 +313,7 @@ validación final, APK de prueba y matriz física de permisos/extracción pendie
 
 Seis pasos EN/ES/PT-BR en Recursos, instalación del port Android, ROM USA .z64,
 conversión explicada, conexión unificada y primeros mods. Lanzamiento fallido
-ofrece guía si falta el juego. Validación remota y física pendientes.
+ofrece guía si falta el juego. Testing 39337289411 aprobó generación l10n,
+formato, análisis sin errores nuevos y 250 pruebas Flutter. APK en compilación;
+validación física pendiente.
 Contrato y matriz: [HOW_TO_PLAY.md](HOW_TO_PLAY.md).

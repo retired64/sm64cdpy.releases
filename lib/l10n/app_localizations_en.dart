@@ -2173,7 +2173,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playGuideStep5Body =>
-      '1. Close the game before installing or changing mods.\n2. Open Catalog and choose one mod. Read its compatibility notes.\n3. Download it. With automatic installation enabled, wait for Installed: a finished download alone is not a finished installation. If automatic installation is off, follow the manual-install prompt or enable it in Settings.\n4. Open Tools → Library. Game Mods holds Lua mods. DynOS / Touch Controls holds model, texture and control packs. Turn on the item you want.\n5. Open the game again to load your changes. Some packs need their own in-game settings; follow the author’s instructions.';
+      '1. Close the game before installing or changing mods.\n2. Open Catalog and choose one mod. Read its compatibility notes.\n3. Download it. With automatic installation enabled, wait for Installed: a finished download alone is not a finished installation. If automatic installation is off, follow the manual-install prompt or enable it in Settings.\n4. Open GameTool → Library. Game Mods holds Lua mods. DynOS / Touch Controls holds model, texture and control packs. Turn on the item you want.\n5. Open the game again to load your changes. Some packs need their own in-game settings; follow the author’s instructions.';
 
   @override
   String get playGuidePathsTitle => 'Where does everything go?';

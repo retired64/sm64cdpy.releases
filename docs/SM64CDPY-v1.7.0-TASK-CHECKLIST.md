@@ -679,5 +679,5 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Seis pasos localizados y ayudas de conversión/rutas.
 - [x] Drawer y lanzamiento compartido Home/guía/postinstalación.
 - [x] Conexión existente y estado comprobado al reanudar, sin cache nuevo.
-- [ ] Generación l10n, formato, análisis y pruebas Flutter en Testing.
+- [x] Generación l10n, formato, análisis y 250 pruebas Flutter en Testing 39337289411.
 - [ ] Prueba física desde juego ausente hasta primer mod activo.

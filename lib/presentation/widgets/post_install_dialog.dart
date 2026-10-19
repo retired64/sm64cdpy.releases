@@ -90,7 +90,10 @@ Future<void> showPostInstallDialog(BuildContext context) async {
           else
             TextButton(
               onPressed: () => Navigator.pop(ctx, 'guide'),
-              child: Text(l10n.playGuideRead, style: retro.body(size: 13, color: retro.accentText)),
+              child: Text(
+                l10n.playGuideRead,
+                style: retro.body(size: 13, color: retro.accentText),
+              ),
             ),
         ],
       );

@@ -75,3 +75,11 @@ Pendiente revisión física: primera instalación desde navegador, permisos de l
 versión del juego, selector de ROM, carpeta existente/ausente/revocada,
 volver desde navegador/Ajustes, texto grande y conversor externo disponible.
 No se afirma validación funcional en dispositivo sin ejecutar estos escenarios.
+
+Validación remota de la candidata `29a3d31`:
+[Testing](https://github.com/retired64/sm64cdpy.releases/actions/runs/39337289411)
+generó traducciones, aplicó formato y pasó análisis sin errores nuevos y las
+250 pruebas Flutter. Los generados/formato se sincronizan desde su artifact,
+sin modificar archivos ajenos a esta tarea. APK arm64 en compilación al registrar
+esta evidencia; validación física pendiente. Validación local: cinco ARB JSON
+con 38 claves coherentes, cuatro pruebas Python del manifiesto y diff-check.

@@ -64,25 +64,43 @@ void main() {
       }
     }
 
-    testWidgets('post-install missing game offers guide: $language', (tester) async {
-      final router = GoRouter(routes: [
-        GoRoute(path: '/', builder: (context, state) => Scaffold(
-          body: TextButton(onPressed: () => showPostInstallDialog(context), child: const Text('Installed')),
-        )),
-        GoRoute(path: '/how-to-play', builder: (_, state) => const Scaffold(body: Text('Guide destination'))),
-      ]);
+    testWidgets('post-install missing game offers guide: $language', (
+      tester,
+    ) async {
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) => Scaffold(
+              body: TextButton(
+                onPressed: () => showPostInstallDialog(context),
+                child: const Text('Installed'),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/how-to-play',
+            builder: (_, state) =>
+                const Scaffold(body: Text('Guide destination')),
+          ),
+        ],
+      );
       addTearDown(router.dispose);
-      await tester.pumpWidget(MaterialApp.router(
-        routerConfig: router,
-        locale: Locale(language),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: RetroTheme.materialTheme(false),
-      ));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          locale: Locale(language),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: RetroTheme.materialTheme(false),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Installed'));
       await tester.pumpAndSettle();
-      final l10n = AppLocalizations.of(tester.element(find.byType(AlertDialog)));
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AlertDialog)),
+      );
       await tester.tap(find.text(l10n.playGuideRead));
       await tester.pumpAndSettle();
       expect(find.text('Guide destination'), findsOneWidget);
