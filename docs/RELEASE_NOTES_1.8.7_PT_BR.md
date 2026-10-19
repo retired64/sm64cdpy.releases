@@ -1,6 +1,6 @@
 ## SM64CDPY v1.8.7 — Dois novos temas e sua própria cor de destaque no Retro Manga
 
-A versão 1.8.7 adiciona os visuais Minish Cap e Mario Kart 64 e permite personalizar a cor de destaque do Retro Manga.
+A versão 1.8.7 adiciona os temas Minish Cap e Mario Kart 64, cores de destaque personalizáveis no Retro Manga, edição de partidas originais e um menu lateral reorganizado.
 
 ### Minish Cap
 
@@ -18,18 +18,15 @@ A versão 1.8.7 adiciona os visuais Minish Cap e Mario Kart 64 e permite persona
 - A seleção é salva entre sessões e mantida ao trocar de tema ou modo de brilho.
 - O texto de destaque se adapta para manter a legibilidade; os outros temas, as cores semânticas e a bolha flutuante mantêm suas paletas.
 
-### GameTool: gerencie os saves do jogo original
+### Ferramentas: gerencie as partidas originais
 
-- Abra GameTool → Save File no menu lateral para consultar os quatro slots e suas cópias alternativas independentes.
-- Edite estrelas, recompensas do castelo, moedas, canhões e desbloqueios com uma ação explícita de Aplicar.
-- Cada gravação verificada cria antes um backup local completo e rejeita alterações baseadas em um arquivo desatualizado. Restaurar substitui os quatro slots. Feche o jogo antes de aplicar alterações.
+- Abra Ferramentas → Dados salvos para gerenciar as quatro partidas do jogo original. Toque em um cartão para editar seu próprio progresso; as cópias internas secundárias ficam em uma opção avançada explicada.
+- Edite estrelas, recompensas do castelo, moedas, canhões e desbloqueios. A prévia mostra as estrelas da partida selecionada; completar 120 estrelas é uma ação explícita do menu. As alterações só são salvas ao aplicar e confirmar.
+- Copie ou apague partidas e crie backups locais completos. Cada gravação verificada cria antes um backup e rejeita alterações baseadas em um arquivo desatualizado. Restaurar substitui as quatro partidas; feche o jogo antes de aplicar alterações.
 
-- GameTool reúne Biblioteca, Jogador e Save File. Toque em uma partida para editar seu progresso; completar 120 estrelas é uma ação explícita, e as cópias secundárias ficam como opção avançada explicada.
+### Navegação mais clara
 
-- O menu lateral reúne as categorias exclusivas em um submenu, coloca Popular acima de GameTool e simplifica os nomes Mods e Omm Pack.
-
-- Explorar reúne Catálogo, Popular e Favoritos; Recursos reúne Links e Aviso legal. Início e Configurações continuam diretos, com grupos animados independentes e destaque da seção ativa.
-
-- Início e Configurações seguem o estilo dos grupos do menu; o rótulo de navegação se adapta a telas pequenas, e Exclusivo e Render96 têm ícones distintos.
-
-- O menu mostra Ferramentas, Dados salvos e Links; os nomes também foram traduzidos para espanhol.
+- Explorar reúne Catálogo, Popular e Favoritos. Ferramentas agrupa Biblioteca, Jogador e Dados salvos.
+- Exclusivo reúne Render96, Mods, DynOS, Touch Controls e Omm Pack; Recursos agrupa Links e Aviso legal. Início e Configurações mantêm o acesso direto.
+- Os grupos se expandem de forma independente, mostram o destino ativo e seguem o visual de cada tema. Início e Configurações compartilham a tipografia dos grupos; o rótulo de navegação se adapta a telas pequenas, com ícones distintos de coleção e modelo 3D.
+- Os nomes das ferramentas e dos dados salvos estão traduzidos para espanhol e português. Os caracteres japoneses decorativos aparecem somente no Retro Manga.

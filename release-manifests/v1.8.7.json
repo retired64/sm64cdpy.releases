@@ -7,11 +7,12 @@
   "locales": {
     "en": {
       "title": "Two new themes and your own Retro Manga accent",
-      "summary": "Version 1.8.7 adds Minish Cap and Mario Kart 64 interface designs and lets you personalize the accent color of Retro Manga.",
+      "summary": "Version 1.8.7 adds Minish Cap and Mario Kart 64 themes, customizable Retro Manga accents, original-game save editing and a reorganized navigation drawer.",
       "highlights": [
         "Minish Cap brings warm paper surfaces, forest greens and dedicated typography.",
         "Mario Kart 64 introduces racing panels, checkered backgrounds and its own title font.",
-        "Choose from eight Retro Manga accent colors with readable light and dark variants."
+        "Choose from eight Retro Manga accent colors with readable light and dark variants.",
+        "Manage original-game saves and reach your game tools through a clearer drawer."
       ],
       "sections": [
         {
@@ -39,20 +40,30 @@
         {
           "heading": "GameTool: manage original-game saves",
           "items": [
-            "Open GameTool → Save File from the drawer to inspect the four original-game slots and their independent alternate copies.",
-            "Edit stars, castle rewards, coins, cannons and unlocks with an explicit Apply action.",
-            "Verified writes create a full local backup first and reject changes based on an outdated file. Restoring a backup replaces all four slots. Close the game before applying changes."
+            "Open GameTool → Save File to manage the four original-game slots. Tap a file card to edit its own progress; secondary internal copies are an explained advanced option.",
+            "Edit stars, castle rewards, coins, cannons and unlocks. A live preview shows the selected slot’s star count; completing 120 stars is an explicit menu action. Changes are saved only after Apply and confirmation.",
+            "Copy or erase slots and create full local backups. Every verified write first creates a backup and rejects edits based on an outdated file. Restoring replaces all four slots; close the game before applying changes."
+          ]
+        },
+        {
+          "heading": "Clearer navigation",
+          "items": [
+            "Explore groups Catalog, Popular and Favourites. GameTool brings Library, Player and Save File together.",
+            "Exclusive groups Render96, Mods, DynOS, Touch Controls and Omm Pack; Resources groups Links and Disclaimer. Home and Settings remain direct links.",
+            "Groups expand independently, reveal the active destination and use each theme’s visual style. Home and Settings share the group-heading typography; the compact navigation label fits narrow screens, with distinct collection and 3D-model icons.",
+            "Game-tool and save-file labels are localized in Spanish and Portuguese. Japanese decorative captions appear only in Retro Manga."
           ]
         }
       ]
     },
     "es": {
       "title": "Dos temas nuevos y tu propio acento de Retro Manga",
-      "summary": "La versión 1.8.7 incorpora los diseños de interfaz Minish Cap y Mario Kart 64 y permite personalizar el color de acento de Retro Manga.",
+      "summary": "La versión 1.8.7 incorpora los temas Minish Cap y Mario Kart 64, acentos personalizables de Retro Manga, edición de partidas originales y un menú lateral reorganizado.",
       "highlights": [
         "Minish Cap combina superficies de papel cálido, verdes de bosque y tipografía propia.",
         "Mario Kart 64 incorpora paneles de carreras, fondos a cuadros y su propia fuente de títulos.",
-        "Elige entre ocho acentos de Retro Manga con variantes legibles en claro y oscuro."
+        "Elige entre ocho acentos de Retro Manga con variantes legibles en claro y oscuro.",
+        "Administra las partidas originales y accede a las herramientas del juego desde un menú más claro."
       ],
       "sections": [
         {
@@ -78,22 +89,32 @@
           ]
         },
         {
-          "heading": "GameTool: administra las partidas originales",
+          "heading": "Herramientas: administra las partidas originales",
           "items": [
-            "Abre GameTool → Save File en el menú lateral para consultar las cuatro ranuras y sus copias alternativas independientes.",
-            "Edita estrellas, premios del castillo, monedas, cañones y desbloqueos con una acción explícita de Aplicar.",
-            "Cada escritura verificada crea antes un respaldo local completo y rechaza cambios sobre un archivo desactualizado. Restaurar reemplaza las cuatro ranuras. Cierra el juego antes de aplicar cambios."
+            "Abre Herramientas → Partidas para administrar las cuatro partidas del juego original. Toca una tarjeta para editar su propio progreso; las copias internas secundarias quedan en una opción avanzada explicada.",
+            "Edita estrellas, premios del castillo, monedas, cañones y desbloqueos. La vista previa muestra las estrellas de la partida elegida; completar 120 estrellas es una acción explícita del menú. Los cambios solo se guardan al aplicar y confirmar.",
+            "Copia o borra partidas y crea respaldos locales completos. Cada escritura verificada crea antes un respaldo y rechaza cambios sobre un archivo desactualizado. Restaurar reemplaza las cuatro partidas; cierra el juego antes de aplicar cambios."
+          ]
+        },
+        {
+          "heading": "Navegación más clara",
+          "items": [
+            "Explorar reúne Catálogo, Popular y Favoritos. Herramientas agrupa Biblioteca, Jugador y Partidas.",
+            "Exclusivo reúne Render96, Mods, DynOS, Touch Controls y Omm Pack; Recursos agrupa Enlaces y Aviso legal. Inicio y Ajustes mantienen su acceso directo.",
+            "Los grupos se despliegan de forma independiente, muestran el destino activo y respetan el diseño de cada tema. Inicio y Ajustes comparten la tipografía de los grupos; el rótulo de navegación se adapta a pantallas pequeñas, con iconos distintos de colección y modelo 3D.",
+            "Los nombres de las herramientas y las partidas están traducidos al español y portugués. Los caracteres japoneses decorativos aparecen únicamente en Retro Manga."
           ]
         }
       ]
     },
     "pt-BR": {
       "title": "Dois novos temas e sua própria cor de destaque no Retro Manga",
-      "summary": "A versão 1.8.7 adiciona os visuais Minish Cap e Mario Kart 64 e permite personalizar a cor de destaque do Retro Manga.",
+      "summary": "A versão 1.8.7 adiciona os temas Minish Cap e Mario Kart 64, cores de destaque personalizáveis no Retro Manga, edição de partidas originais e um menu lateral reorganizado.",
       "highlights": [
         "Minish Cap combina superfícies de papel em tons quentes, verde-floresta e tipografia própria.",
         "Mario Kart 64 traz painéis de corrida, fundos quadriculados e uma fonte própria para títulos.",
-        "Escolha entre oito cores de destaque do Retro Manga com variantes legíveis nos modos claro e escuro."
+        "Escolha entre oito cores de destaque do Retro Manga com variantes legíveis nos modos claro e escuro.",
+        "Gerencie as partidas originais e acesse as ferramentas do jogo em um menu mais claro."
       ],
       "sections": [
         {
@@ -119,11 +140,20 @@
           ]
         },
         {
-          "heading": "GameTool: gerencie os saves do jogo original",
+          "heading": "Ferramentas: gerencie as partidas originais",
           "items": [
-            "Abra GameTool → Save File no menu lateral para consultar os quatro slots e suas cópias alternativas independentes.",
-            "Edite estrelas, recompensas do castelo, moedas, canhões e desbloqueios com uma ação explícita de Aplicar.",
-            "Cada gravação verificada cria antes um backup local completo e rejeita alterações baseadas em um arquivo desatualizado. Restaurar substitui os quatro slots. Feche o jogo antes de aplicar alterações."
+            "Abra Ferramentas → Dados salvos para gerenciar as quatro partidas do jogo original. Toque em um cartão para editar seu próprio progresso; as cópias internas secundárias ficam em uma opção avançada explicada.",
+            "Edite estrelas, recompensas do castelo, moedas, canhões e desbloqueios. A prévia mostra as estrelas da partida selecionada; completar 120 estrelas é uma ação explícita do menu. As alterações só são salvas ao aplicar e confirmar.",
+            "Copie ou apague partidas e crie backups locais completos. Cada gravação verificada cria antes um backup e rejeita alterações baseadas em um arquivo desatualizado. Restaurar substitui as quatro partidas; feche o jogo antes de aplicar alterações."
+          ]
+        },
+        {
+          "heading": "Navegação mais clara",
+          "items": [
+            "Explorar reúne Catálogo, Popular e Favoritos. Ferramentas agrupa Biblioteca, Jogador e Dados salvos.",
+            "Exclusivo reúne Render96, Mods, DynOS, Touch Controls e Omm Pack; Recursos agrupa Links e Aviso legal. Início e Configurações mantêm o acesso direto.",
+            "Os grupos se expandem de forma independente, mostram o destino ativo e seguem o visual de cada tema. Início e Configurações compartilham a tipografia dos grupos; o rótulo de navegação se adapta a telas pequenas, com ícones distintos de coleção e modelo 3D.",
+            "Os nomes das ferramentas e dos dados salvos estão traduzidos para espanhol e português. Os caracteres japoneses decorativos aparecem somente no Retro Manga."
           ]
         }
       ]

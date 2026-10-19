@@ -14,8 +14,12 @@ como parte de esta preparación.
 - Cambiar de diseño o brillo conserva el acento; otros temas y overlay mantienen
   sus paletas. Los colores semánticos siguen siendo independientes.
 
-- GameTool → Save File: gestor de partidas originales con copias independientes,
-  progreso editable y respaldos completos antes de cada escritura verificada.
+- Herramientas → Partidas: gestor de partidas originales con copias independientes,
+  editor por tarjeta, contador de borrador y respaldos completos antes de escribir.
+- Drawer organizado en Explorar, Herramientas, Exclusivo y Recursos; Inicio y
+  Ajustes directos, tipografía coherente e iconos diferenciados.
+- Etiquetas de Herramientas/Partidas traducidas al español y portugués; Enlaces
+  abreviado y decoración japonesa exclusiva de Retro Manga.
 
 ## Distribución
 
@@ -36,9 +40,10 @@ del sitio web. Los previews RELEASE_NOTES_1.8.7_EN/ES/PT_BR.md se generan desde
 
 ## Validación y salida
 
-- Testing 39142810984 correcto para da7c12f; prueba física de acentos confirmada
-  por el usuario. Esto no sustituye validar el commit final 1.8.7.
-- Validar manifiesto contra pubspec y ejecutar tests Python del contrato.
+- Testing 39176188203 (grupos del drawer), 39178119774 (ajustes visuales) y
+  39180931054 (traducciones) completados correctamente: análisis, pruebas y APK.
+- Usuario confirmó funcionamiento del editor, reorganización y ajustes visuales.
+- Manifiesto, pubspec y previews EN/ES/PT-BR sincronizados; contrato Python validado.
 - Ejecutar Testing en main antes de la publicación oficial.
 - Revisar ambos modos de Minish Cap y MK64, los ocho acentos, texto ampliado,
   reapertura y cambio entre temas en un dispositivo Android.

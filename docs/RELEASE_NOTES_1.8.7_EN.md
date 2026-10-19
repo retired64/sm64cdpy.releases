@@ -1,6 +1,6 @@
 ## SM64CDPY v1.8.7 — Two new themes and your own Retro Manga accent
 
-Version 1.8.7 adds Minish Cap and Mario Kart 64 interface designs and lets you personalize the accent color of Retro Manga.
+Version 1.8.7 adds Minish Cap and Mario Kart 64 themes, customizable Retro Manga accents, original-game save editing and a reorganized navigation drawer.
 
 ### Minish Cap
 
@@ -20,16 +20,13 @@ Version 1.8.7 adds Minish Cap and Mario Kart 64 interface designs and lets you p
 
 ### GameTool: manage original-game saves
 
-- Open GameTool → Save File from the drawer to inspect the four original-game slots and their independent alternate copies.
-- Edit stars, castle rewards, coins, cannons and unlocks with an explicit Apply action.
-- Verified writes create a full local backup first and reject changes based on an outdated file. Restoring a backup replaces all four slots. Close the game before applying changes.
+- Open GameTool → Save File to manage the four original-game slots. Tap a file card to edit its own progress; secondary internal copies are an explained advanced option.
+- Edit stars, castle rewards, coins, cannons and unlocks. A live preview shows the selected slot’s star count; completing 120 stars is an explicit menu action. Changes are saved only after Apply and confirmation.
+- Copy or erase slots and create full local backups. Every verified write first creates a backup and rejects edits based on an outdated file. Restoring replaces all four slots; close the game before applying changes.
 
-- GameTool groups Library, Player and Save File. Tap a file card to edit its own progress; 120-star completion is an explicit action, and secondary copies are an explained advanced option.
+### Clearer navigation
 
-- The drawer groups exclusive categories in one expandable menu, places Popular above GameTool and simplifies the Mods and Omm Pack labels.
-
-- Explore now groups Catalog, Popular and Favourites; Resources groups Links and Disclaimer. Home and Settings stay direct, with independent animated groups and active-route highlighting.
-
-- Drawer Home and Settings now match the group headings; navigation labels fit narrow screens, with distinct Exclusive and Render96 icons.
-
-- Game tools and save-file labels are translated into Spanish and Portuguese; the Links label is shorter.
+- Explore groups Catalog, Popular and Favourites. GameTool brings Library, Player and Save File together.
+- Exclusive groups Render96, Mods, DynOS, Touch Controls and Omm Pack; Resources groups Links and Disclaimer. Home and Settings remain direct links.
+- Groups expand independently, reveal the active destination and use each theme’s visual style. Home and Settings share the group-heading typography; the compact navigation label fits narrow screens, with distinct collection and 3D-model icons.
+- Game-tool and save-file labels are localized in Spanish and Portuguese. Japanese decorative captions appear only in Retro Manga.

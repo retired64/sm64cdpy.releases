@@ -638,3 +638,10 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [ ] Review narrow-screen and enlarged-text drawer presentation on device across themes.
 
 - [x] Localize the game-tools group and save-file destination in both Spanish and Portuguese variants; shorten the Links navigation label across languages.
+
+### Cierre de preparación 1.8.7
+
+- [x] Fusionar las traducciones del drawer en main conservando la actualización del catálogo.
+- [x] Consolidar las notas de temas, acentos, Partidas y navegación en el manifiesto canónico.
+- [x] Regenerar previews EN/ES/PT-BR y validar versión 1.8.7+26 y contrato Python.
+- [ ] Ejecutar manualmente Build & Release cuando el propietario decida publicar; revisar fecha real y las tres ABI.
