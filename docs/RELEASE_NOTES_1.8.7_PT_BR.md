@@ -30,3 +30,8 @@ A versão 1.8.7 adiciona os temas Minish Cap e Mario Kart 64, cores de destaque 
 - Exclusivo reúne Render96, Mods, DynOS, Touch Controls e Omm Pack; Recursos agrupa Links e Aviso legal. Início e Configurações mantêm o acesso direto.
 - Os grupos se expandem de forma independente, mostram o destino ativo e seguem o visual de cada tema. Início e Configurações compartilham a tipografia dos grupos; o rótulo de navegação se adapta a telas pequenas, com ícones distintos de coleção e modelo 3D.
 - Os nomes das ferramentas e dos dados salvos estão traduzidos para espanhol e português. Os caracteres japoneses decorativos aparecem somente no Retro Manga.
+
+### Instalação rápida opcional
+
+- Os Ajustes oferecem acesso opcional ao armazenamento para acelerar a instalação em pastas compatíveis do armazenamento principal. ZIP, 7z, mods, DynOS e Touch Controls compartilham o mesmo gravador; SAF continua disponível sem a permissão adicional.
+- A extração paralela mantém memória limitada, verificações de cancelamento, validação de arquivos e recibos de instalação confirmada. A biblioteca é atualizada após instalações automáticas e manuais.

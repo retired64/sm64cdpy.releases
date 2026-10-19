@@ -2062,6 +2062,17 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get drawerResources => 'Recursos';
+
+  @override
+  String get fastInstallTitle => 'Ativar instalação rápida';
+
+  @override
+  String get fastInstallDescription =>
+      'Opcional: permita o acesso a todos os arquivos no Android para acelerar a instalação em pastas compatíveis do jogo. Sem isso, você pode continuar instalando normalmente.';
+
+  @override
+  String get fastInstallAccessError =>
+      'Não foi possível abrir as permissões. Você pode continuar instalando normalmente.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -4122,4 +4133,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get drawerResources => 'Recursos';
+
+  @override
+  String get fastInstallTitle => 'Ativar instalação rápida';
+
+  @override
+  String get fastInstallDescription =>
+      'Opcional: permita o acesso a todos os arquivos no Android para acelerar a instalação em pastas compatíveis do jogo. Sem isso, você pode continuar instalando normalmente.';
+
+  @override
+  String get fastInstallAccessError =>
+      'Não foi possível abrir as permissões. Você pode continuar instalando normalmente.';
 }

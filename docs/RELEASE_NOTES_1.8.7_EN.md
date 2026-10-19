@@ -30,3 +30,8 @@ Version 1.8.7 adds Minish Cap and Mario Kart 64 themes, customizable Retro Manga
 - Exclusive groups Render96, Mods, DynOS, Touch Controls and Omm Pack; Resources groups Links and Disclaimer. Home and Settings remain direct links.
 - Groups expand independently, reveal the active destination and use each theme’s visual style. Home and Settings share the group-heading typography; the compact navigation label fits narrow screens, with distinct collection and 3D-model icons.
 - Game-tool and save-file labels are localized in Spanish and Portuguese. Japanese decorative captions appear only in Retro Manga.
+
+### Optional faster installation
+
+- Settings offers optional storage access to accelerate installation in compatible primary-storage game folders. ZIP, 7z, mods, DynOS and Touch Controls share the same writer; ordinary SAF remains available without the extra permission.
+- Parallel extraction retains bounded memory, cancellation checks, archive validation and verified installation receipts. The library refreshes after automatic and manual installations.

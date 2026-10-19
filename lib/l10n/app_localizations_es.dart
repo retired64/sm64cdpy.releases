@@ -2072,6 +2072,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get drawerResources => 'Recursos';
+
+  @override
+  String get fastInstallTitle => 'Activar instalación rápida';
+
+  @override
+  String get fastInstallDescription =>
+      'Opcional: permite el acceso a todos los archivos en Android para acelerar la instalación en carpetas compatibles del juego. Sin él, puedes seguir instalando normalmente.';
+
+  @override
+  String get fastInstallAccessError =>
+      'No se pudieron abrir los permisos. Puedes seguir instalando normalmente.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -4142,4 +4153,15 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get drawerResources => 'Recursos';
+
+  @override
+  String get fastInstallTitle => 'Activar instalación rápida';
+
+  @override
+  String get fastInstallDescription =>
+      'Opcional: permite el acceso a todos los archivos en Android para acelerar la instalación en carpetas compatibles del juego. Sin él, puedes seguir instalando normalmente.';
+
+  @override
+  String get fastInstallAccessError =>
+      'No se pudieron abrir los permisos. Puedes seguir instalando normalmente.';
 }

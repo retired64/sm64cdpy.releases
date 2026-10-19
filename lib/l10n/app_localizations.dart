@@ -3737,6 +3737,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Resources'**
   String get drawerResources;
+
+  /// No description provided for @fastInstallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable faster installation'**
+  String get fastInstallTitle;
+
+  /// No description provided for @fastInstallDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional: allow all-files access in Android to speed up installation in compatible game folders. Without it, installation still works normally.'**
+  String get fastInstallDescription;
+
+  /// No description provided for @fastInstallAccessError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open permission settings. You can keep installing normally.'**
+  String get fastInstallAccessError;
 }
 
 class _AppLocalizationsDelegate

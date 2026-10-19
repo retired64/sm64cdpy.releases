@@ -679,7 +679,8 @@ class _FastInstallTileState extends State<_FastInstallTile>
       }
     } catch (_) {
       // Missing/unavailable platform support leaves ordinary SAF installation usable.
-      if (mounted && generation == _generation) setState(() => _visible = false);
+      if (mounted && generation == _generation)
+        setState(() => _visible = false);
     }
   }
 
@@ -691,8 +692,11 @@ class _FastInstallTileState extends State<_FastInstallTile>
       if (!mounted) return;
       await _refresh();
     } catch (_) {
-      if (mounted) AppSnackbar.error(context,
-        message: AppLocalizations.of(context).fastInstallAccessError);
+      if (mounted)
+        AppSnackbar.error(
+          context,
+          message: AppLocalizations.of(context).fastInstallAccessError,
+        );
     } finally {
       if (mounted) setState(() => _launching = false);
     }

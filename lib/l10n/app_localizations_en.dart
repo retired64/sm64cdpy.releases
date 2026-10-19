@@ -2050,4 +2050,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get drawerResources => 'Resources';
+
+  @override
+  String get fastInstallTitle => 'Enable faster installation';
+
+  @override
+  String get fastInstallDescription =>
+      'Optional: allow all-files access in Android to speed up installation in compatible game folders. Without it, installation still works normally.';
+
+  @override
+  String get fastInstallAccessError =>
+      'Could not open permission settings. You can keep installing normally.';
 }
