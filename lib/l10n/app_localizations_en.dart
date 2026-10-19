@@ -1949,7 +1949,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saveFileConfirm =>
-      'Close SM64CoopDX first. Changes apply on the next launch. Copy and erase affect both copies of the selected slot. Restore replaces all four slots. A full backup is saved before writing.';
+      'Close SM64CoopDX first. Changes apply on the next launch. Copy and erase affect both normal and alternative progress for the selected slot. Restore replaces all four slots. A full backup is saved before writing.';
 
   @override
   String get saveFileDone => 'Saved';
@@ -1963,10 +1963,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not verify or save the file. Refresh and try again; recovery copies are kept in Backups.';
 
   @override
-  String get saveFilePrimary => 'Main copy';
+  String get saveFilePrimary => 'Normal';
 
   @override
-  String get saveFileAlternate => 'Secondary copy';
+  String get saveFileAlternate => 'Alternative';
 
   @override
   String get saveFileEmpty => 'Empty';
@@ -2033,11 +2033,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
 
   @override
-  String get saveFileCopies => 'Internal copies';
+  String get saveFileCopies => 'Game progress';
 
   @override
   String get saveFileCopiesHint =>
-      'The file stores two copies of each slot. Use the main copy for normal editing; the secondary copy is an advanced option, not a dated backup.';
+      'Normal is your usual game progress. Some mods use Alternative for special modes, such as hard mode. It is not a backup. Selecting it here does not change which progress the game uses.';
 
   @override
   String get saveFileOpenSlot => 'Tap to edit';

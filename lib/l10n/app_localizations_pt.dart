@@ -1961,7 +1961,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get saveFileConfirm =>
-      'Feche o SM64CoopDX primeiro. As alterações valem na próxima abertura. Copiar e apagar afetam as duas cópias do slot. Restaurar substitui os quatro slots. Um backup completo é salvo antes da gravação.';
+      'Feche o SM64CoopDX primeiro. As alterações são aplicadas ao abrir o jogo novamente. Copiar e apagar afetam o progresso normal e o alternativo da partida escolhida. Restaurar substitui as quatro partidas. Um backup completo é salvo antes de gravar.';
 
   @override
   String get saveFileDone => 'Salvo';
@@ -1975,10 +1975,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível verificar ou salvar o arquivo. Atualize e tente novamente; as cópias de recuperação ficam em Backups.';
 
   @override
-  String get saveFilePrimary => 'Principal';
+  String get saveFilePrimary => 'Normal';
 
   @override
-  String get saveFileAlternate => 'Secundária';
+  String get saveFileAlternate => 'Alternativo';
 
   @override
   String get saveFileEmpty => 'Vazia';
@@ -2045,11 +2045,11 @@ class AppLocalizationsPt extends AppLocalizations {
       'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
 
   @override
-  String get saveFileCopies => 'Cópias internas';
+  String get saveFileCopies => 'Progresso do jogo';
 
   @override
   String get saveFileCopiesHint =>
-      'O arquivo guarda duas cópias de cada partida. Edite a principal normalmente; a secundária é uma opção avançada, não um backup por data.';
+      'Normal é o progresso habitual da sua partida. Alguns mods usam Alternativo para modos especiais, como o modo difícil. Não é um backup. Selecioná-lo aqui não muda o progresso que o jogo utiliza.';
 
   @override
   String get saveFileOpenSlot => 'Toque para editar';
@@ -4021,7 +4021,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get saveFileConfirm =>
-      'Feche o SM64CoopDX primeiro. As alterações valem na próxima abertura. Copiar e apagar afetam as duas cópias do slot. Restaurar substitui os quatro slots. Um backup completo é salvo antes da gravação.';
+      'Feche o SM64CoopDX primeiro. As alterações são aplicadas ao abrir o jogo novamente. Copiar e apagar afetam o progresso normal e o alternativo da partida escolhida. Restaurar substitui as quatro partidas. Um backup completo é salvo antes de gravar.';
 
   @override
   String get saveFileDone => 'Salvo';
@@ -4035,10 +4035,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Não foi possível verificar ou salvar o arquivo. Atualize e tente novamente; as cópias de recuperação ficam em Backups.';
 
   @override
-  String get saveFilePrimary => 'Principal';
+  String get saveFilePrimary => 'Normal';
 
   @override
-  String get saveFileAlternate => 'Secundária';
+  String get saveFileAlternate => 'Alternativo';
 
   @override
   String get saveFileEmpty => 'Vazia';
@@ -4105,11 +4105,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
 
   @override
-  String get saveFileCopies => 'Cópias internas';
+  String get saveFileCopies => 'Progresso do jogo';
 
   @override
   String get saveFileCopiesHint =>
-      'O arquivo guarda duas cópias de cada partida. Edite a principal normalmente; a secundária é uma opção avançada, não um backup por data.';
+      'Normal é o progresso habitual da sua partida. Alguns mods usam Alternativo para modos especiais, como o modo difícil. Não é um backup. Selecioná-lo aqui não muda o progresso que o jogo utiliza.';
 
   @override
   String get saveFileOpenSlot => 'Toque para editar';
