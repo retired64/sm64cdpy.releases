@@ -139,6 +139,7 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
     final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
     final folder = ref.watch(gameFolderProvider);
+    final connected = folder.connection.connected && folder.connection.fullAccess;
     final titles = [
       l10n.playGuideStep1Title,
       l10n.playGuideStep2Title,
@@ -235,16 +236,20 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                 ready: _installed,
                               ),
                             action(
-                              l10n.playGuideOpenDownload,
-                              Icons.open_in_browser,
-                              () => _open(AppConstants.androidGameReleasesUrl),
+                              _installed == true ? l10n.playGuideLaunch : l10n.playGuideOpenDownload,
+                              _installed == true ? Icons.play_arrow_rounded : Icons.open_in_browser,
+                              _installed == true ? () => launchGameWithGuide(context)
+                                : () => _open(AppConstants.androidGameReleasesUrl),
                               primary: true,
                             ),
-                            action(
-                              l10n.playGuideRepository,
-                              Icons.code,
-                              () => _open(AppConstants.maniscat2Github),
-                            ),
+                            Wrap(spacing: 8, children: [
+                              if (_installed == true)
+                                TextButton(onPressed: _busy ? null : () => _action(() => _open(AppConstants.androidGameReleasesUrl)),
+                                  child: Text(l10n.playGuideOpenDownload)),
+                              TextButton.icon(onPressed: _busy ? null : () => _action(() => _open(AppConstants.maniscat2Github)),
+                                icon: const Icon(Icons.code, size: 18),
+                                label: Text(l10n.playGuideRepository)),
+                            ]),
                           ],
                           if (index == 1)
                             ExpansionTile(
@@ -290,13 +295,21 @@ PlayGuideCard(text: l10n.playGuideConvertCard6, number: 6)
                                     folder.connection.fullAccess,
                               ),
                             action(
-                              l10n.playGuideConnect,
-                              Icons.folder_open_rounded,
+                              connected ? l10n.playGuideLibrary : l10n.playGuideConnect,
+                              connected ? Icons.inventory_2_outlined : Icons.folder_open_rounded,
                               () async {
-                                await connectGameFolder(context, ref);
+                                if (connected) {
+                                  context.go('/library?view=game-mods');
+                                } else {
+                                  await connectGameFolder(context, ref);
+                                }
                               },
                               primary: true,
                             ),
+                            if (connected)
+                              TextButton(onPressed: _busy ? null : () => _action(() async {
+                                await connectGameFolder(context, ref);
+                              }), child: Text(l10n.gameFolderChange)),
                           ],
                           if (index == 4) ...[
                             action(

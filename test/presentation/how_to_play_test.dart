@@ -72,6 +72,44 @@ void main() {
       }
     }
 
+    testWidgets('chapter map and compact landscape: $language', (tester) async {
+      tester.view.physicalSize = const Size(800, 360);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(ProviderScope(
+        overrides: [gameFolderProvider.overrideWith(_UnconnectedFolder.new)],
+        child: MaterialApp(
+          locale: Locale(language),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: RetroTheme.materialTheme(false),
+          builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(
+            textScaler: const TextScaler.linear(1.6)), child: child!),
+          home: const Scaffold(body: HowToPlayScreen()),
+        ),
+      ));
+      await tester.pumpAndSettle();
+      final l10n = AppLocalizations.of(tester.element(find.byType(HowToPlayScreen)));
+      await tester.tap(find.byTooltip(l10n.playGuideOverview));
+      await tester.pumpAndSettle();
+      expect(find.byType(BottomSheet), findsOneWidget);
+      final target = find.byType(ListTile).at(3);
+      await tester.ensureVisible(target);
+      await tester.tap(target);
+      await tester.pumpAndSettle();
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(tester.widget<PageView>(find.byType(PageView)).controller!.page, 3);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.byTooltip(l10n.playGuideOverview));
+      await tester.pumpAndSettle();
+      final handle = tester.getTopLeft(find.byType(BottomSheet)) + const Offset(100, 12);
+      await tester.dragFrom(handle, const Offset(0, 400));
+      await tester.pumpAndSettle();
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('post-install missing game offers guide: $language', (
       tester,
     ) async {
