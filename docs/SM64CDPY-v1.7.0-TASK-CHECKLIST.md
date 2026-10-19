@@ -684,4 +684,5 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 
 - [x] Revisar capturas y sustituir bloque largo por tarjetas tituladas y capítulos deslizables.
 - [x] Mapa modal, navegación fija y estructura visual por tema.
-- [ ] Validar guía v2 con gestos, texto ampliado y landscape.
+- [x] Validar guía v2 con gestos, texto ampliado y landscape: 253 pruebas Flutter en Testing 39340475646.
+- [ ] Revisión física de guía v2 y APK final.

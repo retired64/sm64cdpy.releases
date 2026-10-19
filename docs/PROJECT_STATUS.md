@@ -320,4 +320,6 @@ Contrato y matriz: [HOW_TO_PLAY.md](HOW_TO_PLAY.md).
 
 Guía v2: capítulos deslizables, mapa modal y 32 tarjetas tituladas con materiales
 propios de cada tema. Navegación fija y layout compacto en landscape.
-Pendiente Testing nuevo; la evidencia anterior valida la primera estructura.
+Testing 39340475646 aprobó generación, formato, análisis y 253 pruebas Flutter,
+incluidos mapa/gestos en landscape. APK arm64 en compilación y revisión física
+pendiente; la evidencia anterior valida la primera estructura.

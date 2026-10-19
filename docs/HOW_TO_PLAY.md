@@ -113,3 +113,20 @@ cabecera para conservar espacio de lectura. Se liberan PageController y observer
 no se añaden preferencias, caches ni cambios en permisos/Workers/overlay.
 Validación nueva pendiente: análisis, generación, pruebas de deslizamiento,
 controles, seis temas, tres idiomas y tamaños estrechos/texto ampliado.
+
+### Evidencia de la segunda iteración
+
+[Testing 39340475646](https://github.com/retired64/sm64cdpy.releases/actions/runs/39340475646),
+candidata `95b27e2`: generación l10n y formato correctos; análisis sin errores
+nuevos y 253 pruebas Flutter aprobadas. Incluye los seis temas en claro/oscuro,
+tres idiomas, pantalla estrecha con texto ampliado, swipe horizontal, anterior,
+mapa con lista desplazable en landscape a escala 1.6, selección y cierre por
+arrastre. Los archivos modificados coinciden con el formato/generados del runner;
+no se incorpora el reformateo ajeno a esta tarea.
+
+Los cinco ARB conservan 110 claves de guía coherentes. Se retiran ocho bloques
+de texto antiguos y la etiqueta antigua del selector: las tarjetas son ahora
+la única fuente de instrucciones. Cuatro pruebas Python y diff-check correctos.
+La conexión ya preparada ofrece Biblioteca; el juego instalado ofrece abrirlo
+en lugar de repetir su instalación. APK arm64 compilándose al registrar esta
+evidencia. Sigue pendiente revisión visual y de gestos en dispositivo real.
