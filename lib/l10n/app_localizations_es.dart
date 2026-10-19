@@ -2098,9 +2098,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get playGuideBack => 'Paso anterior';
 
   @override
-  String get playGuideSteps => 'Elige un paso';
-
-  @override
   String get playGuideOpenDownload => 'Abrir descargas de Android';
 
   @override
@@ -2159,57 +2156,310 @@ class AppLocalizationsEs extends AppLocalizations {
   String get playGuideStep1Title => 'Consigue el juego';
 
   @override
-  String get playGuideStep1Body =>
-      'SM64CDPY organiza mods. SM64CoopDX Android es otra aplicación: la que ejecuta el juego.\n\n1. Pulsa Abrir descargas de Android. Tu navegador abrirá GitHub, la página del port Android.\n2. Busca la versión y despliega Assets si hace falta. Descarga el archivo que termina en .apk, no Source code. Si hay varias opciones, sigue los requisitos para tu teléfono de esa versión.\n3. Abre el APK descargado y pulsa Instalar. Si Android lo pide, permite que ese navegador o explorador instale este APK y vuelve a la instalación.\n4. Abre SM64CoopDX una vez. Sigue sus indicaciones de almacenamiento para que cree su carpeta.\n\nSi no entiendes un aviso de Android, pide ayuda a alguien de confianza.';
-
-  @override
   String get playGuideStep2Title => 'Prepara tu propia ROM';
-
-  @override
-  String get playGuideStep2Body =>
-      'La ROM es una copia del cartucho original de Super Mario 64. El APK por sí solo no incluye las imágenes y los sonidos originales del juego.\n\nUsa tu propia copia original de USA, sin modificar y en formato .z64. Esta guía no proporciona ROMs. Un ZIP es un paquete: extráelo primero para ver el archivo que contiene.\n\n• ¿Ya termina en .z64? Continúa al siguiente paso.\n• ¿Termina en .n64 o .v64? Abre «Convertir mi ROM» aquí abajo.\n• ¿Es de otra región o está modificada? Cambiar su nombre o formato no la convierte en una copia original de USA.';
 
   @override
   String get playGuideConvertTitle => 'Convertir mi ROM (.n64 / .v64)';
 
   @override
-  String get playGuideConvertBody =>
-      '1. Conserva el archivo original como respaldo.\n2. Abre el conversor de ROM en tu navegador.\n3. Elige tu archivo .n64 o .v64.\n4. Selecciona .z64 como formato de salida y guarda el resultado, normalmente en Descargas.\n5. Regresa aquí y continúa con ese archivo .z64.\n\nConvertir reorganiza los datos del archivo. Cambiar el nombre de .n64 a .z64 no lo convierte. Es una herramienta externa: si no está disponible, usa otro conversor de orden de bytes de N64 con salida .z64.';
-
-  @override
   String get playGuideStep3Title => 'Dale la ROM al juego';
-
-  @override
-  String get playGuideStep3Body =>
-      '1. Abre SM64CoopDX Android.\n2. Si te pide elegir una ROM, selecciona tu archivo .z64 de USA, normalmente en Descargas. Espera a que el juego termine de prepararlo.\n3. Si tu versión no tiene selector, cierra el juego. En tu explorador de archivos, copia el .z64 a Almacenamiento interno → com.maniscat2.sm64coopdx → user. Abre el juego de nuevo.\n4. Espera hasta llegar al menú del juego. Si rechaza la ROM, revisa que sea la original de USA, sin modificar, y que esté convertida de verdad a .z64.\n\nEl juego conserva la ROM de USA aceptada como user/baserom.us.z64. La carpeta puede variar según sus permisos de almacenamiento; sigue la ubicación que te muestre el juego.';
 
   @override
   String get playGuideStep4Title => 'Conecta el manager';
 
   @override
-  String get playGuideStep4Body =>
-      '1. Vuelve a SM64CDPY y pulsa Conectar carpeta del juego. Antes de abrir la ventana de carpetas de Android, explicaremos qué debes elegir.\n2. Abre Almacenamiento interno → com.maniscat2.sm64coopdx.\n3. Selecciona esa carpeta principal, la que contiene user, y pulsa Usar esta carpeta / Permitir. No elijas Descargas, user sola ni el archivo ROM.\n\nUna sola selección conecta mods, DynOS, ajustes del juego y detección de ROM. Si falta user, abre y prepara primero el juego. Si Android bloquea el acceso, revisa el almacenamiento del juego: elegir una carpeta vacía diferente no lo arregla.\n\n¿Ya está conectada? Continúa. No necesitas elegir las mismas carpetas para cada mod.';
-
-  @override
   String get playGuideStep5Title => 'Añade tu primer mod';
-
-  @override
-  String get playGuideStep5Body =>
-      '1. Cierra el juego antes de instalar o cambiar mods.\n2. Abre Catálogo y elige un mod. Lee sus notas de compatibilidad.\n3. Descárgalo. Con instalación automática activada, espera a ver Instalado: terminar la descarga no significa que termine la instalación. Si la instalación automática está desactivada, sigue el aviso de instalación manual o actívala en Ajustes.\n4. Abre Herramientas → Biblioteca. Mods del juego reúne los mods Lua. DynOS / Touch Controls reúne modelos, texturas y controles. Activa el elemento que quieras usar.\n5. Abre de nuevo el juego para cargar los cambios. Algunos packs requieren sus propios ajustes dentro del juego: sigue las instrucciones de su autor.';
 
   @override
   String get playGuidePathsTitle => '¿Dónde va cada cosa?';
 
   @override
-  String get playGuidePathsBody =>
-      'Dentro de Almacenamiento interno → com.maniscat2.sm64coopdx:\n\nuser/mods → nuevas instalaciones de mods Lua. Un mod puede ser un archivo .lua o una carpeta con main.lua.\nuser/dynos/packs → nuevos packs DynOS y Touch Controls. Touch Controls comparte este destino.\nuser/baserom.us.z64 → ROM original de USA aceptada por el juego.\nuser/sm64config.txt → ajustes del juego y elementos activados. Deja que la app lo gestione en vez de editarlo a mano.\n\nEl juego también lee mods y dynos/packs fuera de user. El manager también los muestra al conectar la carpeta principal. Si repites nombres, Lua prefiere user/mods; DynOS prefiere dynos/packs exterior. Evita mantener dos copias con el mismo nombre.';
-
-  @override
   String get playGuideStep6Title => 'Juega y encuentra ayuda';
 
   @override
-  String get playGuideStep6Body =>
-      'Pulsa Abrir el juego aquí abajo. Elige una partida dentro del juego y disfruta de tu aventura.\n\n¿El juego no abre? Prueba primero desde su icono en el inicio de Android.\n¿No acepta la ROM? Revisa la copia original de USA y el formato .z64 en el paso 2.\n¿No aparece el mod? Comprueba que terminó la instalación, actívalo en Biblioteca y reinicia el juego. Revisa si necesita otro mod.\n¿Perdiste el acceso a la carpeta? Reconecta la carpeta principal en el paso 4.\n\nPrueba un mod a la vez. Si algo falla, desactiva ese mod y vuelve a abrir el juego. Guarda un respaldo antes de borrar archivos del juego.';
+  String get playGuideMap => 'El mapa de tu aventura';
+
+  @override
+  String get playGuideSwipe => 'Desliza a los lados para cambiar de capítulo';
+
+  @override
+  String get playGuideChapter => 'CAPÍTULO';
+
+  @override
+  String get playGuideTip => 'Recuerda';
+
+  @override
+  String get playGuideOverview => 'Ver pasos';
+
+  @override
+  String get playGuideS1Card1 =>
+      'SM64CDPY organiza mods. SM64CoopDX Android es otra aplicación: la que ejecuta el juego.';
+
+  @override
+  String get playGuideS1Card2 =>
+      'Pulsa Abrir descargas de Android. Tu navegador abrirá GitHub, la página del port Android.';
+
+  @override
+  String get playGuideS1Card3 =>
+      'Busca la versión y despliega Assets si hace falta. Descarga el archivo que termina en .apk, no Source code. Si hay varias opciones, sigue los requisitos para tu teléfono de esa versión.';
+
+  @override
+  String get playGuideS1Card4 =>
+      'Abre el APK descargado y pulsa Instalar. Si Android lo pide, permite que ese navegador o explorador instale este APK y vuelve a la instalación.';
+
+  @override
+  String get playGuideS1Card5 =>
+      'Abre SM64CoopDX una vez. Sigue sus indicaciones de almacenamiento para que cree su carpeta.';
+
+  @override
+  String get playGuideS1Card6 =>
+      'Si no entiendes un aviso de Android, pide ayuda a alguien de confianza.';
+
+  @override
+  String get playGuideS2Card1 =>
+      'La ROM es una copia del cartucho original de Super Mario 64. El APK por sí solo no incluye las imágenes y los sonidos originales del juego.';
+
+  @override
+  String get playGuideS2Card2 =>
+      'Usa tu propia copia original de USA, sin modificar y en formato .z64. Esta guía no proporciona ROMs. Un ZIP es un paquete: extráelo primero para ver el archivo que contiene.';
+
+  @override
+  String get playGuideS2Card3 =>
+      '¿Ya termina en .z64? Continúa al siguiente paso.';
+
+  @override
+  String get playGuideS2Card4 =>
+      '¿Termina en .n64 o .v64? Abre «Convertir mi ROM» aquí abajo.';
+
+  @override
+  String get playGuideS2Card5 =>
+      '¿Es de otra región o está modificada? Cambiar su nombre o formato no la convierte en una copia original de USA.';
+
+  @override
+  String get playGuideS3Card1 => 'Abre SM64CoopDX Android.';
+
+  @override
+  String get playGuideS3Card2 =>
+      'Si te pide elegir una ROM, selecciona tu archivo .z64 de USA, normalmente en Descargas. Espera a que el juego termine de prepararlo.';
+
+  @override
+  String get playGuideS3Card3 =>
+      'Si tu versión no tiene selector, cierra el juego. En tu explorador de archivos, copia el .z64 a Almacenamiento interno → com.maniscat2.sm64coopdx → user. Abre el juego de nuevo.';
+
+  @override
+  String get playGuideS3Card4 =>
+      'Espera hasta llegar al menú del juego. Si rechaza la ROM, revisa que sea la original de USA, sin modificar, y que esté convertida de verdad a .z64.';
+
+  @override
+  String get playGuideS3Card5 =>
+      'El juego conserva la ROM de USA aceptada como user/baserom.us.z64. La carpeta puede variar según sus permisos de almacenamiento; sigue la ubicación que te muestre el juego.';
+
+  @override
+  String get playGuideS4Card1 =>
+      'Vuelve a SM64CDPY y pulsa Conectar carpeta del juego. Antes de abrir la ventana de carpetas de Android, explicaremos qué debes elegir.';
+
+  @override
+  String get playGuideS4Card2 =>
+      'Abre Almacenamiento interno → com.maniscat2.sm64coopdx.';
+
+  @override
+  String get playGuideS4Card3 =>
+      'Selecciona esa carpeta principal, la que contiene user, y pulsa Usar esta carpeta / Permitir. No elijas Descargas, user sola ni el archivo ROM.';
+
+  @override
+  String get playGuideS4Card4 =>
+      'Una sola selección conecta mods, DynOS, ajustes del juego y detección de ROM. Si falta user, abre y prepara primero el juego. Si Android bloquea el acceso, revisa el almacenamiento del juego: elegir una carpeta vacía diferente no lo arregla.';
+
+  @override
+  String get playGuideS4Card5 =>
+      '¿Ya está conectada? Continúa. No necesitas elegir las mismas carpetas para cada mod.';
+
+  @override
+  String get playGuideS5Card1 =>
+      'Cierra el juego antes de instalar o cambiar mods.';
+
+  @override
+  String get playGuideS5Card2 =>
+      'Abre Catálogo y elige un mod. Lee sus notas de compatibilidad.';
+
+  @override
+  String get playGuideS5Card3 =>
+      'Descárgalo. Con instalación automática activada, espera a ver Instalado: terminar la descarga no significa que termine la instalación. Si la instalación automática está desactivada, sigue el aviso de instalación manual o actívala en Ajustes.';
+
+  @override
+  String get playGuideS5Card4 =>
+      'Abre Herramientas → Biblioteca. Mods del juego reúne los mods Lua. DynOS / Touch Controls reúne modelos, texturas y controles. Activa el elemento que quieras usar.';
+
+  @override
+  String get playGuideS5Card5 =>
+      'Abre de nuevo el juego para cargar los cambios. Algunos packs requieren sus propios ajustes dentro del juego: sigue las instrucciones de su autor.';
+
+  @override
+  String get playGuideS6Card1 =>
+      'Pulsa Abrir el juego aquí abajo. Elige una partida dentro del juego y disfruta de tu aventura.';
+
+  @override
+  String get playGuideS6Card2 =>
+      '¿El juego no abre? Prueba primero desde su icono en el inicio de Android.';
+
+  @override
+  String get playGuideS6Card3 =>
+      '¿No acepta la ROM? Revisa la copia original de USA y el formato .z64 en el paso 2.';
+
+  @override
+  String get playGuideS6Card4 =>
+      '¿No aparece el mod? Comprueba que terminó la instalación, actívalo en Biblioteca y reinicia el juego. Revisa si necesita otro mod.';
+
+  @override
+  String get playGuideS6Card5 =>
+      '¿Perdiste el acceso a la carpeta? Reconecta la carpeta principal en el paso 4.';
+
+  @override
+  String get playGuideS6Card6 =>
+      'Prueba un mod a la vez. Si algo falla, desactiva ese mod y vuelve a abrir el juego. Guarda un respaldo antes de borrar archivos del juego.';
+
+  @override
+  String get playGuideConvertCard1 =>
+      'Conserva el archivo original como respaldo.';
+
+  @override
+  String get playGuideConvertCard2 =>
+      'Abre el conversor de ROM en tu navegador.';
+
+  @override
+  String get playGuideConvertCard3 => 'Elige tu archivo .n64 o .v64.';
+
+  @override
+  String get playGuideConvertCard4 =>
+      'Selecciona .z64 como formato de salida y guarda el resultado, normalmente en Descargas.';
+
+  @override
+  String get playGuideConvertCard5 =>
+      'Regresa aquí y continúa con ese archivo .z64.';
+
+  @override
+  String get playGuideConvertCard6 =>
+      'Convertir reorganiza los datos del archivo. Cambiar el nombre de .n64 a .z64 no lo convierte. Es una herramienta externa: si no está disponible, usa otro conversor de orden de bytes de N64 con salida .z64.';
+
+  @override
+  String get playGuidePathsCard1 =>
+      'Dentro de Almacenamiento interno → com.maniscat2.sm64coopdx:';
+
+  @override
+  String get playGuidePathsCard2 =>
+      'user/mods → nuevas instalaciones de mods Lua. Un mod puede ser un archivo .lua o una carpeta con main.lua.';
+
+  @override
+  String get playGuidePathsCard3 =>
+      'user/dynos/packs → nuevos packs DynOS y Touch Controls. Touch Controls comparte este destino.';
+
+  @override
+  String get playGuidePathsCard4 =>
+      'user/baserom.us.z64 → ROM original de USA aceptada por el juego.';
+
+  @override
+  String get playGuidePathsCard5 =>
+      'user/sm64config.txt → ajustes del juego y elementos activados. Deja que la app lo gestione en vez de editarlo a mano.';
+
+  @override
+  String get playGuidePathsCard6 =>
+      'El juego también lee mods y dynos/packs fuera de user. El manager también los muestra al conectar la carpeta principal. Si repites nombres, Lua prefiere user/mods; DynOS prefiere dynos/packs exterior. Evita mantener dos copias con el mismo nombre.';
+
+  @override
+  String get playGuideS1Title1 => 'Dos apps, dos tareas';
+
+  @override
+  String get playGuideS1Title2 => 'Abre la página de Android';
+
+  @override
+  String get playGuideS1Title3 => 'Elige el APK';
+
+  @override
+  String get playGuideS1Title4 => 'Instala el juego';
+
+  @override
+  String get playGuideS1Title5 => 'Ábrelo una vez';
+
+  @override
+  String get playGuideS1Title6 => 'Una mano amiga';
+
+  @override
+  String get playGuideS2Title1 => '¿Qué es una ROM?';
+
+  @override
+  String get playGuideS2Title2 => 'La copia que necesitas';
+
+  @override
+  String get playGuideS2Title3 => 'Ya tengo .z64';
+
+  @override
+  String get playGuideS2Title4 => 'Tengo .n64 o .v64';
+
+  @override
+  String get playGuideS2Title5 => 'La región importa';
+
+  @override
+  String get playGuideS3Title1 => 'Abre SM64CoopDX';
+
+  @override
+  String get playGuideS3Title2 => 'Elige tu ROM';
+
+  @override
+  String get playGuideS3Title3 => 'Si no aparece un selector';
+
+  @override
+  String get playGuideS3Title4 => 'Llega al menú del juego';
+
+  @override
+  String get playGuideS3Title5 => 'El hogar de tu ROM';
+
+  @override
+  String get playGuideS4Title1 => 'Vuelve al manager';
+
+  @override
+  String get playGuideS4Title2 => 'Busca la carpeta principal';
+
+  @override
+  String get playGuideS4Title3 => 'Permite usar esa carpeta';
+
+  @override
+  String get playGuideS4Title4 => 'Una sola conexión';
+
+  @override
+  String get playGuideS4Title5 => '¿Ya está conectada?';
+
+  @override
+  String get playGuideS5Title1 => 'Primero cierra el juego';
+
+  @override
+  String get playGuideS5Title2 => 'Elige un mod';
+
+  @override
+  String get playGuideS5Title3 => 'Espera la instalación';
+
+  @override
+  String get playGuideS5Title4 => 'Actívalo en Biblioteca';
+
+  @override
+  String get playGuideS5Title5 => 'Reinicia y pruébalo';
+
+  @override
+  String get playGuideS6Title1 => 'Empieza tu aventura';
+
+  @override
+  String get playGuideS6Title2 => 'El juego no abre';
+
+  @override
+  String get playGuideS6Title3 => 'No acepta la ROM';
+
+  @override
+  String get playGuideS6Title4 => 'No aparece el mod';
+
+  @override
+  String get playGuideS6Title5 => 'Perdiste el acceso';
+
+  @override
+  String get playGuideS6Title6 => 'Prueba uno a la vez';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -4306,9 +4556,6 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get playGuideBack => 'Paso anterior';
 
   @override
-  String get playGuideSteps => 'Elige un paso';
-
-  @override
   String get playGuideOpenDownload => 'Abrir descargas de Android';
 
   @override
@@ -4367,55 +4614,308 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get playGuideStep1Title => 'Consigue el juego';
 
   @override
-  String get playGuideStep1Body =>
-      'SM64CDPY organiza mods. SM64CoopDX Android es otra aplicación: la que ejecuta el juego.\n\n1. Pulsa Abrir descargas de Android. Tu navegador abrirá GitHub, la página del port Android.\n2. Busca la versión y despliega Assets si hace falta. Descarga el archivo que termina en .apk, no Source code. Si hay varias opciones, sigue los requisitos para tu teléfono de esa versión.\n3. Abre el APK descargado y pulsa Instalar. Si Android lo pide, permite que ese navegador o explorador instale este APK y vuelve a la instalación.\n4. Abre SM64CoopDX una vez. Sigue sus indicaciones de almacenamiento para que cree su carpeta.\n\nSi no entiendes un aviso de Android, pide ayuda a alguien de confianza.';
-
-  @override
   String get playGuideStep2Title => 'Prepara tu propia ROM';
-
-  @override
-  String get playGuideStep2Body =>
-      'La ROM es una copia del cartucho original de Super Mario 64. El APK por sí solo no incluye las imágenes y los sonidos originales del juego.\n\nUsa tu propia copia original de USA, sin modificar y en formato .z64. Esta guía no proporciona ROMs. Un ZIP es un paquete: extráelo primero para ver el archivo que contiene.\n\n• ¿Ya termina en .z64? Continúa al siguiente paso.\n• ¿Termina en .n64 o .v64? Abre «Convertir mi ROM» aquí abajo.\n• ¿Es de otra región o está modificada? Cambiar su nombre o formato no la convierte en una copia original de USA.';
 
   @override
   String get playGuideConvertTitle => 'Convertir mi ROM (.n64 / .v64)';
 
   @override
-  String get playGuideConvertBody =>
-      '1. Conserva el archivo original como respaldo.\n2. Abre el conversor de ROM en tu navegador.\n3. Elige tu archivo .n64 o .v64.\n4. Selecciona .z64 como formato de salida y guarda el resultado, normalmente en Descargas.\n5. Regresa aquí y continúa con ese archivo .z64.\n\nConvertir reorganiza los datos del archivo. Cambiar el nombre de .n64 a .z64 no lo convierte. Es una herramienta externa: si no está disponible, usa otro conversor de orden de bytes de N64 con salida .z64.';
-
-  @override
   String get playGuideStep3Title => 'Dale la ROM al juego';
-
-  @override
-  String get playGuideStep3Body =>
-      '1. Abre SM64CoopDX Android.\n2. Si te pide elegir una ROM, selecciona tu archivo .z64 de USA, normalmente en Descargas. Espera a que el juego termine de prepararlo.\n3. Si tu versión no tiene selector, cierra el juego. En tu explorador de archivos, copia el .z64 a Almacenamiento interno → com.maniscat2.sm64coopdx → user. Abre el juego de nuevo.\n4. Espera hasta llegar al menú del juego. Si rechaza la ROM, revisa que sea la original de USA, sin modificar, y que esté convertida de verdad a .z64.\n\nEl juego conserva la ROM de USA aceptada como user/baserom.us.z64. La carpeta puede variar según sus permisos de almacenamiento; sigue la ubicación que te muestre el juego.';
 
   @override
   String get playGuideStep4Title => 'Conecta el manager';
 
   @override
-  String get playGuideStep4Body =>
-      '1. Vuelve a SM64CDPY y pulsa Conectar carpeta del juego. Antes de abrir la ventana de carpetas de Android, explicaremos qué debes elegir.\n2. Abre Almacenamiento interno → com.maniscat2.sm64coopdx.\n3. Selecciona esa carpeta principal, la que contiene user, y pulsa Usar esta carpeta / Permitir. No elijas Descargas, user sola ni el archivo ROM.\n\nUna sola selección conecta mods, DynOS, ajustes del juego y detección de ROM. Si falta user, abre y prepara primero el juego. Si Android bloquea el acceso, revisa el almacenamiento del juego: elegir una carpeta vacía diferente no lo arregla.\n\n¿Ya está conectada? Continúa. No necesitas elegir las mismas carpetas para cada mod.';
-
-  @override
   String get playGuideStep5Title => 'Añade tu primer mod';
-
-  @override
-  String get playGuideStep5Body =>
-      '1. Cierra el juego antes de instalar o cambiar mods.\n2. Abre Catálogo y elige un mod. Lee sus notas de compatibilidad.\n3. Descárgalo. Con instalación automática activada, espera a ver Instalado: terminar la descarga no significa que termine la instalación. Si la instalación automática está desactivada, sigue el aviso de instalación manual o actívala en Ajustes.\n4. Abre Herramientas → Biblioteca. Mods del juego reúne los mods Lua. DynOS / Touch Controls reúne modelos, texturas y controles. Activa el elemento que quieras usar.\n5. Abre de nuevo el juego para cargar los cambios. Algunos packs requieren sus propios ajustes dentro del juego: sigue las instrucciones de su autor.';
 
   @override
   String get playGuidePathsTitle => '¿Dónde va cada cosa?';
 
   @override
-  String get playGuidePathsBody =>
-      'Dentro de Almacenamiento interno → com.maniscat2.sm64coopdx:\n\nuser/mods → nuevas instalaciones de mods Lua. Un mod puede ser un archivo .lua o una carpeta con main.lua.\nuser/dynos/packs → nuevos packs DynOS y Touch Controls. Touch Controls comparte este destino.\nuser/baserom.us.z64 → ROM original de USA aceptada por el juego.\nuser/sm64config.txt → ajustes del juego y elementos activados. Deja que la app lo gestione en vez de editarlo a mano.\n\nEl juego también lee mods y dynos/packs fuera de user. El manager también los muestra al conectar la carpeta principal. Si repites nombres, Lua prefiere user/mods; DynOS prefiere dynos/packs exterior. Evita mantener dos copias con el mismo nombre.';
-
-  @override
   String get playGuideStep6Title => 'Juega y encuentra ayuda';
 
   @override
-  String get playGuideStep6Body =>
-      'Pulsa Abrir el juego aquí abajo. Elige una partida dentro del juego y disfruta de tu aventura.\n\n¿El juego no abre? Prueba primero desde su icono en el inicio de Android.\n¿No acepta la ROM? Revisa la copia original de USA y el formato .z64 en el paso 2.\n¿No aparece el mod? Comprueba que terminó la instalación, actívalo en Biblioteca y reinicia el juego. Revisa si necesita otro mod.\n¿Perdiste el acceso a la carpeta? Reconecta la carpeta principal en el paso 4.\n\nPrueba un mod a la vez. Si algo falla, desactiva ese mod y vuelve a abrir el juego. Guarda un respaldo antes de borrar archivos del juego.';
+  String get playGuideMap => 'El mapa de tu aventura';
+
+  @override
+  String get playGuideSwipe => 'Desliza a los lados para cambiar de capítulo';
+
+  @override
+  String get playGuideChapter => 'CAPÍTULO';
+
+  @override
+  String get playGuideTip => 'Recuerda';
+
+  @override
+  String get playGuideOverview => 'Ver pasos';
+
+  @override
+  String get playGuideS1Card1 =>
+      'SM64CDPY organiza mods. SM64CoopDX Android es otra aplicación: la que ejecuta el juego.';
+
+  @override
+  String get playGuideS1Card2 =>
+      'Pulsa Abrir descargas de Android. Tu navegador abrirá GitHub, la página del port Android.';
+
+  @override
+  String get playGuideS1Card3 =>
+      'Busca la versión y despliega Assets si hace falta. Descarga el archivo que termina en .apk, no Source code. Si hay varias opciones, sigue los requisitos para tu teléfono de esa versión.';
+
+  @override
+  String get playGuideS1Card4 =>
+      'Abre el APK descargado y pulsa Instalar. Si Android lo pide, permite que ese navegador o explorador instale este APK y vuelve a la instalación.';
+
+  @override
+  String get playGuideS1Card5 =>
+      'Abre SM64CoopDX una vez. Sigue sus indicaciones de almacenamiento para que cree su carpeta.';
+
+  @override
+  String get playGuideS1Card6 =>
+      'Si no entiendes un aviso de Android, pide ayuda a alguien de confianza.';
+
+  @override
+  String get playGuideS2Card1 =>
+      'La ROM es una copia del cartucho original de Super Mario 64. El APK por sí solo no incluye las imágenes y los sonidos originales del juego.';
+
+  @override
+  String get playGuideS2Card2 =>
+      'Usa tu propia copia original de USA, sin modificar y en formato .z64. Esta guía no proporciona ROMs. Un ZIP es un paquete: extráelo primero para ver el archivo que contiene.';
+
+  @override
+  String get playGuideS2Card3 =>
+      '¿Ya termina en .z64? Continúa al siguiente paso.';
+
+  @override
+  String get playGuideS2Card4 =>
+      '¿Termina en .n64 o .v64? Abre «Convertir mi ROM» aquí abajo.';
+
+  @override
+  String get playGuideS2Card5 =>
+      '¿Es de otra región o está modificada? Cambiar su nombre o formato no la convierte en una copia original de USA.';
+
+  @override
+  String get playGuideS3Card1 => 'Abre SM64CoopDX Android.';
+
+  @override
+  String get playGuideS3Card2 =>
+      'Si te pide elegir una ROM, selecciona tu archivo .z64 de USA, normalmente en Descargas. Espera a que el juego termine de prepararlo.';
+
+  @override
+  String get playGuideS3Card3 =>
+      'Si tu versión no tiene selector, cierra el juego. En tu explorador de archivos, copia el .z64 a Almacenamiento interno → com.maniscat2.sm64coopdx → user. Abre el juego de nuevo.';
+
+  @override
+  String get playGuideS3Card4 =>
+      'Espera hasta llegar al menú del juego. Si rechaza la ROM, revisa que sea la original de USA, sin modificar, y que esté convertida de verdad a .z64.';
+
+  @override
+  String get playGuideS3Card5 =>
+      'El juego conserva la ROM de USA aceptada como user/baserom.us.z64. La carpeta puede variar según sus permisos de almacenamiento; sigue la ubicación que te muestre el juego.';
+
+  @override
+  String get playGuideS4Card1 =>
+      'Vuelve a SM64CDPY y pulsa Conectar carpeta del juego. Antes de abrir la ventana de carpetas de Android, explicaremos qué debes elegir.';
+
+  @override
+  String get playGuideS4Card2 =>
+      'Abre Almacenamiento interno → com.maniscat2.sm64coopdx.';
+
+  @override
+  String get playGuideS4Card3 =>
+      'Selecciona esa carpeta principal, la que contiene user, y pulsa Usar esta carpeta / Permitir. No elijas Descargas, user sola ni el archivo ROM.';
+
+  @override
+  String get playGuideS4Card4 =>
+      'Una sola selección conecta mods, DynOS, ajustes del juego y detección de ROM. Si falta user, abre y prepara primero el juego. Si Android bloquea el acceso, revisa el almacenamiento del juego: elegir una carpeta vacía diferente no lo arregla.';
+
+  @override
+  String get playGuideS4Card5 =>
+      '¿Ya está conectada? Continúa. No necesitas elegir las mismas carpetas para cada mod.';
+
+  @override
+  String get playGuideS5Card1 =>
+      'Cierra el juego antes de instalar o cambiar mods.';
+
+  @override
+  String get playGuideS5Card2 =>
+      'Abre Catálogo y elige un mod. Lee sus notas de compatibilidad.';
+
+  @override
+  String get playGuideS5Card3 =>
+      'Descárgalo. Con instalación automática activada, espera a ver Instalado: terminar la descarga no significa que termine la instalación. Si la instalación automática está desactivada, sigue el aviso de instalación manual o actívala en Ajustes.';
+
+  @override
+  String get playGuideS5Card4 =>
+      'Abre Herramientas → Biblioteca. Mods del juego reúne los mods Lua. DynOS / Touch Controls reúne modelos, texturas y controles. Activa el elemento que quieras usar.';
+
+  @override
+  String get playGuideS5Card5 =>
+      'Abre de nuevo el juego para cargar los cambios. Algunos packs requieren sus propios ajustes dentro del juego: sigue las instrucciones de su autor.';
+
+  @override
+  String get playGuideS6Card1 =>
+      'Pulsa Abrir el juego aquí abajo. Elige una partida dentro del juego y disfruta de tu aventura.';
+
+  @override
+  String get playGuideS6Card2 =>
+      '¿El juego no abre? Prueba primero desde su icono en el inicio de Android.';
+
+  @override
+  String get playGuideS6Card3 =>
+      '¿No acepta la ROM? Revisa la copia original de USA y el formato .z64 en el paso 2.';
+
+  @override
+  String get playGuideS6Card4 =>
+      '¿No aparece el mod? Comprueba que terminó la instalación, actívalo en Biblioteca y reinicia el juego. Revisa si necesita otro mod.';
+
+  @override
+  String get playGuideS6Card5 =>
+      '¿Perdiste el acceso a la carpeta? Reconecta la carpeta principal en el paso 4.';
+
+  @override
+  String get playGuideS6Card6 =>
+      'Prueba un mod a la vez. Si algo falla, desactiva ese mod y vuelve a abrir el juego. Guarda un respaldo antes de borrar archivos del juego.';
+
+  @override
+  String get playGuideConvertCard1 =>
+      'Conserva el archivo original como respaldo.';
+
+  @override
+  String get playGuideConvertCard2 =>
+      'Abre el conversor de ROM en tu navegador.';
+
+  @override
+  String get playGuideConvertCard3 => 'Elige tu archivo .n64 o .v64.';
+
+  @override
+  String get playGuideConvertCard4 =>
+      'Selecciona .z64 como formato de salida y guarda el resultado, normalmente en Descargas.';
+
+  @override
+  String get playGuideConvertCard5 =>
+      'Regresa aquí y continúa con ese archivo .z64.';
+
+  @override
+  String get playGuideConvertCard6 =>
+      'Convertir reorganiza los datos del archivo. Cambiar el nombre de .n64 a .z64 no lo convierte. Es una herramienta externa: si no está disponible, usa otro conversor de orden de bytes de N64 con salida .z64.';
+
+  @override
+  String get playGuidePathsCard1 =>
+      'Dentro de Almacenamiento interno → com.maniscat2.sm64coopdx:';
+
+  @override
+  String get playGuidePathsCard2 =>
+      'user/mods → nuevas instalaciones de mods Lua. Un mod puede ser un archivo .lua o una carpeta con main.lua.';
+
+  @override
+  String get playGuidePathsCard3 =>
+      'user/dynos/packs → nuevos packs DynOS y Touch Controls. Touch Controls comparte este destino.';
+
+  @override
+  String get playGuidePathsCard4 =>
+      'user/baserom.us.z64 → ROM original de USA aceptada por el juego.';
+
+  @override
+  String get playGuidePathsCard5 =>
+      'user/sm64config.txt → ajustes del juego y elementos activados. Deja que la app lo gestione en vez de editarlo a mano.';
+
+  @override
+  String get playGuidePathsCard6 =>
+      'El juego también lee mods y dynos/packs fuera de user. El manager también los muestra al conectar la carpeta principal. Si repites nombres, Lua prefiere user/mods; DynOS prefiere dynos/packs exterior. Evita mantener dos copias con el mismo nombre.';
+
+  @override
+  String get playGuideS1Title1 => 'Dos apps, dos tareas';
+
+  @override
+  String get playGuideS1Title2 => 'Abre la página de Android';
+
+  @override
+  String get playGuideS1Title3 => 'Elige el APK';
+
+  @override
+  String get playGuideS1Title4 => 'Instala el juego';
+
+  @override
+  String get playGuideS1Title5 => 'Ábrelo una vez';
+
+  @override
+  String get playGuideS1Title6 => 'Una mano amiga';
+
+  @override
+  String get playGuideS2Title1 => '¿Qué es una ROM?';
+
+  @override
+  String get playGuideS2Title2 => 'La copia que necesitas';
+
+  @override
+  String get playGuideS2Title3 => 'Ya tengo .z64';
+
+  @override
+  String get playGuideS2Title4 => 'Tengo .n64 o .v64';
+
+  @override
+  String get playGuideS2Title5 => 'La región importa';
+
+  @override
+  String get playGuideS3Title1 => 'Abre SM64CoopDX';
+
+  @override
+  String get playGuideS3Title2 => 'Elige tu ROM';
+
+  @override
+  String get playGuideS3Title3 => 'Si no aparece un selector';
+
+  @override
+  String get playGuideS3Title4 => 'Llega al menú del juego';
+
+  @override
+  String get playGuideS3Title5 => 'El hogar de tu ROM';
+
+  @override
+  String get playGuideS4Title1 => 'Vuelve al manager';
+
+  @override
+  String get playGuideS4Title2 => 'Busca la carpeta principal';
+
+  @override
+  String get playGuideS4Title3 => 'Permite usar esa carpeta';
+
+  @override
+  String get playGuideS4Title4 => 'Una sola conexión';
+
+  @override
+  String get playGuideS4Title5 => '¿Ya está conectada?';
+
+  @override
+  String get playGuideS5Title1 => 'Primero cierra el juego';
+
+  @override
+  String get playGuideS5Title2 => 'Elige un mod';
+
+  @override
+  String get playGuideS5Title3 => 'Espera la instalación';
+
+  @override
+  String get playGuideS5Title4 => 'Actívalo en Biblioteca';
+
+  @override
+  String get playGuideS5Title5 => 'Reinicia y pruébalo';
+
+  @override
+  String get playGuideS6Title1 => 'Empieza tu aventura';
+
+  @override
+  String get playGuideS6Title2 => 'El juego no abre';
+
+  @override
+  String get playGuideS6Title3 => 'No acepta la ROM';
+
+  @override
+  String get playGuideS6Title4 => 'No aparece el mod';
+
+  @override
+  String get playGuideS6Title5 => 'Perdiste el acceso';
+
+  @override
+  String get playGuideS6Title6 => 'Prueba uno a la vez';
 }

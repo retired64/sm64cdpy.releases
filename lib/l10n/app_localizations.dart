@@ -3780,12 +3780,6 @@ abstract class AppLocalizations {
   /// **'Previous step'**
   String get playGuideBack;
 
-  /// No description provided for @playGuideSteps.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a step'**
-  String get playGuideSteps;
-
   /// No description provided for @playGuideOpenDownload.
   ///
   /// In en, this message translates to:
@@ -3894,23 +3888,11 @@ abstract class AppLocalizations {
   /// **'Get the game'**
   String get playGuideStep1Title;
 
-  /// No description provided for @playGuideStep1Body.
-  ///
-  /// In en, this message translates to:
-  /// **'SM64CDPY manages mods. SM64CoopDX Android is the separate app that runs the game.\n\n1. Tap Open Android downloads. Your browser will open the Android port’s GitHub page.\n2. Find the release and expand Assets if needed. Download the file ending in .apk, not Source code. Follow the release’s device requirements if it offers different builds.\n3. Open the downloaded APK and tap Install. If Android asks, allow this browser or file app to install this APK, then return to installation.\n4. Open SM64CoopDX once. Follow its storage instructions so it can create its game folder.\n\nIf you are unsure about Android’s prompts, ask someone you trust to help.'**
-  String get playGuideStep1Body;
-
   /// No description provided for @playGuideStep2Title.
   ///
   /// In en, this message translates to:
   /// **'Prepare your own ROM'**
   String get playGuideStep2Title;
-
-  /// No description provided for @playGuideStep2Body.
-  ///
-  /// In en, this message translates to:
-  /// **'The ROM is a copy of the original Super Mario 64 cartridge. The APK alone does not include the game’s original pictures and sounds.\n\nUse your own unmodified USA copy in .z64 format. This guide does not supply ROMs. A ZIP is a package: extract it first to see the file inside.\n\n• Already .z64? Go to the next step.\n• Ends in .n64 or .v64? Open “Convert my ROM” below.\n• A different region or modified game? Changing its name or format will not make it a USA original.'**
-  String get playGuideStep2Body;
 
   /// No description provided for @playGuideConvertTitle.
   ///
@@ -3918,23 +3900,11 @@ abstract class AppLocalizations {
   /// **'Convert my ROM (.n64 / .v64)'**
   String get playGuideConvertTitle;
 
-  /// No description provided for @playGuideConvertBody.
-  ///
-  /// In en, this message translates to:
-  /// **'1. Keep your original file as a backup.\n2. Open the ROM converter in your browser.\n3. Choose your own .n64 or .v64 file.\n4. Select .z64 as the output format and save the converted file, usually in Downloads.\n5. Return here and continue with that .z64 file.\n\nConversion rearranges the file’s bytes. Renaming .n64 to .z64 does not convert it. This is an external tool; if it is unavailable, use another N64 byte-order converter with .z64 output.'**
-  String get playGuideConvertBody;
-
   /// No description provided for @playGuideStep3Title.
   ///
   /// In en, this message translates to:
   /// **'Give the ROM to the game'**
   String get playGuideStep3Title;
-
-  /// No description provided for @playGuideStep3Body.
-  ///
-  /// In en, this message translates to:
-  /// **'1. Open SM64CoopDX Android.\n2. If it asks you to choose a ROM, select your USA .z64 file, usually in Downloads. Let the game finish preparing it.\n3. If your version has no selector, close the game. In your file app, copy the .z64 into Internal storage → com.maniscat2.sm64coopdx → user. Open the game again.\n4. Wait until you can reach the game menu. If the ROM is rejected, check the region, original unmodified contents and real .z64 conversion.\n\nThe game keeps its accepted USA ROM as user/baserom.us.z64. The folder can depend on the game’s storage permissions; follow the location the game shows you.'**
-  String get playGuideStep3Body;
 
   /// No description provided for @playGuideStep4Title.
   ///
@@ -3942,23 +3912,11 @@ abstract class AppLocalizations {
   /// **'Connect the manager'**
   String get playGuideStep4Title;
 
-  /// No description provided for @playGuideStep4Body.
-  ///
-  /// In en, this message translates to:
-  /// **'1. Return to SM64CDPY and tap Connect game folder. We explain what to choose before opening Android’s folder window.\n2. Open Internal storage → com.maniscat2.sm64coopdx.\n3. Select that main folder, the one containing user, and tap Use this folder / Allow. Do not select Downloads, user alone or the ROM file.\n\nOne selection connects mods, DynOS, game settings and ROM detection. If user is missing, open and prepare the game first. If Android blocks access, check the game’s storage setup; choosing an unrelated empty folder will not fix it.\n\nAlready connected? Continue. You do not need to select the same folders for each mod.'**
-  String get playGuideStep4Body;
-
   /// No description provided for @playGuideStep5Title.
   ///
   /// In en, this message translates to:
   /// **'Add your first mod'**
   String get playGuideStep5Title;
-
-  /// No description provided for @playGuideStep5Body.
-  ///
-  /// In en, this message translates to:
-  /// **'1. Close the game before installing or changing mods.\n2. Open Catalog and choose one mod. Read its compatibility notes.\n3. Download it. With automatic installation enabled, wait for Installed: a finished download alone is not a finished installation. If automatic installation is off, follow the manual-install prompt or enable it in Settings.\n4. Open GameTool → Library. Game Mods holds Lua mods. DynOS / Touch Controls holds model, texture and control packs. Turn on the item you want.\n5. Open the game again to load your changes. Some packs need their own in-game settings; follow the author’s instructions.'**
-  String get playGuideStep5Body;
 
   /// No description provided for @playGuidePathsTitle.
   ///
@@ -3966,23 +3924,497 @@ abstract class AppLocalizations {
   /// **'Where does everything go?'**
   String get playGuidePathsTitle;
 
-  /// No description provided for @playGuidePathsBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Inside Internal storage → com.maniscat2.sm64coopdx:\n\nuser/mods → new Lua mod installations. A mod can be a .lua file or a folder with main.lua.\nuser/dynos/packs → new DynOS and Touch Controls packs. Touch Controls shares this destination.\nuser/baserom.us.z64 → the original USA ROM accepted by the game.\nuser/sm64config.txt → game settings and enabled items. Let the app manage it rather than editing it by hand.\n\nThe game also reads mods and dynos/packs outside user. This manager shows those too when the main folder is connected. For duplicate names, Lua uses user/mods first; DynOS uses the outer dynos/packs first. Avoid keeping two copies with the same name.'**
-  String get playGuidePathsBody;
-
   /// No description provided for @playGuideStep6Title.
   ///
   /// In en, this message translates to:
   /// **'Play and find help'**
   String get playGuideStep6Title;
 
-  /// No description provided for @playGuideStep6Body.
+  /// No description provided for @playGuideMap.
   ///
   /// In en, this message translates to:
-  /// **'Tap Open the game below. Choose a save slot in the game and enjoy your adventure.\n\nGame not opening? First open it from Android’s home screen.\nROM not accepted? Recheck the USA original and .z64 format in step 2.\nMod missing? Check that installation finished, enable it in Library and restart the game. Check whether it needs another mod.\nFolder access lost? Reconnect the main game folder in step 4.\n\nTry one mod at a time. If something breaks, turn off that mod, then reopen the game. Keep a backup before deleting game files.'**
-  String get playGuideStep6Body;
+  /// **'Your adventure map'**
+  String get playGuideMap;
+
+  /// No description provided for @playGuideSwipe.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe left or right to change chapter'**
+  String get playGuideSwipe;
+
+  /// No description provided for @playGuideChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'CHAPTER'**
+  String get playGuideChapter;
+
+  /// No description provided for @playGuideTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember'**
+  String get playGuideTip;
+
+  /// No description provided for @playGuideOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'All steps'**
+  String get playGuideOverview;
+
+  /// No description provided for @playGuideS1Card1.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CDPY manages mods. SM64CoopDX Android is the separate app that runs the game.'**
+  String get playGuideS1Card1;
+
+  /// No description provided for @playGuideS1Card2.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Open Android downloads. Your browser will open the Android port’s GitHub page.'**
+  String get playGuideS1Card2;
+
+  /// No description provided for @playGuideS1Card3.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the release and expand Assets if needed. Download the file ending in .apk, not Source code. Follow the release’s device requirements if it offers different builds.'**
+  String get playGuideS1Card3;
+
+  /// No description provided for @playGuideS1Card4.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the downloaded APK and tap Install. If Android asks, allow this browser or file app to install this APK, then return to installation.'**
+  String get playGuideS1Card4;
+
+  /// No description provided for @playGuideS1Card5.
+  ///
+  /// In en, this message translates to:
+  /// **'Open SM64CoopDX once. Follow its storage instructions so it can create its game folder.'**
+  String get playGuideS1Card5;
+
+  /// No description provided for @playGuideS1Card6.
+  ///
+  /// In en, this message translates to:
+  /// **'If you are unsure about Android’s prompts, ask someone you trust to help.'**
+  String get playGuideS1Card6;
+
+  /// No description provided for @playGuideS2Card1.
+  ///
+  /// In en, this message translates to:
+  /// **'The ROM is a copy of the original Super Mario 64 cartridge. The APK alone does not include the game’s original pictures and sounds.'**
+  String get playGuideS2Card1;
+
+  /// No description provided for @playGuideS2Card2.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your own unmodified USA copy in .z64 format. This guide does not supply ROMs. A ZIP is a package: extract it first to see the file inside.'**
+  String get playGuideS2Card2;
+
+  /// No description provided for @playGuideS2Card3.
+  ///
+  /// In en, this message translates to:
+  /// **'Already .z64? Go to the next step.'**
+  String get playGuideS2Card3;
+
+  /// No description provided for @playGuideS2Card4.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends in .n64 or .v64? Open “Convert my ROM” below.'**
+  String get playGuideS2Card4;
+
+  /// No description provided for @playGuideS2Card5.
+  ///
+  /// In en, this message translates to:
+  /// **'A different region or modified game? Changing its name or format will not make it a USA original.'**
+  String get playGuideS2Card5;
+
+  /// No description provided for @playGuideS3Card1.
+  ///
+  /// In en, this message translates to:
+  /// **'Open SM64CoopDX Android.'**
+  String get playGuideS3Card1;
+
+  /// No description provided for @playGuideS3Card2.
+  ///
+  /// In en, this message translates to:
+  /// **'If it asks you to choose a ROM, select your USA .z64 file, usually in Downloads. Let the game finish preparing it.'**
+  String get playGuideS3Card2;
+
+  /// No description provided for @playGuideS3Card3.
+  ///
+  /// In en, this message translates to:
+  /// **'If your version has no selector, close the game. In your file app, copy the .z64 into Internal storage → com.maniscat2.sm64coopdx → user. Open the game again.'**
+  String get playGuideS3Card3;
+
+  /// No description provided for @playGuideS3Card4.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait until you can reach the game menu. If the ROM is rejected, check the region, original unmodified contents and real .z64 conversion.'**
+  String get playGuideS3Card4;
+
+  /// No description provided for @playGuideS3Card5.
+  ///
+  /// In en, this message translates to:
+  /// **'The game keeps its accepted USA ROM as user/baserom.us.z64. The folder can depend on the game’s storage permissions; follow the location the game shows you.'**
+  String get playGuideS3Card5;
+
+  /// No description provided for @playGuideS4Card1.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to SM64CDPY and tap Connect game folder. We explain what to choose before opening Android’s folder window.'**
+  String get playGuideS4Card1;
+
+  /// No description provided for @playGuideS4Card2.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Internal storage → com.maniscat2.sm64coopdx.'**
+  String get playGuideS4Card2;
+
+  /// No description provided for @playGuideS4Card3.
+  ///
+  /// In en, this message translates to:
+  /// **'Select that main folder, the one containing user, and tap Use this folder / Allow. Do not select Downloads, user alone or the ROM file.'**
+  String get playGuideS4Card3;
+
+  /// No description provided for @playGuideS4Card4.
+  ///
+  /// In en, this message translates to:
+  /// **'One selection connects mods, DynOS, game settings and ROM detection. If user is missing, open and prepare the game first. If Android blocks access, check the game’s storage setup; choosing an unrelated empty folder will not fix it.'**
+  String get playGuideS4Card4;
+
+  /// No description provided for @playGuideS4Card5.
+  ///
+  /// In en, this message translates to:
+  /// **'Already connected? Continue. You do not need to select the same folders for each mod.'**
+  String get playGuideS4Card5;
+
+  /// No description provided for @playGuideS5Card1.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the game before installing or changing mods.'**
+  String get playGuideS5Card1;
+
+  /// No description provided for @playGuideS5Card2.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Catalog and choose one mod. Read its compatibility notes.'**
+  String get playGuideS5Card2;
+
+  /// No description provided for @playGuideS5Card3.
+  ///
+  /// In en, this message translates to:
+  /// **'Download it. With automatic installation enabled, wait for Installed: a finished download alone is not a finished installation. If automatic installation is off, follow the manual-install prompt or enable it in Settings.'**
+  String get playGuideS5Card3;
+
+  /// No description provided for @playGuideS5Card4.
+  ///
+  /// In en, this message translates to:
+  /// **'Open GameTool → Library. Game Mods holds Lua mods. DynOS / Touch Controls holds model, texture and control packs. Turn on the item you want.'**
+  String get playGuideS5Card4;
+
+  /// No description provided for @playGuideS5Card5.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the game again to load your changes. Some packs need their own in-game settings; follow the author’s instructions.'**
+  String get playGuideS5Card5;
+
+  /// No description provided for @playGuideS6Card1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Open the game below. Choose a save slot in the game and enjoy your adventure.'**
+  String get playGuideS6Card1;
+
+  /// No description provided for @playGuideS6Card2.
+  ///
+  /// In en, this message translates to:
+  /// **'Game not opening? First open it from Android’s home screen.'**
+  String get playGuideS6Card2;
+
+  /// No description provided for @playGuideS6Card3.
+  ///
+  /// In en, this message translates to:
+  /// **'ROM not accepted? Recheck the USA original and .z64 format in step 2.'**
+  String get playGuideS6Card3;
+
+  /// No description provided for @playGuideS6Card4.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod missing? Check that installation finished, enable it in Library and restart the game. Check whether it needs another mod.'**
+  String get playGuideS6Card4;
+
+  /// No description provided for @playGuideS6Card5.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder access lost? Reconnect the main game folder in step 4.'**
+  String get playGuideS6Card5;
+
+  /// No description provided for @playGuideS6Card6.
+  ///
+  /// In en, this message translates to:
+  /// **'Try one mod at a time. If something breaks, turn off that mod, then reopen the game. Keep a backup before deleting game files.'**
+  String get playGuideS6Card6;
+
+  /// No description provided for @playGuideConvertCard1.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your original file as a backup.'**
+  String get playGuideConvertCard1;
+
+  /// No description provided for @playGuideConvertCard2.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the ROM converter in your browser.'**
+  String get playGuideConvertCard2;
+
+  /// No description provided for @playGuideConvertCard3.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your own .n64 or .v64 file.'**
+  String get playGuideConvertCard3;
+
+  /// No description provided for @playGuideConvertCard4.
+  ///
+  /// In en, this message translates to:
+  /// **'Select .z64 as the output format and save the converted file, usually in Downloads.'**
+  String get playGuideConvertCard4;
+
+  /// No description provided for @playGuideConvertCard5.
+  ///
+  /// In en, this message translates to:
+  /// **'Return here and continue with that .z64 file.'**
+  String get playGuideConvertCard5;
+
+  /// No description provided for @playGuideConvertCard6.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversion rearranges the file’s bytes. Renaming .n64 to .z64 does not convert it. This is an external tool; if it is unavailable, use another N64 byte-order converter with .z64 output.'**
+  String get playGuideConvertCard6;
+
+  /// No description provided for @playGuidePathsCard1.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside Internal storage → com.maniscat2.sm64coopdx:'**
+  String get playGuidePathsCard1;
+
+  /// No description provided for @playGuidePathsCard2.
+  ///
+  /// In en, this message translates to:
+  /// **'user/mods → new Lua mod installations. A mod can be a .lua file or a folder with main.lua.'**
+  String get playGuidePathsCard2;
+
+  /// No description provided for @playGuidePathsCard3.
+  ///
+  /// In en, this message translates to:
+  /// **'user/dynos/packs → new DynOS and Touch Controls packs. Touch Controls shares this destination.'**
+  String get playGuidePathsCard3;
+
+  /// No description provided for @playGuidePathsCard4.
+  ///
+  /// In en, this message translates to:
+  /// **'user/baserom.us.z64 → the original USA ROM accepted by the game.'**
+  String get playGuidePathsCard4;
+
+  /// No description provided for @playGuidePathsCard5.
+  ///
+  /// In en, this message translates to:
+  /// **'user/sm64config.txt → game settings and enabled items. Let the app manage it rather than editing it by hand.'**
+  String get playGuidePathsCard5;
+
+  /// No description provided for @playGuidePathsCard6.
+  ///
+  /// In en, this message translates to:
+  /// **'The game also reads mods and dynos/packs outside user. This manager shows those too when the main folder is connected. For duplicate names, Lua uses user/mods first; DynOS uses the outer dynos/packs first. Avoid keeping two copies with the same name.'**
+  String get playGuidePathsCard6;
+
+  /// No description provided for @playGuideS1Title1.
+  ///
+  /// In en, this message translates to:
+  /// **'Two apps, two jobs'**
+  String get playGuideS1Title1;
+
+  /// No description provided for @playGuideS1Title2.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the Android page'**
+  String get playGuideS1Title2;
+
+  /// No description provided for @playGuideS1Title3.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the APK'**
+  String get playGuideS1Title3;
+
+  /// No description provided for @playGuideS1Title4.
+  ///
+  /// In en, this message translates to:
+  /// **'Install the game'**
+  String get playGuideS1Title4;
+
+  /// No description provided for @playGuideS1Title5.
+  ///
+  /// In en, this message translates to:
+  /// **'Open it once'**
+  String get playGuideS1Title5;
+
+  /// No description provided for @playGuideS1Title6.
+  ///
+  /// In en, this message translates to:
+  /// **'A helping hand'**
+  String get playGuideS1Title6;
+
+  /// No description provided for @playGuideS2Title1.
+  ///
+  /// In en, this message translates to:
+  /// **'What is a ROM?'**
+  String get playGuideS2Title1;
+
+  /// No description provided for @playGuideS2Title2.
+  ///
+  /// In en, this message translates to:
+  /// **'The copy you need'**
+  String get playGuideS2Title2;
+
+  /// No description provided for @playGuideS2Title3.
+  ///
+  /// In en, this message translates to:
+  /// **'Already .z64'**
+  String get playGuideS2Title3;
+
+  /// No description provided for @playGuideS2Title4.
+  ///
+  /// In en, this message translates to:
+  /// **'I have .n64 or .v64'**
+  String get playGuideS2Title4;
+
+  /// No description provided for @playGuideS2Title5.
+  ///
+  /// In en, this message translates to:
+  /// **'Region matters'**
+  String get playGuideS2Title5;
+
+  /// No description provided for @playGuideS3Title1.
+  ///
+  /// In en, this message translates to:
+  /// **'Open SM64CoopDX'**
+  String get playGuideS3Title1;
+
+  /// No description provided for @playGuideS3Title2.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your ROM'**
+  String get playGuideS3Title2;
+
+  /// No description provided for @playGuideS3Title3.
+  ///
+  /// In en, this message translates to:
+  /// **'If there is no selector'**
+  String get playGuideS3Title3;
+
+  /// No description provided for @playGuideS3Title4.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach the game menu'**
+  String get playGuideS3Title4;
+
+  /// No description provided for @playGuideS3Title5.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ROM’s home'**
+  String get playGuideS3Title5;
+
+  /// No description provided for @playGuideS4Title1.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to this manager'**
+  String get playGuideS4Title1;
+
+  /// No description provided for @playGuideS4Title2.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the main folder'**
+  String get playGuideS4Title2;
+
+  /// No description provided for @playGuideS4Title3.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow that folder'**
+  String get playGuideS4Title3;
+
+  /// No description provided for @playGuideS4Title4.
+  ///
+  /// In en, this message translates to:
+  /// **'One connection'**
+  String get playGuideS4Title4;
+
+  /// No description provided for @playGuideS4Title5.
+  ///
+  /// In en, this message translates to:
+  /// **'Already connected?'**
+  String get playGuideS4Title5;
+
+  /// No description provided for @playGuideS5Title1.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the game first'**
+  String get playGuideS5Title1;
+
+  /// No description provided for @playGuideS5Title2.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose one mod'**
+  String get playGuideS5Title2;
+
+  /// No description provided for @playGuideS5Title3.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for installation'**
+  String get playGuideS5Title3;
+
+  /// No description provided for @playGuideS5Title4.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn it on in Library'**
+  String get playGuideS5Title4;
+
+  /// No description provided for @playGuideS5Title5.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart and try it'**
+  String get playGuideS5Title5;
+
+  /// No description provided for @playGuideS6Title1.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your adventure'**
+  String get playGuideS6Title1;
+
+  /// No description provided for @playGuideS6Title2.
+  ///
+  /// In en, this message translates to:
+  /// **'The game will not open'**
+  String get playGuideS6Title2;
+
+  /// No description provided for @playGuideS6Title3.
+  ///
+  /// In en, this message translates to:
+  /// **'The ROM is rejected'**
+  String get playGuideS6Title3;
+
+  /// No description provided for @playGuideS6Title4.
+  ///
+  /// In en, this message translates to:
+  /// **'The mod is missing'**
+  String get playGuideS6Title4;
+
+  /// No description provided for @playGuideS6Title5.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder permission lost'**
+  String get playGuideS6Title5;
+
+  /// No description provided for @playGuideS6Title6.
+  ///
+  /// In en, this message translates to:
+  /// **'Try one at a time'**
+  String get playGuideS6Title6;
 }
 
 class _AppLocalizationsDelegate
