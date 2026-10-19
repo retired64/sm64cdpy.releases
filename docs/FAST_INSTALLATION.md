@@ -74,7 +74,7 @@ same in both writers. Filesystem writes target the exact files exposed by SAF;
 no URI is fabricated for receipts. InstallationSafVerifier reads fresh bounded
 sentinels, and InstallationReceiptStore remains the durable installation evidence.
 
-Successful native installs invalidate InstallationDiscoveryScanner's persisted
+Successful native installs and failed/cancelled cleanup invalidate InstallationDiscoveryScanner's persisted
 cache because replacing nested files need not change root timestamps. New SAF
 writer directory indexes are per-operation and discarded at return/failure.
 Manual Flutter success also emits the existing library invalidation signal.

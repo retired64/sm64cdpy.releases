@@ -606,6 +606,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     Handler(Looper.getMainLooper()).post { result.success(true) }
                 } catch (error: Exception) {
                     root?.let { journal.rollback(it) }
+                    InstallationDiscoveryScanner.invalidate(applicationContext)
                     Handler(Looper.getMainLooper()).post { result.error("COPY_ERROR", error.message, null) }
                 }
             }
@@ -689,6 +690,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
             } catch (e: Exception) {
                 rollbackRoot?.let { journal.rollback(it) }
+                InstallationDiscoveryScanner.invalidate(applicationContext)
                 act.runOnUiThread {
                     result.error("INSTALL_ERROR", e.message ?: "Unknown error during installation", null)
                 }
@@ -775,6 +777,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
             } catch (e: Exception) {
                 rollbackRoot?.let { journal.rollback(it) }
+                InstallationDiscoveryScanner.invalidate(applicationContext)
                 act.runOnUiThread {
                     result.error("INSTALL_ERROR", e.message ?: "Unknown error during installation", null)
                 }

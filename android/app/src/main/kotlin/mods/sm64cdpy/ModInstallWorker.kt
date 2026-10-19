@@ -118,6 +118,7 @@ class ModInstallWorker(
                 )
                 if (manifest == null) {
                     writeJournal.rollback(treeDoc)
+                    InstallationDiscoveryScanner.invalidate(applicationContext)
                     deleteSource(zipFile)
                     return Result.failure(
                         workDataOf(
@@ -186,6 +187,7 @@ class ModInstallWorker(
 
                 if (manifest.fileCount == 0) {
                     writeJournal.rollback(treeDoc)
+                    InstallationDiscoveryScanner.invalidate(applicationContext)
                     deleteSource(zipFile)
                     return Result.failure(
                         workDataOf(
@@ -267,6 +269,7 @@ class ModInstallWorker(
 
             if (manifest.fileCount == 0) {
                 writeJournal.rollback(treeDoc)
+                InstallationDiscoveryScanner.invalidate(applicationContext)
                 deleteSource(zipFile)
                 return Result.failure(
                     workDataOf(
@@ -288,6 +291,7 @@ class ModInstallWorker(
             )
         } catch (e: CancellationException) {
             writeJournal.rollback(treeDoc)
+            InstallationDiscoveryScanner.invalidate(applicationContext)
             deleteSource(zipFile)
             throw e
         } catch (e: SecurityException) {
@@ -298,6 +302,7 @@ class ModInstallWorker(
             // genérico de abajo con un e.message poco útil ("Permission
             // denied") que no le dice al usuario qué hacer.
             writeJournal.rollback(treeDoc)
+            InstallationDiscoveryScanner.invalidate(applicationContext)
             deleteSource(zipFile)
             return Result.failure(
                 workDataOf(
@@ -306,6 +311,7 @@ class ModInstallWorker(
             )
         } catch (e: Exception) {
             writeJournal.rollback(treeDoc)
+            InstallationDiscoveryScanner.invalidate(applicationContext)
             deleteSource(zipFile)
             return Result.failure(
                 workDataOf("error" to (e.message ?: "Unknown error during installation"))
@@ -326,6 +332,7 @@ class ModInstallWorker(
     ): Result {
         if (isStopped) {
             writeJournal.rollback(treeDoc)
+            InstallationDiscoveryScanner.invalidate(applicationContext)
             deleteSource(source)
             return Result.failure(workDataOf("error" to "Installation was cancelled"))
         }
@@ -343,6 +350,7 @@ class ModInstallWorker(
                 )
             } catch (error: Exception) {
                 writeJournal.rollback(treeDoc)
+                InstallationDiscoveryScanner.invalidate(applicationContext)
                 deleteSource(source)
                 return Result.failure(
                     workDataOf(
@@ -367,6 +375,7 @@ class ModInstallWorker(
                 }
             }
             writeJournal.rollback(treeDoc)
+            InstallationDiscoveryScanner.invalidate(applicationContext)
             deleteSource(source)
             return Result.failure(workDataOf("error" to "Installation was cancelled"))
         }
