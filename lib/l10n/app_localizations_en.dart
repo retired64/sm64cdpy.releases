@@ -36,7 +36,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navOmmRebirth => 'Omm Pack';
 
   @override
-  String get navLinksResource => 'Links Resource';
+  String get navLinksResource => 'Links';
 
   @override
   String get navDisclaimer => 'Disclaimer';

@@ -159,7 +159,7 @@ abstract class AppLocalizations {
   /// Drawer navigation label for the links & resources screen
   ///
   /// In en, this message translates to:
-  /// **'Links Resource'**
+  /// **'Links'**
   String get navLinksResource;
 
   /// Drawer navigation label for the disclaimer screen
