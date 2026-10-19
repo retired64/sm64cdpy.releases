@@ -461,7 +461,7 @@ class _DrawerHeader extends StatelessWidget {
       child: Row(
         children: [
           Image.asset(
-            retro.design.brandAsset ?? 'assets/icons/logo.png',
+            'assets/icons/logo.png',
             width: 44,
             height: 44,
             cacheWidth: 88,

@@ -3543,7 +3543,7 @@ abstract class AppLocalizations {
   /// No description provided for @saveFileConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Close SM64CoopDX first. Changes apply on the next launch. Copy and erase affect both copies of the selected slot. Restore replaces all four slots. A full backup is saved before writing.'**
+  /// **'Close SM64CoopDX first. Changes apply on the next launch. Copy and erase affect both normal and alternative progress for the selected slot. Restore replaces all four slots. A full backup is saved before writing.'**
   String get saveFileConfirm;
 
   /// No description provided for @saveFileDone.
@@ -3567,13 +3567,13 @@ abstract class AppLocalizations {
   /// No description provided for @saveFilePrimary.
   ///
   /// In en, this message translates to:
-  /// **'Main copy'**
+  /// **'Normal'**
   String get saveFilePrimary;
 
   /// No description provided for @saveFileAlternate.
   ///
   /// In en, this message translates to:
-  /// **'Secondary copy'**
+  /// **'Alternative'**
   String get saveFileAlternate;
 
   /// No description provided for @saveFileEmpty.
@@ -3705,13 +3705,13 @@ abstract class AppLocalizations {
   /// No description provided for @saveFileCopies.
   ///
   /// In en, this message translates to:
-  /// **'Internal copies'**
+  /// **'Game progress'**
   String get saveFileCopies;
 
   /// No description provided for @saveFileCopiesHint.
   ///
   /// In en, this message translates to:
-  /// **'The file stores two copies of each slot. Use the main copy for normal editing; the secondary copy is an advanced option, not a dated backup.'**
+  /// **'Normal is your usual game progress. Some mods use Alternative for special modes, such as hard mode. It is not a backup. Selecting it here does not change which progress the game uses.'**
   String get saveFileCopiesHint;
 
   /// No description provided for @saveFileOpenSlot.

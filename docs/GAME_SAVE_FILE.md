@@ -76,3 +76,13 @@ when applying the 120-star preset. The game can still derive an effective score
 of at least 100 from a hundred-coin star; this does not require rewriting those
 records. Older explicit coin payloads remain accepted for compatibility. Whole
 slot copy/erase and full backup/restore retain their existing semantics.
+
+### User-facing progress labels
+
+The UI names the bank selector Game progress → Normal / Alternative. Normal maps
+to bank 0 and remains the initial selection; Alternative maps to bank 1. This is
+a presentation change only. The explanation identifies alternative progress as
+used by some mods for special modes (for example Star Road hard mode), not a
+dated backup. It does not claim that editing this bank enables a mode or changes
+which bank the game selects. Copy/erase confirmations explicitly cover both
+progress variants; full backup/restore and bank identity remain unchanged.

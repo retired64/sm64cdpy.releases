@@ -65,7 +65,7 @@ void main() {
         await tester.ensureVisible(find.text('B'));
         await tester.tap(find.text('B'));
         await tester.pumpAndSettle();
-        expect(find.text('Save File B · Main copy'), findsOneWidget);
+        expect(find.text('Save File B · Normal'), findsOneWidget);
         expect(find.text('Preview · saved only after Apply'), findsOneWidget);
         expect(find.text('Complete progress: 120 stars'), findsNothing);
         expect(
