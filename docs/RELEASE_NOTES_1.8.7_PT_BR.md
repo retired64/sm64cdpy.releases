@@ -23,6 +23,7 @@ A versão 1.8.7 adiciona os temas Minish Cap e Mario Kart 64, cores de destaque 
 - Abra Ferramentas → Dados salvos para gerenciar as quatro partidas do jogo original. Toque em um cartão para editar seu próprio progresso; as cópias internas secundárias ficam em uma opção avançada explicada.
 - Edite estrelas, recompensas do castelo, moedas, canhões e desbloqueios. A prévia mostra as estrelas da partida selecionada; completar 120 estrelas é uma ação explícita do menu. As alterações só são salvas ao aplicar e confirmar.
 - Copie ou apague partidas e crie backups locais completos. Cada gravação verificada cria antes um backup e rejeita alterações baseadas em um arquivo desatualizado. Restaurar substitui as quatro partidas; feche o jogo antes de aplicar alterações.
+- O controle de moedas mostra o intervalo de 0 a 255 com uma barra visível, preenchimento do tema e valor atual.
 
 ### Navegação mais clara
 
