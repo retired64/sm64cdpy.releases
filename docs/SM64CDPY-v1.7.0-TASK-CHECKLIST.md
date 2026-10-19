@@ -633,3 +633,6 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Complete drawer groups: Explore (Catalog, Popular, Favourites), GameTool, Exclusive and Resources; Home/Settings stay direct.
 - [x] Share themed group headers, independent expansion and active-route highlighting without adding persistent preferences.
 - [ ] Verify drawer expansion, screen-reader announcements and text scaling on device in each theme.
+
+- [x] Unify root drawer typography and row sizing; prevent decorative navigation-title wrapping; distinguish Exclusive and Render96 icons.
+- [ ] Review narrow-screen and enlarged-text drawer presentation on device across themes.

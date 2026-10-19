@@ -302,3 +302,5 @@ highlights its group. Group expansion is independent local UI state, remembered
 by PageStorage for its existing navigation lifetime, not durable user settings or
 a cross-engine cache. Home and Settings stay direct links. No routes, Workers,
 SAF grants or overlay messages change.
+
+Drawer root links use the same themed heading size, icon bounds and minimum row height as group headers. Nested destinations keep body typography. The navigation caption uses a compact single-line body label instead of the shared decorative section heading, so narrow drawers do not split it. Exclusive uses a collection icon; Render96 uses a distinct 3D-model icon in every theme.

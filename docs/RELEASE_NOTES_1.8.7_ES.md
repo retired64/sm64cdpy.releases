@@ -29,3 +29,5 @@ La versión 1.8.7 incorpora los diseños de interfaz Minish Cap y Mario Kart 64 
 - El menú lateral agrupa las categorías exclusivas en un submenú, coloca Popular encima de GameTool y simplifica las etiquetas Mods y Omm Pack.
 
 - Explorar reúne Catálogo, Popular y Favoritos; Recursos reúne Enlaces y Aviso legal. Inicio y Ajustes siguen directos, con grupos animados independientes y la sección activa resaltada.
+
+- Inicio y Ajustes comparten el estilo de los grupos del menú; el rótulo de navegación se adapta a pantallas pequeñas y Exclusivo y Render96 tienen iconos distintos.
