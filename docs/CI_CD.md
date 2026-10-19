@@ -99,10 +99,10 @@ runner no crea commits. El artifact `flutter-source-sync` permite revisar e
 incorporar el parche de generación/formato cuando el entorno local no dispone
 del SDK completo.
 
-Para probar 1.8.7 después del merge, seleccionar `main` en el workflow manual de testing.
+Para probar 1.8.8 después del merge, seleccionar `main` en el workflow manual de testing.
 Continúan siendo necesarios los secretos de firma existentes. No usar el
 workflow de publicación para obtener una prueba. La candidata actual se
-describe en [RELEASE_1.8.7.md](RELEASE_1.8.7.md).
+describe en [RELEASE_1.8.8.md](RELEASE_1.8.8.md).
 Ver [flujo y validación de temas](../cuatom_themea.md).
 
 ## Release oficial 1.8.3+22

@@ -1,7 +1,7 @@
 # Documentación de SM64CDPY
 
 Este directorio es el punto de entrada técnico del proyecto. `1.8.6+25` es la versión anterior;
-`1.8.7+26` está preparada en main para validación y publicación manual. Otros documentos
+`1.8.8+27` está preparada en main para validación y publicación manual. Otros documentos
 conservan su fecha y alcance de revisión explícitos.
 
 | Documento | Propósito | Estado |
@@ -12,6 +12,7 @@ conservan su fecha y alcance de revisión explícitos.
 | [Preparación de release 1.8.5](RELEASE_1.8.5.md) | Versión/build, pantalla Jugador, vista 3D y puerta de publicación | Preparada en `main`; pendiente del workflow final |
 | [Renderizador 3D de Jugador](PLAYER_3D_RENDERER.md) | Arquitectura, recursos locales, ciclo de vida y límites de la vista previa | Implementado; ampliar matriz física de GPU/WebView |
 | [Preparación de release 1.8.7](RELEASE_1.8.7.md) | Minish Cap, Mario Kart 64, acentos de Retro Manga y datos de distribución | Preparada en main; publicación pendiente |
+| [Preparación de release 1.8.8](RELEASE_1.8.8.md) | Overhaul visual, rendimiento e instalación directa opcional | Preparada en main; validación y publicación pendientes |
 | [Preparación de release 1.8.6](RELEASE_1.8.6.md) | Versión/build, distribución, evidencia y puerta de publicación | Preparada en rama; pendiente merge y workflow final |
 | [Rendimiento visual 1.8.6](PERFORMANCE_MINIMAL_1.8.6.md) | Tema Minimalista opcional, drawer, navegación, detalle y eliminación de SVG | Implementado; pendiente perfil físico |
 | [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Incluidos desde 1.8.3; referencia técnica |
@@ -33,7 +34,7 @@ conservan su fecha y alcance de revisión explícitos.
 
 Cuando cambien versión mínima, dependencias, workers, canales de plataforma, persistencia, overlay o workflows, actualiza el documento correspondiente y la fecha de revisión del archivo. Las ideas y auditorías puntuales no deben presentarse como arquitectura vigente: deben añadirse al índice del archivo.
 
-Última revisión: **2026-10-18**.
+Última revisión: **2026-10-19**.
 
 - [Activación de mods desde Biblioteca](GAME_MOD_ACTIVATION.md): contrato del juego, SAF, edición verificada, recuperación y pruebas.
 

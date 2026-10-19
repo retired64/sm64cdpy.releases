@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "version": "1.8.8",
+  "build": 27,
+  "publishedAt": "2026-10-19T00:00:00Z",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "Smoother themes and optional faster installation",
+      "summary": "Version 1.8.8 refines the visual themes for low-end devices and adds an optional direct-storage installation path while preserving the standard folder-access fallback.",
+      "highlights": [
+        "Minish Cap now uses a more consistent paper-and-wood interface across screens and mod cards.",
+        "Mario Kart 64 supports the full interface accent palette in light and dark modes.",
+        "Navigation, mod details and Player keep lightweight rendering paths for smoother low-end performance.",
+        "Optional all-files access can accelerate compatible ZIP, 7z, mod, DynOS and Touch Controls installations."
+      ],
+      "sections": [
+        {
+          "heading": "More consistent visual themes",
+          "items": [
+            "Minish Cap extends its paper, chapter-sign and wooden-card language across shared surfaces without expensive blur, clipping or per-card textures.",
+            "Mario Kart 64 can now follow the selected cyan, blue, violet, pink, coral, amber, green or lime interface accent while retaining readable contrast.",
+            "The status bar safe area is respected throughout the app, including the drawer and full-screen routes."
+          ]
+        },
+        {
+          "heading": "Performance for low-end devices",
+          "items": [
+            "Theme backdrops use bounded native painting and cached optimized assets instead of repeated filters or animated decoration.",
+            "Player avoids redundant themed layers around its native preview, while shared cards and navigation retain the optimized rendering path."
+          ]
+        },
+        {
+          "heading": "Optional faster installation",
+          "items": [
+            "Settings can request optional all-files access on supported Android versions to write directly into compatible primary-storage game folders.",
+            "The permission is optional: users who decline it continue using the existing Android folder picker and SAF installation flow.",
+            "ZIP, 7z and loose-file installation share bounded parallel extraction, cancellation checks, path validation, rollback and verified receipts.",
+            "The library invalidates stale discovery results after automatic and manual installations so the installed state refreshes coherently."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Temas más fluidos e instalación rápida opcional",
+      "summary": "La versión 1.8.8 perfecciona los temas visuales para dispositivos de gama baja e incorpora una ruta opcional de instalación directa, conservando el acceso estándar mediante el selector de carpetas.",
+      "highlights": [
+        "Minish Cap ahora usa una interfaz de papel y madera más consistente en pantallas y tarjetas de mods.",
+        "Mario Kart 64 admite toda la paleta de acentos de interfaz en modo claro y oscuro.",
+        "La navegación, los detalles de mods y Jugador mantienen renderizado ligero para mayor fluidez en gama baja.",
+        "El acceso opcional para administrar todos los archivos puede acelerar instalaciones compatibles de ZIP, 7z, mods, DynOS y Touch Controls."
+      ],
+      "sections": [
+        {
+          "heading": "Temas visuales más consistentes",
+          "items": [
+            "Minish Cap extiende su lenguaje de papel, letreros de capítulo y tarjetas de madera a las superficies compartidas sin blur, recortes costosos ni texturas por tarjeta.",
+            "Mario Kart 64 ahora puede seguir el acento cian, azul, violeta, rosa, coral, ámbar, verde o lima manteniendo un contraste legible.",
+            "Toda la aplicación respeta el área segura de la barra de estado, incluido el drawer y las rutas de pantalla completa."
+          ]
+        },
+        {
+          "heading": "Rendimiento para dispositivos de gama baja",
+          "items": [
+            "Los fondos de tema usan dibujo nativo acotado y recursos optimizados en caché en lugar de filtros repetidos o decoración animada.",
+            "Jugador evita capas temáticas redundantes alrededor de su vista nativa; las tarjetas y la navegación conservan el flujo de renderizado optimizado."
+          ]
+        },
+        {
+          "heading": "Instalación rápida opcional",
+          "items": [
+            "Ajustes puede solicitar el permiso opcional para administrar todos los archivos en versiones compatibles de Android y escribir directamente en carpetas válidas del juego dentro del almacenamiento principal.",
+            "El permiso no es obligatorio: quien lo rechace seguirá usando el selector de carpetas de Android y la instalación SAF existente.",
+            "ZIP, 7z y archivos sueltos comparten extracción paralela con memoria acotada, cancelación, validación de rutas, rollback y recibos verificados.",
+            "La biblioteca invalida resultados de detección antiguos tras instalaciones automáticas y manuales para refrescar coherentemente el estado instalado."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Temas mais fluidos e instalação rápida opcional",
+      "summary": "A versão 1.8.8 aprimora os temas visuais para dispositivos de entrada e adiciona uma rota opcional de instalação direta, preservando o acesso padrão pelo seletor de pastas.",
+      "highlights": [
+        "Minish Cap agora usa uma interface de papel e madeira mais consistente em telas e cartões de mods.",
+        "Mario Kart 64 oferece suporte a toda a paleta de cores de destaque nos modos claro e escuro.",
+        "Navegação, detalhes de mods e Jogador mantêm renderização leve para maior fluidez em aparelhos de entrada.",
+        "O acesso opcional para gerenciar todos os arquivos pode acelerar instalações compatíveis de ZIP, 7z, mods, DynOS e Touch Controls."
+      ],
+      "sections": [
+        {
+          "heading": "Temas visuais mais consistentes",
+          "items": [
+            "Minish Cap amplia sua linguagem de papel, placas de capítulo e cartões de madeira para superfícies compartilhadas sem blur, recortes caros ou texturas por cartão.",
+            "Mario Kart 64 agora pode seguir o destaque ciano, azul, violeta, rosa, coral, âmbar, verde ou lima mantendo contraste legível.",
+            "Todo o aplicativo respeita a área segura da barra de status, incluindo o menu lateral e as rotas em tela cheia."
+          ]
+        },
+        {
+          "heading": "Desempenho em dispositivos de entrada",
+          "items": [
+            "Os fundos dos temas usam desenho nativo limitado e recursos otimizados em cache no lugar de filtros repetidos ou decoração animada.",
+            "Jogador evita camadas temáticas redundantes ao redor da visualização nativa; cartões e navegação preservam o fluxo de renderização otimizado."
+          ]
+        },
+        {
+          "heading": "Instalação rápida opcional",
+          "items": [
+            "Os Ajustes podem solicitar a permissão opcional para gerenciar todos os arquivos em versões compatíveis do Android e gravar diretamente em pastas válidas do jogo no armazenamento principal.",
+            "A permissão não é obrigatória: quem recusar continuará usando o seletor de pastas do Android e o fluxo SAF existente.",
+            "ZIP, 7z e arquivos avulsos compartilham extração paralela com memória limitada, cancelamento, validação de caminhos, rollback e recibos verificados.",
+            "A biblioteca invalida resultados antigos de detecção após instalações automáticas e manuais para atualizar de forma coerente o estado instalado."
+          ]
+        }
+      ]
+    }
+  }
+}

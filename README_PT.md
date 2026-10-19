@@ -6,7 +6,7 @@ SM64CDPY é um navegador e gerenciador de mods não oficial, voltado para Androi
 para o **SM64CoopDX**. Ele reúne descoberta, download e instalação de conteúdo,
 integração com o jogo e atualização do catálogo em uma interface móvel.
 
-O projeto está em manutenção ativa. A versão de desenvolvimento é **1.8.7+26**. A
+O projeto está em manutenção ativa. A versão de desenvolvimento é **1.8.8+27**. A
 bolha flutuante da linha 1.7 está implementada, mas continua experimental até a
 conclusão de testes em dispositivos Android reais.
 

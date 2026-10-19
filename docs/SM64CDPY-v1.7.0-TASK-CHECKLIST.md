@@ -663,3 +663,13 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Invalidate native discovery after installation; notify Flutter on manual success.
 - [ ] Full Testing compilation and suites.
 - [ ] Device performance, permission revocation, reinstall, cancellation and app/overlay matrix in FAST_INSTALLATION.md.
+
+## Preparación de release 1.8.8
+
+- [x] Fusionar `minish-cap-visual-overhaul` en `main` conservando instalación rápida y optimizaciones visuales.
+- [x] Subir `pubspec.yaml` a 1.8.8+27 y reservar versionCodes ABI 271/272/273.
+- [x] Preparar manifiesto canónico y notas EN/ES/PT-BR con fecha provisional.
+- [x] Mantener el permiso de administrar todos los archivos como opción explícita y conservar SAF como fallback.
+- [x] Ejecutar análisis, pruebas Flutter/Kotlin y compilación APK debug local.
+- [ ] Validar físicamente permiso concedido/revocado, ZIP, 7z, archivo suelto, cancelación y refresco de Biblioteca.
+- [ ] Ejecutar Testing en `main`, confirmar `publishedAt` y publicar solo con autorización explícita.

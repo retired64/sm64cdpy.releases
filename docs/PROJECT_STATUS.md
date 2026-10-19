@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado para la candidata `1.8.7+26` en `main` el 2026-10-18. La 1.8.6 es la versión anterior.
+Revisado para la candidata `1.8.8+27` en `main` el 2026-10-19. La 1.8.7 es la versión anterior.
 
 ## Implementado
 
@@ -297,3 +297,14 @@ Save progress terminology now uses Normal / Alternative under Game progress in a
 The drawer header always shows the SM64CDPY application logo, including Minish Cap and Mario Kart 64; theme artwork remains available for theme-specific presentation elsewhere.
 
 Pending Testing: optional faster installation in Settings, contained primary-storage direct writes for ZIP/7z/loose files, preserved SAF fallback, direct rollback of new entries, and discovery invalidation after installs. Android 10 deliberately remains on SAF. No on-device speed claim yet.
+
+## Candidata 1.8.8+27
+
+El overhaul visual de Minish Cap, los acentos adaptables de Mario Kart 64 y las
+optimizaciones compartidas de renderizado están integrados en `main`. La
+instalación rápida opcional añade escritura directa únicamente en destinos
+compatibles del almacenamiento principal cuando el usuario concede el permiso
+de administrar todos los archivos; SAF continúa como ruta estándar y fallback.
+
+Manifiesto canónico: `release-manifests/v1.8.8.json`. Notas EN/ES/PT-BR,
+validación final, APK de prueba y matriz física de permisos/extracción pendientes.
