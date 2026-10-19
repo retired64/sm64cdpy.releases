@@ -461,7 +461,6 @@ class _SaveEditor extends StatefulWidget {
 
 class _SaveEditorState extends State<_SaveEditor> {
   late final List<int> stars = List<int>.from(widget.slot['stars'] as List);
-  late final List<int> coins = List<int>.from(widget.slot['coins'] as List);
   late final List<bool> cannons = List<bool>.from(
     widget.slot['cannons'] as List,
   );
@@ -546,7 +545,6 @@ class _SaveEditorState extends State<_SaveEditor> {
                         }
                         for (var i = 0; i < 15; i++) {
                           cannons[i] = true;
-                          coins[i] = coins[i] < 100 ? 100 : coins[i];
                         }
                         castle = 31;
                         unlocks = 0x10ffff;
@@ -600,10 +598,6 @@ class _SaveEditorState extends State<_SaveEditor> {
                               selected: stars[i] & (1 << n) != 0,
                               onSelected: (_) => setState(() {
                                 stars[i] ^= 1 << n;
-                                if (i < 15 &&
-                                    stars[i] & 64 != 0 &&
-                                    coins[i] < 100)
-                                  coins[i] = 100;
                               }),
                             ),
                         ],
@@ -613,88 +607,6 @@ class _SaveEditorState extends State<_SaveEditor> {
                           title: Text(l.saveFileCannon),
                           value: cannons[i],
                           onChanged: (v) => setState(() => cannons[i] = v),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      l.saveFileCoins,
-                                      style: retro.body(size: 15),
-                                    ),
-                                  ),
-                                  Text(
-                                    '${coins[i]} / 255',
-                                    style: retro
-                                        .body(size: 15, color: retro.accentText)
-                                        .copyWith(fontWeight: FontWeight.w700),
-                                  ),
-                                ],
-                              ),
-                              SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  trackHeight: 8,
-                                  trackShape:
-                                      const RoundedRectSliderTrackShape(),
-                                  inactiveTrackColor: Color.alphaBlend(
-                                    retro.ink.withValues(alpha: 0.28),
-                                    retro.surface,
-                                  ),
-                                  activeTrackColor: retro.accent,
-                                  thumbColor: retro.accent,
-                                  overlayColor: retro.accent.withValues(
-                                    alpha: 0.16,
-                                  ),
-                                  activeTickMarkColor: Colors.transparent,
-                                  inactiveTickMarkColor: Colors.transparent,
-                                  valueIndicatorColor: retro.accent,
-                                  valueIndicatorTextStyle: retro.body(
-                                    size: 14,
-                                    color: retro.onColor(retro.accent),
-                                  ),
-                                ),
-                                child: Slider(
-                                  value: coins[i].toDouble(),
-                                  min: 0,
-                                  max: 255,
-                                  divisions: 255,
-                                  label: '${coins[i]}',
-                                  semanticFormatterCallback: (value) =>
-                                      '${l.saveFileCoins} ${value.round()}',
-                                  onChanged: (v) => setState(
-                                    () =>
-                                        coins[i] = stars[i] & 64 != 0 && v < 100
-                                        ? 100
-                                        : v.round(),
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '0',
-                                    style: retro.body(
-                                      size: 12,
-                                      color: retro.inkDim,
-                                    ),
-                                  ),
-                                  Text(
-                                    '255',
-                                    style: retro.body(
-                                      size: 12,
-                                      color: retro.inkDim,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
                         ),
                       ],
                     ],
@@ -755,7 +667,6 @@ class _SaveEditorState extends State<_SaveEditor> {
                     'slot': widget.slot['slot'],
                     'bank': widget.slot['bank'],
                     'stars': stars,
-                    'coins': coins,
                     'cannons': cannons,
                     'castle': castle,
                     'unlocks': unlocks,

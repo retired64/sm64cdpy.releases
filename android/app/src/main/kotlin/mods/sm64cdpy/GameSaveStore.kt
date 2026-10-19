@@ -57,7 +57,7 @@ internal object GameSaveStore {
                 "copy" -> codec.copy(slot, (arguments["destination"] as? Number)?.toInt() ?: error("invalid"))
                 "edit" -> codec.edit(slot, (arguments["bank"] as? Number)?.toInt() ?: error("invalid"),
                     (arguments["stars"] as? List<*>)?.map { (it as Number).toInt() } ?: error("invalid"),
-                    (arguments["coins"] as? List<*>)?.map { (it as Number).toInt() } ?: error("invalid"),
+                    (arguments["coins"] as? List<*>)?.map { (it as Number).toInt() },
                     (arguments["cannons"] as? List<*>)?.map { it as Boolean } ?: error("invalid"),
                     (arguments["castle"] as? Number)?.toInt() ?: error("invalid"),
                     (arguments["unlocks"] as? Number)?.toInt() ?: error("invalid"))

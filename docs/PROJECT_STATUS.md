@@ -289,4 +289,5 @@ Drawer visual polish: consistent Home/Settings and group-header typography, a co
 
 Drawer localization: Spanish uses Herramientas / Partidas / Enlaces; Portuguese uses Ferramentas / Dados salvos / Links. English keeps GameTool / Save File and shortens Links. Save screen headings share the same translated label; routes remain unchanged.
 
-Save File coin controls now expose a visible neutral track even at zero, themed fill, current/255 count and endpoint labels. The draft and native persistence rules are unchanged.
+
+Save File no longer exposes coin editing. Progress edits omit coin records so Kotlin preserves their original bytes; stars, cannons, unlocks, copy/erase and backups remain available.
