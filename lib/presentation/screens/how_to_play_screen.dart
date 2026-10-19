@@ -99,7 +99,7 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
       builder: (sheetContext) {
         final retro = RetroTheme.of(sheetContext);
         return SafeArea(child: FractionallySizedBox(heightFactor: 0.8,
-          child: ListView(padding: const EdgeInsets.fromLTRB(20, 0, 20, 24), children: [
+          child: ListView(primary: false, padding: const EdgeInsets.fromLTRB(20, 0, 20, 24), children: [
             Text(l10n.playGuideMap, style: retro.heading(size: 22)),
             const SizedBox(height: 12),
             Text(l10n.playGuideIntro, style: retro.body(size: 16)),
@@ -220,6 +220,7 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
           onPageChanged: (page) => setState(() => _step = page),
           itemBuilder: (context, index) => ListView(
             key: PageStorageKey('guide-chapter-$index'),
+            primary: false,
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             children: [Align(alignment: Alignment.topCenter,
               child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 680),
