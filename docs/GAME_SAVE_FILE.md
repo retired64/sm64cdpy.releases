@@ -69,3 +69,10 @@ the Flutter suite, including opening slot B independently from a completed A,
 previewing 120 stars and cancelling without changing confirmed progress across
 all six designs. Generated localization and Dart formatting are synced from the
 runner. Device checks and light/dark visual review remain necessary.
+
+Coin editing is not exposed in the application. Edit requests omit `coins`, so
+the native codec preserves the original 15 raw coin records exactly, including
+when applying the 120-star preset. The game can still derive an effective score
+of at least 100 from a hundred-coin star; this does not require rewriting those
+records. Older explicit coin payloads remain accepted for compatibility. Whole
+slot copy/erase and full backup/restore retain their existing semantics.

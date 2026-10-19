@@ -461,7 +461,6 @@ class _SaveEditor extends StatefulWidget {
 
 class _SaveEditorState extends State<_SaveEditor> {
   late final List<int> stars = List<int>.from(widget.slot['stars'] as List);
-  late final List<int> coins = List<int>.from(widget.slot['coins'] as List);
   late final List<bool> cannons = List<bool>.from(
     widget.slot['cannons'] as List,
   );
@@ -546,7 +545,6 @@ class _SaveEditorState extends State<_SaveEditor> {
                         }
                         for (var i = 0; i < 15; i++) {
                           cannons[i] = true;
-                          coins[i] = coins[i] < 100 ? 100 : coins[i];
                         }
                         castle = 31;
                         unlocks = 0x10ffff;
@@ -600,10 +598,6 @@ class _SaveEditorState extends State<_SaveEditor> {
                               selected: stars[i] & (1 << n) != 0,
                               onSelected: (_) => setState(() {
                                 stars[i] ^= 1 << n;
-                                if (i < 15 &&
-                                    stars[i] & 64 != 0 &&
-                                    coins[i] < 100)
-                                  coins[i] = 100;
                               }),
                             ),
                         ],
@@ -613,24 +607,6 @@ class _SaveEditorState extends State<_SaveEditor> {
                           title: Text(l.saveFileCannon),
                           value: cannons[i],
                           onChanged: (v) => setState(() => cannons[i] = v),
-                        ),
-                        Row(
-                          children: [
-                            Text('${l.saveFileCoins} ${coins[i]}'),
-                            Expanded(
-                              child: Slider(
-                                value: coins[i].toDouble(),
-                                min: 0,
-                                max: 255,
-                                divisions: 255,
-                                onChanged: (v) => setState(
-                                  () => coins[i] = stars[i] & 64 != 0 && v < 100
-                                      ? 100
-                                      : v.round(),
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ],
@@ -691,7 +667,6 @@ class _SaveEditorState extends State<_SaveEditor> {
                     'slot': widget.slot['slot'],
                     'bank': widget.slot['bank'],
                     'stars': stars,
-                    'coins': coins,
                     'cannons': cannons,
                     'castle': castle,
                     'unlocks': unlocks,

@@ -62,6 +62,20 @@ class GameSaveCodecTest {
         bytes[12] = 64
         assertEquals(100, GameSaveCodec(bytes).coins(0, 0)[0])
     }
+    @Test fun `editing progress without coins preserves raw records in both byte orders`() {
+        for (order in listOf(ByteOrder.BIG_ENDIAN, ByteOrder.LITTLE_ENDIAN)) {
+            val codec = GameSaveCodec(fixture(order))
+            codec.edit(0, 0, List(25) { 0 }, List(15) { it * 13 }, List(15) { false }, 0, 0)
+            val records = codec.bytes.sliceArray(37..51)
+            val untouched = codec.bytes.sliceArray(56..511)
+            // Even the 120-star preset must preserve the original coin bytes.
+            codec.edit(0, 0, GameSaveCodec.maxStars.map { (1 shl it) - 1 }, null, List(15) { true }, 31, 0x10ffff)
+            assertArrayEquals(records, codec.bytes.sliceArray(37..51))
+            assertArrayEquals(untouched, codec.bytes.sliceArray(56..511))
+            assertTrue(codec.valid(0, 0))
+            assertEquals(120, codec.total(0, 0))
+        }
+    }
     @Test(expected = IllegalArgumentException::class) fun `rejects wrong size`() { GameSaveCodec(ByteArray(513)) }
     @Test(expected = IllegalArgumentException::class) fun `rejects corrupt source instead of signing it`() {
         val bytes = fixture(); bytes[3] = 11

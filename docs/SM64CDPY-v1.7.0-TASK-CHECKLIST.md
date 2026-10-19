@@ -645,3 +645,6 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Consolidar las notas de temas, acentos, Partidas y navegación en el manifiesto canónico.
 - [x] Regenerar previews EN/ES/PT-BR y validar versión 1.8.7+26 y contrato Python.
 - [ ] Ejecutar manualmente Build & Release cuando el propietario decida publicar; revisar fecha real y las tres ABI.
+
+
+- [x] Remove unsupported coin editing and preserve raw coin records in progress-only writes; add both-endian preservation regression coverage.

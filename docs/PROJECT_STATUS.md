@@ -288,3 +288,6 @@ Drawer navigation: Home and Settings remain direct links. Explore groups Catalog
 Drawer visual polish: consistent Home/Settings and group-header typography, a compact navigation caption for narrow screens, and separate collection/3D-model icons for Exclusive/Render96.
 
 Drawer localization: Spanish uses Herramientas / Partidas / Enlaces; Portuguese uses Ferramentas / Dados salvos / Links. English keeps GameTool / Save File and shortens Links. Save screen headings share the same translated label; routes remain unchanged.
+
+
+Save File no longer exposes coin editing. Progress edits omit coin records so Kotlin preserves their original bytes; stars, cannons, unlocks, copy/erase and backups remain available.

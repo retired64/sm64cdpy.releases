@@ -43,14 +43,14 @@ internal class GameSaveCodec(input: ByteArray) {
     }
     fun cannons(slot: Int, bank: Int) = (1..15).map { bytes[offset(slot, bank) + 12 + it].toInt() and 128 != 0 }
     fun total(slot: Int, bank: Int) = stars(slot, bank).sumOf { Integer.bitCount(it) } + Integer.bitCount(flags(slot, bank) ushr 24 and 127)
-    fun edit(slot: Int, bank: Int, stars: List<Int>, coins: List<Int>, cannons: List<Boolean>, castle: Int, unlocks: Int) {
+    fun edit(slot: Int, bank: Int, stars: List<Int>, coins: List<Int>?, cannons: List<Boolean>, castle: Int, unlocks: Int) {
         require(valid(slot, bank) || empty(slot, bank)) { "format" }
-        require(stars.size == 25 && coins.size == 15 && cannons.size == 15 && castle in 0..31) { "invalid" }
-        require(stars.withIndex().all { (i, value) -> value in 0..((1 shl maxStars[i]) - 1) } && coins.all { it in 0..255 }) { "invalid" }
+        require(stars.size == 25 && (coins == null || coins.size == 15) && cannons.size == 15 && castle in 0..31) { "invalid" }
+        require(stars.withIndex().all { (i, value) -> value in 0..((1 shl maxStars[i]) - 1) } && (coins == null || coins.all { it in 0..255 })) { "invalid" }
         val at = offset(slot, bank)
         stars.forEachIndexed { i, value -> bytes[at + 12 + i] = ((bytes[at + 12 + i].toInt() and 128) or value).toByte() }
         cannons.forEachIndexed { i, value -> val p = at + 13 + i; bytes[p] = ((bytes[p].toInt() and 127) or if (value) 128 else 0).toByte() }
-        coins.forEachIndexed { i, value -> bytes[at + 37 + i] = value.coerceAtLeast(if (stars[i] and 64 != 0) 100 else 0).toByte() }
+        coins?.forEachIndexed { i, value -> bytes[at + 37 + i] = value.coerceAtLeast(if (stars[i] and 64 != 0) 100 else 0).toByte() }
         val mask = 0x0010ffff
         require(unlocks and mask.inv() == 0) { "invalid" }
         val preserved = flags(slot, bank) and (mask or 0x1f000000).inv()
