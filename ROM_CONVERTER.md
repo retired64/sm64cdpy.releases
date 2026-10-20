@@ -330,3 +330,145 @@ una copia USA válida o una explicación accionable, puede cancelar y sabe dónd
 guardó el resultado. Preparar no altera configuración, mods, partidas ni tema.
 La integración inicial se limita a exportar y continuar la guía; instalar o
 reemplazar directamente en user requiere la segunda fase descrita arriba.
+
+## 12. Obtener una copia del propio cartucho: ayuda propuesta
+
+Añadir una ayuda opcional **¿Cómo obtengo mi ROM?** antes de elegir archivo.
+Explicar que la ROM contiene los datos del cartucho y que el preparador recibe
+un archivo que el usuario ya tiene: la app no lee físicamente cartuchos ni
+incluye un juego. Separar extracción, conversión y comprobación de compatibilidad.
+
+Una vía técnica documentada es utilizar un lector de cartuchos compatible con
+Nintendo 64, como Open Source Cartridge Reader (OSCR). Referencias del proyecto:
+
+- [Qué pedir / componentes](https://github.com/sanni/cartreader/wiki/What-to-order):
+  lista para construir el lector; no es una guía jurídica ni un enlace a ROMs.
+- [Leer un cartucho N64](https://github.com/sanni/cartreader/wiki/Read-N64-cartridge):
+  instrucciones específicas de lectura y preparación del equipo.
+
+La página de componentes muestra diferentes piezas y configuraciones: enlazar
+la documentación correspondiente al hardware, sin copiar ajustes eléctricos
+como si fueran universales. Montar un lector requiere conocimientos; para
+menores, indicar ayuda de una persona adulta. No presentar una compra concreta
+como requisito de la app ni fijar precios o disponibilidad. El repositorio
+consultado aparece archivado: revisar enlaces antes de publicar la ayuda.
+
+### Recorrido sencillo para la futura guía
+
+1. **Tu cartucho:** disponer de una copia legítima del juego. Para el flujo
+   compatible estudiado se necesita el contenido de la edición USA original;
+   un cartucho europeo no se transforma en USA con el preparador.
+2. **Un lector compatible:** seguir la guía del fabricante/proyecto y las
+   instrucciones de seguridad de su modelo. Usar la función de lectura de ROM;
+   no escribir ni borrar cartucho o partida.
+3. **Obtener el archivo:** extraer una copia con el equipo, conforme a la ley
+   aplicable. La documentación N64 de OSCR explica la preparación de la tarjeta
+   SD y la lectura. No inventar una secuencia de botones común a todos los lectores.
+4. **Pasarlo al teléfono:** transferir el archivo generado desde la tarjeta o
+   el ordenador mediante un método disponible, conservando una copia original.
+5. **Prepararlo en SM64CDPY:** elegir ese archivo; normalizar si hace falta y
+   comprobar tamaño/hash. Un resultado compatible identifica contenido técnico,
+   no acredita propiedad ni permisos legales.
+
+### Orientación por países: México
+
+Usar nombres de países y territorios jurídicos, sin ciudades ni inferencias
+sobre la ubicación del usuario. La región **USA de la ROM** es un requisito
+técnico del juego, independiente del país donde vive la persona.
+
+El artículo 105 de la
+[Ley Federal del Derecho de Autor de México, texto vigente](https://www.diputados.gob.mx/LeyesBiblio/pdf/LFDA.pdf)
+permite al usuario legítimo las copias autorizadas por la licencia o una copia
+bajo las condiciones legales: indispensable para utilizar el programa, o
+exclusivamente de resguardo para sustituir la copia adquirida si queda inutilizable
+por daño o pérdida. El respaldo debe destruirse al cesar el derecho de uso.
+
+Ese artículo no declara autorizado todo volcado de videojuego para jugar en
+otro sistema. También deben considerarse los artículos 114 Bis y siguientes
+sobre medidas tecnológicas y sus excepciones. No afirmar ausencia de
+jurisprudencia específica sin una investigación judicial suficiente, ni prometer
+que una interpretación sea «la más defendible» para cualquier caso.
+
+### Estados Unidos (USA)
+
+La [sección 117 del título 17](https://www.copyright.gov/title17/92chap1.html#117)
+contempla, para el propietario de una copia de un programa, copias en supuestos
+concretos, como el paso esencial para utilizarlo con una máquina o el archivo
+exclusivo, con sus condiciones. Una copia de archivo no equivale automáticamente
+a autorización para usar sus recursos en otro port. La
+[Copyright Office explica los límites de los respaldos](https://www.copyright.gov/help/faq/faq-digital.html).
+
+La [sección 1201](https://www.copyright.gov/title17/92chap12.html#1201)
+regula por separado la elusión de controles efectivos de acceso y establece
+excepciones. No asumir que la falta de cifrado descarta una medida tecnológica:
+el concepto legal no se limita al cifrado. No concluir que el riesgo es bajo
+por tratarse de N64 o uso personal. Las opiniones de un fabricante no sustituyen
+la ley ni una decisión judicial sobre un caso concreto.
+
+### Europa y la Unión Europea
+
+Evitar el título «Obtén tu ROM legalmente en Europa» como garantía general.
+Europa incluye países fuera de la UE; incluso dentro de la UE hay que atender
+la legislación nacional y las circunstancias del uso.
+
+El artículo 5.2 de la
+[Directiva 2009/24/CE](https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32009L0024)
+establece que no puede impedirse por contrato una copia de seguridad realizada
+por quien tiene derecho a usar el programa, en la medida en que sea necesaria
+para esa utilización. No es una autorización general para cualquier copia,
+descarga o uso posterior. Esa disposición por sí sola no demuestra que usar una
+ROM extraída en este port esté autorizado en todos los casos.
+
+El TJUE explicó en Nintendo/PC Box, C-355/12, que los videojuegos incluyen también
+elementos gráficos y sonoros con protección propia y abordó los límites de la
+protección de medidas tecnológicas. Por ello no basta aplicar automáticamente
+la excepción de software a todo el juego. Véase el
+[comunicado oficial del TJUE sobre la sentencia](https://curia.europa.eu/jcms/upload/docs/application/pdf/2014-01/cp140009en.pdf).
+No deducir que poseer un cartucho permite eludir cualquier protección o
+compartir su ROM. La guía técnica del lector tampoco determina esa legalidad.
+
+### Reino Unido
+
+La [sección 50A de Copyright, Designs and Patents Act 1988](https://www.legislation.gov.uk/ukpga/1988/48/section/50A)
+contempla una copia de respaldo necesaria para el uso legítimo de un programa
+por su usuario legítimo. No presentarlo como permiso general de copia privada
+de videojuegos ni como autorización para cualquier uso posterior. Reino Unido
+se trata separadamente de la UE; comprobar texto vigente y demás reglas
+aplicables antes de publicar una conclusión específica.
+
+### Otros países y límites de esta orientación
+
+No extrapolar estas excepciones a Brasil u otros países sin revisar fuentes
+nacionales. Idioma, país del usuario y región del cartucho son datos distintos;
+no elegir automáticamente la explicación jurídica por idioma o GPS.
+
+Para redactar la ayuda, conservar estas distinciones:
+
+- **Extraer el cartucho propio:** método técnico que debe evaluarse bajo la ley
+  aplicable; propiedad y uso personal no bastan para garantizar legalidad.
+- **Descargar de terceros:** poseer el cartucho no concede por sí solo permiso
+  para obtener una copia de una fuente no autorizada. La app no enlaza ROMs.
+- **Compartir volcados:** una excepción de respaldo no concede por sí sola
+  derecho a distribuirlos. No ofrecer subida, intercambio ni publicación.
+- **Emulación y ports:** no usar «todos los emuladores son legales» como garantía
+  para esta app; software, ROM, recursos del juego y medidas tecnológicas son
+  cuestiones separadas. El preparador no determina derechos sobre ninguna.
+
+Evitar tanto «todo es ilegal» como «es una zona gris de muy bajo riesgo».
+Describir las condiciones verificadas y dejar explícito qué no se ha resuelto.
+No recomendar Retrode, EverDrive u otro equipo como lector de cartuchos sin
+comprobar que el modelo y accesorios permiten extraer precisamente N64:
+cargar ROMs y extraerlas de un cartucho son funciones distintas.
+
+Texto breve propuesto para la interfaz, pendiente de localización:
+
+> Puedes obtener un archivo de tu propio cartucho con un lector compatible.
+> Consulta las normas de tu país sobre copias y medidas de protección.
+> SM64CDPY no incluye ni proporciona ROMs.
+
+La explicación ampliada y las fuentes quedan en una ayuda secundaria; no añadir
+un formulario jurídico ni una casilla que finja comprobar derechos. Mantener
+como acciones separadas **Ver guía del lector** y **Ya tengo mi archivo**.
+Esta sección es orientación general para redactar el producto, no una conclusión
+jurídica sobre la situación de cada usuario. Antes de presentar afirmaciones
+legales específicas para un país, verificarlas con fuentes nacionales vigentes.
