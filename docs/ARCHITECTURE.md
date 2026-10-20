@@ -31,13 +31,12 @@ Los otros cinco temas mantienen AppDrawer y DrawerMenuButton.
 GoRouter/currentRoute es autoridad sobre selección. PageController conserva
 solo qué viñeta se explora: deslizar no navega ni abre el juego. Pulsar un destino
 navega tras cerrar el panel modal; la nueva ruta centra su grupo. Los paneles
-admiten scroll, arrastre para cerrar y botón Cerrar. Jugar usa launchGameWithGuide
-y su confirmación cuando falta el juego; no es una pestaña.
+admiten scroll, arrastre para cerrar y botón Cerrar. Jugar permanece en Inicio,
+usa launchGameWithGuide y su confirmación cuando falta el juego; no es una pestaña.
 
 Las dos barras canónicas y Aviso legal consultan el scope para retirar el
-hamburguesa únicamente bajo la navegación inferior real. Inicio retira su
-lanzamiento duplicado. Scaffold reserva espacio para la tira, respeta SafeArea
-y la oculta con el teclado. En horizontal Jugar se compacta. AnimatedScale
+hamburguesa únicamente bajo la navegación inferior real. Scaffold reserva
+espacio para la tira, respeta SafeArea y la oculta con el teclado. AnimatedScale
 respeta reducción de movimiento; la trama usa HalftoneBackground existente.
 El carrusel repite los cinco grupos para que el activo pueda quedar centrado
 y tenga vecinos a ambos lados. Construye solo celdas visibles y omite índices
@@ -46,7 +45,7 @@ semánticos artificiales; los controles conservan nombre, acción y selección r
 PageStorageBucket del shell conserva offsets compatibles, aislados por ruta;
 se descarta al destruir el shell. No conserva todos los State/controles ni
 cachea datos del juego. Los providers siguen siendo autoridad de sus datos.
-Antes de abandonar Jugador o abrir el juego se comprueba busy/dirty y se pide
+Antes de abandonar Jugador se comprueba busy/dirty y se pide
 confirmación para descartar. No hay preferencias nativas ni mensajes al overlay.
 Los métodos usados con unawaited capturan errores y liberan busy en finally.
 PageController y callbacks pendientes se protegen con dispose/mounted.
@@ -72,6 +71,24 @@ No se eliminan las comprobaciones de lanzamiento/confirmación para pasar CI.
 La ejecución terminó correctamente, incluidas las pruebas nativas y el APK
 `cdpy-bd74160-TESTING`. El análisis pasó sin errores ni warnings; conserva avisos
 informativos de estilo. La comprobación visual en un teléfono sigue pendiente.
+
+### Ajuste a partir de las capturas — 2026-10-20
+
+La tira pasa a una única fila de icono y nombre, sin instrucción visible,
+checks/flechas inferiores ni lanzamiento duplicado. La ayuda de deslizamiento
+permanece en Semantics. Jugar vuelve al bloque original de Inicio para todos
+los temas, reutilizando su protección contra doble toque y la guía de instalación.
+La altura base es de aproximadamente 89 dp más SafeArea y crece con la escala
+de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa;
+solo su dibujo se reduce. La sección activa mantiene escala 1, color de acento
+y sombra mayor; las vecinas usan 0.78, o 0.86 al centrarlas para explorar.
+Deslizar sigue sin cambiar la selección real ni navegar.
+
+Los tests de la tira verifican altura compacta, jerarquía, área táctil y ausencia
+de Jugar. El lanzamiento y su guía siguen cubiertos por how_to_play_test y los
+tests del servicio. Formato, análisis y pruebas Flutter de este ajuste quedan
+pendientes en CI: Flutter/Dart no están instalados en Termux. La build verde
+citada arriba corresponde al diseño anterior, no a este ajuste.
 
 ## Arranque
 

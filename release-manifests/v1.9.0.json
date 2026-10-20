@@ -14,7 +14,7 @@
         "Retro Manga now applies ink borders, hard shadows and rectangular paper geometry to cards, dialogs, inputs, menus, chips, buttons, switches, sliders, progress, tabs, ExpansionTile and tooltips.",
         "Slanted section headers keep their manga identity, apply consistent uppercase labels and truncate long titles on narrow screens.",
         "The other five designs remain isolated; no new blur, shaders, raster assets or broad storage permission are added.",
-        "Retro Manga introduces a swipeable comic-panel navigation strip with grouped destinations and an explicit Play action; the other themes keep their drawer."
+        "Retro Manga introduces a swipeable comic-panel navigation strip with compact grouped destinations and a larger active section; Play remains on Home and the other themes keep their drawer."
       ],
       "sections": [
         {
@@ -71,7 +71,7 @@
         "Retro Manga aplica bordes de tinta, sombras duras y geometría rectangular de papel a tarjetas, diálogos, campos, menús, chips, botones, switches, sliders, progreso, pestañas, ExpansionTile y tooltips.",
         "Los encabezados inclinados conservan su identidad manga, aplican mayúsculas coherentes y truncan títulos largos en pantallas estrechas.",
         "Los otros cinco diseños permanecen aislados; no se añaden blur, shaders, recursos raster ni permisos generales de almacenamiento.",
-        "Retro Manga incorpora una barra de viñetas deslizable con destinos agrupados y una acción explícita para Jugar; los demás temas conservan su drawer."
+        "Retro Manga incorpora una barra de viñetas deslizable con destinos compactos y una sección activa más grande; Jugar permanece en Inicio y los demás temas conservan su drawer."
       ],
       "sections": [
         {
@@ -128,7 +128,7 @@
         "O Retro Manga aplica bordas de tinta, sombras duras e geometria retangular de papel a cartões, diálogos, campos, menus, chips, botões, switches, sliders, progresso, abas, ExpansionTile e tooltips.",
         "Os cabeçalhos inclinados mantêm a identidade mangá, aplicam maiúsculas coerentes e truncam títulos longos em telas estreitas.",
         "Os outros cinco designs permanecem isolados; não são adicionados blur, shaders, recursos raster ou permissões gerais de armazenamento.",
-        "Retro Manga ganha uma barra de quadrinhos deslizante com destinos agrupados e uma ação explícita para Jogar; os demais temas mantêm o menu lateral."
+        "Retro Manga ganha uma barra de quadrinhos deslizante com destinos compactos e uma seção ativa maior; Jogar permanece no Início e os demais temas mantêm o menu lateral."
       ],
       "sections": [
         {

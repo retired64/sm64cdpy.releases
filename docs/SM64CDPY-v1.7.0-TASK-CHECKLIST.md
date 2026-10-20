@@ -17,12 +17,14 @@
 ### Drawer-ui: navegación inferior Manga — 2026-10-20
 
 - [x] Cinco grupos con acceso a todos los destinos del drawer.
-- [x] Swipe para explorar; pulsación para navegar o lanzar explícitamente.
+- [x] Swipe para explorar; pulsación para navegar. Jugar permanece en Inicio.
 - [x] Área inferior, SafeArea, teclado y variante horizontal.
 - [x] Protección de borradores y ciclo de vida de controllers/modales.
 - [x] Cuatro claves en cinco ARB y pruebas de regresión de navegación.
 - [x] Generar localizaciones, ejecutar formato, análisis y tests en Flutter/CI:
       Testing 39494649064, 428 pruebas correctas para bd74160.
+- [x] Compactar a una fila, destacar la sección activa y conservar el área táctil.
+- [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.
 

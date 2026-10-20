@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -128,6 +126,17 @@ void main() {
     expect(find.byKey(const ValueKey('manga-nav-0')), findsOneWidget);
     expect(find.byKey(const ValueKey('manga-nav-1')), findsOneWidget);
     expect(router.routeInformationProvider.value.uri.path, '/');
+    final bar = find.byKey(const ValueKey('manga-navigation'));
+    expect(tester.getSize(bar).height, lessThan(100));
+    final active = tester.widget<AnimatedScale>(
+      find.byKey(const ValueKey('manga-nav-visual-0')),
+    );
+    final neighbour = tester.widget<AnimatedScale>(
+      find.byKey(const ValueKey('manga-nav-visual-1')),
+    );
+    expect(active.scale, 1);
+    expect(neighbour.scale, lessThan(active.scale));
+    expect(find.byKey(const ValueKey('manga-play')), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -204,22 +213,8 @@ void main() {
   }
 
   testWidgets(
-    'more retains exclusive resources settings and native launch',
+    'more retains exclusive resources and settings',
     (tester) async {
-      final calls = <String>[];
-      const channel = MethodChannel('sm64cdpy/launcher');
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
-        call,
-      ) async {
-        calls.add(call.method);
-        return true;
-      });
-      addTearDown(
-        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          channel,
-          null,
-        ),
-      );
       final router = _router(initial: '/settings');
       addTearDown(router.dispose);
       await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
@@ -254,13 +249,10 @@ void main() {
       }
       await tester.tap(find.byType(CloseButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('manga-play')));
-      await tester.pumpAndSettle();
-      expect(calls, ['launch']);
+      expect(find.byKey(const ValueKey('manga-play')), findsNothing);
       expect(router.routeInformationProvider.value.uri.path, '/settings');
       expect(tester.takeException(), isNull);
     },
-    variant: TargetPlatformVariant.only(TargetPlatform.android),
   );
 
   testWidgets('leaving Player asks before discarding its draft', (
@@ -310,40 +302,4 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'missing game opens the guide only after confirmation',
-    (tester) async {
-      final calls = <String>[];
-      const channel = MethodChannel('sm64cdpy/launcher');
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
-        call,
-      ) async {
-        calls.add(call.method);
-        return false;
-      });
-      addTearDown(
-        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          channel,
-          null,
-        ),
-      );
-      final router = _router(initial: '/library');
-      addTearDown(router.dispose);
-      await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
-      await tester.pumpAndSettle();
-      final l = AppLocalizations.of(
-        tester.element(find.byType(MangaNavigationBar)),
-      );
-      await tester.tap(find.byKey(const ValueKey('manga-play')));
-      await tester.pumpAndSettle();
-      expect(calls, ['launch', 'isInstalled']);
-      expect(router.routeInformationProvider.value.uri.path, '/library');
-      final retro = RetroTheme.of(tester.element(find.byType(Dialog)));
-      await tester.tap(find.text(retro.displayLabel(l.playGuideRead)));
-      await tester.pumpAndSettle();
-      expect(router.routeInformationProvider.value.uri.path, '/how-to-play');
-      expect(tester.takeException(), isNull);
-    },
-    variant: TargetPlatformVariant.only(TargetPlatform.android),
-  );
 }

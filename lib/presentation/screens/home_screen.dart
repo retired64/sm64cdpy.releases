@@ -15,7 +15,6 @@ import '../providers/extra_providers.dart';
 import '../providers/installation_library_provider.dart';
 import '../widgets/installation_library_card.dart';
 import '../widgets/app_shell.dart';
-import '../widgets/manga_navigation_scope.dart';
 import '../../l10n/app_localizations.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -79,8 +78,7 @@ class _HomeBody extends ConsumerWidget {
 
         // ── Launch game ─────────────────────────────────────
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
-        if (!MangaNavigationScope.of(context))
-          const SliverToBoxAdapter(child: _LaunchGameButton()),
+        const SliverToBoxAdapter(child: _LaunchGameButton()),
 
         const SliverToBoxAdapter(child: _RecentInstallations()),
 

@@ -8,7 +8,6 @@ import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
 import 'app_snackbar.dart';
-import 'game_launch_flow.dart';
 
 typedef _Destination = ({String label, IconData icon, String route});
 
@@ -30,8 +29,9 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
 
   static int _group(String route) {
     if (route == '/') return 0;
-    if (const ['/catalogue', '/popular', '/favourites'].contains(route))
+    if (const ['/catalogue', '/popular', '/favourites'].contains(route)) {
       return 1;
+    }
     if (route == '/library') return 2;
     if (route == '/player' || route.startsWith('/game-tool/')) return 3;
     return 4;
@@ -43,7 +43,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     _focused = _group(widget.currentRoute);
     _pages = PageController(
       initialPage: _origin + _focused,
-      viewportFraction: 0.4,
+      viewportFraction: 0.32,
       keepPage: false,
     );
   }
@@ -110,27 +110,12 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       FocusManager.instance.primaryFocus?.unfocus();
       context.go(route);
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         AppSnackbar.error(
           context,
           message: AppLocalizations.of(context).mangaNavError,
         );
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _play() async {
-    if (_busy) return;
-    setState(() => _busy = true);
-    try {
-      if (await _canLeave() && mounted) await launchGameWithGuide(context);
-    } catch (_) {
-      if (mounted)
-        AppSnackbar.error(
-          context,
-          message: AppLocalizations.of(context).mangaNavError,
-        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -317,20 +302,15 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     final retro = RetroTheme.of(context);
     final l = AppLocalizations.of(context);
     final entries = [
-      (label: l.navHome, icon: Icons.home_outlined, grouped: false),
-      (label: l.sectionExplore, icon: Icons.explore_outlined, grouped: true),
-      (label: l.navLibrary, icon: Icons.inventory_2_outlined, grouped: false),
-      (
-        label: l.gameToolTitle,
-        icon: Icons.sports_esports_outlined,
-        grouped: true,
-      ),
-      (label: l.mangaNavMore, icon: Icons.dashboard_outlined, grouped: true),
+      (label: l.navHome, icon: Icons.home_outlined),
+      (label: l.sectionExplore, icon: Icons.explore_outlined),
+      (label: l.navLibrary, icon: Icons.inventory_2_outlined),
+      (label: l.gameToolTitle, icon: Icons.sports_esports_outlined),
+      (label: l.mangaNavMore, icon: Icons.dashboard_outlined),
     ];
     final labelHeight = MediaQuery.textScalerOf(context).scale(11) * 2.6;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final selected = _group(widget.currentRoute);
-    final compact = MediaQuery.sizeOf(context).height < 450;
     return Material(
       key: const ValueKey('manga-navigation'),
       color: retro.background,
@@ -349,91 +329,33 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                   color: retro.ink.withValues(alpha: 0.07),
                 ),
               ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (!compact)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              l.mangaNavHint,
-                              style: retro.body(size: 10, color: retro.inkDim),
-                            ),
-                          ),
-                          TextButton.icon(
-                            key: const ValueKey('manga-play'),
-                            onPressed: _busy ? null : () => unawaited(_play()),
-                            icon: const Icon(Icons.sports_esports, size: 26),
-                            label: Text(retro.displayLabel(l.mangaNavPlay)),
-                            style: TextButton.styleFrom(
-                              minimumSize: const Size(48, 48),
-                              backgroundColor: retro.accent,
-                              foregroundColor: retro.onColor(retro.accent),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: retro.radius,
-                                side: BorderSide(
-                                  color: retro.border,
-                                  width: retro.borderWidth(2),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+              SizedBox(
+                // Una sola fila; crece con el texto accesible, no con la pantalla.
+                height: 60 + labelHeight,
+                child: Semantics(
+                  hint: l.mangaNavHint,
+                  child: PageView.custom(
+                    key: const ValueKey('manga-navigation-pages'),
+                    controller: _pages,
+                    onPageChanged: (index) => setState(
+                      () => _focused = index % entries.length,
                     ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 76 + labelHeight,
-                          child: Semantics(
-                            hint: l.mangaNavHint,
-                            child: PageView.custom(
-                              key: const ValueKey('manga-navigation-pages'),
-                              controller: _pages,
-                              onPageChanged: (index) => setState(
-                                () => _focused = index % entries.length,
-                              ),
-                              childrenDelegate: SliverChildBuilderDelegate((
-                                context,
-                                page,
-                              ) {
-                                final index = page % entries.length;
-                                final item = entries[index];
-                                return _MangaNavigationTile(
-                                  index: index,
-                                  label: item.label,
-                                  icon: item.icon,
-                                  grouped: item.grouped,
-                                  selected: index == selected,
-                                  focused: index == _focused,
-                                  labelHeight: labelHeight,
-                                  reduceMotion: reduceMotion,
-                                  onTap: _busy
-                                      ? null
-                                      : () => unawaited(_select(index)),
-                                );
-                              }, addSemanticIndexes: false),
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (compact)
-                        IconButton(
-                          key: const ValueKey('manga-play'),
-                          tooltip: l.mangaNavPlay,
-                          onPressed: _busy ? null : () => unawaited(_play()),
-                          icon: Icon(
-                            Icons.sports_esports,
-                            color: retro.accentText,
-                          ),
-                        ),
-                    ],
+                    childrenDelegate: SliverChildBuilderDelegate((context, page) {
+                      final index = page % entries.length;
+                      final item = entries[index];
+                      return _MangaNavigationTile(
+                        index: index,
+                        label: item.label,
+                        icon: item.icon,
+                        selected: index == selected,
+                        focused: index == _focused,
+                        labelHeight: labelHeight,
+                        reduceMotion: reduceMotion,
+                        onTap: _busy ? null : () => unawaited(_select(index)),
+                      );
+                    }, addSemanticIndexes: false),
                   ),
-                ],
+                ),
               ),
             ],
           ),
@@ -448,7 +370,6 @@ class _MangaNavigationTile extends StatelessWidget {
     required this.index,
     required this.label,
     required this.icon,
-    required this.grouped,
     required this.selected,
     required this.focused,
     required this.labelHeight,
@@ -459,91 +380,77 @@ class _MangaNavigationTile extends StatelessWidget {
   final int index;
   final String label;
   final IconData icon;
-  final bool grouped, selected, focused, reduceMotion;
+  final bool selected, focused, reduceMotion;
   final double labelHeight;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final foreground = selected ? retro.onColor(retro.accent) : retro.ink;
-    return Center(
-      child: AnimatedScale(
-        scale: focused ? 1 : 0.92,
-        duration: reduceMotion
-            ? Duration.zero
-            : const Duration(milliseconds: 160),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          child: Semantics(
-            button: true,
-            selected: selected,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.skewX(-retro.chipSkew),
-                    child: DecoratedBox(
-                      decoration: retro.surfaceDecoration(
-                        color: selected ? retro.accent : retro.surface,
-                        shadowDx: focused ? 3 : 1,
-                        shadowDy: focused ? 3 : 1,
+    final foreground = selected ? retro.onColor(retro.accent) : retro.inkDim;
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: ValueKey('manga-nav-$index'),
+          onTap: onTap,
+          child: Center(
+            // Solo escala el dibujo. El objetivo táctil conserva toda la celda.
+            child: AnimatedScale(
+              key: ValueKey('manga-nav-visual-$index'),
+              scale: selected ? 1 : (focused ? 0.86 : 0.78),
+              duration: reduceMotion
+                  ? Duration.zero
+                  : const Duration(milliseconds: 160),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.skewX(-retro.chipSkew),
+                        child: DecoratedBox(
+                          decoration: retro.surfaceDecoration(
+                            color: selected ? retro.accent : retro.surface,
+                            shadowDx: selected ? 3 : 1,
+                            shadowDy: selected ? 3 : 1,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    key: ValueKey('manga-nav-$index'),
-                    onTap: onTap,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: 48,
-                        minHeight: 48,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 5,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 5,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              icon,
-                              size: focused ? 27 : 23,
-                              color: selected ? foreground : retro.inkDim,
-                            ),
-                            const SizedBox(height: 4),
-                            SizedBox(
-                              height: labelHeight,
-                              child: Center(
-                                child: Text(
-                                  retro.displayLabel(label),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  style: retro
-                                      .body(size: 11, color: foreground)
-                                      .copyWith(fontWeight: FontWeight.w800),
-                                ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(icon, size: 24, color: foreground),
+                          const SizedBox(height: 3),
+                          SizedBox(
+                            height: labelHeight,
+                            child: Center(
+                              child: Text(
+                                retro.displayLabel(label),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: retro
+                                    .body(size: 11, color: foreground)
+                                    .copyWith(fontWeight: FontWeight.w800),
                               ),
                             ),
-                            Icon(
-                              grouped
-                                  ? Icons.expand_less
-                                  : (selected ? Icons.check : Icons.remove),
-                              size: 12,
-                              color: selected ? foreground : retro.inkDim,
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
