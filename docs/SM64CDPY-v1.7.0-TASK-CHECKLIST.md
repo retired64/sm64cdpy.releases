@@ -21,7 +21,8 @@
 - [x] Área inferior, SafeArea, teclado y variante horizontal.
 - [x] Protección de borradores y ciclo de vida de controllers/modales.
 - [x] Cuatro claves en cinco ARB y pruebas de regresión de navegación.
-- [ ] Generar localizaciones, ejecutar formato, análisis y tests en Flutter/CI.
+- [x] Generar localizaciones, ejecutar formato, análisis y tests en Flutter/CI:
+      Testing 39494649064, 428 pruebas correctas para bd74160.
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.
 

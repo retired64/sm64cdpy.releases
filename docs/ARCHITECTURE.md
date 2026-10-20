@@ -65,6 +65,14 @@ y errores). El bloqueo a plataformas no Android sigue vigente. Traducciones y
 formato de los archivos afectados se sincronizan desde el artefacto del runner;
 la nueva ejecución debe validar el conjunto antes de declarar lista la build.
 
+Testing 39494649064, candidata bd74160: generación, formato y análisis correctos;
+428 pruebas Flutter verdes. Los tests de Cómo jugar simulan explícitamente el
+juego ausente y las acciones buscan las etiquetas con displayLabel del tema.
+No se eliminan las comprobaciones de lanzamiento/confirmación para pasar CI.
+La ejecución terminó correctamente, incluidas las pruebas nativas y el APK
+`cdpy-bd74160-TESTING`. El análisis pasó sin errores ni warnings; conserva avisos
+informativos de estilo. La comprobación visual en un teléfono sigue pendiente.
+
 ## Arranque
 
 `lib/main.dart` configura orientaciones, downloader, Hive, información de versión, eventos de instalación y el puente del overlay. Después crea el árbol Riverpod y `MaterialApp.router`.
