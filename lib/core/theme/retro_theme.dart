@@ -1841,6 +1841,7 @@ class RetroTag extends StatelessWidget {
     this.color,
     this.filled = false,
     this.dense = true,
+    this.flexibleLabel = false,
   });
 
   final RetroTheme retro;
@@ -1849,12 +1850,24 @@ class RetroTag extends StatelessWidget {
   final Color? color;
   final bool filled;
   final bool dense;
+  // Ajuste opcional para etiquetas largas dentro de paneles estrechos.
+  final bool flexibleLabel;
 
   @override
   Widget build(BuildContext context) {
     final c = color ?? retro.accent;
     final bg = filled ? c : Colors.transparent;
     final fg = filled ? retro.onColor(c) : c;
+
+    final labelWidget = Text(
+      label,
+      style: TextStyle(
+        color: fg,
+        fontSize: retro.isMario ? 16 : (dense ? 10 : 11.5),
+        fontWeight: retro.isMario ? FontWeight.w400 : FontWeight.w800,
+        letterSpacing: retro.isMario ? 0 : 0.4,
+      ),
+    );
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -1873,15 +1886,7 @@ class RetroTag extends StatelessWidget {
             Icon(icon, size: dense ? 12 : 14, color: fg),
             const SizedBox(width: 4),
           ],
-          Text(
-            label,
-            style: TextStyle(
-              color: fg,
-              fontSize: retro.isMario ? 16 : (dense ? 10 : 11.5),
-              fontWeight: retro.isMario ? FontWeight.w400 : FontWeight.w800,
-              letterSpacing: retro.isMario ? 0 : 0.4,
-            ),
-          ),
+          if (flexibleLabel) Flexible(child: labelWidget) else labelWidget,
         ],
       ),
     );

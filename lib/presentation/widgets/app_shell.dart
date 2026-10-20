@@ -177,7 +177,8 @@ class DrawerMenuButton extends StatelessWidget {
         : retro.onColor(background);
     // Reserva espacio para el borde, la sombra y la inclinación sin transformar
     // el área táctil ni invadir el título o el límite superior de la barra.
-    final inset = retro.borderWidth(3) +
+    final inset =
+        retro.borderWidth(3) +
         retro.chipSkew.abs() * kMinInteractiveDimension / 2;
 
     return Center(

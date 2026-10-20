@@ -33,15 +33,15 @@ void main() {
     for (final dark in [false, true]) {
       for (final language in ['en', 'es', 'pt']) {
         for (final host in _Host.values) {
-          testWidgets(
-            'drawer ${design.id} dark=$dark $language ${host.name}',
-            (tester) async {
-              tester.view.physicalSize = const Size(320, 640);
-              tester.view.devicePixelRatio = 1;
-              addTearDown(tester.view.resetPhysicalSize);
-              addTearDown(tester.view.resetDevicePixelRatio);
-              final semantics = tester.ensureSemantics();
-              addTearDown(semantics.dispose);
+          testWidgets('drawer ${design.id} dark=$dark $language ${host.name}', (
+            tester,
+          ) async {
+            tester.view.physicalSize = const Size(320, 640);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            final semantics = tester.ensureSemantics();
+            try {
               final scaffold = GlobalKey<ScaffoldState>();
               await tester.pumpWidget(
                 MaterialApp(
@@ -64,7 +64,9 @@ void main() {
                 matching: find.byType(IconButton),
               );
               final context = tester.element(button);
-              final tooltip = MaterialLocalizations.of(context).openAppDrawerTooltip;
+              final tooltip = MaterialLocalizations.of(
+                context,
+              ).openAppDrawerTooltip;
               expect(find.byTooltip(tooltip), findsOneWidget);
               final rect = tester.getRect(button);
               expect(rect.width, greaterThanOrEqualTo(48));
@@ -82,24 +84,34 @@ void main() {
               final icon = tester.widget<MarioGameIcon>(
                 find.descendant(of: menu, matching: find.byType(MarioGameIcon)),
               );
-              final backgrounds = find.byKey(const ValueKey('drawer-menu-surface'));
+              final backgrounds = find.byKey(
+                const ValueKey('drawer-menu-surface'),
+              );
               // El modo minimalista no incorpora ningún panel decorativo.
               if (retro.usesMinimalSurfaces) {
                 expect(backgrounds, findsNothing);
-                expect(_contrast(icon.color!, retro.background), greaterThanOrEqualTo(3));
+                expect(
+                  _contrast(icon.color!, retro.background),
+                  greaterThanOrEqualTo(3),
+                );
               } else {
-                final decoration = tester
-                    .widget<DecoratedBox>(backgrounds)
-                    .decoration as BoxDecoration;
+                final decoration =
+                    tester.widget<DecoratedBox>(backgrounds).decoration
+                        as BoxDecoration;
                 expect(decoration.border, isNotNull);
-                expect(decoration.borderRadius, retro.surfaceDecoration().borderRadius);
+                expect(
+                  decoration.borderRadius,
+                  retro.surfaceDecoration().borderRadius,
+                );
                 expect(
                   _contrast(icon.color!, decoration.color!),
                   greaterThanOrEqualTo(3),
                 );
                 // La inclinación y la sombra pintadas también caben en el botón.
                 final transform = tester.widget<Transform>(
-                  find.descendant(of: menu, matching: find.byType(Transform)).first,
+                  find
+                      .descendant(of: menu, matching: find.byType(Transform))
+                      .first,
                 );
                 expect(
                   transform.transform.entry(0, 1),
@@ -113,7 +125,9 @@ void main() {
                 var paintedRect = materialRect;
                 for (final shadow in decoration.boxShadow ?? <BoxShadow>[]) {
                   paintedRect = paintedRect.expandToInclude(
-                    materialRect.shift(shadow.offset).inflate(shadow.spreadRadius),
+                    materialRect
+                        .shift(shadow.offset)
+                        .inflate(shadow.spreadRadius),
                   );
                 }
                 expect(paintedRect.left, greaterThanOrEqualTo(rect.left));
@@ -122,7 +136,9 @@ void main() {
                 expect(paintedRect.bottom, lessThanOrEqualTo(rect.bottom));
               }
               if (host == _Host.pinned) {
-                final bar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+                final bar = tester.widget<SliverAppBar>(
+                  find.byType(SliverAppBar),
+                );
                 expect(bar.leadingWidth, 56);
                 expect(bar.toolbarHeight, 56);
               }
@@ -131,8 +147,10 @@ void main() {
               await tester.pumpAndSettle();
               expect(scaffold.currentState!.isDrawerOpen, isTrue);
               expect(tester.takeException(), isNull);
-            },
-          );
+            } finally {
+              semantics.dispose();
+            }
+          });
         }
       }
       testWidgets('section colors ${design.id} dark=$dark stay readable', (
