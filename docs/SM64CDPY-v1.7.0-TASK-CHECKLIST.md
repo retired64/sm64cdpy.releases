@@ -623,6 +623,16 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Preparar pruebas para los seis temas en claro y oscuro.
 - [ ] Ejecutar Testing y revisar visualmente el APK.
 
+## Retro Manga: superficies y controles coherentes
+
+- [x] Completar borde y sombra dura en superficies neutras sin duplicar contratos semánticos.
+- [x] Unificar `ThemeData` para campos, diálogos, menús, botones, switches, checkboxes, sliders, progreso, pestañas, `ExpansionTile`, tooltips y estados de error/deshabilitado.
+- [x] Retirar overrides locales que anulaban el borde en ROM, guía, Save Files, detalle, Player y post-instalación.
+- [x] Aplicar `displayLabel` en `SectionKicker` y truncar etiquetas largas en pantallas estrechas.
+- [x] Mantener `popupMenuTheme` y los controles cómic aislados de los otros cinco diseños.
+- [x] Pruebas locales de tema, ROM a 320/360 px con texto ampliado, guía, ajustes, Save Files y detalle.
+- [ ] Revisión física en claro/oscuro, texto ampliado, ROM, Save Files, diálogos y botones deshabilitados.
+
 ## GameTool Save File
 
 - [x] Kotlin EEPROM codec, bounded SAF store, identity/revision checks and backups.
@@ -683,6 +693,23 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Ejecutar análisis, pruebas Flutter/Kotlin y compilación APK debug local.
 - [ ] Validar físicamente permiso concedido/revocado, ZIP, 7z, archivo suelto, cancelación y refresco de Biblioteca.
 - [ ] Ejecutar Testing en `main`, confirmar `publishedAt` y publicar solo con autorización explícita.
+
+## Preparación de release 1.9.0 — ROM converter y Retro Manga
+
+- [x] Integrar el preparador local de ROM desde Cómo jugar y GameTool.
+- [x] Detectar z64/v64/n64 por cabecera, validar tamaño/MD5 USA y exportar `.z64` por SAF sin modificar el original.
+- [x] Añadir progreso por fase, cancelación, reintento, errores accionables y estados `prepared`/`saved` diferenciados.
+- [x] Completar Retro Manga con superficies de cartón, controles Material coherentes y encabezados inclinados truncables.
+- [x] Aislar `popupMenuTheme` y los controles cómic de los otros cinco diseños.
+- [x] Actualizar `pubspec.yaml` a `1.9.0+28` y reservar versionCodes ABI `281/282/283`.
+- [x] Preparar manifiesto canónico y previews EN/ES/PT-BR con fecha provisional.
+- [x] Validar manifiesto contra pubspec, pruebas Python, formato, análisis y 280 pruebas Flutter.
+- [x] Mantener la desinstalación segura fuera de esta candidata; sigue como roadmap posterior.
+- [ ] Fusionar `how-to-play-guide` en `main` sin crear todavía el tag.
+- [ ] Ejecutar Testing en `main` y revisar el APK arm64 firmado.
+- [ ] Matriz física: proveedores SAF locales/remotos/lentos, rotación, poco espacio, cancelación, ROM real y exportación.
+- [ ] Revisión visual física de Retro Manga en claro/oscuro, 320/360 px, texto ampliado, ROM, Save Files, diálogos y estados deshabilitados.
+- [ ] Confirmar `publishedAt`, tag `v1.9.0` y publicar solo con autorización explícita.
 
 ## How to Play — how-to-play-guide
 

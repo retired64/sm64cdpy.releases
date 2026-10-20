@@ -74,4 +74,43 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('prepared panel fits 320 px with enlarged Spanish text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final service = _PreparedService();
+    addTearDown(service.controller.close);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [romPreparationServiceProvider.overrideWithValue(service)],
+        child: MaterialApp(
+          locale: const Locale('es'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: RetroTheme.materialTheme(false),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(1.5)),
+            child: child!,
+          ),
+          home: const Scaffold(
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: RomPreparationPanel(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Guardar copia .z64'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

@@ -6,7 +6,7 @@ SM64CDPY é um navegador e gerenciador de mods não oficial, voltado para Androi
 para o **SM64CoopDX**. Ele reúne descoberta, download e instalação de conteúdo,
 integração com o jogo e atualização do catálogo em uma interface móvel.
 
-O projeto está em manutenção ativa. A versão de desenvolvimento é **1.8.8+27**. A
+O projeto está em manutenção ativa. A versão de desenvolvimento é **1.9.0+28**. A
 bolha flutuante da linha 1.7 está implementada, mas continua experimental até a
 conclusão de testes em dispositivos Android reais.
 
@@ -33,6 +33,7 @@ progresso do download e da instalação.
 ## Funcionalidades atuais
 
 - Catálogo principal, conteúdo popular e destaques.
+- Prepare sua própria ROM USA de Super Mario 64 localmente: a ferramenta detecta `.z64`, `.v64` e `.n64`, valida o dump esperado e exporta uma cópia `.z64` verificada sem modificar o original. [Detalhes do preparador](ROM_CONVERTER.md).
 - Seções VIP, DynOS, controles de toque, OMM Rebirth e Render96.
 - Importação e exportação de favoritos em JSON.
 - Biblioteca local de conteúdo instalado, recente, mods do jogo e com

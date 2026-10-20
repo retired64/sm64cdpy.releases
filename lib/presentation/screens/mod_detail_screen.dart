@@ -799,7 +799,7 @@ class _VersionAccordionState extends State<_VersionAccordion> {
               decoration: RetroTheme.of(context).gameDecoration(
                 BoxDecoration(
                   color: RetroTheme.of(context).inkDim.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: RetroTheme.of(context).radius,
                 ),
               ),
             ),
@@ -1385,7 +1385,15 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
               style: FilledButton.styleFrom(
                 backgroundColor: retro.accent,
                 foregroundColor: retro.inkOnAccent,
-                shape: RoundedRectangleBorder(borderRadius: retro.radius),
+                shape: RoundedRectangleBorder(
+                  borderRadius: retro.radius,
+                  side: retro.usesComicSurfaces
+                      ? BorderSide(
+                          color: retro.border,
+                          width: retro.borderWidth(2),
+                        )
+                      : BorderSide.none,
+                ),
                 textStyle: TextStyle(
                   fontSize: retro.isMario ? 16 : 12,
                   fontWeight: FontWeight.w700,

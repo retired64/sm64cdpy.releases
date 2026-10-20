@@ -99,10 +99,10 @@ runner no crea commits. El artifact `flutter-source-sync` permite revisar e
 incorporar el parche de generación/formato cuando el entorno local no dispone
 del SDK completo.
 
-Para probar 1.8.8 después del merge, seleccionar `main` en el workflow manual de testing.
+Para probar 1.9.0 después del merge, seleccionar `main` en el workflow manual de testing.
 Continúan siendo necesarios los secretos de firma existentes. No usar el
 workflow de publicación para obtener una prueba. La candidata actual se
-describe en [RELEASE_1.8.8.md](RELEASE_1.8.8.md).
+describe en [RELEASE_1.9.0.md](RELEASE_1.9.0.md).
 Ver [flujo y validación de temas](../cuatom_themea.md).
 
 ## Release oficial 1.8.3+22
@@ -115,7 +115,8 @@ Una ejecución manual con `all_abis: true`, o un push `[testing] [all-abis]`, pe
 APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
-flujo manual autorizado. La candidata siguiente es [1.8.5](RELEASE_1.8.5.md).
+flujo manual autorizado. La candidata de esta preparación es
+[1.9.0](RELEASE_1.9.0.md).
 
 ## Activación de mods — release 1.8.3
 

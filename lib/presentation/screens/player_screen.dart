@@ -789,11 +789,15 @@ class _PartTile extends StatelessWidget {
                     Text(
                       label,
                       maxLines: 1,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: retro.body(
+                        size: 13,
+                        color: retro.ink,
+                        weight: FontWeight.w700,
+                      ),
                     ),
                     Text(
                       _hex(color),
-                      style: TextStyle(fontSize: 11, color: retro.inkDim),
+                      style: retro.body(size: 11, color: retro.inkDim),
                     ),
                   ],
                 ),
@@ -913,26 +917,28 @@ class _ColorEditorState extends State<_ColorEditor> {
     }
   }
 
-  Widget _channel(String label, double value, ValueChanged<double> onChanged) =>
-      SizedBox(
-        height: 42,
-        child: Row(
-          children: [
-            SizedBox(
-              width: 58,
-              child: Text(
-                '$label ${(value * 255).round()}',
-                style: const TextStyle(
-                  fontFeatures: [FontFeature.tabularFigures()],
-                ),
-              ),
+  Widget _channel(String label, double value, ValueChanged<double> onChanged) {
+    final retro = RetroTheme.of(context);
+    return SizedBox(
+      height: 42,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 58,
+            child: Text(
+              '$label ${(value * 255).round()}',
+              style: retro
+                  .body(size: 12, color: retro.ink)
+                  .copyWith(fontFeatures: [FontFeature.tabularFigures()]),
             ),
-            Expanded(
-              child: Slider(value: value, onChanged: onChanged),
-            ),
-          ],
-        ),
-      );
+          ),
+          Expanded(
+            child: Slider(value: value, onChanged: onChanged),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 String _hex(Color color) =>

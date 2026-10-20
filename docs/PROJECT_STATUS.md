@@ -1,6 +1,7 @@
 # Estado y próximos pasos
 
-Revisado para la candidata `1.8.8+27` en `main` el 2026-10-19. La 1.8.7 es la versión anterior.
+Revisado para la candidata `1.9.0+28` en `how-to-play-guide` el 2026-10-20. La
+`1.8.8+27` es la candidata anterior.
 
 ## Implementado
 
@@ -10,6 +11,15 @@ Revisado para la candidata `1.8.8+27` en `main` el 2026-10-19. La 1.8.7 es la ve
   general de archivos. Estado único entre rutas, cancelación, reintento de
   exportación y detalles técnicos en [ROM_CONVERTER.md](../ROM_CONVERTER.md).
   Pruebas sintéticas y de widgets aprobadas; matriz física pendiente.
+
+- Retro Manga completa su sistema de superficies y controles: las tarjetas
+  neutras reciben borde de tinta y sombra dura, y `ThemeData` unifica campos,
+  diálogos, menús, botones, switches, checkboxes, sliders, progreso, pestañas,
+  `ExpansionTile`, tooltips y estados de error/deshabilitado. Los encabezados
+  inclinados truncan etiquetas largas y los overrides de ROM, guía, Save Files,
+  detalle y Player ya no anulan el tema. Pruebas locales de tema, ROM a 320/360
+  px con texto ampliado, guía, ajustes, Save Files y detalle aprobadas; revisión
+  física pendiente.
 
 - Rama de trabajo: Jugador muestra un snapshot privado del último perfil
   confirmado y verifica SAF en segundo plano, separando escaneo de paletas.
@@ -127,9 +137,10 @@ Revisado para la candidata `1.8.8+27` en `main` el 2026-10-19. La 1.8.7 es la ve
 
 ## Posterior a 1.8.0
 
-La desinstalación física queda planificada para `1.9.0` en tres fases:
-manifiesto completo de propiedad, Worker SAF conservador y sincronización de la
-experiencia entre Biblioteca, catálogo y overlay. El plan está en
+La desinstalación física queda planificada para una fase posterior a la
+candidata `1.9.0+28`: manifiesto completo de propiedad, Worker SAF conservador y
+sincronización de la experiencia entre Biblioteca, catálogo y overlay. No forma
+parte de este release. El plan está en
 [SAFE-UNINSTALL-v1.9.0-ROADMAP.md](SAFE-UNINSTALL-v1.9.0-ROADMAP.md). Los
 centinelas actuales verifican presencia, pero no se usarán como autorización
 para borrar archivos.
@@ -321,6 +332,29 @@ de administrar todos los archivos; SAF continúa como ruta estándar y fallback.
 
 Manifiesto canónico: `release-manifests/v1.8.8.json`. Notas EN/ES/PT-BR,
 validación final, APK de prueba y matriz física de permisos/extracción pendientes.
+
+## Candidata 1.9.0+28
+
+El preparador local de ROM y el acabado completo de Retro Manga están integrados
+en la rama `how-to-play-guide`. La herramienta detecta z64, v64 y n64 por
+cabecera, valida tamaño y MD5 USA, transforma por bloques con staging aislado y
+exporta una copia `.z64` mediante SAF sin modificar el original ni solicitar
+acceso general al almacenamiento.
+
+Retro Manga completa su política compartida de superficies: borde de tinta,
+sombra dura y geometría rectangular en tarjetas, paneles, ROM, Save Files,
+drawer, ajustes, diálogos, campos, menús y controles secundarios. Los encabezados
+inclinados aplican `displayLabel` y truncan etiquetas largas; los otros cinco
+diseños permanecen aislados. La optimización es de composición y política de
+tema, sin blur, shaders ni recursos raster nuevos.
+
+Manifiesto canónico: `release-manifests/v1.9.0.json`. VersionCodes ABI
+`281/282/283`. Validación local: 280 pruebas Flutter, manifiesto sincronizado
+con `pubspec.yaml`, cuatro pruebas Python y análisis sin errores nuevos.
+Detalles en [RELEASE_1.9.0.md](RELEASE_1.9.0.md). Merge a `main`, Testing, APK
+firmado, matriz física de SAF/ROM y revisión visual en dispositivo siguen
+pendientes. `publishedAt` es provisional. La desinstalación segura del roadmap
+no forma parte de esta candidata.
 
 ## Guía de inicio — rama how-to-play-guide
 

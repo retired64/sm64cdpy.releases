@@ -292,10 +292,15 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                       width: 56,
                                       height: 56,
                                       alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: retro.surfaceAlt,
-                                        borderRadius: retro.radius,
-                                        border: Border.all(color: retro.border),
+                                      decoration: retro.gameDecoration(
+                                        BoxDecoration(
+                                          color: retro.surfaceAlt,
+                                          borderRadius: retro.radius,
+                                          border: Border.all(
+                                            color: retro.border,
+                                            width: retro.borderWidth(2),
+                                          ),
+                                        ),
                                       ),
                                       child: Text(
                                         'ABCD'[slot['slot'] as int],
@@ -365,7 +370,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                 ),
                                 const SizedBox(height: 14),
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: retro.radius,
                                   child: LinearProgressIndicator(
                                     minHeight: 6,
                                     value:
@@ -570,11 +575,36 @@ class _SaveEditorState extends State<_SaveEditor> {
                     backgroundColor: retro.surface,
                     collapsedShape: RoundedRectangleBorder(
                       borderRadius: retro.radius,
+                      side: retro.usesComicSurfaces
+                          ? BorderSide(
+                              color: retro.border,
+                              width: retro.borderWidth(2),
+                            )
+                          : BorderSide.none,
                     ),
-                    shape: RoundedRectangleBorder(borderRadius: retro.radius),
-                    leading: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: retro.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: retro.radius,
+                      side: retro.usesComicSurfaces
+                          ? BorderSide(
+                              color: retro.border,
+                              width: retro.borderWidth(2),
+                            )
+                          : BorderSide.none,
+                    ),
+                    leading: Container(
+                      width: 32,
+                      height: 32,
+                      alignment: Alignment.center,
+                      decoration: retro.gameDecoration(
+                        BoxDecoration(
+                          color: retro.surface,
+                          borderRadius: retro.radius,
+                          border: Border.all(
+                            color: retro.border,
+                            width: retro.borderWidth(2),
+                          ),
+                        ),
+                      ),
                       child: Text(
                         '${i + 1}',
                         style: retro.body(size: 13, color: retro.accentText),

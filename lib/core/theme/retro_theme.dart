@@ -76,6 +76,20 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         borderRadius: value.borderRadius ?? radius,
       );
     }
+    if (usesComicSurfaces &&
+        value.shape == BoxShape.rectangle &&
+        value.image == null &&
+        value.gradient == null &&
+        _isNeutralSurface(value.color) &&
+        (value.border == null || value.borderRadius != null)) {
+      return value.copyWith(
+        color: value.color ?? surface,
+        borderRadius: value.borderRadius ?? radius,
+        border:
+            value.border ?? Border.all(color: border, width: borderWidth(2)),
+        boxShadow: value.boxShadow ?? hardShadow(dx: 3, dy: 3),
+      );
+    }
     return value;
   }
 
@@ -186,6 +200,9 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       design.surfaceTreatment == AppSurfaceTreatment.folio;
   bool get usesRacingSurfaces =>
       design.surfaceTreatment == AppSurfaceTreatment.racing;
+  bool get usesComicSurfaces =>
+      design.backdropStyle == AppBackdropStyle.halftone &&
+      design.surfaceTreatment == AppSurfaceTreatment.flat;
   String? get pageTextureAsset => design.pageTextureAsset;
 
   bool _isNeutralSurface(Color? color) =>
@@ -341,7 +358,15 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   );
 
   ThemeData toMaterialTheme() {
-    final shape = RoundedRectangleBorder(borderRadius: radius);
+    final shape = RoundedRectangleBorder(
+      borderRadius: radius,
+      side: usesComicSurfaces
+          ? BorderSide(color: border, width: borderWidth(2))
+          : BorderSide.none,
+    );
+    final comicControlSide = usesComicSurfaces
+        ? BorderSide(color: border, width: borderWidth(2))
+        : null;
     var theme = ThemeData(
       useMaterial3: true,
       extensions: <ThemeExtension<dynamic>>[this],
@@ -366,10 +391,13 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surface,
-        shape: isMario
+        shape: isMario || usesComicSurfaces
             ? RoundedRectangleBorder(
                 borderRadius: radius,
-                side: BorderSide(color: border, width: 3),
+                side: BorderSide(
+                  color: border,
+                  width: borderWidth(isMario ? 3 : 2),
+                ),
               )
             : shape,
       ),
@@ -386,7 +414,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
           elevation: 0,
           side: usesBeveledSurfaces
               ? BorderSide(color: surfaceHighlight, width: borderWidth(1.5))
-              : null,
+              : comicControlSide,
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -398,7 +426,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
                   color: inkOnAccent.withValues(alpha: 0.65),
                   width: borderWidth(1.5),
                 )
-              : null,
+              : comicControlSide,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -410,7 +438,7 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
           foregroundColor: accentText,
           side: usesMinimalSurfaces
               ? BorderSide(color: border, width: 1)
-              : null,
+              : comicControlSide,
         ),
       ),
       cardTheme: CardThemeData(
@@ -438,8 +466,242 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
                 borderSide: BorderSide(color: accent, width: 1.5),
               ),
             )
+          : usesComicSurfaces
+          ? InputDecorationTheme(
+              filled: true,
+              fillColor: surface,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 14,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: radius,
+                borderSide: BorderSide(color: border, width: borderWidth(2)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: radius,
+                borderSide: BorderSide(color: border, width: borderWidth(2)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: radius,
+                borderSide: BorderSide(color: accent, width: borderWidth(3)),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderRadius: radius,
+                borderSide: BorderSide(
+                  color: border.withValues(alpha: 0.55),
+                  width: borderWidth(2),
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: radius,
+                borderSide: BorderSide(color: red, width: borderWidth(2)),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: radius,
+                borderSide: BorderSide(color: red, width: borderWidth(3)),
+              ),
+              hintStyle: body(size: 13, color: inkDim.withValues(alpha: 0.8)),
+              labelStyle: body(size: 13, color: inkDim),
+              floatingLabelStyle: body(size: 12, color: accentText),
+              helperStyle: body(size: 12, color: inkDim),
+              errorStyle: body(size: 12, color: red),
+              counterStyle: body(size: 11, color: inkDim),
+              prefixIconColor: accentText,
+              suffixIconColor: inkDim,
+            )
+          : null,
+      chipTheme: usesComicSurfaces
+          ? ChipThemeData(
+              backgroundColor: surface,
+              selectedColor: accent,
+              disabledColor: surfaceAlt,
+              side: BorderSide(color: border, width: borderWidth(2)),
+              shape: shape,
+              labelStyle: body(size: 13, color: ink),
+              secondaryLabelStyle: body(size: 13, color: inkOnAccent),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            )
+          : null,
+      segmentedButtonTheme: usesComicSurfaces
+          ? SegmentedButtonThemeData(
+              style: ButtonStyle(
+                shape: WidgetStatePropertyAll(shape),
+                side: WidgetStatePropertyAll(
+                  BorderSide(color: border, width: borderWidth(2)),
+                ),
+                textStyle: WidgetStatePropertyAll(
+                  heading(size: 13, weight: FontWeight.w800),
+                ),
+              ),
+            )
           : null,
     );
+    if (usesComicSurfaces) {
+      final comicShape = RoundedRectangleBorder(
+        borderRadius: radius,
+        side: BorderSide(color: border, width: borderWidth(2)),
+      );
+      final comicTextStyle = TextStyle(
+        inherit: false,
+        fontFamily: headingFamily,
+        fontFamilyFallback: design.headingFontFamilyFallback,
+        fontSize: 13.5,
+        fontWeight: FontWeight.w800,
+        letterSpacing: design.headingTracking,
+        height: 1.05,
+      );
+      theme = theme.copyWith(
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: accent,
+            foregroundColor: inkOnAccent,
+            disabledBackgroundColor: accent.withValues(alpha: 0.5),
+            disabledForegroundColor: inkOnAccent.withValues(alpha: 0.6),
+            shape: comicShape,
+            elevation: 0,
+            minimumSize: const Size(48, 48),
+            textStyle: comicTextStyle,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: accent,
+            foregroundColor: inkOnAccent,
+            disabledBackgroundColor: accent.withValues(alpha: 0.5),
+            disabledForegroundColor: inkOnAccent.withValues(alpha: 0.6),
+            shape: comicShape,
+            elevation: 0,
+            minimumSize: const Size(48, 48),
+            textStyle: comicTextStyle,
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: accentText,
+            disabledForegroundColor: inkDim,
+            side: BorderSide(color: border, width: borderWidth(2)),
+            shape: comicShape,
+            minimumSize: const Size(48, 48),
+            textStyle: comicTextStyle,
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: accentText,
+            disabledForegroundColor: inkDim,
+            minimumSize: const Size(48, 48),
+            textStyle: comicTextStyle,
+          ),
+        ),
+        iconButtonTheme: IconButtonThemeData(
+          style: ButtonStyle(
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(borderRadius: radius),
+            ),
+            minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+          ),
+        ),
+        popupMenuTheme: PopupMenuThemeData(
+          color: surface,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          shape: comicShape,
+        ),
+        switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateProperty.resolveWith(
+            (states) =>
+                states.contains(WidgetState.selected) ? inkOnAccent : inkDim,
+          ),
+          trackColor: WidgetStateProperty.resolveWith(
+            (states) =>
+                states.contains(WidgetState.selected) ? accent : surfaceAlt,
+          ),
+          trackOutlineColor: WidgetStatePropertyAll(border),
+          thumbIcon: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? Icon(
+                    Icons.check_rounded,
+                    size: 14,
+                    color: onColor(inkOnAccent),
+                  )
+                : null,
+          ),
+        ),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? accent
+                : Colors.transparent,
+          ),
+          checkColor: WidgetStatePropertyAll(inkOnAccent),
+          side: BorderSide(color: border, width: borderWidth(2)),
+          shape: RoundedRectangleBorder(borderRadius: radius),
+        ),
+        sliderTheme: SliderThemeData(
+          trackHeight: 6,
+          activeTrackColor: accent,
+          inactiveTrackColor: surfaceAlt,
+          thumbColor: accent,
+          overlayColor: accent.withValues(alpha: 0.16),
+          activeTickMarkColor: inkOnAccent,
+          inactiveTickMarkColor: inkDim,
+        ),
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: accent,
+          linearTrackColor: surfaceAlt,
+          circularTrackColor: surfaceAlt,
+          linearMinHeight: 5,
+          borderRadius: radius,
+        ),
+        tabBarTheme: TabBarThemeData(
+          labelColor: accentText,
+          unselectedLabelColor: inkDim,
+          labelStyle: heading(size: 13, weight: FontWeight.w800),
+          unselectedLabelStyle: heading(size: 13, weight: FontWeight.w600),
+          indicator: UnderlineTabIndicator(
+            borderSide: BorderSide(color: accent, width: borderWidth(3)),
+            insets: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+          dividerColor: border,
+          dividerHeight: borderWidth(1),
+        ),
+        expansionTileTheme: ExpansionTileThemeData(
+          backgroundColor: surface,
+          collapsedBackgroundColor: surfaceAlt,
+          textColor: ink,
+          collapsedTextColor: ink,
+          iconColor: accentText,
+          collapsedIconColor: inkDim,
+          shape: comicShape,
+          collapsedShape: comicShape,
+          childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+        ),
+        listTileTheme: ListTileThemeData(
+          textColor: ink,
+          iconColor: accentText,
+          titleTextStyle: body(size: 14, color: ink, weight: FontWeight.w700),
+          subtitleTextStyle: body(size: 12, color: inkDim),
+          leadingAndTrailingTextStyle: body(size: 12, color: inkDim),
+        ),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: accent,
+          selectionColor: accent.withValues(alpha: 0.3),
+          selectionHandleColor: accent,
+        ),
+        tooltipTheme: TooltipThemeData(
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: radius,
+            border: Border.all(color: border, width: borderWidth(1.5)),
+            boxShadow: hardShadow(dx: 2, dy: 2),
+          ),
+          textStyle: body(size: 12, color: ink),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          margin: const EdgeInsets.all(8),
+        ),
+      );
+    }
     if (usesFolioSurfaces) {
       final folioShape = _FolioButtonBorder(
         side: BorderSide(color: border, width: borderWidth(2)),
@@ -1168,8 +1430,35 @@ class SectionKicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedLabel = retro.displayLabel(label);
     if (retro.usesFolioSurfaces) {
-      return _FolioSectionKicker(retro: retro, label: label);
+      return _FolioSectionKicker(retro: retro, label: resolvedLabel);
+    }
+    if (retro.usesComicSurfaces) {
+      return Row(
+        children: [
+          Flexible(
+            child: SkewChip(
+              retro: retro,
+              label: resolvedLabel,
+              textSize: 16,
+              accentColor: retro.surface,
+              flexibleLabel: true,
+            ),
+          ),
+          if (japanese != null) ...[
+            const SizedBox(width: 9),
+            Text(japanese!, style: retro.body(size: 12, color: retro.inkDim)),
+          ],
+          const SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              height: 2,
+              color: retro.border.withValues(alpha: 0.72),
+            ),
+          ),
+        ],
+      );
     }
     return Row(
       children: [
@@ -1191,7 +1480,7 @@ class SectionKicker extends StatelessWidget {
         if (retro.isMario)
           Expanded(
             child: Text(
-              label,
+              resolvedLabel,
               style: retro
                   .heading(size: 13.5)
                   .copyWith(
@@ -1203,7 +1492,7 @@ class SectionKicker extends StatelessWidget {
           )
         else
           Flexible(
-            child: MarioGameTitle(text: label, retro: retro, size: 17),
+            child: MarioGameTitle(text: resolvedLabel, retro: retro, size: 17),
           ),
         if (retro.showJapaneseDecorations && japanese != null) ...[
           const SizedBox(width: 8),
@@ -1350,6 +1639,8 @@ class SkewChip extends StatelessWidget {
     this.onTap,
     this.dense = false,
     this.accentColor,
+    this.textSize,
+    this.flexibleLabel = false,
   });
 
   final RetroTheme retro;
@@ -1365,6 +1656,8 @@ class SkewChip extends StatelessWidget {
   // Override opcional del color de acento (por defecto retro.accent).
   // Usado, por ejemplo, por VIP Mods para chips dorados en vez de teal.
   final Color? accentColor;
+  final double? textSize;
+  final bool flexibleLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -1404,10 +1697,26 @@ class SkewChip extends StatelessWidget {
                 Icon(icon, size: dense ? 13 : 15, color: fg),
                 const SizedBox(width: 6),
               ],
-              Text(
-                label,
-                style: retro.heading(size: dense ? 11 : 12.5, color: fg),
-              ),
+              if (flexibleLabel)
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: retro.heading(
+                      size: textSize ?? (dense ? 11 : 12.5),
+                      color: fg,
+                    ),
+                  ),
+                )
+              else
+                Text(
+                  label,
+                  style: retro.heading(
+                    size: textSize ?? (dense ? 11 : 12.5),
+                    color: fg,
+                  ),
+                ),
               if (trailing != null) ...[
                 const SizedBox(width: 4),
                 Icon(trailing, size: 16, color: fg),

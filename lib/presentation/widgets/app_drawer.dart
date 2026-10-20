@@ -408,13 +408,21 @@ class _DrawerGroupState extends State<_DrawerGroup> {
               constraints: const BoxConstraints(minHeight: 52),
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: active ? retro.surfaceAlt : Colors.transparent,
-                borderRadius: retro.radius,
-                border: active
-                    ? Border.all(color: retro.accentText, width: 1)
-                    : null,
-              ),
+              decoration: active && retro.usesComicSurfaces
+                  ? retro.surfaceDecoration(
+                      color: retro.surfaceAlt,
+                      borderColor: retro.accentText,
+                      border: 2,
+                      shadowDx: 3,
+                      shadowDy: 3,
+                    )
+                  : BoxDecoration(
+                      color: active ? retro.surfaceAlt : Colors.transparent,
+                      borderRadius: retro.radius,
+                      border: active
+                          ? Border.all(color: retro.accentText, width: 1)
+                          : null,
+                    ),
               child: Row(
                 children: [
                   MarioGameIcon(
@@ -572,13 +580,21 @@ class _NavItem extends StatelessWidget {
             horizontal: 14,
             vertical: isTopLevel ? 12 : 0,
           ),
-          decoration: BoxDecoration(
-            border: minimal && isActive
-                ? Border(left: BorderSide(color: accent, width: 2))
-                : null,
-            borderRadius: minimal ? null : retro.radius,
-            color: isActive && !minimal ? accent : Colors.transparent,
-          ),
+          decoration: isActive && retro.usesComicSurfaces
+              ? retro.surfaceDecoration(
+                  color: accent,
+                  borderColor: retro.border,
+                  border: 2,
+                  shadowDx: 3,
+                  shadowDy: 3,
+                )
+              : BoxDecoration(
+                  border: minimal && isActive
+                      ? Border(left: BorderSide(color: accent, width: 2))
+                      : null,
+                  borderRadius: minimal ? null : retro.radius,
+                  color: isActive && !minimal ? accent : Colors.transparent,
+                ),
           child: Row(
             children: [
               if (!minimal) ...[

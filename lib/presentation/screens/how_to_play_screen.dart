@@ -121,7 +121,9 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                         borderRadius: retro.radius,
                         side: BorderSide(
                           color: retro.border,
-                          width: retro.borderWidth(1),
+                          width: retro.borderWidth(
+                            retro.usesComicSurfaces ? 2 : 1,
+                          ),
                         ),
                       ),
                       tileColor: i == _step ? retro.accent : retro.surface,

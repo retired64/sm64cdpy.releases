@@ -200,6 +200,20 @@ void main() {
     expect(retro.showHalftone, isTrue);
     expect(retro.showN64Backdrop, isFalse);
     expect(retro.design.drawerRasterIcons, isTrue);
+    expect(retro.usesComicSurfaces, isTrue);
+    final panel = retro.gameDecoration(
+      BoxDecoration(color: retro.surface, borderRadius: retro.radius),
+    );
+    expect(panel.border, isNotNull);
+    expect(panel.boxShadow, isNotEmpty);
+    final material = retro.toMaterialTheme();
+    expect(
+      material.inputDecorationTheme.enabledBorder,
+      isA<OutlineInputBorder>(),
+    );
+    final cardShape = material.cardTheme.shape! as RoundedRectangleBorder;
+    expect(cardShape.side.style, BorderStyle.solid);
+    expect(cardShape.side.width, retro.borderWidth(2));
     expect(
       AppThemeCatalog.resolve(AppThemeId.minimal).drawerRasterIcons,
       isFalse,
@@ -208,6 +222,97 @@ void main() {
       AppThemeCatalog.resolve(AppThemeId.mario64).drawerRasterIcons,
       isFalse,
     );
+  });
+
+  test('comic surfaces only complete neutral rectangular materials', () {
+    const comic = RetroTheme(false);
+    final neutral = BoxDecoration(
+      color: comic.surfaceAlt,
+      borderRadius: comic.radius,
+    );
+    final decorated = comic.gameDecoration(neutral);
+    expect(decorated.border, isNotNull);
+    expect(decorated.boxShadow, isNotEmpty);
+    expect(decorated.borderRadius, comic.radius);
+
+    for (final decoration in [
+      BoxDecoration(color: comic.red, borderRadius: comic.radius),
+      BoxDecoration(
+        gradient: LinearGradient(colors: [comic.surface, comic.surfaceAlt]),
+        borderRadius: comic.radius,
+      ),
+      BoxDecoration(color: comic.surface, shape: BoxShape.circle),
+    ]) {
+      expect(comic.gameDecoration(decoration), same(decoration));
+    }
+  });
+
+  test('comic Material controls share the paper-and-ink geometry', () {
+    const comic = RetroTheme(false);
+    final material = comic.toMaterialTheme();
+    expect(material.switchTheme.trackColor, isNotNull);
+    expect(material.checkboxTheme.side, isNotNull);
+    expect(material.sliderTheme.activeTrackColor, comic.accent);
+    expect(material.progressIndicatorTheme.color, comic.accent);
+    expect(material.tabBarTheme.indicator, isNotNull);
+    expect(material.expansionTileTheme.shape, isNotNull);
+    expect(material.tooltipTheme.decoration, isNotNull);
+    expect(
+      material.inputDecorationTheme.errorBorder,
+      isA<OutlineInputBorder>(),
+    );
+    expect(material.popupMenuTheme.elevation, 0);
+  });
+
+  test('comic control themes stay isolated from the other designs', () {
+    for (final design in AppThemeCatalog.designs) {
+      if (design.id == AppThemeId.retroManga) continue;
+      final retro = RetroTheme(false, design: design);
+      expect(retro.usesComicSurfaces, isFalse);
+      final material = retro.toMaterialTheme();
+      expect(material.popupMenuTheme.color, isNull);
+      expect(material.tabBarTheme.indicator, isNull);
+      expect(material.expansionTileTheme.shape, isNull);
+      expect(material.progressIndicatorTheme.color, isNull);
+      if (design.id == AppThemeId.minimal) continue;
+      final decoration = BoxDecoration(
+        color: retro.surface,
+        borderRadius: retro.radius,
+      );
+      expect(retro.gameDecoration(decoration), same(decoration));
+    }
+  });
+
+  testWidgets('comic section kicker truncates long labels on narrow screens', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    const retro = RetroTheme(false);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: retro.toMaterialTheme(),
+        home: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(12),
+            child: SectionKicker(
+              retro: retro,
+              label:
+                  'Preparación de una ROM de Super Mario 64 con nombre largo',
+              japanese: '準備',
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text('PREPARACIÓN DE UNA ROM DE SUPER MARIO 64 CON NOMBRE LARGO'),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   test('overlay keeps its fixed palette regardless of catalogue selection', () {

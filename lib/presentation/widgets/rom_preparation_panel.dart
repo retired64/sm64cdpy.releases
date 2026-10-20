@@ -25,36 +25,29 @@ class RomPreparationPanel extends ConsumerWidget {
       container: true,
       liveRegion: state.phase.busy,
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: retro.surface,
-          border: Border.all(color: retro.border, width: retro.borderWidth(1)),
-          borderRadius: retro.radius,
+        decoration: retro.surfaceDecoration(
+          borderColor: retro.border,
+          border: 2,
+          shadowDx: 4,
+          shadowDy: 4,
         ),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  Icon(Icons.memory_rounded, color: retro.accentText),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      l.romPrepareTitle,
-                      style: retro.heading(size: 20),
-                    ),
-                  ),
-                ],
-              ),
+              SectionKicker(retro: retro, label: l.romPrepareTitle),
               const SizedBox(height: 10),
               Text(l.romPrepareDescription, style: retro.body(size: 15)),
               const SizedBox(height: 14),
               Container(
                 padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: retro.background,
-                  borderRadius: retro.radius,
+                decoration: retro.surfaceDecoration(
+                  color: retro.surfaceAlt,
+                  borderColor: retro.border,
+                  border: 1.5,
+                  shadowDx: 2,
+                  shadowDy: 2,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

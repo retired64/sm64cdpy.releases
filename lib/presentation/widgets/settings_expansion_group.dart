@@ -166,7 +166,10 @@ class _SettingsExpansionGroupState extends State<SettingsExpansionGroup> {
     return Material(
       color: Colors.transparent,
       child: Ink(
-        decoration: retro.design.softSettingsPanels || retro.usesMinimalSurfaces
+        decoration:
+            retro.design.softSettingsPanels ||
+                retro.usesMinimalSurfaces ||
+                retro.usesComicSurfaces
             ? retro.settingsPanel()
             : const BoxDecoration(),
         child: content,

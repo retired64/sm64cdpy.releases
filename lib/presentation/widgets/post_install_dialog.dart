@@ -20,7 +20,6 @@ Future<void> showPostInstallDialog(BuildContext context) async {
 
       return AlertDialog(
         backgroundColor: retro.surface,
-        shape: RoundedRectangleBorder(borderRadius: retro.radius),
         title: Row(
           children: [
             MarioGameIcon(
