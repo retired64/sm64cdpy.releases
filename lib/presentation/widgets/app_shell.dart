@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/retro_accent.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/auto_install_provider.dart';
@@ -161,13 +162,68 @@ class DrawerMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final decoration = retro.surfaceDecoration(
+      shadowDx: retro.borderWidth(2),
+      shadowDy: retro.borderWidth(2),
+    );
+    // La madera y los paneles comparten los materiales del resto de la app.
+    final background = retro.usesMinimalSurfaces
+        ? retro.background
+        : decoration.color ?? retro.background;
+    final requestedColor = color ?? retro.ink;
+    // Los colores de sección se conservan solo si siguen siendo legibles.
+    final foreground = RetroAccent.contrast(requestedColor, background) >= 3
+        ? requestedColor
+        : retro.onColor(background);
+    // Reserva espacio para el borde, la sombra y la inclinación sin transformar
+    // el área táctil ni invadir el título o el límite superior de la barra.
+    final inset = retro.borderWidth(3) +
+        retro.chipSkew.abs() * kMinInteractiveDimension / 2;
 
-    return Builder(
-      builder: (ctx) => IconButton(
-        tooltip: MaterialLocalizations.of(ctx).openAppDrawerTooltip,
-        constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-        icon: MarioGameIcon(icon, color: color ?? retro.ink, size: size),
-        onPressed: () => Scaffold.of(ctx).openDrawer(),
+    return Center(
+      widthFactor: 1,
+      heightFactor: 1,
+      child: SizedBox.square(
+        dimension: kMinInteractiveDimension,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (!retro.usesMinimalSurfaces)
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.all(inset),
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.skewX(-retro.chipSkew),
+                    child: DecoratedBox(
+                      key: const ValueKey('drawer-menu-surface'),
+                      decoration: decoration,
+                    ),
+                  ),
+                ),
+              ),
+            // Solo se inclina el material: el icono y su semántica quedan rectos.
+            IconButton(
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              constraints: const BoxConstraints.tightFor(
+                width: kMinInteractiveDimension,
+                height: kMinInteractiveDimension,
+              ),
+              padding: EdgeInsets.zero,
+              style: IconButton.styleFrom(
+                minimumSize: const Size.square(kMinInteractiveDimension),
+                maximumSize: const Size.square(kMinInteractiveDimension),
+                visualDensity: VisualDensity.standard,
+                tapTargetSize: MaterialTapTargetSize.padded,
+                shape: RoundedRectangleBorder(borderRadius: retro.radius),
+                foregroundColor: foreground,
+                backgroundColor: Colors.transparent,
+              ),
+              icon: MarioGameIcon(icon, color: foreground, size: size),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ],
+        ),
       ),
     );
   }
