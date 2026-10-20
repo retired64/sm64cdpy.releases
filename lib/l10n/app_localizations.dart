@@ -4613,6 +4613,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something unexpected happened. Your original file was not changed.'**
   String get romPrepareErrorUnexpected;
+
+  /// No description provided for @mangaNavMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get mangaNavMore;
+
+  /// No description provided for @mangaNavPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get mangaNavPlay;
+
+  /// No description provided for @mangaNavHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to browse. Tap to open.'**
+  String get mangaNavHint;
+
+  /// No description provided for @mangaNavError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete this action. Try again.'**
+  String get mangaNavError;
 }
 
 class _AppLocalizationsDelegate

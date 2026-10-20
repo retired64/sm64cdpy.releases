@@ -120,7 +120,9 @@ class _AppShellState extends ConsumerState<AppShell> {
       enabled: bottomNavigation,
       child: Scaffold(
         backgroundColor: retro.background,
-        drawer: bottomNavigation ? null : AppDrawer(scrollController: _drawerScrollController),
+        drawer: bottomNavigation
+            ? null
+            : AppDrawer(scrollController: _drawerScrollController),
         drawerEnableOpenDragGesture: !bottomNavigation,
         drawerEdgeDragWidth: 32,
         drawerScrimColor: Colors.black.withValues(alpha: 0.62),
@@ -132,7 +134,8 @@ class _AppShellState extends ConsumerState<AppShell> {
             }
           });
         },
-        bottomNavigationBar: bottomNavigation && MediaQuery.viewInsetsOf(context).bottom == 0
+        bottomNavigationBar:
+            bottomNavigation && MediaQuery.viewInsetsOf(context).bottom == 0
             ? MangaNavigationBar(currentRoute: widget.currentRoute)
             : null,
         body: PageStorage(
@@ -140,22 +143,22 @@ class _AppShellState extends ConsumerState<AppShell> {
           child: KeyedSubtree(
             key: PageStorageKey(widget.currentRoute),
             child: showBackdrop
-            ? Stack(
-                children: [
-                  Positioned.fill(
-                    child: ThemeBackdrop(
-                      menuSurface:
-                          widget.currentRoute == '/library' ||
-                          widget.currentRoute == '/settings',
-                      allowHalftone: !_noHalftoneRoutes.contains(
-                        widget.currentRoute,
+                ? Stack(
+                    children: [
+                      Positioned.fill(
+                        child: ThemeBackdrop(
+                          menuSurface:
+                              widget.currentRoute == '/library' ||
+                              widget.currentRoute == '/settings',
+                          allowHalftone: !_noHalftoneRoutes.contains(
+                            widget.currentRoute,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  ThemePageFrame(child: widget.child),
-                ],
-              )
-            : widget.child,
+                      ThemePageFrame(child: widget.child),
+                    ],
+                  )
+                : widget.child,
           ),
         ),
       ),

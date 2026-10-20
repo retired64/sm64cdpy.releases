@@ -56,6 +56,15 @@ generados. Nuevas pruebas: aislamiento de temas, espacio de contenido, swipe sin
 navegación, rutas de herramientas y Más, teclado, borrador y lanzamiento.
 Validación Flutter y física pendiente: este Termux carece de Flutter/Dart.
 
+Primera build 39492939735: análisis correcto y 422 pruebas verdes; dos pruebas
+de lanzamiento fallaron porque Platform.isAndroid era falso en el host Linux
+y omitía el MethodChannel simulado. GameLauncherService usa ahora
+!kIsWeb + defaultTargetPlatform Android, con variantes Android explícitas en
+los widgets y cuatro pruebas del servicio (éxito, ausencia, otras plataformas
+y errores). El bloqueo a plataformas no Android sigue vigente. Traducciones y
+formato de los archivos afectados se sincronizan desde el artefacto del runner;
+la nueva ejecución debe validar el conjunto antes de declarar lista la build.
+
 ## Arranque
 
 `lib/main.dart` configura orientaciones, downloader, Hive, información de versión, eventos de instalación y el puente del overlay. Después crea el árbol Riverpod y `MaterialApp.router`.

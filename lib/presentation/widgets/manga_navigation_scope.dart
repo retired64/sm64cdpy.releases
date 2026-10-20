@@ -10,9 +10,11 @@ class MangaNavigationScope extends InheritedWidget {
 
   final bool enabled;
 
-  static bool of(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<MangaNavigationScope>()
-      ?.enabled ?? false;
+  static bool of(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<MangaNavigationScope>()
+          ?.enabled ??
+      false;
 
   @override
   bool updateShouldNotify(MangaNavigationScope oldWidget) =>

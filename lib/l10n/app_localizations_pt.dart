@@ -2560,6 +2560,19 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get romPrepareErrorUnexpected =>
       'Algo inesperado aconteceu. Seu arquivo original não foi alterado.';
+
+  @override
+  String get mangaNavMore => 'Mais';
+
+  @override
+  String get mangaNavPlay => 'Jogar';
+
+  @override
+  String get mangaNavHint => 'Deslize para explorar. Toque para abrir.';
+
+  @override
+  String get mangaNavError =>
+      'Não foi possível concluir a ação. Tente novamente.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -5118,4 +5131,17 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get romPrepareErrorUnexpected =>
       'Algo inesperado aconteceu. Seu arquivo original não foi alterado.';
+
+  @override
+  String get mangaNavMore => 'Mais';
+
+  @override
+  String get mangaNavPlay => 'Jogar';
+
+  @override
+  String get mangaNavHint => 'Deslize para explorar. Toque para abrir.';
+
+  @override
+  String get mangaNavError =>
+      'Não foi possível concluir a ação. Tente novamente.';
 }

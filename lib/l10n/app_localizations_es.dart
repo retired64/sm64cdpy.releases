@@ -2573,6 +2573,19 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get romPrepareErrorUnexpected =>
       'Ocurrió algo inesperado. Tu archivo original no fue modificado.';
+
+  @override
+  String get mangaNavMore => 'Más';
+
+  @override
+  String get mangaNavPlay => 'Jugar';
+
+  @override
+  String get mangaNavHint => 'Desliza para explorar. Toca para abrir.';
+
+  @override
+  String get mangaNavError =>
+      'No se pudo completar la acción. Inténtalo de nuevo.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -5144,4 +5157,17 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get romPrepareErrorUnexpected =>
       'Ocurrió algo inesperado. Tu archivo original no fue modificado.';
+
+  @override
+  String get mangaNavMore => 'Más';
+
+  @override
+  String get mangaNavPlay => 'Jugar';
+
+  @override
+  String get mangaNavHint => 'Desliza para explorar. Toca para abrir.';
+
+  @override
+  String get mangaNavError =>
+      'No se pudo completar la acción. Inténtalo de nuevo.';
 }

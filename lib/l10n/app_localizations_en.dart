@@ -2548,4 +2548,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get romPrepareErrorUnexpected =>
       'Something unexpected happened. Your original file was not changed.';
+
+  @override
+  String get mangaNavMore => 'More';
+
+  @override
+  String get mangaNavPlay => 'Play';
+
+  @override
+  String get mangaNavHint => 'Swipe to browse. Tap to open.';
+
+  @override
+  String get mangaNavError => 'Could not complete this action. Try again.';
 }

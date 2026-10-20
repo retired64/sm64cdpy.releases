@@ -30,7 +30,8 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
 
   static int _group(String route) {
     if (route == '/') return 0;
-    if (const ['/catalogue', '/popular', '/favourites'].contains(route)) return 1;
+    if (const ['/catalogue', '/popular', '/favourites'].contains(route))
+      return 1;
     if (route == '/library') return 2;
     if (route == '/player' || route.startsWith('/game-tool/')) return 3;
     return 4;
@@ -40,7 +41,11 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
   void initState() {
     super.initState();
     _focused = _group(widget.currentRoute);
-    _pages = PageController(initialPage: _origin + _focused, viewportFraction: 0.4, keepPage: false);
+    _pages = PageController(
+      initialPage: _origin + _focused,
+      viewportFraction: 0.4,
+      keepPage: false,
+    );
   }
 
   @override
@@ -105,7 +110,11 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       FocusManager.instance.primaryFocus?.unfocus();
       context.go(route);
     } catch (_) {
-      if (mounted) AppSnackbar.error(context, message: AppLocalizations.of(context).mangaNavError);
+      if (mounted)
+        AppSnackbar.error(
+          context,
+          message: AppLocalizations.of(context).mangaNavError,
+        );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -117,7 +126,11 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     try {
       if (await _canLeave() && mounted) await launchGameWithGuide(context);
     } catch (_) {
-      if (mounted) AppSnackbar.error(context, message: AppLocalizations.of(context).mangaNavError);
+      if (mounted)
+        AppSnackbar.error(
+          context,
+          message: AppLocalizations.of(context).mangaNavError,
+        );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -126,35 +139,102 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
   Future<String?> _showDestinations(int group, AppLocalizations l) {
     final sections = switch (group) {
       1 => [
-        (title: l.sectionExplore, entries: <_Destination>[
-          (label: l.navCatalog, icon: Icons.grid_view_outlined, route: '/catalogue'),
-          (label: l.navPopular, icon: Icons.trending_up, route: '/popular'),
-          (label: l.navFavourites, icon: Icons.favorite_border, route: '/favourites'),
-        ]),
+        (
+          title: l.sectionExplore,
+          entries: <_Destination>[
+            (
+              label: l.navCatalog,
+              icon: Icons.grid_view_outlined,
+              route: '/catalogue',
+            ),
+            (label: l.navPopular, icon: Icons.trending_up, route: '/popular'),
+            (
+              label: l.navFavourites,
+              icon: Icons.favorite_border,
+              route: '/favourites',
+            ),
+          ],
+        ),
       ],
       3 => [
-        (title: l.gameToolTitle, entries: <_Destination>[
-          (label: l.navPlayer, icon: Icons.person_outline, route: '/player'),
-          (label: l.saveFileTitle, icon: Icons.save_outlined, route: '/game-tool/save-file'),
-          (label: l.romPrepareNav, icon: Icons.memory, route: '/game-tool/rom-preparer'),
-        ]),
+        (
+          title: l.gameToolTitle,
+          entries: <_Destination>[
+            (label: l.navPlayer, icon: Icons.person_outline, route: '/player'),
+            (
+              label: l.saveFileTitle,
+              icon: Icons.save_outlined,
+              route: '/game-tool/save-file',
+            ),
+            (
+              label: l.romPrepareNav,
+              icon: Icons.memory,
+              route: '/game-tool/rom-preparer',
+            ),
+          ],
+        ),
       ],
       _ => [
-        (title: l.navSettings, entries: <_Destination>[
-          (label: l.navSettings, icon: Icons.settings_outlined, route: '/settings'),
-        ]),
-        (title: l.sectionExclusive, entries: <_Destination>[
-          (label: l.navRender96, icon: Icons.view_in_ar_outlined, route: '/render96'),
-          (label: l.navVIPMods, icon: Icons.workspace_premium_outlined, route: '/vip'),
-          (label: l.navDynOS, icon: Icons.extension_outlined, route: '/dynos'),
-          (label: l.navTouchControls, icon: Icons.gamepad_outlined, route: '/touch-controls'),
-          (label: l.navOmmRebirth, icon: Icons.folder_zip_outlined, route: '/omm-rebirth'),
-        ]),
-        (title: l.drawerResources, entries: <_Destination>[
-          (label: l.playGuideTitle, icon: Icons.menu_book_outlined, route: '/how-to-play'),
-          (label: l.navLinksResource, icon: Icons.link, route: '/links-resource'),
-          (label: l.navDisclaimer, icon: Icons.info_outline, route: '/disclaimer'),
-        ]),
+        (
+          title: l.navSettings,
+          entries: <_Destination>[
+            (
+              label: l.navSettings,
+              icon: Icons.settings_outlined,
+              route: '/settings',
+            ),
+          ],
+        ),
+        (
+          title: l.sectionExclusive,
+          entries: <_Destination>[
+            (
+              label: l.navRender96,
+              icon: Icons.view_in_ar_outlined,
+              route: '/render96',
+            ),
+            (
+              label: l.navVIPMods,
+              icon: Icons.workspace_premium_outlined,
+              route: '/vip',
+            ),
+            (
+              label: l.navDynOS,
+              icon: Icons.extension_outlined,
+              route: '/dynos',
+            ),
+            (
+              label: l.navTouchControls,
+              icon: Icons.gamepad_outlined,
+              route: '/touch-controls',
+            ),
+            (
+              label: l.navOmmRebirth,
+              icon: Icons.folder_zip_outlined,
+              route: '/omm-rebirth',
+            ),
+          ],
+        ),
+        (
+          title: l.drawerResources,
+          entries: <_Destination>[
+            (
+              label: l.playGuideTitle,
+              icon: Icons.menu_book_outlined,
+              route: '/how-to-play',
+            ),
+            (
+              label: l.navLinksResource,
+              icon: Icons.link,
+              route: '/links-resource',
+            ),
+            (
+              label: l.navDisclaimer,
+              icon: Icons.info_outline,
+              route: '/disclaimer',
+            ),
+          ],
+        ),
       ],
     };
     final retro = RetroTheme.of(context);
@@ -164,7 +244,9 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       useSafeArea: true,
       showDragHandle: true,
       backgroundColor: retro.background,
-      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.8),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.8,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: retro.radius,
         side: BorderSide(color: retro.border, width: retro.borderWidth(2)),
@@ -186,7 +268,10 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                   for (final section in sections) ...[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(section.title, style: retro.heading(size: 16)),
+                      child: Text(
+                        section.title,
+                        style: retro.heading(size: 16),
+                      ),
                     ),
                     for (final destination in section.entries)
                       Padding(
@@ -203,14 +288,16 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                             ),
                             child: ListTile(
                               key: ValueKey('manga-route-${destination.route}'),
-                              selected: destination.route == widget.currentRoute,
+                              selected:
+                                  destination.route == widget.currentRoute,
                               textColor: retro.ink,
                               iconColor: retro.ink,
                               selectedColor: retro.onColor(retro.accent),
                               leading: Icon(destination.icon),
                               title: Text(destination.label),
                               trailing: const Icon(Icons.chevron_right),
-                              onTap: () => Navigator.pop(context, destination.route),
+                              onTap: () =>
+                                  Navigator.pop(context, destination.route),
                             ),
                           ),
                         ),
@@ -233,7 +320,11 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       (label: l.navHome, icon: Icons.home_outlined, grouped: false),
       (label: l.sectionExplore, icon: Icons.explore_outlined, grouped: true),
       (label: l.navLibrary, icon: Icons.inventory_2_outlined, grouped: false),
-      (label: l.gameToolTitle, icon: Icons.sports_esports_outlined, grouped: true),
+      (
+        label: l.gameToolTitle,
+        icon: Icons.sports_esports_outlined,
+        grouped: true,
+      ),
       (label: l.mangaNavMore, icon: Icons.dashboard_outlined, grouped: true),
     ];
     final labelHeight = MediaQuery.textScalerOf(context).scale(11) * 2.6;
@@ -245,46 +336,54 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       color: retro.background,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: retro.border, width: retro.borderWidth(3))),
+          border: Border(
+            top: BorderSide(color: retro.border, width: retro.borderWidth(3)),
+          ),
         ),
         child: SafeArea(
           top: false,
           child: Stack(
             children: [
               Positioned.fill(
-                child: HalftoneBackground(color: retro.ink.withValues(alpha: 0.07)),
+                child: HalftoneBackground(
+                  color: retro.ink.withValues(alpha: 0.07),
+                ),
               ),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (!compact) Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            l.mangaNavHint,
-                            style: retro.body(size: 10, color: retro.inkDim),
-                          ),
-                        ),
-                        TextButton.icon(
-                          key: const ValueKey('manga-play'),
-                          onPressed: _busy ? null : () => unawaited(_play()),
-                          icon: const Icon(Icons.sports_esports, size: 26),
-                          label: Text(retro.displayLabel(l.mangaNavPlay)),
-                          style: TextButton.styleFrom(
-                            minimumSize: const Size(48, 48),
-                            backgroundColor: retro.accent,
-                            foregroundColor: retro.onColor(retro.accent),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: retro.radius,
-                              side: BorderSide(color: retro.border, width: retro.borderWidth(2)),
+                  if (!compact)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              l.mangaNavHint,
+                              style: retro.body(size: 10, color: retro.inkDim),
                             ),
                           ),
-                        ),
-                      ],
+                          TextButton.icon(
+                            key: const ValueKey('manga-play'),
+                            onPressed: _busy ? null : () => unawaited(_play()),
+                            icon: const Icon(Icons.sports_esports, size: 26),
+                            label: Text(retro.displayLabel(l.mangaNavPlay)),
+                            style: TextButton.styleFrom(
+                              minimumSize: const Size(48, 48),
+                              backgroundColor: retro.accent,
+                              foregroundColor: retro.onColor(retro.accent),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: retro.radius,
+                                side: BorderSide(
+                                  color: retro.border,
+                                  width: retro.borderWidth(2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                   Row(
                     children: [
                       Expanded(
@@ -295,8 +394,13 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                             child: PageView.custom(
                               key: const ValueKey('manga-navigation-pages'),
                               controller: _pages,
-                              onPageChanged: (index) => setState(() => _focused = index % entries.length),
-                              childrenDelegate: SliverChildBuilderDelegate((context, page) {
+                              onPageChanged: (index) => setState(
+                                () => _focused = index % entries.length,
+                              ),
+                              childrenDelegate: SliverChildBuilderDelegate((
+                                context,
+                                page,
+                              ) {
                                 final index = page % entries.length;
                                 final item = entries[index];
                                 return _MangaNavigationTile(
@@ -308,7 +412,9 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                                   focused: index == _focused,
                                   labelHeight: labelHeight,
                                   reduceMotion: reduceMotion,
-                                  onTap: _busy ? null : () => unawaited(_select(index)),
+                                  onTap: _busy
+                                      ? null
+                                      : () => unawaited(_select(index)),
                                 );
                               }, addSemanticIndexes: false),
                             ),
@@ -320,7 +426,10 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                           key: const ValueKey('manga-play'),
                           tooltip: l.mangaNavPlay,
                           onPressed: _busy ? null : () => unawaited(_play()),
-                          icon: Icon(Icons.sports_esports, color: retro.accentText),
+                          icon: Icon(
+                            Icons.sports_esports,
+                            color: retro.accentText,
+                          ),
                         ),
                     ],
                   ),
@@ -361,7 +470,9 @@ class _MangaNavigationTile extends StatelessWidget {
     return Center(
       child: AnimatedScale(
         scale: focused ? 1 : 0.92,
-        duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 160),
+        duration: reduceMotion
+            ? Duration.zero
+            : const Duration(milliseconds: 160),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           child: Semantics(
@@ -388,13 +499,23 @@ class _MangaNavigationTile extends StatelessWidget {
                     key: ValueKey('manga-nav-$index'),
                     onTap: onTap,
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                      constraints: const BoxConstraints(
+                        minWidth: 48,
+                        minHeight: 48,
+                      ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 5,
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(icon, size: focused ? 27 : 23, color: selected ? foreground : retro.inkDim),
+                            Icon(
+                              icon,
+                              size: focused ? 27 : 23,
+                              color: selected ? foreground : retro.inkDim,
+                            ),
                             const SizedBox(height: 4),
                             SizedBox(
                               height: labelHeight,
@@ -403,12 +524,16 @@ class _MangaNavigationTile extends StatelessWidget {
                                   retro.displayLabel(label),
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
-                                  style: retro.body(size: 11, color: foreground).copyWith(fontWeight: FontWeight.w800),
+                                  style: retro
+                                      .body(size: 11, color: foreground)
+                                      .copyWith(fontWeight: FontWeight.w800),
                                 ),
                               ),
                             ),
                             Icon(
-                              grouped ? Icons.expand_less : (selected ? Icons.check : Icons.remove),
+                              grouped
+                                  ? Icons.expand_less
+                                  : (selected ? Icons.check : Icons.remove),
                               size: 12,
                               color: selected ? foreground : retro.inkDim,
                             ),
