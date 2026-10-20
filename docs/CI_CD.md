@@ -99,10 +99,10 @@ runner no crea commits. El artifact `flutter-source-sync` permite revisar e
 incorporar el parche de generación/formato cuando el entorno local no dispone
 del SDK completo.
 
-Para probar 1.8.8 después del merge, seleccionar `main` en el workflow manual de testing.
+Para probar 1.9.0 después del merge, seleccionar `main` en el workflow manual de testing.
 Continúan siendo necesarios los secretos de firma existentes. No usar el
 workflow de publicación para obtener una prueba. La candidata actual se
-describe en [RELEASE_1.8.8.md](RELEASE_1.8.8.md).
+describe en [RELEASE_1.9.0.md](RELEASE_1.9.0.md).
 Ver [flujo y validación de temas](../cuatom_themea.md).
 
 ## Release oficial 1.8.3+22
@@ -115,7 +115,8 @@ Una ejecución manual con `all_abis: true`, o un push `[testing] [all-abis]`, pe
 APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
-flujo manual autorizado. La candidata siguiente es [1.8.5](RELEASE_1.8.5.md).
+flujo manual autorizado. La candidata de esta preparación es
+[1.9.0](RELEASE_1.9.0.md).
 
 ## Activación de mods — release 1.8.3
 
@@ -138,3 +139,28 @@ Rama `unified-game-folder` basada en `custom-themes`: user como raíz autorizada
 mods y dynos/packs derivados y ROM detectada sin otra selección. Contrato,
 migración, resolver de documentos SAF y matriz: [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
 Validación Actions pendiente; revisión física requerida.
+
+## Preparación del NDK y descarga incompleta
+
+El fallo de Testing 39342619343 ocurrió al instalar NDK 28.2.13676358:
+`Archive is not a ZIP archive`. Análisis y pruebas Flutter habían pasado; el
+error fue la descarga de herramientas nativas, no el selector de Jugador.
+
+Ambos workflows ejecutan `scripts/prepare_android_ndk.py` inmediatamente después
+de configurar Flutter. El script lee la versión exacta de `FlutterExtension.kt`
+del SDK instalado (misma autoridad que `flutter.ndkVersion`), comprueba revisión,
+toolchain CMake y clang, y reutiliza una instalación completa. Si falta o está
+incompleta, usa sdkmanager con hasta tres intentos y pausas acotadas. Solo limpia
+el directorio incompleto de esa versión, nunca otra versión ni un symlink.
+Agotar los intentos falla el workflow antes de generar/firma/compilar; no se
+ocultan errores ni se publican APK incompletos. No cambia Flutter, Dart, Java,
+NDK requerido por el proyecto ni permisos de la aplicación.
+
+Contrato de instalación: [sdkmanager oficial](https://developer.android.com/tools/sdkmanager).
+Pruebas Python: reutilización sin red, instalación fallida seguida de éxito,
+límite de intentos y rechazo de limpieza fuera del SDK mediante symlink.
+
+Validación: [Testing 39344333533](https://github.com/retired64/sm64cdpy.releases/actions/runs/39344333533) pasó la preparación real
+del NDK, las ocho pruebas Python, análisis, 253 pruebas Flutter, APK arm64
+y pruebas nativas para f10f833. El workflow de Release comparte exactamente
+el preparador; no se ejecutó una publicación ni se creó un tag.

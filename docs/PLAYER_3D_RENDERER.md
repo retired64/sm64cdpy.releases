@@ -1,5 +1,60 @@
 # Jugador 3D: arquitectura y operación
 
+## Apertura del editor y snapshot persistente — 2026-10-19
+
+Se separa el tiempo para mostrar el perfil del tiempo de lectura SAF y del
+renderizador. `getCachedPlayerProfile` lee `PlayerProfileCache` desde preferencias
+Android privadas, sin listar carpetas ni esperar el bloqueo global de SAF.
+El envelope v1 está acotado, ligado a URI user + raíz autorizada, comprueba
+permiso persistente y estructura básica. No contiene ROM, imágenes ni WebViews.
+Es caché descartable de presentación, no respaldo ni autoridad del juego.
+
+`getPlayerProfile` lee configuración/revisión sin escanear paletas;
+`getPlayerPalettes` completa el listado después. Antes, `playerSnapshot` hacía
+ambas tareas bajo el mismo bloqueo y Flutter esperaba todo sin datos visibles.
+Riverpod publica el snapshot primero y refresca sin retirar el editor. Busy
+representa una mutación; refreshing representa verificación, no un falso guardado.
+Sin caché válida, la primera lectura todavía necesita acceso real al proveedor.
+
+Escritores: lecturas confirmadas, apply, restore y operaciones de paletas nativas
+actualizan el snapshot. GameFolderStore lo elimina al conectar/desconectar;
+cambio de identidad, falta de permiso, estructura corrupta y errores de lectura
+lo invalidan. Cambios externos del juego se detectan en refresh al abrir por
+primera vez el proceso, al reanudar Jugador y al actualizar manualmente.
+No se garantizan milisegundos concretos ni se cachean permisos como si fueran
+permanentes. Una llamada cache fallida no impide consultar el juego.
+
+Mientras se verifica se permite editar, pero aplicar, restaurar y escribir
+paletas requieren revisión disponible y refresh terminado. Si se edita mientras
+llega una respuesta, se conserva borrador, perfil base y revisión original:
+apply nativo vuelve a leer y rechaza conflictos, incluso con un borrador iniciado
+desde caché. Una lectura fallida retira autorización para escribir. Lectura
+válida sin perfil retira el snapshot visible; no sigue ofreciendo una carpeta
+desconectada como operativa. La revisión de una respuesta antigua nunca gana a
+una mutación más reciente; los listados vacíos sí reemplazan paletas anteriores.
+Si solo cambian otras claves del config y el perfil base sigue siendo idéntico,
+se adopta la revisión nueva para evitar conflictos innecesarios. Aplicar un
+perfil reutiliza el listado de paletas conocido: esa escritura no modifica los
+INI y no necesita repetir su escaneo completo.
+
+Deduplicación de cargas también para force; errores inesperados liberan estado
+de carga. No se incorporan Futures fire-and-forget nuevos. El refresh de lifecycle
+ya existente captura errores dentro del notifier. Proyecciones main y overlay
+no comparten memoria: el nuevo snapshot vive en Android y el overlay no lo
+consume. No se cambian eventos de instalación, mods, DynOS o Touch Controls.
+Se revisaron importación de assets ROM, caché de Player3DSource y cambios de
+carpeta: continúan independientes y la preparación 3D no bloquea los controles.
+
+Pruebas añadidas en `player_profile_provider_test.dart`: snapshot antes de SAF,
+deduplicación, edición durante refresh con conflicto, respuestas tardías de
+paletas, pérdida de carpeta, caché corrupta y excepciones inesperadas. Pendiente
+ejecutar Flutter/Android en CI y medir arranque frío en teléfono con permisos
+válidos/revocados, paletas vacías/numerosas, edición externa y rotación.
+Termux no dispone de flutter, dart ni android/gradlew; diff-check sí es local.
+La clase PlayerProfileCache compila contra stubs con el compilador Kotlin
+disponible; esto comprueba sintaxis/tipos de esa clase, no compatibilidad Android
+completa ni comportamiento de SharedPreferences/SAF. Manifiesto JSON válido.
+
 ## Decisión
 
 La pantalla Jugador reemplaza completamente la previsualización PNG 2.5D por un
@@ -131,3 +186,34 @@ fuente de verdad; el canvas nunca persiste estado del juego.
 4. Juego ausente, ROM ausente/incorrecta y permiso SAF revocado degradan con UI útil.
 5. Rotación, background/foreground y 20 entradas/salidas no filtran contextos WebGL.
 6. Validar Android 7, 10, 13, 14 y 16 en GPU baja/media/alta.
+
+## Iconos del selector de personaje
+
+Jugador usa los cinco PNG originales del usuario en `assets/icons/player/`,
+registrados en pubspec. La correspondencia conserva los IDs del juego:
+0 Mario, 1 Luigi, 2 Toad, 3 Waluigi, 4 Wario. Cada imagen nativa de 16×16
+se muestra a 32×32 con vecino más cercano, sin tintes ni animaciones.
+`Image.asset` reutiliza ImageCache de Flutter con decodificación limitada a
+16×16 (1 KiB RGBA por icono; cinco iconos suman 5 KiB sin contar overhead).
+No hay lectura externa, requests, timers, precarga masiva ni cache persistente.
+El nombre proporciona la etiqueta accesible y la imagen es decorativa.
+
+SkewChip acepta un leading opcional; los demás consumidores mantienen iconos
+Material y el mismo comportamiento. El selector crece a 64 puntos para respetar
+el tamaño de los iconos y área táctil, manteniendo scroll horizontal y colores
+de selección de cada tema. No cambia perfil, guardado, renderer 3D ni su cache.
+La optimización del spinner/carga de entrada se pospone por petición del usuario.
+Validación física pendiente: nombres e iconos, selección y texto ampliado.
+
+Validación de iconos: cinco originales copiados byte a byte, 1803 bytes en total,
+IHDR de 16×16 verificado. [Testing 39342619343](https://github.com/retired64/sm64cdpy.releases/actions/runs/39342619343)
+aprobó generación, formato, análisis y pruebas Flutter para `f929c9b`.
+Los Dart modificados ya coinciden con el formato del runner; no se importa el
+reformateo de archivos ajenos. APK arm64 en compilación al registrar esta nota.
+El rendimiento real y el aspecto siguen pendientes de comprobación en teléfono.
+
+Build de seguimiento validada: [Testing 39344333533](https://github.com/retired64/sm64cdpy.releases/actions/runs/39344333533)
+completó APK arm64 y pruebas nativas con los retratos incluidos en el código y
+pubspec. El fallo de 39342619343 era una descarga NDK inválida; no se revirtió
+la integración de iconos ni se modificó el spinner. Artifact publicado por CI:
+`cdpy-f10f833-TESTING`. Sigue pendiente revisión en teléfono.

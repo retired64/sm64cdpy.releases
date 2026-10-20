@@ -417,6 +417,7 @@ class _RetroSwitch extends StatelessWidget {
               color: retro.border,
               width: retro.borderWidth(retro.design.softSettingsPanels ? 1 : 2),
             ),
+            boxShadow: const [],
           ),
         ),
         alignment: value ? Alignment.centerRight : Alignment.centerLeft,

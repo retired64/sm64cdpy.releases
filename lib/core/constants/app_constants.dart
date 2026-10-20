@@ -50,6 +50,8 @@ class AppConstants {
   static const String maniscat2Github =
       'https://github.com/ManIsCat2/sm64coopdx';
 
+  static const String androidGameReleasesUrl =
+      'https://github.com/ManIsCat2/sm64coopdx/releases';
   // ── Mod Installer ───────────────────────────────────────────────────────
   /// Clave en SharedPreferences para el estado de auto-instalación.
   static const String autoInstallModsKey = 'auto_install_mods';

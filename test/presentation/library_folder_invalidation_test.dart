@@ -39,7 +39,38 @@ class SlowLibrary implements InstallationLibraryRepository {
     String artifactKey,
   ) async => before;
   @override
+  Future<InstallationLibrarySnapshot?> readCached() async => null;
+  @override
+  Future<InstallationLibrarySnapshot> clearHistory() async => before;
+  @override
+  Future<InstallationLibrarySnapshot> forgetContent(String contentKey) async =>
+      before;
+  @override
+  Future<InstallationLibrarySnapshot> removeHistoryEvent(
+    String workerId,
+  ) async => before;
+}
+
+class CachedSlowLibrary implements InstallationLibraryRepository {
+  final verified = Completer<InstallationLibrarySnapshot>();
+  int verifyCalls = 0;
+  @override
   Future<InstallationLibrarySnapshot?> readCached() async => before;
+  @override
+  Future<InstallationLibrarySnapshot> verifyAll() {
+    verifyCalls++;
+    return verified.future;
+  }
+
+  @override
+  Future<InstallationLibrarySnapshot> synchronize() async => before;
+  @override
+  Future<InstallationLibrarySnapshot> discover({bool force = false}) async =>
+      before;
+  @override
+  Future<InstallationLibrarySnapshot> verifyArtifact(
+    String artifactKey,
+  ) async => before;
   @override
   Future<InstallationLibrarySnapshot> clearHistory() async => before;
   @override
@@ -53,6 +84,32 @@ class SlowLibrary implements InstallationLibraryRepository {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test('shows persisted library before background SAF verification', () async {
+    final repo = CachedSlowLibrary();
+    final container = ProviderContainer(
+      overrides: [
+        installationLibraryRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
+    try {
+      final initial = await container.read(installationLibraryProvider.future);
+      expect(initial.snapshot, same(before));
+      await Future<void>.delayed(Duration.zero);
+      expect(repo.verifyCalls, 1);
+      expect(container.read(installationLibraryProvider).isLoading, isFalse);
+
+      repo.verified.complete(after);
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        container.read(installationLibraryProvider).value!.snapshot,
+        same(after),
+      );
+    } finally {
+      container.dispose();
+    }
+  });
+
   test(
     'changing folders drops the old projection and ignores its pending verification',
     () async {

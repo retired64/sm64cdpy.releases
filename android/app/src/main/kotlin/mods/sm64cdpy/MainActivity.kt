@@ -26,6 +26,7 @@ class MainActivity : FlutterActivity() {
         flutterEngine.plugins.add(ModInstallerPlugin())
         flutterEngine.plugins.add(MarioAssetsPlugin())
         flutterEngine.plugins.add(Player3DPlugin())
+        flutterEngine.plugins.add(RomPreparationPlugin())
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->

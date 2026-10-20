@@ -1,4 +1,4 @@
-# Rendimiento de Biblioteca — línea 1.8.4
+# Rendimiento de Biblioteca — línea 1.8.4+
 
 Revisión: 2026-10-15. Este documento describe los cambios de rendimiento en
 `library-performance-1.8.4`; no afirma todavía una medición física de APK.
@@ -52,6 +52,12 @@ trabajo en el hilo de Flutter.
    precedencia, historial de configuración y detalles siguen usando el snapshot
    validado. Refresco manual, reanudación con el panel activo, cambio de carpeta e
    instalación son los puntos que vuelven a enumerar contenido.
+7. **Arranque cache-first.** Al reconstruir el proceso, Biblioteca presenta de
+   inmediato la última proyección válida guardada en Hive y verifica recibos y
+   SAF en segundo plano. La conexión inicial a la misma carpeta ya no se trata
+   como un cambio de carpeta ni borra el snapshot de Mods del juego. Solo un
+   cambio real posterior de `connectionKey` invalida esos datos. La primera
+   ejecución, una carpeta nueva o un caché inválido conservan la carga normal.
 
 La verificación recursiva del límite de tamaño Lua se mantiene al habilitar un
 mod. Puede tardar más en carpetas grandes o proveedores SAF lentos; se ejecuta
@@ -72,6 +78,11 @@ No se salta esa comprobación para dar una respuesta rápida.
   obsoleto. Si la app reanuda con Biblioteca abierta, el panel visible fuerza
   lectura; al volver a montarse, revalida si los datos tienen más de 30
   segundos. El gesto manual siempre vuelve a leer SAF.
+- **Persistencia:** Hive contiene únicamente una proyección reconstruible para
+  el primer frame. Los recibos nativos, `sm64config.txt` y el contenido SAF
+  continúan siendo la fuente de verdad. La verificación sustituye la proyección
+  cuando termina; un error transitorio conserva la última lista visible y deja
+  disponible el refresco manual.
 - **Engines:** esta gestión vive en el engine principal. La autoridad nativa y
   el archivo compartido evitan depender de memoria cruzada con el overlay.
 - **Escrituras consecutivas:** los toques se reflejan inmediatamente y entran en
@@ -82,8 +93,9 @@ No se salta esa comprobación para dar una respuesta rápida.
 
 ## Objetivo y límites de rendimiento
 
-Al volver a Mods del juego o DynOS con un snapshot reciente, la interfaz debe
-mostrar la lista sin esperar un nuevo recorrido SAF. Después de aceptar la
+Al abrir de nuevo la aplicación o volver a Mods del juego o DynOS con un
+snapshot reciente, la interfaz debe mostrar la lista sin esperar un nuevo
+recorrido SAF. Después de aceptar la
 confirmación, el switch debe reflejar el cambio en el primer frame disponible;
 la validación continúa silenciosamente y solo interrumpe si falla. El tiempo de confirmación real depende del
 proveedor SAF del dispositivo y del tamaño/estructura del mod; no se promete

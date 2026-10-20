@@ -8,7 +8,7 @@ integration, and catalogue updates into a single mobile interface instead of
 requiring users to move repeatedly between a browser, file manager, and the
 game.
 
-The project is under active maintenance. Its current development version is **1.8.8+27**.
+The project is under active maintenance. Its current development version is **1.9.0+28**.
 The floating overlay introduced for the 1.7 line is implemented
 but remains experimental until it completes broader testing on real Android
 devices and across process recreation scenarios.
@@ -29,6 +29,7 @@ folder while keeping the user informed of download and extraction progress.
 
 The application can serve as:
 
+- A built-in **How to Play** guide in Resources walks new players through Android game installation, their USA ROM, the game folder and the first mod.
 - A searchable, categorized catalogue of community content.
 - A local favourites library that can be exported and restored.
 - A download manager with background progress, cancellation, and notifications.
@@ -46,6 +47,7 @@ in-game mod workflow.
 ## Current features
 
 - Browse, search, filter, sort, and paginate the main mod catalogue.
+- Prepare your own USA Super Mario 64 ROM locally: the game tool detects `.z64`, `.v64` and `.n64`, validates the expected dump and exports a verified `.z64` copy without modifying the original. [ROM preparation details](ROM_CONVERTER.md).
 - View popular and featured content.
 - Browse dedicated VIP, DynOS, Touch Controls, OMM Rebirth, and Render96
   sections.

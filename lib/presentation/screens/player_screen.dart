@@ -92,14 +92,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 96),
               sliver: SliverList.list(
                 children: [
-                  if (state.busy && draft == null)
+                  if ((state.busy || state.refreshing) && draft == null)
                     const Center(
                       child: Padding(
                         padding: EdgeInsets.all(48),
                         child: CircularProgressIndicator(),
                       ),
                     ),
-                  if (draft == null && !state.busy)
+                  if (draft == null && !state.busy && !state.refreshing)
                     _Unavailable(
                       status: state.status,
                       onRetry: () async {
@@ -221,6 +221,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                     const SizedBox(height: 14),
                     _PlayerActions(
                       busy: state.busy,
+                      canWrite: !state.refreshing && state.revision != null,
                       dirty: state.dirty,
                       backupAvailable: state.backupAvailable,
                       onReset: ref.read(playerProfileProvider.notifier).reset,
@@ -569,8 +570,10 @@ class _ModelSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     const names = ['Mario', 'Luigi', 'Toad', 'Waluigi', 'Wario'];
+    const assets = ['mario', 'luigi', 'toad', 'waluigi', 'wario'];
+    final labelHeight = MediaQuery.textScalerOf(context).scale(12.5) * 1.4;
     return SizedBox(
-      height: 48,
+      height: (labelHeight + 30).clamp(64.0, double.infinity).toDouble(),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.fromLTRB(5, 2, 8, 5),
@@ -583,9 +586,18 @@ class _ModelSelector extends StatelessWidget {
           child: SkewChip(
             retro: retro,
             label: names[index],
-            icon: model == index ? Icons.sports_esports : Icons.person_outline,
+            leading: Image.asset(
+              'assets/icons/player/${assets[index]}.png',
+              width: 32,
+              height: 32,
+              cacheWidth: 16,
+              cacheHeight: 16,
+              filterQuality: FilterQuality.none,
+              excludeFromSemantics: true,
+              gaplessPlayback: true,
+            ),
             selected: model == index,
-            dense: true,
+            dense: false,
             onTap: () => onChanged(index),
           ),
         ),
@@ -603,10 +615,12 @@ class _PlayerActions extends StatelessWidget {
     required this.onSavePreset,
     required this.onApply,
     required this.onRestore,
+    required this.canWrite,
   });
 
   final bool busy;
   final bool dirty;
+  final bool canWrite;
   final bool backupAvailable;
   final VoidCallback onReset;
   final VoidCallback onSavePreset;
@@ -621,7 +635,7 @@ class _PlayerActions extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FilledButton.icon(
-            onPressed: busy || !dirty ? null : onApply,
+            onPressed: busy || !canWrite || !dirty ? null : onApply,
             icon: busy
                 ? const SizedBox.square(
                     dimension: 18,
@@ -647,7 +661,7 @@ class _PlayerActions extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: busy ? null : onSavePreset,
+                  onPressed: busy || !canWrite ? null : onSavePreset,
                   icon: const Icon(Icons.palette_outlined, size: 18),
                   label: Text(
                     l10n.playerSavePreset,
@@ -661,7 +675,7 @@ class _PlayerActions extends StatelessWidget {
           if (backupAvailable) ...[
             const SizedBox(height: 2),
             TextButton.icon(
-              onPressed: busy ? null : onRestore,
+              onPressed: busy || !canWrite ? null : onRestore,
               icon: const Icon(Icons.history, size: 18),
               label: Text(l10n.playerRestore),
             ),
@@ -775,11 +789,15 @@ class _PartTile extends StatelessWidget {
                     Text(
                       label,
                       maxLines: 1,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: retro.body(
+                        size: 13,
+                        color: retro.ink,
+                        weight: FontWeight.w700,
+                      ),
                     ),
                     Text(
                       _hex(color),
-                      style: TextStyle(fontSize: 11, color: retro.inkDim),
+                      style: retro.body(size: 11, color: retro.inkDim),
                     ),
                   ],
                 ),
@@ -899,26 +917,28 @@ class _ColorEditorState extends State<_ColorEditor> {
     }
   }
 
-  Widget _channel(String label, double value, ValueChanged<double> onChanged) =>
-      SizedBox(
-        height: 42,
-        child: Row(
-          children: [
-            SizedBox(
-              width: 58,
-              child: Text(
-                '$label ${(value * 255).round()}',
-                style: const TextStyle(
-                  fontFeatures: [FontFeature.tabularFigures()],
-                ),
-              ),
+  Widget _channel(String label, double value, ValueChanged<double> onChanged) {
+    final retro = RetroTheme.of(context);
+    return SizedBox(
+      height: 42,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 58,
+            child: Text(
+              '$label ${(value * 255).round()}',
+              style: retro
+                  .body(size: 12, color: retro.ink)
+                  .copyWith(fontFeatures: [FontFeature.tabularFigures()]),
             ),
-            Expanded(
-              child: Slider(value: value, onChanged: onChanged),
-            ),
-          ],
-        ),
-      );
+          ),
+          Expanded(
+            child: Slider(value: value, onChanged: onChanged),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 String _hex(Color color) =>

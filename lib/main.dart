@@ -100,7 +100,7 @@ Future<void> _bootstrapMainApp() async {
 
   // Keep the optional Hive projection synchronized even before Library UI is
   // opened. Native durable receipts remain the authority.
-  await InstallationLibraryProjectionService.instance.init();
+  unawaited(InstallationLibraryProjectionService.instance.init());
 
   // Overlay ↔ app download bridge
   OverlayBridge.init();

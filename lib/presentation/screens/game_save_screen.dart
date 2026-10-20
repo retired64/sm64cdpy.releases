@@ -135,7 +135,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
   }
 
   Future<void> _openSlot(Map slot, Map? snapshot) async {
-    if (ref.read(gameSaveProvider).busy) return;
+    if (!ref.read(gameSaveProvider).canMutate) return;
     final change = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
       isScrollControlled: true,
@@ -278,7 +278,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                         type: MaterialType.transparency,
                         child: InkWell(
                           borderRadius: retro.radius,
-                          onTap: state.busy
+                          onTap: !state.canMutate
                               ? null
                               : () => _openSlot(slot, state.data),
                           child: Padding(
@@ -292,10 +292,15 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                       width: 56,
                                       height: 56,
                                       alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: retro.surfaceAlt,
-                                        borderRadius: retro.radius,
-                                        border: Border.all(color: retro.border),
+                                      decoration: retro.gameDecoration(
+                                        BoxDecoration(
+                                          color: retro.surfaceAlt,
+                                          borderRadius: retro.radius,
+                                          border: Border.all(
+                                            color: retro.border,
+                                            width: retro.borderWidth(2),
+                                          ),
+                                        ),
                                       ),
                                       child: Text(
                                         'ABCD'[slot['slot'] as int],
@@ -330,7 +335,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                     ),
                                     const Icon(Icons.chevron_right),
                                     PopupMenuButton<int>(
-                                      enabled: !state.busy,
+                                      enabled: state.canMutate,
                                       tooltip: l.saveFileActions,
                                       itemBuilder: (_) => [
                                         for (var i = 0; i < 4; i++)
@@ -365,7 +370,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                 ),
                                 const SizedBox(height: 14),
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: retro.radius,
                                   child: LinearProgressIndicator(
                                     minHeight: 6,
                                     value:
@@ -396,7 +401,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                   FilledButton.icon(
                     icon: const Icon(Icons.save_outlined),
                     label: Text(l.saveFileBackup),
-                    onPressed: state.busy
+                    onPressed: !state.canMutate
                         ? null
                         : () async {
                             final ok = await ref
@@ -431,7 +436,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                           trailing: IconButton(
                             tooltip: l.playerRestore,
                             icon: const Icon(Icons.restore),
-                            onPressed: state.busy
+                            onPressed: !state.canMutate
                                 ? null
                                 : () => _change({
                                     'revision': state.data?['revision'],
@@ -570,11 +575,36 @@ class _SaveEditorState extends State<_SaveEditor> {
                     backgroundColor: retro.surface,
                     collapsedShape: RoundedRectangleBorder(
                       borderRadius: retro.radius,
+                      side: retro.usesComicSurfaces
+                          ? BorderSide(
+                              color: retro.border,
+                              width: retro.borderWidth(2),
+                            )
+                          : BorderSide.none,
                     ),
-                    shape: RoundedRectangleBorder(borderRadius: retro.radius),
-                    leading: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: retro.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: retro.radius,
+                      side: retro.usesComicSurfaces
+                          ? BorderSide(
+                              color: retro.border,
+                              width: retro.borderWidth(2),
+                            )
+                          : BorderSide.none,
+                    ),
+                    leading: Container(
+                      width: 32,
+                      height: 32,
+                      alignment: Alignment.center,
+                      decoration: retro.gameDecoration(
+                        BoxDecoration(
+                          color: retro.surface,
+                          borderRadius: retro.radius,
+                          border: Border.all(
+                            color: retro.border,
+                            width: retro.borderWidth(2),
+                          ),
+                        ),
+                      ),
                       child: Text(
                         '${i + 1}',
                         style: retro.body(size: 13, color: retro.accentText),

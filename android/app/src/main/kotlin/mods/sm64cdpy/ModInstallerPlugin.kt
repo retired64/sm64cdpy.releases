@@ -194,7 +194,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "restoreGameModConfig" -> gameTask(result) { GameModActivationStore.restore(applicationContext) }
             "getGameSave" -> gameTask(result) { GameSaveStore.snapshot(applicationContext) }
             "changeGameSave" -> gameTask(result) { GameSaveStore.mutate(applicationContext, call.arguments as? Map<*, *> ?: error("invalid")) }
-            "getPlayerProfile" -> gameTask(result) { GameModActivationStore.playerSnapshot(applicationContext) }
+            "getCachedPlayerProfile" -> gameTask(result) { PlayerProfileCache.read(applicationContext) }
+            "getPlayerPalettes" -> gameTask(result) { GameModActivationStore.playerPalettes(applicationContext) }
+            "getPlayerProfile" -> gameTask(result) { GameModActivationStore.playerSnapshot(applicationContext, includePalettes = false) }
             "restorePlayerConfig" -> gameTask(result) {
                 GameModActivationStore.restore(applicationContext)
                 GameModActivationStore.playerSnapshot(applicationContext)

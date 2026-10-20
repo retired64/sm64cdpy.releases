@@ -286,6 +286,30 @@ catálogo/VIP/DynOS/Touch Controls/OMM/Render96/enlaces/ajustes usan esta regla.
 Se oculta también el espacio de las leyendas independientes; el contenido de
 mods y los nombres proporcionados por usuarios o autores no se filtran.
 
+## Superficies coherentes de Retro Manga
+
+Retro Manga deriva su acabado de una política compartida en `RetroTheme`, no de
+condiciones repetidas por pantalla. Las superficies neutras que pasan por
+`gameDecoration` completan borde de tinta y sombra dura cuando la pantalla no
+los especifica; `surfaceDecoration` sigue siendo el contrato para tarjetas
+principales. `ThemeData` aplica la misma geometría rectangular a campos,
+diálogos, menús, chips, botones segmentados, switches, checkboxes, sliders,
+barras de progreso, pestañas, `ExpansionTile`, tooltips y botones estándar,
+incluidos sus estados de foco, error y deshabilitado. Los títulos de sección
+usan una etiqueta inclinada con borde, aplican `displayLabel` y truncan de
+forma controlada las etiquetas largas; los grupos del drawer, de Ajustes y de
+Save Files comparten el mismo tratamiento de papel/cartón. Los overrides
+locales de diálogos, guía, detalle, Player y tarjetas de descarga ya no anulan
+el borde o la sombra del tema.
+
+La política solo se activa para el diseño `halftone + flat`: Minimalista no
+recupera contenedores ni sombras y Minish Cap, Mario Kart 64 y los diseños N64
+conservan sus tratamientos propios. `popupMenuTheme` y los controles cómic se
+declaran dentro del bloque `usesComicSurfaces`, por lo que no alteran los otros
+diseños. Las sombras siguen sin desenfoque y el fondo de semitono permanece
+aislado en `RepaintBoundary`, evitando shaders, blur o nuevos recursos raster
+durante el scroll.
+
 ## GameTool Save File
 
 The main engine projects GameSaveStore through gameSaveProvider. Native Kotlin

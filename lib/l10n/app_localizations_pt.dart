@@ -2073,6 +2073,493 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get fastInstallAccessError =>
       'Não foi possível abrir as permissões. Você pode continuar instalando normalmente.';
+
+  @override
+  String get playGuideTitle => 'Como jogar';
+
+  @override
+  String get playGuideIntro =>
+      'Sua primeira aventura, passo a passo. Prepare o jogo e depois traga seus mods para cá.';
+
+  @override
+  String get playGuideNext => 'Próximo passo';
+
+  @override
+  String get playGuideBack => 'Passo anterior';
+
+  @override
+  String get playGuideOpenDownload => 'Abrir downloads do Android';
+
+  @override
+  String get playGuideRepository => 'Repositório do port Android';
+
+  @override
+  String get playGuideConnect => 'Conectar pasta do jogo';
+
+  @override
+  String get playGuideLibrary => 'Abrir Biblioteca';
+
+  @override
+  String get playGuideLaunch => 'Abrir o jogo';
+
+  @override
+  String get playGuideMissingTitle => 'Vamos preparar seu jogo';
+
+  @override
+  String get playGuideMissingBody =>
+      'SM64CoopDX Android não está instalado. Siga o guia para instalar, preparar sua ROM e conectar seus mods.';
+
+  @override
+  String get playGuideRead => 'Ver guia inicial';
+
+  @override
+  String get playGuideLater => 'Agora não';
+
+  @override
+  String get playGuideLinkError =>
+      'Não foi possível abrir a página. Confira sua conexão e tente novamente.';
+
+  @override
+  String get playGuideLaunchError =>
+      'O jogo está instalado, mas o Android não conseguiu abri-lo. Tente pelo ícone na tela inicial.';
+
+  @override
+  String get playGuideInstalled => 'Jogo instalado';
+
+  @override
+  String get playGuideNotInstalled => 'Jogo ainda não detectado';
+
+  @override
+  String get playGuideConnected => 'Pasta do jogo conectada';
+
+  @override
+  String get playGuideNotConnected => 'Pasta do jogo ainda não conectada';
+
+  @override
+  String get playGuideReady =>
+      'Sua aventura espera por você! Você pode rever qualquer passo quando precisar.';
+
+  @override
+  String get playGuideStep1Title => 'Obtenha o jogo';
+
+  @override
+  String get playGuideStep2Title => 'Prepare sua própria ROM';
+
+  @override
+  String get playGuideConvertTitle => 'Converter minha ROM (.n64 / .v64)';
+
+  @override
+  String get playGuideStep3Title => 'Entregue a ROM ao jogo';
+
+  @override
+  String get playGuideStep4Title => 'Conecte o manager';
+
+  @override
+  String get playGuideStep5Title => 'Adicione seu primeiro mod';
+
+  @override
+  String get playGuidePathsTitle => 'Onde fica cada coisa?';
+
+  @override
+  String get playGuideStep6Title => 'Jogue e encontre ajuda';
+
+  @override
+  String get playGuideMap => 'O mapa da sua aventura';
+
+  @override
+  String get playGuideSwipe => 'Deslize para os lados para mudar de capítulo';
+
+  @override
+  String get playGuideChapter => 'CAPÍTULO';
+
+  @override
+  String get playGuideTip => 'Lembre-se';
+
+  @override
+  String get playGuideOverview => 'Ver passos';
+
+  @override
+  String get playGuideS1Card1 =>
+      'SM64CDPY organiza mods. SM64CoopDX Android é outro aplicativo: aquele que executa o jogo.';
+
+  @override
+  String get playGuideS1Card2 =>
+      'Toque em Abrir downloads do Android. Seu navegador abrirá o GitHub do port Android.';
+
+  @override
+  String get playGuideS1Card3 =>
+      'Encontre a versão e expanda Assets se necessário. Baixe o arquivo que termina em .apk, não Source code. Se houver várias opções, siga os requisitos do seu celular naquela versão.';
+
+  @override
+  String get playGuideS1Card4 =>
+      'Abra o APK baixado e toque em Instalar. Se o Android pedir, permita que esse navegador ou gerenciador instale este APK e volte à instalação.';
+
+  @override
+  String get playGuideS1Card5 =>
+      'Abra SM64CoopDX uma vez. Siga as instruções de armazenamento para que ele crie sua pasta.';
+
+  @override
+  String get playGuideS1Card6 =>
+      'Se não entender um aviso do Android, peça ajuda a alguém de confiança.';
+
+  @override
+  String get playGuideS2Card1 =>
+      'A ROM é uma cópia do cartucho original de Super Mario 64. O APK sozinho não inclui as imagens e os sons originais do jogo.';
+
+  @override
+  String get playGuideS2Card2 =>
+      'Use sua própria cópia original dos EUA, sem modificações, no formato .z64. Este guia não fornece ROMs. Um ZIP é um pacote: extraia-o primeiro para ver o arquivo dentro.';
+
+  @override
+  String get playGuideS2Card3 => 'Já termina em .z64? Vá para o próximo passo.';
+
+  @override
+  String get playGuideS2Card4 =>
+      'Termina em .n64 ou .v64? Abra “Converter minha ROM” abaixo.';
+
+  @override
+  String get playGuideS2Card5 =>
+      'É de outra região ou está modificada? Mudar o nome ou formato não a transforma em uma cópia original dos EUA.';
+
+  @override
+  String get playGuideS3Card1 => 'Abra SM64CoopDX Android.';
+
+  @override
+  String get playGuideS3Card2 =>
+      'Se ele pedir uma ROM, escolha seu arquivo .z64 dos EUA, normalmente em Downloads. Espere o jogo terminar de prepará-lo.';
+
+  @override
+  String get playGuideS3Card3 =>
+      'Se sua versão não tem seletor, feche o jogo. No gerenciador de arquivos, copie o .z64 para Armazenamento interno → com.maniscat2.sm64coopdx → user. Abra o jogo novamente.';
+
+  @override
+  String get playGuideS3Card4 =>
+      'Espere chegar ao menu do jogo. Se a ROM for rejeitada, confira se é a original dos EUA, sem modificações, e se foi realmente convertida para .z64.';
+
+  @override
+  String get playGuideS3Card5 =>
+      'O jogo guarda a ROM dos EUA aceita como user/baserom.us.z64. A pasta pode variar conforme as permissões de armazenamento; siga o local mostrado pelo jogo.';
+
+  @override
+  String get playGuideS4Card1 =>
+      'Volte ao SM64CDPY e toque em Conectar pasta do jogo. Antes de abrir a janela de pastas do Android, explicaremos o que escolher.';
+
+  @override
+  String get playGuideS4Card2 =>
+      'Abra Armazenamento interno → com.maniscat2.sm64coopdx.';
+
+  @override
+  String get playGuideS4Card3 =>
+      'Selecione essa pasta principal, que contém user, e toque em Usar esta pasta / Permitir. Não escolha Downloads, apenas user ou o arquivo ROM.';
+
+  @override
+  String get playGuideS4Card4 =>
+      'Uma seleção conecta mods, DynOS, configurações e detecção de ROM. Se user não existir, abra e prepare o jogo primeiro. Se o Android bloquear o acesso, confira o armazenamento do jogo: escolher outra pasta vazia não resolve.';
+
+  @override
+  String get playGuideS4Card5 =>
+      'Já está conectada? Continue. Não precisa escolher as mesmas pastas para cada mod.';
+
+  @override
+  String get playGuideS5Card1 =>
+      'Feche o jogo antes de instalar ou alterar mods.';
+
+  @override
+  String get playGuideS5Card2 =>
+      'Abra Catálogo e escolha um mod. Leia as notas de compatibilidade.';
+
+  @override
+  String get playGuideS5Card3 =>
+      'Baixe-o. Com instalação automática ativada, espere por Instalado: terminar o download não significa terminar a instalação. Se estiver desativada, siga o aviso de instalação manual ou ative-a em Configurações.';
+
+  @override
+  String get playGuideS5Card4 =>
+      'Abra Ferramentas → Biblioteca. Mods do jogo reúne mods Lua. DynOS / Touch Controls reúne modelos, texturas e controles. Ative o item que quiser usar.';
+
+  @override
+  String get playGuideS5Card5 =>
+      'Abra o jogo novamente para carregar as mudanças. Alguns packs exigem ajustes dentro do jogo: siga as instruções do autor.';
+
+  @override
+  String get playGuideS6Card1 =>
+      'Toque em Abrir o jogo abaixo. Escolha um arquivo de jogo salvo e aproveite sua aventura.';
+
+  @override
+  String get playGuideS6Card2 =>
+      'O jogo não abre? Tente pelo ícone na tela inicial do Android.';
+
+  @override
+  String get playGuideS6Card3 =>
+      'ROM não aceita? Confira a original dos EUA e o formato .z64 no passo 2.';
+
+  @override
+  String get playGuideS6Card4 =>
+      'Mod não aparece? Confira se a instalação terminou, ative-o na Biblioteca e reinicie o jogo. Veja se ele precisa de outro mod.';
+
+  @override
+  String get playGuideS6Card5 =>
+      'Perdeu acesso à pasta? Reconecte a pasta principal no passo 4.';
+
+  @override
+  String get playGuideS6Card6 =>
+      'Teste um mod por vez. Se algo falhar, desative esse mod e abra o jogo novamente. Faça backup antes de apagar arquivos do jogo.';
+
+  @override
+  String get playGuideConvertCard1 => 'Guarde o arquivo original como backup.';
+
+  @override
+  String get playGuideConvertCard2 => 'Abra o conversor de ROM no navegador.';
+
+  @override
+  String get playGuideConvertCard3 => 'Escolha seu arquivo .n64 ou .v64.';
+
+  @override
+  String get playGuideConvertCard4 =>
+      'Selecione .z64 como formato de saída e salve o resultado, normalmente em Downloads.';
+
+  @override
+  String get playGuideConvertCard5 =>
+      'Volte aqui e continue com esse arquivo .z64.';
+
+  @override
+  String get playGuideConvertCard6 =>
+      'Converter reorganiza os dados do arquivo. Renomear .n64 para .z64 não converte. Esta é uma ferramenta externa: se estiver indisponível, use outro conversor de ordem de bytes de N64 com saída .z64.';
+
+  @override
+  String get playGuidePathsCard1 =>
+      'Dentro de Armazenamento interno → com.maniscat2.sm64coopdx:';
+
+  @override
+  String get playGuidePathsCard2 =>
+      'user/mods → novas instalações de mods Lua. Um mod pode ser um arquivo .lua ou uma pasta com main.lua.';
+
+  @override
+  String get playGuidePathsCard3 =>
+      'user/dynos/packs → novos packs DynOS e Touch Controls. Touch Controls compartilha esse destino.';
+
+  @override
+  String get playGuidePathsCard4 =>
+      'user/baserom.us.z64 → ROM original dos EUA aceita pelo jogo.';
+
+  @override
+  String get playGuidePathsCard5 =>
+      'user/sm64config.txt → configurações e itens ativados. Deixe o app cuidar dele em vez de editar à mão.';
+
+  @override
+  String get playGuidePathsCard6 =>
+      'O jogo também lê mods e dynos/packs fora de user. O manager também os mostra ao conectar a pasta principal. Para nomes repetidos, Lua prefere user/mods; DynOS prefere dynos/packs externo. Evite manter duas cópias com o mesmo nome.';
+
+  @override
+  String get playGuideS1Title1 => 'Dois apps, duas tarefas';
+
+  @override
+  String get playGuideS1Title2 => 'Abra a página do Android';
+
+  @override
+  String get playGuideS1Title3 => 'Escolha o APK';
+
+  @override
+  String get playGuideS1Title4 => 'Instale o jogo';
+
+  @override
+  String get playGuideS1Title5 => 'Abra uma vez';
+
+  @override
+  String get playGuideS1Title6 => 'Uma mão amiga';
+
+  @override
+  String get playGuideS2Title1 => 'O que é uma ROM?';
+
+  @override
+  String get playGuideS2Title2 => 'A cópia necessária';
+
+  @override
+  String get playGuideS2Title3 => 'Já tenho .z64';
+
+  @override
+  String get playGuideS2Title4 => 'Tenho .n64 ou .v64';
+
+  @override
+  String get playGuideS2Title5 => 'A região importa';
+
+  @override
+  String get playGuideS3Title1 => 'Abra SM64CoopDX';
+
+  @override
+  String get playGuideS3Title2 => 'Escolha sua ROM';
+
+  @override
+  String get playGuideS3Title3 => 'Se não houver seletor';
+
+  @override
+  String get playGuideS3Title4 => 'Chegue ao menu do jogo';
+
+  @override
+  String get playGuideS3Title5 => 'O lar da sua ROM';
+
+  @override
+  String get playGuideS4Title1 => 'Volte ao manager';
+
+  @override
+  String get playGuideS4Title2 => 'Encontre a pasta principal';
+
+  @override
+  String get playGuideS4Title3 => 'Permita usar essa pasta';
+
+  @override
+  String get playGuideS4Title4 => 'Uma só conexão';
+
+  @override
+  String get playGuideS4Title5 => 'Já está conectada?';
+
+  @override
+  String get playGuideS5Title1 => 'Feche o jogo primeiro';
+
+  @override
+  String get playGuideS5Title2 => 'Escolha um mod';
+
+  @override
+  String get playGuideS5Title3 => 'Espere a instalação';
+
+  @override
+  String get playGuideS5Title4 => 'Ative na Biblioteca';
+
+  @override
+  String get playGuideS5Title5 => 'Reinicie e experimente';
+
+  @override
+  String get playGuideS6Title1 => 'Comece sua aventura';
+
+  @override
+  String get playGuideS6Title2 => 'O jogo não abre';
+
+  @override
+  String get playGuideS6Title3 => 'ROM não aceita';
+
+  @override
+  String get playGuideS6Title4 => 'O mod não aparece';
+
+  @override
+  String get playGuideS6Title5 => 'Acesso à pasta perdido';
+
+  @override
+  String get playGuideS6Title6 => 'Teste um por vez';
+
+  @override
+  String get romPrepareNav => 'Preparar ROM';
+
+  @override
+  String get romPrepareTitle => 'Prepare sua ROM';
+
+  @override
+  String get romPrepareDescription =>
+      'Escolha seu próprio arquivo de Super Mario 64. O aplicativo cria e verifica uma cópia .z64 compatível sem alterar o original.';
+
+  @override
+  String get romPreparePrivacy =>
+      'O SM64CDPY não inclui, baixa nem compartilha ROMs. O arquivo é processado localmente no dispositivo.';
+
+  @override
+  String get romPrepareChoose => 'Escolher ROM';
+
+  @override
+  String get romPrepareChooseAnother => 'Escolher outro arquivo';
+
+  @override
+  String get romPrepareAnother => 'Preparar outra ROM';
+
+  @override
+  String get romPrepareSave => 'Salvar cópia .z64';
+
+  @override
+  String get romPrepareContinue => 'Continuar com o guia';
+
+  @override
+  String get romPrepareCancel => 'Cancelar';
+
+  @override
+  String get romPrepareIdle => 'Pronto para verificar seu arquivo';
+
+  @override
+  String get romPreparePicking => 'Escolha seu arquivo no Android';
+
+  @override
+  String get romPrepareInspecting => 'Verificando o arquivo selecionado';
+
+  @override
+  String get romPrepareConverting => 'Preparando uma cópia compatível';
+
+  @override
+  String get romPrepareValidating => 'Verificando a ROM preparada';
+
+  @override
+  String get romPrepareReady => 'ROM compatível pronta';
+
+  @override
+  String get romPrepareAlreadyCompatible =>
+      'Sua ROM já estava no formato correto';
+
+  @override
+  String get romPrepareChoosingDestination => 'Escolha onde salvar a cópia';
+
+  @override
+  String get romPrepareExporting => 'Salvando sua cópia';
+
+  @override
+  String get romPrepareVerifyingExport => 'Verificando a cópia salva';
+
+  @override
+  String get romPrepareSaved => 'Cópia salva e verificada';
+
+  @override
+  String get romPrepareCancelling => 'Parando com segurança';
+
+  @override
+  String get romPrepareCancelled => 'Preparação cancelada';
+
+  @override
+  String get romPrepareFailed => 'Não foi possível preparar a ROM';
+
+  @override
+  String romPrepareDetected(String format) {
+    return 'Formato detectado: $format';
+  }
+
+  @override
+  String romPrepareSavedAs(String name) {
+    return 'Salva como $name';
+  }
+
+  @override
+  String get romPrepareErrorUnrecognized =>
+      'O arquivo não está em um formato de ROM de N64 reconhecido.';
+
+  @override
+  String get romPrepareErrorSize =>
+      'A ROM original de Super Mario 64 deve ter exatamente 8 MiB.';
+
+  @override
+  String get romPrepareErrorIncompatible =>
+      'Você precisa de uma ROM original e sem alterações de Super Mario 64 USA.';
+
+  @override
+  String get romPrepareErrorPermission =>
+      'O Android não permite mais acessar esse arquivo. Escolha-o novamente.';
+
+  @override
+  String get romPrepareErrorStorage =>
+      'Não há armazenamento suficiente ou não foi possível ler o arquivo.';
+
+  @override
+  String get romPrepareErrorExport =>
+      'Não foi possível verificar a cópia salva. Escolha outro destino e tente novamente.';
+
+  @override
+  String get romPrepareErrorBusy => 'Outra operação de ROM já está ativa.';
+
+  @override
+  String get romPrepareErrorUnexpected =>
+      'Algo inesperado aconteceu. Seu arquivo original não foi alterado.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -4144,4 +4631,491 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get fastInstallAccessError =>
       'Não foi possível abrir as permissões. Você pode continuar instalando normalmente.';
+
+  @override
+  String get playGuideTitle => 'Como jogar';
+
+  @override
+  String get playGuideIntro =>
+      'Sua primeira aventura, passo a passo. Prepare o jogo e depois traga seus mods para cá.';
+
+  @override
+  String get playGuideNext => 'Próximo passo';
+
+  @override
+  String get playGuideBack => 'Passo anterior';
+
+  @override
+  String get playGuideOpenDownload => 'Abrir downloads do Android';
+
+  @override
+  String get playGuideRepository => 'Repositório do port Android';
+
+  @override
+  String get playGuideConnect => 'Conectar pasta do jogo';
+
+  @override
+  String get playGuideLibrary => 'Abrir Biblioteca';
+
+  @override
+  String get playGuideLaunch => 'Abrir o jogo';
+
+  @override
+  String get playGuideMissingTitle => 'Vamos preparar seu jogo';
+
+  @override
+  String get playGuideMissingBody =>
+      'SM64CoopDX Android não está instalado. Siga o guia para instalar, preparar sua ROM e conectar seus mods.';
+
+  @override
+  String get playGuideRead => 'Ver guia inicial';
+
+  @override
+  String get playGuideLater => 'Agora não';
+
+  @override
+  String get playGuideLinkError =>
+      'Não foi possível abrir a página. Confira sua conexão e tente novamente.';
+
+  @override
+  String get playGuideLaunchError =>
+      'O jogo está instalado, mas o Android não conseguiu abri-lo. Tente pelo ícone na tela inicial.';
+
+  @override
+  String get playGuideInstalled => 'Jogo instalado';
+
+  @override
+  String get playGuideNotInstalled => 'Jogo ainda não detectado';
+
+  @override
+  String get playGuideConnected => 'Pasta do jogo conectada';
+
+  @override
+  String get playGuideNotConnected => 'Pasta do jogo ainda não conectada';
+
+  @override
+  String get playGuideReady =>
+      'Sua aventura espera por você! Você pode rever qualquer passo quando precisar.';
+
+  @override
+  String get playGuideStep1Title => 'Obtenha o jogo';
+
+  @override
+  String get playGuideStep2Title => 'Prepare sua própria ROM';
+
+  @override
+  String get playGuideConvertTitle => 'Converter minha ROM (.n64 / .v64)';
+
+  @override
+  String get playGuideStep3Title => 'Entregue a ROM ao jogo';
+
+  @override
+  String get playGuideStep4Title => 'Conecte o manager';
+
+  @override
+  String get playGuideStep5Title => 'Adicione seu primeiro mod';
+
+  @override
+  String get playGuidePathsTitle => 'Onde fica cada coisa?';
+
+  @override
+  String get playGuideStep6Title => 'Jogue e encontre ajuda';
+
+  @override
+  String get playGuideMap => 'O mapa da sua aventura';
+
+  @override
+  String get playGuideSwipe => 'Deslize para os lados para mudar de capítulo';
+
+  @override
+  String get playGuideChapter => 'CAPÍTULO';
+
+  @override
+  String get playGuideTip => 'Lembre-se';
+
+  @override
+  String get playGuideOverview => 'Ver passos';
+
+  @override
+  String get playGuideS1Card1 =>
+      'SM64CDPY organiza mods. SM64CoopDX Android é outro aplicativo: aquele que executa o jogo.';
+
+  @override
+  String get playGuideS1Card2 =>
+      'Toque em Abrir downloads do Android. Seu navegador abrirá o GitHub do port Android.';
+
+  @override
+  String get playGuideS1Card3 =>
+      'Encontre a versão e expanda Assets se necessário. Baixe o arquivo que termina em .apk, não Source code. Se houver várias opções, siga os requisitos do seu celular naquela versão.';
+
+  @override
+  String get playGuideS1Card4 =>
+      'Abra o APK baixado e toque em Instalar. Se o Android pedir, permita que esse navegador ou gerenciador instale este APK e volte à instalação.';
+
+  @override
+  String get playGuideS1Card5 =>
+      'Abra SM64CoopDX uma vez. Siga as instruções de armazenamento para que ele crie sua pasta.';
+
+  @override
+  String get playGuideS1Card6 =>
+      'Se não entender um aviso do Android, peça ajuda a alguém de confiança.';
+
+  @override
+  String get playGuideS2Card1 =>
+      'A ROM é uma cópia do cartucho original de Super Mario 64. O APK sozinho não inclui as imagens e os sons originais do jogo.';
+
+  @override
+  String get playGuideS2Card2 =>
+      'Use sua própria cópia original dos EUA, sem modificações, no formato .z64. Este guia não fornece ROMs. Um ZIP é um pacote: extraia-o primeiro para ver o arquivo dentro.';
+
+  @override
+  String get playGuideS2Card3 => 'Já termina em .z64? Vá para o próximo passo.';
+
+  @override
+  String get playGuideS2Card4 =>
+      'Termina em .n64 ou .v64? Abra “Converter minha ROM” abaixo.';
+
+  @override
+  String get playGuideS2Card5 =>
+      'É de outra região ou está modificada? Mudar o nome ou formato não a transforma em uma cópia original dos EUA.';
+
+  @override
+  String get playGuideS3Card1 => 'Abra SM64CoopDX Android.';
+
+  @override
+  String get playGuideS3Card2 =>
+      'Se ele pedir uma ROM, escolha seu arquivo .z64 dos EUA, normalmente em Downloads. Espere o jogo terminar de prepará-lo.';
+
+  @override
+  String get playGuideS3Card3 =>
+      'Se sua versão não tem seletor, feche o jogo. No gerenciador de arquivos, copie o .z64 para Armazenamento interno → com.maniscat2.sm64coopdx → user. Abra o jogo novamente.';
+
+  @override
+  String get playGuideS3Card4 =>
+      'Espere chegar ao menu do jogo. Se a ROM for rejeitada, confira se é a original dos EUA, sem modificações, e se foi realmente convertida para .z64.';
+
+  @override
+  String get playGuideS3Card5 =>
+      'O jogo guarda a ROM dos EUA aceita como user/baserom.us.z64. A pasta pode variar conforme as permissões de armazenamento; siga o local mostrado pelo jogo.';
+
+  @override
+  String get playGuideS4Card1 =>
+      'Volte ao SM64CDPY e toque em Conectar pasta do jogo. Antes de abrir a janela de pastas do Android, explicaremos o que escolher.';
+
+  @override
+  String get playGuideS4Card2 =>
+      'Abra Armazenamento interno → com.maniscat2.sm64coopdx.';
+
+  @override
+  String get playGuideS4Card3 =>
+      'Selecione essa pasta principal, que contém user, e toque em Usar esta pasta / Permitir. Não escolha Downloads, apenas user ou o arquivo ROM.';
+
+  @override
+  String get playGuideS4Card4 =>
+      'Uma seleção conecta mods, DynOS, configurações e detecção de ROM. Se user não existir, abra e prepare o jogo primeiro. Se o Android bloquear o acesso, confira o armazenamento do jogo: escolher outra pasta vazia não resolve.';
+
+  @override
+  String get playGuideS4Card5 =>
+      'Já está conectada? Continue. Não precisa escolher as mesmas pastas para cada mod.';
+
+  @override
+  String get playGuideS5Card1 =>
+      'Feche o jogo antes de instalar ou alterar mods.';
+
+  @override
+  String get playGuideS5Card2 =>
+      'Abra Catálogo e escolha um mod. Leia as notas de compatibilidade.';
+
+  @override
+  String get playGuideS5Card3 =>
+      'Baixe-o. Com instalação automática ativada, espere por Instalado: terminar o download não significa terminar a instalação. Se estiver desativada, siga o aviso de instalação manual ou ative-a em Configurações.';
+
+  @override
+  String get playGuideS5Card4 =>
+      'Abra Ferramentas → Biblioteca. Mods do jogo reúne mods Lua. DynOS / Touch Controls reúne modelos, texturas e controles. Ative o item que quiser usar.';
+
+  @override
+  String get playGuideS5Card5 =>
+      'Abra o jogo novamente para carregar as mudanças. Alguns packs exigem ajustes dentro do jogo: siga as instruções do autor.';
+
+  @override
+  String get playGuideS6Card1 =>
+      'Toque em Abrir o jogo abaixo. Escolha um arquivo de jogo salvo e aproveite sua aventura.';
+
+  @override
+  String get playGuideS6Card2 =>
+      'O jogo não abre? Tente pelo ícone na tela inicial do Android.';
+
+  @override
+  String get playGuideS6Card3 =>
+      'ROM não aceita? Confira a original dos EUA e o formato .z64 no passo 2.';
+
+  @override
+  String get playGuideS6Card4 =>
+      'Mod não aparece? Confira se a instalação terminou, ative-o na Biblioteca e reinicie o jogo. Veja se ele precisa de outro mod.';
+
+  @override
+  String get playGuideS6Card5 =>
+      'Perdeu acesso à pasta? Reconecte a pasta principal no passo 4.';
+
+  @override
+  String get playGuideS6Card6 =>
+      'Teste um mod por vez. Se algo falhar, desative esse mod e abra o jogo novamente. Faça backup antes de apagar arquivos do jogo.';
+
+  @override
+  String get playGuideConvertCard1 => 'Guarde o arquivo original como backup.';
+
+  @override
+  String get playGuideConvertCard2 => 'Abra o conversor de ROM no navegador.';
+
+  @override
+  String get playGuideConvertCard3 => 'Escolha seu arquivo .n64 ou .v64.';
+
+  @override
+  String get playGuideConvertCard4 =>
+      'Selecione .z64 como formato de saída e salve o resultado, normalmente em Downloads.';
+
+  @override
+  String get playGuideConvertCard5 =>
+      'Volte aqui e continue com esse arquivo .z64.';
+
+  @override
+  String get playGuideConvertCard6 =>
+      'Converter reorganiza os dados do arquivo. Renomear .n64 para .z64 não converte. Esta é uma ferramenta externa: se estiver indisponível, use outro conversor de ordem de bytes de N64 com saída .z64.';
+
+  @override
+  String get playGuidePathsCard1 =>
+      'Dentro de Armazenamento interno → com.maniscat2.sm64coopdx:';
+
+  @override
+  String get playGuidePathsCard2 =>
+      'user/mods → novas instalações de mods Lua. Um mod pode ser um arquivo .lua ou uma pasta com main.lua.';
+
+  @override
+  String get playGuidePathsCard3 =>
+      'user/dynos/packs → novos packs DynOS e Touch Controls. Touch Controls compartilha esse destino.';
+
+  @override
+  String get playGuidePathsCard4 =>
+      'user/baserom.us.z64 → ROM original dos EUA aceita pelo jogo.';
+
+  @override
+  String get playGuidePathsCard5 =>
+      'user/sm64config.txt → configurações e itens ativados. Deixe o app cuidar dele em vez de editar à mão.';
+
+  @override
+  String get playGuidePathsCard6 =>
+      'O jogo também lê mods e dynos/packs fora de user. O manager também os mostra ao conectar a pasta principal. Para nomes repetidos, Lua prefere user/mods; DynOS prefere dynos/packs externo. Evite manter duas cópias com o mesmo nome.';
+
+  @override
+  String get playGuideS1Title1 => 'Dois apps, duas tarefas';
+
+  @override
+  String get playGuideS1Title2 => 'Abra a página do Android';
+
+  @override
+  String get playGuideS1Title3 => 'Escolha o APK';
+
+  @override
+  String get playGuideS1Title4 => 'Instale o jogo';
+
+  @override
+  String get playGuideS1Title5 => 'Abra uma vez';
+
+  @override
+  String get playGuideS1Title6 => 'Uma mão amiga';
+
+  @override
+  String get playGuideS2Title1 => 'O que é uma ROM?';
+
+  @override
+  String get playGuideS2Title2 => 'A cópia necessária';
+
+  @override
+  String get playGuideS2Title3 => 'Já tenho .z64';
+
+  @override
+  String get playGuideS2Title4 => 'Tenho .n64 ou .v64';
+
+  @override
+  String get playGuideS2Title5 => 'A região importa';
+
+  @override
+  String get playGuideS3Title1 => 'Abra SM64CoopDX';
+
+  @override
+  String get playGuideS3Title2 => 'Escolha sua ROM';
+
+  @override
+  String get playGuideS3Title3 => 'Se não houver seletor';
+
+  @override
+  String get playGuideS3Title4 => 'Chegue ao menu do jogo';
+
+  @override
+  String get playGuideS3Title5 => 'O lar da sua ROM';
+
+  @override
+  String get playGuideS4Title1 => 'Volte ao manager';
+
+  @override
+  String get playGuideS4Title2 => 'Encontre a pasta principal';
+
+  @override
+  String get playGuideS4Title3 => 'Permita usar essa pasta';
+
+  @override
+  String get playGuideS4Title4 => 'Uma só conexão';
+
+  @override
+  String get playGuideS4Title5 => 'Já está conectada?';
+
+  @override
+  String get playGuideS5Title1 => 'Feche o jogo primeiro';
+
+  @override
+  String get playGuideS5Title2 => 'Escolha um mod';
+
+  @override
+  String get playGuideS5Title3 => 'Espere a instalação';
+
+  @override
+  String get playGuideS5Title4 => 'Ative na Biblioteca';
+
+  @override
+  String get playGuideS5Title5 => 'Reinicie e experimente';
+
+  @override
+  String get playGuideS6Title1 => 'Comece sua aventura';
+
+  @override
+  String get playGuideS6Title2 => 'O jogo não abre';
+
+  @override
+  String get playGuideS6Title3 => 'ROM não aceita';
+
+  @override
+  String get playGuideS6Title4 => 'O mod não aparece';
+
+  @override
+  String get playGuideS6Title5 => 'Acesso à pasta perdido';
+
+  @override
+  String get playGuideS6Title6 => 'Teste um por vez';
+
+  @override
+  String get romPrepareNav => 'Preparar ROM';
+
+  @override
+  String get romPrepareTitle => 'Prepare sua ROM';
+
+  @override
+  String get romPrepareDescription =>
+      'Escolha seu próprio arquivo de Super Mario 64. O aplicativo cria e verifica uma cópia .z64 compatível sem alterar o original.';
+
+  @override
+  String get romPreparePrivacy =>
+      'O SM64CDPY não inclui, baixa nem compartilha ROMs. O arquivo é processado localmente no dispositivo.';
+
+  @override
+  String get romPrepareChoose => 'Escolher ROM';
+
+  @override
+  String get romPrepareChooseAnother => 'Escolher outro arquivo';
+
+  @override
+  String get romPrepareAnother => 'Preparar outra ROM';
+
+  @override
+  String get romPrepareSave => 'Salvar cópia .z64';
+
+  @override
+  String get romPrepareContinue => 'Continuar com o guia';
+
+  @override
+  String get romPrepareCancel => 'Cancelar';
+
+  @override
+  String get romPrepareIdle => 'Pronto para verificar seu arquivo';
+
+  @override
+  String get romPreparePicking => 'Escolha seu arquivo no Android';
+
+  @override
+  String get romPrepareInspecting => 'Verificando o arquivo selecionado';
+
+  @override
+  String get romPrepareConverting => 'Preparando uma cópia compatível';
+
+  @override
+  String get romPrepareValidating => 'Verificando a ROM preparada';
+
+  @override
+  String get romPrepareReady => 'ROM compatível pronta';
+
+  @override
+  String get romPrepareAlreadyCompatible =>
+      'Sua ROM já estava no formato correto';
+
+  @override
+  String get romPrepareChoosingDestination => 'Escolha onde salvar a cópia';
+
+  @override
+  String get romPrepareExporting => 'Salvando sua cópia';
+
+  @override
+  String get romPrepareVerifyingExport => 'Verificando a cópia salva';
+
+  @override
+  String get romPrepareSaved => 'Cópia salva e verificada';
+
+  @override
+  String get romPrepareCancelling => 'Parando com segurança';
+
+  @override
+  String get romPrepareCancelled => 'Preparação cancelada';
+
+  @override
+  String get romPrepareFailed => 'Não foi possível preparar a ROM';
+
+  @override
+  String romPrepareDetected(String format) {
+    return 'Formato detectado: $format';
+  }
+
+  @override
+  String romPrepareSavedAs(String name) {
+    return 'Salva como $name';
+  }
+
+  @override
+  String get romPrepareErrorUnrecognized =>
+      'O arquivo não está em um formato de ROM de N64 reconhecido.';
+
+  @override
+  String get romPrepareErrorSize =>
+      'A ROM original de Super Mario 64 deve ter exatamente 8 MiB.';
+
+  @override
+  String get romPrepareErrorIncompatible =>
+      'Você precisa de uma ROM original e sem alterações de Super Mario 64 USA.';
+
+  @override
+  String get romPrepareErrorPermission =>
+      'O Android não permite mais acessar esse arquivo. Escolha-o novamente.';
+
+  @override
+  String get romPrepareErrorStorage =>
+      'Não há armazenamento suficiente ou não foi possível ler o arquivo.';
+
+  @override
+  String get romPrepareErrorExport =>
+      'Não foi possível verificar a cópia salva. Escolha outro destino e tente novamente.';
+
+  @override
+  String get romPrepareErrorBusy => 'Outra operação de ROM já está ativa.';
+
+  @override
+  String get romPrepareErrorUnexpected =>
+      'Algo inesperado aconteceu. Seu arquivo original não foi alterado.';
 }

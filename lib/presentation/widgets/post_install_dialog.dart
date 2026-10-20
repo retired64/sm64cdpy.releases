@@ -1,4 +1,6 @@
+import 'game_launch_flow.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
@@ -9,7 +11,7 @@ Future<void> showPostInstallDialog(BuildContext context) async {
 
   if (!context.mounted) return;
 
-  await showDialog<void>(
+  final action = await showDialog<String>(
     context: context,
     barrierDismissible: false,
     builder: (ctx) {
@@ -18,7 +20,6 @@ Future<void> showPostInstallDialog(BuildContext context) async {
 
       return AlertDialog(
         backgroundColor: retro.surface,
-        shape: RoundedRectangleBorder(borderRadius: retro.radius),
         title: Row(
           children: [
             MarioGameIcon(
@@ -74,8 +75,7 @@ Future<void> showPostInstallDialog(BuildContext context) async {
           if (isGameInstalled)
             TextButton(
               onPressed: () {
-                Navigator.pop(ctx);
-                GameLauncherService.launch();
+                Navigator.pop(ctx, 'launch');
               },
               child: Text(
                 l10n.postInstallLaunchGame,
@@ -85,9 +85,23 @@ Future<void> showPostInstallDialog(BuildContext context) async {
                   weight: FontWeight.w800,
                 ),
               ),
+            )
+          else
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'guide'),
+              child: Text(
+                l10n.playGuideRead,
+                style: retro.body(size: 13, color: retro.accentText),
+              ),
             ),
         ],
       );
     },
   );
+  if (!context.mounted) return;
+  if (action == 'guide') {
+    context.go('/how-to-play');
+  } else if (action == 'launch') {
+    await launchGameWithGuide(context);
+  }
 }

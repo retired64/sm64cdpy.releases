@@ -1,4 +1,6 @@
+import '../../presentation/screens/how_to_play_screen.dart';
 import '../../presentation/screens/game_save_screen.dart';
+import '../../presentation/screens/rom_preparation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -44,6 +46,15 @@ final appRouter = GoRouter(
           pageBuilder: (_, s) => _page(const GameSaveScreen(), s),
         ),
         GoRoute(
+          path: '/game-tool/rom-preparer',
+          pageBuilder: (_, s) => _page(
+            RomPreparationScreen(
+              fromGuide: s.uri.queryParameters['from'] == 'guide',
+            ),
+            s,
+          ),
+        ),
+        GoRoute(
           path: '/player',
           pageBuilder: (_, s) => _page(const PlayerScreen(), s),
         ),
@@ -54,6 +65,16 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/settings',
           pageBuilder: (_, s) => _page(const SettingsScreen(), s),
+        ),
+        GoRoute(
+          path: '/how-to-play',
+          pageBuilder: (_, s) => _page(
+            HowToPlayScreen(
+              initialStep:
+                  int.tryParse(s.uri.queryParameters['step'] ?? '') ?? 0,
+            ),
+            s,
+          ),
         ),
         GoRoute(
           path: '/links-resource',

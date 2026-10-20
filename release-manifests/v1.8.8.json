@@ -12,7 +12,8 @@
         "Minish Cap now uses a more consistent paper-and-wood interface across screens and mod cards.",
         "Mario Kart 64 supports the full interface accent palette in light and dark modes.",
         "Navigation, mod details and Player keep lightweight rendering paths for smoother low-end performance.",
-        "Optional all-files access can accelerate compatible ZIP, 7z, mod, DynOS and Touch Controls installations."
+        "Optional all-files access can accelerate compatible ZIP, 7z, mod, DynOS and Touch Controls installations.",
+        "Player can show the last confirmed profile from private local storage while checking the game configuration in the background; palette scanning no longer blocks the editor."
       ],
       "sections": [
         {
@@ -38,6 +39,20 @@
             "ZIP, 7z and loose-file installation share bounded parallel extraction, cancellation checks, path validation, rollback and verified receipts.",
             "The library invalidates stale discovery results after automatic and manual installations so the installed state refreshes coherently."
           ]
+        },
+        {
+          "heading": "Getting started",
+          "items": [
+            "A localized How to Play guide explains Android game installation, your USA ROM, game folders and the first mod. Launching without the game offers the guide.",
+            "The guide uses swipeable chapters, individual instruction cards, a step map and always-visible navigation adapted to each theme.",
+            "ROM-conversion and folder help keep independent expansion and reading positions, preventing a blank panel when opened."
+          ]
+        },
+        {
+          "heading": "Player portraits",
+          "items": [
+            "Player shows the original character portraits beside each name using tiny cached local PNGs."
+          ]
         }
       ]
     },
@@ -48,7 +63,8 @@
         "Minish Cap ahora usa una interfaz de papel y madera más consistente en pantallas y tarjetas de mods.",
         "Mario Kart 64 admite toda la paleta de acentos de interfaz en modo claro y oscuro.",
         "La navegación, los detalles de mods y Jugador mantienen renderizado ligero para mayor fluidez en gama baja.",
-        "El acceso opcional para administrar todos los archivos puede acelerar instalaciones compatibles de ZIP, 7z, mods, DynOS y Touch Controls."
+        "El acceso opcional para administrar todos los archivos puede acelerar instalaciones compatibles de ZIP, 7z, mods, DynOS y Touch Controls.",
+        "Jugador puede mostrar el último perfil confirmado desde almacenamiento privado mientras comprueba la configuración del juego en segundo plano; el escaneo de paletas ya no bloquea el editor."
       ],
       "sections": [
         {
@@ -74,6 +90,20 @@
             "ZIP, 7z y archivos sueltos comparten extracción paralela con memoria acotada, cancelación, validación de rutas, rollback y recibos verificados.",
             "La biblioteca invalida resultados de detección antiguos tras instalaciones automáticas y manuales para refrescar coherentemente el estado instalado."
           ]
+        },
+        {
+          "heading": "Primeros pasos",
+          "items": [
+            "La guía Cómo jugar explica la instalación del juego Android, tu ROM USA, las carpetas y el primer mod. Al abrir sin el juego instalado se ofrece la guía.",
+            "La guía usa capítulos deslizables, tarjetas de instrucciones, mapa de pasos y navegación siempre visible adaptada a cada tema.",
+            "La ayuda de conversión de ROM y carpetas separa sus estados de expansión y lectura para evitar el panel gris al abrirla."
+          ]
+        },
+        {
+          "heading": "Retratos de Jugador",
+          "items": [
+            "Jugador muestra los retratos originales junto al nombre de cada personaje usando PNG locales pequeños y cacheados."
+          ]
         }
       ]
     },
@@ -84,7 +114,8 @@
         "Minish Cap agora usa uma interface de papel e madeira mais consistente em telas e cartões de mods.",
         "Mario Kart 64 oferece suporte a toda a paleta de cores de destaque nos modos claro e escuro.",
         "Navegação, detalhes de mods e Jogador mantêm renderização leve para maior fluidez em aparelhos de entrada.",
-        "O acesso opcional para gerenciar todos os arquivos pode acelerar instalações compatíveis de ZIP, 7z, mods, DynOS e Touch Controls."
+        "O acesso opcional para gerenciar todos os arquivos pode acelerar instalações compatíveis de ZIP, 7z, mods, DynOS e Touch Controls.",
+        "Jogador pode mostrar o último perfil confirmado do armazenamento privado enquanto verifica a configuração do jogo em segundo plano; a busca de paletas não bloqueia mais o editor."
       ],
       "sections": [
         {
@@ -109,6 +140,20 @@
             "A permissão não é obrigatória: quem recusar continuará usando o seletor de pastas do Android e o fluxo SAF existente.",
             "ZIP, 7z e arquivos avulsos compartilham extração paralela com memória limitada, cancelamento, validação de caminhos, rollback e recibos verificados.",
             "A biblioteca invalida resultados antigos de detecção após instalações automáticas e manuais para atualizar de forma coerente o estado instalado."
+          ]
+        },
+        {
+          "heading": "Primeiros passos",
+          "items": [
+            "O guia Como jogar explica a instalação do jogo Android, sua ROM dos EUA, as pastas e o primeiro mod. Abrir sem o jogo instalado oferece o guia.",
+            "O guia usa capítulos deslizáveis, cartões de instruções, mapa de passos e navegação sempre visível adaptada a cada tema.",
+            "A ajuda de conversão de ROM e pastas separa os estados de expansão e leitura para evitar um painel vazio ao abrir."
+          ]
+        },
+        {
+          "heading": "Retratos do Jogador",
+          "items": [
+            "Jogador mostra os retratos originais ao lado de cada nome com PNGs locais pequenos em cache."
           ]
         }
       ]

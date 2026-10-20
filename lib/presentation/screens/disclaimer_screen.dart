@@ -176,6 +176,7 @@ class _HeroBadge extends StatelessWidget {
         RetroTag(
           retro: retro,
           label: l10n.disclaimerAppSubtitle,
+          flexibleLabel: true,
           filled: true,
           dense: true,
         ),

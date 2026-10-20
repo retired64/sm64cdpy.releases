@@ -8,7 +8,18 @@ import 'package:sm64cdpy/services/game_save_service.dart';
 class _SaveService extends GameSaveService {
   Completer<Map<String, dynamic>>? pending;
   Map<String, dynamic>? received;
+  Map<String, dynamic>? cached;
   bool fail = false;
+  @override
+  Map<String, dynamic>? readCached(String? connectionKey) => cached;
+  @override
+  Future<void> writeCached(
+    String? connectionKey,
+    Map<String, dynamic> snapshot,
+  ) async {
+    cached = snapshot;
+  }
+
   @override
   Future<Map<String, dynamic>> read() async => pending == null
       ? {
@@ -32,6 +43,47 @@ class _SaveService extends GameSaveService {
 }
 
 void main() {
+  test(
+    'shows cached slots immediately and verifies them in background',
+    () async {
+      final service = _SaveService()
+        ..cached = {
+          'identity': 'cached-document',
+          'revision': 'cached',
+          'damaged': false,
+          'slots': [],
+          'backups': [],
+        }
+        ..pending = Completer<Map<String, dynamic>>();
+      final container = ProviderContainer(
+        overrides: [gameSaveServiceProvider.overrideWithValue(service)],
+      );
+      try {
+        final initial = container.read(gameSaveProvider);
+        expect(initial.data?['revision'], 'cached');
+        expect(initial.busy, isTrue);
+        expect(initial.canMutate, isFalse);
+        service.pending!.complete({
+          'identity': 'live-document',
+          'revision': 'live',
+          'damaged': false,
+          'slots': [],
+          'backups': [],
+        });
+        await Future<void>.delayed(Duration.zero);
+        await Future<void>.delayed(Duration.zero);
+        final live = container.read(gameSaveProvider);
+        expect(live.data?['revision'], 'live');
+        expect(live.busy, isFalse);
+        expect(live.verified, isTrue);
+        expect(live.canMutate, isTrue);
+        expect(service.cached?['revision'], 'live');
+      } finally {
+        container.dispose();
+      }
+    },
+  );
+
   test(
     'deduplicates reads and keeps an explicit stale draft revision for native rejection',
     () async {

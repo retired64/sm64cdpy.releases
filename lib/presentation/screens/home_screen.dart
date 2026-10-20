@@ -1,3 +1,4 @@
+import '../widgets/game_launch_flow.dart';
 import '../widgets/game_folder_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -1012,57 +1013,16 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
     setState(() => _checking = false);
   }
 
-  Future<void> _launch() async {
-    final launched = await GameLauncherService.launch();
-    if (!mounted) return;
-    if (!launched) {
-      _showNotInstalledDialog();
-    }
-  }
+  bool _launching = false;
 
-  void _showNotInstalledDialog() {
-    final l10n = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        final retro = RetroTheme.of(ctx);
-        return AlertDialog(
-          backgroundColor: retro.surface,
-          shape: RoundedRectangleBorder(borderRadius: retro.radius),
-          title: Text(
-            l10n.homeGameNotInstalled,
-            style: retro.heading(size: 16, color: retro.red),
-          ),
-          content: Text(
-            l10n.homeGameNotInstalledBody,
-            style: retro.body(size: 13),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(
-                l10n.homeClose,
-                style: retro.body(size: 13, color: retro.inkDim),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                context.go('/links-resource');
-              },
-              child: Text(
-                l10n.homeDownload,
-                style: retro.body(
-                  size: 13,
-                  color: retro.accentText,
-                  weight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> _launch() async {
+    if (_launching) return;
+    setState(() => _launching = true);
+    try {
+      await launchGameWithGuide(context);
+    } finally {
+      if (mounted) setState(() => _launching = false);
+    }
   }
 
   @override
@@ -1199,7 +1159,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: GestureDetector(
-        onTap: _launch,
+        onTap: _launching ? null : _launch,
         child: Transform(
           alignment: Alignment.center,
           transform: Matrix4.skewX(-retro.chipSkew),

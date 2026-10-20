@@ -420,7 +420,7 @@ EMBLEM_B=0
         return output
     }
 
-    fun playerSnapshot(context: Context): Map<String, Any?> = synchronized(InstallationSafAccessCoordinator.lock) {
+    fun playerSnapshot(context: Context, includePalettes: Boolean = true): Map<String, Any?> = synchronized(InstallationSafAccessCoordinator.lock) {
         val saved = prefs(context).getString(KEY, null)
             ?: return@synchronized mapOf("status" to "unselected")
         try {
@@ -433,11 +433,19 @@ EMBLEM_B=0
                 "backupAvailable" to (prefs(context).getString(BACKUP_DOCUMENT, null) == file.uri.toString()),
                 "revision" to revision(bytes),
                 "profile" to playerMap(PlayerProfileConfig.parse(bytes.toString(Charsets.UTF_8))),
-                "palettes" to paletteFiles(context, directory),
-            )
+                "palettes" to if (includePalettes) paletteFiles(context, directory) else emptyList<Any>(),
+            ).also { PlayerProfileCache.save(context, it, includePalettes) }
         } catch (error: Exception) {
-            mapOf("status" to (error.message?.takeIf { it in setOf("missing", "folder", "mismatch", "limit", "format") } ?: "access"))
+            mapOf("status" to (error.message?.takeIf { it in setOf("missing", "folder", "mismatch", "limit", "format") } ?: "access")).also { PlayerProfileCache.clear(context) }
         }
+    }
+
+    fun playerPalettes(context: Context): Map<String, Any?> = synchronized(InstallationSafAccessCoordinator.lock) {
+        val saved = prefs(context).getString(KEY, null) ?: error("access")
+        val directory = root(context, Uri.parse(saved))
+        val values = paletteFiles(context, directory)
+        PlayerProfileCache.savePalettes(context, values)
+        mapOf("palettes" to values)
     }
 
     fun applyPlayer(context: Context, name: String, model: Int, colors: List<Int>, expectedRevision: String): Map<String, Any?> =
@@ -478,8 +486,9 @@ EMBLEM_B=0
                 "backupAvailable" to (prefs(context).getString(BACKUP_DOCUMENT, null) == file.uri.toString()),
                 "revision" to revision(confirmed),
                 "profile" to playerMap(profile),
-                "palettes" to paletteFiles(context, directory),
-            )
+                // Applying a profile does not alter palette files. Avoid another full SAF scan.
+                "palettes" to (PlayerProfileCache.read(context)["palettes"] ?: emptyList<Any>()),
+            ).also { PlayerProfileCache.save(context, it) }
         }
 
     private fun validPaletteName(name: String): Boolean = name.length in 1..63 && name == name.trim() &&
