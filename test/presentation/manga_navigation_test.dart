@@ -203,63 +203,65 @@ void main() {
     }
   }
 
-  testWidgets('more retains exclusive resources settings and native launch', (
-    tester,
-  ) async {
-    final calls = <String>[];
-    const channel = MethodChannel('sm64cdpy/launcher');
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
-      call,
-    ) async {
-      calls.add(call.method);
-      return true;
-    });
-    addTearDown(
-      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        channel,
-        null,
-      ),
-    );
-    final router = _router(initial: '/settings');
-    addTearDown(router.dispose);
-    await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('manga-nav-4')));
-    await tester.pumpAndSettle();
-    final list = find.descendant(
-      of: find.byType(BottomSheet),
-      matching: find.byType(ListView),
-    );
-    for (final path in [
-      '/settings',
-      '/render96',
-      '/vip',
-      '/dynos',
-      '/touch-controls',
-      '/omm-rebirth',
-      '/how-to-play',
-      '/links-resource',
-      '/disclaimer',
-    ]) {
-      final target = find.byKey(ValueKey('manga-route-$path'));
-      await tester.scrollUntilVisible(
-        target,
-        100,
-        scrollable: find.descendant(
-          of: list,
-          matching: find.byType(Scrollable),
+  testWidgets(
+    'more retains exclusive resources settings and native launch',
+    (tester) async {
+      final calls = <String>[];
+      const channel = MethodChannel('sm64cdpy/launcher');
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+        call,
+      ) async {
+        calls.add(call.method);
+        return true;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          channel,
+          null,
         ),
       );
-      expect(target, findsOneWidget);
-    }
-    await tester.tap(find.byType(CloseButton));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('manga-play')));
-    await tester.pumpAndSettle();
-    expect(calls, ['launch']);
-    expect(router.routeInformationProvider.value.uri.path, '/settings');
-    expect(tester.takeException(), isNull);
-  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+      final router = _router(initial: '/settings');
+      addTearDown(router.dispose);
+      await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('manga-nav-4')));
+      await tester.pumpAndSettle();
+      final list = find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.byType(ListView),
+      );
+      for (final path in [
+        '/settings',
+        '/render96',
+        '/vip',
+        '/dynos',
+        '/touch-controls',
+        '/omm-rebirth',
+        '/how-to-play',
+        '/links-resource',
+        '/disclaimer',
+      ]) {
+        final target = find.byKey(ValueKey('manga-route-$path'));
+        await tester.scrollUntilVisible(
+          target,
+          100,
+          scrollable: find.descendant(
+            of: list,
+            matching: find.byType(Scrollable),
+          ),
+        );
+        expect(target, findsOneWidget);
+      }
+      await tester.tap(find.byType(CloseButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('manga-play')));
+      await tester.pumpAndSettle();
+      expect(calls, ['launch']);
+      expect(router.routeInformationProvider.value.uri.path, '/settings');
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
 
   testWidgets('leaving Player asks before discarding its draft', (
     tester,
@@ -308,37 +310,40 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('missing game opens the guide only after confirmation', (
-    tester,
-  ) async {
-    final calls = <String>[];
-    const channel = MethodChannel('sm64cdpy/launcher');
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
-      call,
-    ) async {
-      calls.add(call.method);
-      return false;
-    });
-    addTearDown(
-      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        channel,
-        null,
-      ),
-    );
-    final router = _router(initial: '/library');
-    addTearDown(router.dispose);
-    await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
-    await tester.pumpAndSettle();
-    final l = AppLocalizations.of(
-      tester.element(find.byType(MangaNavigationBar)),
-    );
-    await tester.tap(find.byKey(const ValueKey('manga-play')));
-    await tester.pumpAndSettle();
-    expect(calls, ['launch', 'isInstalled']);
-    expect(router.routeInformationProvider.value.uri.path, '/library');
-    await tester.tap(find.text(l.playGuideRead));
-    await tester.pumpAndSettle();
-    expect(router.routeInformationProvider.value.uri.path, '/how-to-play');
-    expect(tester.takeException(), isNull);
-  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+  testWidgets(
+    'missing game opens the guide only after confirmation',
+    (tester) async {
+      final calls = <String>[];
+      const channel = MethodChannel('sm64cdpy/launcher');
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+        call,
+      ) async {
+        calls.add(call.method);
+        return false;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          channel,
+          null,
+        ),
+      );
+      final router = _router(initial: '/library');
+      addTearDown(router.dispose);
+      await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
+      await tester.pumpAndSettle();
+      final l = AppLocalizations.of(
+        tester.element(find.byType(MangaNavigationBar)),
+      );
+      await tester.tap(find.byKey(const ValueKey('manga-play')));
+      await tester.pumpAndSettle();
+      expect(calls, ['launch', 'isInstalled']);
+      expect(router.routeInformationProvider.value.uri.path, '/library');
+      final retro = RetroTheme.of(tester.element(find.byType(Dialog)));
+      await tester.tap(find.text(retro.displayLabel(l.playGuideRead)));
+      await tester.pumpAndSettle();
+      expect(router.routeInformationProvider.value.uri.path, '/how-to-play');
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
 }
