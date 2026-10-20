@@ -2082,9 +2082,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playGuideRepository => 'Android port repository';
 
   @override
-  String get playGuideConverter => 'Open ROM converter';
-
-  @override
   String get playGuideConnect => 'Connect game folder';
 
   @override
@@ -2435,4 +2432,120 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playGuideS6Title6 => 'Try one at a time';
+
+  @override
+  String get romPrepareNav => 'Prepare ROM';
+
+  @override
+  String get romPrepareTitle => 'Prepare your ROM';
+
+  @override
+  String get romPrepareDescription =>
+      'Choose your own Super Mario 64 file. The app creates and verifies a compatible .z64 copy without changing the original.';
+
+  @override
+  String get romPreparePrivacy =>
+      'SM64CDPY does not include, download or share ROMs. The selected file is processed locally on your device.';
+
+  @override
+  String get romPrepareChoose => 'Choose ROM';
+
+  @override
+  String get romPrepareChooseAnother => 'Choose another file';
+
+  @override
+  String get romPrepareAnother => 'Prepare another ROM';
+
+  @override
+  String get romPrepareSave => 'Save .z64 copy';
+
+  @override
+  String get romPrepareContinue => 'Continue with the guide';
+
+  @override
+  String get romPrepareCancel => 'Cancel';
+
+  @override
+  String get romPrepareIdle => 'Ready to check your file';
+
+  @override
+  String get romPreparePicking => 'Choose your file in Android';
+
+  @override
+  String get romPrepareInspecting => 'Checking the selected file';
+
+  @override
+  String get romPrepareConverting => 'Preparing a compatible copy';
+
+  @override
+  String get romPrepareValidating => 'Verifying the prepared ROM';
+
+  @override
+  String get romPrepareReady => 'Compatible ROM ready';
+
+  @override
+  String get romPrepareAlreadyCompatible =>
+      'Your ROM was already in the correct format';
+
+  @override
+  String get romPrepareChoosingDestination => 'Choose where to save the copy';
+
+  @override
+  String get romPrepareExporting => 'Saving your copy';
+
+  @override
+  String get romPrepareVerifyingExport => 'Verifying the saved copy';
+
+  @override
+  String get romPrepareSaved => 'Copy saved and verified';
+
+  @override
+  String get romPrepareCancelling => 'Stopping safely';
+
+  @override
+  String get romPrepareCancelled => 'Preparation cancelled';
+
+  @override
+  String get romPrepareFailed => 'The ROM could not be prepared';
+
+  @override
+  String romPrepareDetected(String format) {
+    return 'Detected format: $format';
+  }
+
+  @override
+  String romPrepareSavedAs(String name) {
+    return 'Saved as $name';
+  }
+
+  @override
+  String get romPrepareErrorUnrecognized =>
+      'This file is not a recognized N64 ROM format.';
+
+  @override
+  String get romPrepareErrorSize =>
+      'The original Super Mario 64 ROM must be exactly 8 MiB.';
+
+  @override
+  String get romPrepareErrorIncompatible =>
+      'You need an unmodified original Super Mario 64 USA ROM.';
+
+  @override
+  String get romPrepareErrorPermission =>
+      'Android no longer allows access to that file. Choose it again.';
+
+  @override
+  String get romPrepareErrorStorage =>
+      'There is not enough available storage, or the file could not be read.';
+
+  @override
+  String get romPrepareErrorExport =>
+      'The saved copy could not be verified. Choose another destination and try again.';
+
+  @override
+  String get romPrepareErrorBusy => 'Another ROM operation is already active.';
+
+  @override
+  String get romPrepareErrorUnexpected =>
+      'Something unexpected happened. Your original file was not changed.';
 }

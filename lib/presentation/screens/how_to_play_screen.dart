@@ -19,7 +19,8 @@ import '../widgets/game_setup_widgets.dart';
 import '../widgets/play_guide_widgets.dart';
 
 class HowToPlayScreen extends ConsumerStatefulWidget {
-  const HowToPlayScreen({super.key});
+  const HowToPlayScreen({super.key, this.initialStep = 0});
+  final int initialStep;
 
   @override
   ConsumerState<HowToPlayScreen> createState() => _HowToPlayScreenState();
@@ -27,8 +28,8 @@ class HowToPlayScreen extends ConsumerStatefulWidget {
 
 class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
     with WidgetsBindingObserver {
-  final _pages = PageController();
-  int _step = 0;
+  late final PageController _pages;
+  late int _step;
   bool? _installed;
   bool _busy = false;
   int _refreshRevision = 0;
@@ -36,6 +37,8 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
   @override
   void initState() {
     super.initState();
+    _step = widget.initialStep.clamp(0, 5);
+    _pages = PageController(initialPage: _step);
     WidgetsBinding.instance.addObserver(this);
     // Both operations handle errors internally. Recheck after external setup.
     unawaited(_refresh());
@@ -463,10 +466,12 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                         ],
                                       ),
                                       action(
-                                        l10n.playGuideConverter,
+                                        l10n.romPrepareChoose,
                                         Icons.swap_horiz,
-                                        () =>
-                                            _open(AppConstants.romConverterUrl),
+                                        () async => context.push(
+                                          '/game-tool/rom-preparer?from=guide',
+                                        ),
+                                        primary: true,
                                       ),
                                     ],
                                   ),

@@ -17,6 +17,7 @@ conservan su fecha y alcance de revisión explícitos.
 | [Rendimiento visual 1.8.6](PERFORMANCE_MINIMAL_1.8.6.md) | Tema Minimalista opcional, drawer, navegación, detalle y eliminación de SVG | Implementado; pendiente perfil físico |
 | [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Incluidos desde 1.8.3; referencia técnica |
 | [GameTool Save File](GAME_SAVE_FILE.md) | Original-game save editing and verified backups | Testing candidate |
+| [Preparador de ROM](../ROM_CONVERTER.md) | Conversión local z64/v64/n64, validación, SAF, estado y rendimiento | Implementado en rama; validación física pendiente |
 | [Arquitectura](ARCHITECTURE.md) | Componentes, engines, persistencia y flujo de datos | Vigente |
 | [Descargas y overlay](DOWNLOADS_AND_OVERLAY.md) | Flujo WorkManager/SAF, progreso y burbuja | Vigente |
 | [Contrato de la base de mods](CATALOG_DATABASE_CONTRACT.md) | Esquema v2, identidad durable, resolutores y publicación segura | Vigente |

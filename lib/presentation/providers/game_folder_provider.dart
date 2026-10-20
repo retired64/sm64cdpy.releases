@@ -6,6 +6,7 @@ import 'mod_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/game_folder_service.dart';
+import '../../services/game_save_service.dart';
 import '../../services/mod_installer.dart';
 
 final gameFolderServiceProvider = Provider((ref) => GameFolderService());
@@ -59,14 +60,16 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
           !state.busy &&
           revision == _revision &&
           value != null) {
+        final wasInitialized = state.initialized;
         final changed =
             state.connection.connected != value.connected ||
             state.connection.fullAccess != value.fullAccess ||
             state.connection.unified != value.unified ||
             state.connection.connectionKey != value.connectionKey;
         state = GameFolderState(initialized: true, connection: value);
-        if (changed) {
+        if (wasInitialized && changed) {
           await ref.read(gameModGatewayProvider).clearCached();
+          await GameSaveService().clearCached();
           ref.invalidate(gameModActivationProvider);
           ref.invalidate(playerProfileProvider);
           ModInstaller.invalidateInstallationLibrary('gameFolderAccessChanged');
@@ -99,6 +102,7 @@ class GameFolderNotifier extends Notifier<GameFolderState> {
       state = GameFolderState(initialized: true, connection: value ?? previous);
       if (value != null && method != 'dismissGameFolderGuide') {
         await ref.read(gameModGatewayProvider).clearCached();
+        await GameSaveService().clearCached();
         ref.invalidate(gameModActivationProvider);
         ref.invalidate(playerProfileProvider);
         ModInstaller.invalidateInstallationLibrary('gameFolderChanged');

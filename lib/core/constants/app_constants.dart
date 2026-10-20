@@ -52,8 +52,6 @@ class AppConstants {
 
   static const String androidGameReleasesUrl =
       'https://github.com/ManIsCat2/sm64coopdx/releases';
-  static const String romConverterUrl = 'https://hack64.net/tools/swapper.php';
-
   // ── Mod Installer ───────────────────────────────────────────────────────
   /// Clave en SharedPreferences para el estado de auto-instalación.
   static const String autoInstallModsKey = 'auto_install_mods';

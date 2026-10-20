@@ -174,6 +174,16 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                       route: '/game-tool/save-file',
                       isActive: currentRoute == '/game-tool/save-file',
                     ),
+                    _NavItem(
+                      iconBuilder: (color) => MarioGameIcon(
+                        Icons.memory_rounded,
+                        size: 19,
+                        color: color,
+                      ),
+                      label: l10n.romPrepareNav,
+                      route: '/game-tool/rom-preparer',
+                      isActive: currentRoute == '/game-tool/rom-preparer',
+                    ),
                   ],
                 ),
 

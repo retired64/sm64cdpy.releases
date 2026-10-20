@@ -53,6 +53,24 @@ action, never a status badge. Clearing stars changes the draft only.
 No Python runtime is included; sm64_savetool.py remains a reference outside the
 product build. No state is shared with the independent overlay engine.
 
+### Persistent display snapshot
+
+After the first successful native read, Flutter stores the parsed display
+metadata in the existing Hive projection box, scoped to the selected folder's
+`connectionKey`. It never stores or reconstructs the 512-byte save. On a later
+process start, Save File can therefore paint the last four slot summaries and
+backup list immediately while `getGameSave` validates the real SAF document in
+the background.
+
+The SAF file remains the only source of truth. Cached content is explicitly
+unverified: editing, copy, erase, backup and restore stay disabled until the
+native response confirms document identity and revision. A successful read or
+mutation replaces the cache. A real folder change clears it; an initial
+reconnection to the same persisted folder does not. Invalid schema, owner,
+identity or revision data is rejected and removed. If background validation
+fails, the snapshot remains useful as read-only context and the error/retry
+flow remains visible instead of replacing the screen with an empty loader.
+
 ## Verification
 
 Native tests cover both byte orders, exact preservation of other copies, cannon

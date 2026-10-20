@@ -16,8 +16,9 @@ La pantalla comparte `RetroPinnedAppBar`, `surfaceDecoration`,
 `GameSetupAction`, `GameSetupStatus` y tipografías de cada tema. Las opciones
 se ajustan al ancho; no hay dimensiones de texto ni paneles de altura fija.
 Todo el contenido está en los cinco ARB, con inglés, español y portugués BR.
-La lectura es local y funciona sin internet; descargar APK/conversión abre el
-navegador externo y ofrece un error recuperable si no puede abrirse.
+La lectura y la preparación de ROM funcionan localmente y sin internet. Solo la
+descarga del APK abre el navegador externo y ofrece un error recuperable si no
+puede abrirse.
 
 ## Flujo y fuentes
 
@@ -56,13 +57,12 @@ Fuentes oficiales consultadas el 2026-10-19:
   `GameModActivationStore.kt` y [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
   Raíz elegida `com.maniscat2.sm64coopdx`, escritura nueva en `user/mods` y
   `user/dynos/packs`; lectura de ambas ramas con precedencia diferente.
-- [Conversor externo Hack64](https://hack64.net/tools/swapper.php): enlace de
-  ayuda para conversión de orden de bytes, sin subir ROM desde el manager.
-  Su servidor no respondió durante la comprobación en Termux; no se garantiza
-  disponibilidad. La guía explica salida .z64 y alternativa de otro conversor.
-  Cambiar únicamente la extensión NO convierte.
+- [Preparador de ROM](../ROM_CONVERTER.md): herramienta local integrada que
+  detecta z64/v64/n64 por cabecera, normaliza por streaming, valida tamaño/MD5 y
+  exporta una copia mediante SAF. No usa un servidor ni modifica el original.
 
-No se implementa otro importador de ROM, instalador de APK ni sistema de rutas.
+No se implementa instalación directa de ROM, instalador de APK ni un segundo
+sistema de rutas.
 
 ## Validación
 
@@ -72,8 +72,8 @@ abrir guía sin navegar automáticamente. Flutter gen-l10n debe producir los
 Dart generados; no se editan manualmente.
 
 Pendiente revisión física: primera instalación desde navegador, permisos de la
-versión del juego, selector de ROM, carpeta existente/ausente/revocada,
-volver desde navegador/Ajustes, texto grande y conversor externo disponible.
+versión del juego, selectores SAF de origen/destino, carpeta
+existente/ausente/revocada, volver desde navegador/Ajustes y texto grande.
 No se afirma validación funcional en dispositivo sin ejecutar estos escenarios.
 
 Validación remota de la candidata `29a3d31`:

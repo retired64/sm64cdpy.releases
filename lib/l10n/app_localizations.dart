@@ -3792,12 +3792,6 @@ abstract class AppLocalizations {
   /// **'Android port repository'**
   String get playGuideRepository;
 
-  /// No description provided for @playGuideConverter.
-  ///
-  /// In en, this message translates to:
-  /// **'Open ROM converter'**
-  String get playGuideConverter;
-
   /// No description provided for @playGuideConnect.
   ///
   /// In en, this message translates to:
@@ -4415,6 +4409,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try one at a time'**
   String get playGuideS6Title6;
+
+  /// No description provided for @romPrepareNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare ROM'**
+  String get romPrepareNav;
+
+  /// No description provided for @romPrepareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare your ROM'**
+  String get romPrepareTitle;
+
+  /// No description provided for @romPrepareDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your own Super Mario 64 file. The app creates and verifies a compatible .z64 copy without changing the original.'**
+  String get romPrepareDescription;
+
+  /// No description provided for @romPreparePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CDPY does not include, download or share ROMs. The selected file is processed locally on your device.'**
+  String get romPreparePrivacy;
+
+  /// No description provided for @romPrepareChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose ROM'**
+  String get romPrepareChoose;
+
+  /// No description provided for @romPrepareChooseAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another file'**
+  String get romPrepareChooseAnother;
+
+  /// No description provided for @romPrepareAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare another ROM'**
+  String get romPrepareAnother;
+
+  /// No description provided for @romPrepareSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save .z64 copy'**
+  String get romPrepareSave;
+
+  /// No description provided for @romPrepareContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with the guide'**
+  String get romPrepareContinue;
+
+  /// No description provided for @romPrepareCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get romPrepareCancel;
+
+  /// No description provided for @romPrepareIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to check your file'**
+  String get romPrepareIdle;
+
+  /// No description provided for @romPreparePicking.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your file in Android'**
+  String get romPreparePicking;
+
+  /// No description provided for @romPrepareInspecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking the selected file'**
+  String get romPrepareInspecting;
+
+  /// No description provided for @romPrepareConverting.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing a compatible copy'**
+  String get romPrepareConverting;
+
+  /// No description provided for @romPrepareValidating.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying the prepared ROM'**
+  String get romPrepareValidating;
+
+  /// No description provided for @romPrepareReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Compatible ROM ready'**
+  String get romPrepareReady;
+
+  /// No description provided for @romPrepareAlreadyCompatible.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ROM was already in the correct format'**
+  String get romPrepareAlreadyCompatible;
+
+  /// No description provided for @romPrepareChoosingDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where to save the copy'**
+  String get romPrepareChoosingDestination;
+
+  /// No description provided for @romPrepareExporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving your copy'**
+  String get romPrepareExporting;
+
+  /// No description provided for @romPrepareVerifyingExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying the saved copy'**
+  String get romPrepareVerifyingExport;
+
+  /// No description provided for @romPrepareSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy saved and verified'**
+  String get romPrepareSaved;
+
+  /// No description provided for @romPrepareCancelling.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopping safely'**
+  String get romPrepareCancelling;
+
+  /// No description provided for @romPrepareCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparation cancelled'**
+  String get romPrepareCancelled;
+
+  /// No description provided for @romPrepareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The ROM could not be prepared'**
+  String get romPrepareFailed;
+
+  /// No description provided for @romPrepareDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected format: {format}'**
+  String romPrepareDetected(String format);
+
+  /// No description provided for @romPrepareSavedAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved as {name}'**
+  String romPrepareSavedAs(String name);
+
+  /// No description provided for @romPrepareErrorUnrecognized.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is not a recognized N64 ROM format.'**
+  String get romPrepareErrorUnrecognized;
+
+  /// No description provided for @romPrepareErrorSize.
+  ///
+  /// In en, this message translates to:
+  /// **'The original Super Mario 64 ROM must be exactly 8 MiB.'**
+  String get romPrepareErrorSize;
+
+  /// No description provided for @romPrepareErrorIncompatible.
+  ///
+  /// In en, this message translates to:
+  /// **'You need an unmodified original Super Mario 64 USA ROM.'**
+  String get romPrepareErrorIncompatible;
+
+  /// No description provided for @romPrepareErrorPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Android no longer allows access to that file. Choose it again.'**
+  String get romPrepareErrorPermission;
+
+  /// No description provided for @romPrepareErrorStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'There is not enough available storage, or the file could not be read.'**
+  String get romPrepareErrorStorage;
+
+  /// No description provided for @romPrepareErrorExport.
+  ///
+  /// In en, this message translates to:
+  /// **'The saved copy could not be verified. Choose another destination and try again.'**
+  String get romPrepareErrorExport;
+
+  /// No description provided for @romPrepareErrorBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Another ROM operation is already active.'**
+  String get romPrepareErrorBusy;
+
+  /// No description provided for @romPrepareErrorUnexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Something unexpected happened. Your original file was not changed.'**
+  String get romPrepareErrorUnexpected;
 }
 
 class _AppLocalizationsDelegate

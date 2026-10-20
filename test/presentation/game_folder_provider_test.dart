@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/services/game_folder_service.dart';
+import 'package:sm64cdpy/services/game_mod_activation.dart';
+import 'package:sm64cdpy/presentation/providers/game_mod_activation_provider.dart';
 import 'package:sm64cdpy/presentation/providers/game_folder_provider.dart';
 
 class FolderFake extends GameFolderService {
@@ -36,6 +38,26 @@ class DelayedFolderRead extends GameFolderService {
   }
 }
 
+class ChangingFolderRead extends GameFolderService {
+  int reads = 0;
+  @override
+  Future<GameFolderConnection?> call(String method) async {
+    reads++;
+    return GameFolderConnection(
+      connected: true,
+      connectionKey: reads == 1 ? 'folder-a' : 'folder-b',
+    );
+  }
+}
+
+class CacheGateway extends GameModActivation {
+  int clears = 0;
+  @override
+  Future<void> clearCached() async {
+    clears++;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   test(
@@ -59,6 +81,28 @@ void main() {
       );
       expect(read('user-1', 'mods-1').fullAccess, isTrue);
       expect(GameFolderConnection.fromMap({}).fullAccess, isFalse);
+    },
+  );
+  test(
+    'startup keeps owner-scoped caches but a real folder change clears them',
+    () async {
+      final service = ChangingFolderRead();
+      final cache = CacheGateway();
+      final container = ProviderContainer(
+        overrides: [
+          gameFolderServiceProvider.overrideWithValue(service),
+          gameModGatewayProvider.overrideWithValue(cache),
+        ],
+      );
+      try {
+        final notifier = container.read(gameFolderProvider.notifier);
+        await notifier.initialize();
+        expect(cache.clears, 0);
+        await notifier.refresh();
+        expect(cache.clears, 1);
+      } finally {
+        container.dispose();
+      }
     },
   );
   test('a stale refresh cannot overwrite a confirmed connection', () async {

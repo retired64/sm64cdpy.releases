@@ -4,6 +4,13 @@ Revisado para la candidata `1.8.8+27` en `main` el 2026-10-19. La 1.8.7 es la ve
 
 ## Implementado
 
+- Preparador local de ROM accesible desde Cómo jugar y GameTool. Detecta z64,
+  v64 y n64 por cabecera, genera una copia z64 mediante streaming nativo de
+  memoria constante, valida el dump USA esperado y exporta con SAF sin permiso
+  general de archivos. Estado único entre rutas, cancelación, reintento de
+  exportación y detalles técnicos en [ROM_CONVERTER.md](../ROM_CONVERTER.md).
+  Pruebas sintéticas y de widgets aprobadas; matriz física pendiente.
+
 - Rama de trabajo: Jugador muestra un snapshot privado del último perfil
   confirmado y verifica SAF en segundo plano, separando escaneo de paletas.
   Caché invalidada por carpeta/permisos y escrituras protegidas por revisión.

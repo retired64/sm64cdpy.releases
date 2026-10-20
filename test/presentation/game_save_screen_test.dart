@@ -10,6 +10,7 @@ import 'package:sm64cdpy/presentation/screens/game_save_screen.dart';
 class _Files extends GameSaveNotifier {
   @override
   GameSaveState build() => GameSaveState(
+    verified: true,
     data: {
       'identity': 'save',
       'revision': 'original',

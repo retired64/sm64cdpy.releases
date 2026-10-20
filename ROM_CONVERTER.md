@@ -1,16 +1,17 @@
-# Preparador de ROM — análisis y plan de integración
+# Preparador de ROM — arquitectura e implementación
 
 Fecha: 19 de octubre de 2026. Rama de análisis: `how-to-play-guide`.
-Estado: **propuesta; todavía no implementada**. Este documento no cambia la
-aplicación, el enlace actual, permisos, versión ni archivos del juego.
+Estado: **implementado en `how-to-play-guide`; pendiente de validación física y
+merge**. La herramienta reemplaza el enlace externo de conversión, pero no
+cambia versión, instala ROMs ni modifica archivos del juego.
 
-## 1. Objetivo y decisión propuesta
+## 1. Objetivo y decisión implementada
 
 Incorporar **Preparar mi ROM** al capítulo 2 de Cómo jugar. El usuario elige su
 propia ROM y la app identifica su formato, genera si hace falta una copia `.z64`
 y comprueba que sirve para la versión Android de CoopDX estudiada.
 
-Se recomienda implementar la transformación en Kotlin, con lectura y escritura
+La transformación se implementa en Kotlin, con lectura y escritura
 por bloques fuera del hilo de interfaz. Flutter presenta pasos y resultados.
 No incorporar Python, NumPy, Rust, ejecutables externos ni un navegador para
 esta operación. Los dos proyectos siguientes quedan como referencias técnicas;
@@ -113,7 +114,7 @@ Todas las rutas son relativas a este repositorio y existen al redactar el plan.
 |---|---|
 | `lib/presentation/screens/how_to_play_screen.dart` | Entrada en capítulo 2; cambiar acción externa por explicación y preparador local; conservar navegación y ayudas |
 | `lib/presentation/widgets/play_guide_widgets.dart` | Tarjetas y composición temática de la guía; reutilizar para instrucciones breves |
-| `lib/core/constants/app_constants.dart` | Contiene `romConverterUrl` de Hack64; retirarlo al migrar todos sus consumidores, no sustituirlo por otra dependencia obligatoria |
+| `lib/core/constants/app_constants.dart` | Se retiró `romConverterUrl` de Hack64 al migrar su consumidor; no existe otra dependencia externa obligatoria |
 | `android/app/src/main/kotlin/mods/sm64cdpy/MarioRomDecoder.kt` | Constantes de ROM; evitar hashes/tamaños divergentes |
 | `android/app/src/main/kotlin/mods/sm64cdpy/MarioAssetsPlugin.kt` | Picker, cancelación e importación existentes; `readRom` valida y `importFromUser` busca candidatos |
 | `android/app/src/main/kotlin/mods/sm64cdpy/Player3DSource.kt` | ROM privada validada para Jugador; revisar efectos si cambia el archivo del juego |
@@ -130,7 +131,7 @@ La importación gráfica actual lee una ROM completa a memoria para decodificar
 recursos; no copiar ese patrón al conversor, que puede procesar bloques.
 Preparar una copia no cambia el tema seleccionado ni dispara una extracción.
 
-## 5. Experiencia propuesta
+## 5. Experiencia implementada
 
 1. Tarjeta **Preparar mi ROM**: «Elige tu archivo. Crearemos una copia compatible
    sin cambiar el original». Acción **Elegir ROM**. Explicar antes del explorador.
@@ -173,13 +174,13 @@ proceso huérfano silencioso.
 
 Incluir desde la primera versión una herramienta reutilizable en el drawer,
 dentro del submenú existente **Herramientas / GameTool**, junto a Biblioteca,
-Jugador y Partidas. Nombre propuesto: **Preparar ROM** en español, **ROM
-Preparer** en inglés y **Preparar ROM** en portugués BR; confirmar las etiquetas
-finales al localizar los cinco ARB. No añadir otro submenú ni un botón principal
+Jugador y Partidas. Las etiquetas localizadas son **Preparar ROM** en español,
+**ROM Preparer** en inglés y **Preparar ROM** en portugués BR. No se añade otro
+submenú ni un botón principal
 independiente del grupo de herramientas.
 
-Crear `lib/presentation/screens/rom_preparation_screen.dart` como pantalla
-contenedora, con ruta propuesta `/game-tool/rom-preparer` dentro del AppShell.
+`lib/presentation/screens/rom_preparation_screen.dart` es la pantalla
+contenedora, con ruta `/game-tool/rom-preparer` dentro del AppShell.
 Reutilizar `rom_preparation_panel.dart`, el mismo servicio y el mismo provider
 desde ambos accesos. La guía ofrece explicación previa y abre esta herramienta;
 el drawer permite volver a utilizarla sin recorrer los capítulos de inicio.
@@ -199,9 +200,9 @@ el mismo lenguaje visual de cada tema; no una segunda implementación del panel.
 Todos los textos nuevos deben estar en los cinco ARB: inglés, español/es-419 y
 portugués/pt-BR. Generar localizaciones con Flutter, sin editar Dart generado.
 
-## 6. Arquitectura propuesta — nombres aún no existentes
+## 6. Arquitectura implementada
 
-| Capa | Archivo propuesto | Contrato |
+| Capa | Archivo | Contrato |
 |---|---|---|
 | Dominio | `lib/domain/entities/rom_preparation.dart` | Estado, formato, resultado y errores tipados |
 | Servicio Flutter | `lib/services/rom_preparation_service.dart` | Canal nativo, eventos y cancelación |
@@ -211,14 +212,15 @@ portugués/pt-BR. Generar localizaciones con Flutter, sin editar Dart generado.
 | Android | `android/app/src/main/kotlin/mods/sm64cdpy/RomPreparationPlugin.kt` | Picker/exportación, ciclo de Activity y canal |
 | Núcleo Android | `android/app/src/main/kotlin/mods/sm64cdpy/RomByteOrderConverter.kt` | Transformación pura sobre streams, comprobable sin UI |
 
-Propuesta de canal: `sm64cdpy/rom_preparation`, separado del importador de assets.
+Canales: `sm64cdpy/rom_preparation` y
+`sm64cdpy/rom_preparation_events`, separados del importador de assets.
 Operaciones conceptuales: seleccionar/preparar, consultar estado, exportar y
 cancelar. Eventos con `operationId`, revisión monotónica, fase, bytes procesados,
 total si se conoce y error estable. El resultado expone un identificador opaco,
 no rutas arbitrarias de archivos privados.
 
-Primera fase: operación interactiva de tamaño acotado en executor nativo o
-Dispatchers.IO, según dependencias reales disponibles al implementar. No usar
+Primera fase: operación interactiva de tamaño acotado en un executor nativo
+dedicado de un solo hilo. No usar
 WorkManager solo por existir: no hay descarga ni promesa de continuar tras
 muerte de proceso. La rotación conserva tarea mientras el engine vive; al
 destruir el engine se cancela y limpia. Tras muerte del proceso se reinicia el
@@ -294,7 +296,7 @@ al terminar/cancelar se elimina. Al arrancar, limpiar restos huérfanos propios
 con criterio de antigüedad y sin tocar operaciones vivas. No crear historial
 de ROM ni persistir progreso de éxito basado solo en nombres de archivo.
 
-## 9. Verificación de sincronización de estado prevista
+## 9. Verificación de sincronización de estado
 
 - **Quién escribe/lee:** trabajador nativo escribe staging/estado de operación;
   servicio y provider Flutter lo leen. UI solicita acciones, no valida archivos.
@@ -307,25 +309,34 @@ de ROM ni persistir progreso de éxito basado solo en nombres de archivo.
 - **Hermanos:** exportar no cambia game-folder, biblioteca, perfil ni assets;
   no invalidarlos innecesariamente. En la futura escritura al juego revisar
   importador de temas, Player3DSource, providers y cualquier caché derivada de ROM.
-- **Futures:** esperar selección, preparación, cancelación y exportación. Solo
-  callbacks síncronos que lo requieran usarán unawaited con captura de errores.
+- **Futures:** selección, preparación, cancelación y exportación se esperan en
+  el notifier. La inicialización del snapshot usa `unawaited`, con errores
+  capturados dentro del Future; la cancelación de la suscripción en `onDispose`
+  también es intencionalmente no esperada y absorbe su error de teardown.
 
-Este es el contrato a implementar y verificar; no describe estado ya añadido.
+El provider descarta revisiones antiguas y conserva una copia preparada si un
+error de plataforma impide abrir el selector de destino. El plugin es exclusivo
+del engine principal; el overlay no escribe ni proyecta este estado.
 
-## 10. Plan de ejecución y validación
+## 10. Ejecución y validación
 
-1. Fijar revisiones de referencias; revisar call sites ROM y validar contrato
-   contra la versión Android del juego que se probará.
-2. Implementar conversor puro y pruebas sintéticas antes de conectarlo a SAF.
-3. Integrar plugin, selección, staging, exportación y cancelación; sin UI nueva
-   hasta que los resultados/error sean comprobables.
-4. Añadir servicio/provider, panel temático y pantalla compartida; registrar
-   `/game-tool/rom-preparer`, entrada en Herramientas/GameTool y acceso desde
-   capítulo 2. Conservar claves
-   PageStorage separadas: expansión guarda bool; textos/listas guardan offsets.
-5. Localizar cinco ARB, generar código, sustituir todos los usos del enlace
-   externo y actualizar HOW_TO_PLAY, checklist, estado y changelog al implementar.
-6. Revisar regresiones de temas/Jugador/carpeta, ejecutar CI y comprobar teléfono.
+Completado: conversor puro, SAF, staging, exportación, cancelación, canal de
+eventos, provider compartido, panel temático, ruta de GameTool, acceso desde la
+guía, cinco ARB y pruebas sintéticas. El núcleo usa 64 KiB constantes y limita
+eventos de progreso a uno cada 150 ms; ningún byte de ROM cruza a Flutter.
+
+Pendiente: CI de la rama y matriz física en Android con proveedores SAF locales,
+remotos y lentos, rotación, poco espacio, cancelación y ejecución completa en
+un teléfono.
+
+Validación local con dos volcados privados del usuario: ambos midieron 8 MiB;
+la copia z64 produjo MD5 `20b854b239203baf6c961b850a4a51a2` y SHA-256
+`17ce077343c6133f8c9f2d6d6d9a4ab62c8cd2aa57c40aea1f490b4c8bb21d91`.
+El segundo archivo tenía extensión `.n64`, pero cabecera v64 `37 80 40 12`.
+El conversor de producción lo detectó por contenido y su salida temporal fue
+idéntica a la z64 de referencia por SHA-256. Las ROM permanecieron en solo
+lectura y la salida temporal se eliminó. La prueba opcional usa variables de
+entorno, por lo que CI no necesita ni incorpora archivos privados.
 
 Pruebas necesarias sin distribuir ROM real:
 

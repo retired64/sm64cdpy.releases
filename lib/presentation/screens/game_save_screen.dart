@@ -135,7 +135,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
   }
 
   Future<void> _openSlot(Map slot, Map? snapshot) async {
-    if (ref.read(gameSaveProvider).busy) return;
+    if (!ref.read(gameSaveProvider).canMutate) return;
     final change = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
       isScrollControlled: true,
@@ -278,7 +278,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                         type: MaterialType.transparency,
                         child: InkWell(
                           borderRadius: retro.radius,
-                          onTap: state.busy
+                          onTap: !state.canMutate
                               ? null
                               : () => _openSlot(slot, state.data),
                           child: Padding(
@@ -330,7 +330,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                                     ),
                                     const Icon(Icons.chevron_right),
                                     PopupMenuButton<int>(
-                                      enabled: !state.busy,
+                                      enabled: state.canMutate,
                                       tooltip: l.saveFileActions,
                                       itemBuilder: (_) => [
                                         for (var i = 0; i < 4; i++)
@@ -396,7 +396,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                   FilledButton.icon(
                     icon: const Icon(Icons.save_outlined),
                     label: Text(l.saveFileBackup),
-                    onPressed: state.busy
+                    onPressed: !state.canMutate
                         ? null
                         : () async {
                             final ok = await ref
@@ -431,7 +431,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                           trailing: IconButton(
                             tooltip: l.playerRestore,
                             icon: const Icon(Icons.restore),
-                            onPressed: state.busy
+                            onPressed: !state.canMutate
                                 ? null
                                 : () => _change({
                                     'revision': state.data?['revision'],

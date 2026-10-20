@@ -52,9 +52,25 @@ class InstallationLibraryNotifier
       unawaited(refresh());
     });
     ref.onDispose(() {
-      _installSubscription?.cancel();
-      _settingsSubscription?.cancel();
+      final installSubscription = _installSubscription;
+      if (installSubscription != null) {
+        unawaited(installSubscription.cancel().catchError((Object _) {}));
+      }
+      final settingsSubscription = _settingsSubscription;
+      if (settingsSubscription != null) {
+        unawaited(settingsSubscription.cancel().catchError((Object _) {}));
+      }
     });
+    final repository = ref.read(installationLibraryRepositoryProvider);
+    final cached = await repository.readCached();
+    if (cached != null) {
+      unawaited(
+        Future<void>.delayed(
+          Duration.zero,
+        ).then((_) => refresh()).catchError((Object _) {}),
+      );
+      return _stateFor(cached);
+    }
     _refreshing = true;
     try {
       InstallationLibraryState next;
@@ -72,6 +88,14 @@ class InstallationLibraryNotifier
     }
   }
 
+  InstallationLibraryState _stateFor(InstallationLibrarySnapshot snapshot) =>
+      InstallationLibraryState(
+        status: snapshot.isPartial
+            ? InstallationLibraryLoadStatus.partial
+            : InstallationLibraryLoadStatus.ready,
+        snapshot: snapshot,
+      );
+
   Future<InstallationLibraryState> _load({
     bool discover = false,
     bool forceDiscovery = false,
@@ -87,12 +111,7 @@ class InstallationLibraryNotifier
     final snapshot = await ref
         .read(installationLibraryRepositoryProvider)
         .verifyAll();
-    return InstallationLibraryState(
-      status: snapshot.isPartial
-          ? InstallationLibraryLoadStatus.partial
-          : InstallationLibraryLoadStatus.ready,
-      snapshot: snapshot,
-    );
+    return _stateFor(snapshot);
   }
 
   Future<void> verifyArtifact(String artifactKey) async {
@@ -101,12 +120,7 @@ class InstallationLibraryNotifier
       final snapshot = await ref
           .read(installationLibraryRepositoryProvider)
           .verifyArtifact(artifactKey);
-      return InstallationLibraryState(
-        status: snapshot.isPartial
-            ? InstallationLibraryLoadStatus.partial
-            : InstallationLibraryLoadStatus.ready,
-        snapshot: snapshot,
-      );
+      return _stateFor(snapshot);
     });
   }
 
@@ -143,6 +157,9 @@ class InstallationLibraryNotifier
         );
         if (revision != _folderRevision) {
           _refreshRequested = true;
+        } else if (next.hasError && state.hasValue) {
+          // Keep the persisted/last verified projection visible. A later
+          // invalidation or pull-to-refresh retries native SAF reconciliation.
         } else if (ref.mounted) {
           state = next;
         }
@@ -158,12 +175,7 @@ class InstallationLibraryNotifier
       final snapshot = await ref
           .read(installationLibraryRepositoryProvider)
           .clearHistory();
-      return InstallationLibraryState(
-        status: snapshot.isPartial
-            ? InstallationLibraryLoadStatus.partial
-            : InstallationLibraryLoadStatus.ready,
-        snapshot: snapshot,
-      );
+      return _stateFor(snapshot);
     });
   }
 
@@ -187,14 +199,7 @@ class InstallationLibraryNotifier
     try {
       final snapshot = await operation();
       if (!ref.mounted) return;
-      state = AsyncData(
-        InstallationLibraryState(
-          status: snapshot.isPartial
-              ? InstallationLibraryLoadStatus.partial
-              : InstallationLibraryLoadStatus.ready,
-          snapshot: snapshot,
-        ),
-      );
+      state = AsyncData(_stateFor(snapshot));
     } catch (_) {
       if (ref.mounted) state = previous;
       rethrow;
