@@ -153,3 +153,11 @@ teardown de ruta descarta esta proyección visual; PageController/observer sigue
 liberándose en dispose. No hay nuevos Futures sin esperar. Guía de conversión y
 ayuda de rutas revisadas a la vez; otros ExpansionTile de Save File no contienen
 SelectableText y conservan su implementación.
+
+Validación final del arreglo, candidata `f10f833`:
+[Testing 39344333533](https://github.com/retired64/sm64cdpy.releases/actions/runs/39344333533) completado correctamente: generación,
+formato, análisis sin errores nuevos, ocho pruebas Python, 253 pruebas Flutter,
+APK arm64 firmado y pruebas nativas. La regresión ampliada confirma apertura,
+cierre, reapertura y restauración sin colisión bool/double. El código fuente
+incorpora solo el formato de los archivos afectados proveniente del runner.
+Pendiente comprobación visual en el teléfono; no se fusiona ni publica release.

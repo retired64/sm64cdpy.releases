@@ -328,11 +328,12 @@ Jugador: selector con PNG originales de Mario/Luigi/Toad/Waluigi/Wario,
 renderizados a 32 puntos desde imágenes de 16×16 cacheadas por Flutter.
 Se conserva la lógica del perfil. Optimización de carga/spinner pospuesta.
 
-Corrección de build pendiente de Testing: la descarga del NDK falló con ZIP
+Corrección de build validada en Testing 39344333533: la descarga del NDK falló con ZIP
 inválido en 39342619343. Ambos workflows ahora preparan/verifican el NDK exacto
-de Flutter con tres intentos acotados. Se investiga además el desplegable de
-conversión de ROM; la captura confirma ErrorWidget gris dentro de la guía.
+de Flutter con tres intentos acotados. La investigación del desplegable de
+conversión de ROM identificó la colisión PageStorage detallada a continuación.
 
 Pantalla gris de conversión reproducida: colisión PageStorage entre booleano
 de ExpansionTile y offset de SelectableText. Claves separadas para conversión,
-rutas y cada texto; regresión ampliada pendiente de Testing final.
+rutas y cada texto. Testing 39344333533 aprobó ocho pruebas Python, 253 Flutter,
+APK arm64 y pruebas nativas. Revisión física pendiente.

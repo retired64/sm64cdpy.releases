@@ -425,7 +425,9 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                 ],
                                 if (index == 1)
                                   ExpansionTile(
-                                    key: const PageStorageKey('guide-conversion-help'),
+                                    key: const PageStorageKey(
+                                      'guide-conversion-help',
+                                    ),
                                     tilePadding: EdgeInsets.zero,
                                     title: Text(
                                       l10n.playGuideConvertTitle,
@@ -527,7 +529,9 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                     primary: true,
                                   ),
                                   ExpansionTile(
-                                    key: const PageStorageKey('guide-paths-help'),
+                                    key: const PageStorageKey(
+                                      'guide-paths-help',
+                                    ),
                                     tilePadding: EdgeInsets.zero,
                                     title: Text(
                                       l10n.playGuidePathsTitle,

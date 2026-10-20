@@ -156,3 +156,9 @@ aprobó generación, formato, análisis y pruebas Flutter para `f929c9b`.
 Los Dart modificados ya coinciden con el formato del runner; no se importa el
 reformateo de archivos ajenos. APK arm64 en compilación al registrar esta nota.
 El rendimiento real y el aspecto siguen pendientes de comprobación en teléfono.
+
+Build de seguimiento validada: [Testing 39344333533](https://github.com/retired64/sm64cdpy.releases/actions/runs/39344333533)
+completó APK arm64 y pruebas nativas con los retratos incluidos en el código y
+pubspec. El fallo de 39342619343 era una descarga NDK inválida; no se revirtió
+la integración de iconos ni se modificó el spinner. Artifact publicado por CI:
+`cdpy-f10f833-TESTING`. Sigue pendiente revisión en teléfono.

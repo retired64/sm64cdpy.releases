@@ -67,8 +67,14 @@ void main() {
                 await tester.pumpAndSettle();
                 expect(tester.takeException(), isNull);
                 final strings = AppLocalizations.of(tester.element(help));
-                final heading = find.descendant(of: help,
-                  matching: find.text(step == 1 ? strings.playGuideConvertTitle : strings.playGuidePathsTitle));
+                final heading = find.descendant(
+                  of: help,
+                  matching: find.text(
+                    step == 1
+                        ? strings.playGuideConvertTitle
+                        : strings.playGuidePathsTitle,
+                  ),
+                );
                 await tester.ensureVisible(heading);
                 await tester.pumpAndSettle();
                 await tester.tap(heading);
@@ -90,8 +96,16 @@ void main() {
             await tester.tap(find.byKey(const ValueKey('guide-stage-1')));
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull);
-            final restoredHelp = find.byKey(const PageStorageKey('guide-conversion-help'));
-            expect(find.descendant(of: restoredHelp, matching: find.byType(SelectableText)), findsNWidgets(6));
+            final restoredHelp = find.byKey(
+              const PageStorageKey('guide-conversion-help'),
+            );
+            expect(
+              find.descendant(
+                of: restoredHelp,
+                matching: find.byType(SelectableText),
+              ),
+              findsNWidgets(6),
+            );
             await tester.pumpWidget(const SizedBox.shrink());
             await tester.pumpAndSettle();
           },

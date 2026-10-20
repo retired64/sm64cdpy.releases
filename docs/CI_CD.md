@@ -158,3 +158,8 @@ NDK requerido por el proyecto ni permisos de la aplicación.
 Contrato de instalación: [sdkmanager oficial](https://developer.android.com/tools/sdkmanager).
 Pruebas Python: reutilización sin red, instalación fallida seguida de éxito,
 límite de intentos y rechazo de limpieza fuera del SDK mediante symlink.
+
+Validación: [Testing 39344333533](https://github.com/retired64/sm64cdpy.releases/actions/runs/39344333533) pasó la preparación real
+del NDK, las ocho pruebas Python, análisis, 253 pruebas Flutter, APK arm64
+y pruebas nativas para f10f833. El workflow de Release comparte exactamente
+el preparador; no se ejecutó una publicación ni se creó un tag.
