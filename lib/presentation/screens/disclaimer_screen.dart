@@ -5,6 +5,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/update_service.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/manga_navigation_scope.dart';
 import '../widgets/app_snackbar.dart';
 
 class DisclaimerScreen extends StatelessWidget {
@@ -25,8 +26,12 @@ class DisclaimerScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16),
             child: Row(
               children: [
-                const DrawerMenuButton(),
-                const SizedBox(width: 8),
+                if (MangaNavigationScope.of(context))
+                  const SizedBox(width: 16)
+                else ...[
+                  const DrawerMenuButton(),
+                  const SizedBox(width: 8),
+                ],
                 Expanded(
                   child: Text(
                     l10n.disclaimerTitle,

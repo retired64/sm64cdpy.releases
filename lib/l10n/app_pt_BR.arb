@@ -794,5 +794,9 @@
   "romPrepareErrorStorage": "Não há armazenamento suficiente ou não foi possível ler o arquivo.",
   "romPrepareErrorExport": "Não foi possível verificar a cópia salva. Escolha outro destino e tente novamente.",
   "romPrepareErrorBusy": "Outra operação de ROM já está ativa.",
-  "romPrepareErrorUnexpected": "Algo inesperado aconteceu. Seu arquivo original não foi alterado."
+  "romPrepareErrorUnexpected": "Algo inesperado aconteceu. Seu arquivo original não foi alterado.",
+  "mangaNavMore": "Mais",
+  "mangaNavPlay": "Jogar",
+  "mangaNavHint": "Deslize para explorar. Toque para abrir.",
+  "mangaNavError": "Não foi possível concluir a ação. Tente novamente."
 }

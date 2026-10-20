@@ -2009,5 +2009,9 @@
   "romPrepareErrorStorage": "There is not enough available storage, or the file could not be read.",
   "romPrepareErrorExport": "The saved copy could not be verified. Choose another destination and try again.",
   "romPrepareErrorBusy": "Another ROM operation is already active.",
-  "romPrepareErrorUnexpected": "Something unexpected happened. Your original file was not changed."
+  "romPrepareErrorUnexpected": "Something unexpected happened. Your original file was not changed.",
+  "mangaNavMore": "More",
+  "mangaNavPlay": "Play",
+  "mangaNavHint": "Swipe to browse. Tap to open.",
+  "mangaNavError": "Could not complete this action. Try again."
 }

@@ -20,6 +20,42 @@ SM64CDPY es una aplicación Flutter orientada exclusivamente a Android. Combina 
 
 La arquitectura es deliberadamente híbrida: el catálogo principal utiliza entidades/repositorio; las colecciones pequeñas tienen datasources y providers directos.
 
+## Navegación Retro Manga — drawer-ui, 2026-10-20
+
+AppShell usa MangaNavigationScope y MangaNavigationBar solo en Retro Manga.
+Inicio, Explorar, Biblioteca, Herramientas y Más conservan todas las rutas.
+Explorar reúne catálogo/populares/favoritos; Herramientas agrupa Jugador,
+Partidas y Preparar ROM; Más conserva Ajustes, exclusivos y Recursos.
+Los otros cinco temas mantienen AppDrawer y DrawerMenuButton.
+
+GoRouter/currentRoute es autoridad sobre selección. PageController conserva
+solo qué viñeta se explora: deslizar no navega ni abre el juego. Pulsar un destino
+navega tras cerrar el panel modal; la nueva ruta centra su grupo. Los paneles
+admiten scroll, arrastre para cerrar y botón Cerrar. Jugar usa launchGameWithGuide
+y su confirmación cuando falta el juego; no es una pestaña.
+
+Las dos barras canónicas y Aviso legal consultan el scope para retirar el
+hamburguesa únicamente bajo la navegación inferior real. Inicio retira su
+lanzamiento duplicado. Scaffold reserva espacio para la tira, respeta SafeArea
+y la oculta con el teclado. En horizontal Jugar se compacta. AnimatedScale
+respeta reducción de movimiento; la trama usa HalftoneBackground existente.
+El carrusel repite los cinco grupos para que el activo pueda quedar centrado
+y tenga vecinos a ambos lados. Construye solo celdas visibles y omite índices
+semánticos artificiales; los controles conservan nombre, acción y selección real.
+
+PageStorageBucket del shell conserva offsets compatibles, aislados por ruta;
+se descarta al destruir el shell. No conserva todos los State/controles ni
+cachea datos del juego. Los providers siguen siendo autoridad de sus datos.
+Antes de abandonar Jugador o abrir el juego se comprueba busy/dirty y se pide
+confirmación para descartar. No hay preferencias nativas ni mensajes al overlay.
+Los métodos usados con unawaited capturan errores y liberan busy en finally.
+PageController y callbacks pendientes se protegen con dispose/mounted.
+
+Cuatro claves nuevas están en los cinco ARB; ejecutar flutter gen-l10n sin editar
+generados. Nuevas pruebas: aislamiento de temas, espacio de contenido, swipe sin
+navegación, rutas de herramientas y Más, teclado, borrador y lanzamiento.
+Validación Flutter y física pendiente: este Termux carece de Flutter/Dart.
+
 ## Arranque
 
 `lib/main.dart` configura orientaciones, downloader, Hive, información de versión, eventos de instalación y el puente del overlay. Después crea el árbol Riverpod y `MaterialApp.router`.

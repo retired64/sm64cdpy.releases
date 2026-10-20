@@ -14,6 +14,17 @@
 
 ## How to use this checklist
 
+### Drawer-ui: navegación inferior Manga — 2026-10-20
+
+- [x] Cinco grupos con acceso a todos los destinos del drawer.
+- [x] Swipe para explorar; pulsación para navegar o lanzar explícitamente.
+- [x] Área inferior, SafeArea, teclado y variante horizontal.
+- [x] Protección de borradores y ciclo de vida de controllers/modales.
+- [x] Cuatro claves en cinco ARB y pruebas de regresión de navegación.
+- [ ] Generar localizaciones, ejecutar formato, análisis y tests en Flutter/CI.
+- [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
+      gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.
+
 ### Seguimiento de rama — Jugador, 2026-10-19
 
 - [x] Snapshot nativo privado ligado a carpeta/permisos; lectura rápida sin listado SAF.
