@@ -6,6 +6,8 @@ class PlayerProfileService {
   static const _channel = MethodChannel('mods.sm64cdpy/mod_installer');
 
   Future<PlayerProfileSnapshot> read() => _call('getPlayerProfile');
+  Future<PlayerProfileSnapshot> cached() => _call('getCachedPlayerProfile');
+  Future<PlayerProfileSnapshot> palettes() => _call('getPlayerPalettes');
   Future<PlayerProfileSnapshot> restore() => _call('restorePlayerConfig');
 
   Future<PlayerProfileSnapshot> apply({

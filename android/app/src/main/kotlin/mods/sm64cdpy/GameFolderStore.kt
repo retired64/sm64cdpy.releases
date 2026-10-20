@@ -69,6 +69,7 @@ internal object GameFolderStore {
                 error("access")
             }
             }
+            PlayerProfileCache.clear(context)
             // Retain old grants: queued workers hold immutable URI inputs, not mutable folder prefs.
         } catch (error: Exception) {
             if (!alreadyGranted && preferences.getString(ROOT_KEY, null) != grant.toString() &&
@@ -160,6 +161,7 @@ internal object GameFolderStore {
             restore.commit()
             error("access")
         }
+        PlayerProfileCache.clear(context)
         if (saved != null) runCatching { context.contentResolver.releasePersistableUriPermission(GameFolderAccess.grantUri(Uri.parse(saved)),
             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION) }
         // No resources, config, installation receipts or game files are deleted.

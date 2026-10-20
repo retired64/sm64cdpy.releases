@@ -12,7 +12,8 @@
         "Minish Cap now uses a more consistent paper-and-wood interface across screens and mod cards.",
         "Mario Kart 64 supports the full interface accent palette in light and dark modes.",
         "Navigation, mod details and Player keep lightweight rendering paths for smoother low-end performance.",
-        "Optional all-files access can accelerate compatible ZIP, 7z, mod, DynOS and Touch Controls installations."
+        "Optional all-files access can accelerate compatible ZIP, 7z, mod, DynOS and Touch Controls installations.",
+        "Player can show the last confirmed profile from private local storage while checking the game configuration in the background; palette scanning no longer blocks the editor."
       ],
       "sections": [
         {
@@ -62,7 +63,8 @@
         "Minish Cap ahora usa una interfaz de papel y madera más consistente en pantallas y tarjetas de mods.",
         "Mario Kart 64 admite toda la paleta de acentos de interfaz en modo claro y oscuro.",
         "La navegación, los detalles de mods y Jugador mantienen renderizado ligero para mayor fluidez en gama baja.",
-        "El acceso opcional para administrar todos los archivos puede acelerar instalaciones compatibles de ZIP, 7z, mods, DynOS y Touch Controls."
+        "El acceso opcional para administrar todos los archivos puede acelerar instalaciones compatibles de ZIP, 7z, mods, DynOS y Touch Controls.",
+        "Jugador puede mostrar el último perfil confirmado desde almacenamiento privado mientras comprueba la configuración del juego en segundo plano; el escaneo de paletas ya no bloquea el editor."
       ],
       "sections": [
         {
@@ -112,7 +114,8 @@
         "Minish Cap agora usa uma interface de papel e madeira mais consistente em telas e cartões de mods.",
         "Mario Kart 64 oferece suporte a toda a paleta de cores de destaque nos modos claro e escuro.",
         "Navegação, detalhes de mods e Jogador mantêm renderização leve para maior fluidez em aparelhos de entrada.",
-        "O acesso opcional para gerenciar todos os arquivos pode acelerar instalações compatíveis de ZIP, 7z, mods, DynOS e Touch Controls."
+        "O acesso opcional para gerenciar todos os arquivos pode acelerar instalações compatíveis de ZIP, 7z, mods, DynOS e Touch Controls.",
+        "Jogador pode mostrar o último perfil confirmado do armazenamento privado enquanto verifica a configuração do jogo em segundo plano; a busca de paletas não bloqueia mais o editor."
       ],
       "sections": [
         {

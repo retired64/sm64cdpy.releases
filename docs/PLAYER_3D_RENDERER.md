@@ -1,5 +1,60 @@
 # Jugador 3D: arquitectura y operación
 
+## Apertura del editor y snapshot persistente — 2026-10-19
+
+Se separa el tiempo para mostrar el perfil del tiempo de lectura SAF y del
+renderizador. `getCachedPlayerProfile` lee `PlayerProfileCache` desde preferencias
+Android privadas, sin listar carpetas ni esperar el bloqueo global de SAF.
+El envelope v1 está acotado, ligado a URI user + raíz autorizada, comprueba
+permiso persistente y estructura básica. No contiene ROM, imágenes ni WebViews.
+Es caché descartable de presentación, no respaldo ni autoridad del juego.
+
+`getPlayerProfile` lee configuración/revisión sin escanear paletas;
+`getPlayerPalettes` completa el listado después. Antes, `playerSnapshot` hacía
+ambas tareas bajo el mismo bloqueo y Flutter esperaba todo sin datos visibles.
+Riverpod publica el snapshot primero y refresca sin retirar el editor. Busy
+representa una mutación; refreshing representa verificación, no un falso guardado.
+Sin caché válida, la primera lectura todavía necesita acceso real al proveedor.
+
+Escritores: lecturas confirmadas, apply, restore y operaciones de paletas nativas
+actualizan el snapshot. GameFolderStore lo elimina al conectar/desconectar;
+cambio de identidad, falta de permiso, estructura corrupta y errores de lectura
+lo invalidan. Cambios externos del juego se detectan en refresh al abrir por
+primera vez el proceso, al reanudar Jugador y al actualizar manualmente.
+No se garantizan milisegundos concretos ni se cachean permisos como si fueran
+permanentes. Una llamada cache fallida no impide consultar el juego.
+
+Mientras se verifica se permite editar, pero aplicar, restaurar y escribir
+paletas requieren revisión disponible y refresh terminado. Si se edita mientras
+llega una respuesta, se conserva borrador, perfil base y revisión original:
+apply nativo vuelve a leer y rechaza conflictos, incluso con un borrador iniciado
+desde caché. Una lectura fallida retira autorización para escribir. Lectura
+válida sin perfil retira el snapshot visible; no sigue ofreciendo una carpeta
+desconectada como operativa. La revisión de una respuesta antigua nunca gana a
+una mutación más reciente; los listados vacíos sí reemplazan paletas anteriores.
+Si solo cambian otras claves del config y el perfil base sigue siendo idéntico,
+se adopta la revisión nueva para evitar conflictos innecesarios. Aplicar un
+perfil reutiliza el listado de paletas conocido: esa escritura no modifica los
+INI y no necesita repetir su escaneo completo.
+
+Deduplicación de cargas también para force; errores inesperados liberan estado
+de carga. No se incorporan Futures fire-and-forget nuevos. El refresh de lifecycle
+ya existente captura errores dentro del notifier. Proyecciones main y overlay
+no comparten memoria: el nuevo snapshot vive en Android y el overlay no lo
+consume. No se cambian eventos de instalación, mods, DynOS o Touch Controls.
+Se revisaron importación de assets ROM, caché de Player3DSource y cambios de
+carpeta: continúan independientes y la preparación 3D no bloquea los controles.
+
+Pruebas añadidas en `player_profile_provider_test.dart`: snapshot antes de SAF,
+deduplicación, edición durante refresh con conflicto, respuestas tardías de
+paletas, pérdida de carpeta, caché corrupta y excepciones inesperadas. Pendiente
+ejecutar Flutter/Android en CI y medir arranque frío en teléfono con permisos
+válidos/revocados, paletas vacías/numerosas, edición externa y rotación.
+Termux no dispone de flutter, dart ni android/gradlew; diff-check sí es local.
+La clase PlayerProfileCache compila contra stubs con el compilador Kotlin
+disponible; esto comprueba sintaxis/tipos de esa clase, no compatibilidad Android
+completa ni comportamiento de SharedPreferences/SAF. Manifiesto JSON válido.
+
 ## Decisión
 
 La pantalla Jugador reemplaza completamente la previsualización PNG 2.5D por un

@@ -4,6 +4,12 @@ Revisado para la candidata `1.8.8+27` en `main` el 2026-10-19. La 1.8.7 es la ve
 
 ## Implementado
 
+- Rama de trabajo: Jugador muestra un snapshot privado del último perfil
+  confirmado y verifica SAF en segundo plano, separando escaneo de paletas.
+  Caché invalidada por carpeta/permisos y escrituras protegidas por revisión.
+  Implementado; validación CI y medición física pendientes. Detalles en
+  [Jugador](PLAYER_3D_RENDERER.md).
+
 - Tema Minimalista de bajo costo disponible en Ajustes, sin fondos pintados,
   sombras, inclinaciones ni iconos en el drawer. Retro Manga es nuevamente el
   predeterminado; los cuatro diseños y las preferencias válidas se conservan.

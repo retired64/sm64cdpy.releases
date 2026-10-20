@@ -92,14 +92,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 96),
               sliver: SliverList.list(
                 children: [
-                  if (state.busy && draft == null)
+                  if ((state.busy || state.refreshing) && draft == null)
                     const Center(
                       child: Padding(
                         padding: EdgeInsets.all(48),
                         child: CircularProgressIndicator(),
                       ),
                     ),
-                  if (draft == null && !state.busy)
+                  if (draft == null && !state.busy && !state.refreshing)
                     _Unavailable(
                       status: state.status,
                       onRetry: () async {
@@ -221,6 +221,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                     const SizedBox(height: 14),
                     _PlayerActions(
                       busy: state.busy,
+                      canWrite: !state.refreshing && state.revision != null,
                       dirty: state.dirty,
                       backupAvailable: state.backupAvailable,
                       onReset: ref.read(playerProfileProvider.notifier).reset,
@@ -614,10 +615,12 @@ class _PlayerActions extends StatelessWidget {
     required this.onSavePreset,
     required this.onApply,
     required this.onRestore,
+    required this.canWrite,
   });
 
   final bool busy;
   final bool dirty;
+  final bool canWrite;
   final bool backupAvailable;
   final VoidCallback onReset;
   final VoidCallback onSavePreset;
@@ -632,7 +635,7 @@ class _PlayerActions extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FilledButton.icon(
-            onPressed: busy || !dirty ? null : onApply,
+            onPressed: busy || !canWrite || !dirty ? null : onApply,
             icon: busy
                 ? const SizedBox.square(
                     dimension: 18,
@@ -658,7 +661,7 @@ class _PlayerActions extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: busy ? null : onSavePreset,
+                  onPressed: busy || !canWrite ? null : onSavePreset,
                   icon: const Icon(Icons.palette_outlined, size: 18),
                   label: Text(
                     l10n.playerSavePreset,
@@ -672,7 +675,7 @@ class _PlayerActions extends StatelessWidget {
           if (backupAvailable) ...[
             const SizedBox(height: 2),
             TextButton.icon(
-              onPressed: busy ? null : onRestore,
+              onPressed: busy || !canWrite ? null : onRestore,
               icon: const Icon(Icons.history, size: 18),
               label: Text(l10n.playerRestore),
             ),

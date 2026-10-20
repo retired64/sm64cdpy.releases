@@ -19,6 +19,7 @@ class PlayerProfileState {
     this.presets = const [],
     this.backupAvailable = false,
     this.busy = false,
+    this.refreshing = false,
     this.error,
   });
   final String status;
@@ -28,18 +29,22 @@ class PlayerProfileState {
   final List<PlayerPalettePreset> presets;
   final bool backupAvailable;
   final bool busy;
+  final bool refreshing;
   final String? error;
   bool get dirty => confirmed != null && draft != confirmed;
 }
 
 class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
   Future<void>? _loading;
+  int _epoch = 0;
   @override
   PlayerProfileState build() => const PlayerProfileState();
 
   Future<void> load({bool force = false}) {
-    if (!force && state.draft != null) return Future<void>.value();
-    if (!force && _loading != null) return _loading!;
+    if (_loading != null) return _loading!;
+    if (state.busy || (!force && state.draft != null)) {
+      return Future<void>.value();
+    }
     final operation = _load();
     _loading = operation;
     return operation.whenComplete(() {
@@ -48,36 +53,81 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
   }
 
   Future<void> _load() async {
-    final oldDraft = state.dirty ? state.draft : null;
-    state = PlayerProfileState(
-      status: state.status,
-      confirmed: state.confirmed,
-      draft: state.draft,
-      revision: state.revision,
-      presets: state.presets,
-      backupAvailable: state.backupAvailable,
-      busy: true,
-    );
+    final epoch = ++_epoch;
+    final service = ref.read(playerProfileServiceProvider);
+    state = _copy(refreshing: true);
+    bool current() => ref.mounted && epoch == _epoch;
     try {
-      final value = await ref.read(playerProfileServiceProvider).read();
-      if (!ref.mounted) return;
+      if (state.draft == null) {
+        try {
+          final cached = await service.cached();
+          if (!current()) return;
+          if (cached.profile != null) {
+            state = PlayerProfileState(
+              status: cached.status,
+              confirmed: cached.profile,
+              draft: cached.profile,
+              // Preserve the cached baseline for conflict detection if the user
+              // edits while refreshing; refreshing blocks every write action.
+              revision: cached.revision,
+              presets: cached.presets,
+              refreshing: true,
+            );
+          }
+        } catch (_) {
+          // Missing/corrupt cache cannot prevent a real read or leave loading stuck.
+        }
+      }
+      if (!current()) return;
+      final value = await service.read();
+      if (!current()) return;
+      final edited = state.dirty;
+      final previous = state;
+      final preserveBaseline = edited &&
+          previous.revision != null &&
+          previous.confirmed != value.profile;
       state = PlayerProfileState(
         status: value.status,
-        confirmed: value.profile,
-        draft: oldDraft ?? value.profile,
-        revision: value.revision,
-        presets: value.presets,
+        confirmed: value.profile == null
+            ? null
+            : (edited ? previous.confirmed : value.profile),
+        draft: value.profile == null
+            ? null
+            : (edited ? previous.draft : value.profile),
+        // Preserve the baseline when editing an already verified profile. If it
+        // changed externally, native apply must reject that original revision.
+        revision: value.profile == null
+            ? null
+            : (preserveBaseline ? previous.revision : value.revision),
+        presets: value.profile == null ? const [] : previous.presets,
         backupAvailable: value.backupAvailable,
       );
-    } on PlatformException catch (error) {
-      if (ref.mounted) {
+      if (value.profile == null) return;
+      try {
+        final palettes = await service.palettes();
+        if (!current()) return;
         state = PlayerProfileState(
           status: state.status,
           confirmed: state.confirmed,
           draft: state.draft,
           revision: state.revision,
+          presets: palettes.presets,
+          backupAvailable: state.backupAvailable,
+          busy: state.busy,
+          error: state.error,
+        );
+      } catch (_) {
+        // Keep the last palette list; profile editing does not depend on scanning it.
+      }
+    } catch (error) {
+      if (current()) {
+        state = PlayerProfileState(
+          status: 'access',
+          confirmed: state.confirmed,
+          draft: state.draft,
+          // Cached/failed refresh data remains viewable, but cannot be written.
           presets: state.presets,
-          error: error.code,
+          error: error is PlatformException ? error.code : 'access',
         );
       }
     }
@@ -118,7 +168,9 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
   Future<bool> apply() async {
     final draft = state.draft;
     final revision = state.revision;
-    if (draft == null || revision == null || state.busy) return false;
+    if (draft == null || revision == null || state.busy || state.refreshing) {
+      return false;
+    }
     return _perform(
       () => ref
           .read(playerProfileServiceProvider)
@@ -128,7 +180,9 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
 
   Future<bool> savePalette(String name, {bool overwrite = false}) async {
     final draft = state.draft;
-    if (draft == null || state.busy) return false;
+    if (draft == null || state.busy || state.refreshing || state.revision == null) {
+      return false;
+    }
     return _perform(
       () => ref
           .read(playerProfileServiceProvider)
@@ -142,7 +196,7 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
   }
 
   Future<bool> deletePalette(String id) async {
-    if (state.busy) return false;
+    if (state.busy || state.refreshing || state.revision == null) return false;
     return _perform(
       () => ref.read(playerProfileServiceProvider).deletePalette(id),
       preserveDraft: true,
@@ -150,7 +204,7 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
   }
 
   Future<bool> restore() async {
-    if (state.busy) return false;
+    if (state.busy || state.refreshing || state.revision == null) return false;
     return _perform(() => ref.read(playerProfileServiceProvider).restore());
   }
 
@@ -159,6 +213,7 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
     bool preserveDraft = false,
   }) async {
     final draft = state.draft;
+    ++_epoch; // Retire palette/refresh replies that began before this mutation.
     state = _copy(busy: true, error: null);
     try {
       final value = await call();
@@ -168,7 +223,7 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
         confirmed: value.profile ?? state.confirmed,
         draft: preserveDraft ? draft : (value.profile ?? draft),
         revision: value.revision ?? state.revision,
-        presets: value.presets.isEmpty ? state.presets : value.presets,
+        presets: value.presets,
         backupAvailable: value.backupAvailable,
       );
       return true;
@@ -181,7 +236,12 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
     }
   }
 
-  PlayerProfileState _copy({PlayerProfile? draft, bool? busy, String? error}) =>
+  PlayerProfileState _copy({
+    PlayerProfile? draft,
+    bool? busy,
+    bool? refreshing,
+    String? error,
+  }) =>
       PlayerProfileState(
         status: state.status,
         confirmed: state.confirmed,
@@ -190,6 +250,7 @@ class PlayerProfileNotifier extends Notifier<PlayerProfileState> {
         presets: state.presets,
         backupAvailable: state.backupAvailable,
         busy: busy ?? state.busy,
+        refreshing: refreshing ?? state.refreshing,
         error: error,
       );
 }

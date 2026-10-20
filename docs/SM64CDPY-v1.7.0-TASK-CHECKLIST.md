@@ -14,6 +14,16 @@
 
 ## How to use this checklist
 
+### Seguimiento de rama — Jugador, 2026-10-19
+
+- [x] Snapshot nativo privado ligado a carpeta/permisos; lectura rápida sin listado SAF.
+- [x] Perfil y paletas en lecturas separadas; editor visible mientras se refresca.
+- [x] Proteger borrador/revisión ante respuestas tardías y bloquear escrituras sin verificar.
+- [x] Documentar invalidación, hermanos, fuentes de verdad y límites del caché.
+- [ ] Ejecutar nuevas pruebas Riverpod, análisis y compilación Kotlin en CI.
+- [ ] Medir cierre/reapertura en gama baja, permiso revocado, cambio de carpeta,
+      cambios externos del juego, rotación y paletas numerosas.
+
 - Complete tasks in priority order when possible.
 - Add the test date, device, Android version and result next to every manual test.
 - Do not mark a group complete because the feature exists in code; mark it only after verification.
