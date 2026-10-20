@@ -167,7 +167,34 @@ Una tarea visible cada vez; nombre largo con ajuste de línea; botones amplios,
 texto escalable, lector de pantalla, modo claro/oscuro y landscape. No comunicar
 error o éxito solo con color. Deshabilitar doble toque durante operación.
 Volver con tarea activa pide cancelar o continuar en la pantalla; no deja un
-proceso huérfano silencioso. No añadir un destino al drawer en la primera fase.
+proceso huérfano silencioso.
+
+### Dos accesos: Cómo jugar y Herramientas/GameTool
+
+Incluir desde la primera versión una herramienta reutilizable en el drawer,
+dentro del submenú existente **Herramientas / GameTool**, junto a Biblioteca,
+Jugador y Partidas. Nombre propuesto: **Preparar ROM** en español, **ROM
+Preparer** en inglés y **Preparar ROM** en portugués BR; confirmar las etiquetas
+finales al localizar los cinco ARB. No añadir otro submenú ni un botón principal
+independiente del grupo de herramientas.
+
+Crear `lib/presentation/screens/rom_preparation_screen.dart` como pantalla
+contenedora, con ruta propuesta `/game-tool/rom-preparer` dentro del AppShell.
+Reutilizar `rom_preparation_panel.dart`, el mismo servicio y el mismo provider
+desde ambos accesos. La guía ofrece explicación previa y abre esta herramienta;
+el drawer permite volver a utilizarla sin recorrer los capítulos de inicio.
+
+Desde Cómo jugar, volver debe conservar el capítulo 2 y su desplazamiento.
+El resultado puede ofrecer **Continuar con la guía** hacia el capítulo 3;
+no navegar automáticamente al completar ni al cancelar. Desde el drawer,
+ofrecer guardar la copia y, como acción secundaria, consultar cómo usarla en el
+juego. No mostrar dos instancias capaces de iniciar conversiones simultáneas:
+la operación nativa sigue siendo única y una segunda entrada consulta su estado.
+
+Modificar el router `lib/core/router/app_router.dart` y el componente existente
+`lib/presentation/widgets/app_drawer.dart`, usado por AppShell. Añadir título, selección de ruta,
+semántica e icono coherente con las herramientas existentes. La pantalla usa
+el mismo lenguaje visual de cada tema; no una segunda implementación del panel.
 
 Todos los textos nuevos deben estar en los cinco ARB: inglés, español/es-419 y
 portugués/pt-BR. Generar localizaciones con Flutter, sin editar Dart generado.
@@ -180,6 +207,7 @@ portugués/pt-BR. Generar localizaciones con Flutter, sin editar Dart generado.
 | Servicio Flutter | `lib/services/rom_preparation_service.dart` | Canal nativo, eventos y cancelación |
 | Provider | `lib/presentation/providers/rom_preparation_provider.dart` | Proyección observable y exclusión de doble operación |
 | UI | `lib/presentation/widgets/rom_preparation_panel.dart` | Pasos, progreso y acciones; sin I/O |
+| Pantalla | `lib/presentation/screens/rom_preparation_screen.dart` | Contenedor común abierto desde la guía y el submenú Herramientas/GameTool |
 | Android | `android/app/src/main/kotlin/mods/sm64cdpy/RomPreparationPlugin.kt` | Picker/exportación, ciclo de Activity y canal |
 | Núcleo Android | `android/app/src/main/kotlin/mods/sm64cdpy/RomByteOrderConverter.kt` | Transformación pura sobre streams, comprobable sin UI |
 
@@ -291,7 +319,9 @@ Este es el contrato a implementar y verificar; no describe estado ya añadido.
 2. Implementar conversor puro y pruebas sintéticas antes de conectarlo a SAF.
 3. Integrar plugin, selección, staging, exportación y cancelación; sin UI nueva
    hasta que los resultados/error sean comprobables.
-4. Añadir servicio/provider y panel temático en capítulo 2. Conservar claves
+4. Añadir servicio/provider, panel temático y pantalla compartida; registrar
+   `/game-tool/rom-preparer`, entrada en Herramientas/GameTool y acceso desde
+   capítulo 2. Conservar claves
    PageStorage separadas: expansión guarda bool; textos/listas guardan offsets.
 5. Localizar cinco ARB, generar código, sustituir todos los usos del enlace
    externo y actualizar HOW_TO_PLAY, checklist, estado y changelog al implementar.
@@ -311,6 +341,10 @@ Pruebas necesarias sin distribuir ROM real:
   muerte de proceso sin loading permanente ni éxito falso.
 - Widgets en seis temas, claro/oscuro, tres idiomas, texto grande y pantalla
   pequeña. Conservar pruebas de ayudas desplegables y navegación de la guía.
+- Entrada desde drawer y guía, ruta seleccionada, retorno al capítulo original,
+  consulta de una operación ya activa y acción de continuar tras guardar. Añadir
+  `test/presentation/rom_preparation_screen_test.dart` y ampliar pruebas del
+  drawer/router existentes; verificar que ambos accesos usan el mismo estado.
 
 En dispositivo y con ROM propia: comparar hash de las tres variantes tras
 normalizar, medir duración/memoria en gama baja y verificar que el juego acepta
