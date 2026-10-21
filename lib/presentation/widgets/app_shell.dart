@@ -116,17 +116,8 @@ class _AppShellState extends ConsumerState<AppShell> {
         (retro.showHalftone &&
             !_noHalftoneRoutes.contains(widget.currentRoute));
 
-    // El fondo llega detrás de la tira; el contenido respeta el espacio
-    // que Scaffold expone mediante MediaQuery cuando extendBody está activo.
-    final pageContent = bottomNavigation
-        ? SafeArea(
-            top: false,
-            left: false,
-            right: false,
-            child: widget.child,
-          )
-        : widget.child;
-
+    // El viewport debe llegar detrás de la navegación; la separación final
+    // pertenece al contenido desplazable, no al tamaño de la pantalla.
     return MangaNavigationScope(
       enabled: bottomNavigation,
       child: Scaffold(
@@ -167,15 +158,35 @@ class _AppShellState extends ConsumerState<AppShell> {
                           ),
                         ),
                       ),
-                      ThemePageFrame(child: pageContent),
+                      ThemePageFrame(child: widget.child),
                     ],
                   )
-                : pageContent,
+                : widget.child,
           ),
         ),
       ),
     );
   }
+}
+
+/// Espacio final desplazable: no recorta el viewport ni pinta una franja.
+double mangaNavigationScrollInset(BuildContext context) {
+  if (!MangaNavigationScope.of(context) ||
+      MediaQuery.viewInsetsOf(context).bottom > 0) {
+    return 0;
+  }
+  // Scaffold.extendBody incluye aquí la tira y el margen seguro de Android.
+  // Los 24 dp adicionales dejan libre el icono elevado.
+  return MediaQuery.paddingOf(context).bottom + 24;
+}
+
+class MangaNavigationSliverInset extends StatelessWidget {
+  const MangaNavigationSliverInset({super.key});
+
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+    child: SizedBox(height: mangaNavigationScrollInset(context)),
+  );
 }
 
 class DrawerMenuButton extends StatelessWidget {

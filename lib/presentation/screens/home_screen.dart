@@ -109,6 +109,7 @@ class _HomeBody extends ConsumerWidget {
 
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
         const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }
@@ -1499,7 +1500,12 @@ class _HomeSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 80, 20, 32),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        80,
+        20,
+        32 + mangaNavigationScrollInset(context),
+      ),
       children: [
         const _Bone(height: 220),
         const SizedBox(height: 20),

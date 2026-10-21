@@ -103,7 +103,12 @@ class _ModsFavTab extends ConsumerWidget {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'mods');
         return ListView.separated(
           shrinkWrap: true,
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + mangaNavigationScrollInset(context),
+          ),
           itemCount: mods.length,
           separatorBuilder: (context, index) => const SizedBox(height: 8),
           itemBuilder: (context, i) {
@@ -141,7 +146,12 @@ class _VipFavTab extends ConsumerWidget {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'VIP mods');
         return ListView.separated(
           shrinkWrap: true,
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + mangaNavigationScrollInset(context),
+          ),
           itemCount: mods.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, i) {
@@ -176,7 +186,12 @@ class _DynosFavTab extends ConsumerWidget {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'DynOS');
         return ListView.separated(
           shrinkWrap: true,
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + mangaNavigationScrollInset(context),
+          ),
           itemCount: mods.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, i) {
@@ -211,7 +226,12 @@ class _TouchFavTab extends ConsumerWidget {
         if (mods.isEmpty) return const _EmptyFavourites(type: 'Touch Controls');
         return ListView.separated(
           shrinkWrap: true,
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + mangaNavigationScrollInset(context),
+          ),
           itemCount: mods.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, i) {

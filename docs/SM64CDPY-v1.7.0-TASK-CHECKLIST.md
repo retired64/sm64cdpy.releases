@@ -42,6 +42,8 @@
 - [x] Fondo de pantalla extendido detrás del carrusel transparente, contenido
       protegido por SafeArea y Mods como nombre de Explorar en español.
 - [ ] Regenerar mangaNavExplore en CI y comprobar transparencia en teléfono.
+- [x] Corregir franja persistente: quitar SafeArea global y pasar la separación
+      a footers/padding desplazables; revisar listas hermanas y acción final.
 - [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.

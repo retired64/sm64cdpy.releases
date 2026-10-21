@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/manga_navigation_scope.dart';
 import '../widgets/rom_preparation_panel.dart';
 
 class RomPreparationScreen extends StatelessWidget {
@@ -18,8 +19,14 @@ class RomPreparationScreen extends StatelessWidget {
       title: Text(l.romPrepareTitle, style: retro.heading(size: 22)),
       child: SafeArea(
         top: false,
+        bottom: !MangaNavigationScope.of(context),
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            28 + mangaNavigationScrollInset(context),
+          ),
           children: [
             RomPreparationPanel(
               onContinueGuide: fromGuide

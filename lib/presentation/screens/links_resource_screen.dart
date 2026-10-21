@@ -161,6 +161,7 @@ class LinksResourceScreen extends StatelessWidget {
         ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }

@@ -209,6 +209,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 ),
               ),
             ),
+          const MangaNavigationSliverInset(),
         ],
       ),
     );

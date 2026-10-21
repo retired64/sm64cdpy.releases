@@ -146,6 +146,7 @@ class _TouchBody extends StatelessWidget {
           ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }

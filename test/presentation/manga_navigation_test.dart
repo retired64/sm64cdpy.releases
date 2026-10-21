@@ -78,7 +78,23 @@ GoRouter _router({String initial = '/'}) => GoRouter(
               slivers: [
                 RetroPinnedAppBar(title: Text(route)),
                 SliverToBoxAdapter(child: Text('content $route')),
-                const SliverToBoxAdapter(child: SizedBox(height: 1200)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 1200,
+                    child: ColoredBox(color: Colors.red),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 48,
+                    child: TextButton(
+                      key: const ValueKey('last-content-action'),
+                      onPressed: () {},
+                      child: const Text('Last action'),
+                    ),
+                  ),
+                ),
+                const MangaNavigationSliverInset(),
               ],
             ),
           ),
@@ -216,6 +232,28 @@ void main() {
     });
   }
 
+  for (final dark in [false, true]) {
+    testWidgets('transparent strip keeps a full viewport and reachable last action dark=$dark', (tester) async {
+      final router = _router(initial: '/settings');
+      addTearDown(router.dispose);
+      await tester.pumpWidget(_app(router, RetroTheme(dark), 'es', 1));
+      await tester.pumpAndSettle();
+      final viewport = tester.getRect(find.byType(CustomScrollView));
+      final bar = tester.getRect(find.byKey(const ValueKey('manga-navigation')));
+      expect(viewport.bottom, greaterThanOrEqualTo(bar.bottom));
+      final scrollable = tester.state<ScrollableState>(find.descendant(
+        of: find.byType(CustomScrollView),
+        matching: find.byType(Scrollable),
+      ).first);
+      scrollable.position.jumpTo(scrollable.position.maxScrollExtent);
+      await tester.pumpAndSettle();
+      final lastAction = find.byKey(const ValueKey('last-content-action'));
+      expect(tester.getRect(lastAction).bottom, lessThanOrEqualTo(bar.top - 20));
+      await tester.tap(lastAction);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   for (final design in AppThemeCatalog.designs) {
     for (final dark in [false, true]) {
       testWidgets('navigation follows ${design.id} dark=$dark', (tester) async {
@@ -240,7 +278,8 @@ void main() {
           final bar = tester.getRect(
             find.byKey(const ValueKey('manga-navigation')),
           );
-          expect(body.bottom, lessThanOrEqualTo(bar.top));
+          // La lista pinta detrás de toda la tira, no se recorta en su borde.
+          expect(body.bottom, greaterThanOrEqualTo(bar.bottom));
           final backdrop = find.byType(ThemeBackdrop);
           if (backdrop.evaluate().isNotEmpty) {
             expect(tester.getRect(backdrop).bottom, greaterThanOrEqualTo(bar.bottom));

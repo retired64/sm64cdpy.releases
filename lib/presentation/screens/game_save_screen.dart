@@ -451,6 +451,7 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
               ],
             ),
           ),
+          const MangaNavigationSliverInset(),
         ],
       ),
     );

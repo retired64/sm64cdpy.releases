@@ -123,6 +123,7 @@ class SettingsScreen extends ConsumerWidget {
             ],
           ),
         ),
+        const MangaNavigationSliverInset(),
       ],
     );
   }

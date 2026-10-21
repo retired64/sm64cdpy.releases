@@ -140,6 +140,7 @@ class _OmmBody extends StatelessWidget {
           ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }

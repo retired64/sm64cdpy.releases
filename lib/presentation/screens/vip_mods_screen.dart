@@ -143,6 +143,7 @@ class _VipBody extends StatelessWidget {
           ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }

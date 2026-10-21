@@ -146,6 +146,7 @@ class _DynosBody extends StatelessWidget {
           ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }

@@ -126,6 +126,7 @@ class _Render96Body extends StatelessWidget {
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }
@@ -735,6 +736,7 @@ class _Render96Skeleton extends StatelessWidget {
             ),
           ),
         ),
+        const MangaNavigationSliverInset(),
       ],
     );
   }

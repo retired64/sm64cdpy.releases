@@ -95,7 +95,12 @@ class _DisclaimerBody extends StatelessWidget {
     ];
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        12,
+        20,
+        120 + mangaNavigationScrollInset(context),
+      ),
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 8),

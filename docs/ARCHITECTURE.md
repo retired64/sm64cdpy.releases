@@ -35,8 +35,9 @@ admiten scroll, arrastre para cerrar y botón Cerrar. Jugar permanece en Inicio,
 usa launchGameWithGuide y su confirmación cuando falta el juego; no es una pestaña.
 
 Las dos barras canónicas y Aviso legal consultan el scope para retirar el
-hamburguesa únicamente bajo la navegación inferior real. Scaffold reserva
-espacio para la tira, respeta SafeArea y la oculta con el teclado. AnimatedScale
+hamburguesa únicamente bajo la navegación inferior real. Scaffold extiende
+el viewport detrás de la tira y la oculta con el teclado; el margen seguro
+queda en la propia navegación y al final de las listas. AnimatedScale
 respeta reducción de movimiento; la trama usa HalftoneBackground existente.
 El carrusel repite los cinco grupos para que el activo pueda quedar centrado
 y tenga vecinos a ambos lados. Construye solo celdas visibles y omite índices
@@ -81,12 +82,21 @@ los temas, reutilizando su protección contra doble toque y la guía de instalac
 La altura base es de aproximadamente 48 dp más SafeArea y crece con la escala
 de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa.
 La superficie de la tira es transparente y AppShell usa extendBody solo para
-Retro Manga: el fondo de cada pantalla continúa detrás de los iconos. SafeArea
-protege únicamente el contenido interactivo con el padding inferior que
-Scaffold expone en MediaQuery; el backdrop puede ocupar toda la altura.
-El teclado oculta la tira como antes. Los otros temas no usan extendBody. No pinta trama ni capa
-de fondo propia; conserva el espacio reservado de 48 dp y las cápsulas de
-las etiquetas. No usa BackdropFilter/blur.
+Retro Manga. Diagnóstico de las dos capturas: un SafeArea global seguía
+recortando el viewport al comienzo de la tira; se veía una franja de fondo
+vacía aunque Material fuera transparente. Ese SafeArea se retira.
+Las listas CustomScrollView añaden MangaNavigationSliverInset al final;
+Favoritos, Aviso legal, skeleton de Inicio y Preparar ROM ajustan su padding
+interno. El helper usa el padding inferior de MediaQuery que Scaffold amplía
+con la altura real de la navegación, más 24 dp para el icono elevado. Es espacio
+desplazable, no una franja fija: el viewport llega detrás del menú y el último
+control puede desplazarse por encima de los iconos. Fuera de Manga o con
+teclado devuelve cero. No se modifican datos, operaciones ni scroll controllers.
+La guía conserva su zona segura local para sus botones fijos Anterior/Siguiente;
+no se cambia su estructura paginada por una lista continua. Los demás temas
+conservan el drawer y sus dimensiones. No se usa blur ni capa oscura.
+Pruebas de regresión: viewport completo, ausencia de relleno opaco y última
+acción accesible al final, en ambos modos. Sigue pendiente ejecutar Flutter/CI.
 Cada etiqueta lleva una cápsula redondeada con borde blanco fino y gradiente
 translúcido, más tenue en oscuro, para sugerir una burbuja de jabón sin otra
 caja alrededor del icono. El relleno amarillo y el contorno negro son iguales

@@ -166,6 +166,7 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
           ),
 
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          const MangaNavigationSliverInset(),
         ],
       ),
     );
