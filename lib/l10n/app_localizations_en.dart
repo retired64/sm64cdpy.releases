@@ -2550,6 +2550,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Something unexpected happened. Your original file was not changed.';
 
   @override
+  String get mangaNavLibrary => 'Library';
+
+  @override
+  String get mangaNavExplore => 'Explore';
+
+  @override
+  String get mangaMenuLabel => 'Menu';
+
+  @override
+  String get mangaMenuOpen => 'Open menu';
+
+  @override
+  String get mangaMenuClose => 'Close menu';
+
+  @override
+  String get mangaNavTools => 'Tools';
+
+  @override
   String get mangaNavMore => 'More';
 
   @override

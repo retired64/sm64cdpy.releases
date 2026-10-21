@@ -160,7 +160,10 @@ class _AppShellState extends ConsumerState<AppShell> {
       ),
     );
     return bottomNavigation
-        ? MangaNavigationDock(currentRoute: widget.currentRoute, child: scaffold)
+        ? MangaNavigationDock(
+            currentRoute: widget.currentRoute,
+            child: scaffold,
+          )
         : MangaNavigationScope(enabled: false, child: scaffold);
   }
 }

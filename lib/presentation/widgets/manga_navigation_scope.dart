@@ -12,9 +12,11 @@ class MangaNavigationScope extends InheritedWidget {
   final bool enabled;
   final double reservedBottomInset;
 
-  static double insetOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<MangaNavigationScope>()
-      ?.reservedBottomInset ?? 0;
+  static double insetOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<MangaNavigationScope>()
+          ?.reservedBottomInset ??
+      0;
 
   static bool of(BuildContext context) =>
       context

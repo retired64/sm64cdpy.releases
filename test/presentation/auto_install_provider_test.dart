@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sm64cdpy/core/constants/app_constants.dart';
@@ -180,14 +181,30 @@ void main() {
       ],
     );
     addTearDown(container.dispose);
+    // AppShell usa el dispatcher de Atrás del Router, igual que en producción.
+    final router = GoRouter(
+      routes: [
+        ShellRoute(
+          builder: (context, state, child) =>
+              AppShell(currentRoute: state.uri.path, child: child),
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => const SizedBox.expand(),
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
 
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: MaterialApp(
+        child: MaterialApp.router(
+          routerConfig: router,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const AppShell(currentRoute: '/', child: SizedBox.expand()),
         ),
       ),
     );

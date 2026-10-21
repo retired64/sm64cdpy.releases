@@ -23,7 +23,10 @@
 - [x] Teclado, texto ampliado y margen de listas coordinados por el scope.
 - [x] Carga al primer uso y retención del carrusel sin actividad oculta.
 - [x] Tres claves en cinco ARB y pruebas de integración del dock.
-- [ ] Ejecutar gen-l10n, dart format, analyze y tests Flutter en CI.
+- [x] Testing 39687239343: generación/análisis correctos; fuentes sincronizadas
+      desde el artefacto del runner. 436 pruebas verdes y una fallida por fixture
+      de primer inicio sin Router; corregido para usar GoRouter + ShellRoute.
+- [ ] Repetir CI y confirmar las pruebas completas tras corregir el fixture.
 - [ ] Comprobar en teléfono modo claro/oscuro, Atrás con borrador de Jugador,
       modales, teclado, rotación, pausa/reapertura y texto grande.
 

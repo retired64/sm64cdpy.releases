@@ -2562,6 +2562,24 @@ class AppLocalizationsPt extends AppLocalizations {
       'Algo inesperado aconteceu. Seu arquivo original não foi alterado.';
 
   @override
+  String get mangaNavLibrary => 'Biblioteca';
+
+  @override
+  String get mangaNavExplore => 'Explorar';
+
+  @override
+  String get mangaMenuLabel => 'Menu';
+
+  @override
+  String get mangaMenuOpen => 'Abrir menu';
+
+  @override
+  String get mangaMenuClose => 'Fechar menu';
+
+  @override
+  String get mangaNavTools => 'Oficina';
+
+  @override
   String get mangaNavMore => 'Mais';
 
   @override
@@ -5131,6 +5149,24 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get romPrepareErrorUnexpected =>
       'Algo inesperado aconteceu. Seu arquivo original não foi alterado.';
+
+  @override
+  String get mangaNavLibrary => 'Biblioteca';
+
+  @override
+  String get mangaNavExplore => 'Explorar';
+
+  @override
+  String get mangaMenuLabel => 'Menu';
+
+  @override
+  String get mangaMenuOpen => 'Abrir menu';
+
+  @override
+  String get mangaMenuClose => 'Fechar menu';
+
+  @override
+  String get mangaNavTools => 'Oficina';
 
   @override
   String get mangaNavMore => 'Mais';

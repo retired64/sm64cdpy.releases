@@ -69,6 +69,19 @@ La matriz existente abre ahora el dock explícitamente y comprueba que se
 cierra tras elegir un destino. Formato, análisis, tests Flutter y validación
 física siguen pendientes: este Termux no dispone de Flutter/Dart.
 
+### Corrección de Testing 39687239343
+
+El análisis pasó y 436 pruebas Flutter terminaron correctamente; falló únicamente
+first-run decisions appear as two sequential dialogs. Su fixture usaba
+MaterialApp.home, sin Router, aunque AppShell ahora contiene BackButtonListener.
+La aplicación real y las pruebas del dock sí usan MaterialApp.router/GoRouter.
+Se actualiza el fixture a GoRouter + ShellRoute, manteniendo las aserciones del
+orden de los diálogos, confirmación de persistencia y ausencia de excepciones.
+No se cambia la lógica de auto-install ni se omite el control de Atrás del dock.
+Las traducciones generadas y el formato del código del menú se sincronizan desde
+el artefacto flutter-source-sync de esa ejecución. Hace falta repetir CI para
+validar la corrección; no hay Flutter/Dart instalado en este Termux.
+
 ## Navegación Retro Manga — drawer-ui, 2026-10-20
 
 AppShell usa MangaNavigationScope y MangaNavigationBar solo en Retro Manga.

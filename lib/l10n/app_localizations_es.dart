@@ -2575,7 +2575,25 @@ class AppLocalizationsEs extends AppLocalizations {
       'Ocurrió algo inesperado. Tu archivo original no fue modificado.';
 
   @override
-  String get mangaNavMore => 'Más';
+  String get mangaNavLibrary => 'Mis Mods';
+
+  @override
+  String get mangaNavExplore => 'Mods';
+
+  @override
+  String get mangaMenuLabel => 'Menú';
+
+  @override
+  String get mangaMenuOpen => 'Abrir menú';
+
+  @override
+  String get mangaMenuClose => 'Cerrar menú';
+
+  @override
+  String get mangaNavTools => 'Taller';
+
+  @override
+  String get mangaNavMore => 'MAS';
 
   @override
   String get mangaNavPlay => 'Jugar';
@@ -5159,7 +5177,25 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
       'Ocurrió algo inesperado. Tu archivo original no fue modificado.';
 
   @override
-  String get mangaNavMore => 'Más';
+  String get mangaNavLibrary => 'Mis Mods';
+
+  @override
+  String get mangaNavExplore => 'Mods';
+
+  @override
+  String get mangaMenuLabel => 'Menú';
+
+  @override
+  String get mangaMenuOpen => 'Abrir menú';
+
+  @override
+  String get mangaMenuClose => 'Cerrar menú';
+
+  @override
+  String get mangaNavTools => 'Taller';
+
+  @override
+  String get mangaNavMore => 'MAS';
 
   @override
   String get mangaNavPlay => 'Jugar';

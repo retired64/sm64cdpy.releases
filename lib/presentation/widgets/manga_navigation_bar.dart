@@ -342,7 +342,9 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
           children: [
             SizedBox(
               // Siluetas flotantes; solo el texto accesible aumenta la altura.
-              height: (34 + labelHeight).clamp(48.0, double.infinity).toDouble(),
+              height: (34 + labelHeight)
+                  .clamp(48.0, double.infinity)
+                  .toDouble(),
               child: Semantics(
                 hint: l.mangaNavHint,
                 child: PageView.custom(
@@ -355,7 +357,8 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                     return AnimatedBuilder(
                       animation: _pages,
                       builder: (context, child) {
-                        final position = _pages.hasClients &&
+                        final position =
+                            _pages.hasClients &&
                                 _pages.position.hasContentDimensions
                             ? _pages.page ?? _pages.initialPage.toDouble()
                             : _pages.initialPage.toDouble();
@@ -443,7 +446,9 @@ class _MangaNavigationTile extends StatelessWidget {
                             child: DecoratedBox(
                               key: ValueKey('manga-nav-halo-$index'),
                               decoration: BoxDecoration(
-                                color: retro.accent.withValues(alpha: 0.38 * focus),
+                                color: retro.accent.withValues(
+                                  alpha: 0.38 * focus,
+                                ),
                                 borderRadius: const BorderRadius.all(
                                   Radius.elliptical(12, 4),
                                 ),
@@ -481,11 +486,8 @@ class _MangaNavigationTile extends StatelessWidget {
                                 fit: BoxFit.contain,
                                 filterQuality: FilterQuality.medium,
                                 excludeFromSemantics: true,
-                                errorBuilder: (context, error, stackTrace) => Icon(
-                                  icon,
-                                  size: 24,
-                                  color: foreground,
-                                ),
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(icon, size: 24, color: foreground),
                               ),
                             ),
                           ),
@@ -594,11 +596,17 @@ class _MangaNavigationLabel extends StatelessWidget {
             end: Alignment.bottomCenter,
             colors: [
               // 65 % transparente: alfa 0.35 también en los reflejos.
-              Color.lerp(bubbleColor, Colors.white, 0.22)!
-                  .withValues(alpha: 0.35),
+              Color.lerp(
+                bubbleColor,
+                Colors.white,
+                0.22,
+              )!.withValues(alpha: 0.35),
               bubbleColor.withValues(alpha: 0.35),
-              Color.lerp(bubbleColor, Colors.black, 0.08)!
-                  .withValues(alpha: 0.35),
+              Color.lerp(
+                bubbleColor,
+                Colors.black,
+                0.08,
+              )!.withValues(alpha: 0.35),
             ],
           ),
         ),

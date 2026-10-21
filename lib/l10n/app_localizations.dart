@@ -4614,6 +4614,42 @@ abstract class AppLocalizations {
   /// **'Something unexpected happened. Your original file was not changed.'**
   String get romPrepareErrorUnexpected;
 
+  /// Library label in the Retro Manga bottom carousel only; Spanish uses Mis Mods.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get mangaNavLibrary;
+
+  /// Explore group label in the Retro Manga bottom carousel only.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get mangaNavExplore;
+
+  /// No description provided for @mangaMenuLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get mangaMenuLabel;
+
+  /// No description provided for @mangaMenuOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open menu'**
+  String get mangaMenuOpen;
+
+  /// No description provided for @mangaMenuClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close menu'**
+  String get mangaMenuClose;
+
+  /// Short label for the game tools group in the Retro Manga bottom carousel only.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get mangaNavTools;
+
   /// No description provided for @mangaNavMore.
   ///
   /// In en, this message translates to:
