@@ -5,7 +5,7 @@ import '../../l10n/app_localizations.dart';
 import 'manga_navigation_bar.dart';
 import 'manga_navigation_scope.dart';
 
-/// Navegación bajo demanda: el botón conserva su posición al abrir la tira.
+/// Tira anclada abajo; el botón se eleva por encima al desplegarla.
 class MangaNavigationDock extends StatefulWidget {
   const MangaNavigationDock({
     super.key,
@@ -100,8 +100,6 @@ class _MangaNavigationDockState extends State<MangaNavigationDock>
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final l = AppLocalizations.of(context);
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
     final safeBottom = keyboard > 0
         ? 0.0
@@ -130,7 +128,7 @@ class _MangaNavigationDockState extends State<MangaNavigationDock>
               buttonHeight +
               12 +
               safeBottom +
-              (panelVisible ? panelHeight + 24 : 0);
+              (panelVisible ? panelHeight + 28 : 0);
           return MangaNavigationScope(
             enabled: true,
             reservedBottomInset: inset,
@@ -138,133 +136,62 @@ class _MangaNavigationDockState extends State<MangaNavigationDock>
               fit: StackFit.expand,
               children: [
                 child!,
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: keyboard,
-                  child: SafeArea(
-                    top: false,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_hasOpened)
-                            Offstage(
-                              offstage: !panelVisible,
-                              child: TickerMode(
-                                enabled: panelVisible,
-                                child: ExcludeSemantics(
-                                  excluding: !_expanded,
-                                  child: IgnorePointer(
-                                    ignoring: !_expanded,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 24,
-                                      ),
-                                      child: FadeTransition(
-                                        opacity: _curve,
-                                        child: SlideTransition(
-                                          position: _slide,
-                                          child: MangaNavigationBar(
-                                            currentRoute: widget.currentRoute,
-                                            bottomSafeArea: false,
-                                            onDestinationSelected: () =>
-                                                _setExpanded(false),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Tooltip(
-                              excludeFromSemantics: true,
-                              message: _expanded
-                                  ? l.mangaMenuClose
-                                  : l.mangaMenuOpen,
-                              child: Semantics(
-                                button: true,
-                                toggled: _expanded,
-                                label: _expanded
-                                    ? l.mangaMenuClose
-                                    : l.mangaMenuOpen,
-                                child: ExcludeSemantics(
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      key: const ValueKey('manga-menu-toggle'),
-                                      onTap: () {
-                                        if (!_expanded) {
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
-                                        }
-                                        _setExpanded(!_expanded);
-                                      },
-                                      borderRadius: BorderRadius.circular(32),
-                                      child: SizedBox(
-                                        width: 72,
-                                        height: buttonHeight,
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: retro.accent,
-                                                border: Border.all(
-                                                  color: retro.onColor(
-                                                    retro.accent,
-                                                  ),
-                                                  width: 1.5,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: retro.shadowColor
-                                                        .withValues(
-                                                          alpha: 0.24,
-                                                        ),
-                                                    offset: const Offset(0, 2),
-                                                    blurRadius: 3,
-                                                  ),
-                                                ],
-                                              ),
-                                              child: SizedBox.square(
-                                                dimension: 56,
-                                                child: Icon(
-                                                  _expanded
-                                                      ? Icons.close_rounded
-                                                      : Icons.more_horiz,
-                                                  color: retro.onColor(
-                                                    retro.accent,
-                                                  ),
-                                                  size: 30,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              l.mangaMenuLabel,
-                                              maxLines: 1,
-                                              style: retro.body(
-                                                size: 11,
-                                                color: retro.ink,
-                                                height: 1.3,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                if (_hasOpened)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: keyboard,
+                    child: SafeArea(
+                      top: false,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Offstage(
+                          offstage: !panelVisible,
+                          child: TickerMode(
+                            enabled: panelVisible,
+                            child: ExcludeSemantics(
+                              excluding: !_expanded,
+                              child: IgnorePointer(
+                                ignoring: !_expanded,
+                                child: FadeTransition(
+                                  opacity: _curve,
+                                  child: SlideTransition(
+                                    position: _slide,
+                                    child: MangaNavigationBar(
+                                      currentRoute: widget.currentRoute,
+                                      bottomSafeArea: false,
+                                      onDestinationSelected: () => _setExpanded(false),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ],
+                        ),
+                      ),
+                    ),
+                  ),
+                Positioned(
+                  key: const ValueKey('manga-menu-lift'),
+                  right: 0,
+                  // Mover la posición real mantiene la X también pulsable;
+                  // una transformación fuera de su padre solo movería el dibujo.
+                  bottom: keyboard + (panelHeight + 28) * _curve.value,
+                  child: SafeArea(
+                    top: false,
+                    left: false,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 12, bottom: 12),
+                      child: _MangaMenuToggle(
+                        progress: _curve.value,
+                        expanded: _expanded,
+                        height: buttonHeight,
+                        onTap: () {
+                          if (!_expanded) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          }
+                          _setExpanded(!_expanded);
+                        },
                       ),
                     ),
                   ),
@@ -274,6 +201,106 @@ class _MangaNavigationDockState extends State<MangaNavigationDock>
           );
         },
         child: widget.child,
+      ),
+    );
+  }
+}
+
+/// Dos imágenes pequeñas comparten la misma transición; no hay animación ociosa.
+class _MangaMenuToggle extends StatelessWidget {
+  const _MangaMenuToggle({
+    required this.progress,
+    required this.expanded,
+    required this.height,
+    required this.onTap,
+  });
+
+  final double progress, height;
+  final bool expanded;
+  final VoidCallback onTap;
+
+  Widget _badge(String name, IconData fallback, Color color) => Image.asset(
+    'assets/themes/manga/navigation/$name.webp',
+    key: ValueKey('manga-menu-$name'),
+    width: 56,
+    height: 56,
+    cacheWidth: 192,
+    cacheHeight: 192,
+    filterQuality: FilterQuality.medium,
+    excludeFromSemantics: true,
+    errorBuilder: (context, error, stackTrace) => Icon(
+      fallback,
+      size: 30,
+      color: color,
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final l = AppLocalizations.of(context);
+    final action = expanded ? l.mangaMenuClose : l.mangaMenuOpen;
+    return Tooltip(
+      excludeFromSemantics: true,
+      message: action,
+      child: Semantics(
+        button: true,
+        toggled: expanded,
+        label: action,
+        child: ExcludeSemantics(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              key: const ValueKey('manga-menu-toggle'),
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(32),
+              child: SizedBox(
+                width: 72,
+                height: height,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Transform.scale(
+                      scale: 1 - 0.24 * progress * (1 - progress),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: retro.accent.withValues(alpha: 0.24),
+                              offset: const Offset(0, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: RepaintBoundary(
+                          child: Stack(
+                            children: [
+                              Opacity(
+                                opacity: 1 - progress,
+                                child: _badge('menu-button', Icons.more_horiz, retro.ink),
+                              ),
+                              Opacity(
+                                opacity: progress,
+                                child: _badge('close-button', Icons.close_rounded, retro.ink),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      l.mangaMenuLabel,
+                      maxLines: 1,
+                      style: retro.body(size: 11, color: retro.ink, height: 1.3),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

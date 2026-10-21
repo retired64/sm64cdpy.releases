@@ -26,7 +26,11 @@
 - [x] Testing 39687239343: generación/análisis correctos; fuentes sincronizadas
       desde el artefacto del runner. 436 pruebas verdes y una fallida por fixture
       de primer inicio sin Router; corregido para usar GoRouter + ShellRoute.
-- [ ] Repetir CI y confirmar las pruebas completas tras corregir el fixture.
+- [x] Tira anclada al borde inferior y cierre elevado sin solapar opciones.
+- [x] Dos badges Mario Run PNG convertidos a WebP 192 px, con transición
+      de imagen, elevación y compresión breve compartiendo el mismo controlador.
+- [x] Palabras únicas sin cortes de letras; nombres compuestos pueden usar dos líneas.
+- [ ] Repetir CI y confirmar las pruebas completas tras este ajuste.
 - [ ] Comprobar en teléfono modo claro/oscuro, Atrás con borrador de Jugador,
       modales, teclado, rotación, pausa/reapertura y texto grande.
 

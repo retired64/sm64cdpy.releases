@@ -532,6 +532,8 @@ class _MangaNavigationLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final enlarged = MediaQuery.textScalerOf(context).scale(11) > 14.3;
+    // Solo separar palabras completas; nunca dejar la E de EXPLORE sola.
+    final wrap = enlarged && label.contains(' ');
     const fill = Color(0xFFFFD83D);
     final bubbleColor = retro.isDark
         ? const Color(0xFF2387FF)
@@ -552,8 +554,8 @@ class _MangaNavigationLabel extends StatelessWidget {
         Text(
           label,
           key: ValueKey('manga-nav-label-outline-$index'),
-          maxLines: enlarged ? 2 : 1,
-          softWrap: enlarged,
+          maxLines: wrap ? 2 : 1,
+          softWrap: wrap,
           overflow: TextOverflow.visible,
           textAlign: TextAlign.center,
           style: style.copyWith(
@@ -567,8 +569,8 @@ class _MangaNavigationLabel extends StatelessWidget {
         Text(
           label,
           key: ValueKey('manga-nav-label-fill-$index'),
-          maxLines: enlarged ? 2 : 1,
-          softWrap: enlarged,
+          maxLines: wrap ? 2 : 1,
+          softWrap: wrap,
           overflow: TextOverflow.visible,
           textAlign: TextAlign.center,
           style: style.copyWith(
@@ -616,7 +618,7 @@ class _MangaNavigationLabel extends StatelessWidget {
             builder: (context, constraints) => FittedBox(
               key: ValueKey('manga-nav-label-fit-$index'),
               fit: BoxFit.scaleDown,
-              child: enlarged
+              child: wrap
                   ? SizedBox(width: constraints.maxWidth, child: lettering)
                   : lettering,
             ),

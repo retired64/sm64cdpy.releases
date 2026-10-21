@@ -27,8 +27,10 @@ pantallas, pero MangaNavigationDock coloca por encima el botón Menú fijo en
 la esquina inferior derecha, con margen seguro. El dock existe solo en Retro
 Manga; los otros cinco temas conservan su drawer.
 
-El estado inicial es cerrado. Pulsar el botón abre o cierra el carrusel encima
-del propio botón, cuya posición no cambia. La tira mantiene sus cinco grupos,
+El estado inicial es cerrado. Pulsar el botón abre o cierra el carrusel anclado
+al borde inferior. El botón sube al abrir para quedar 28 dp por encima del
+carrusel, dejando libre el icono central elevado; al cerrar vuelve a la esquina
+inferior derecha. Ambas posiciones respetan el margen seguro de Android. La tira mantiene sus cinco grupos,
 assets, colores, etiquetas, selección y protección de borradores de Jugador.
 La navegación confirmada, incluso elegir la ruta actual, cierra el dock;
 cancelar un diálogo de borrador o un panel de destinos lo mantiene accesible.
@@ -37,7 +39,8 @@ ese caso el modal recibe Atrás. Se usa BackButtonListener bajo MaterialApp.rout
 https://api.flutter.dev/flutter/widgets/BackButtonListener-class.html.
 
 La apertura combina desplazamiento vertical corto y opacidad durante 180 ms;
-el cierre dura 130 ms. No se anima el layout completo de la pantalla ni se
+el cierre dura 130 ms. El botón usa el mismo progreso para elevarse, cruzar
+su imagen de tres puntos a X y aplicar una compresión sutil, sin tickers extra. No se anima el layout completo de la pantalla ni se
 usan blur, shaders o recursos nuevos. Con reducción de movimiento se aplica
 el estado final sin transición. La tira se construye al primer uso; después
 Offstage, IgnorePointer, ExcludeSemantics y TickerMode la retienen sin acciones
@@ -46,8 +49,12 @@ botón y se desecha con el dock. CurvedAnimation, AnimationController y el
 observer de ciclo de vida se retiran en dispose.
 
 El botón conserva un objetivo mayor de 48 dp, un nombre localizado de acción
-y estado toggled para accesibilidad. Se apoya en el acento del usuario y usa
-onColor para contraste. Permanece visible encima del teclado; la llegada del
+y estado toggled para accesibilidad. Usa dos badges azules con borde blanco
+inspirados en Mario Run, con sombra del acento del usuario. Son WebP RGBA de
+192 × 192; la decodificación está acotada a ese tamaño (288 KiB de píxeles en
+total para ambos) y conservan fallback de icono si falla el asset. Los PNG
+originales y prompts del generador integrado imagegen están en
+output/imagegen/mario-run-menu-buttons/, fuera del bundle. Permanece visible encima del teclado; la llegada del
 teclado cierra un panel ya abierto. Abrir explícitamente el menú quita el foco
 del campo. Pausar u ocultar la aplicación cierra el panel sin persistirlo.
 
@@ -63,7 +70,8 @@ no se añade ningún Future de IO ni se modifica la coordinación de operaciones
 
 Tres claves nuevas en cinco ARB (mangaMenuLabel/Open/Close). Regenerar con
 flutter gen-l10n; los Dart generados no se editan manualmente. Pruebas añadidas:
-arranque cerrado, posición fija, área táctil, abrir/cerrar con Atrás, retención
+arranque cerrado, tira al borde inferior, cierre elevado sin solapamiento,
+área táctil, abrir/cerrar con Atrás, retención
 del controlador, reducción de movimiento, Semantics y prioridad de modales.
 La matriz existente abre ahora el dock explícitamente y comprueba que se
 cierra tras elegir un destino. Formato, análisis, tests Flutter y validación
@@ -552,3 +560,17 @@ sustituye la fuente: un ajuste compartido mantiene el texto completo y dos
 líneas para texto ampliado. Las pruebas comprueban que el párrafo queda dentro
 de la burbuja en 320 px y horizontal, además del alfa/color del fondo en ambos
 modos. Pendiente ejecutar Flutter/CI y revisar físicamente la nueva superficie.
+
+### Ajuste de coherencia del dock — 2026-10-21
+
+La captura mostraba una fila vacía debajo del carrusel por apilar la tira y el
+botón en una Column. Ahora son dos capas Positioned independientes: la tira
+mantiene su posición inferior y el cierre cambia su posición real por encima
+de ella. Así su zona pulsable coincide con la X, sin quedar fuera de los
+límites de hit testing de su padre.
+El margen desplazable protege el conjunto completo mientras está visible.
+Los nombres de una sola palabra, como EXPLORE, se ajustan en una línea incluso
+con texto ampliado, para no separar la última letra en otra fila. Solo las
+etiquetas con espacios permiten dos líneas accesibles. El controlador de
+animación, el PageController y las reglas de cierre/cancelación se mantienen.
+Pendiente validar este ajuste con Flutter/CI y físicamente en claro/oscuro.

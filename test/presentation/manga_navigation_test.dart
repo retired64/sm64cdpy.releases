@@ -151,7 +151,7 @@ Future<void> _openMenu(WidgetTester tester) async {
 void main() {
   for (final language in ['en', 'es', 'pt']) {
     testWidgets(
-      'floating menu is lazy, anchored and closes with Back: $language',
+      'carousel anchors below its lifted close button and closes with Back: $language',
       (tester) async {
         tester.view.physicalSize = const Size(320, 640);
         tester.view.devicePixelRatio = 1;
@@ -174,13 +174,20 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byType(MangaNavigationBar), findsOneWidget);
         final opened = tester.getRect(toggle);
-        expect(opened.top, closeTo(closed.top, 0.01));
+        expect(opened.top, lessThan(closed.top));
         expect(opened.right, closeTo(closed.right, 0.01));
-        expect(opened.bottom, closeTo(closed.bottom, 0.01));
         final bar = tester.getRect(
           find.byKey(const ValueKey('manga-navigation')),
         );
-        expect(bar.bottom, lessThan(closed.top));
+        expect(bar.bottom, closeTo(closed.bottom, 0.01));
+        expect(opened.bottom, lessThanOrEqualTo(bar.top - 24));
+        expect(opened.overlaps(bar), isFalse);
+        final menuImage = tester.widget<Image>(
+          find.byKey(const ValueKey('manga-menu-menu-button')),
+        );
+        final cached = menuImage.image as ResizeImage;
+        expect(cached.width, 192);
+        expect(cached.height, 192);
         final pages = tester
             .widget<PageView>(
               find.byKey(const ValueKey('manga-navigation-pages')),
@@ -261,7 +268,7 @@ void main() {
   });
 
   testWidgets('all five papercraft assets are bundled', (tester) async {
-    for (final name in ['home', 'explore', 'library', 'tools', 'more']) {
+    for (final name in ['home', 'explore', 'library', 'tools', 'more', 'menu-button', 'close-button']) {
       final bytes = await rootBundle.load(
         'assets/themes/manga/navigation/$name.webp',
       );
@@ -534,6 +541,7 @@ void main() {
         final exploreLabel = tester.widget<Text>(
           find.byKey(const ValueKey('manga-nav-label-fill-1')),
         );
+        expect(exploreLabel.maxLines, 1);
         expect(exploreLabel.data, switch (language) {
           'es' => 'MODS',
           'pt' => 'EXPLORAR',
