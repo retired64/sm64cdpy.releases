@@ -80,6 +80,11 @@ permanece en Semantics. Jugar vuelve al bloque original de Inicio para todos
 los temas, reutilizando su protección contra doble toque y la guía de instalación.
 La altura base es de aproximadamente 48 dp más SafeArea y crece con la escala
 de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa.
+El fondo combina papel y tinta del tema (85 % de tinta) con opacidad 88 %.
+Se compone sobre el fondo del Scaffold; no se extiende sobre el contenido ni
+requiere BackdropFilter/blur. Las etiquetas y la trama usan un primer plano
+calculado con onColor sobre el color compuesto para mantener contraste en
+claro y oscuro. La opacidad no afecta a iconos, textos ni halo de acento.
 Los cinco iconos papercraft flotan sin cajas, divisores ni borde superior. Solo
 la imagen se escala: el icono centrado llega a 1.28 (unos 33 dp) y sus vecinos
 a 0.62 (unos 16 dp). AnimatedBuilder observa el PageController y calcula la

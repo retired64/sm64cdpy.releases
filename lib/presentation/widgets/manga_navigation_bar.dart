@@ -317,16 +317,20 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     final labelHeight = MediaQuery.textScalerOf(context).scale(11) * 1.3;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final selected = _group(widget.currentRoute);
+    // Tinta translúcida sin blur: conserva el espacio reservado al contenido.
+    final backdrop = Color.lerp(retro.background, retro.shadowColor, 0.85)!
+        .withValues(alpha: 0.88);
+    final foreground = retro.onColor(Color.alphaBlend(backdrop, retro.background));
     return Material(
       key: const ValueKey('manga-navigation'),
-      color: retro.background,
+      color: backdrop,
       child: SafeArea(
         top: false,
         child: Stack(
           children: [
             Positioned.fill(
               child: HalftoneBackground(
-                color: retro.ink.withValues(alpha: 0.035),
+                color: foreground.withValues(alpha: 0.035),
               ),
             ),
             SizedBox(
@@ -359,6 +363,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                           label: item.label,
                           icon: item.icon,
                           asset: _navigationAssets[index],
+                          foreground: foreground,
                           selected: index == selected,
                           focus: focus,
                           labelHeight: labelHeight,
@@ -383,6 +388,7 @@ class _MangaNavigationTile extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.asset,
+    required this.foreground,
     required this.selected,
     required this.focus,
     required this.labelHeight,
@@ -392,6 +398,7 @@ class _MangaNavigationTile extends StatelessWidget {
   final int index;
   final String label, asset;
   final IconData icon;
+  final Color foreground;
   final bool selected;
   final double focus;
   final double labelHeight;
@@ -469,7 +476,7 @@ class _MangaNavigationTile extends StatelessWidget {
                                 errorBuilder: (context, error, stackTrace) => Icon(
                                   icon,
                                   size: 24,
-                                  color: retro.ink,
+                                  color: foreground,
                                 ),
                               ),
                             ),
@@ -487,7 +494,7 @@ class _MangaNavigationTile extends StatelessWidget {
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: retro.body(size: 11, color: retro.ink, height: 1.2).copyWith(
+                        style: retro.body(size: 11, color: foreground, height: 1.2).copyWith(
                           fontWeight: selected ? FontWeight.w900 : FontWeight.w500,
                           decoration: selected ? TextDecoration.underline : null,
                           decorationColor: retro.accent,

@@ -227,6 +227,22 @@ void main() {
             find.byKey(const ValueKey('manga-navigation')),
           );
           expect(body.bottom, lessThanOrEqualTo(bar.top));
+          final surface = tester.widget<Material>(
+            find.byKey(const ValueKey('manga-navigation')),
+          ).color!;
+          expect(surface.a, lessThan(1));
+          final background = Color.alphaBlend(
+            surface,
+            RetroTheme(dark, design: design).background,
+          );
+          final label = tester.widget<Text>(find.descendant(
+            of: find.byKey(const ValueKey('manga-navigation')),
+            matching: find.byType(Text),
+          ).first);
+          expect(
+            RetroAccent.contrast(label.style!.color!, background),
+            greaterThanOrEqualTo(4.5),
+          );
         }
         expect(tester.takeException(), isNull);
       });
