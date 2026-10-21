@@ -249,6 +249,30 @@ void main() {
     },
   );
 
+  for (final dark in [false, true]) {
+    testWidgets('Menu caption uses localized Mario lettering dark=$dark', (tester) async {
+      final router = _router();
+      addTearDown(router.dispose);
+      await tester.pumpWidget(_app(router, RetroTheme(dark), 'es', 1.6));
+      await tester.pumpAndSettle();
+      final caption = tester.widget<Text>(
+        find.byKey(const ValueKey('manga-menu-caption-fill')),
+      );
+      expect(caption.style!.fontFamily, 'TypefaceMario64');
+      expect(caption.textSpan!.toPlainText(), 'MENÚ');
+      final colors = (caption.textSpan! as TextSpan).children!
+          .cast<TextSpan>().map((span) => span.style!.color).toSet();
+      expect(colors.length, 4);
+      final outline = tester.widget<Text>(
+        find.byKey(const ValueKey('manga-menu-caption-outline')),
+      );
+      expect(outline.style!.foreground!.color, Colors.black);
+      expect(find.byKey(const ValueKey('manga-menu-caption-rim')),
+          dark ? findsOneWidget : findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('modal Back closes the destination sheet before the menu', (
     tester,
   ) async {

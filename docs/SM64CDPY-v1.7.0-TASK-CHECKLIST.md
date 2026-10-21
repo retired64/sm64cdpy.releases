@@ -30,6 +30,8 @@
 - [x] Dos badges Mario Run PNG convertidos a WebP 192 px, con transición
       de imagen, elevación y compresión breve compartiendo el mismo controlador.
 - [x] Palabras únicas sin cortes de letras; nombres compuestos pueden usar dos líneas.
+- [x] Rótulo Menú con TypefaceMario64, letras multicolor, contorno negro
+      y filete blanco adicional en oscuro; sin imágenes o tickers nuevos.
 - [ ] Repetir CI y confirmar las pruebas completas tras este ajuste.
 - [ ] Comprobar en teléfono modo claro/oscuro, Atrás con borrador de Jugador,
       modales, teclado, rotación, pausa/reapertura y texto grande.

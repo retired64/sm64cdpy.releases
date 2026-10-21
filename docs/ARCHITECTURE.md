@@ -186,8 +186,9 @@ vigente; no mantiene copia local del color. Ajustes escribe la preferencia de
 acento existente y main reconstruye el tema, que actualiza este consumidor.
 Al reducir movimiento, el énfasis cambia al centro sin interpolación adicional.
 La etiqueta subrayada y Semantics.selected siguen indicando la ruta abierta,
-aunque se explore otro grupo. Solo las cinco etiquetas del carrusel reutilizan headingFontFamily de
-mario64Theme (TypefaceMario64), sin cambiar el tema global ni los paneles.
+aunque se explore otro grupo. Las cinco etiquetas del carrusel y el rótulo Menú del botón reutilizan
+headingFontFamily de mario64Theme (TypefaceMario64), sin cambiar el tema
+global ni los paneles.
 Dos Text superpuestos dibujan relleno amarillo y contorno negro de 1.5 dp
 en ambos modos. Una única Semantics excluye las dos capas
 para evitar anuncios duplicados. La ruta abierta conserva el subrayado de acento.
@@ -574,3 +575,15 @@ con texto ampliado, para no separar la última letra en otra fila. Solo las
 etiquetas con espacios permiten dos líneas accesibles. El controlador de
 animación, el PageController y las reglas de cierre/cancelación se mantienen.
 Pendiente validar este ajuste con Flutter/CI y físicamente en claro/oscuro.
+
+### Rótulo Menú multicolor — 2026-10-21
+
+El botón conserva su nombre localizado y usa TypefaceMario64 en mayúsculas.
+Cada letra recibe azul, rojo, amarillo o verde, inspirado en el título de
+Mario 64. Un contorno negro de 1.5 dp mantiene la silueta y, en oscuro, un
+filete blanco exterior de 2.8 dp la separa del fondo. Text.rich dibuja el color
+y Text con Paint.stroke el borde; no se crean bitmaps, shaders ni tickers.
+FittedBox evita recortar el rótulo dentro del botón y respeta el espacio
+reservado a su caption. El botón sigue anunciando una sola acción localizada
+Abrir/Cerrar menú mediante su Semantics superior. Tests de familia, texto
+español, colores y contorno claro/oscuro añadidos; ejecución Flutter pendiente.

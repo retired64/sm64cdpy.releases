@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/retro_theme.dart';
+import '../../core/theme/themes/mario64_theme.dart';
 import '../../l10n/app_localizations.dart';
 import 'manga_navigation_bar.dart';
 import 'manga_navigation_scope.dart';
@@ -290,15 +291,84 @@ class _MangaMenuToggle extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      l.mangaMenuLabel,
-                      maxLines: 1,
-                      style: retro.body(size: 11, color: retro.ink, height: 1.3),
-                    ),
+                    _MarioMenuCaption(label: l.mangaMenuLabel),
                   ],
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Rótulo multicolor dibujado con texto real, sin nuevos assets o animaciones.
+class _MarioMenuCaption extends StatelessWidget {
+  const _MarioMenuCaption({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final text = label.toUpperCase();
+    const colors = [
+      Color(0xFF4BA7FF),
+      Color(0xFFFF6354),
+      Color(0xFFFFD83D),
+      Color(0xFF6BDF72),
+    ];
+    final style = TextStyle(
+      fontFamily: mario64Theme.headingFontFamily,
+      fontFamilyFallback: mario64Theme.headingFontFamilyFallback,
+      fontSize: 11,
+      fontWeight: FontWeight.w400,
+      height: 1.3,
+    );
+    Text contour(Color color, double width, Key key) => Text(
+      text,
+      key: key,
+      maxLines: 1,
+      softWrap: false,
+      style: style.copyWith(
+        foreground: Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeJoin = StrokeJoin.round
+          ..strokeWidth = width
+          ..color = color,
+      ),
+    );
+    final letters = text.runes.toList(growable: false);
+    return SizedBox(
+      height: MediaQuery.textScalerOf(context).scale(11) * 1.3 + 2,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              if (retro.isDark)
+                contour(Colors.white, 2.8, const ValueKey('manga-menu-caption-rim')),
+              contour(Colors.black, 1.5, const ValueKey('manga-menu-caption-outline')),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    for (var i = 0; i < letters.length; i++)
+                      TextSpan(
+                        text: String.fromCharCode(letters[i]),
+                        style: TextStyle(color: colors[i % colors.length]),
+                      ),
+                  ],
+                ),
+                key: const ValueKey('manga-menu-caption-fill'),
+                maxLines: 1,
+                softWrap: false,
+                style: style,
+              ),
+            ],
           ),
         ),
       ),
