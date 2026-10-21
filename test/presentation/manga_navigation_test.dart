@@ -233,7 +233,7 @@ void main() {
   }
 
   for (final dark in [false, true]) {
-    testWidgets('transparent strip keeps a full viewport and reachable last action dark=$dark', (tester) async {
+    testWidgets('translucent strip keeps a full viewport and reachable last action dark=$dark', (tester) async {
       final router = _router(initial: '/settings');
       addTearDown(router.dispose);
       await tester.pumpWidget(_app(router, RetroTheme(dark), 'es', 1));
@@ -287,7 +287,11 @@ void main() {
           final surface = tester.widget<Material>(
             find.byKey(const ValueKey('manga-navigation')),
           ).color!;
-          expect(surface, Colors.transparent);
+          expect(surface.a, closeTo(0.85, 0.005));
+          expect(
+            surface.withValues(alpha: 1),
+            RetroTheme(dark, design: design).background,
+          );
           expect(
             find.descendant(
               of: find.byKey(const ValueKey('manga-navigation')),
@@ -351,6 +355,15 @@ void main() {
           'pt' => 'BIBLIOTECA',
           _ => 'LIBRARY',
         });
+        expect(libraryLabel.overflow, TextOverflow.visible);
+        final fit = find.byKey(const ValueKey('manga-nav-label-fit-2'));
+        expect(tester.widget<FittedBox>(fit).fit, BoxFit.scaleDown);
+        final pill = find.byKey(const ValueKey('manga-nav-label-bubble-2'));
+        final text = find.byKey(const ValueKey('manga-nav-label-fill-2'));
+        expect(tester.getTopLeft(text).dx,
+            greaterThanOrEqualTo(tester.getTopLeft(pill).dx));
+        expect(tester.getBottomRight(text).dx,
+            lessThanOrEqualTo(tester.getBottomRight(pill).dx));
         final exploreLabel = tester.widget<Text>(
           find.byKey(const ValueKey('manga-nav-label-fill-1')),
         );

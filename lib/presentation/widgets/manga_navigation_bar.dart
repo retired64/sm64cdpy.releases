@@ -315,13 +315,14 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       (label: l.mangaNavTools, icon: Icons.sports_esports_outlined),
       (label: l.mangaNavMore, icon: Icons.dashboard_outlined),
     ];
-    final labelHeight = MediaQuery.textScalerOf(context).scale(11) * 1.3;
+    final scaledLabelSize = MediaQuery.textScalerOf(context).scale(11);
+    final labelHeight = scaledLabelSize * (scaledLabelSize > 14.3 ? 2.6 : 1.3);
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final selected = _group(widget.currentRoute);
     final foreground = retro.onColor(retro.background);
     return Material(
       key: const ValueKey('manga-navigation'),
-      color: Colors.transparent,
+      color: retro.background.withValues(alpha: 0.85),
       child: SafeArea(
         top: false,
         child: Stack(
@@ -515,6 +516,7 @@ class _MangaNavigationLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final enlarged = MediaQuery.textScalerOf(context).scale(11) > 14.3;
     const fill = Color(0xFFFFD83D);
     final bubbleColor = retro.isDark
         ? const Color(0xFF2387FF)
@@ -527,6 +529,41 @@ class _MangaNavigationLabel extends StatelessWidget {
       fontSize: 11,
       fontWeight: FontWeight.w400,
       height: 1.2,
+    );
+    final lettering = Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        Text(
+          label,
+          key: ValueKey('manga-nav-label-outline-$index'),
+          maxLines: enlarged ? 2 : 1,
+          softWrap: enlarged,
+          overflow: TextOverflow.visible,
+          textAlign: TextAlign.center,
+          style: style.copyWith(
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.5
+              ..strokeJoin = StrokeJoin.round
+              ..color = outline,
+          ),
+        ),
+        Text(
+          label,
+          key: ValueKey('manga-nav-label-fill-$index'),
+          maxLines: enlarged ? 2 : 1,
+          softWrap: enlarged,
+          overflow: TextOverflow.visible,
+          textAlign: TextAlign.center,
+          style: style.copyWith(
+            color: fill,
+            decoration: selected ? TextDecoration.underline : null,
+            decorationColor: retro.accent,
+            decorationThickness: 2,
+          ),
+        ),
+      ],
     );
     return Semantics(
       label: label,
@@ -554,37 +591,14 @@ class _MangaNavigationLabel extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0.5),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(
-                label,
-                key: ValueKey('manga-nav-label-outline-$index'),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: style.copyWith(
-                  foreground: Paint()
-                    ..style = PaintingStyle.stroke
-                    ..strokeWidth = 1.5
-                    ..strokeJoin = StrokeJoin.round
-                    ..color = outline,
-                ),
-              ),
-              Text(
-                label,
-                key: ValueKey('manga-nav-label-fill-$index'),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: style.copyWith(
-                  color: fill,
-                  decoration: selected ? TextDecoration.underline : null,
-                  decorationColor: retro.accent,
-                  decorationThickness: 2,
-                ),
-              ),
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) => FittedBox(
+              key: ValueKey('manga-nav-label-fit-$index'),
+              fit: BoxFit.scaleDown,
+              child: enlarged
+                  ? SizedBox(width: constraints.maxWidth, child: lettering)
+                  : lettering,
+            ),
           ),
         ),
       ),

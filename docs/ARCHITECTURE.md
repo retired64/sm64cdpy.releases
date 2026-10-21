@@ -81,7 +81,9 @@ permanece en Semantics. Jugar vuelve al bloque original de Inicio para todos
 los temas, reutilizando su protección contra doble toque y la guía de instalación.
 La altura base es de aproximadamente 48 dp más SafeArea y crece con la escala
 de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa.
-La superficie de la tira es transparente y AppShell usa extendBody solo para
+La superficie de la tira usa retro.background con alfa 0.85 (15 % transparente),
+crema en claro y tinta en oscuro, para mejorar legibilidad sin blur.
+AppShell usa extendBody solo para
 Retro Manga. Diagnóstico de las dos capturas: un SafeArea global seguía
 recortando el viewport al comienzo de la tira; se veía una franja de fondo
 vacía aunque Material fuera transparente. Ese SafeArea se retira.
@@ -95,7 +97,7 @@ teclado devuelve cero. No se modifican datos, operaciones ni scroll controllers.
 La guía conserva su zona segura local para sus botones fijos Anterior/Siguiente;
 no se cambia su estructura paginada por una lista continua. Los demás temas
 conservan el drawer y sus dimensiones. No se usa blur ni capa oscura.
-Pruebas de regresión: viewport completo, ausencia de relleno opaco y última
+Pruebas de regresión: viewport completo, superficie semitransparente adaptada al tema y última
 acción accesible al final, en ambos modos. Sigue pendiente ejecutar Flutter/CI.
 Cada etiqueta lleva una cápsula redondeada con borde blanco fino y gradiente
 azul en oscuro (#2387FF) o rojo en claro (#E53935). Los tres tonos del reflejo
@@ -131,8 +133,10 @@ Regenerar localizaciones con flutter gen-l10n antes del análisis o compilación
 no se editan los Dart generados manualmente.
 La barra ocupa aproximadamente la mitad de la altura anterior (97 dp), sin
 reducir los objetivos táctiles por debajo de 48 dp. Las etiquetas mantienen
-11 sp en una línea con elipsis y tooltip del nombre completo. Al ampliar el
-texto, crece la barra para evitar recortes. El margen seguro de Android se
+11 sp como tamaño base, con FittedBox.scaleDown para conservar todas las
+letras en una línea, sin elipsis. Ambas capas de fuente usan el mismo ajuste.
+Con escala accesible mayor que 1.3, se habilitan dos líneas y crece la barra.
+El tooltip y Semantics conservan el nombre completo. El margen seguro de Android se
 conserva y no se incluye en esta reducción.
 Deslizar sigue sin cambiar la selección real ni navegar.
 
@@ -475,3 +479,12 @@ SAF grants or overlay messages change.
 Drawer root links use the same themed heading size, icon bounds and minimum row height as group headers. Nested destinations keep body typography. The navigation caption uses a compact single-line body label instead of the shared decorative section heading, so narrow drawers do not split it. Exclusive uses a collection icon; Render96 uses a distinct 3D-model icon in every theme.
 
 Optional accelerated installation selects a contained direct writer for eligible primary-storage document destinations with all-files access. SAF remains the fallback and folder grant remains required. ZIP, 7z and loose files share one sink abstraction; permission is read from Android per operation. See FAST_INSTALLATION.md for platform boundaries, cache invalidation and rollback limits.
+
+### Legibilidad del carrusel — 2026-10-21
+
+La captura de Mis Mods mostraba MIS MO… porque TextOverflow.ellipsis truncaba
+el texto en el 32 % de ancho asignado a la celda. No se cambia el nombre ni se
+sustituye la fuente: un ajuste compartido mantiene el texto completo y dos
+líneas para texto ampliado. Las pruebas comprueban que el párrafo queda dentro
+de la burbuja en 320 px y horizontal, además del alfa/color del fondo en ambos
+modos. Pendiente ejecutar Flutter/CI y revisar físicamente la nueva superficie.

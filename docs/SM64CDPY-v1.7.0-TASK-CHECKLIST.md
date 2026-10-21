@@ -51,6 +51,8 @@
 - [x] Conjunto cartoon-v2 a partir de mods.png: cinco WebP 256 px, con alfa
       real y bordes de pegatina; originales/prompts locales fuera del APK.
 - [ ] Revisar nuevos iconos claros/oscuros a tamaño real en teléfono.
+- [x] Ajuste 2026-10-21: fondo del tema al 85 % de opacidad y etiquetas
+      completas sin elipsis; dos líneas al ampliar texto. Validación CI pendiente.
 - [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.
