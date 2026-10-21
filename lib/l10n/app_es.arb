@@ -796,7 +796,7 @@
   "romPrepareErrorBusy": "Ya hay otra operación de ROM activa.",
   "romPrepareErrorUnexpected": "Ocurrió algo inesperado. Tu archivo original no fue modificado.",
   "mangaNavTools": "Taller",
-  "mangaNavMore": "Más",
+  "mangaNavMore": "MAS",
   "mangaNavPlay": "Jugar",
   "mangaNavHint": "Desliza para explorar. Toca para abrir.",
   "mangaNavError": "No se pudo completar la acción. Inténtalo de nuevo."

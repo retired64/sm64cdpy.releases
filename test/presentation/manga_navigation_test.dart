@@ -244,6 +244,13 @@ void main() {
             find.byKey(const ValueKey('manga-navigation')),
           ).color!;
           expect(surface, Colors.transparent);
+          expect(
+            find.descendant(
+              of: find.byKey(const ValueKey('manga-navigation')),
+              matching: find.byType(HalftoneBackground),
+            ),
+            findsNothing,
+          );
           final label = tester.widget<Text>(
             find.byKey(const ValueKey('manga-nav-label-fill-2')),
           );
@@ -299,7 +306,7 @@ void main() {
         expect(shortLabel.data, switch (language) {
           'es' => 'TALLER',
           'pt' => 'OFICINA',
-          _ => 'WORKSHOP',
+          _ => 'GAME TOOL',
         });
         expect(tester.getSize(tile).width, greaterThanOrEqualTo(48));
         expect(tester.getSize(tile).height, greaterThanOrEqualTo(48));
@@ -313,6 +320,14 @@ void main() {
           router.routeInformationProvider.value.uri.path,
           '/game-tool/save-file',
         );
+        final moreLabel = tester.widget<Text>(
+          find.byKey(const ValueKey('manga-nav-label-fill-4')),
+        );
+        expect(moreLabel.data, switch (language) {
+          'es' => 'MAS',
+          'pt' => 'MAIS',
+          _ => 'MORE',
+        });
         expect(find.byType(DrawerMenuButton), findsNothing);
         expect(tester.takeException(), isNull);
       });

@@ -326,11 +326,6 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
         top: false,
         child: Stack(
           children: [
-            Positioned.fill(
-              child: HalftoneBackground(
-                color: foreground.withValues(alpha: 0.035),
-              ),
-            ),
             SizedBox(
               // Siluetas flotantes; solo el texto accesible aumenta la altura.
               height: (34 + labelHeight).clamp(48.0, double.infinity).toDouble(),

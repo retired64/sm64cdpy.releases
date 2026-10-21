@@ -2010,7 +2010,7 @@
   "romPrepareErrorExport": "The saved copy could not be verified. Choose another destination and try again.",
   "romPrepareErrorBusy": "Another ROM operation is already active.",
   "romPrepareErrorUnexpected": "Something unexpected happened. Your original file was not changed.",
-  "mangaNavTools": "Workshop",
+  "mangaNavTools": "Game Tool",
   "@mangaNavTools": {"description": "Short label for the game tools group in the Retro Manga bottom carousel only."},
   "mangaNavMore": "More",
   "mangaNavPlay": "Play",

@@ -81,8 +81,9 @@ los temas, reutilizando su protección contra doble toque y la guía de instalac
 La altura base es de aproximadamente 48 dp más SafeArea y crece con la escala
 de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa.
 La superficie de la tira es transparente: deja visible el fondo original del
-Scaffold, sin capa oscura ni extensión sobre el contenido. Conserva la trama
-tenue y el espacio reservado de 48 dp; no usa BackdropFilter/blur.
+Scaffold, sin capa oscura ni extensión sobre el contenido. No pinta trama ni capa
+de fondo propia; conserva el espacio reservado de 48 dp y las cápsulas de
+las etiquetas. No usa BackdropFilter/blur.
 Cada etiqueta lleva una cápsula redondeada con borde blanco fino y gradiente
 translúcido, más tenue en oscuro, para sugerir una burbuja de jabón sin otra
 caja alrededor del icono. El relleno amarillo y el contorno negro son iguales
@@ -104,7 +105,8 @@ mario64Theme (TypefaceMario64), sin cambiar el tema global ni los paneles.
 Dos Text superpuestos dibujan relleno amarillo y contorno negro de 1.5 dp
 en ambos modos. Una única Semantics excluye las dos capas
 para evitar anuncios duplicados. La ruta abierta conserva el subrayado de acento.
-La clave mangaNavTools usa Workshop / Taller / Oficina solo en la tira;
+La clave mangaNavTools usa Game Tool / Taller / Oficina solo en la tira;
+mangaNavMore usa MAS sin tilde en español solo en este menú.
 el título completo Herramientas y sus equivalentes sigue en el panel.
 Regenerar localizaciones con flutter gen-l10n antes del análisis o compilación;
 no se editan los Dart generados manualmente.
