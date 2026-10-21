@@ -248,10 +248,15 @@ void main() {
             surface,
             RetroTheme(dark, design: design).background,
           );
-          final label = tester.widget<Text>(find.descendant(
-            of: find.byKey(const ValueKey('manga-navigation')),
-            matching: find.byType(Text),
-          ).first);
+          final label = tester.widget<Text>(
+            find.byKey(const ValueKey('manga-nav-label-fill-2')),
+          );
+          expect(label.style!.fontFamily, 'TypefaceMario64');
+          final outline = tester.widget<Text>(
+            find.byKey(const ValueKey('manga-nav-label-outline-2')),
+          ).style!.foreground!;
+          expect(outline.style, PaintingStyle.stroke);
+          expect(outline.color, dark ? Colors.white : Colors.black);
           expect(
             RetroAccent.contrast(label.style!.color!, background),
             greaterThanOrEqualTo(4.5),
@@ -286,6 +291,14 @@ void main() {
         controller.jumpToPage(3);
         await tester.pumpAndSettle();
         final tile = find.byKey(const ValueKey('manga-nav-3'));
+        final shortLabel = tester.widget<Text>(
+          find.byKey(const ValueKey('manga-nav-label-fill-3')),
+        );
+        expect(shortLabel.data, switch (language) {
+          'es' => 'TALLER',
+          'pt' => 'OFICINA',
+          _ => 'WORKSHOP',
+        });
         expect(tester.getSize(tile).width, greaterThanOrEqualTo(48));
         expect(tester.getSize(tile).height, greaterThanOrEqualTo(48));
         await tester.tap(tile);

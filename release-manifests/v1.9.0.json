@@ -14,7 +14,7 @@
         "Retro Manga now applies ink borders, hard shadows and rectangular paper geometry to cards, dialogs, inputs, menus, chips, buttons, switches, sliders, progress, tabs, ExpansionTile and tooltips.",
         "Slanted section headers keep their manga identity, apply consistent uppercase labels and truncate long titles on narrow screens.",
         "The other five designs remain isolated; no new blur, shaders, raster assets or broad storage permission are added.",
-        "Retro Manga introduces a swipeable comic-panel navigation strip with five lightweight floating papercraft icons on a dark translucent backdrop, a half-height carousel with 48 dp touch targets and a double-size centered icon with an accessibility-accent halo; Play remains on Home and the other themes keep their drawer."
+        "Retro Manga introduces a swipeable comic-panel navigation strip with five lightweight floating papercraft icons on a dark translucent backdrop, a half-height carousel with 48 dp touch targets and a double-size centered icon with an accessibility-accent halo and outlined Mario-font labels; Play remains on Home and the other themes keep their drawer."
       ],
       "sections": [
         {
@@ -71,7 +71,7 @@
         "Retro Manga aplica bordes de tinta, sombras duras y geometría rectangular de papel a tarjetas, diálogos, campos, menús, chips, botones, switches, sliders, progreso, pestañas, ExpansionTile y tooltips.",
         "Los encabezados inclinados conservan su identidad manga, aplican mayúsculas coherentes y truncan títulos largos en pantallas estrechas.",
         "Los otros cinco diseños permanecen aislados; no se añaden blur, shaders, recursos raster ni permisos generales de almacenamiento.",
-        "Retro Manga incorpora una barra de viñetas deslizable con cinco iconos papercraft flotantes y ligeros sobre un fondo oscuro translúcido, un carrusel con la mitad de altura y áreas táctiles de 48 dp, y un icono central al doble de tamaño con halo del acento de accesibilidad; Jugar permanece en Inicio y los demás temas conservan su drawer."
+        "Retro Manga incorpora una barra de viñetas deslizable con cinco iconos papercraft flotantes y ligeros sobre un fondo oscuro translúcido, un carrusel con la mitad de altura y áreas táctiles de 48 dp, y un icono central al doble de tamaño con halo del acento de accesibilidad y etiquetas con fuente Mario y contorno; Jugar permanece en Inicio y los demás temas conservan su drawer."
       ],
       "sections": [
         {
@@ -128,7 +128,7 @@
         "O Retro Manga aplica bordas de tinta, sombras duras e geometria retangular de papel a cartões, diálogos, campos, menus, chips, botões, switches, sliders, progresso, abas, ExpansionTile e tooltips.",
         "Os cabeçalhos inclinados mantêm a identidade mangá, aplicam maiúsculas coerentes e truncam títulos longos em telas estreitas.",
         "Os outros cinco designs permanecem isolados; não são adicionados blur, shaders, recursos raster ou permissões gerais de armazenamento.",
-        "Retro Manga ganha uma barra de quadrinhos deslizante com cinco ícones papercraft flutuantes e leves sobre um fundo escuro translúcido, um carrossel com metade da altura e áreas de toque de 48 dp, e um ícone central com o dobro do tamanho e halo da cor de destaque de acessibilidade; Jogar permanece no Início e os demais temas mantêm o menu lateral."
+        "Retro Manga ganha uma barra de quadrinhos deslizante com cinco ícones papercraft flutuantes e leves sobre um fundo escuro translúcido, um carrossel com metade da altura e áreas de toque de 48 dp, e um ícone central com o dobro do tamanho e halo da cor de destaque de acessibilidade, com rótulos na fonte Mario e contorno; Jogar permanece no Início e os demais temas mantêm o menu lateral."
       ],
       "sections": [
         {

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/retro_theme.dart';
+import '../../core/theme/themes/mario64_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
 import 'app_snackbar.dart';
@@ -311,7 +312,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       (label: l.navHome, icon: Icons.home_outlined),
       (label: l.sectionExplore, icon: Icons.explore_outlined),
       (label: l.navLibrary, icon: Icons.inventory_2_outlined),
-      (label: l.gameToolTitle, icon: Icons.sports_esports_outlined),
+      (label: l.mangaNavTools, icon: Icons.sports_esports_outlined),
       (label: l.mangaNavMore, icon: Icons.dashboard_outlined),
     ];
     final labelHeight = MediaQuery.textScalerOf(context).scale(11) * 1.3;
@@ -490,17 +491,10 @@ class _MangaNavigationTile extends StatelessWidget {
                   SizedBox(
                     height: labelHeight,
                     child: Center(
-                      child: Text(
-                        retro.displayLabel(label),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: retro.body(size: 11, color: foreground, height: 1.2).copyWith(
-                          fontWeight: selected ? FontWeight.w900 : FontWeight.w500,
-                          decoration: selected ? TextDecoration.underline : null,
-                          decorationColor: retro.accent,
-                          decorationThickness: 2,
-                        ),
+                      child: _MangaNavigationLabel(
+                        index: index,
+                        label: retro.displayLabel(label),
+                        selected: selected,
                       ),
                     ),
                   ),
@@ -509,6 +503,71 @@ class _MangaNavigationTile extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Tipografía Mario limitada a los cinco accesos del carrusel.
+class _MangaNavigationLabel extends StatelessWidget {
+  const _MangaNavigationLabel({
+    required this.index,
+    required this.label,
+    required this.selected,
+  });
+
+  final int index;
+  final String label;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final fill = retro.isDark
+        ? const Color(0xFF65B9FF)
+        : const Color(0xFFFFD83D);
+    final outline = retro.isDark ? Colors.white : Colors.black;
+    final style = TextStyle(
+      fontFamily: mario64Theme.headingFontFamily,
+      fontFamilyFallback: mario64Theme.headingFontFamilyFallback,
+      fontSize: 11,
+      fontWeight: FontWeight.w400,
+      height: 1.2,
+    );
+    return Semantics(
+      label: label,
+      excludeSemantics: true,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Text(
+            label,
+            key: ValueKey('manga-nav-label-outline-$index'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+              foreground: Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 1.5
+                ..strokeJoin = StrokeJoin.round
+                ..color = outline,
+            ),
+          ),
+          Text(
+            label,
+            key: ValueKey('manga-nav-label-fill-$index'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+              color: fill,
+              decoration: selected ? TextDecoration.underline : null,
+              decorationColor: retro.accent,
+              decorationThickness: 2,
+            ),
+          ),
+        ],
       ),
     );
   }

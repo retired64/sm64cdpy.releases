@@ -97,8 +97,15 @@ vigente; no mantiene copia local del color. Ajustes escribe la preferencia de
 acento existente y main reconstruye el tema, que actualiza este consumidor.
 Al reducir movimiento, el énfasis cambia al centro sin interpolación adicional.
 La etiqueta subrayada y Semantics.selected siguen indicando la ruta abierta,
-aunque se explore otro grupo. Las etiquetas conservan su tamaño accesible y el color de
-tinta; la activa añade peso y subrayado con el acento del usuario.
+aunque se explore otro grupo. Solo las cinco etiquetas del carrusel reutilizan headingFontFamily de
+mario64Theme (TypefaceMario64), sin cambiar el tema global ni los paneles.
+Dos Text superpuestos dibujan relleno y contorno de 1.5 dp: amarillo/negro en
+claro y azul vivo/blanco en oscuro. Una única Semantics excluye las dos capas
+para evitar anuncios duplicados. La ruta abierta conserva el subrayado de acento.
+La clave mangaNavTools usa Workshop / Taller / Oficina solo en la tira;
+el título completo Herramientas y sus equivalentes sigue en el panel.
+Regenerar localizaciones con flutter gen-l10n antes del análisis o compilación;
+no se editan los Dart generados manualmente.
 La barra ocupa aproximadamente la mitad de la altura anterior (97 dp), sin
 reducir los objetivos táctiles por debajo de 48 dp. Las etiquetas mantienen
 11 sp en una línea con elipsis y tooltip del nombre completo. Al ampliar el
