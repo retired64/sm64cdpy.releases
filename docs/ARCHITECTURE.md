@@ -86,10 +86,13 @@ requiere BackdropFilter/blur. Las etiquetas y la trama usan un primer plano
 calculado con onColor sobre el color compuesto para mantener contraste en
 claro y oscuro. La opacidad no afecta a iconos, textos ni halo de acento.
 Los cinco iconos papercraft flotan sin cajas, divisores ni borde superior. Solo
-la imagen se escala: el icono centrado llega a 1.28 (unos 33 dp) y sus vecinos
+la imagen se escala: el icono centrado llega a 2 (52 dp, el doble de sus 26 dp base) y sus vecinos
 a 0.62 (unos 16 dp). AnimatedBuilder observa el PageController y calcula la
 escala por distancia al centro en cada fotograma, sin reconstruir el shell ni
-navegar. Un halo elíptico con sombra corta usa retro.accent del ThemeExtension
+navegar. El icono centrado se eleva 11 dp, crece por encima de la tira y
+no cubre la etiqueta; este saliente es decorativo, la acción táctil permanece
+en la celda de al menos 48 dp. La altura reservada de la barra no aumenta.
+Un halo elíptico con sombra corta usa retro.accent del ThemeExtension
 vigente; no mantiene copia local del color. Ajustes escribe la preferencia de
 acento existente y main reconstruye el tema, que actualiza este consumidor.
 Al reducir movimiento, el énfasis cambia al centro sin interpolación adicional.

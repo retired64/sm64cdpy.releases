@@ -450,14 +450,15 @@ class _MangaNavigationTile extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              child: const SizedBox(width: 22, height: 6),
+                              child: const SizedBox(width: 34, height: 8),
                             ),
                           ),
                         Transform.translate(
-                          offset: Offset(0, -focus),
+                          // Crece hacia arriba para no cubrir la etiqueta.
+                          offset: Offset(0, -11 * focus),
                           child: AnimatedScale(
                             key: ValueKey('manga-nav-visual-$index'),
-                            scale: 0.62 + 0.66 * focus,
+                            scale: 0.62 + 1.38 * focus,
                             curve: Curves.easeOutCubic,
                             // El desplazamiento ya interpola cada fotograma.
                             duration: Duration.zero,

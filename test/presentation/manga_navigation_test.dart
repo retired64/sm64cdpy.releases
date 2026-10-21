@@ -166,8 +166,21 @@ void main() {
       (resized.imageProvider as AssetImage).assetName,
       'assets/themes/manga/navigation/home.webp',
     );
-    expect(active.scale, closeTo(1.28, 0.001));
+    expect(active.scale, closeTo(2, 0.001));
     expect(neighbour.scale, lessThan(active.scale));
+    final icon = find.byKey(const ValueKey('manga-nav-image-0'));
+    expect(
+      tester.getBottomRight(icon).dx - tester.getTopLeft(icon).dx,
+      closeTo(52, 0.01),
+    );
+    final label = find.descendant(
+      of: find.byKey(const ValueKey('manga-nav-0')),
+      matching: find.byType(Text),
+    ).first;
+    expect(
+      tester.getBottomRight(icon).dy,
+      lessThanOrEqualTo(tester.getTopLeft(label).dy),
+    );
     expect(find.byKey(const ValueKey('manga-play')), findsNothing);
     expect(tester.takeException(), isNull);
   });

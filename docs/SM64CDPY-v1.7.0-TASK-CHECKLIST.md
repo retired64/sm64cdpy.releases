@@ -32,6 +32,8 @@
       táctiles de 48 dp; permitir expansión con texto accesible.
 - [x] Fondo de tinta semitransparente, sin blur; contraste de etiquetas
       calculado y comprobado en tests para claro/oscuro.
+- [x] Icono centrado a escala 2 (52 dp) elevado sin cubrir la etiqueta;
+      pruebas de tamaño y separación visual, conservando la barra compacta.
 - [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.
