@@ -795,6 +795,7 @@
   "romPrepareErrorExport": "No se pudo verificar la copia guardada. Elige otro destino e inténtalo de nuevo.",
   "romPrepareErrorBusy": "Ya hay otra operación de ROM activa.",
   "romPrepareErrorUnexpected": "Ocurrió algo inesperado. Tu archivo original no fue modificado.",
+  "mangaNavLibrary": "Mis Mods",
   "mangaNavExplore": "Mods",
   "mangaNavTools": "Taller",
   "mangaNavMore": "MAS",

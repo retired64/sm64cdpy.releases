@@ -343,6 +343,14 @@ void main() {
           _app(router, const RetroTheme(false), language, 1.6),
         );
         await tester.pumpAndSettle();
+        final libraryLabel = tester.widget<Text>(
+          find.byKey(const ValueKey('manga-nav-label-fill-2')),
+        );
+        expect(libraryLabel.data, switch (language) {
+          'es' => 'MIS MODS',
+          'pt' => 'BIBLIOTECA',
+          _ => 'LIBRARY',
+        });
         final exploreLabel = tester.widget<Text>(
           find.byKey(const ValueKey('manga-nav-label-fill-1')),
         );

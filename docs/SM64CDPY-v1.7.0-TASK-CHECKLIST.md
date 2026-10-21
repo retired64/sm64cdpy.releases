@@ -46,6 +46,11 @@
       a footers/padding desplazables; revisar listas hermanas y acción final.
 - [x] Cápsulas azules en oscuro y rojas en claro, con 65 % de transparencia
       en todos los tonos del gradiente; mantener texto y barra transparente.
+- [x] Mis Mods sustituye Biblioteca solo en el carrusel español, con clave
+      mangaNavLibrary en cinco ARB; regeneración y prueba Flutter pendientes.
+- [x] Conjunto cartoon-v2 a partir de mods.png: cinco WebP 256 px, con alfa
+      real y bordes de pegatina; originales/prompts locales fuera del APK.
+- [ ] Revisar nuevos iconos claros/oscuros a tamaño real en teléfono.
 - [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.

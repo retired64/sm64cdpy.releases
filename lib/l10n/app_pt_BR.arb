@@ -795,6 +795,7 @@
   "romPrepareErrorExport": "Não foi possível verificar a cópia salva. Escolha outro destino e tente novamente.",
   "romPrepareErrorBusy": "Outra operação de ROM já está ativa.",
   "romPrepareErrorUnexpected": "Algo inesperado aconteceu. Seu arquivo original não foi alterado.",
+  "mangaNavLibrary": "Biblioteca",
   "mangaNavExplore": "Explorar",
   "mangaNavTools": "Oficina",
   "mangaNavMore": "Mais",
