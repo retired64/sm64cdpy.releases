@@ -20,6 +20,55 @@ SM64CDPY es una aplicación Flutter orientada exclusivamente a Android. Combina 
 
 La arquitectura es deliberadamente híbrida: el catálogo principal utiliza entidades/repositorio; las colecciones pequeñas tienen datasources y providers directos.
 
+## Menú flotante bajo demanda — menu-slide, 2026-10-21
+
+Rama creada desde drawer-ui (76101bf). AppShell conserva el Scaffold y sus
+pantallas, pero MangaNavigationDock coloca por encima el botón Menú fijo en
+la esquina inferior derecha, con margen seguro. El dock existe solo en Retro
+Manga; los otros cinco temas conservan su drawer.
+
+El estado inicial es cerrado. Pulsar el botón abre o cierra el carrusel encima
+del propio botón, cuya posición no cambia. La tira mantiene sus cinco grupos,
+assets, colores, etiquetas, selección y protección de borradores de Jugador.
+La navegación confirmada, incluso elegir la ruta actual, cierra el dock;
+cancelar un diálogo de borrador o un panel de destinos lo mantiene accesible.
+Atrás cierra primero el dock sin navegar, excepto si hay un modal encima: en
+ese caso el modal recibe Atrás. Se usa BackButtonListener bajo MaterialApp.router:
+https://api.flutter.dev/flutter/widgets/BackButtonListener-class.html.
+
+La apertura combina desplazamiento vertical corto y opacidad durante 180 ms;
+el cierre dura 130 ms. No se anima el layout completo de la pantalla ni se
+usan blur, shaders o recursos nuevos. Con reducción de movimiento se aplica
+el estado final sin transición. La tira se construye al primer uso; después
+Offstage, IgnorePointer, ExcludeSemantics y TickerMode la retienen sin acciones
+ocultas ni animaciones activas. El PageController se conserva al alternar el
+botón y se desecha con el dock. CurvedAnimation, AnimationController y el
+observer de ciclo de vida se retiran en dispose.
+
+El botón conserva un objetivo mayor de 48 dp, un nombre localizado de acción
+y estado toggled para accesibilidad. Se apoya en el acento del usuario y usa
+onColor para contraste. Permanece visible encima del teclado; la llegada del
+teclado cierra un panel ya abierto. Abrir explícitamente el menú quita el foco
+del campo. Pausar u ocultar la aplicación cierra el panel sin persistirlo.
+
+MangaNavigationScope publica reservedBottomInset calculado por el dock desde
+texto, panel abierto/cerrado, teclado y SafeArea. Los footers y padding de las
+listas leen ese valor en vez de asumir un bottomNavigationBar permanente.
+La pantalla conserva su viewport completo; el margen final protege el botón
+y, cuando está abierto, también el carrusel y su icono elevado. No hay cachés
+persistentes, preferencias nuevas ni sincronización con el engine del overlay.
+GoRouter sigue siendo la autoridad de ruta; el dock solo controla visibilidad.
+Las TickerFuture de las transiciones se inician intencionalmente sin await;
+no se añade ningún Future de IO ni se modifica la coordinación de operaciones.
+
+Tres claves nuevas en cinco ARB (mangaMenuLabel/Open/Close). Regenerar con
+flutter gen-l10n; los Dart generados no se editan manualmente. Pruebas añadidas:
+arranque cerrado, posición fija, área táctil, abrir/cerrar con Atrás, retención
+del controlador, reducción de movimiento, Semantics y prioridad de modales.
+La matriz existente abre ahora el dock explícitamente y comprueba que se
+cierra tras elegir un destino. Formato, análisis, tests Flutter y validación
+física siguen pendientes: este Termux no dispone de Flutter/Dart.
+
 ## Navegación Retro Manga — drawer-ui, 2026-10-20
 
 AppShell usa MangaNavigationScope y MangaNavigationBar solo en Retro Manga.

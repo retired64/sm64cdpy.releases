@@ -8,7 +8,7 @@ import '../providers/auto_install_provider.dart';
 import '../providers/extra_providers.dart';
 import '../providers/game_folder_provider.dart';
 import 'app_drawer.dart';
-import 'manga_navigation_bar.dart';
+import 'manga_navigation_dock.dart';
 import 'manga_navigation_scope.dart';
 import 'game_folder_card.dart';
 import 'game_setup_widgets.dart';
@@ -118,66 +118,58 @@ class _AppShellState extends ConsumerState<AppShell> {
 
     // El viewport debe llegar detrás de la navegación; la separación final
     // pertenece al contenido desplazable, no al tamaño de la pantalla.
-    return MangaNavigationScope(
-      enabled: bottomNavigation,
-      child: Scaffold(
-        extendBody: bottomNavigation,
-        backgroundColor: retro.background,
-        drawer: bottomNavigation
-            ? null
-            : AppDrawer(scrollController: _drawerScrollController),
-        drawerEnableOpenDragGesture: !bottomNavigation,
-        drawerEdgeDragWidth: 32,
-        drawerScrimColor: Colors.black.withValues(alpha: 0.62),
-        onDrawerChanged: (isOpened) {
-          if (!isOpened) return;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (_drawerScrollController.hasClients) {
-              _drawerScrollController.jumpTo(0);
-            }
-          });
-        },
-        bottomNavigationBar:
-            bottomNavigation && MediaQuery.viewInsetsOf(context).bottom == 0
-            ? MangaNavigationBar(currentRoute: widget.currentRoute)
-            : null,
-        body: PageStorage(
-          bucket: _pageStorage,
-          child: KeyedSubtree(
-            key: PageStorageKey(widget.currentRoute),
-            child: showBackdrop
-                ? Stack(
-                    children: [
-                      Positioned.fill(
-                        child: ThemeBackdrop(
-                          menuSurface:
-                              widget.currentRoute == '/library' ||
-                              widget.currentRoute == '/settings',
-                          allowHalftone: !_noHalftoneRoutes.contains(
-                            widget.currentRoute,
-                          ),
+    final scaffold = Scaffold(
+      extendBody: bottomNavigation,
+      backgroundColor: retro.background,
+      drawer: bottomNavigation
+          ? null
+          : AppDrawer(scrollController: _drawerScrollController),
+      drawerEnableOpenDragGesture: !bottomNavigation,
+      drawerEdgeDragWidth: 32,
+      drawerScrimColor: Colors.black.withValues(alpha: 0.62),
+      onDrawerChanged: (isOpened) {
+        if (!isOpened) return;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_drawerScrollController.hasClients) {
+            _drawerScrollController.jumpTo(0);
+          }
+        });
+      },
+      body: PageStorage(
+        bucket: _pageStorage,
+        child: KeyedSubtree(
+          key: PageStorageKey(widget.currentRoute),
+          child: showBackdrop
+              ? Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ThemeBackdrop(
+                        menuSurface:
+                            widget.currentRoute == '/library' ||
+                            widget.currentRoute == '/settings',
+                        allowHalftone: !_noHalftoneRoutes.contains(
+                          widget.currentRoute,
                         ),
                       ),
-                      ThemePageFrame(child: widget.child),
-                    ],
-                  )
-                : widget.child,
-          ),
+                    ),
+                    ThemePageFrame(child: widget.child),
+                  ],
+                )
+              : widget.child,
         ),
       ),
     );
+    return bottomNavigation
+        ? MangaNavigationDock(currentRoute: widget.currentRoute, child: scaffold)
+        : MangaNavigationScope(enabled: false, child: scaffold);
   }
 }
 
 /// Espacio final desplazable: no recorta el viewport ni pinta una franja.
 double mangaNavigationScrollInset(BuildContext context) {
-  if (!MangaNavigationScope.of(context) ||
-      MediaQuery.viewInsetsOf(context).bottom > 0) {
-    return 0;
-  }
-  // Scaffold.extendBody incluye aquí la tira y el margen seguro de Android.
-  // Los 24 dp adicionales dejan libre el icono elevado.
-  return MediaQuery.paddingOf(context).bottom + 24;
+  if (!MangaNavigationScope.of(context)) return 0;
+  // El dock publica su altura real: botón cerrado o carrusel desplegado.
+  return MangaNavigationScope.insetOf(context) + 24;
 }
 
 class MangaNavigationSliverInset extends StatelessWidget {

@@ -22,7 +22,14 @@ typedef _Destination = ({String label, IconData icon, String route});
 
 /// La ruta es la selección real. Deslizar solo explora las viñetas disponibles.
 class MangaNavigationBar extends ConsumerStatefulWidget {
-  const MangaNavigationBar({super.key, required this.currentRoute});
+  const MangaNavigationBar({
+    super.key,
+    required this.currentRoute,
+    this.onDestinationSelected,
+    this.bottomSafeArea = true,
+  });
+  final VoidCallback? onDestinationSelected;
+  final bool bottomSafeArea;
   final String currentRoute;
 
   @override
@@ -112,10 +119,15 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
         2 => '/library',
         _ => await _showDestinations(index, l),
       };
-      if (!mounted || route == null || route == widget.currentRoute) return;
+      if (!mounted || route == null) return;
+      if (route == widget.currentRoute) {
+        widget.onDestinationSelected?.call();
+        return;
+      }
       if (!await _canLeave() || !mounted) return;
       FocusManager.instance.primaryFocus?.unfocus();
       context.go(route);
+      widget.onDestinationSelected?.call();
     } catch (_) {
       if (mounted) {
         AppSnackbar.error(
@@ -325,6 +337,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       color: retro.background.withValues(alpha: 0.85),
       child: SafeArea(
         top: false,
+        bottom: widget.bottomSafeArea,
         child: Stack(
           children: [
             SizedBox(

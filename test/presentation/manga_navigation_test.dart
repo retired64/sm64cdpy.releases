@@ -110,6 +110,7 @@ Widget _app(
   double scale, {
   bool dirty = false,
   double keyboard = 0,
+  bool reduceMotion = false,
 }) => ProviderScope(
   overrides: [
     autoInstallProvider.overrideWith(_Auto.new),
@@ -129,6 +130,7 @@ Widget _app(
     builder: (context, child) => MediaQuery(
       data: MediaQuery.of(context).copyWith(
         textScaler: TextScaler.linear(scale),
+        disableAnimations: reduceMotion,
         viewInsets: EdgeInsets.only(bottom: keyboard),
       ),
       child: child!,
@@ -136,7 +138,106 @@ Widget _app(
   ),
 );
 
+Future<void> _openMenu(WidgetTester tester) async {
+  await tester.pumpAndSettle();
+  final toggle = find.byKey(const ValueKey('manga-menu-toggle'));
+  if (toggle.evaluate().isEmpty) return;
+  if (MediaQuery.viewInsetsOf(tester.element(toggle)).bottom > 0) return;
+  if (find.byType(MangaNavigationBar).evaluate().isNotEmpty) return;
+  await tester.tap(toggle);
+  await tester.pumpAndSettle();
+}
+
 void main() {
+  for (final language in ['en', 'es', 'pt']) {
+    testWidgets('floating menu is lazy, anchored and closes with Back: $language', (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final router = _router(initial: '/library');
+      addTearDown(router.dispose);
+      await tester.pumpWidget(_app(router, const RetroTheme(false), language, 1));
+      await tester.pumpAndSettle();
+      final toggle = find.byKey(const ValueKey('manga-menu-toggle'));
+      expect(find.byType(MangaNavigationBar), findsNothing);
+      final closed = tester.getRect(toggle);
+      expect(closed.width, greaterThanOrEqualTo(48));
+      expect(closed.height, greaterThanOrEqualTo(48));
+      expect(closed.right, greaterThan(280));
+      expect(closed.bottom, lessThanOrEqualTo(640));
+      await tester.tap(toggle);
+      await tester.pumpAndSettle();
+      expect(find.byType(MangaNavigationBar), findsOneWidget);
+      final opened = tester.getRect(toggle);
+      expect(opened.top, closeTo(closed.top, 0.01));
+      expect(opened.right, closeTo(closed.right, 0.01));
+      expect(opened.bottom, closeTo(closed.bottom, 0.01));
+      final bar = tester.getRect(find.byKey(const ValueKey('manga-navigation')));
+      expect(bar.bottom, lessThan(closed.top));
+      final pages = tester.widget<PageView>(
+        find.byKey(const ValueKey('manga-navigation-pages')),
+      ).controller!;
+      pages.jumpToPage(pages.initialPage + 1);
+      await tester.pumpAndSettle();
+      final page = pages.page;
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byType(MangaNavigationBar), findsNothing);
+      expect(router.routeInformationProvider.value.uri.path, '/library');
+      await tester.tap(toggle);
+      await tester.pumpAndSettle();
+      final restored = tester.widget<PageView>(
+        find.byKey(const ValueKey('manga-navigation-pages')),
+      ).controller!;
+      expect(identical(restored, pages), isTrue);
+      expect(restored.page, page);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('toggle semantics and reduce motion reflect open and closed states', (tester) async {
+    final router = _router();
+    addTearDown(router.dispose);
+    await tester.pumpWidget(_app(router, const RetroTheme(false), 'es', 1, reduceMotion: true));
+    await tester.pumpAndSettle();
+    final toggle = find.byKey(const ValueKey('manga-menu-toggle'));
+    final l = AppLocalizations.of(tester.element(toggle));
+    final semantics = tester.ensureSemantics();
+    try {
+      expect(find.bySemanticsLabel(l.mangaMenuOpen), findsOneWidget);
+      await tester.tap(toggle);
+      await tester.pump();
+      final fade = tester.widget<FadeTransition>(find.ancestor(
+        of: find.byType(MangaNavigationBar),
+        matching: find.byType(FadeTransition),
+      ).first);
+      expect(fade.opacity.value, 1);
+      expect(find.bySemanticsLabel(l.mangaMenuClose), findsOneWidget);
+      await tester.tap(toggle);
+      await tester.pump();
+      expect(find.byType(MangaNavigationBar), findsNothing);
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  testWidgets('modal Back closes the destination sheet before the menu', (tester) async {
+    final router = _router(initial: '/settings');
+    addTearDown(router.dispose);
+    await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
+    await _openMenu(tester);
+    await tester.tap(find.byKey(const ValueKey('manga-nav-4')));
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsNothing);
+    expect(find.byType(MangaNavigationBar), findsOneWidget);
+    expect(router.routeInformationProvider.value.uri.path, '/settings');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('all five papercraft assets are bundled', (tester) async {
     for (final name in ['home', 'explore', 'library', 'tools', 'more']) {
       final bytes = await rootBundle.load(
@@ -154,6 +255,7 @@ void main() {
     final router = _router();
     addTearDown(router.dispose);
     await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
+    await _openMenu(tester);
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('manga-nav-4')), findsOneWidget);
     expect(find.byKey(const ValueKey('manga-nav-0')), findsOneWidget);
@@ -207,6 +309,7 @@ void main() {
       addTearDown(router.dispose);
       final theme = RetroTheme(dark, retroAccent: RetroAccent.coral);
       await tester.pumpWidget(_app(router, theme, 'en', 1));
+      await _openMenu(tester);
       await tester.pumpAndSettle();
       final pages = tester.widget<PageView>(
         find.byKey(const ValueKey('manga-navigation-pages')),
@@ -237,6 +340,7 @@ void main() {
       final router = _router(initial: '/settings');
       addTearDown(router.dispose);
       await tester.pumpWidget(_app(router, RetroTheme(dark), 'es', 1));
+      await _openMenu(tester);
       await tester.pumpAndSettle();
       final viewport = tester.getRect(find.byType(CustomScrollView));
       final bar = tester.getRect(find.byKey(const ValueKey('manga-navigation')));
@@ -262,6 +366,7 @@ void main() {
         await tester.pumpWidget(
           _app(router, RetroTheme(dark, design: design), 'en', 1),
         );
+        await _openMenu(tester);
         await tester.pumpAndSettle();
         final manga = RetroTheme(dark, design: design).showJapaneseDecorations;
         expect(
@@ -346,6 +451,7 @@ void main() {
         await tester.pumpWidget(
           _app(router, const RetroTheme(false), language, 1.6),
         );
+        await _openMenu(tester);
         await tester.pumpAndSettle();
         final libraryLabel = tester.widget<Text>(
           find.byKey(const ValueKey('manga-nav-label-fill-2')),
@@ -401,6 +507,9 @@ void main() {
           router.routeInformationProvider.value.uri.path,
           '/game-tool/save-file',
         );
+        // Elegir destino cierra el dock; abrirlo de nuevo conserva su grupo.
+        expect(find.byType(MangaNavigationBar), findsNothing);
+        await _openMenu(tester);
         final moreLabel = tester.widget<Text>(
           find.byKey(const ValueKey('manga-nav-label-fill-4')),
         );
@@ -421,6 +530,7 @@ void main() {
       final router = _router(initial: '/settings');
       addTearDown(router.dispose);
       await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
+      await _openMenu(tester);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('manga-nav-4')));
       await tester.pumpAndSettle();
@@ -466,6 +576,7 @@ void main() {
     await tester.pumpWidget(
       _app(router, const RetroTheme(false), 'en', 1, dirty: true),
     );
+    await _openMenu(tester);
     await tester.pumpAndSettle();
     final l = AppLocalizations.of(
       tester.element(find.byType(MangaNavigationBar)),
@@ -488,7 +599,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('keyboard hides the strip and closing it restores navigation', (
+  testWidgets('keyboard preserves the floating toggle and hides the panel', (
     tester,
   ) async {
     final router = _router(initial: '/catalogue');
@@ -496,10 +607,13 @@ void main() {
     await tester.pumpWidget(
       _app(router, const RetroTheme(false), 'en', 1, keyboard: 240),
     );
+    await _openMenu(tester);
     await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('manga-menu-toggle')), findsOneWidget);
     expect(find.byType(MangaNavigationBar), findsNothing);
     expect(find.byType(DrawerMenuButton), findsNothing);
     await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
+    await _openMenu(tester);
     await tester.pumpAndSettle();
     expect(find.byType(MangaNavigationBar), findsOneWidget);
     expect(tester.takeException(), isNull);

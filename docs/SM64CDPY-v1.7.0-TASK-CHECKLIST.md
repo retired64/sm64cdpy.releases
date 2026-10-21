@@ -14,6 +14,19 @@
 
 ## How to use this checklist
 
+### Menu-slide: navegación bajo demanda — 2026-10-21
+
+- [x] Rama menu-slide desde drawer-ui; carrusel inicialmente oculto.
+- [x] Botón Menú fijo abajo a la derecha, accesible y con acento del usuario.
+- [x] Apertura/cierre por opacidad y desplazamiento breve; reducción de movimiento.
+- [x] Cierre tras elegir destino, con Atrás y al pausar; modales conservan prioridad.
+- [x] Teclado, texto ampliado y margen de listas coordinados por el scope.
+- [x] Carga al primer uso y retención del carrusel sin actividad oculta.
+- [x] Tres claves en cinco ARB y pruebas de integración del dock.
+- [ ] Ejecutar gen-l10n, dart format, analyze y tests Flutter en CI.
+- [ ] Comprobar en teléfono modo claro/oscuro, Atrás con borrador de Jugador,
+      modales, teclado, rotación, pausa/reapertura y texto grande.
+
 ### Drawer-ui: navegación inferior Manga — 2026-10-20
 
 - [x] Cinco grupos con acceso a todos los destinos del drawer.
