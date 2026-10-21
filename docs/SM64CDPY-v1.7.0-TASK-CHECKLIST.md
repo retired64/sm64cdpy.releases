@@ -53,6 +53,8 @@
 - [ ] Revisar nuevos iconos claros/oscuros a tamaño real en teléfono.
 - [x] Ajuste 2026-10-21: fondo del tema al 85 % de opacidad y etiquetas
       completas sin elipsis; dos líneas al ampliar texto. Validación CI pendiente.
+- [x] Inicio simplificado a champiñón rojo de silueta limpia y bordes de
+      papel; WebP 256 px con alfa, sin cambiar navegación ni animación.
 - [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.

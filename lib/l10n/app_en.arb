@@ -2014,7 +2014,7 @@
   "@mangaNavLibrary": {"description": "Library label in the Retro Manga bottom carousel only; Spanish uses Mis Mods."},
   "mangaNavExplore": "Explore",
   "@mangaNavExplore": {"description": "Explore group label in the Retro Manga bottom carousel only."},
-  "mangaNavTools": "Game Tool",
+  "mangaNavTools": "Tools",
   "@mangaNavTools": {"description": "Short label for the game tools group in the Retro Manga bottom carousel only."},
   "mangaNavMore": "More",
   "mangaNavPlay": "Play",

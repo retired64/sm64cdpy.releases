@@ -387,7 +387,7 @@ void main() {
         expect(shortLabel.data, switch (language) {
           'es' => 'TALLER',
           'pt' => 'OFICINA',
-          _ => 'GAME TOOL',
+          _ => 'TOOLS',
         });
         expect(tester.getSize(tile).width, greaterThanOrEqualTo(48));
         expect(tester.getSize(tile).height, greaterThanOrEqualTo(48));

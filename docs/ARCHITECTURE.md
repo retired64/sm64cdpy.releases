@@ -124,7 +124,7 @@ para evitar anuncios duplicados. La ruta abierta conserva el subrayado de acento
 mangaNavLibrary usa Mis Mods en español solo en el carrusel; Library y
 Biblioteca se conservan en inglés/portugués. La ruta /library y los títulos
 de pantalla no cambian. Regenerar la nueva clave con flutter gen-l10n.
-La clave mangaNavTools usa Game Tool / Taller / Oficina solo en la tira;
+La clave mangaNavTools usa Tools / Taller / Oficina solo en la tira;
 mangaNavMore usa MAS sin tilde en español solo en este menú.
 mangaNavExplore usa Mods en español (Explore / Explorar en inglés/portugués),
 sin cambiar los títulos de sección ni el panel de destinos.
@@ -142,16 +142,18 @@ Deslizar sigue sin cambiar la selección real ni navegar.
 
 El conjunto cartoon-v2 toma mods.png del usuario como referencia: colores
 facetados, contorno negro grueso y borde blanco de papel recortado. Mods usa
-el grupo de gorras/champiñón; Inicio conserva la casa, Taller las herramientas,
+el grupo de gorras/champiñón; Inicio usa un champiñón rojo simple (v3),
+sin casa ni facetas, y Taller las herramientas,
 Mis Mods una carpeta con tarjetas de juego y MAS el bloque de interrogación.
 Los PNG originales y los prompts del generador integrado imagegen están en
-output/imagegen/cartoon-navigation-v2/ (solo material local, fuera del APK).
+output/imagegen/cartoon-navigation-v2/ y output/imagegen/home-simple-v3/
+(solo material local, fuera del APK).
 El original de Mods tenía fondo negro opaco: se conserva aparte y se genera
 un recorte transparente antes de la conversión. No se afirma equivalencia
 píxel a píxel con la referencia tras la edición generativa.
 Solo assets/themes/manga/navigation/ está registrado en pubspec: cinco WebP
 RGBA de 256 × 256, calidad 88, método 6 y alfa de calidad 100.
-El conjunto ocupa 116.9 KiB. explore.webp conserva su ruta histórica, pero
+El conjunto ocupa 102.4 KiB. explore.webp conserva su ruta histórica, pero
 ahora contiene el icono de Mods; no se altera el agrupamiento de navegación.
 Los cinco archivos sustituyen a los anteriores sin duplicarlos en el bundle. Cada Image.asset limita su decodificación a
 256 × 256, comparte el ImageCache estándar de Flutter y aísla repintados con
