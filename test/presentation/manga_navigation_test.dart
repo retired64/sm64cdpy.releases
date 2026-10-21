@@ -144,7 +144,11 @@ void main() {
     expect(find.byKey(const ValueKey('manga-nav-1')), findsOneWidget);
     expect(router.routeInformationProvider.value.uri.path, '/');
     final bar = find.byKey(const ValueKey('manga-navigation'));
-    expect(tester.getSize(bar).height, lessThan(100));
+    expect(tester.getSize(bar).height, inInclusiveRange(48, 50));
+    expect(
+      tester.getSize(find.byKey(const ValueKey('manga-nav-0'))).height,
+      greaterThanOrEqualTo(48),
+    );
     final active = tester.widget<AnimatedScale>(
       find.byKey(const ValueKey('manga-nav-visual-0')),
     );

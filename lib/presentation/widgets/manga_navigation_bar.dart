@@ -314,7 +314,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       (label: l.gameToolTitle, icon: Icons.sports_esports_outlined),
       (label: l.mangaNavMore, icon: Icons.dashboard_outlined),
     ];
-    final labelHeight = MediaQuery.textScalerOf(context).scale(11) * 2.6;
+    final labelHeight = MediaQuery.textScalerOf(context).scale(11) * 1.3;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final selected = _group(widget.currentRoute);
     return Material(
@@ -331,7 +331,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
             ),
             SizedBox(
               // Siluetas flotantes; solo el texto accesible aumenta la altura.
-              height: 68 + labelHeight,
+              height: (34 + labelHeight).clamp(48.0, double.infinity).toDouble(),
               child: Semantics(
                 hint: l.mangaNavHint,
                 child: PageView.custom(
@@ -400,100 +400,104 @@ class _MangaNavigationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    return Semantics(
-      button: true,
-      selected: selected,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          key: ValueKey('manga-nav-$index'),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 56,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    clipBehavior: Clip.none,
-                    children: [
-                      if (focus > 0.01)
-                        Positioned(
-                          bottom: 3,
-                          child: DecoratedBox(
-                            key: ValueKey('manga-nav-halo-$index'),
-                            decoration: BoxDecoration(
-                              color: retro.accent.withValues(alpha: 0.38 * focus),
-                              borderRadius: const BorderRadius.all(
-                                Radius.elliptical(24, 8),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: retro.accent.withValues(
-                                    alpha: 0.65 * focus,
-                                  ),
-                                  blurRadius: 10,
-                                  spreadRadius: 3 * focus,
+    return Tooltip(
+      message: label,
+      excludeFromSemantics: true,
+      child: Semantics(
+        button: true,
+        selected: selected,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            key: ValueKey('manga-nav-$index'),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 30,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      clipBehavior: Clip.none,
+                      children: [
+                        if (focus > 0.01)
+                          Positioned(
+                            bottom: 2,
+                            child: DecoratedBox(
+                              key: ValueKey('manga-nav-halo-$index'),
+                              decoration: BoxDecoration(
+                                color: retro.accent.withValues(alpha: 0.38 * focus),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.elliptical(12, 4),
                                 ),
-                              ],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: retro.accent.withValues(
+                                      alpha: 0.65 * focus,
+                                    ),
+                                    blurRadius: 6,
+                                    spreadRadius: 1.5 * focus,
+                                  ),
+                                ],
+                              ),
+                              child: const SizedBox(width: 22, height: 6),
                             ),
-                            child: const SizedBox(width: 42, height: 12),
                           ),
-                        ),
-                      Transform.translate(
-                        offset: Offset(0, -2 * focus),
-                        child: AnimatedScale(
-                          key: ValueKey('manga-nav-visual-$index'),
-                          scale: 0.62 + 0.66 * focus,
-                          curve: Curves.easeOutCubic,
-                          // El desplazamiento ya interpola cada fotograma.
-                          duration: Duration.zero,
-                          child: RepaintBoundary(
-                            child: Image.asset(
-                              asset,
-                              key: ValueKey('manga-nav-image-$index'),
-                              width: 52,
-                              height: 52,
-                              // Decodificación acotada y compartida por ImageCache.
-                              cacheWidth: 256,
-                              cacheHeight: 256,
-                              fit: BoxFit.contain,
-                              filterQuality: FilterQuality.medium,
-                              excludeFromSemantics: true,
-                              errorBuilder: (context, error, stackTrace) => Icon(
-                                icon,
-                                size: 36,
-                                color: retro.ink,
+                        Transform.translate(
+                          offset: Offset(0, -focus),
+                          child: AnimatedScale(
+                            key: ValueKey('manga-nav-visual-$index'),
+                            scale: 0.62 + 0.66 * focus,
+                            curve: Curves.easeOutCubic,
+                            // El desplazamiento ya interpola cada fotograma.
+                            duration: Duration.zero,
+                            child: RepaintBoundary(
+                              child: Image.asset(
+                                asset,
+                                key: ValueKey('manga-nav-image-$index'),
+                                width: 26,
+                                height: 26,
+                                // Decodificación acotada y compartida por ImageCache.
+                                cacheWidth: 256,
+                                cacheHeight: 256,
+                                fit: BoxFit.contain,
+                                filterQuality: FilterQuality.medium,
+                                excludeFromSemantics: true,
+                                errorBuilder: (context, error, stackTrace) => Icon(
+                                  icon,
+                                  size: 24,
+                                  color: retro.ink,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 3),
-                SizedBox(
-                  height: labelHeight,
-                  child: Center(
-                    child: Text(
-                      retro.displayLabel(label),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: retro.body(size: 11, color: retro.ink).copyWith(
-                        fontWeight: selected ? FontWeight.w900 : FontWeight.w500,
-                        decoration: selected ? TextDecoration.underline : null,
-                        decorationColor: retro.accent,
-                        decorationThickness: 2,
+                  const SizedBox(height: 2),
+                  SizedBox(
+                    height: labelHeight,
+                    child: Center(
+                      child: Text(
+                        retro.displayLabel(label),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: retro.body(size: 11, color: retro.ink, height: 1.2).copyWith(
+                          fontWeight: selected ? FontWeight.w900 : FontWeight.w500,
+                          decoration: selected ? TextDecoration.underline : null,
+                          decorationColor: retro.accent,
+                          decorationThickness: 2,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
