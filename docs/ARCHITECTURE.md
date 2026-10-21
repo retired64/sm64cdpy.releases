@@ -78,11 +78,18 @@ La tira pasa a una única fila de icono y nombre, sin instrucción visible,
 checks/flechas inferiores ni lanzamiento duplicado. La ayuda de deslizamiento
 permanece en Semantics. Jugar vuelve al bloque original de Inicio para todos
 los temas, reutilizando su protección contra doble toque y la guía de instalación.
-La altura base es de aproximadamente 109 dp más SafeArea y crece con la escala
+La altura base es de aproximadamente 97 dp más SafeArea y crece con la escala
 de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa.
 Los cinco iconos papercraft flotan sin cajas, divisores ni borde superior. Solo
-la imagen se escala: la sección activa usa 1, las vecinas 0.74 y la centrada
-para explorar 0.86. Las etiquetas conservan su tamaño accesible y el color de
+la imagen se escala: el icono centrado llega a 1.28 (unos 67 dp) y sus vecinos
+a 0.62 (unos 32 dp). AnimatedBuilder observa el PageController y calcula la
+escala por distancia al centro en cada fotograma, sin reconstruir el shell ni
+navegar. Un halo elíptico con sombra corta usa retro.accent del ThemeExtension
+vigente; no mantiene copia local del color. Ajustes escribe la preferencia de
+acento existente y main reconstruye el tema, que actualiza este consumidor.
+Al reducir movimiento, el énfasis cambia al centro sin interpolación adicional.
+La etiqueta subrayada y Semantics.selected siguen indicando la ruta abierta,
+aunque se explore otro grupo. Las etiquetas conservan su tamaño accesible y el color de
 tinta; la activa añade peso y subrayado con el acento del usuario.
 Deslizar sigue sin cambiar la selección real ni navegar.
 

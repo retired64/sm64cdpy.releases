@@ -32,7 +32,6 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
   // Solo se construyen las viñetas visibles; el origen permite explorar ambos lados.
   static const _origin = 1000;
   late final PageController _pages;
-  late int _focused;
   bool _busy = false;
 
   static int _group(String route) {
@@ -48,9 +47,8 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
   @override
   void initState() {
     super.initState();
-    _focused = _group(widget.currentRoute);
     _pages = PageController(
-      initialPage: _origin + _focused,
+      initialPage: _origin + _group(widget.currentRoute),
       viewportFraction: 0.32,
       keepPage: false,
     );
@@ -333,28 +331,40 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
             ),
             SizedBox(
               // Siluetas flotantes; solo el texto accesible aumenta la altura.
-              height: 80 + labelHeight,
+              height: 68 + labelHeight,
               child: Semantics(
                 hint: l.mangaNavHint,
                 child: PageView.custom(
                   key: const ValueKey('manga-navigation-pages'),
                   controller: _pages,
-                  onPageChanged: (index) => setState(
-                    () => _focused = index % entries.length,
-                  ),
+                  clipBehavior: Clip.none,
                   childrenDelegate: SliverChildBuilderDelegate((context, page) {
                     final index = page % entries.length;
                     final item = entries[index];
-                    return _MangaNavigationTile(
-                      index: index,
-                      label: item.label,
-                      icon: item.icon,
-                      asset: _navigationAssets[index],
-                      selected: index == selected,
-                      focused: index == _focused,
-                      labelHeight: labelHeight,
-                      reduceMotion: reduceMotion,
-                      onTap: _busy ? null : () => unawaited(_select(index)),
+                    return AnimatedBuilder(
+                      animation: _pages,
+                      builder: (context, child) {
+                        final position = _pages.hasClients &&
+                                _pages.position.hasContentDimensions
+                            ? _pages.page ?? _pages.initialPage.toDouble()
+                            : _pages.initialPage.toDouble();
+                        // El centro visual sigue el dedo sin cambiar de ruta.
+                        final focus = reduceMotion
+                            ? (position.round() == page ? 1.0 : 0.0)
+                            : (1 - (position - page).abs())
+                                  .clamp(0.0, 1.0)
+                                  .toDouble();
+                        return _MangaNavigationTile(
+                          index: index,
+                          label: item.label,
+                          icon: item.icon,
+                          asset: _navigationAssets[index],
+                          selected: index == selected,
+                          focus: focus,
+                          labelHeight: labelHeight,
+                          onTap: _busy ? null : () => unawaited(_select(index)),
+                        );
+                      },
                     );
                   }, addSemanticIndexes: false),
                 ),
@@ -374,16 +384,16 @@ class _MangaNavigationTile extends StatelessWidget {
     required this.icon,
     required this.asset,
     required this.selected,
-    required this.focused,
+    required this.focus,
     required this.labelHeight,
-    required this.reduceMotion,
     required this.onTap,
   });
 
   final int index;
   final String label, asset;
   final IconData icon;
-  final bool selected, focused, reduceMotion;
+  final bool selected;
+  final double focus;
   final double labelHeight;
   final VoidCallback? onTap;
 
@@ -399,38 +409,70 @@ class _MangaNavigationTile extends StatelessWidget {
           key: ValueKey('manga-nav-$index'),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 64,
-                  child: AnimatedScale(
-                    key: ValueKey('manga-nav-visual-$index'),
-                    scale: selected ? 1 : (focused ? 0.86 : 0.74),
-                    duration: reduceMotion
-                        ? Duration.zero
-                        : const Duration(milliseconds: 160),
-                    child: RepaintBoundary(
-                      child: Image.asset(
-                        asset,
-                        key: ValueKey('manga-nav-image-$index'),
-                        width: 64,
-                        height: 64,
-                        // Decodificación acotada y compartida por ImageCache.
-                        cacheWidth: 256,
-                        cacheHeight: 256,
-                        fit: BoxFit.contain,
-                        filterQuality: FilterQuality.medium,
-                        excludeFromSemantics: true,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                          icon,
-                          size: 36,
-                          color: retro.ink,
+                  height: 56,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.none,
+                    children: [
+                      if (focus > 0.01)
+                        Positioned(
+                          bottom: 3,
+                          child: DecoratedBox(
+                            key: ValueKey('manga-nav-halo-$index'),
+                            decoration: BoxDecoration(
+                              color: retro.accent.withValues(alpha: 0.38 * focus),
+                              borderRadius: const BorderRadius.all(
+                                Radius.elliptical(24, 8),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: retro.accent.withValues(
+                                    alpha: 0.65 * focus,
+                                  ),
+                                  blurRadius: 10,
+                                  spreadRadius: 3 * focus,
+                                ),
+                              ],
+                            ),
+                            child: const SizedBox(width: 42, height: 12),
+                          ),
+                        ),
+                      Transform.translate(
+                        offset: Offset(0, -2 * focus),
+                        child: AnimatedScale(
+                          key: ValueKey('manga-nav-visual-$index'),
+                          scale: 0.62 + 0.66 * focus,
+                          curve: Curves.easeOutCubic,
+                          // El desplazamiento ya interpola cada fotograma.
+                          duration: Duration.zero,
+                          child: RepaintBoundary(
+                            child: Image.asset(
+                              asset,
+                              key: ValueKey('manga-nav-image-$index'),
+                              width: 52,
+                              height: 52,
+                              // Decodificación acotada y compartida por ImageCache.
+                              cacheWidth: 256,
+                              cacheHeight: 256,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.medium,
+                              excludeFromSemantics: true,
+                              errorBuilder: (context, error, stackTrace) => Icon(
+                                icon,
+                                size: 36,
+                                color: retro.ink,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 3),

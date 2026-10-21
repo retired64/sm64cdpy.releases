@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
+import 'package:sm64cdpy/core/theme/retro_accent.dart';
 import 'package:sm64cdpy/domain/entities/player_profile.dart';
 import 'package:sm64cdpy/l10n/app_localizations.dart';
 import 'package:sm64cdpy/presentation/providers/auto_install_provider.dart';
@@ -104,7 +105,11 @@ Widget _app(
     locale: Locale(language),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
-    theme: RetroTheme.materialTheme(retro.isDark, design: retro.design),
+    theme: RetroTheme.materialTheme(
+      retro.isDark,
+      design: retro.design,
+      retroAccent: retro.retroAccent,
+    ),
     builder: (context, child) => MediaQuery(
       data: MediaQuery.of(context).copyWith(
         textScaler: TextScaler.linear(scale),
@@ -139,7 +144,7 @@ void main() {
     expect(find.byKey(const ValueKey('manga-nav-1')), findsOneWidget);
     expect(router.routeInformationProvider.value.uri.path, '/');
     final bar = find.byKey(const ValueKey('manga-navigation'));
-    expect(tester.getSize(bar).height, lessThan(120));
+    expect(tester.getSize(bar).height, lessThan(100));
     final active = tester.widget<AnimatedScale>(
       find.byKey(const ValueKey('manga-nav-visual-0')),
     );
@@ -157,11 +162,42 @@ void main() {
       (resized.imageProvider as AssetImage).assetName,
       'assets/themes/manga/navigation/home.webp',
     );
-    expect(active.scale, 1);
+    expect(active.scale, closeTo(1.28, 0.001));
     expect(neighbour.scale, lessThan(active.scale));
     expect(find.byKey(const ValueKey('manga-play')), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  for (final dark in [false, true]) {
+    testWidgets('carousel focus follows the center and accent dark=$dark', (tester) async {
+      final router = _router();
+      addTearDown(router.dispose);
+      final theme = RetroTheme(dark, retroAccent: RetroAccent.coral);
+      await tester.pumpWidget(_app(router, theme, 'en', 1));
+      await tester.pumpAndSettle();
+      final pages = tester.widget<PageView>(
+        find.byKey(const ValueKey('manga-navigation-pages')),
+      ).controller!;
+      pages.jumpToPage(pages.initialPage + 1);
+      await tester.pumpAndSettle();
+      final centered = tester.widget<AnimatedScale>(
+        find.byKey(const ValueKey('manga-nav-visual-1')),
+      );
+      final previous = tester.widget<AnimatedScale>(
+        find.byKey(const ValueKey('manga-nav-visual-0')),
+      );
+      expect(centered.scale, greaterThan(previous.scale));
+      final halo = tester.widget<DecoratedBox>(
+        find.byKey(const ValueKey('manga-nav-halo-1')),
+      ).decoration as BoxDecoration;
+      expect(
+        halo.boxShadow!.single.color,
+        theme.accent.withValues(alpha: 0.65),
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   for (final design in AppThemeCatalog.designs) {
     for (final dark in [false, true]) {
