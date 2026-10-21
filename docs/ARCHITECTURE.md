@@ -98,8 +98,9 @@ conservan el drawer y sus dimensiones. No se usa blur ni capa oscura.
 Pruebas de regresión: viewport completo, ausencia de relleno opaco y última
 acción accesible al final, en ambos modos. Sigue pendiente ejecutar Flutter/CI.
 Cada etiqueta lleva una cápsula redondeada con borde blanco fino y gradiente
-translúcido, más tenue en oscuro, para sugerir una burbuja de jabón sin otra
-caja alrededor del icono. El relleno amarillo y el contorno negro son iguales
+azul en oscuro (#2387FF) o rojo en claro (#E53935). Los tres tonos del reflejo
+usan alfa 0.35: 65 % de transparencia, sin capa opaca bajo el gradiente.
+Sugiere una burbuja de jabón sin otra caja alrededor del icono. El relleno amarillo y el contorno negro son iguales
 en ambos modos. El halo y el subrayado conservan el acento personalizado.
 Los cinco iconos papercraft flotan sin cajas, divisores ni borde superior. Solo
 la imagen se escala: el icono centrado llega a 2 (52 dp, el doble de sus 26 dp base) y sus vecinos

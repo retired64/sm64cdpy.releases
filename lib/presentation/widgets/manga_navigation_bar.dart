@@ -516,6 +516,9 @@ class _MangaNavigationLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     const fill = Color(0xFFFFD83D);
+    final bubbleColor = retro.isDark
+        ? const Color(0xFF2387FF)
+        : const Color(0xFFE53935);
     // El borde oscuro conserva la silueta del amarillo sobre la burbuja.
     const outline = Colors.black;
     final style = TextStyle(
@@ -540,9 +543,12 @@ class _MangaNavigationLabel extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.white.withValues(alpha: retro.isDark ? 0.16 : 0.6),
-              retro.surface.withValues(alpha: retro.isDark ? 0.08 : 0.22),
-              Colors.white.withValues(alpha: retro.isDark ? 0.06 : 0.32),
+              // 65 % transparente: alfa 0.35 también en los reflejos.
+              Color.lerp(bubbleColor, Colors.white, 0.22)!
+                  .withValues(alpha: 0.35),
+              bubbleColor.withValues(alpha: 0.35),
+              Color.lerp(bubbleColor, Colors.black, 0.08)!
+                  .withValues(alpha: 0.35),
             ],
           ),
         ),

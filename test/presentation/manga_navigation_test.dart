@@ -314,6 +314,14 @@ void main() {
           ).decoration as BoxDecoration;
           expect(bubble.borderRadius, BorderRadius.circular(999));
           expect(bubble.gradient!.colors.every((color) => color.a < 1), isTrue);
+          for (final color in bubble.gradient!.colors) {
+            expect(color.a, closeTo(0.35, 0.005));
+          }
+          expect(
+            bubble.gradient!.colors[1],
+            (dark ? const Color(0xFF2387FF) : const Color(0xFFE53935))
+                .withValues(alpha: 0.35),
+          );
         }
         expect(tester.takeException(), isNull);
       });

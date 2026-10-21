@@ -44,6 +44,8 @@
 - [ ] Regenerar mangaNavExplore en CI y comprobar transparencia en teléfono.
 - [x] Corregir franja persistente: quitar SafeArea global y pasar la separación
       a footers/padding desplazables; revisar listas hermanas y acción final.
+- [x] Cápsulas azules en oscuro y rojas en claro, con 65 % de transparencia
+      en todos los tonos del gradiente; mantener texto y barra transparente.
 - [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.
