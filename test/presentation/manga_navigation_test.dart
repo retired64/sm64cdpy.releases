@@ -234,12 +234,17 @@ void main() {
           find.byType(DrawerMenuButton),
           manga ? findsNothing : findsOneWidget,
         );
+        expect(tester.widget<Scaffold>(find.byType(Scaffold)).extendBody, manga);
         if (manga) {
           final body = tester.getRect(find.byType(CustomScrollView));
           final bar = tester.getRect(
             find.byKey(const ValueKey('manga-navigation')),
           );
           expect(body.bottom, lessThanOrEqualTo(bar.top));
+          final backdrop = find.byType(ThemeBackdrop);
+          if (backdrop.evaluate().isNotEmpty) {
+            expect(tester.getRect(backdrop).bottom, greaterThanOrEqualTo(bar.bottom));
+          }
           final surface = tester.widget<Material>(
             find.byKey(const ValueKey('manga-navigation')),
           ).color!;
@@ -291,6 +296,14 @@ void main() {
           _app(router, const RetroTheme(false), language, 1.6),
         );
         await tester.pumpAndSettle();
+        final exploreLabel = tester.widget<Text>(
+          find.byKey(const ValueKey('manga-nav-label-fill-1')),
+        );
+        expect(exploreLabel.data, switch (language) {
+          'es' => 'MODS',
+          'pt' => 'EXPLORAR',
+          _ => 'EXPLORE',
+        });
         final pages = find.byKey(const ValueKey('manga-navigation-pages'));
         await tester.drag(pages, const Offset(-180, 0));
         await tester.pumpAndSettle();

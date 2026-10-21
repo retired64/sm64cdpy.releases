@@ -116,9 +116,21 @@ class _AppShellState extends ConsumerState<AppShell> {
         (retro.showHalftone &&
             !_noHalftoneRoutes.contains(widget.currentRoute));
 
+    // El fondo llega detrás de la tira; el contenido respeta el espacio
+    // que Scaffold expone mediante MediaQuery cuando extendBody está activo.
+    final pageContent = bottomNavigation
+        ? SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            child: widget.child,
+          )
+        : widget.child;
+
     return MangaNavigationScope(
       enabled: bottomNavigation,
       child: Scaffold(
+        extendBody: bottomNavigation,
         backgroundColor: retro.background,
         drawer: bottomNavigation
             ? null
@@ -155,10 +167,10 @@ class _AppShellState extends ConsumerState<AppShell> {
                           ),
                         ),
                       ),
-                      ThemePageFrame(child: widget.child),
+                      ThemePageFrame(child: pageContent),
                     ],
                   )
-                : widget.child,
+                : pageContent,
           ),
         ),
       ),

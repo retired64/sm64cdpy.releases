@@ -80,8 +80,11 @@ permanece en Semantics. Jugar vuelve al bloque original de Inicio para todos
 los temas, reutilizando su protección contra doble toque y la guía de instalación.
 La altura base es de aproximadamente 48 dp más SafeArea y crece con la escala
 de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa.
-La superficie de la tira es transparente: deja visible el fondo original del
-Scaffold, sin capa oscura ni extensión sobre el contenido. No pinta trama ni capa
+La superficie de la tira es transparente y AppShell usa extendBody solo para
+Retro Manga: el fondo de cada pantalla continúa detrás de los iconos. SafeArea
+protege únicamente el contenido interactivo con el padding inferior que
+Scaffold expone en MediaQuery; el backdrop puede ocupar toda la altura.
+El teclado oculta la tira como antes. Los otros temas no usan extendBody. No pinta trama ni capa
 de fondo propia; conserva el espacio reservado de 48 dp y las cápsulas de
 las etiquetas. No usa BackdropFilter/blur.
 Cada etiqueta lleva una cápsula redondeada con borde blanco fino y gradiente
@@ -107,6 +110,8 @@ en ambos modos. Una única Semantics excluye las dos capas
 para evitar anuncios duplicados. La ruta abierta conserva el subrayado de acento.
 La clave mangaNavTools usa Game Tool / Taller / Oficina solo en la tira;
 mangaNavMore usa MAS sin tilde en español solo en este menú.
+mangaNavExplore usa Mods en español (Explore / Explorar en inglés/portugués),
+sin cambiar los títulos de sección ni el panel de destinos.
 el título completo Herramientas y sus equivalentes sigue en el panel.
 Regenerar localizaciones con flutter gen-l10n antes del análisis o compilación;
 no se editan los Dart generados manualmente.

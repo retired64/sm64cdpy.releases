@@ -310,7 +310,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     final l = AppLocalizations.of(context);
     final entries = [
       (label: l.navHome, icon: Icons.home_outlined),
-      (label: l.sectionExplore, icon: Icons.explore_outlined),
+      (label: l.mangaNavExplore, icon: Icons.explore_outlined),
       (label: l.navLibrary, icon: Icons.inventory_2_outlined),
       (label: l.mangaNavTools, icon: Icons.sports_esports_outlined),
       (label: l.mangaNavMore, icon: Icons.dashboard_outlined),

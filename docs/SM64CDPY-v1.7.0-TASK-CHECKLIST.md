@@ -39,6 +39,9 @@
 - [ ] Regenerar localizaciones (mangaNavTools en cinco ARB) y validar Flutter.
 - [x] Carrusel sin trama de fondo; Game Tool en inglés y MAS sin tilde
       en español, limitados a las etiquetas de navegación.
+- [x] Fondo de pantalla extendido detrás del carrusel transparente, contenido
+      protegido por SafeArea y Mods como nombre de Explorar en español.
+- [ ] Regenerar mangaNavExplore en CI y comprobar transparencia en teléfono.
 - [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.
