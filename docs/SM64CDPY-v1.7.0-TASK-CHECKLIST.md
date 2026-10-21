@@ -24,6 +24,8 @@
 - [x] Generar localizaciones, ejecutar formato, análisis y tests en Flutter/CI:
       Testing 39494649064, 428 pruebas correctas para bd74160.
 - [x] Compactar a una fila, destacar la sección activa y conservar el área táctil.
+- [x] Cinco assets papercraft WebP, decodificación acotada, etiquetas accesibles
+      y tests de empaquetado; sin cajas ni borde superior en la tira.
 - [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
 - [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
       gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.

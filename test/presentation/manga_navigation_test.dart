@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -115,6 +116,17 @@ Widget _app(
 );
 
 void main() {
+  testWidgets('all five papercraft assets are bundled', (tester) async {
+    for (final name in ['home', 'explore', 'library', 'tools', 'more']) {
+      final bytes = await rootBundle.load(
+        'assets/themes/manga/navigation/$name.webp',
+      );
+      expect(bytes.lengthInBytes, greaterThan(0));
+      expect(bytes.getUint32(0), 0x52494646); // Cabecera RIFF/WebP.
+      expect(bytes.getUint32(8), 0x57454250);
+    }
+  });
+
   testWidgets('Home has neighbours on both sides without navigating', (
     tester,
   ) async {
@@ -127,12 +139,23 @@ void main() {
     expect(find.byKey(const ValueKey('manga-nav-1')), findsOneWidget);
     expect(router.routeInformationProvider.value.uri.path, '/');
     final bar = find.byKey(const ValueKey('manga-navigation'));
-    expect(tester.getSize(bar).height, lessThan(100));
+    expect(tester.getSize(bar).height, lessThan(120));
     final active = tester.widget<AnimatedScale>(
       find.byKey(const ValueKey('manga-nav-visual-0')),
     );
     final neighbour = tester.widget<AnimatedScale>(
       find.byKey(const ValueKey('manga-nav-visual-1')),
+    );
+    final image = tester.widget<Image>(
+      find.byKey(const ValueKey('manga-nav-image-0')),
+    );
+    expect(image.excludeFromSemantics, isTrue);
+    final resized = image.image as ResizeImage;
+    expect(resized.width, 256);
+    expect(resized.height, 256);
+    expect(
+      (resized.imageProvider as AssetImage).assetName,
+      'assets/themes/manga/navigation/home.webp',
     );
     expect(active.scale, 1);
     expect(neighbour.scale, lessThan(active.scale));

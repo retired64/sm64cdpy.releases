@@ -63,6 +63,7 @@ flutter:
     - assets/player3d/
     - assets/themes/minish/
     - assets/themes/mk64/
+    - assets/themes/manga/navigation/
 
   fonts:
     - family: TypefaceMario64

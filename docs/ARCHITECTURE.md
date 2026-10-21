@@ -78,11 +78,26 @@ La tira pasa a una única fila de icono y nombre, sin instrucción visible,
 checks/flechas inferiores ni lanzamiento duplicado. La ayuda de deslizamiento
 permanece en Semantics. Jugar vuelve al bloque original de Inicio para todos
 los temas, reutilizando su protección contra doble toque y la guía de instalación.
-La altura base es de aproximadamente 89 dp más SafeArea y crece con la escala
-de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa;
-solo su dibujo se reduce. La sección activa mantiene escala 1, color de acento
-y sombra mayor; las vecinas usan 0.78, o 0.86 al centrarlas para explorar.
+La altura base es de aproximadamente 109 dp más SafeArea y crece con la escala
+de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa.
+Los cinco iconos papercraft flotan sin cajas, divisores ni borde superior. Solo
+la imagen se escala: la sección activa usa 1, las vecinas 0.74 y la centrada
+para explorar 0.86. Las etiquetas conservan su tamaño accesible y el color de
+tinta; la activa añade peso y subrayado con el acento del usuario.
 Deslizar sigue sin cambiar la selección real ni navegar.
+
+Los originales PNG y sus prompts de imagegen están en
+output/imagegen/papercraft-navigation/. Solo assets/themes/manga/navigation/
+está registrado en pubspec: cinco WebP RGBA de 256 × 256, calidad 85 y alfa
+preservado (unos 68 KiB en total). Cada Image.asset limita su decodificación a
+256 × 256, comparte el ImageCache estándar de Flutter y aísla repintados con
+RepaintBoundary. Las cinco imágenes decodificadas ocupan aproximadamente
+1.25 MiB de píxeles; no se precargan originales ni se crean caches persistentes.
+Flutter administra la expulsión del ImageCache. Si falla un asset, el icono
+semántico equivalente conserva una acción visible. Las etiquetas siguen usando
+las traducciones existentes. Los demás temas y el engine del overlay no cargan
+esta navegación. Las imágenes son decorativas en Semantics para no duplicar
+el nombre del botón.
 
 Los tests de la tira verifican altura compacta, jerarquía, área táctil y ausencia
 de Jugar. El lanzamiento y su guía siguen cubiertos por how_to_play_test y los

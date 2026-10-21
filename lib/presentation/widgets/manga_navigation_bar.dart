@@ -9,6 +9,14 @@ import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
 import 'app_snackbar.dart';
 
+const _navigationAssets = [
+  'assets/themes/manga/navigation/home.webp',
+  'assets/themes/manga/navigation/explore.webp',
+  'assets/themes/manga/navigation/library.webp',
+  'assets/themes/manga/navigation/tools.webp',
+  'assets/themes/manga/navigation/more.webp',
+];
+
 typedef _Destination = ({String label, IconData icon, String route});
 
 /// La ruta es la selección real. Deslizar solo explora las viñetas disponibles.
@@ -314,51 +322,45 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     return Material(
       key: const ValueKey('manga-navigation'),
       color: retro.background,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: retro.border, width: retro.borderWidth(3)),
-          ),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: HalftoneBackground(
-                  color: retro.ink.withValues(alpha: 0.07),
-                ),
+      child: SafeArea(
+        top: false,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: HalftoneBackground(
+                color: retro.ink.withValues(alpha: 0.035),
               ),
-              SizedBox(
-                // Una sola fila; crece con el texto accesible, no con la pantalla.
-                height: 60 + labelHeight,
-                child: Semantics(
-                  hint: l.mangaNavHint,
-                  child: PageView.custom(
-                    key: const ValueKey('manga-navigation-pages'),
-                    controller: _pages,
-                    onPageChanged: (index) => setState(
-                      () => _focused = index % entries.length,
-                    ),
-                    childrenDelegate: SliverChildBuilderDelegate((context, page) {
-                      final index = page % entries.length;
-                      final item = entries[index];
-                      return _MangaNavigationTile(
-                        index: index,
-                        label: item.label,
-                        icon: item.icon,
-                        selected: index == selected,
-                        focused: index == _focused,
-                        labelHeight: labelHeight,
-                        reduceMotion: reduceMotion,
-                        onTap: _busy ? null : () => unawaited(_select(index)),
-                      );
-                    }, addSemanticIndexes: false),
+            ),
+            SizedBox(
+              // Siluetas flotantes; solo el texto accesible aumenta la altura.
+              height: 80 + labelHeight,
+              child: Semantics(
+                hint: l.mangaNavHint,
+                child: PageView.custom(
+                  key: const ValueKey('manga-navigation-pages'),
+                  controller: _pages,
+                  onPageChanged: (index) => setState(
+                    () => _focused = index % entries.length,
                   ),
+                  childrenDelegate: SliverChildBuilderDelegate((context, page) {
+                    final index = page % entries.length;
+                    final item = entries[index];
+                    return _MangaNavigationTile(
+                      index: index,
+                      label: item.label,
+                      icon: item.icon,
+                      asset: _navigationAssets[index],
+                      selected: index == selected,
+                      focused: index == _focused,
+                      labelHeight: labelHeight,
+                      reduceMotion: reduceMotion,
+                      onTap: _busy ? null : () => unawaited(_select(index)),
+                    );
+                  }, addSemanticIndexes: false),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -370,6 +372,7 @@ class _MangaNavigationTile extends StatelessWidget {
     required this.index,
     required this.label,
     required this.icon,
+    required this.asset,
     required this.selected,
     required this.focused,
     required this.labelHeight,
@@ -378,7 +381,7 @@ class _MangaNavigationTile extends StatelessWidget {
   });
 
   final int index;
-  final String label;
+  final String label, asset;
   final IconData icon;
   final bool selected, focused, reduceMotion;
   final double labelHeight;
@@ -387,7 +390,6 @@ class _MangaNavigationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final foreground = selected ? retro.onColor(retro.accent) : retro.inkDim;
     return Semantics(
       button: true,
       selected: selected,
@@ -396,61 +398,60 @@ class _MangaNavigationTile extends StatelessWidget {
         child: InkWell(
           key: ValueKey('manga-nav-$index'),
           onTap: onTap,
-          child: Center(
-            // Solo escala el dibujo. El objetivo táctil conserva toda la celda.
-            child: AnimatedScale(
-              key: ValueKey('manga-nav-visual-$index'),
-              scale: selected ? 1 : (focused ? 0.86 : 0.78),
-              duration: reduceMotion
-                  ? Duration.zero
-                  : const Duration(milliseconds: 160),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.skewX(-retro.chipSkew),
-                        child: DecoratedBox(
-                          decoration: retro.surfaceDecoration(
-                            color: selected ? retro.accent : retro.surface,
-                            shadowDx: selected ? 3 : 1,
-                            shadowDy: selected ? 3 : 1,
-                          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 64,
+                  child: AnimatedScale(
+                    key: ValueKey('manga-nav-visual-$index'),
+                    scale: selected ? 1 : (focused ? 0.86 : 0.74),
+                    duration: reduceMotion
+                        ? Duration.zero
+                        : const Duration(milliseconds: 160),
+                    child: RepaintBoundary(
+                      child: Image.asset(
+                        asset,
+                        key: ValueKey('manga-nav-image-$index'),
+                        width: 64,
+                        height: 64,
+                        // Decodificación acotada y compartida por ImageCache.
+                        cacheWidth: 256,
+                        cacheHeight: 256,
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.medium,
+                        excludeFromSemantics: true,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          icon,
+                          size: 36,
+                          color: retro.ink,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 5,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(icon, size: 24, color: foreground),
-                          const SizedBox(height: 3),
-                          SizedBox(
-                            height: labelHeight,
-                            child: Center(
-                              child: Text(
-                                retro.displayLabel(label),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: retro
-                                    .body(size: 11, color: foreground)
-                                    .copyWith(fontWeight: FontWeight.w800),
-                              ),
-                            ),
-                          ),
-                        ],
+                  ),
+                ),
+                const SizedBox(height: 3),
+                SizedBox(
+                  height: labelHeight,
+                  child: Center(
+                    child: Text(
+                      retro.displayLabel(label),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: retro.body(size: 11, color: retro.ink).copyWith(
+                        fontWeight: selected ? FontWeight.w900 : FontWeight.w500,
+                        decoration: selected ? TextDecoration.underline : null,
+                        decorationColor: retro.accent,
+                        decorationThickness: 2,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
