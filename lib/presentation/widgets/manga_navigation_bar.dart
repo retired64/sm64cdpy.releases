@@ -318,13 +318,10 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     final labelHeight = MediaQuery.textScalerOf(context).scale(11) * 1.3;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final selected = _group(widget.currentRoute);
-    // Tinta translúcida sin blur: conserva el espacio reservado al contenido.
-    final backdrop = Color.lerp(retro.background, retro.shadowColor, 0.85)!
-        .withValues(alpha: 0.88);
-    final foreground = retro.onColor(Color.alphaBlend(backdrop, retro.background));
+    final foreground = retro.onColor(retro.background);
     return Material(
       key: const ValueKey('manga-navigation'),
-      color: backdrop,
+      color: Colors.transparent,
       child: SafeArea(
         top: false,
         child: Stack(
@@ -523,10 +520,9 @@ class _MangaNavigationLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final fill = retro.isDark
-        ? const Color(0xFF65B9FF)
-        : const Color(0xFFFFD83D);
-    final outline = retro.isDark ? Colors.white : Colors.black;
+    const fill = Color(0xFFFFD83D);
+    // El borde oscuro conserva la silueta del amarillo sobre la burbuja.
+    const outline = Colors.black;
     final style = TextStyle(
       fontFamily: mario64Theme.headingFontFamily,
       fontFamilyFallback: mario64Theme.headingFontFamilyFallback,
@@ -537,37 +533,59 @@ class _MangaNavigationLabel extends StatelessWidget {
     return Semantics(
       label: label,
       excludeSemantics: true,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Text(
-            label,
-            key: ValueKey('manga-nav-label-outline-$index'),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-              foreground: Paint()
-                ..style = PaintingStyle.stroke
-                ..strokeWidth = 1.5
-                ..strokeJoin = StrokeJoin.round
-                ..color = outline,
-            ),
+      child: DecoratedBox(
+        key: ValueKey('manga-nav-label-bubble-$index'),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: retro.isDark ? 0.22 : 0.7),
+            width: 0.7,
           ),
-          Text(
-            label,
-            key: ValueKey('manga-nav-label-fill-$index'),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-              color: fill,
-              decoration: selected ? TextDecoration.underline : null,
-              decorationColor: retro.accent,
-              decorationThickness: 2,
-            ),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white.withValues(alpha: retro.isDark ? 0.16 : 0.6),
+              retro.surface.withValues(alpha: retro.isDark ? 0.08 : 0.22),
+              Colors.white.withValues(alpha: retro.isDark ? 0.06 : 0.32),
+            ],
           ),
-        ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0.5),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Text(
+                label,
+                key: ValueKey('manga-nav-label-outline-$index'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: style.copyWith(
+                  foreground: Paint()
+                    ..style = PaintingStyle.stroke
+                    ..strokeWidth = 1.5
+                    ..strokeJoin = StrokeJoin.round
+                    ..color = outline,
+                ),
+              ),
+              Text(
+                label,
+                key: ValueKey('manga-nav-label-fill-$index'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: style.copyWith(
+                  color: fill,
+                  decoration: selected ? TextDecoration.underline : null,
+                  decorationColor: retro.accent,
+                  decorationThickness: 2,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

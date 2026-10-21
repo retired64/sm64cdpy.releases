@@ -30,8 +30,8 @@
       de accesibilidad; tests de foco, acento claro/oscuro y ruta sin cambiar.
 - [x] Reducir la barra a unos 48 dp (sin SafeArea), con tooltip y objetivos
       táctiles de 48 dp; permitir expansión con texto accesible.
-- [x] Fondo de tinta semitransparente, sin blur; contraste de etiquetas
-      calculado y comprobado en tests para claro/oscuro.
+- [x] Fondo transparente sin capa oscura; cápsulas sutiles para etiquetas,
+      amarillo/contorno negro en ambos modos y contraste interno en tests.
 - [x] Icono centrado a escala 2 (52 dp) elevado sin cubrir la etiqueta;
       pruebas de tamaño y separación visual, conservando la barra compacta.
 - [x] Fuente Mario limitada a etiquetas del carrusel, doble capa de contorno

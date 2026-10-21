@@ -80,11 +80,13 @@ permanece en Semantics. Jugar vuelve al bloque original de Inicio para todos
 los temas, reutilizando su protección contra doble toque y la guía de instalación.
 La altura base es de aproximadamente 48 dp más SafeArea y crece con la escala
 de texto. Cada celda ocupa el 32 % del ancho y conserva su área táctil completa.
-El fondo combina papel y tinta del tema (85 % de tinta) con opacidad 88 %.
-Se compone sobre el fondo del Scaffold; no se extiende sobre el contenido ni
-requiere BackdropFilter/blur. Las etiquetas y la trama usan un primer plano
-calculado con onColor sobre el color compuesto para mantener contraste en
-claro y oscuro. La opacidad no afecta a iconos, textos ni halo de acento.
+La superficie de la tira es transparente: deja visible el fondo original del
+Scaffold, sin capa oscura ni extensión sobre el contenido. Conserva la trama
+tenue y el espacio reservado de 48 dp; no usa BackdropFilter/blur.
+Cada etiqueta lleva una cápsula redondeada con borde blanco fino y gradiente
+translúcido, más tenue en oscuro, para sugerir una burbuja de jabón sin otra
+caja alrededor del icono. El relleno amarillo y el contorno negro son iguales
+en ambos modos. El halo y el subrayado conservan el acento personalizado.
 Los cinco iconos papercraft flotan sin cajas, divisores ni borde superior. Solo
 la imagen se escala: el icono centrado llega a 2 (52 dp, el doble de sus 26 dp base) y sus vecinos
 a 0.62 (unos 16 dp). AnimatedBuilder observa el PageController y calcula la
@@ -99,8 +101,8 @@ Al reducir movimiento, el énfasis cambia al centro sin interpolación adicional
 La etiqueta subrayada y Semantics.selected siguen indicando la ruta abierta,
 aunque se explore otro grupo. Solo las cinco etiquetas del carrusel reutilizan headingFontFamily de
 mario64Theme (TypefaceMario64), sin cambiar el tema global ni los paneles.
-Dos Text superpuestos dibujan relleno y contorno de 1.5 dp: amarillo/negro en
-claro y azul vivo/blanco en oscuro. Una única Semantics excluye las dos capas
+Dos Text superpuestos dibujan relleno amarillo y contorno negro de 1.5 dp
+en ambos modos. Una única Semantics excluye las dos capas
 para evitar anuncios duplicados. La ruta abierta conserva el subrayado de acento.
 La clave mangaNavTools usa Workshop / Taller / Oficina solo en la tira;
 el título completo Herramientas y sus equivalentes sigue en el panel.

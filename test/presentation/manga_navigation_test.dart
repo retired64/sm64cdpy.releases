@@ -243,11 +243,7 @@ void main() {
           final surface = tester.widget<Material>(
             find.byKey(const ValueKey('manga-navigation')),
           ).color!;
-          expect(surface.a, lessThan(1));
-          final background = Color.alphaBlend(
-            surface,
-            RetroTheme(dark, design: design).background,
-          );
+          expect(surface, Colors.transparent);
           final label = tester.widget<Text>(
             find.byKey(const ValueKey('manga-nav-label-fill-2')),
           );
@@ -256,11 +252,17 @@ void main() {
             find.byKey(const ValueKey('manga-nav-label-outline-2')),
           ).style!.foreground!;
           expect(outline.style, PaintingStyle.stroke);
-          expect(outline.color, dark ? Colors.white : Colors.black);
+          expect(outline.color, Colors.black);
+          expect(label.style!.color, const Color(0xFFFFD83D));
           expect(
-            RetroAccent.contrast(label.style!.color!, background),
+            RetroAccent.contrast(label.style!.color!, outline.color),
             greaterThanOrEqualTo(4.5),
           );
+          final bubble = tester.widget<DecoratedBox>(
+            find.byKey(const ValueKey('manga-nav-label-bubble-2')),
+          ).decoration as BoxDecoration;
+          expect(bubble.borderRadius, BorderRadius.circular(999));
+          expect(bubble.gradient!.colors.every((color) => color.a < 1), isTrue);
         }
         expect(tester.takeException(), isNull);
       });
