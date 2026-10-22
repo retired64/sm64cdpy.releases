@@ -3,6 +3,7 @@ package mods.sm64cdpy
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.SystemClock
+import android.util.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -20,21 +21,32 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             it.setMethodCallHandler(this)
         }
         val soundPool = SoundPool.Builder().setMaxStreams(1).setAudioAttributes(
-            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
         ).build()
         pool = soundPool
         soundPool.setOnLoadCompleteListener { _, id, status ->
-            if (status == 0) ready.add(id)
+            if (status == 0) {
+                ready.add(id)
+                Log.d("MangaMenuAudio", "Sample preparado: $id")
+            } else {
+                Log.w("MangaMenuAudio", "No se pudo decodificar sample $id: $status")
+            }
         }
         for ((name, file) in mapOf("press" to "menu-button-press.wav", "slide" to "slide.mp3")) {
             try {
                 val key = binding.flutterAssets.getAssetFilePathByName("assets/audio/manga/$file")
                 binding.applicationContext.assets.openFd(key).use { descriptor ->
-                    samples[name] = soundPool.load(descriptor, 1)
+                    val id = soundPool.load(descriptor, 1)
+                    if (id != 0) {
+                        samples[name] = id
+                    } else {
+                        Log.w("MangaMenuAudio", "SoundPool rechazó el efecto $name")
+                    }
                 }
-            } catch (_: Exception) {
-                // El menú sigue funcionando si falta un recurso o no puede decodificarse.
+            } catch (error: Exception) {
+                // Conservar navegación, pero permitir diagnosticar el fallo en logcat.
+                Log.w("MangaMenuAudio", "No se pudo cargar el efecto $name", error)
             }
         }
     }
@@ -52,7 +64,12 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 val now = SystemClock.elapsedRealtime()
                 if (id != null && ready.contains(id) && now - lastPlay >= 75) {
                     lastPlay = now
-                    pool?.play(id, 0.65f, 0.65f, 1, 0, 1f)
+                    try {
+                        val stream = pool?.play(id, 0.65f, 0.65f, 1, 0, 1f) ?: 0
+                        if (stream == 0) Log.w("MangaMenuAudio", "Reproducción rechazada: $name")
+                    } catch (error: RuntimeException) {
+                        Log.w("MangaMenuAudio", "No se pudo reproducir $name", error)
+                    }
                 }
                 result.success(null)
             }

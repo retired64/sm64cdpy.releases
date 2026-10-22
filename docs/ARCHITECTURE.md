@@ -621,7 +621,7 @@ tipos de botones entre todos los diseños disponibles en claro y oscuro.
 
 `MangaMenuAudioPlugin` se registra solo en el engine principal. SoundPool
 precarga los dos efectos de `assets/audio/manga/`, mantiene una sola voz y limita
-emisiones a una cada 75 ms. Usa sonificación de Android al 65% del volumen
+emisiones a una cada 75 ms. Usa audio de juego (`USAGE_GAME`) al 65% del volumen multimedia
 correspondiente, sin permisos, foco de audio exclusivo ni servicio de fondo.
 Un sample no preparado se omite; no se encolan reproducciones tardías.
 El pool y el listener se liberan al destruir el engine.
@@ -655,3 +655,28 @@ valores predeterminados y combinarlos antes de la interpolación.
 La prueba de idioma identifica sus cuatro grupos por clave, incluyendo acento,
 en vez de asumir el antiguo total de tres. Los dos fallos de esta ejecución son
 anteriores a la integración del audio; nueva ejecución de CI pendiente.
+
+### Audio inaudible: diagnóstico del APK — 2026-10-22
+
+Se inspeccionó el APK del Actions 39731678882 (`87fdff3`): ambos efectos están en
+`assets/flutter_assets/assets/audio/manga/`, almacenados sin compresión. Por ello
+no es necesario cambiar pubspec ni añadir reglas noCompress. El WAV es PCM mono
+16 bits/32 kHz, 0,401 s, con señal no silenciosa. La preferencia y los eventos
+sí llegan al servicio por el flujo existente.
+
+Se reemplaza `USAGE_ASSISTANCE_SONIFICATION` (sonidos del sistema) por
+`USAGE_GAME` (volumen multimedia): la política de volumen del sistema puede
+silenciar el primero independientemente del volumen multimedia. MainActivity
+selecciona STREAM_MUSIC para las teclas de volumen, sin alterar el nivel elegido
+por el usuario. Esta es una causa probable: no se pudo confirmar el estado del
+mezclador del teléfono porque adb local no inicia por incompatibilidad de libs.
+
+Carga rechazada, error de decodificación, excepción de asset y reproducción
+rechazada se registran con tag `MangaMenuAudio`; el bridge Dart también registra
+fallos del canal. No se bloquea la UI, no hay audio diferido ni reintentos
+automáticos. Se mantienen mute persistente, parada por lifecycle y aislamiento
+del overlay. Pruebas comprueban assets y payloads press/slide del canal; CI y
+escucha en dispositivo siguen pendientes tras la corrección.
+
+Referencias: https://source.android.com/docs/core/audio/attributes y
+https://developer.android.com/reference/android/content/res/AssetManager#openFd(java.lang.String).

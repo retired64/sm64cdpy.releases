@@ -17,7 +17,8 @@
         "Retro Manga introduces a Mario Run-inspired floating Menu button with multicolored Mario-font lettering that lifts above a bottom-anchored swipeable comic-panel navigation strip with five lightweight handcrafted paper icons, including a simple Home mushroom, with bold black-and-white sticker borders with content scrolling behind the theme-adapted translucent strip and complete labels without ellipsis and bubble-shaped labels tinted red in light mode and blue in dark mode with 65% transparency, a half-height carousel with 48 dp touch targets and a double-size centered icon with an accessibility-accent halo and outlined Mario-font labels; Play remains on Home and the other themes keep their drawer.",
         "The open navigation menu shows only a smaller close icon while keeping a comfortable touch target.",
         "Interface themes are now Minimal, Retro Manga and Mario Kart 64. Previous Mario 64, SM64 Intro and Minish Cap selections fall back to Retro Manga, preserving brightness.",
-        "Retro Manga adds lightweight menu sound effects with an option to disable them in Settings."
+        "Retro Manga adds lightweight menu sound effects with an option to disable them in Settings.",
+        "Menu effects now follow multimedia volume instead of system interface sounds."
       ],
       "sections": [
         {
@@ -77,7 +78,8 @@
         "Retro Manga incorpora un botón Menú flotante inspirado en Mario Run con letras multicolor en fuente Mario que se eleva sobre una barra de viñetas deslizable anclada abajo con cinco iconos cartoon de papel, incluido un champiñón sencillo para Inicio, con bordes negros y blancos de pegatina con contenido que se desplaza detrás de una barra semitransparente adaptada al tema y etiquetas completas sin puntos suspensivos y etiquetas en burbujas rojas en claro y azules en oscuro con 65 % de transparencia, un carrusel con la mitad de altura y áreas táctiles de 48 dp, y un icono central al doble de tamaño con halo del acento de accesibilidad y etiquetas con fuente Mario y contorno; Jugar permanece en Inicio y los demás temas conservan su drawer.",
         "El menú de navegación abierto muestra solo un cierre más pequeño y conserva un área táctil cómoda.",
         "Los temas disponibles son Minimal, Retro Manga y Mario Kart 64. Las selecciones anteriores de Mario 64, SM64 Intro y Minish Cap pasan a Retro Manga conservando el modo claro u oscuro.",
-        "Retro Manga añade efectos de sonido ligeros al menú, con opción para desactivarlos en Ajustes."
+        "Retro Manga añade efectos de sonido ligeros al menú, con opción para desactivarlos en Ajustes.",
+        "Los efectos del menú ahora usan el volumen multimedia en lugar del de sonidos del sistema."
       ],
       "sections": [
         {
@@ -137,7 +139,8 @@
         "Retro Manga ganha um botão Menu flutuante inspirado em Mario Run com letras multicoloridas na fonte Mario que se eleva sobre uma barra de quadrinhos deslizante fixada na parte inferior com cinco ícones cartoon de papel, incluindo um cogumelo simples para Início, com contornos pretos e brancos de adesivo com conteúdo rolando atrás da barra translúcida adaptada ao tema e rótulos completos sem reticências e rótulos em bolhas vermelhas no modo claro e azuis no modo escuro com 65% de transparência, um carrossel com metade da altura e áreas de toque de 48 dp, e um ícone central com o dobro do tamanho e halo da cor de destaque de acessibilidade, com rótulos na fonte Mario e contorno; Jogar permanece no Início e os demais temas mantêm o menu lateral.",
         "O menu de navegação aberto mostra apenas um ícone de fechar menor e mantém uma área de toque confortável.",
         "Os temas disponíveis são Minimal, Retro Manga e Mario Kart 64. Seleções anteriores de Mario 64, SM64 Intro e Minish Cap passam para Retro Manga, preservando o modo claro ou escuro.",
-        "Retro Manga adiciona efeitos sonoros leves ao menu, com opção de desativá-los nas Configurações."
+        "Retro Manga adiciona efeitos sonoros leves ao menu, com opção de desativá-los nas Configurações.",
+        "Os efeitos do menu agora usam o volume de mídia em vez dos sons do sistema."
       ],
       "sections": [
         {

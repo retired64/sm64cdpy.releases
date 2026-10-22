@@ -14,6 +14,14 @@
 
 ## How to use this checklist
 
+### Audio inaudible — 2026-10-22
+
+- [x] APK Testing 39731678882 inspeccionado: ambos assets presentes sin compresión.
+- [x] Canal de juego/multimedia y teclas de volumen alineados; sin forzar nivel.
+- [x] Registros nativos de carga/decodificación/reproducción, errores Dart visibles.
+- [x] Prueba de assets y payloads nativos para ambos efectos.
+- [ ] Repetir CI y escuchar en teléfono con volumen multimedia y preferencia activos.
+
 ### Sonidos del menú Retro Manga — 2026-10-21
 
 - [x] Efectos originales integrados como assets locales, SoundPool de una voz.

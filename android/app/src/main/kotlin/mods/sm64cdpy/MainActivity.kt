@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.media.AudioManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -18,6 +19,9 @@ class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
+        // Los botones físicos ajustan el mismo volumen que los efectos del menú.
+        // Esto elige el canal; no cambia ni fuerza el volumen del usuario.
+        volumeControlStream = AudioManager.STREAM_MUSIC
         createNotificationChannel()
     }
 

@@ -61,6 +61,29 @@ void main() {
     }
   });
 
+  test('effects are bundled and requests reach the native channel', () async {
+    for (final file in ['menu-button-press.wav', 'slide.mp3']) {
+      final data = await rootBundle.load('assets/audio/manga/$file');
+      expect(data.lengthInBytes, greaterThan(0));
+    }
+    const channel = MethodChannel('sm64cdpy/manga_menu_audio');
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    final calls = <MethodCall>[];
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      calls.add(call);
+      return null;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+    final audio = MangaMenuAudio();
+    await audio.prepare();
+    await audio.play('press');
+    await audio.play('slide');
+    await audio.stop();
+    expect(calls.map((call) => call.method), ['prepare', 'play', 'play', 'stop']);
+    expect(calls[1].arguments, {'sound': 'press'});
+    expect(calls[2].arguments, {'sound': 'slide'});
+  });
+
   test('optional native audio failures do not escape to navigation', () async {
     const channel = MethodChannel('sm64cdpy/manga_menu_audio');
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
