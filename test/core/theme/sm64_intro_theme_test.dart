@@ -7,7 +7,7 @@ import '../../presentation/mario_rom_fixture.dart';
 
 void main() {
   test('Intro persists independently and keeps bundled typography', () {
-    expect(AppThemeId.fromStorage('sm64_intro'), AppThemeId.sm64Intro);
+    expect(AppThemeId.fromStorage('sm64_intro'), AppThemeId.retroManga);
     for (final dark in [false, true]) {
       final intro = RetroTheme(
         dark,

@@ -15,8 +15,15 @@ void main() {
     expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);
     expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);
     expect(
+      AppThemeCatalog.designs.map((design) => design.id).toList(),
+      [AppThemeId.minimal, AppThemeId.retroManga, AppThemeId.marioKart64],
+    );
+    for (final key in ['mario64', 'sm64_intro', 'minish_cap']) {
+      expect(AppThemeId.fromStorage(key), AppThemeId.retroManga);
+    }
+    expect(
       AppThemeCatalog.designs.map((d) => d.id).toSet().length,
-      AppThemeId.values.length,
+      AppThemeId.values.where((id) => id.isAvailable).length,
     );
   });
 

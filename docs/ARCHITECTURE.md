@@ -594,3 +594,18 @@ Con el carrusel abierto se oculta el rótulo Menú y el badge de cierre pasa
 de 56 a 28 dp mediante el controlador existente. El área táctil conserva
 su tamaño (mínimo 48 dp), tooltip y semántica localizada. Al cerrar vuelve
 el rótulo multicolor; no se añaden estado persistido, caches ni animadores.
+
+### Temas disponibles — 2026-10-21
+
+El selector ofrece únicamente Minimal, Retro Manga y Mario Kart 64. Los IDs
+persistidos `mario64`, `sm64_intro` y `minish_cap` se interpretan como Retro
+Manga desde `AppThemeId.fromStorage`; `AppearanceNotifier.setTheme` aplica
+la misma normalización antes de guardar. El modo claro/oscuro/sistema y el
+acento se conservan. No se escribe en Hive durante un build: la selección
+antigua se normaliza al leer y se reemplaza al siguiente guardado de apariencia.
+
+Se conservan definiciones internas retiradas para las pruebas de compatibilidad
+y los helpers compartidos; no forman parte de `AppThemeCatalog.designs` ni se
+pueden activar por el provider. TypefaceMario64 sigue disponible para los
+rótulos del menú de Retro Manga. No cambia el engine del overlay, que mantiene
+su paleta independiente; no se añaden caches, Futures sin esperar ni canales.

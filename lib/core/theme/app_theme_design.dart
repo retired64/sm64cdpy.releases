@@ -12,9 +12,15 @@ enum AppThemeId {
   const AppThemeId(this.storageKey);
   final String storageKey;
 
+  // Los IDs retirados siguen identificando definiciones internas, nunca opciones.
+  bool get isAvailable => switch (this) {
+    minimal || retroManga || marioKart64 => true,
+    _ => false,
+  };
+
   static AppThemeId fromStorage(String? value) {
     for (final id in values) {
-      if (id.storageKey == value) return id;
+      if (id.isAvailable && id.storageKey == value) return id;
     }
     return retroManga;
   }

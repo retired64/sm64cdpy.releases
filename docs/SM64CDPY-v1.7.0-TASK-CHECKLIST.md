@@ -14,6 +14,13 @@
 
 ## How to use this checklist
 
+### Retirada de temas — 2026-10-21
+
+- [x] Solo Minimal, Retro Manga y Mario Kart 64 en el selector.
+- [x] Preferencias antiguas de Mario 64, Intro y Minish Cap pasan a Retro Manga.
+- [x] Guardado normalizado y pruebas de restauración sin perder el modo oscuro.
+- [ ] Ejecutar Flutter analyze/tests en CI y comprobar una actualización real.
+
 ### Menu-slide: navegación bajo demanda — 2026-10-21
 
 - [x] Rama menu-slide desde drawer-ui; carrusel inicialmente oculto.

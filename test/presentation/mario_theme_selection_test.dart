@@ -8,23 +8,37 @@ import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/presentation/providers/theme_provider.dart';
 
 void main() {
-  test('Mario themes are selected without preparing resources', () async {
+  test('retired themes restore Retro Manga and preserve brightness', () async {
     final directory = await Directory.systemTemp.createTemp(
       'built-in-theme-select-',
     );
     Hive.init(directory.path);
     await Hive.openBox<String>(AppConstants.settingsBoxKey);
     try {
-      final container = ProviderContainer();
-      addTearDown(container.dispose);
-
-      for (final id in [AppThemeId.mario64, AppThemeId.sm64Intro]) {
-        expect(
-          await container.read(appearanceProvider.notifier).setTheme(id),
-          isTrue,
-        );
-        expect(container.read(appearanceProvider).themeId, id);
-        expect(container.read(appearanceProvider).isSaving, isFalse);
+      final box = Hive.box<String>(AppConstants.settingsBoxKey);
+      for (final id in [
+        AppThemeId.mario64,
+        AppThemeId.sm64Intro,
+        AppThemeId.minishCap,
+      ]) {
+        await box.putAll({'theme_id': id.storageKey, 'theme_mode': 'dark'});
+        final container = ProviderContainer();
+        try {
+          expect(
+            container.read(appearanceProvider).themeId,
+            AppThemeId.retroManga,
+          );
+          expect(container.read(themeModeProvider).name, 'dark');
+          expect(
+            await container.read(appearanceProvider.notifier).setTheme(id),
+            isTrue,
+          );
+          expect(box.get('theme_id'), 'retro_manga');
+          expect(box.get('theme_mode'), 'dark');
+          expect(container.read(appearanceProvider).isSaving, isFalse);
+        } finally {
+          container.dispose();
+        }
       }
     } finally {
       await Hive.close();

@@ -46,7 +46,8 @@ class AppearanceNotifier extends Notifier<AppearanceSettings> {
     },
   );
 
-  Future<bool> setTheme(AppThemeId id) => _save(themeId: id);
+  Future<bool> setTheme(AppThemeId id) =>
+      _save(themeId: AppThemeId.fromStorage(id.storageKey));
   Future<bool> setThemeMode(ThemeMode mode) => _save(mode: mode);
 
   Future<bool> _save({AppThemeId? themeId, ThemeMode? mode}) async {

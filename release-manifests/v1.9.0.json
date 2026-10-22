@@ -15,7 +15,8 @@
         "Slanted section headers keep their manga identity, apply consistent uppercase labels and truncate long titles on narrow screens.",
         "The other five designs remain isolated; no new blur, shaders, raster assets or broad storage permission are added.",
         "Retro Manga introduces a Mario Run-inspired floating Menu button with multicolored Mario-font lettering that lifts above a bottom-anchored swipeable comic-panel navigation strip with five lightweight handcrafted paper icons, including a simple Home mushroom, with bold black-and-white sticker borders with content scrolling behind the theme-adapted translucent strip and complete labels without ellipsis and bubble-shaped labels tinted red in light mode and blue in dark mode with 65% transparency, a half-height carousel with 48 dp touch targets and a double-size centered icon with an accessibility-accent halo and outlined Mario-font labels; Play remains on Home and the other themes keep their drawer.",
-        "The open navigation menu shows only a smaller close icon while keeping a comfortable touch target."
+        "The open navigation menu shows only a smaller close icon while keeping a comfortable touch target.",
+        "Interface themes are now Minimal, Retro Manga and Mario Kart 64. Previous Mario 64, SM64 Intro and Minish Cap selections fall back to Retro Manga, preserving brightness."
       ],
       "sections": [
         {
@@ -73,7 +74,8 @@
         "Los encabezados inclinados conservan su identidad manga, aplican mayúsculas coherentes y truncan títulos largos en pantallas estrechas.",
         "Los otros cinco diseños permanecen aislados; no se añaden blur, shaders, recursos raster ni permisos generales de almacenamiento.",
         "Retro Manga incorpora un botón Menú flotante inspirado en Mario Run con letras multicolor en fuente Mario que se eleva sobre una barra de viñetas deslizable anclada abajo con cinco iconos cartoon de papel, incluido un champiñón sencillo para Inicio, con bordes negros y blancos de pegatina con contenido que se desplaza detrás de una barra semitransparente adaptada al tema y etiquetas completas sin puntos suspensivos y etiquetas en burbujas rojas en claro y azules en oscuro con 65 % de transparencia, un carrusel con la mitad de altura y áreas táctiles de 48 dp, y un icono central al doble de tamaño con halo del acento de accesibilidad y etiquetas con fuente Mario y contorno; Jugar permanece en Inicio y los demás temas conservan su drawer.",
-        "El menú de navegación abierto muestra solo un cierre más pequeño y conserva un área táctil cómoda."
+        "El menú de navegación abierto muestra solo un cierre más pequeño y conserva un área táctil cómoda.",
+        "Los temas disponibles son Minimal, Retro Manga y Mario Kart 64. Las selecciones anteriores de Mario 64, SM64 Intro y Minish Cap pasan a Retro Manga conservando el modo claro u oscuro."
       ],
       "sections": [
         {
@@ -131,7 +133,8 @@
         "Os cabeçalhos inclinados mantêm a identidade mangá, aplicam maiúsculas coerentes e truncam títulos longos em telas estreitas.",
         "Os outros cinco designs permanecem isolados; não são adicionados blur, shaders, recursos raster ou permissões gerais de armazenamento.",
         "Retro Manga ganha um botão Menu flutuante inspirado em Mario Run com letras multicoloridas na fonte Mario que se eleva sobre uma barra de quadrinhos deslizante fixada na parte inferior com cinco ícones cartoon de papel, incluindo um cogumelo simples para Início, com contornos pretos e brancos de adesivo com conteúdo rolando atrás da barra translúcida adaptada ao tema e rótulos completos sem reticências e rótulos em bolhas vermelhas no modo claro e azuis no modo escuro com 65% de transparência, um carrossel com metade da altura e áreas de toque de 48 dp, e um ícone central com o dobro do tamanho e halo da cor de destaque de acessibilidade, com rótulos na fonte Mario e contorno; Jogar permanece no Início e os demais temas mantêm o menu lateral.",
-        "O menu de navegação aberto mostra apenas um ícone de fechar menor e mantém uma área de toque confortável."
+        "O menu de navegação aberto mostra apenas um ícone de fechar menor e mantém uma área de toque confortável.",
+        "Os temas disponíveis são Minimal, Retro Manga e Mario Kart 64. Seleções anteriores de Mario 64, SM64 Intro e Minish Cap passam para Retro Manga, preservando o modo claro ou escuro."
       ],
       "sections": [
         {

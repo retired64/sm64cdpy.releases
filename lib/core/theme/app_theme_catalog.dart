@@ -11,12 +11,15 @@ abstract final class AppThemeCatalog {
   static const designs = <AppThemeDesign>[
     minimalTheme,
     retroMangaTheme,
-    minishCapTheme,
     marioKart64Theme,
-    mario64Theme,
-    sm64IntroTheme,
   ];
 
-  static AppThemeDesign resolve(AppThemeId id) =>
-      designs.firstWhere((design) => design.id == id);
+  // Definiciones internas conservadas para helpers visuales y compatibilidad.
+  // No son opciones disponibles ni se restauran desde preferencias antiguas.
+  static AppThemeDesign resolve(AppThemeId id) => switch (id) {
+    AppThemeId.minishCap => minishCapTheme,
+    AppThemeId.mario64 => mario64Theme,
+    AppThemeId.sm64Intro => sm64IntroTheme,
+    _ => designs.firstWhere((design) => design.id == id),
+  };
 }
