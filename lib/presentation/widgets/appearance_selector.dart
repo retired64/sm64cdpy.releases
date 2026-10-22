@@ -1,4 +1,3 @@
-import 'manga_menu_sound_setting.dart';
 import 'retro_accent_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -102,7 +101,6 @@ class AppearanceSelector extends ConsumerWidget {
           ],
         ),
         const RetroAccentSelector(),
-        const MangaMenuSoundSetting(),
         if (settings.isSaving) ...[
           const SizedBox(height: 12),
           LinearProgressIndicator(

@@ -811,5 +811,6 @@
   "appEffectsVolumeDescription": "Ajusta apenas os efeitos deste app. O volume de mídia do telefone continua sendo o limite.",
   "ambientMusicTitle": "Música ambiente",
   "ambientMusicDescription": "Uma trilha suave ao usar Retro Manga. Pausa ao sair do app.",
-  "ambientMusicVolume": "Volume da música"
+  "ambientMusicVolume": "Volume da música",
+  "mangaNavAudio": "Áudio"
 }

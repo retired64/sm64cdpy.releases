@@ -766,3 +766,29 @@ CI y validación física pendientes (latencia, bucle, llamadas/foco, minimizar,
 rotar, lanzar juego, otros reproductores, texto grande y gama baja).
 Referencias: https://developer.android.com/media/platform/mediaplayer/state-resources
  y https://developer.android.com/media/optimize/audio-focus.
+
+### Submenú Audio del carrusel — 2026-10-22
+
+Los controles se retiran de AppearanceSelector/Ajustes y se reutiliza el mismo
+MangaMenuSoundSetting en un modal accesible desde la sexta viñeta Audio/Áudio.
+No se duplica estado, lógica de guardado ni configuración de reproducción.
+showMangaAudioMenu usa los helpers del tema, SafeArea, cabecera con cierre y
+contenido desplazable limitado al 80% de pantalla. Atrás/cerrar/arrastrar cierran
+solo el modal: no cambian ruta ni descartan borradores de Jugador; el dock queda
+abierto. Un guardado ya iniciado conserva el flujo anterior y revisa mounted.
+
+El PageController parte ahora de 1020 (múltiplo de seis); los índices previos
+0–4 se conservan y Audio es 5. Inicio sigue centrado; sus vecinos son Audio y
+Mods. Música, efectos, volúmenes, lifecycle nativo y overlay no cambian.
+
+Icono `assets/themes/manga/navigation/audio.webp`: bocina de papel naranja/azul,
+contorno de tinta y borde blanco, generación built-in imagegen con tools.webp
+como referencia de estilo. Conversión con cwebp, 256×256, calidad 85 y alpha 100,
+unos 19 KiB; caché de decodificación existente del carrusel limitada a 256 px.
+La cabecera del modal solicita 128 px. Fuente y prompt conservados localmente
+bajo output/imagegen/manga-audio-icon/ (ignorado por Git); solo WebP se publica.
+
+Pruebas: asset WebP, centro/vecinos con seis elementos, audio en tres idiomas a
+320 px/texto 1,6×, acceso a controles mediante scroll, cierre con Atrás sin
+navegar y ausencia de los controles en Ajustes. SDK Flutter no disponible local;
+CI y comprobación visual del menú en dispositivo pendientes.

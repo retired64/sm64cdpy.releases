@@ -308,8 +308,44 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('all five papercraft assets are bundled', (tester) async {
-    for (final name in ['home', 'explore', 'library', 'tools', 'more', 'menu-button', 'close-button']) {
+  for (final language in ['en', 'es', 'pt']) {
+    testWidgets('audio submenu preserves Player and scrolls on small screens: $language', (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final router = _router(initial: '/player');
+      addTearDown(router.dispose);
+      await tester.pumpWidget(_app(router, const RetroTheme(true), language, 1.6, dirty: true));
+      await _openMenu(tester);
+      final pages = tester.widget<PageView>(
+        find.byKey(const ValueKey('manga-navigation-pages')),
+      ).controller!;
+      pages.jumpToPage(pages.initialPage + 2);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('manga-nav-5')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('manga-audio-menu')), findsOneWidget);
+      expect(find.byKey(const ValueKey('ambient-music-enabled')), findsOneWidget);
+      expect(find.byKey(const ValueKey('ambient-music-volume')), findsOneWidget);
+      expect(find.byKey(const ValueKey('manga-menu-sounds')), findsOneWidget);
+      final effects = find.byKey(const ValueKey('app-effects-volume'));
+      await tester.ensureVisible(effects);
+      await tester.pumpAndSettle();
+      expect(effects.hitTestable(), findsOneWidget);
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(router.routeInformationProvider.value.uri.path, '/player');
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('manga-audio-menu')), findsNothing);
+      expect(find.byType(MangaNavigationBar), findsOneWidget);
+      expect(router.routeInformationProvider.value.uri.path, '/player');
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('all carousel papercraft assets are bundled', (tester) async {
+    for (final name in ['home', 'explore', 'library', 'tools', 'more', 'audio', 'menu-button', 'close-button']) {
       final bytes = await rootBundle.load(
         'assets/themes/manga/navigation/$name.webp',
       );
@@ -327,7 +363,7 @@ void main() {
     await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
     await _openMenu(tester);
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('manga-nav-4')), findsOneWidget);
+    expect(find.byKey(const ValueKey('manga-nav-5')), findsOneWidget);
     expect(find.byKey(const ValueKey('manga-nav-0')), findsOneWidget);
     expect(find.byKey(const ValueKey('manga-nav-1')), findsOneWidget);
     expect(router.routeInformationProvider.value.uri.path, '/');

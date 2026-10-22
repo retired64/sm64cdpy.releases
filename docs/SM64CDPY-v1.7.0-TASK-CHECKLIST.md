@@ -14,6 +14,14 @@
 
 ## How to use this checklist
 
+### Audio en menú deslizable — 2026-10-22
+
+- [x] Sexta viñeta Audio con bocina de papel optimizada WebP 256 px (~19 KiB).
+- [x] Controles retirados de Ajustes y reutilizados en modal con scroll/cierre.
+- [x] Inicio sigue centrado, rutas y preferencias previas conservadas.
+- [x] Pruebas de asset, vecinos, tres idiomas, pantalla pequeña y cierre en Jugador.
+- [ ] CI: l10n/formato/análisis/tests; revisar icono y modal en teléfono.
+
 ### Música ambiental y destacados Manga — 2026-10-22
 
 - [x] Pista Opus local, MediaPlayer asíncrono único y bucle, sin servicio de fondo.

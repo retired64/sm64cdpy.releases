@@ -9,6 +9,55 @@ import '../providers/manga_menu_audio_provider.dart';
 import '../providers/theme_provider.dart';
 import 'app_snackbar.dart';
 
+/// Submenú local: cerrar no navega ni descarta cambios del editor de Jugador.
+Future<void> showMangaAudioMenu(BuildContext context) async {
+  final retro = RetroTheme.of(context);
+  final l = AppLocalizations.of(context);
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    showDragHandle: true,
+    backgroundColor: retro.background,
+    constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.8),
+    shape: RoundedRectangleBorder(
+      borderRadius: retro.radius,
+      side: BorderSide(color: retro.border, width: retro.borderWidth(2)),
+    ),
+    builder: (context) => SafeArea(
+      top: false,
+      child: Column(
+        key: const ValueKey('manga-audio-menu'),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 8),
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/themes/manga/navigation/audio.webp',
+                  width: 40, height: 40, cacheWidth: 128, cacheHeight: 128,
+                  excludeFromSemantics: true,
+                  errorBuilder: (_, _, _) => Icon(Icons.volume_up_outlined, color: retro.ink),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: Text(l.mangaNavAudio, style: retro.heading(size: 20))),
+                const CloseButton(),
+              ],
+            ),
+          ),
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+              child: const MangaMenuSoundSetting(),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 class MangaMenuSoundSetting extends ConsumerStatefulWidget {
   const MangaMenuSoundSetting({super.key});
 

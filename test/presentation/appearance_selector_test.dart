@@ -70,6 +70,8 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('manga-menu-sounds')), findsNothing);
+        expect(find.byKey(const ValueKey('ambient-music-enabled')), findsNothing);
         await tester.tap(find.text('Interface theme'));
         await tester.pumpAndSettle();
 

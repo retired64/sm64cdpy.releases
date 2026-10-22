@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
 import '../providers/manga_menu_audio_provider.dart';
 import 'app_snackbar.dart';
+import 'manga_menu_sound_setting.dart';
 
 const _navigationAssets = [
   'assets/themes/manga/navigation/home.webp',
@@ -17,6 +18,7 @@ const _navigationAssets = [
   'assets/themes/manga/navigation/library.webp',
   'assets/themes/manga/navigation/tools.webp',
   'assets/themes/manga/navigation/more.webp',
+  'assets/themes/manga/navigation/audio.webp',
 ];
 
 typedef _Destination = ({String label, IconData icon, String route});
@@ -39,7 +41,8 @@ class MangaNavigationBar extends ConsumerStatefulWidget {
 
 class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
   // Solo se construyen las viñetas visibles; el origen permite explorar ambos lados.
-  static const _origin = 1000;
+  // Múltiplo de las seis opciones: Inicio sigue centrado en el índice cero.
+  static const _origin = 1020;
   late final PageController _pages;
   bool _busy = false;
 
@@ -115,6 +118,10 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('press'));
     setState(() => _busy = true);
     try {
+      if (index == 5) {
+        await showMangaAudioMenu(context);
+        return;
+      }
       final l = AppLocalizations.of(context);
       final route = switch (index) {
         0 => '/',
@@ -330,6 +337,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       (label: l.mangaNavLibrary, icon: Icons.inventory_2_outlined),
       (label: l.mangaNavTools, icon: Icons.sports_esports_outlined),
       (label: l.mangaNavMore, icon: Icons.dashboard_outlined),
+      (label: l.mangaNavAudio, icon: Icons.volume_up_outlined),
     ];
     final scaledLabelSize = MediaQuery.textScalerOf(context).scale(11);
     final labelHeight = scaledLabelSize * (scaledLabelSize > 14.3 ? 2.6 : 1.3);

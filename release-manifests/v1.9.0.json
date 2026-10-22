@@ -20,7 +20,8 @@
         "Retro Manga adds lightweight menu sound effects with an option to disable them in Settings.",
         "Menu effects now follow multimedia volume instead of system interface sounds.",
         "Adjust menu effects from 0 to 100% within the app, independently of the device volume, with a saved level and a preview when releasing the slider.",
-        "Retro Manga adds a soft ambient loop with separate music controls and ink-framed featured cards with readable paper captions."
+        "Retro Manga adds a soft ambient loop with separate music controls and ink-framed featured cards with readable paper captions.",
+        "Retro Manga audio controls move from Settings to a dedicated carousel submenu with a lightweight paper-speaker icon."
       ],
       "sections": [
         {
@@ -83,7 +84,8 @@
         "Retro Manga añade efectos de sonido ligeros al menú, con opción para desactivarlos en Ajustes.",
         "Los efectos del menú ahora usan el volumen multimedia en lugar del de sonidos del sistema.",
         "Ajusta los efectos del menú de 0 a 100% dentro de la app, sin cambiar el volumen del teléfono, con nivel guardado y una muestra al soltar la barra.",
-        "Retro Manga añade música ambiental suave con controles independientes y tarjetas destacadas con marco de tinta y placas de papel legibles."
+        "Retro Manga añade música ambiental suave con controles independientes y tarjetas destacadas con marco de tinta y placas de papel legibles.",
+        "Los controles de audio de Retro Manga pasan de Ajustes a un submenú propio del carrusel, con un icono ligero de bocina de papel."
       ],
       "sections": [
         {
@@ -146,7 +148,8 @@
         "Retro Manga adiciona efeitos sonoros leves ao menu, com opção de desativá-los nas Configurações.",
         "Os efeitos do menu agora usam o volume de mídia em vez dos sons do sistema.",
         "Ajuste os efeitos do menu de 0 a 100% no app, sem alterar o volume do telefone, com nível salvo e uma amostra ao soltar a barra.",
-        "Retro Manga adiciona música ambiente suave com controles independentes e destaques com moldura de tinta e legendas legíveis em papel."
+        "Retro Manga adiciona música ambiente suave com controles independentes e destaques com moldura de tinta e legendas legíveis em papel.",
+        "Os controles de áudio do Retro Manga passam das Configurações para um submenu do carrossel, com ícone leve de alto-falante de papel."
       ],
       "sections": [
         {
