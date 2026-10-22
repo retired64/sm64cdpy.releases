@@ -1,3 +1,4 @@
+import '../widgets/mario_multicolor_label.dart';
 import '../widgets/featured_mod_frame.dart';
 import '../widgets/game_launch_flow.dart';
 import '../widgets/game_folder_card.dart';
@@ -165,17 +166,17 @@ class _HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-
     return RetroPinnedAppBar(
-      title: Text('SM64CoopDX', style: retro.heading(size: 17)),
-      actions: [
-        IconButton(
-          icon: MarioGameIcon(Icons.search, color: retro.inkDim, size: 22),
-          onPressed: () => context.go('/catalogue'),
+      title: Semantics(
+        header: true,
+        label: 'SM64CDPY',
+        excludeSemantics: true,
+        child: const MarioMulticolorLabel(
+          label: 'SM64CDPY',
+          fontSize: 17,
+          keyPrefix: 'home-brand',
         ),
-        const SizedBox(width: 4),
-      ],
+      ),
     );
   }
 }

@@ -792,3 +792,14 @@ Pruebas: asset WebP, centro/vecinos con seis elementos, audio en tres idiomas a
 320 px/texto 1,6×, acceso a controles mediante scroll, cierre con Atrás sin
 navegar y ausencia de los controles en Ajustes. SDK Flutter no disponible local;
 CI y comprobación visual del menú en dispositivo pendientes.
+
+### Marca de Home — 2026-10-22
+
+Home muestra SM64CDPY sin la acción de lupa. Comparte MarioMulticolorLabel con
+el botón Menú: TypefaceMario64, secuencia azul/rojo/amarillo/verde, contorno negro
+y filete blanco adicional en oscuro. El helper conserva las claves previas del
+menú y permite tamaño/prefijo propios para Home (17 px, home-brand).
+FittedBox adapta el rótulo al ancho disponible; Semantics lo anuncia como un
+solo encabezado, sin repetir cada capa del contorno. No hay nuevos assets,
+animaciones, preferencias o cambios de navegación; el catálogo sigue accesible
+desde sus entradas existentes. La marca propia no requiere traducción.

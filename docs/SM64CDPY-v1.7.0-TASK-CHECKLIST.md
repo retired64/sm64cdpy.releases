@@ -14,6 +14,12 @@
 
 ## How to use this checklist
 
+### Marca de Inicio — 2026-10-22
+
+- [x] Home: SM64CDPY multicolor con la fuente/contornos de Menú; lupa retirada.
+- [x] Helper compartido con ajuste de ancho, sin assets o estado nuevos.
+- [ ] CI y revisión en teléfono de Home claro/oscuro y ancho pequeño.
+
 ### Audio en menú deslizable — 2026-10-22
 
 - [x] Sexta viñeta Audio con bocina de papel optimizada WebP 256 px (~19 KiB).
