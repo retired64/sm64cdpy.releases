@@ -11,36 +11,39 @@ double contrast(Color a, Color b) {
 }
 
 void main() {
-  test('available themes interpolate button typography in both modes', () {
-    for (final dark in [false, true]) {
-      final themes = [
-        for (final design in AppThemeCatalog.designs)
-          RetroTheme.materialTheme(dark, design: design),
-      ];
-      List<TextStyle> styles(ThemeData theme) => [
-        for (final button in [
-          theme.filledButtonTheme.style,
-          theme.elevatedButtonTheme.style,
-          theme.outlinedButtonTheme.style,
-          theme.textButtonTheme.style,
-        ])
-          button?.textStyle?.resolve(<WidgetState>{}) ??
-              theme.textTheme.labelLarge!,
-      ];
-      for (final from in themes) {
-        for (final to in themes) {
-          final start = styles(from);
-          final end = styles(to);
-          for (var index = 0; index < start.length; index++) {
-            expect(
-              () => TextStyle.lerp(start[index], end[index], 0.5),
-              returnsNormally,
-            );
-          }
+  for (final dark in [false, true]) {
+    testWidgets('real buttons animate between available themes dark=$dark', (
+      tester,
+    ) async {
+      Widget app(AppThemeDesign design) => MaterialApp(
+        theme: RetroTheme.materialTheme(dark, design: design),
+        home: Scaffold(
+          body: Column(
+            children: [
+              FilledButton(onPressed: () {}, child: const Text('Filled')),
+              ElevatedButton(onPressed: () {}, child: const Text('Elevated')),
+              OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
+              TextButton(onPressed: () {}, child: const Text('Text')),
+            ],
+          ),
+        ),
+      );
+      // Conservar los mismos elementos para ejercitar AnimatedDefaultTextStyle,
+      // incluidos los estilos predeterminados que Material resuelve y combina.
+      for (final from in AppThemeCatalog.designs) {
+        for (final to in AppThemeCatalog.designs) {
+          await tester.pumpWidget(app(from));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(app(to));
+          await tester.pump(const Duration(milliseconds: 75));
+          expect(tester.takeException(), isNull);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
         }
       }
-    }
-  });
+    });
+  }
 
   test('unknown/absent IDs use Retro Manga by default', () {
     expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);

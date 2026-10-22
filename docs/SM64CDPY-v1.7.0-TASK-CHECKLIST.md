@@ -14,6 +14,22 @@
 
 ## How to use this checklist
 
+### Sonidos del menú Retro Manga — 2026-10-21
+
+- [x] Efectos originales integrados como assets locales, SoundPool de una voz.
+- [x] Pulsaciones, pasos del carrusel y cierres automáticos diferenciados.
+- [x] Preferencia persistente solo Manga, traducida en cinco ARB.
+- [x] Parada al minimizar/desmontar y liberación nativa al destruir el engine.
+- [x] Pruebas de persistencia, aislamiento por tema y fallo del canal.
+- [ ] Generar l10n/formatear/analizar/tests y compilar Kotlin en CI.
+- [ ] Revisar latencia, volumen/silencio y arrastre rápido en teléfono de gama baja.
+
+### Regresión de pruebas — Actions 39730665442
+
+- [x] Prueba tipográfica sobre botones reales y animación entre todos los pares.
+- [x] Prueba de idioma comprueba grupos por clave, incluyendo selector de acento.
+- [ ] Confirmar análisis, pruebas y compilación con una nueva ejecución de CI.
+
 ### Retirada de temas — 2026-10-21
 
 - [x] Solo Minimal, Retro Manga y Mario Kart 64 en el selector.

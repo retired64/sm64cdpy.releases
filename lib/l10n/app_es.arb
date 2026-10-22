@@ -804,5 +804,7 @@
   "mangaNavMore": "MAS",
   "mangaNavPlay": "Jugar",
   "mangaNavHint": "Desliza para explorar. Toca para abrir.",
-  "mangaNavError": "No se pudo completar la acción. Inténtalo de nuevo."
+  "mangaNavError": "No se pudo completar la acción. Inténtalo de nuevo.",
+  "mangaMenuSoundsTitle": "Sonidos del menú",
+  "mangaMenuSoundsDescription": "Efectos al abrir, seleccionar y deslizar el menú."
 }

@@ -71,7 +71,20 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.byType(SettingsExpansionGroup), findsNWidgets(3));
+        for (final key in [
+          'bundled-theme-selector',
+          'theme-mode-selector',
+          'retro-accent-selector',
+          'locale-selector',
+        ]) {
+          expect(
+            find.byWidgetPredicate(
+              (widget) => widget is SettingsExpansionGroup &&
+                  widget.key == PageStorageKey<String>(key),
+            ),
+            findsOneWidget,
+          );
+        }
         expect(
           find.byKey(const PageStorageKey('mario-rom-assets')),
           findsNothing,

@@ -51,6 +51,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/audio/manga/
     - assets/db/database_sm64coopdx.json
     - assets/db/vip.json
     - assets/db/dynos.json

@@ -8,6 +8,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../core/theme/themes/mario64_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
+import '../providers/manga_menu_audio_provider.dart';
 import 'app_snackbar.dart';
 
 const _navigationAssets = [
@@ -111,6 +112,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
 
   Future<void> _select(int index) async {
     if (_busy) return;
+    unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('press'));
     setState(() => _busy = true);
     try {
       final l = AppLocalizations.of(context);
@@ -300,8 +302,10 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                               leading: Icon(destination.icon),
                               title: Text(destination.label),
                               trailing: const Icon(Icons.chevron_right),
-                              onTap: () =>
-                                  Navigator.pop(context, destination.route),
+                              onTap: () {
+                                unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('press'));
+                                Navigator.pop(context, destination.route);
+                              },
                             ),
                           ),
                         ),
@@ -350,6 +354,11 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                 child: PageView.custom(
                   key: const ValueKey('manga-navigation-pages'),
                   controller: _pages,
+                  onPageChanged: (_) {
+                    if (_pages.position.isScrollingNotifier.value) {
+                      unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('slide'));
+                    }
+                  },
                   clipBehavior: Clip.none,
                   childrenDelegate: SliverChildBuilderDelegate((context, page) {
                     final index = page % entries.length;

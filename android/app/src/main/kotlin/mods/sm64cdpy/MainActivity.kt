@@ -27,6 +27,7 @@ class MainActivity : FlutterActivity() {
         flutterEngine.plugins.add(MarioAssetsPlugin())
         flutterEngine.plugins.add(Player3DPlugin())
         flutterEngine.plugins.add(RomPreparationPlugin())
+        flutterEngine.plugins.add(MangaMenuAudioPlugin())
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->

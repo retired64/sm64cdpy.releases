@@ -616,3 +616,42 @@ Los estilos de botones de racing y folio usan `inherit: false`, igual que los
 estilos completos de Material y Retro Manga. Esto permite interpolarlos sin
 aserciones de `TextStyle.lerp` al cambiar de diseño. Se comprueban los cuatro
 tipos de botones entre todos los diseños disponibles en claro y oscuro.
+
+### Audio del menú Retro Manga — 2026-10-21
+
+`MangaMenuAudioPlugin` se registra solo en el engine principal. SoundPool
+precarga los dos efectos de `assets/audio/manga/`, mantiene una sola voz y limita
+emisiones a una cada 75 ms. Usa sonificación de Android al 65% del volumen
+correspondiente, sin permisos, foco de audio exclusivo ni servicio de fondo.
+Un sample no preparado se omite; no se encolan reproducciones tardías.
+El pool y el listener se liberan al destruir el engine.
+
+`MangaMenuAudio` encapsula MethodChannel y captura fallos de plataforma. El dock
+reproduce press al pulsar abrir/cerrar; la barra al pulsar un grupo o destino.
+PageView emite slide cuando cambia la página central durante un desplazamiento,
+no en cada frame ni al sincronizar la ruta. Los cierres automáticos no añaden
+sonido. Pausa/inactividad y desmontaje del dock detienen las voces.
+
+`manga_menu_sounds` en Hive es la fuente persistente, con valor predeterminado
+activado. `MangaMenuSoundsNotifier` es el único escritor y publica tras guardar;
+si falla conserva el valor anterior. Cada reproducción consulta este estado y
+el tema actual. Ajustes muestra el switch solo para Retro Manga, usando los
+cinco ARB. El overlay no registra el plugin ni comparte esta preferencia.
+Los Futures de efectos y parada son intencionalmente no esperados para no
+bloquear navegación; el servicio captura sus errores. No se añaden timers ni
+cache de preferencias independiente: solo samples nativos por vida del engine.
+
+Validación física pendiente: primer toque, arrastre rápido, silencio/volumen,
+switch apagado, reabrir app, cambiar tema y minimizar. CI debe generar l10n,
+formatear, analizar, ejecutar pruebas y compilar Kotlin antes de probar el APK.
+
+### Corrección de pruebas tras retirar temas — Actions 39730665442
+
+La regresión tipográfica se comprueba con botones reales (Filled, Elevated,
+Outlined y Text), conservando sus elementos al cambiar entre cada par de temas
+disponibles, en claro y oscuro, y verificando frames intermedios. No se compara
+`labelLarge` incompleto contra un estilo completo: Material debe resolver sus
+valores predeterminados y combinarlos antes de la interpolación.
+La prueba de idioma identifica sus cuatro grupos por clave, incluyendo acento,
+en vez de asumir el antiguo total de tres. Los dos fallos de esta ejecución son
+anteriores a la integración del audio; nueva ejecución de CI pendiente.

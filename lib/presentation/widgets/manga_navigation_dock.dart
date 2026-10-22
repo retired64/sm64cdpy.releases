@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../../core/theme/themes/mario64_theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/manga_menu_audio.dart';
+import '../providers/manga_menu_audio_provider.dart';
 import 'manga_navigation_bar.dart';
 import 'manga_navigation_scope.dart';
 
 /// Tira anclada abajo; el botón se eleva por encima al desplegarla.
-class MangaNavigationDock extends StatefulWidget {
+class MangaNavigationDock extends ConsumerStatefulWidget {
   const MangaNavigationDock({
     super.key,
     required this.currentRoute,
@@ -18,11 +23,12 @@ class MangaNavigationDock extends StatefulWidget {
   final Widget child;
 
   @override
-  State<MangaNavigationDock> createState() => _MangaNavigationDockState();
+  ConsumerState<MangaNavigationDock> createState() => _MangaNavigationDockState();
 }
 
-class _MangaNavigationDockState extends State<MangaNavigationDock>
+class _MangaNavigationDockState extends ConsumerState<MangaNavigationDock>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  late final MangaMenuAudio _audio;
   late final AnimationController _animation;
   late final CurvedAnimation _curve;
   late final Animation<Offset> _slide;
@@ -33,6 +39,8 @@ class _MangaNavigationDockState extends State<MangaNavigationDock>
   @override
   void initState() {
     super.initState();
+    _audio = ref.read(mangaMenuAudioProvider);
+    unawaited(_audio.prepare());
     WidgetsBinding.instance.addObserver(this);
     _animation = AnimationController(
       vsync: this,
@@ -85,6 +93,9 @@ class _MangaNavigationDockState extends State<MangaNavigationDock>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) {
+      unawaited(_audio.stop());
+    }
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden) {
       _setExpanded(false, animate: false);
@@ -93,6 +104,7 @@ class _MangaNavigationDockState extends State<MangaNavigationDock>
 
   @override
   void dispose() {
+    unawaited(_audio.stop());
     WidgetsBinding.instance.removeObserver(this);
     _curve.dispose();
     _animation.dispose();
@@ -191,6 +203,7 @@ class _MangaNavigationDockState extends State<MangaNavigationDock>
                           if (!_expanded) {
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
+                          unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('press'));
                           _setExpanded(!_expanded);
                         },
                       ),
