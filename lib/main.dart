@@ -1,3 +1,4 @@
+import 'presentation/widgets/ambient_music_coordinator.dart';
 import 'presentation/providers/retro_accent_provider.dart';
 import 'presentation/providers/game_folder_provider.dart';
 import 'dart:async';
@@ -161,9 +162,11 @@ class _SM64CoopDXAppState extends ConsumerState<SM64CoopDXApp> {
           color: RetroTheme.of(context).background,
           child: SafeArea(
             bottom: false,
-            child: MarioAssetsCoordinator(
-              child: BackgroundOperationCoordinator(
-                child: child ?? const SizedBox.shrink(),
+            child: AmbientMusicCoordinator(
+              child: MarioAssetsCoordinator(
+                child: BackgroundOperationCoordinator(
+                  child: child ?? const SizedBox.shrink(),
+                ),
               ),
             ),
           ),

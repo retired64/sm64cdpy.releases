@@ -680,3 +680,89 @@ escucha en dispositivo siguen pendientes tras la corrección.
 
 Referencias: https://source.android.com/docs/core/audio/attributes y
 https://developer.android.com/reference/android/content/res/AssetManager#openFd(java.lang.String).
+
+### Mezcla interna de audio — 2026-10-22
+
+`AppAudioSettings` / `appAudioSettingsProvider` definen la mezcla interna con
+`effectsVolume` (0–1). Hive `audio_effects_volume` es su fuente persistente;
+valor ausente/corrupto/no finito usa 0,65 para conservar el volumen anterior.
+El notifier limita valores, serializa el guardado rechazando otra escritura
+concurrente y publica únicamente tras persistir. Si falla conserva el valor
+confirmado. El booleano `manga_menu_sounds` sigue separado: mover volumen no
+reactiva un canal silenciado y desactivar sonidos conserva el nivel elegido.
+
+El slider Manga mantiene un borrador local mientras se arrastra, guarda una
+sola vez al soltar, bloquea otra edición hasta terminar, revierte si falla y
+reproduce una única muestra con el nivel confirmado (si el canal está activo).
+No escribe Hive ni manda IPC por cada frame. Al desmontar se descarta el
+borrador; el guardado iniciado conserva su propietario provider y la UI no usa
+context tras el await sin comprobar mounted.
+
+Cada efecto consulta el nivel confirmado y lo envía como `volume` junto con
+`sound` por el canal existente. Kotlin limita otra vez el valor, lo aplica a
+ambos canales de SoundPool y omite ganancias cero. No guarda una segunda copia
+del mezclador ni toca `setStreamVolume`/volumen global. La ganancia final sigue
+limitada por el volumen multimedia de Android. Los botones físicos conservan
+el comportamiento estándar multimedia; el slider es el ajuste propio de la app.
+Overlay no registra este audio ni replica preferencias. Sin nuevos Futures
+no esperados, timers, listeners nativos, permisos o dependencias.
+
+La música ambiental se amplía en la sección siguiente con una pista local y
+canal independiente. No se usa SoundPool para pistas largas ni se modifica el
+volumen del sistema.
+
+Pruebas: valor inicial, restauración, nivel cero, separación del mute,
+normalización de valores inválidos, fallo de persistencia y ganancia por mensaje
+para press/slide. Validación de CI y escucha física pendientes.
+Referencia: https://developer.android.com/reference/android/media/SoundPool.
+
+### Música ambiental y viñetas destacadas — 2026-10-22
+
+La pista proporcionada `ambient/ambiente2.opus` se incluye sin transcodificar
+como `assets/audio/manga/ambiente2.opus` (unos 371 KiB, Ogg Opus). La carpeta ya
+está declarada en pubspec; Android marca opus como noCompress para openFd.
+`AmbientMusicPlugin`, registrado solo en MainActivity, usa un único MediaPlayer
+con prepareAsync, lectura por descriptor y bucle. No copia/decodifica toda la
+pista en memoria ni crea servicios, temporizadores o nuevas dependencias.
+
+AppAudioSettings añade `musicEnabled` (inicialmente true) y `musicVolume` (0,18).
+Hive guarda `audio_music_enabled` y `audio_music_volume`; todas las escrituras
+del mix preservan los otros canales y publican después de persistir. Ajustes
+incluye switch y slider de música independientes de efectos en cinco ARB.
+El mute de efectos no silencia música; el de música no cambia efectos.
+
+AmbientMusicCoordinator es propietario estable bajo MaterialApp del engine
+principal, escucha tema/mix y envía configure por `sm64cdpy/ambient_music`.
+Cambiar de ruta no lo reconstruye como un nuevo reproductor ni reinicia pista.
+Solo activa música con Retro Manga y la preferencia activa. Sus Futures no
+esperados están limitados a sincronización y desmontaje; el servicio captura
+PlatformException/MissingPluginException. No hay cache adicional de Hive.
+
+Android registra callbacks únicamente para su Activity y los retira al
+separarla del plugin/engine. onPause pausa y abandona foco (incluido lanzar el
+juego/explorador/bloquear/minimizar); onResume reevalúa el estado. Rotación
+separa/reconecta Activity conservando el único player mientras viva el engine.
+Solo se solicita foco con Activity reanudada y pista preparada: AUDIOFOCUS_GAIN,
+API 26+ con AudioFocusRequest y compatibilidad 24–25. Pérdida transitoria pausa,
+ducking atenúa al 20% de la ganancia y pérdida permanente bloquea reproducción
+hasta volver explícitamente o reactivar música. Una respuesta tardía de
+prepare/foco vuelve a comprobar visibilidad y preferencia antes de empezar.
+Volumen cero pausa/abandona foco. Fallos de carga se registran y no se reintentan
+en bucle; apagar/encender permite un intento nuevo. Al destruir engine se
+retiran listeners y se libera MediaPlayer. Overlay no registra música.
+
+Home usa FeaturedModFrame únicamente en Retro Manga: papel, borde de tinta,
+sombra dura y placa sólida con colores semánticos para título/autor/rating.
+Se elimina el gradiente genérico en Manga, el corazón usa acento y objetivo de
+48 dp, y se conservan Hero, favoritos y navegación. El marco es RepaintBoundary
+sin animador propio; no hay blur, shaders o bitmaps decorativos nuevos.
+CachedNetworkImage limita la decodificación a un máximo de 960 px de ancho;
+el carrusel aumenta altura con texto accesible. Los otros temas conservan su
+presentación de imagen y controles.
+
+Pruebas añadidas para contrato/asset Opus, sincronización del coordinador,
+aislamiento por tema, teardown, restauración de canales y marco claro/oscuro.
+CI y validación física pendientes (latencia, bucle, llamadas/foco, minimizar,
+rotar, lanzar juego, otros reproductores, texto grande y gama baja).
+Referencias: https://developer.android.com/media/platform/mediaplayer/state-resources
+ y https://developer.android.com/media/optimize/audio-focus.

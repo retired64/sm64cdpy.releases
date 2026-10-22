@@ -18,7 +18,9 @@
         "The open navigation menu shows only a smaller close icon while keeping a comfortable touch target.",
         "Interface themes are now Minimal, Retro Manga and Mario Kart 64. Previous Mario 64, SM64 Intro and Minish Cap selections fall back to Retro Manga, preserving brightness.",
         "Retro Manga adds lightweight menu sound effects with an option to disable them in Settings.",
-        "Menu effects now follow multimedia volume instead of system interface sounds."
+        "Menu effects now follow multimedia volume instead of system interface sounds.",
+        "Adjust menu effects from 0 to 100% within the app, independently of the device volume, with a saved level and a preview when releasing the slider.",
+        "Retro Manga adds a soft ambient loop with separate music controls and ink-framed featured cards with readable paper captions."
       ],
       "sections": [
         {
@@ -79,7 +81,9 @@
         "El menú de navegación abierto muestra solo un cierre más pequeño y conserva un área táctil cómoda.",
         "Los temas disponibles son Minimal, Retro Manga y Mario Kart 64. Las selecciones anteriores de Mario 64, SM64 Intro y Minish Cap pasan a Retro Manga conservando el modo claro u oscuro.",
         "Retro Manga añade efectos de sonido ligeros al menú, con opción para desactivarlos en Ajustes.",
-        "Los efectos del menú ahora usan el volumen multimedia en lugar del de sonidos del sistema."
+        "Los efectos del menú ahora usan el volumen multimedia en lugar del de sonidos del sistema.",
+        "Ajusta los efectos del menú de 0 a 100% dentro de la app, sin cambiar el volumen del teléfono, con nivel guardado y una muestra al soltar la barra.",
+        "Retro Manga añade música ambiental suave con controles independientes y tarjetas destacadas con marco de tinta y placas de papel legibles."
       ],
       "sections": [
         {
@@ -140,7 +144,9 @@
         "O menu de navegação aberto mostra apenas um ícone de fechar menor e mantém uma área de toque confortável.",
         "Os temas disponíveis são Minimal, Retro Manga e Mario Kart 64. Seleções anteriores de Mario 64, SM64 Intro e Minish Cap passam para Retro Manga, preservando o modo claro ou escuro.",
         "Retro Manga adiciona efeitos sonoros leves ao menu, com opção de desativá-los nas Configurações.",
-        "Os efeitos do menu agora usam o volume de mídia em vez dos sons do sistema."
+        "Os efeitos do menu agora usam o volume de mídia em vez dos sons do sistema.",
+        "Ajuste os efeitos do menu de 0 a 100% no app, sem alterar o volume do telefone, com nível salvo e uma amostra ao soltar a barra.",
+        "Retro Manga adiciona música ambiente suave com controles independentes e destaques com moldura de tinta e legendas legíveis em papel."
       ],
       "sections": [
         {

@@ -806,5 +806,10 @@
   "mangaNavHint": "Desliza para explorar. Toca para abrir.",
   "mangaNavError": "No se pudo completar la acción. Inténtalo de nuevo.",
   "mangaMenuSoundsTitle": "Sonidos del menú",
-  "mangaMenuSoundsDescription": "Efectos al abrir, seleccionar y deslizar el menú."
+  "mangaMenuSoundsDescription": "Efectos al abrir, seleccionar y deslizar el menú.",
+  "appEffectsVolume": "Volumen de efectos",
+  "appEffectsVolumeDescription": "Ajusta solo los efectos de esta app. El volumen multimedia del teléfono sigue siendo el límite.",
+  "ambientMusicTitle": "Música ambiental",
+  "ambientMusicDescription": "Una pista suave mientras usas Retro Manga. Se pausa al salir de la app.",
+  "ambientMusicVolume": "Volumen de música"
 }

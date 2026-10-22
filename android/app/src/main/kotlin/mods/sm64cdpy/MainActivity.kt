@@ -32,6 +32,7 @@ class MainActivity : FlutterActivity() {
         flutterEngine.plugins.add(Player3DPlugin())
         flutterEngine.plugins.add(RomPreparationPlugin())
         flutterEngine.plugins.add(MangaMenuAudioPlugin())
+        flutterEngine.plugins.add(AmbientMusicPlugin())
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->

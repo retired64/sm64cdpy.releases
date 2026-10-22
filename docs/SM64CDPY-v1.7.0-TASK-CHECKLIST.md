@@ -14,6 +14,27 @@
 
 ## How to use this checklist
 
+### Música ambiental y destacados Manga — 2026-10-22
+
+- [x] Pista Opus local, MediaPlayer asíncrono único y bucle, sin servicio de fondo.
+- [x] Música al 18% inicial, switch/volumen persistentes separados de efectos.
+- [x] Solo Retro Manga, propietario raíz estable, lifecycle y foco nativo 24+.
+- [x] Viñeta con marco/sombra/placa semántica, favoritos 48 dp y decode máximo 960 px.
+- [x] Pruebas de contrato, coordinador, persistencia y aislamiento del marco.
+- [ ] CI: generar l10n, formatear, analizar, tests y Kotlin (sin SDK local).
+- [ ] Teléfono: bucle sin reinicio al navegar, minimizar/llamada/rotación/juego.
+- [ ] Revisar Home claro/oscuro con texto grande, imágenes remotas y gama baja.
+
+### Volumen interno — 2026-10-22
+
+- [x] Slider 0–100% de efectos, ganancia inicial 65%, persistente e independiente del mute.
+- [x] Guardado al soltar y muestra única, reversión ante fallo y sin IPC por frame.
+- [x] Ganancia Flutter → Kotlin por reproducción, sin alterar volumen del sistema.
+- [x] Documentado canal independiente de música ambiental para futuro, sin pistas añadidas.
+- [x] Pruebas de restauración, cero, mute, valores inválidos, fallo y payloads.
+- [ ] CI: gen-l10n, dart format, analyze, tests y compilación Kotlin.
+- [ ] Teléfono: 0/25/65/100%, reinicio, desactivar/activar, volumen multimedia intacto.
+
 ### Audio inaudible — 2026-10-22
 
 - [x] APK Testing 39731678882 inspeccionado: ambos assets presentes sin compresión.

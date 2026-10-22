@@ -1,3 +1,4 @@
+import '../widgets/featured_mod_frame.dart';
 import '../widgets/game_launch_flow.dart';
 import '../widgets/game_folder_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -210,10 +211,12 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    final extraTextHeight = (MediaQuery.textScalerOf(context).scale(17) - 17)
+        .clamp(0.0, 80.0).toDouble() * 3;
     final carouselHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
-        ? 160.0
-        : 220.0;
+        ? 160.0 + extraTextHeight
+        : 220.0 + extraTextHeight;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -299,6 +302,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    final manga = retro.showJapaneseDecorations;
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
 
     return AnimatedContainer(
@@ -317,7 +321,8 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
         onTapCancel: () => _pressCtrl.reverse(),
         child: ScaleTransition(
           scale: _pressScale,
-          child: ClipRRect(
+          child: FeaturedModFrame(
+            child: ClipRRect(
             borderRadius: retro.radius,
             child: Stack(
               fit: StackFit.expand,
@@ -330,6 +335,9 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                       ? CachedNetworkImage(
                           imageUrl: widget.mod.imageUrl!,
                           fit: BoxFit.cover,
+                          memCacheWidth: (MediaQuery.sizeOf(context).width *
+                                  MediaQuery.devicePixelRatioOf(context))
+                              .round().clamp(1, 960).toInt(),
                           placeholder: (_, _) =>
                               Container(color: retro.surfaceAlt),
                           errorWidget: (_, _, _) => _FeaturedPlaceholder(),
@@ -337,7 +345,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                       : _FeaturedPlaceholder(),
                 ),
 
-                Positioned.fill(
+                if (!manga) Positioned.fill(
                   child: DecoratedBox(
                     decoration: retro.gameDecoration(
                       BoxDecoration(
@@ -359,10 +367,15 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                 ),
 
                 Positioned(
-                  left: 16,
-                  right: 16,
-                  bottom: 14,
-                  child: Row(
+                  left: manga ? 8 : 16,
+                  right: manga ? 8 : 16,
+                  bottom: manga ? 8 : 14,
+                  child: Container(
+                    padding: manga ? const EdgeInsets.all(10) : EdgeInsets.zero,
+                    decoration: manga ? retro.surfaceDecoration(
+                      color: retro.surface, border: 2, shadowDx: 2, shadowDy: 2,
+                    ) : null,
+                    child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Expanded(
@@ -384,7 +397,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: retro.headingFamily,
-                                color: Colors.white,
+                                color: manga ? retro.ink : Colors.white,
                                 fontSize: 17,
                                 fontWeight: retro.design.headingWeight,
                                 height: 1.2,
@@ -397,7 +410,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                 MarioGameIcon(
                                   Icons.person,
                                   size: 11,
-                                  color: Colors.white.withValues(alpha: 0.7),
+                                  color: manga ? retro.inkDim : Colors.white.withValues(alpha: 0.7),
                                 ),
                                 const SizedBox(width: 4),
                                 Flexible(
@@ -406,9 +419,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.75,
-                                      ),
+                                      color: manga ? retro.inkDim : Colors.white.withValues(alpha: 0.75),
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -424,8 +435,8 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                   const SizedBox(width: 3),
                                   Text(
                                     widget.mod.rating!.star,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color: manga ? retro.ink : Colors.white,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -442,14 +453,14 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                             .read(favouritesProvider.notifier)
                             .toggle(widget.mod.id),
                         child: Container(
-                          width: 36,
-                          height: 36,
+                          width: manga ? 48 : 36,
+                          height: manga ? 48 : 36,
                           decoration: retro.gameDecoration(
                             BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.3),
+                              color: manga ? retro.accent : Colors.black.withValues(alpha: 0.3),
                               borderRadius: retro.radius,
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
+                                color: manga ? retro.border : Colors.white.withValues(alpha: 0.2),
                                 width: retro.borderWidth(1.5),
                               ),
                             ),
@@ -457,15 +468,17 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                           child: MarioGameIcon(
                             isFav ? Icons.favorite : Icons.favorite_border,
                             size: 17,
-                            color: isFav ? retro.red : Colors.white,
+                            color: isFav ? retro.red : (manga ? retro.inkOnAccent : Colors.white),
                           ),
                         ),
                       ),
                     ],
+                    ),
                   ),
                 ),
               ],
             ),
+          ),
           ),
         ),
       ),

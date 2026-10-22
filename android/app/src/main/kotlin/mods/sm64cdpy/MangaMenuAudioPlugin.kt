@@ -60,12 +60,15 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             }
             "play" -> {
                 val name = call.argument<String>("sound")
+                // Ganancia por efecto: nunca modifica AudioManager ni el volumen global.
+                val requestedVolume = call.argument<Number>("volume")?.toFloat() ?: 0.65f
+                val volume = if (requestedVolume.isFinite()) requestedVolume.coerceIn(0f, 1f) else 0.65f
                 val id = samples[name]
                 val now = SystemClock.elapsedRealtime()
-                if (id != null && ready.contains(id) && now - lastPlay >= 75) {
+                if (volume > 0f && id != null && ready.contains(id) && now - lastPlay >= 75) {
                     lastPlay = now
                     try {
-                        val stream = pool?.play(id, 0.65f, 0.65f, 1, 0, 1f) ?: 0
+                        val stream = pool?.play(id, volume, volume, 1, 0, 1f) ?: 0
                         if (stream == 0) Log.w("MangaMenuAudio", "Reproducción rechazada: $name")
                     } catch (error: RuntimeException) {
                         Log.w("MangaMenuAudio", "No se pudo reproducir $name", error)

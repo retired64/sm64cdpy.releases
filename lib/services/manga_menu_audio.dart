@@ -7,7 +7,11 @@ class MangaMenuAudio {
 
   Future<void> prepare() => _invoke('prepare');
   Future<void> stop() => _invoke('stop');
-  Future<void> play(String sound) => _invoke('play', {'sound': sound});
+  Future<void> play(String sound, {double volume = 0.65}) =>
+      _invoke('play', {
+        'sound': sound,
+        'volume': volume.isFinite ? volume.clamp(0.0, 1.0).toDouble() : 0.65,
+      });
 
   Future<void> _invoke(String method, [Map<String, Object>? arguments]) async {
     try {
