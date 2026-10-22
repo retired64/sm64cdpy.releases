@@ -1452,7 +1452,7 @@ class SectionKicker extends StatelessWidget {
               flexibleLabel: true,
             ),
           ),
-          if (japanese != null) ...[
+          if (retro.showJapaneseDecorations && japanese != null) ...[
             const SizedBox(width: 9),
             Text(japanese!, style: retro.body(size: 12, color: retro.inkDim)),
           ],

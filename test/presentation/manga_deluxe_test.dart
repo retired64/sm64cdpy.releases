@@ -86,8 +86,15 @@ void main() {
       home: const Scaffold(body: SizedBox.expand(child: DeluxeBackdrop())),
     )));
     await tester.pumpAndSettle();
+    AnimationController controller() => tester.widget<AnimatedBuilder>(
+      find.descendant(
+        of: find.byKey(const ValueKey('manga-deluxe-backdrop')),
+        matching: find.byType(AnimatedBuilder),
+      ),
+    ).animation as AnimationController;
+    addTearDown(() => tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed));
     expect(find.byKey(const ValueKey('manga-deluxe-backdrop')), findsOneWidget);
-    expect(tester.binding.transientCallbackCount, 0);
+    expect(controller().isAnimating, isFalse);
     final moving = ProviderContainer(overrides: [
       deluxeMotionProvider.overrideWith(_MovingBackdrop.new),
     ]);
@@ -100,16 +107,22 @@ void main() {
     ));
     await tester.pumpWidget(scene(false));
     await tester.pump(const Duration(milliseconds: 100));
-    expect(tester.binding.transientCallbackCount, greaterThan(0));
+    expect(controller().isAnimating, isTrue);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
     await tester.pump();
-    expect(tester.binding.transientCallbackCount, 0);
+    expect(controller().isAnimating, isFalse);
+    final pausedValue = controller().value;
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(controller().value, pausedValue);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pump();
-    expect(tester.binding.transientCallbackCount, greaterThan(0));
+    expect(controller().isAnimating, isTrue);
     await tester.pumpWidget(scene(true));
     await tester.pumpAndSettle();
-    expect(tester.binding.transientCallbackCount, 0);
+    expect(controller().isAnimating, isFalse);
+    final reducedValue = controller().value;
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(controller().value, reducedValue);
     expect(tester.takeException(), isNull);
   });
 

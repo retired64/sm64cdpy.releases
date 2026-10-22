@@ -23,7 +23,9 @@
 - [x] Reset solo visual/audio por escritores canónicos, sin borrar datos del juego.
 - [x] ARB en cinco variantes, documentación y notas públicas actualizadas.
 - [x] Pruebas de persistencia, capacidades, assets, fondo, editoriales y tres idiomas.
-- [ ] CI: gen-l10n, dart format, analyze y flutter test completos.
+- [x] Revisado Actions 39868942338: análisis correcto, 423 pruebas verdes;
+      corregidos dos fallos de japonés en Deluxe y la comprobación global del scheduler.
+- [ ] Repetir CI y confirmar las pruebas completas tras la corrección.
 - [ ] Teléfono: Home/Audio/Biblioteca/Partidas/Jugador, claro/oscuro, contraste y texto grande.
 - [ ] Teléfono: movimiento, ahorro batería, minimizar, retorno del vídeo y música sin solape.
 
