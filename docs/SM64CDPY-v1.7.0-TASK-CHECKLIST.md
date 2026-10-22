@@ -19,6 +19,8 @@
 - [x] Solo Minimal, Retro Manga y Mario Kart 64 en el selector.
 - [x] Preferencias antiguas de Mario 64, Intro y Minish Cap pasan a Retro Manga.
 - [x] Guardado normalizado y pruebas de restauración sin perder el modo oscuro.
+- [x] Revisado Actions 39724113377: corregida herencia tipográfica al cambiar
+      a MK64 y dos expectativas antiguas de pruebas tras retirar temas.
 - [ ] Ejecutar Flutter analyze/tests en CI y comprobar una actualización real.
 
 ### Menu-slide: navegación bajo demanda — 2026-10-21

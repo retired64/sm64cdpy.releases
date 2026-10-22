@@ -11,6 +11,37 @@ double contrast(Color a, Color b) {
 }
 
 void main() {
+  test('available themes interpolate button typography in both modes', () {
+    for (final dark in [false, true]) {
+      final themes = [
+        for (final design in AppThemeCatalog.designs)
+          RetroTheme.materialTheme(dark, design: design),
+      ];
+      List<TextStyle> styles(ThemeData theme) => [
+        for (final button in [
+          theme.filledButtonTheme.style,
+          theme.elevatedButtonTheme.style,
+          theme.outlinedButtonTheme.style,
+          theme.textButtonTheme.style,
+        ])
+          button?.textStyle?.resolve(<WidgetState>{}) ??
+              theme.textTheme.labelLarge!,
+      ];
+      for (final from in themes) {
+        for (final to in themes) {
+          final start = styles(from);
+          final end = styles(to);
+          for (var index = 0; index < start.length; index++) {
+            expect(
+              () => TextStyle.lerp(start[index], end[index], 0.5),
+              returnsNormally,
+            );
+          }
+        }
+      }
+    }
+  });
+
   test('unknown/absent IDs use Retro Manga by default', () {
     expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);
     expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);

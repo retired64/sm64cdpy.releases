@@ -81,7 +81,7 @@ void main() {
       expect(container.read(appearanceProvider).isSaving, isFalse);
       expect(
         Hive.box<String>(AppConstants.settingsBoxKey).get('theme_id'),
-        'mario64',
+        'mario_kart_64',
       );
     },
   );

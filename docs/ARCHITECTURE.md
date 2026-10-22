@@ -609,3 +609,10 @@ y los helpers compartidos; no forman parte de `AppThemeCatalog.designs` ni se
 pueden activar por el provider. TypefaceMario64 sigue disponible para los
 rótulos del menú de Retro Manga. No cambia el engine del overlay, que mantiene
 su paleta independiente; no se añaden caches, Futures sin esperar ni canales.
+
+### Transición tipográfica entre temas — 2026-10-21
+
+Los estilos de botones de racing y folio usan `inherit: false`, igual que los
+estilos completos de Material y Retro Manga. Esto permite interpolarlos sin
+aserciones de `TextStyle.lerp` al cambiar de diseño. Se comprueban los cuatro
+tipos de botones entre todos los diseños disponibles en claro y oscuro.

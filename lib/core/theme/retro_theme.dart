@@ -707,6 +707,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         side: BorderSide(color: border, width: borderWidth(2)),
       );
       final labelStyle = TextStyle(
+        // Material interpola estos estilos con estilos completos sin herencia.
+        inherit: false,
         fontFamily: headingFamily,
         fontFamilyFallback: design.headingFontFamilyFallback,
         fontWeight: FontWeight.w400,
@@ -789,6 +791,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         side: BorderSide(color: border, width: borderWidth(2)),
       );
       final labelStyle = TextStyle(
+        // Material interpola estos estilos con estilos completos sin herencia.
+        inherit: false,
         fontFamily: headingFamily,
         fontFamilyFallback: design.headingFontFamilyFallback,
         fontWeight: FontWeight.w400,

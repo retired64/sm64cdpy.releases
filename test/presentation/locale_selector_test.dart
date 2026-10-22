@@ -57,7 +57,7 @@ void main() {
         Hive.init(directory.path);
         final box = await Hive.openBox<String>(AppConstants.settingsBoxKey);
         await box.putAll({
-          'theme_id': 'mario64',
+          'theme_id': 'mario_kart_64',
           'theme_mode': 'light',
           'locale': 'en_US',
         });
