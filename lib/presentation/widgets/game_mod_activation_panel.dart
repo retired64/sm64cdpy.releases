@@ -1,3 +1,4 @@
+import 'manga_switch.dart';
 import 'game_folder_card.dart';
 import 'dart:async';
 
@@ -953,6 +954,12 @@ class _GameModCard extends StatelessWidget {
                 label: mod.title,
                 child: retro.isMario && retro.marioAssets.complete
                     ? MarioGameToggle(
+                        key: ValueKey('game-mod-switch-${mod.keyName}'),
+                        value: mod.enabled,
+                        onChanged: onChanged,
+                      )
+                    : retro.showJapaneseDecorations
+                    ? MangaSwitch(
                         key: ValueKey('game-mod-switch-${mod.keyName}'),
                         value: mod.enabled,
                         onChanged: onChanged,

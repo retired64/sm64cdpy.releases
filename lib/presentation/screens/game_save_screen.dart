@@ -1,3 +1,4 @@
+import '../widgets/manga_switch.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -634,7 +635,7 @@ class _SaveEditorState extends State<_SaveEditor> {
                         ],
                       ),
                       if (i < 15) ...[
-                        SwitchListTile(
+                        ThemedSwitchListTile(
                           title: Text(l.saveFileCannon),
                           value: cannons[i],
                           onChanged: (v) => setState(() => cannons[i] = v),
@@ -673,7 +674,7 @@ class _SaveEditorState extends State<_SaveEditor> {
                       (7, l.saveFileUpstairs),
                       (9, l.saveFileMoat),
                     ])
-                      SwitchListTile(
+                      ThemedSwitchListTile(
                         title: Text(item.$2),
                         value: unlocks & (1 << item.$1) != 0,
                         onChanged: (_) =>

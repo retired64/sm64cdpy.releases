@@ -1,3 +1,4 @@
+import '../widgets/manga_switch.dart';
 import '../widgets/game_folder_card.dart';
 import 'dart:async';
 
@@ -397,13 +398,16 @@ class _RetroSwitch extends StatelessWidget {
 
   final RetroTheme retro;
   final bool value;
-  final ValueChanged<bool> onChanged;
+  final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    if (retro.showJapaneseDecorations) {
+      return MangaSwitch(value: value, onChanged: onChanged);
+    }
     return GestureDetector(
-      onTap: () => onChanged(!value),
+      onTap: onChanged == null ? null : () => onChanged!(!value),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
         curve: Curves.easeOut,
@@ -473,7 +477,7 @@ class _AutoInstallToggle extends ConsumerWidget {
       trailing: _RetroSwitch(
         retro: retro,
         value: autoInstall,
-        onChanged: preference.isSaving ? (_) {} : toggle,
+        onChanged: preference.isSaving ? null : toggle,
       ),
     );
   }

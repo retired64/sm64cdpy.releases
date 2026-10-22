@@ -14,6 +14,15 @@
 
 ## How to use this checklist
 
+### Switches Retro Manga — 2026-10-22
+
+- [x] Control compartido de riel/selector cuadrados, claro y oscuro según referencias.
+- [x] Audio, Biblioteca/mods/DynOS/Touch, Partidas y Ajustes migrados.
+- [x] Objetivo táctil 56×48, semántica, teclado, deshabilitado y movimiento reducido.
+- [x] Otros temas y lógica de persistencia/activación sin cambios.
+- [x] Pruebas de forma, interacción, contraste e aislamiento con texto ampliado.
+- [ ] CI: formato/análisis/tests y revisión en teléfono de ambos estados/modos.
+
 ### Marca de Inicio — 2026-10-22
 
 - [x] Home: SM64CDPY multicolor con la fuente/contornos de Menú; lupa retirada.

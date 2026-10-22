@@ -803,3 +803,31 @@ FittedBox adapta el rótulo al ancho disponible; Semantics lo anuncia como un
 solo encabezado, sin repetir cada capa del contorno. No hay nuevos assets,
 animaciones, preferencias o cambios de navegación; el catálogo sigue accesible
 desde sus entradas existentes. La marca propia no requiere traducción.
+
+### Switches rectangulares Retro Manga — 2026-10-22
+
+MangaSwitch sustituye las píldoras Material en Biblioteca (Game Mods, DynOS y
+Touch Controls), Audio (música/efectos), Partidas (cañones/desbloqueos) y los
+switches propios de Ajustes (auto-install y overlay). Riel 52×30 y selector
+18×18 sin radios, usando tinta/papel del tema: apagado con contorno y selector
+hueco a la izquierda; encendido con relleno de tinta y selector de papel a la
+derecha. En oscuro se invierten automáticamente los colores mediante los roles
+del tema, no con colores literales. Objetivo táctil 56×48, transición de 140 ms,
+reducida a cero con disableAnimations; foco de teclado conserva el acento.
+
+ThemedSwitchListTile reutiliza el control en filas con MergeSemantics y área
+completa pulsable; otros temas siguen usando SwitchListTile. Biblioteca
+conserva Switch/MarioGameToggle fuera de Manga y las claves por identidad.
+Ajustes mantiene su diseño previo en los otros temas. El overlay no contiene
+switches visuales: solo se adapta su control en Ajustes, sin cambiar engine,
+preferencias ni servicios. No se cambian eventos, confirmaciones, persistencia,
+optimismo o Futures de las acciones. El control representa el valor recibido y
+solo solicita onChanged; onChanged nulo deshabilita semántica, foco y pulsación.
+
+SwitchThemeData no permite sustituir la geometría circular interna de Switch;
+por eso cambiar colores del tema no corregía las píldoras. Nuevos controles
+Manga deben reutilizar MangaSwitch o ThemedSwitchListTile, no Switch directo.
+El componente no carga assets, blur, timers o animaciones en reposo.
+Pruebas añadidas para claro/oscuro, forma, contraste, pulsación, teclado,
+semántica, deshabilitado y aislamiento de los temas a 320 px/texto 1,6×.
+Análisis/tests Flutter y revisión física pendientes por SDK no disponible local.

@@ -1,3 +1,4 @@
+import 'manga_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -125,7 +126,7 @@ class _MangaMenuSoundSettingState extends ConsumerState<MangaMenuSoundSetting> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SwitchListTile(
+            ThemedSwitchListTile(
               key: const ValueKey('ambient-music-enabled'),
               title: Text(l.ambientMusicTitle, style: retro.heading(size: 14)),
               subtitle: Text(l.ambientMusicDescription, style: retro.body(size: 12)),
@@ -155,7 +156,7 @@ class _MangaMenuSoundSettingState extends ConsumerState<MangaMenuSoundSetting> {
                 ],
               ),
             ),
-            SwitchListTile(
+            ThemedSwitchListTile(
               key: const ValueKey('manga-menu-sounds'),
               title: Text(l.mangaMenuSoundsTitle, style: retro.heading(size: 14)),
               subtitle: Text(l.mangaMenuSoundsDescription, style: retro.body(size: 12)),
