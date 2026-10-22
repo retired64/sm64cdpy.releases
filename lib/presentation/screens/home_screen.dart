@@ -1,3 +1,5 @@
+import '../widgets/deluxe_content.dart';
+import '../../services/deluxe_links.dart';
 import '../widgets/mario_multicolor_label.dart';
 import '../widgets/featured_mod_frame.dart';
 import '../widgets/game_launch_flow.dart';
@@ -44,6 +46,9 @@ class _HomeBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final deluxe = RetroTheme.of(context).isDeluxe;
+    final mods = ref.watch(allModsProvider).asData?.value ?? const <ModEntity>[];
+    final spotlight = deluxe ? mods.firstWhereOrNull(DeluxeLinks.hasDemo) : null;
     final featuredAsync = ref.watch(featuredModsProvider);
     final topAsync = ref.watch(topModsProvider);
 
@@ -58,6 +63,8 @@ class _HomeBody extends ConsumerWidget {
             child: GameFolderCard(optional: true),
           ),
         ),
+
+        if (deluxe) const SliverToBoxAdapter(child: DeluxeWelcomePanel()),
 
         // ── Featured carousel ─────────────────────────────────
         SliverToBoxAdapter(
@@ -74,6 +81,9 @@ class _HomeBody extends ConsumerWidget {
           orElse: () => false,
         ))
           const SliverToBoxAdapter(child: SizedBox(height: 14)),
+
+        if (spotlight != null)
+          SliverToBoxAdapter(child: DeluxeFeaturedStory(mod: spotlight)),
 
         // ── Browse carousel ─────────────────────────────────────
         const SliverToBoxAdapter(child: _BrowseCarousel()),
@@ -303,7 +313,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
-    final manga = retro.showJapaneseDecorations;
+    final manga = retro.isManga;
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
 
     return AnimatedContainer(

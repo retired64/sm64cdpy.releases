@@ -403,7 +403,7 @@ class _RetroSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    if (retro.showJapaneseDecorations) {
+    if (retro.isManga) {
       return MangaSwitch(value: value, onChanged: onChanged);
     }
     return GestureDetector(

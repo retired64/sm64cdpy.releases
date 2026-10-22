@@ -256,7 +256,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: true,
-      backgroundColor: retro.background,
+      backgroundColor: retro.isDeluxe ? retro.background.withValues(alpha: 0.96) : retro.background,
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.8,
       ),

@@ -48,11 +48,13 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   final AppThemeDesign design;
   final RetroAccent retroAccent;
   bool get supportsAdaptiveAccent =>
-      design.id == AppThemeId.retroManga || design.id == AppThemeId.marioKart64;
+      design.id.isManga || design.id == AppThemeId.marioKart64;
   bool get _adaptiveRacingPalette => design.id == AppThemeId.marioKart64;
   final MarioThemeAssets marioAssets;
 
   /// Japanese captions are decoration exclusive to the manga design.
+  bool get isManga => design.id.isManga;
+  bool get isDeluxe => design.id == AppThemeId.mangaDeluxe;
   bool get showJapaneseDecorations => design.id == AppThemeId.retroManga;
   bool get isIntro => design.id == AppThemeId.sm64Intro;
   bool get isMario => design.id == AppThemeId.mario64 || isIntro;

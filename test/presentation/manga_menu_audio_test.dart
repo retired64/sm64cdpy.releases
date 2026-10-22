@@ -59,6 +59,9 @@ void main() {
       await container.read(appearanceProvider.notifier).setTheme(AppThemeId.retroManga);
       await sounds.play('slide');
       expect(audio.played, ['press', 'slide']);
+      await container.read(appearanceProvider.notifier).setTheme(AppThemeId.mangaDeluxe);
+      await sounds.play('press');
+      expect(audio.played, ['press', 'slide', 'press']);
     } finally {
       container.dispose();
       await Hive.close();

@@ -1,3 +1,6 @@
+import '../widgets/deluxe_backdrop.dart';
+import '../widgets/deluxe_content.dart';
+import '../../services/deluxe_links.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +90,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold> {
     return Scaffold(
       backgroundColor: retro.isMario ? Colors.transparent : retro.background,
       appBar: _buildAppBar(retro, isFav),
-      body: CustomScrollView(
+      body: DeluxeScene(child: CustomScrollView(
         controller: _scrollCtrl,
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -97,6 +100,11 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold> {
               child: _ModHeader(mod: widget.mod),
             ),
           ),
+          if (retro.isDeluxe && DeluxeLinks.hasDemo(widget.mod))
+            SliverToBoxAdapter(child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: const DeluxeDemoButton(),
+            )),
           SliverToBoxAdapter(
             child: _ContentCard(
               mod: widget.mod,
@@ -111,7 +119,7 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold> {
 
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
         ],
-      ),
+      )),
     );
   }
 

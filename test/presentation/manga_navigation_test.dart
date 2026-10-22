@@ -496,7 +496,7 @@ void main() {
         );
         await _openMenu(tester);
         await tester.pumpAndSettle();
-        final manga = RetroTheme(dark, design: design).showJapaneseDecorations;
+        final manga = RetroTheme(dark, design: design).isManga;
         expect(
           find.byType(MangaNavigationBar),
           manga ? findsOneWidget : findsNothing,

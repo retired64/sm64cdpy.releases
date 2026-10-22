@@ -65,6 +65,9 @@ void main() {
     await tester.pump();
     expect(music.calls.last.enabled, isFalse);
     await container.read(appAudioSettingsProvider.notifier).setMusicEnabled(true);
+    await container.read(appearanceProvider.notifier).setTheme(AppThemeId.mangaDeluxe);
+    await tester.pump();
+    expect(music.calls.last, (enabled: true, volume: 0.1));
     await container.read(appearanceProvider.notifier).setTheme(AppThemeId.minimal);
     await tester.pump();
     expect(music.calls.last.enabled, isFalse);

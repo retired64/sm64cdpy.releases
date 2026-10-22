@@ -1,3 +1,4 @@
+import 'deluxe_backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -104,11 +105,12 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    final bottomNavigation = retro.showJapaneseDecorations;
+    final bottomNavigation = retro.isManga;
     final autoInstall = ref.watch(autoInstallProvider);
     ref.watch(gameFolderProvider);
     _scheduleSetupFlow(autoInstall);
     final showBackdrop =
+        retro.isDeluxe ||
         retro.isIntro ||
         retro.showN64Backdrop ||
         retro.showParchmentBackdrop ||
@@ -143,7 +145,7 @@ class _AppShellState extends ConsumerState<AppShell> {
               ? Stack(
                   children: [
                     Positioned.fill(
-                      child: ThemeBackdrop(
+                      child: retro.isDeluxe ? const DeluxeBackdrop() : ThemeBackdrop(
                         menuSurface:
                             widget.currentRoute == '/library' ||
                             widget.currentRoute == '/settings',
@@ -299,7 +301,7 @@ class RetroPinnedAppBar extends StatelessWidget {
       floating: false,
       snap: false,
       toolbarHeight: 56,
-      backgroundColor: retro.background,
+      backgroundColor: retro.isDeluxe ? retro.background.withValues(alpha: 0.96) : retro.background,
       surfaceTintColor: Colors.transparent,
       systemOverlayStyle: retro.systemUiStyle,
       elevation: 0,

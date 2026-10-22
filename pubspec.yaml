@@ -64,6 +64,7 @@ flutter:
     - assets/player3d/
     - assets/themes/minish/
     - assets/themes/mk64/
+    - assets/themes/manga_deluxe/
     - assets/themes/manga/navigation/
 
   fonts:

@@ -72,3 +72,5 @@ v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 - [Optional fast installation](FAST_INSTALLATION.md): direct/SAF selection, permissions, cancellation and device validation.
 
 - [Guía de inicio para jugar](HOW_TO_PLAY.md): instalación Android, ROM, carpetas y primeros mods.
+
+- [Manga Deluxe: diseño, estado y validación](MANGA_DELUXE.md).

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/theme/app_theme_design.dart';
 import '../../services/manga_menu_audio.dart';
 import 'theme_provider.dart';
 import 'app_audio_settings_provider.dart';
@@ -44,7 +43,7 @@ class MangaMenuSoundsNotifier extends Notifier<bool> {
   }
 
   Future<void> play(String sound) async {
-    if (!state || ref.read(themeDesignProvider).id != AppThemeId.retroManga) return;
+    if (!state || !ref.read(themeDesignProvider).id.isManga) return;
     final volume = ref.read(appAudioSettingsProvider).effectsVolume;
     if (volume <= 0) return;
     await ref.read(mangaMenuAudioProvider).play(sound, volume: volume);

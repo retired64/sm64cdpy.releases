@@ -43,6 +43,7 @@ codigo-logica-zip/
 uia_json_estructura.md
 source/*
 .codewhale/
+website/
 android-permissions.md
 flutter_permission_handler_plus/
 # Miscellaneous

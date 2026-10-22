@@ -1,3 +1,4 @@
+import 'deluxe_preferences.dart';
 import 'retro_accent_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,6 +19,7 @@ class AppearanceSelector extends ConsumerWidget {
   String _name(AppLocalizations l10n, AppThemeId id) => switch (id) {
     AppThemeId.minimal => l10n.themeMinimal,
     AppThemeId.retroManga => l10n.themeRetroManga,
+    AppThemeId.mangaDeluxe => l10n.themeMangaDeluxe,
     AppThemeId.minishCap => l10n.themeMinishCap,
     AppThemeId.marioKart64 => l10n.themeMarioKart64,
     AppThemeId.mario64 => l10n.themeMario64,
@@ -101,6 +103,7 @@ class AppearanceSelector extends ConsumerWidget {
           ],
         ),
         const RetroAccentSelector(),
+        const DeluxePreferences(),
         if (settings.isSaving) ...[
           const SizedBox(height: 12),
           LinearProgressIndicator(

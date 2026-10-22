@@ -1,5 +1,6 @@
 import 'app_theme_design.dart';
 import 'themes/minimal_theme.dart';
+import 'themes/manga_deluxe_theme.dart';
 import 'themes/mario64_theme.dart';
 import 'themes/mario_kart_64_theme.dart';
 import 'themes/minish_cap_theme.dart';
@@ -11,6 +12,7 @@ abstract final class AppThemeCatalog {
   static const designs = <AppThemeDesign>[
     minimalTheme,
     retroMangaTheme,
+    mangaDeluxeTheme,
     marioKart64Theme,
   ];
 

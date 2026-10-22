@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
-import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import 'package:sm64cdpy/presentation/widgets/featured_mod_frame.dart';
 
@@ -17,8 +16,8 @@ void main() {
           )),
         ));
         final frame = find.byKey(const ValueKey('manga-featured-frame'));
-        expect(frame, design.id == AppThemeId.retroManga ? findsOneWidget : findsNothing);
-        if (design.id == AppThemeId.retroManga) {
+        expect(frame, design.id.isManga ? findsOneWidget : findsNothing);
+        if (design.id.isManga) {
           final box = tester.widget<Container>(frame);
           final decoration = box.decoration! as BoxDecoration;
           expect((decoration.border! as Border).top.width, greaterThan(0));

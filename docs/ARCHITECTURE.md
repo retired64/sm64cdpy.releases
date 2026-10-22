@@ -831,3 +831,14 @@ El componente no carga assets, blur, timers o animaciones en reposo.
 Pruebas añadidas para claro/oscuro, forma, contraste, pulsación, teclado,
 semántica, deshabilitado y aislamiento de los temas a 320 px/texto 1,6×.
 Análisis/tests Flutter y revisión física pendientes por SDK no disponible local.
+
+### Manga Deluxe — 2026-10-22
+
+Nuevo ID `manga_deluxe` y capacidad `AppThemeId.isManga` para compartir menú,
+switches, audio y acento sin confundirlos con `showJapaneseDecorations`, que
+permanece exclusivo de Retro Manga. Paleta propia y fondo en AppShell (también
+en Home), con gorros/patrón optimizados, quieto por defecto y movimiento opcional
+respetando lifecycle/TickerMode/accesibilidad. No se cambia el overlay.
+Contenido Deluxe: bienvenida CoopDX, editorial DNC, demostración externa bajo
+demanda, FAQ y enlaces del port Android. Preferencias y reset solo por escritores
+canónicos. Procedencia, rutas, pruebas y límites en [MANGA_DELUXE.md](MANGA_DELUXE.md).

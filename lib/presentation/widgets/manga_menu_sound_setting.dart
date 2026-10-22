@@ -1,8 +1,8 @@
+import 'deluxe_preferences.dart';
 import 'manga_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_theme_design.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/app_audio_settings_provider.dart';
@@ -19,7 +19,7 @@ Future<void> showMangaAudioMenu(BuildContext context) async {
     isScrollControlled: true,
     useSafeArea: true,
     showDragHandle: true,
-    backgroundColor: retro.background,
+    backgroundColor: retro.isDeluxe ? retro.background.withValues(alpha: 0.96) : retro.background,
     constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.8),
     shape: RoundedRectangleBorder(
       borderRadius: retro.radius,
@@ -50,7 +50,10 @@ Future<void> showMangaAudioMenu(BuildContext context) async {
           Flexible(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
-              child: const MangaMenuSoundSetting(),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [MangaMenuSoundSetting(), DeluxeResetButton()],
+              ),
             ),
           ),
         ],
@@ -107,7 +110,7 @@ class _MangaMenuSoundSettingState extends ConsumerState<MangaMenuSoundSetting> {
 
   @override
   Widget build(BuildContext context) {
-    if (ref.watch(themeDesignProvider).id != AppThemeId.retroManga) {
+    if (!ref.watch(themeDesignProvider).id.isManga) {
       return const SizedBox.shrink();
     }
     final retro = RetroTheme.of(context);
@@ -129,7 +132,7 @@ class _MangaMenuSoundSettingState extends ConsumerState<MangaMenuSoundSetting> {
             ThemedSwitchListTile(
               key: const ValueKey('ambient-music-enabled'),
               title: Text(l.ambientMusicTitle, style: retro.heading(size: 14)),
-              subtitle: Text(l.ambientMusicDescription, style: retro.body(size: 12)),
+              subtitle: Text(retro.isDeluxe ? l.deluxeMusicDescription : l.ambientMusicDescription, style: retro.body(size: 12)),
               secondary: Icon(Icons.music_note_outlined, color: retro.accentText),
               value: mix.musicEnabled,
               onChanged: _saving ? null : (value) => _saveMusic(enabled: value),

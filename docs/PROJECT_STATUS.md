@@ -3,6 +3,16 @@
 Revisado para la candidata `1.9.0+28` en `how-to-play-guide` el 2026-10-20. La
 `1.8.8+27` es la candidata anterior.
 
+## Manga Deluxe — 2026-10-22
+
+Nuevo diseño independiente `manga_deluxe`, basado en Retro Manga sin modificar
+su paleta ni sus decoraciones japonesas. Integra los assets de la web CoopDX,
+fondo estático por defecto con movimiento opcional/accesible, superficies de
+papel, showcase editorial, vídeo oficial externo bajo demanda y FAQ enlazada a
+los flujos Android. Hereda menú, switches y audio de la familia Manga.
+Preferencias, reset limitado y matriz de pruebas en [MANGA_DELUXE.md](MANGA_DELUXE.md).
+Código preparado; CI y validación física pendientes por SDK local no disponible.
+
 ## Implementado
 
 - Preparador local de ROM accesible desde Cómo jugar y GameTool. Detecta z64,

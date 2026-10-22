@@ -1,3 +1,4 @@
+import '../widgets/deluxe_content.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -600,6 +601,8 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                         ? l10n.playGuideTip
                                         : null,
                                   ),
+                                if (retro.isDeluxe && index == 5)
+                                  const DeluxeHelpPanel(),
                               ],
                             ),
                           ),

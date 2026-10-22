@@ -12,6 +12,21 @@
 | Current phase | Stabilization and validation |
 | Release owner | Retired64 |
 
+## Manga Deluxe — 2026-10-22
+
+- [x] ID, catálogo, selector y restauración; paleta clara/oscura propia.
+- [x] Familia Manga separada de decoraciones japonesas; menú/switches/audio/acento heredados.
+- [x] Assets WebP optimizados de la web; ningún HTML ni vídeo dentro del APK.
+- [x] Fondo estático por defecto, movimiento opcional con pausa/lifecycle/accesibilidad.
+- [x] Paneles de papel, bienvenida, historia editorial DNC y demo externa bajo demanda.
+- [x] FAQ en Cómo jugar, comunidad y releases Android; instalación Android existente conservada.
+- [x] Reset solo visual/audio por escritores canónicos, sin borrar datos del juego.
+- [x] ARB en cinco variantes, documentación y notas públicas actualizadas.
+- [x] Pruebas de persistencia, capacidades, assets, fondo, editoriales y tres idiomas.
+- [ ] CI: gen-l10n, dart format, analyze y flutter test completos.
+- [ ] Teléfono: Home/Audio/Biblioteca/Partidas/Jugador, claro/oscuro, contraste y texto grande.
+- [ ] Teléfono: movimiento, ahorro batería, minimizar, retorno del vídeo y música sin solape.
+
 ## How to use this checklist
 
 ### Switches Retro Manga — 2026-10-22

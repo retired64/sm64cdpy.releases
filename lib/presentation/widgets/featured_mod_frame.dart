@@ -10,7 +10,7 @@ class FeaturedModFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
-    if (!retro.showJapaneseDecorations) return child;
+    if (!retro.isManga) return child;
     return RepaintBoundary(
       child: Container(
         key: const ValueKey('manga-featured-frame'),

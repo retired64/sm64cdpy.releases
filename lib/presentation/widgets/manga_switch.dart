@@ -91,7 +91,7 @@ class ThemedSwitchListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!RetroTheme.of(context).showJapaneseDecorations) {
+    if (!RetroTheme.of(context).isManga) {
       return SwitchListTile(
         title: title, subtitle: subtitle, secondary: secondary,
         value: value, onChanged: onChanged,

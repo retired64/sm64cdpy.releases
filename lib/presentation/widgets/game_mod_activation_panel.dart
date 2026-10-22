@@ -958,7 +958,7 @@ class _GameModCard extends StatelessWidget {
                         value: mod.enabled,
                         onChanged: onChanged,
                       )
-                    : retro.showJapaneseDecorations
+                    : retro.isManga
                     ? MangaSwitch(
                         key: ValueKey('game-mod-switch-${mod.keyName}'),
                         value: mod.enabled,

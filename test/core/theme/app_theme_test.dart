@@ -50,7 +50,7 @@ void main() {
     expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);
     expect(
       AppThemeCatalog.designs.map((design) => design.id).toList(),
-      [AppThemeId.minimal, AppThemeId.retroManga, AppThemeId.marioKart64],
+      [AppThemeId.minimal, AppThemeId.retroManga, AppThemeId.mangaDeluxe, AppThemeId.marioKart64],
     );
     for (final key in ['mario64', 'sm64_intro', 'minish_cap']) {
       expect(AppThemeId.fromStorage(key), AppThemeId.retroManga);
@@ -307,7 +307,7 @@ void main() {
 
   test('comic control themes stay isolated from the other designs', () {
     for (final design in AppThemeCatalog.designs) {
-      if (design.id == AppThemeId.retroManga) continue;
+      if (design.id.isManga) continue;
       final retro = RetroTheme(false, design: design);
       expect(retro.usesComicSurfaces, isFalse);
       final material = retro.toMaterialTheme();

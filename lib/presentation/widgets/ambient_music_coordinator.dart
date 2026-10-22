@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_theme_design.dart';
 import '../../services/ambient_music.dart';
 import '../providers/app_audio_settings_provider.dart';
 import '../providers/theme_provider.dart';
@@ -34,7 +33,7 @@ class _AmbientMusicCoordinatorState extends ConsumerState<AmbientMusicCoordinato
   void _sync() {
     final mix = ref.read(appAudioSettingsProvider);
     unawaited(_music.configure(
-      enabled: mix.musicEnabled && ref.read(themeDesignProvider).id == AppThemeId.retroManga,
+      enabled: mix.musicEnabled && ref.read(themeDesignProvider).id.isManga,
       volume: mix.musicVolume,
     ));
   }

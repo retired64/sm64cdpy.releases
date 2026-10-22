@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
-import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import 'package:sm64cdpy/presentation/widgets/manga_switch.dart';
 
@@ -99,7 +98,7 @@ void main() {
           ),
         )),
       ));
-      final manga = design.id == AppThemeId.retroManga;
+      final manga = design.id.isManga;
       expect(find.byType(MangaSwitch), manga ? findsOneWidget : findsNothing);
       expect(find.byType(SwitchListTile), manga ? findsNothing : findsOneWidget);
       await tester.tap(find.text('Música ambiental'));
