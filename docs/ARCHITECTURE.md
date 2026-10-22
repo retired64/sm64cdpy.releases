@@ -587,3 +587,10 @@ FittedBox evita recortar el rótulo dentro del botón y respeta el espacio
 reservado a su caption. El botón sigue anunciando una sola acción localizada
 Abrir/Cerrar menú mediante su Semantics superior. Tests de familia, texto
 español, colores y contorno claro/oscuro añadidos; ejecución Flutter pendiente.
+
+### Cierre compacto del menú flotante — 2026-10-21
+
+Con el carrusel abierto se oculta el rótulo Menú y el badge de cierre pasa
+de 56 a 28 dp mediante el controlador existente. El área táctil conserva
+su tamaño (mínimo 48 dp), tooltip y semántica localizada. Al cerrar vuelve
+el rótulo multicolor; no se añaden estado persistido, caches ni animadores.

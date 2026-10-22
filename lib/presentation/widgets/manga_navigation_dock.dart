@@ -260,9 +260,12 @@ class _MangaMenuToggle extends StatelessWidget {
                 height: height,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Transform.scale(
-                      scale: 1 - 0.24 * progress * (1 - progress),
+                      // El cierre ocupa la mitad visual, conservando el área táctil.
+                      scale: (1 - 0.5 * progress) *
+                          (1 - 0.24 * progress * (1 - progress)),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -290,8 +293,13 @@ class _MangaMenuToggle extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    _MarioMenuCaption(label: l.mangaMenuLabel),
+                    if (!expanded) ...[
+                      const SizedBox(height: 2),
+                      Opacity(
+                        opacity: 1 - progress,
+                        child: _MarioMenuCaption(label: l.mangaMenuLabel),
+                      ),
+                    ],
                   ],
                 ),
               ),

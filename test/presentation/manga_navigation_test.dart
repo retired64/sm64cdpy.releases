@@ -173,7 +173,20 @@ void main() {
         await tester.tap(toggle);
         await tester.pumpAndSettle();
         expect(find.byType(MangaNavigationBar), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('manga-menu-caption-fill')),
+          findsNothing,
+        );
+        final closeImage = find.byKey(
+          const ValueKey('manga-menu-close-button'),
+        );
+        final closeSize = tester.getBottomRight(closeImage) -
+            tester.getTopLeft(closeImage);
+        expect(closeSize.dx, closeTo(28, 0.01));
+        expect(closeSize.dy, closeTo(28, 0.01));
         final opened = tester.getRect(toggle);
+        expect(opened.width, greaterThanOrEqualTo(48));
+        expect(opened.height, greaterThanOrEqualTo(48));
         expect(opened.top, lessThan(closed.top));
         expect(opened.right, closeTo(closed.right, 0.01));
         final bar = tester.getRect(
@@ -199,6 +212,10 @@ void main() {
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
         expect(find.byType(MangaNavigationBar), findsNothing);
+        expect(
+          find.byKey(const ValueKey('manga-menu-caption-fill')),
+          findsOneWidget,
+        );
         expect(router.routeInformationProvider.value.uri.path, '/library');
         await tester.tap(toggle);
         await tester.pumpAndSettle();

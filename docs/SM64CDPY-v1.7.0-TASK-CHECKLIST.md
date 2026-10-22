@@ -32,6 +32,7 @@
 - [x] Palabras únicas sin cortes de letras; nombres compuestos pueden usar dos líneas.
 - [x] Rótulo Menú con TypefaceMario64, letras multicolor, contorno negro
       y filete blanco adicional en oscuro; sin imágenes o tickers nuevos.
+- [x] Menú abierto sin rótulo y X al 50% visual; área táctil accesible intacta.
 - [ ] Repetir CI y confirmar las pruebas completas tras este ajuste.
 - [ ] Comprobar en teléfono modo claro/oscuro, Atrás con borrador de Jugador,
       modales, teclado, rotación, pausa/reapertura y texto grande.
