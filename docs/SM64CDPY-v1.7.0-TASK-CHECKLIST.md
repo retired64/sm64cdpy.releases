@@ -910,3 +910,9 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Traducciones EN/ES/ES-419/PT/PT-BR y pruebas de restauración/layout.
 - [ ] Ejecutar gen-l10n, dart format, analyze y tests en CI (sin SDK local).
 - [ ] Revisar Home Deluxe claro/oscuro en Android, texto grande y movimiento reducido.
+
+## Movimiento Deluxe perceptible — 2026-10-22
+
+- [x] Período 12 s y planos fijos con traslación sin relayout por fotograma.
+- [x] Prueba de posición al activar/desactivar/reactivar sin remontar el fondo.
+- [ ] Ejecutar format/analyze/tests en CI y verificar switch en Android.

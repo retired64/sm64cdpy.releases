@@ -44,6 +44,16 @@ class _MovingBackdrop extends DeluxeMotionNotifier {
   bool build() => true;
 }
 
+class _SwitchableMotion extends DeluxeMotionNotifier {
+  @override
+  bool build() => false;
+  @override
+  Future<bool> select(bool value) async {
+    state = value;
+    return true;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final design = AppThemeCatalog.resolve(AppThemeId.mangaDeluxe);
@@ -146,6 +156,43 @@ void main() {
     final reducedValue = controller().value;
     await tester.pump(const Duration(milliseconds: 200));
     expect(controller().value, reducedValue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('motion switch moves pixels, stops and resumes without remounting', (tester) async {
+    final container = ProviderContainer(overrides: [
+      deluxeMotionProvider.overrideWith(_SwitchableMotion.new),
+    ]);
+    addTearDown(container.dispose);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp(
+        theme: RetroTheme.materialTheme(true, design: design),
+        home: const Scaffold(body: SizedBox.expand(child: DeluxeBackdrop())),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    double offset() => tester.widget<Transform>(
+      find.byKey(const ValueKey('deluxe-motion-hats')),
+    ).transform.storage[12];
+    expect(offset(), 0);
+    final notifier = container.read(deluxeMotionProvider.notifier);
+    await notifier.select(true);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    // Más de 5 dp por segundo: perceptible incluso en los huecos de Home.
+    expect(offset(), lessThan(-5));
+    await notifier.select(false);
+    await tester.pump();
+    final stopped = offset();
+    await tester.pump(const Duration(seconds: 1));
+    expect(offset(), stopped);
+    await notifier.select(true);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(offset(), lessThan(stopped - 5));
+    await tester.pumpWidget(const SizedBox.shrink());
     expect(tester.takeException(), isNull);
   });
 

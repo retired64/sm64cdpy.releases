@@ -861,3 +861,12 @@ replicación. Sin timers, IO en build ni Futures nuevos sin esperar.
 La prueba que importa HomeScreen real conserva cobertura de carga/error.
 Las pruebas Deluxe verifican persistencia entre contenedores, fallo de guardado,
 intro omitida, papel neutro y adaptación a 320 px/texto 1,6× en tres idiomas.
+
+### Movimiento Deluxe perceptible
+
+El período del fondo es de 12 s: 80 dp/12 s para gorros y 110 dp/12 s para
+trama. El antiguo período de 60 s resultaba casi imperceptible tras reducir los
+assets. Cada plano conserva sus dimensiones y se desplaza por Transform.translate
+bajo recorte. Se conserva la preferencia Hive, pausa por lifecycle/TickerMode y
+reducción de movimiento; sin nuevos escritores, caches ni Futures sueltos.
+La prueba de conmutación mide píxeles desplazados, no solo isAnimating.
