@@ -327,7 +327,20 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                               iconColor: retro.ink,
                               selectedColor: retro.onColor(retro.accent),
                               leading: Icon(destination.icon),
-                              title: Text(destination.label),
+                              title: Text(
+                                destination.label,
+                                // Deluxe reserva esta fuente para las opciones;
+                                // el color lo hereda del ListTile seleccionado.
+                                style: retro.isDeluxe
+                                    ? const TextStyle(
+                                        fontFamily: 'MarioAndLuigi',
+                                        fontFamilyFallback: ['Roboto'],
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.25,
+                                      )
+                                    : null,
+                              ),
                               trailing: const Icon(Icons.chevron_right),
                               onTap: () {
                                 unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('press'));

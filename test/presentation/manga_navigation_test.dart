@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
+import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import 'package:sm64cdpy/core/theme/retro_accent.dart';
 import 'package:sm64cdpy/domain/entities/player_profile.dart';
@@ -668,6 +669,36 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
+  }
+
+  for (final deluxe in [false, true]) {
+    testWidgets('submenu option font is scoped to Deluxe: $deluxe', (tester) async {
+      final router = _router(initial: '/library');
+      addTearDown(router.dispose);
+      final retro = deluxe
+          ? RetroTheme(false, design: AppThemeCatalog.resolve(AppThemeId.mangaDeluxe))
+          : const RetroTheme(false);
+      await tester.pumpWidget(_app(router, retro, 'es', 1.6));
+      await _openMenu(tester);
+      for (final group in [1, 3, 4]) {
+        final pages = find.byKey(const ValueKey('manga-navigation-pages'));
+        tester.widget<PageView>(pages).controller!.jumpToPage(group);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(ValueKey('manga-nav-$group')));
+        await tester.pumpAndSettle();
+        final tiles = tester.widgetList<ListTile>(find.descendant(
+          of: find.byType(BottomSheet), matching: find.byType(ListTile),
+        ));
+        expect(tiles, isNotEmpty);
+        for (final tile in tiles) {
+          final title = tile.title! as Text;
+          expect(title.style?.fontFamily, deluxe ? 'MarioAndLuigi' : null);
+        }
+        expect(tester.takeException(), isNull);
+        await tester.tap(find.byType(CloseButton));
+        await tester.pumpAndSettle();
+      }
+    });
   }
 
   testWidgets('more retains exclusive resources and settings', (tester) async {

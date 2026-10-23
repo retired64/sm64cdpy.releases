@@ -68,6 +68,10 @@ flutter:
     - assets/themes/manga/navigation/
 
   fonts:
+    - family: MarioAndLuigi
+      fonts:
+        - asset: fonts/manga_deluxe/MarioAndLuigi-0v99.ttf
+          weight: 400
     - family: TypefaceMario64
       fonts:
         - asset: fonts/TypefaceMario64.otf

@@ -882,3 +882,16 @@ animaciones, dependencias ni cambios de navegación/estado/audio.
 
 Prueba de cabecera a 320 px/texto 1,6× en EN/ES/PT y claro/oscuro con cierre.
 Pendiente format/analyze/tests en CI y revisión física por falta de SDK local.
+
+## Fuente de opciones Manga Deluxe — 2026-10-22
+
+Las opciones de los submenús Mods, Herramientas y Más usan `MarioAndLuigi`
+(400, 20 sp, altura 1,25) solo en Manga Deluxe. Registrada en pubspec desde
+`fonts/manga_deluxe/MarioAndLuigi-0v99.ttf` (~20 KB), con nota de procedencia
+original y fallback Roboto. El color continúa heredando ListTile para respetar
+la selección; las filas crecen con el texto, sin altura fija. Cabeceras Mario
+multicolor y tipografía de los demás temas permanecen independientes. No se
+aplica a descripciones, volúmenes ni controles de Audio.
+
+Prueba añadida de alcance Deluxe/Retro Manga en los tres grupos, con texto
+1,6×. Pendiente format/analyze/tests en CI y revisión física por falta de SDK.
