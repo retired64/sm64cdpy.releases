@@ -4,8 +4,6 @@ import '../../core/theme/retro_theme.dart';
 import 'game_setup_widgets.dart';
 import 'mario_multicolor_label.dart';
 
-const coopPlayReadingSize = 8.4;
-
 /// Presentación pura: no conoce providers, permisos ni el motor de sesión.
 TextStyle coopPlayBody(RetroTheme retro, {
   double size = 15,
@@ -116,7 +114,7 @@ class CoopPlayAction extends StatelessWidget {
   }
 }
 
-/// Instrucciones del juego: misma lectura que la introducción, sin lógica de red.
+/// Instrucciones del juego con lectura cómoda, sin lógica de red.
 class CoopPlayInstructions extends StatelessWidget {
   const CoopPlayInstructions({super.key, required this.label, this.detail, this.ready});
   final String label;
@@ -130,11 +128,11 @@ class CoopPlayInstructions extends StatelessWidget {
       Icon(Icons.info_outline_rounded, color: retro.accentText, size: 24),
       const SizedBox(width: 12),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(label, style: coopPlayBody(retro, size: coopPlayReadingSize, height: 1.4)),
+        Text(label, style: coopPlayBody(retro, size: 16, height: 1.4)),
         if (detail != null) ...[
           const SizedBox(height: 4),
           Text(detail!, style: coopPlayBody(retro,
-            size: coopPlayReadingSize, color: retro.inkDim, height: 1.4)),
+            size: 16, color: retro.inkDim, height: 1.4)),
         ],
       ])),
       if (ready != null) ...[

@@ -1049,3 +1049,11 @@ colores, escalado del sistema y títulos Mario multicolor permanecen intactos.
 Otros temas conservan sus familias. Pruebas existentes actualizadas; sin cambios
 de conexión, providers, preferencias, caches, motores ni canales Android.
 Pendiente format/analyze/tests en CI por falta de Flutter/Dart local.
+
+## Restauración de tamaños Play — 2026-10-23
+
+Con Familjen Grotesk se retiran las reducciones de lectura: introducción 14 sp,
+Join room/campo Friend code/acción de unirse 18 sp e instrucciones de conexión
+16 sp. Se mantiene la familia actual y el escalado de accesibilidad. No cambian
+acciones, estado, consentimiento ni motor. Pruebas de tamaños actualizadas;
+git diff --check validado, Flutter pendiente en CI por falta de SDK local.

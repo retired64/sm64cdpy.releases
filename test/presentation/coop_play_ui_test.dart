@@ -54,7 +54,7 @@ void main() {
           final l = AppLocalizations.of(tester.element(find.byType(CoopSessionScreen)));
           expect(find.text(l.coopConsentReview), findsNothing);
           expect(find.text(l.coopPrivacy), findsNothing);
-          expect(tester.widget<Text>(find.text(l.coopIntro)).style?.fontSize, coopPlayReadingSize);
+          expect(tester.widget<Text>(find.text(l.coopIntro)).style?.fontSize, 14);
           expect(find.byKey(const ValueKey('coop-game-missing')), findsNothing);
           expect(find.byKey(const ValueKey('coop-battery-help')), findsNothing);
           expect(find.byType(CoopPlayIcon), findsWidgets);
@@ -81,10 +81,10 @@ void main() {
           await tester.enterText(field, 'abcd-1234');
           expect(tester.widget<TextField>(field).controller!.text, 'abcd-1234');
           final input = tester.widget<TextField>(field);
-          expect(input.style?.fontSize, coopPlayReadingSize);
-          expect(input.decoration?.labelStyle?.fontSize, coopPlayReadingSize);
+          expect(input.style?.fontSize, 18);
+          expect(input.decoration?.labelStyle?.fontSize, 18);
           expect(tester.widget<CoopPlayAction>(action).labelStyle?.fontSize,
-              coopPlayReadingSize);
+              18);
           expect(tester.takeException(), isNull);
         });
       }
