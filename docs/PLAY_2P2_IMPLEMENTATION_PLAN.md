@@ -463,3 +463,17 @@ principal hasta el TextField y la acción de unirse identificada por su icono.
 Se mantienen comprobaciones de layout, código y ambos temas/idiomas/modos.
 Sin cambios en código de app, motor ni contratos. Pendiente repetir CI; SDK
 Flutter/Dart no disponible localmente. git diff --check validado.
+
+## Privacidad en Disclaimer — 2026-10-23
+
+La información de privacidad de red y su botón de consulta se trasladan de Play
+al Disclaimer mediante CoopNetworkPrivacyPanel. La consulta muestra los textos
+localizados vigentes en un diálogo informativo, sin aceptar términos, persistir
+preferencias ni iniciar una sesión. El consentimiento obligatorio previo a crear
+o unirse permanece en Play con validación/persistencia existentes; se retira solo
+el parámetro de revisión forzada que ya no tiene llamadores. Introducción Play
+reducida de 14 a 7 sp (-50 %), conservando escalado de accesibilidad del sistema.
+
+Sin cambios en provider, servicios, motor, Kotlin, WebView, UDP ni assets/coop.
+Sin caches ni suscripciones nuevos. Pruebas verifican la ubicación de textos,
+tamaño y consulta sin ProviderScope ni acceso al motor. Flutter pendiente en CI.

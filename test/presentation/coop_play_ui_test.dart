@@ -51,6 +51,10 @@ void main() {
           await tester.pumpWidget(_app(theme, language, dark,
             const CoopSessionState(initialized: true, gameInstalled: true)));
           await tester.pumpAndSettle();
+          final l = AppLocalizations.of(tester.element(find.byType(CoopSessionScreen)));
+          expect(find.text(l.coopConsentReview), findsNothing);
+          expect(find.text(l.coopPrivacy), findsNothing);
+          expect(tester.widget<Text>(find.text(l.coopIntro)).style?.fontSize, 7);
           expect(find.byKey(const ValueKey('coop-game-missing')), findsNothing);
           expect(find.byKey(const ValueKey('coop-battery-help')), findsNothing);
           expect(find.byType(CoopPlayIcon), findsWidgets);

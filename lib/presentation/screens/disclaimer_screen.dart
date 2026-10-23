@@ -7,6 +7,7 @@ import '../../services/update_service.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/manga_navigation_scope.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/coop_network_privacy_panel.dart';
 
 class DisclaimerScreen extends StatelessWidget {
   const DisclaimerScreen({super.key});
@@ -116,6 +117,7 @@ class _DisclaimerBody extends StatelessWidget {
             ),
           ),
         ),
+        const CoopNetworkPrivacyPanel(),
         const SizedBox(height: 8),
         _WarningBanner(l10n: l10n),
         const SizedBox(height: 28),

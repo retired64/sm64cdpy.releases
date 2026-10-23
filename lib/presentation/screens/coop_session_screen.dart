@@ -138,10 +138,10 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
     }
   }
 
-  Future<bool> _ensureNetworkConsent({bool forceReview = false}) async {
+  Future<bool> _ensureNetworkConsent() async {
     final notifier = ref.read(coopSessionProvider.notifier);
     try {
-      if (!forceReview && await notifier.networkConsentAccepted()) return true;
+      if (await notifier.networkConsentAccepted()) return true;
     } catch (_) {
       // A damaged preference must fall back to explicit consent.
     }
@@ -227,27 +227,8 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                         const SizedBox(width: 12),
                       ],
                       Expanded(child: Text(l.coopIntro,
-                        style: coopPlayBody(retro, size: 14, height: 1.4))),
+                        style: coopPlayBody(retro, size: 7, height: 1.4))),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    childrenPadding: const EdgeInsets.only(bottom: 8),
-                    leading: Icon(Icons.shield_outlined, color: retro.accentText),
-                    title: Text(l.coopConsentTitle,
-                      style: coopPlayBody(retro, size: 13, color: retro.inkDim)),
-                    children: [Text(l.coopPrivacy,
-                      style: coopPlayBody(retro, size: 13, color: retro.inkDim))],
-                  ),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: TextButton.icon(
-                      onPressed: () => _ensureNetworkConsent(forceReview: true),
-                      icon: const Icon(Icons.privacy_tip_outlined),
-                      label: Text(l.coopConsentReview),
-                    ),
                   ),
                 ],
               ),
