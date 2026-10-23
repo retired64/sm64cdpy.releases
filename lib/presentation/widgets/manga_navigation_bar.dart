@@ -21,6 +21,7 @@ const _navigationAssets = [
   'assets/themes/manga/navigation/tools.webp',
   'assets/themes/manga/navigation/more.webp',
   'assets/themes/manga/navigation/audio.webp',
+  'assets/themes/manga/navigation/play.webp',
 ];
 
 typedef _Destination = ({String label, IconData icon, String route});
@@ -43,8 +44,8 @@ class MangaNavigationBar extends ConsumerStatefulWidget {
 
 class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
   // Solo se construyen las viñetas visibles; el origen permite explorar ambos lados.
-  // Múltiplo de las seis opciones: Inicio sigue centrado en el índice cero.
-  static const _origin = 1020;
+  // Múltiplo de las siete opciones: Inicio sigue centrado en el índice cero.
+  static const _origin = 1001;
   late final PageController _pages;
   bool _busy = false;
 
@@ -54,6 +55,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       return 1;
     }
     if (route == '/library') return 2;
+    if (route == '/game-tool/play-2p2') return 6;
     if (route == '/player' || route.startsWith('/game-tool/')) return 3;
     return 4;
   }
@@ -128,6 +130,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       final route = switch (index) {
         0 => '/',
         2 => '/library',
+        6 => '/game-tool/play-2p2',
         _ => await _showDestinations(index, l),
       };
       if (!mounted || route == null) return;
@@ -258,7 +261,9 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: true,
-      backgroundColor: retro.isDeluxe ? retro.background.withValues(alpha: 0.96) : retro.background,
+      backgroundColor: retro.isDeluxe
+          ? retro.background.withValues(alpha: 0.96)
+          : retro.background,
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.8,
       ),
@@ -296,14 +301,16 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                         child: Semantics(
                           header: true,
                           label: section.title,
-                          child: ExcludeSemantics(child: Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            child: MarioMulticolorLabel(
-                              label: section.title,
-                              fontSize: 16,
-                              keyPrefix: 'manga-section-${section.title}',
+                          child: ExcludeSemantics(
+                            child: Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: MarioMulticolorLabel(
+                                label: section.title,
+                                fontSize: 16,
+                                keyPrefix: 'manga-section-${section.title}',
+                              ),
                             ),
-                          )),
+                          ),
                         ),
                       ),
                     for (final destination in section.entries)
@@ -343,7 +350,11 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                               ),
                               trailing: const Icon(Icons.chevron_right),
                               onTap: () {
-                                unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('press'));
+                                unawaited(
+                                  ref
+                                      .read(mangaMenuSoundsProvider.notifier)
+                                      .play('press'),
+                                );
                                 Navigator.pop(context, destination.route);
                               },
                             ),
@@ -371,6 +382,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       (label: l.mangaNavTools, icon: Icons.sports_esports_outlined),
       (label: l.mangaNavMore, icon: Icons.dashboard_outlined),
       (label: l.mangaNavAudio, icon: Icons.volume_up_outlined),
+      (label: l.coopNav, icon: Icons.sports_esports_outlined),
     ];
     final scaledLabelSize = MediaQuery.textScalerOf(context).scale(11);
     final labelHeight = scaledLabelSize * (scaledLabelSize > 14.3 ? 2.6 : 1.3);
@@ -397,7 +409,11 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                   controller: _pages,
                   onPageChanged: (_) {
                     if (_pages.position.isScrollingNotifier.value) {
-                      unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('slide'));
+                      unawaited(
+                        ref
+                            .read(mangaMenuSoundsProvider.notifier)
+                            .play('slide'),
+                      );
                     }
                   },
                   clipBehavior: Clip.none,

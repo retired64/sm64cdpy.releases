@@ -2591,6 +2591,230 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get mangaNavError =>
       'Não foi possível concluir a ação. Tente novamente.';
+
+  @override
+  String get mangaMenuSoundsTitle => 'Sons do menu';
+
+  @override
+  String get mangaMenuSoundsDescription =>
+      'Efeitos ao abrir, selecionar e deslizar o menu.';
+
+  @override
+  String get appEffectsVolume => 'Volume dos efeitos';
+
+  @override
+  String get appEffectsVolumeDescription =>
+      'Ajusta apenas os efeitos deste app. O volume de mídia do telefone continua sendo o limite.';
+
+  @override
+  String get ambientMusicTitle => 'Música ambiente';
+
+  @override
+  String get ambientMusicDescription =>
+      'Uma trilha suave ao usar Retro Manga. Pausa ao sair do app.';
+
+  @override
+  String get ambientMusicVolume => 'Volume da música';
+
+  @override
+  String get mangaNavAudio => 'Áudio';
+
+  @override
+  String get themeMangaDeluxe => 'Manga Deluxe';
+
+  @override
+  String get deluxeWelcome => 'Boas-vindas ao CoopDX';
+
+  @override
+  String get deluxeWelcomeBody =>
+      'Seu companheiro de mods no Android: prepare o jogo, descubra mods e encontre a comunidade CoopDX.';
+
+  @override
+  String get deluxeSpotlight => 'Da seleção do CoopDX';
+
+  @override
+  String get deluxeDncBody =>
+      'Céus, iluminação e um ciclo completo de dia e noite. Veja o mod em ação antes de explorar os detalhes.';
+
+  @override
+  String get deluxeViewMod => 'Ver mod';
+
+  @override
+  String get deluxeWatchDemo => 'Ver demonstração';
+
+  @override
+  String get deluxeDemoHint =>
+      'Abre o vídeo oficial fora do app. Requer internet.';
+
+  @override
+  String get deluxeLinkError =>
+      'Não foi possível abrir o link. Confira a conexão e tente novamente.';
+
+  @override
+  String get deluxeHelpTitle => 'Ajuda rápida';
+
+  @override
+  String get deluxeFaqRom => 'Qual ROM preciso usar?';
+
+  @override
+  String get deluxeFaqRomAnswer =>
+      'Use seu próprio dump USA verificado em formato .z64. O Preparador de ROM pode converter uma cópia sem alterar o original.';
+
+  @override
+  String get deluxeFaqFolders => 'Qual pasta devo selecionar?';
+
+  @override
+  String get deluxeFaqFoldersAnswer =>
+      'Use Conectar pasta do jogo. O guia explica o local a selecionar e o gerenciador encontra mods e packs compatíveis.';
+
+  @override
+  String get deluxeFaqPacks => 'Mods do jogo ou DynOS?';
+
+  @override
+  String get deluxeFaqPacksAnswer =>
+      'Mods Lua mudam o comportamento do jogo. Packs DynOS fornecem modelos, texturas e Touch Controls. Gerencie cada tipo em sua seção da Biblioteca.';
+
+  @override
+  String get deluxeOpenGuide => 'Abrir';
+
+  @override
+  String get deluxeCommunity => 'Comunidade e links';
+
+  @override
+  String get deluxeGameNews => 'Novidades do jogo Android';
+
+  @override
+  String get deluxeMotion => 'Fundo em movimento';
+
+  @override
+  String get deluxeMotionHint =>
+      'Rolagem opcional dos chapéus e padrão. Deixe desligado para economizar bateria.';
+
+  @override
+  String get deluxeReducedMotion =>
+      'O movimento está pausado pelos ajustes de acessibilidade.';
+
+  @override
+  String get deluxeReset => 'Restaurar visual e áudio Deluxe';
+
+  @override
+  String get deluxeResetDone => 'Visual e áudio Deluxe restaurados.';
+
+  @override
+  String get deluxeMusicDescription =>
+      'Uma trilha suave para Manga Deluxe. Pausa ao sair do app.';
+
+  @override
+  String get deluxeAccentDescription =>
+      'Escolha os destaques e a cor do padrão de fundo do Manga Deluxe.';
+
+  @override
+  String get deluxeResetHint =>
+      'Restaura os destaques e o áudio compartilhados. Mantém suas pastas, mods e saves.';
+
+  @override
+  String get deluxeWelcomeCompact =>
+      'Primeira vez? Prepare o jogo com nosso guia.';
+
+  @override
+  String get deluxeSkip => 'Pular';
+
+  @override
+  String get deluxeSkipHint =>
+      'Ocultar esta introdução. O guia continua no menu.';
+
+  @override
+  String get coopTitle => 'Jogar com amigos';
+
+  @override
+  String get coopNav => 'Jogar';
+
+  @override
+  String get coopIntro =>
+      'Crie uma sala privada ou entre com o código do seu amigo. O assistente conecta o SM64CoopDX pela internet enquanto o jogo usa a Conexão direta local.';
+
+  @override
+  String get coopPrivacy =>
+      'O código da sala é um segredo compartilhado. A sinalização usa o serviço Cloudflare compatível; o tráfego conecta diretamente quando possível e usa TURN quando necessário.';
+
+  @override
+  String get coopCreate => 'Criar partida';
+
+  @override
+  String get coopJoin => 'Entrar na partida';
+
+  @override
+  String get coopCode => 'Código do amigo';
+
+  @override
+  String get coopCodeHint => 'ABCD-1234';
+
+  @override
+  String get coopRecent => 'Códigos recentes';
+
+  @override
+  String get coopClearRecent => 'Limpar';
+
+  @override
+  String get coopWaiting => 'Aguardando amigos';
+
+  @override
+  String get coopConnecting => 'Procurando seu amigo';
+
+  @override
+  String get coopConnected => 'Partida conectada';
+
+  @override
+  String get coopReconnecting => 'Reconectando';
+
+  @override
+  String get coopPreparing => 'Preparando sala segura';
+
+  @override
+  String get coopStop => 'Parar partida';
+
+  @override
+  String get coopOpenGame => 'Abrir SM64CoopDX';
+
+  @override
+  String get coopGameMissing =>
+      'SM64CoopDX não está instalado neste dispositivo.';
+
+  @override
+  String get coopGameReady => 'SM64CoopDX detectado';
+
+  @override
+  String get coopHostInstruction =>
+      'No jogo, abra Multiplayer > Direct Connection > Host. Seus amigos entram com o código exibido aqui.';
+
+  @override
+  String coopJoinInstruction(int port) {
+    return 'No jogo, abra Multiplayer > Direct Connection e conecte a 127.0.0.1 usando a porta $port.';
+  }
+
+  @override
+  String get coopCopy => 'Copiar código';
+
+  @override
+  String get coopCopied => 'Código copiado';
+
+  @override
+  String coopPeers(int count) {
+    return 'Amigos: $count';
+  }
+
+  @override
+  String get coopDirect => 'Direta';
+
+  @override
+  String get coopRelay => 'Relay';
+
+  @override
+  String get coopNoCode => 'Digite um código válido de oito caracteres.';
+
+  @override
+  String get coopNetworkError =>
+      'Não foi possível iniciar a partida. Verifique a conexão e tente novamente.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -5180,4 +5404,228 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get mangaNavError =>
       'Não foi possível concluir a ação. Tente novamente.';
+
+  @override
+  String get mangaMenuSoundsTitle => 'Sons do menu';
+
+  @override
+  String get mangaMenuSoundsDescription =>
+      'Efeitos ao abrir, selecionar e deslizar o menu.';
+
+  @override
+  String get appEffectsVolume => 'Volume dos efeitos';
+
+  @override
+  String get appEffectsVolumeDescription =>
+      'Ajusta apenas os efeitos deste app. O volume de mídia do telefone continua sendo o limite.';
+
+  @override
+  String get ambientMusicTitle => 'Música ambiente';
+
+  @override
+  String get ambientMusicDescription =>
+      'Uma trilha suave ao usar Retro Manga. Pausa ao sair do app.';
+
+  @override
+  String get ambientMusicVolume => 'Volume da música';
+
+  @override
+  String get mangaNavAudio => 'Áudio';
+
+  @override
+  String get themeMangaDeluxe => 'Manga Deluxe';
+
+  @override
+  String get deluxeWelcome => 'Boas-vindas ao CoopDX';
+
+  @override
+  String get deluxeWelcomeBody =>
+      'Seu companheiro de mods no Android: prepare o jogo, descubra mods e encontre a comunidade CoopDX.';
+
+  @override
+  String get deluxeSpotlight => 'Da seleção do CoopDX';
+
+  @override
+  String get deluxeDncBody =>
+      'Céus, iluminação e um ciclo completo de dia e noite. Veja o mod em ação antes de explorar os detalhes.';
+
+  @override
+  String get deluxeViewMod => 'Ver mod';
+
+  @override
+  String get deluxeWatchDemo => 'Ver demonstração';
+
+  @override
+  String get deluxeDemoHint =>
+      'Abre o vídeo oficial fora do app. Requer internet.';
+
+  @override
+  String get deluxeLinkError =>
+      'Não foi possível abrir o link. Confira a conexão e tente novamente.';
+
+  @override
+  String get deluxeHelpTitle => 'Ajuda rápida';
+
+  @override
+  String get deluxeFaqRom => 'Qual ROM preciso usar?';
+
+  @override
+  String get deluxeFaqRomAnswer =>
+      'Use seu próprio dump USA verificado em formato .z64. O Preparador de ROM pode converter uma cópia sem alterar o original.';
+
+  @override
+  String get deluxeFaqFolders => 'Qual pasta devo selecionar?';
+
+  @override
+  String get deluxeFaqFoldersAnswer =>
+      'Use Conectar pasta do jogo. O guia explica o local a selecionar e o gerenciador encontra mods e packs compatíveis.';
+
+  @override
+  String get deluxeFaqPacks => 'Mods do jogo ou DynOS?';
+
+  @override
+  String get deluxeFaqPacksAnswer =>
+      'Mods Lua mudam o comportamento do jogo. Packs DynOS fornecem modelos, texturas e Touch Controls. Gerencie cada tipo em sua seção da Biblioteca.';
+
+  @override
+  String get deluxeOpenGuide => 'Abrir';
+
+  @override
+  String get deluxeCommunity => 'Comunidade e links';
+
+  @override
+  String get deluxeGameNews => 'Novidades do jogo Android';
+
+  @override
+  String get deluxeMotion => 'Fundo em movimento';
+
+  @override
+  String get deluxeMotionHint =>
+      'Rolagem opcional dos chapéus e padrão. Deixe desligado para economizar bateria.';
+
+  @override
+  String get deluxeReducedMotion =>
+      'O movimento está pausado pelos ajustes de acessibilidade.';
+
+  @override
+  String get deluxeReset => 'Restaurar visual e áudio Deluxe';
+
+  @override
+  String get deluxeResetDone => 'Visual e áudio Deluxe restaurados.';
+
+  @override
+  String get deluxeMusicDescription =>
+      'Uma trilha suave para Manga Deluxe. Pausa ao sair do app.';
+
+  @override
+  String get deluxeAccentDescription =>
+      'Escolha os destaques e a cor do padrão de fundo do Manga Deluxe.';
+
+  @override
+  String get deluxeResetHint =>
+      'Restaura os destaques e o áudio compartilhados. Mantém suas pastas, mods e saves.';
+
+  @override
+  String get deluxeWelcomeCompact =>
+      'Primeira vez? Prepare o jogo com nosso guia.';
+
+  @override
+  String get deluxeSkip => 'Pular';
+
+  @override
+  String get deluxeSkipHint =>
+      'Ocultar esta introdução. O guia continua no menu.';
+
+  @override
+  String get coopTitle => 'Jogar com amigos';
+
+  @override
+  String get coopNav => 'Jogar';
+
+  @override
+  String get coopIntro =>
+      'Crie uma sala privada ou entre com o código do seu amigo. O assistente conecta o SM64CoopDX pela internet enquanto o jogo usa a Conexão direta local.';
+
+  @override
+  String get coopPrivacy =>
+      'O código da sala é um segredo compartilhado. A sinalização usa o serviço Cloudflare compatível; o tráfego conecta diretamente quando possível e usa TURN quando necessário.';
+
+  @override
+  String get coopCreate => 'Criar partida';
+
+  @override
+  String get coopJoin => 'Entrar na partida';
+
+  @override
+  String get coopCode => 'Código do amigo';
+
+  @override
+  String get coopCodeHint => 'ABCD-1234';
+
+  @override
+  String get coopRecent => 'Códigos recentes';
+
+  @override
+  String get coopClearRecent => 'Limpar';
+
+  @override
+  String get coopWaiting => 'Aguardando amigos';
+
+  @override
+  String get coopConnecting => 'Procurando seu amigo';
+
+  @override
+  String get coopConnected => 'Partida conectada';
+
+  @override
+  String get coopReconnecting => 'Reconectando';
+
+  @override
+  String get coopPreparing => 'Preparando sala segura';
+
+  @override
+  String get coopStop => 'Parar partida';
+
+  @override
+  String get coopOpenGame => 'Abrir SM64CoopDX';
+
+  @override
+  String get coopGameMissing =>
+      'SM64CoopDX não está instalado neste dispositivo.';
+
+  @override
+  String get coopGameReady => 'SM64CoopDX detectado';
+
+  @override
+  String get coopHostInstruction =>
+      'No jogo, abra Multiplayer > Direct Connection > Host. Seus amigos entram com o código exibido aqui.';
+
+  @override
+  String coopJoinInstruction(int port) {
+    return 'No jogo, abra Multiplayer > Direct Connection e conecte a 127.0.0.1 usando a porta $port.';
+  }
+
+  @override
+  String get coopCopy => 'Copiar código';
+
+  @override
+  String get coopCopied => 'Código copiado';
+
+  @override
+  String coopPeers(int count) {
+    return 'Amigos: $count';
+  }
+
+  @override
+  String get coopDirect => 'Direta';
+
+  @override
+  String get coopRelay => 'Relay';
+
+  @override
+  String get coopNoCode => 'Digite um código válido de oito caracteres.';
+
+  @override
+  String get coopNetworkError =>
+      'Não foi possível iniciar a partida. Verifique a conexão e tente novamente.';
 }

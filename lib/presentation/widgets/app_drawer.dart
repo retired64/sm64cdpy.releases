@@ -137,7 +137,8 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   title: l10n.gameToolTitle,
                   icon: Icons.sports_esports_outlined,
                   activeRoute:
-                      currentRoute.startsWith('/game-tool/') ||
+                      (currentRoute.startsWith('/game-tool/') &&
+                              currentRoute != '/game-tool/play-2p2') ||
                           currentRoute == '/library' ||
                           currentRoute == '/player'
                       ? currentRoute
@@ -185,6 +186,18 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                       isActive: currentRoute == '/game-tool/rom-preparer',
                     ),
                   ],
+                ),
+                _NavItem(
+                  retroIconPath: 'assets/themes/manga/navigation/play.webp',
+                  iconBuilder: (color) => MarioGameIcon(
+                    Icons.sports_esports_outlined,
+                    size: 22,
+                    color: color,
+                  ),
+                  isTopLevel: true,
+                  label: l10n.coopNav,
+                  route: '/game-tool/play-2p2',
+                  isActive: currentRoute == '/game-tool/play-2p2',
                 ),
 
                 Padding(
@@ -543,6 +556,7 @@ class _NavItem extends StatelessWidget {
     required this.isActive,
     this.accentColor,
     this.retroIconAsset,
+    this.retroIconPath,
     this.isTopLevel = false,
   });
 
@@ -552,6 +566,7 @@ class _NavItem extends StatelessWidget {
   final bool isActive;
   final Color? accentColor;
   final String? retroIconAsset;
+  final String? retroIconPath;
   final bool isTopLevel;
 
   @override
@@ -602,9 +617,11 @@ class _NavItem extends StatelessWidget {
                   width: 22,
                   height: 22,
                   child:
-                      retro.design.drawerRasterIcons && retroIconAsset != null
+                      retro.design.drawerRasterIcons &&
+                          (retroIconPath != null || retroIconAsset != null)
                       ? Image.asset(
-                          'assets/icons/menu/$retroIconAsset.png',
+                          retroIconPath ??
+                              'assets/icons/menu/$retroIconAsset.png',
                           width: 22,
                           height: 22,
                           cacheWidth: 64,

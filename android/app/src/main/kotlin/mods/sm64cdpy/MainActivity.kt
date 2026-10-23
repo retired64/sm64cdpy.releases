@@ -33,6 +33,7 @@ class MainActivity : FlutterActivity() {
         flutterEngine.plugins.add(RomPreparationPlugin())
         flutterEngine.plugins.add(MangaMenuAudioPlugin())
         flutterEngine.plugins.add(AmbientMusicPlugin())
+        flutterEngine.plugins.add(CoopSessionPlugin())
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->

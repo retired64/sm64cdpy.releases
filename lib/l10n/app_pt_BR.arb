@@ -842,5 +842,19 @@
   "deluxeResetHint": "Restaura os destaques e o áudio compartilhados. Mantém suas pastas, mods e saves.",
   "deluxeWelcomeCompact": "Primeira vez? Prepare o jogo com nosso guia.",
   "deluxeSkip": "Pular",
-  "deluxeSkipHint": "Ocultar esta introdução. O guia continua no menu."
+  "deluxeSkipHint": "Ocultar esta introdução. O guia continua no menu.",
+  "coopTitle": "Jogar com amigos", "coopNav": "Jogar",
+  "coopIntro": "Crie uma sala privada ou entre com o código do seu amigo. O assistente conecta o SM64CoopDX pela internet enquanto o jogo usa a Conexão direta local.",
+  "coopPrivacy": "O código da sala é um segredo compartilhado. A sinalização usa o serviço Cloudflare compatível; o tráfego conecta diretamente quando possível e usa TURN quando necessário.",
+  "coopCreate": "Criar partida", "coopJoin": "Entrar na partida", "coopCode": "Código do amigo", "coopCodeHint": "ABCD-1234",
+  "coopRecent": "Códigos recentes", "coopClearRecent": "Limpar", "coopWaiting": "Aguardando amigos", "coopConnecting": "Procurando seu amigo",
+  "coopConnected": "Partida conectada", "coopReconnecting": "Reconectando", "coopPreparing": "Preparando sala segura", "coopStop": "Parar partida",
+  "coopOpenGame": "Abrir SM64CoopDX", "coopGameMissing": "SM64CoopDX não está instalado neste dispositivo.", "coopGameReady": "SM64CoopDX detectado",
+  "coopHostInstruction": "No jogo, abra Multiplayer > Direct Connection > Host. Seus amigos entram com o código exibido aqui.",
+  "coopJoinInstruction": "No jogo, abra Multiplayer > Direct Connection e conecte a 127.0.0.1 usando a porta {port}.",
+  "@coopJoinInstruction": {"placeholders": {"port": {"type": "int"}}},
+  "coopCopy": "Copiar código", "coopCopied": "Código copiado", "coopPeers": "Amigos: {count}",
+  "@coopPeers": {"placeholders": {"count": {"type": "int"}}},
+  "coopDirect": "Direta", "coopRelay": "Relay", "coopNoCode": "Digite um código válido de oito caracteres.",
+  "coopNetworkError": "Não foi possível iniciar a partida. Verifique a conexão e tente novamente."
 }

@@ -15,6 +15,7 @@ docs/*
 !docs/DOWNLOADS_AND_OVERLAY.md
 !docs/PROJECT_STATUS.md
 !docs/CI_CD.md
+!docs/PLAY_2P2_IMPLEMENTATION_PLAN.md
 !docs/PERFORMANCE_MINIMAL_1.8.6.md
 !docs/RELEASE_1.8.5.md
 !docs/RELEASE_NOTES_1.8.5_EN.md

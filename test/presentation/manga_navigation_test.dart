@@ -54,6 +54,7 @@ const _routes = [
   '/player',
   '/game-tool/save-file',
   '/game-tool/rom-preparer',
+  '/game-tool/play-2p2',
   '/settings',
   '/render96',
   '/vip',
@@ -181,8 +182,8 @@ void main() {
         final closeImage = find.byKey(
           const ValueKey('manga-menu-close-button'),
         );
-        final closeSize = tester.getBottomRight(closeImage) -
-            tester.getTopLeft(closeImage);
+        final closeSize =
+            tester.getBottomRight(closeImage) - tester.getTopLeft(closeImage);
         expect(closeSize.dx, closeTo(28, 0.01));
         expect(closeSize.dy, closeTo(28, 0.01));
         final opened = tester.getRect(toggle);
@@ -268,7 +269,9 @@ void main() {
   );
 
   for (final dark in [false, true]) {
-    testWidgets('Menu caption uses localized Mario lettering dark=$dark', (tester) async {
+    testWidgets('Menu caption uses localized Mario lettering dark=$dark', (
+      tester,
+    ) async {
       final router = _router();
       addTearDown(router.dispose);
       await tester.pumpWidget(_app(router, RetroTheme(dark), 'es', 1.6));
@@ -279,14 +282,18 @@ void main() {
       expect(caption.style!.fontFamily, 'TypefaceMario64');
       expect(caption.textSpan!.toPlainText(), 'MENÚ');
       final colors = (caption.textSpan! as TextSpan).children!
-          .cast<TextSpan>().map((span) => span.style!.color).toSet();
+          .cast<TextSpan>()
+          .map((span) => span.style!.color)
+          .toSet();
       expect(colors.length, 4);
       final outline = tester.widget<Text>(
         find.byKey(const ValueKey('manga-menu-caption-outline')),
       );
       expect(outline.style!.foreground!.color, Colors.black);
-      expect(find.byKey(const ValueKey('manga-menu-caption-rim')),
-          dark ? findsOneWidget : findsNothing);
+      expect(
+        find.byKey(const ValueKey('manga-menu-caption-rim')),
+        dark ? findsOneWidget : findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
   }
@@ -310,43 +317,65 @@ void main() {
   });
 
   for (final language in ['en', 'es', 'pt']) {
-    testWidgets('audio submenu preserves Player and scrolls on small screens: $language', (tester) async {
-      tester.view.physicalSize = const Size(320, 640);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final router = _router(initial: '/player');
-      addTearDown(router.dispose);
-      await tester.pumpWidget(_app(router, const RetroTheme(true), language, 1.6, dirty: true));
-      await _openMenu(tester);
-      final pages = tester.widget<PageView>(
-        find.byKey(const ValueKey('manga-navigation-pages')),
-      ).controller!;
-      pages.jumpToPage(pages.initialPage + 2);
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('manga-nav-5')));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('manga-audio-menu')), findsOneWidget);
-      expect(find.byKey(const ValueKey('ambient-music-enabled')), findsOneWidget);
-      expect(find.byKey(const ValueKey('ambient-music-volume')), findsOneWidget);
-      expect(find.byKey(const ValueKey('manga-menu-sounds')), findsOneWidget);
-      final effects = find.byKey(const ValueKey('app-effects-volume'));
-      await tester.ensureVisible(effects);
-      await tester.pumpAndSettle();
-      expect(effects.hitTestable(), findsOneWidget);
-      expect(find.byType(AlertDialog), findsNothing);
-      expect(router.routeInformationProvider.value.uri.path, '/player');
-      await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('manga-audio-menu')), findsNothing);
-      expect(find.byType(MangaNavigationBar), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, '/player');
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'audio submenu preserves Player and scrolls on small screens: $language',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final router = _router(initial: '/player');
+        addTearDown(router.dispose);
+        await tester.pumpWidget(
+          _app(router, const RetroTheme(true), language, 1.6, dirty: true),
+        );
+        await _openMenu(tester);
+        final pages = tester
+            .widget<PageView>(
+              find.byKey(const ValueKey('manga-navigation-pages')),
+            )
+            .controller!;
+        pages.jumpToPage(pages.initialPage + 2);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('manga-nav-5')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('manga-audio-menu')), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey('ambient-music-enabled')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey('ambient-music-volume')),
+          findsOneWidget,
+        );
+        expect(find.byKey(const ValueKey('manga-menu-sounds')), findsOneWidget);
+        final effects = find.byKey(const ValueKey('app-effects-volume'));
+        await tester.ensureVisible(effects);
+        await tester.pumpAndSettle();
+        expect(effects.hitTestable(), findsOneWidget);
+        expect(find.byType(AlertDialog), findsNothing);
+        expect(router.routeInformationProvider.value.uri.path, '/player');
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('manga-audio-menu')), findsNothing);
+        expect(find.byType(MangaNavigationBar), findsOneWidget);
+        expect(router.routeInformationProvider.value.uri.path, '/player');
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 
   testWidgets('all carousel papercraft assets are bundled', (tester) async {
-    for (final name in ['home', 'explore', 'library', 'tools', 'more', 'audio', 'menu-button', 'close-button']) {
+    for (final name in [
+      'home',
+      'explore',
+      'library',
+      'tools',
+      'more',
+      'audio',
+      'menu-button',
+      'close-button',
+    ]) {
       final bytes = await rootBundle.load(
         'assets/themes/manga/navigation/$name.webp',
       );
@@ -672,11 +701,16 @@ void main() {
   }
 
   for (final deluxe in [false, true]) {
-    testWidgets('submenu option font is scoped to Deluxe: $deluxe', (tester) async {
+    testWidgets('submenu option font is scoped to Deluxe: $deluxe', (
+      tester,
+    ) async {
       final router = _router(initial: '/library');
       addTearDown(router.dispose);
       final retro = deluxe
-          ? RetroTheme(false, design: AppThemeCatalog.resolve(AppThemeId.mangaDeluxe))
+          ? RetroTheme(
+              false,
+              design: AppThemeCatalog.resolve(AppThemeId.mangaDeluxe),
+            )
           : const RetroTheme(false);
       await tester.pumpWidget(_app(router, retro, 'es', 1.6));
       await _openMenu(tester);
@@ -686,9 +720,12 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(ValueKey('manga-nav-$group')));
         await tester.pumpAndSettle();
-        final tiles = tester.widgetList<ListTile>(find.descendant(
-          of: find.byType(BottomSheet), matching: find.byType(ListTile),
-        ));
+        final tiles = tester.widgetList<ListTile>(
+          find.descendant(
+            of: find.byType(BottomSheet),
+            matching: find.byType(ListTile),
+          ),
+        );
         expect(tiles, isNotEmpty);
         for (final tile in tiles) {
           final title = tile.title! as Text;
@@ -740,6 +777,32 @@ void main() {
     expect(find.byKey(const ValueKey('manga-play')), findsNothing);
     expect(router.routeInformationProvider.value.uri.path, '/settings');
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Play is a direct top-level destination', (tester) async {
+    final router = _router(initial: '/library');
+    addTearDown(router.dispose);
+    await tester.pumpWidget(_app(router, const RetroTheme(false), 'en', 1));
+    await _openMenu(tester);
+
+    final pages = find.byKey(const ValueKey('manga-navigation-pages'));
+    tester.widget<PageView>(pages).controller!.jumpToPage(6);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<Text>(find.byKey(const ValueKey('manga-nav-label-fill-6')))
+          .data,
+      'PLAY',
+    );
+    await tester.tap(find.byKey(const ValueKey('manga-nav-6')));
+    await tester.pumpAndSettle();
+
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      '/game-tool/play-2p2',
+    );
+    expect(find.byType(BottomSheet), findsNothing);
   });
 
   testWidgets('leaving Player asks before discarding its draft', (
