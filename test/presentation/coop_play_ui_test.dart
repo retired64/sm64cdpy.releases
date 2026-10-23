@@ -54,12 +54,25 @@ void main() {
           expect(find.byKey(const ValueKey('coop-game-missing')), findsNothing);
           expect(find.byKey(const ValueKey('coop-battery-help')), findsNothing);
           expect(find.byType(CoopPlayIcon), findsWidgets);
-          final action = find.byType(CoopPlayAction).last;
-          await tester.ensureVisible(action);
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull);
+          // La lista es perezosa: primero desplazar para construir el formulario.
+          // ensureVisible requiere que el elemento ya exista en el árbol.
+          final scrollable = find.descendant(
+            of: find.byType(ListView).first,
+            matching: find.byType(Scrollable),
+          ).first;
           final field = find.byType(TextField);
+          await tester.scrollUntilVisible(field, 160,
+              scrollable: scrollable, maxScrolls: 30);
+          await tester.pumpAndSettle();
+          final action = find.byWidgetPredicate((widget) =>
+              widget is CoopPlayAction && widget.icon == Icons.login_rounded);
+          await tester.scrollUntilVisible(action, 160,
+              scrollable: scrollable, maxScrolls: 30);
+          await tester.pumpAndSettle();
+          expect(action, findsOneWidget);
+          expect(tester.takeException(), isNull);
           await tester.ensureVisible(field);
+          await tester.pumpAndSettle();
           await tester.tap(field);
           await tester.enterText(field, 'abcd-1234');
           expect(tester.widget<TextField>(field).controller!.text, 'abcd-1234');

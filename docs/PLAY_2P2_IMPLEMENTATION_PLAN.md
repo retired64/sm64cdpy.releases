@@ -452,3 +452,14 @@ y acceso a revisión. Los requisitos ya resueltos no ocupan tarjetas: detección
 positiva del juego y exención de batería concedida. Los mecanismos que consultan
 y solicitan estos permisos no se alteran. Pruebas UI independientes del motor
 en test/presentation/coop_play_ui_test.dart; ejecución pendiente en CI.
+
+## Corrección de pruebas — Actions 40007818120
+
+El análisis pasó; 457 pruebas pasaron y las 12 variantes de Play compacto
+fallaron con `Bad state: No element` antes de alcanzar el formulario. El test
+usaba `.last` sobre botones aún no construidos por ListView, seguido de
+ensureVisible. Se desplaza primero con scrollUntilVisible sobre el Scrollable
+principal hasta el TextField y la acción de unirse identificada por su icono.
+Se mantienen comprobaciones de layout, código y ambos temas/idiomas/modos.
+Sin cambios en código de app, motor ni contratos. Pendiente repetir CI; SDK
+Flutter/Dart no disponible localmente. git diff --check validado.
