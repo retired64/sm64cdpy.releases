@@ -440,3 +440,15 @@ Los códigos recientes deben poder borrarse individualmente o en conjunto. En di
 Implementar primero Fase 0 y Fase 1; después construir el adaptador compatible y validarlo mediante una matriz cruzada host/invitado contra la otra aplicación. Durante esa validación, mantenerlo en builds internas y medir respuestas, desconexiones y límites reales del Worker. Solo después decidir si la dependencia temporal es suficientemente estable para una beta explícita.
 
 De esta forma, cuando el conector propio esté listo, el cambio queda contenido en `SignalingAdapter`; la pantalla, el estado, el historial, el puente UDP y la integración con SM64CoopDX permanecen iguales.
+
+## Rediseño visual aislado — 2026-10-23
+
+La capa `coop_play_visuals.dart` recibe texto y callbacks sin importar ningún
+provider/servicio de sesión. El coordinador conserva intactos sus métodos.
+Cabecera Mario multicolor, acciones Supreme Spike y lectura Super Mario World
+en Deluxe, con acento y geometría de cada tema. Se reutilizan play.webp y
+explore.webp, sin nuevos assets. Privacidad plegable mantiene toda la información
+y acceso a revisión. Los requisitos ya resueltos no ocupan tarjetas: detección
+positiva del juego y exención de batería concedida. Los mecanismos que consultan
+y solicitan estos permisos no se alteran. Pruebas UI independientes del motor
+en test/presentation/coop_play_ui_test.dart; ejecución pendiente en CI.

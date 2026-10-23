@@ -11,6 +11,7 @@ import '../providers/coop_session_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/game_setup_widgets.dart';
+import '../widgets/coop_play_visuals.dart';
 import '../widgets/manga_navigation_scope.dart';
 
 class CoopSessionScreen extends ConsumerStatefulWidget {
@@ -202,7 +203,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
     final retro = RetroTheme.of(context);
     final state = ref.watch(coopSessionProvider);
     return RetroFixedHeaderView(
-      title: Text(l.coopTitle, style: retro.heading(size: 22)),
+      title: CoopPlayTitle(label: l.coopTitle, size: 22),
       child: SafeArea(
         top: false,
         bottom: !MangaNavigationScope.of(context),
@@ -219,31 +220,25 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      MarioGameIcon(
-                        Icons.group_outlined,
-                        color: retro.accentText,
-                        size: 28,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          l.coopTitle,
-                          style: retro.heading(size: 20),
-                        ),
-                      ),
+                      if (retro.isManga) ...[
+                        const CoopPlayIcon(size: 48),
+                        const SizedBox(width: 12),
+                      ],
+                      Expanded(child: Text(l.coopIntro,
+                        style: coopPlayBody(retro, size: 14, height: 1.4))),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(l.coopIntro, style: retro.body(size: 15, height: 1.45)),
-                  const SizedBox(height: 12),
-                  Text(
-                    l.coopPrivacy,
-                    style: retro.body(
-                      size: 13,
-                      color: retro.inkDim,
-                      height: 1.4,
-                    ),
+                  const SizedBox(height: 8),
+                  ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    childrenPadding: const EdgeInsets.only(bottom: 8),
+                    leading: Icon(Icons.shield_outlined, color: retro.accentText),
+                    title: Text(l.coopConsentTitle,
+                      style: coopPlayBody(retro, size: 13, color: retro.inkDim)),
+                    children: [Text(l.coopPrivacy,
+                      style: coopPlayBody(retro, size: 13, color: retro.inkDim))],
                   ),
                   const SizedBox(height: 8),
                   Align(
@@ -274,18 +269,21 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
     final enabled = state.initialized && !_starting;
     return Column(
       children: [
-        _Panel(
-          child: GameSetupStatus(
-            label: state.gameInstalled == true
-                ? l.coopGameReady
-                : l.coopGameMissing,
-            icon: Icons.sports_esports_outlined,
-            ready: state.gameInstalled,
+        if (state.gameInstalled == false) ...[
+          _Panel(
+            key: const ValueKey('coop-game-missing'),
+            child: GameSetupStatus(
+              label: l.coopGameMissing,
+              icon: Icons.sports_esports_outlined,
+              ready: false,
+            ),
           ),
-        ),
-        if (_battery case final battery? when battery.supported) ...[
+          const SizedBox(height: 14),
+        ],
+        if (_battery case final battery? when battery.supported && !battery.ignored) ...[
           const SizedBox(height: 14),
           _Panel(
+            key: const ValueKey('coop-battery-help'),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -298,7 +296,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                   ready: battery.ignored,
                 ),
                 const SizedBox(height: 12),
-                GameSetupAction(
+                CoopPlayAction(
                   label: battery.ignored
                       ? l.coopBatteryManage
                       : l.coopBatteryAllow,
@@ -312,7 +310,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
           ),
         ],
         const SizedBox(height: 14),
-        GameSetupAction(
+        CoopPlayAction(
           label: l.coopCreate,
           icon: Icons.add_link_rounded,
           primary: true,
@@ -323,10 +321,17 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(l.coopJoin, style: retro.heading(size: 18)),
+              Row(children: [
+                if (retro.isManga) ...[
+                  const CoopPlayIcon(asset: 'explore', size: 36),
+                  const SizedBox(width: 10),
+                ],
+                Expanded(child: CoopPlayTitle(label: l.coopJoin, size: 18)),
+              ]),
               const SizedBox(height: 12),
               TextField(
                 controller: _code,
+                style: coopPlayBody(retro, size: 18, color: retro.ink),
                 enabled: enabled,
                 textCapitalization: TextCapitalization.characters,
                 inputFormatters: [
@@ -346,7 +351,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                     Expanded(
                       child: Text(
                         l.coopRecent,
-                        style: retro.body(size: 13, color: retro.inkDim),
+                        style: coopPlayBody(retro, size: 13, color: retro.inkDim),
                       ),
                     ),
                     TextButton(
@@ -366,14 +371,14 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                   children: [
                     for (final code in _recent)
                       ActionChip(
-                        label: Text(code),
+                        label: Text(code, style: coopPlayBody(retro, size: 14)),
                         onPressed: () => setState(() => _code.text = code),
                       ),
                   ],
                 ),
               ],
               const SizedBox(height: 14),
-              GameSetupAction(
+              CoopPlayAction(
                 label: l.coopJoin,
                 icon: Icons.login_rounded,
                 onPressed: enabled ? _join : null,
@@ -412,7 +417,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                 children: [
                   _Pulse(active: state.phase != CoopSessionPhase.failed),
                   const SizedBox(width: 10),
-                  Expanded(child: Text(status, style: retro.heading(size: 18))),
+                  Expanded(child: CoopPlayTitle(label: status, size: 18)),
                 ],
               ),
               if (state.mode == CoopSessionMode.host && code.isNotEmpty) ...[
@@ -438,7 +443,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
               const SizedBox(height: 14),
               Text(
                 l.coopPeers(state.peers.length),
-                style: retro.body(size: 15),
+                style: coopPlayBody(retro, size: 15),
               ),
               if (state.peers.isNotEmpty) ...[
                 const SizedBox(height: 10),
@@ -461,7 +466,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                             peer.id.length > 6
                                 ? peer.id.substring(0, 6)
                                 : peer.id,
-                            style: retro.body(size: 14),
+                            style: coopPlayBody(retro, size: 14),
                           ),
                         ),
                         if (peer.route != null)
@@ -493,7 +498,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
           ),
         ),
         const SizedBox(height: 14),
-        GameSetupAction(
+        CoopPlayAction(
           label: l.coopOpenGame,
           icon: Icons.play_arrow_rounded,
           primary: true,
@@ -509,7 +514,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
               : null,
         ),
         const SizedBox(height: 10),
-        GameSetupAction(
+        CoopPlayAction(
           label: l.coopStop,
           icon: Icons.stop_circle_outlined,
           onPressed: state.phase == CoopSessionPhase.stopping
@@ -556,14 +561,14 @@ class _DiagnosticsPanel extends StatelessWidget {
         child: ExpansionTile(
           tilePadding: EdgeInsets.zero,
           childrenPadding: const EdgeInsets.only(top: 8),
-          title: Text(l.coopDiagnosticsTitle, style: retro.heading(size: 16)),
+          title: CoopPlayTitle(label: l.coopDiagnosticsTitle, size: 16),
           leading: Icon(Icons.monitor_heart_outlined, color: retro.accentText),
           children: [
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: Text(
                 l.coopDiagnosticsSignal(state.trackers),
-                style: retro.body(size: 13, color: retro.inkDim),
+                style: coopPlayBody(retro, size: 13, color: retro.inkDim),
               ),
             ),
             const SizedBox(height: 6),
@@ -574,7 +579,7 @@ class _DiagnosticsPanel extends StatelessWidget {
                   diagnostics.toGame,
                   diagnostics.toPage,
                 ),
-                style: retro.body(size: 13, color: retro.inkDim),
+                style: coopPlayBody(retro, size: 13, color: retro.inkDim),
               ),
             ),
             const SizedBox(height: 6),
@@ -585,7 +590,7 @@ class _DiagnosticsPanel extends StatelessWidget {
                   diagnostics.upDelayAverageMs,
                   diagnostics.upDelayMaxMs,
                 ),
-                style: retro.body(size: 13, color: retro.inkDim),
+                style: coopPlayBody(retro, size: 13, color: retro.inkDim),
               ),
             ),
           ],
@@ -596,7 +601,7 @@ class _DiagnosticsPanel extends StatelessWidget {
 }
 
 class _Panel extends StatelessWidget {
-  const _Panel({required this.child});
+  const _Panel({super.key, required this.child});
   final Widget child;
   @override
   Widget build(BuildContext context) {
@@ -623,7 +628,7 @@ class _ErrorPanel extends StatelessWidget {
           Icon(Icons.error_outline_rounded, color: retro.red),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(message, style: retro.body(size: 14, color: retro.red)),
+            child: Text(message, style: coopPlayBody(retro, size: 14, color: retro.red)),
           ),
         ],
       ),

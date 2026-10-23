@@ -976,3 +976,28 @@ fallback Roboto y colores heredados de selección. Sin cambios en títulos
 multicolor, descripción/autor/etiquetas/fechas ni otros temas. El directorio
 proporcionado no incluye archivo de licencia; no se atribuye una licencia
 no comprobada. Prueba de alcance actualizada; Flutter pendiente en CI.
+
+## Presentación Play — 2026-10-23
+
+`coop_play_visuals.dart` contiene únicamente título, icono, estilo de lectura y
+acción visual. Ambos temas Manga usan rótulos Mario multicolor, bordes/sombras
+existentes y WebPs Play/Explore compartidos (decode 128 px). Deluxe usa Supreme
+Spike en acciones y Super Mario World en lectura; otros temas conservan sus
+controles GameSetupAction. Sin nuevas imágenes, dependencias ni animaciones.
+
+CoopSessionScreen mantiene íntegros controlador, lifecycle, consentimiento,
+validación, callbacks y selección de fases. La presentación evita repetir el
+título; privacidad puede expandirse y revisar consentimiento sigue accesible.
+Solo muestra falta de juego cuando gameInstalled == false; el estado desconocido
+no se presenta como éxito. La tarjeta de batería aparece únicamente si supported
+&& !ignored, y desaparece al actualizar el permiso con el flujo existente.
+
+Provider, servicios, dominio, WebView, Kotlin, Manifest y assets/coop no cambian.
+Las vistas leen el estado existente y no escriben preferencias nuevas ni tienen
+caches. El reset, navegación, notificación y overlay no cambian. No hay nuevos
+Futures sin esperar ni suscripciones.
+
+Pruebas añadidas: 320 px/texto 1,5×, claro/oscuro, ES/EN/PT, ambos Manga,
+requisitos resueltos/pendientes, entrada del código, acciones por fase y callback
+habilitado/deshabilitado. Pendiente dart format, flutter analyze y flutter test
+por falta del SDK local, además de revisión física del teclado y ciclo de sesión.
