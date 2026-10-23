@@ -941,3 +941,16 @@ aplica a descripciones, volúmenes ni controles de Audio.
 
 Prueba añadida de alcance Deluxe/Retro Manga en los tres grupos, con texto
 1,6×. Pendiente format/analyze/tests en CI y revisión física por falta de SDK.
+
+## Lectura del detalle Manga Deluxe — 2026-10-22
+
+`SuperMarioWorldTextBox` se registra desde el TTF proporcionado (~12 KB), con
+nota de procedencia en fonts/manga_deluxe. Solo descripción (contraída/expandida),
+autor, etiquetas y rótulos/valores de primera publicación y última actualización
+del detalle general usan esta fuente en Manga Deluxe. Helper local conserva
+colores, usa peso real 400, mínimo 16 sp, interlínea 1,5 y fallback Roboto.
+No se cambia el tema global, las cabeceras, acciones ni otros temas/pantallas.
+Las fechas mantienen formato localizado y disposición adaptable existentes.
+
+Prueba de layout existente ampliada para verificar alcance de fuente por tema.
+Pendiente ejecutar format/analyze/tests en CI y revisar texto grande en Android.

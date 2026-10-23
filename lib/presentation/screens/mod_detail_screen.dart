@@ -30,6 +30,19 @@ import '../widgets/post_install_dialog.dart';
 import '../widgets/installation_action_presentation.dart';
 import '../widgets/dynos_install_flow.dart';
 
+/// Fuente de lectura exclusiva de Deluxe, sin alterar títulos ni otros temas.
+TextStyle _detailReadingStyle(RetroTheme retro, TextStyle base) {
+  if (!retro.isDeluxe) return base;
+  return base.copyWith(
+    fontFamily: 'SuperMarioWorldTextBox',
+    fontFamilyFallback: const ['Roboto'],
+    fontWeight: FontWeight.w400,
+    fontSize: (base.fontSize ?? 16) < 16 ? 16 : base.fontSize,
+    letterSpacing: 0,
+    height: 1.5,
+  );
+}
+
 // ── Entry point ───────────────────────────────────────────────────────────────
 
 class ModDetailScreen extends ConsumerWidget {
@@ -506,11 +519,11 @@ class _TitleSection extends StatelessWidget {
                       ),
                 child: Text(
                   mod.author,
-                  style: retro.body(
+                  style: _detailReadingStyle(retro, retro.body(
                     size: 14,
                     weight: FontWeight.w700,
                     color: retro.ink,
-                  ),
+                  )),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -2146,11 +2159,11 @@ class _TagCloud extends StatelessWidget {
           ),
           child: Text(
             tag,
-            style: TextStyle(
+            style: _detailReadingStyle(retro, TextStyle(
               color: retro.inkDim,
               fontSize: retro.isMario ? 16 : 12,
               fontWeight: FontWeight.w600,
-            ),
+            )),
           ),
         );
       }).toList(),
@@ -2177,13 +2190,13 @@ class _ExpandableText extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final isLong = text.length > AppConstants.descriptionMaxLen;
 
-    final baseStyle = TextStyle(
+    final baseStyle = _detailReadingStyle(retro, TextStyle(
       color: retro.inkDim,
       fontSize: retro.isMario ? 18 : 14,
       fontFamily: retro.isMario ? 'Roboto' : retro.bodyFamily,
       letterSpacing: 0,
       height: 1.5,
-    );
+    ));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2348,23 +2361,23 @@ class _DateCell extends StatelessWidget {
                 label,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: _detailReadingStyle(retro, TextStyle(
                   color: retro.inkDim,
                   fontSize: retro.isMario ? 16 : 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: retro.isMario ? 0 : 0.5,
-                ),
+                )),
               ),
               const SizedBox(height: 2),
               Text(
                 formatDate(date, locale: l10n.localeName) ?? date,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: _detailReadingStyle(retro, TextStyle(
                   color: retro.ink,
                   fontSize: retro.isMario ? 16 : 13,
                   fontWeight: FontWeight.w700,
-                ),
+                )),
               ),
             ],
           ),

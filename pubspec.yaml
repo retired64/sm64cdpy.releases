@@ -68,6 +68,10 @@ flutter:
     - assets/themes/manga/navigation/
 
   fonts:
+    - family: SuperMarioWorldTextBox
+      fonts:
+        - asset: fonts/manga_deluxe/SuperMarioWorldTextBoxRegular-Y86j.ttf
+          weight: 400
     - family: MarioAndLuigi
       fonts:
         - asset: fonts/manga_deluxe/MarioAndLuigi-0v99.ttf

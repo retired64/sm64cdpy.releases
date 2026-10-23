@@ -30,6 +30,8 @@ const mod = ModEntity(
   downloadUrls: [],
   updates: [],
   extractedAt: '',
+  firstRelease: '2025-01-02',
+  lastUpdate: '2026-10-22',
 );
 
 void main() {
@@ -85,6 +87,25 @@ void main() {
         );
         expect(tester.getSize(cover), const Size(112, 112));
         expect(find.text(mod.title), findsOneWidget);
+        final author = tester.widget<Text>(find.text(mod.author));
+        expect(author.style?.fontFamily == 'SuperMarioWorldTextBox',
+            id == AppThemeId.mangaDeluxe);
+        final description = tester.widgetList<Text>(find.text(mod.description));
+        expect(description, isNotEmpty);
+        for (final text in description) {
+          expect(text.style?.fontFamily == 'SuperMarioWorldTextBox',
+              id == AppThemeId.mangaDeluxe);
+        }
+        final tag = tester.widget<Text>(find.text('romhack'));
+        expect(tag.style?.fontFamily == 'SuperMarioWorldTextBox',
+            id == AppThemeId.mangaDeluxe);
+        final detailContext = tester.element(find.byType(ModDetailScreen));
+        final l = AppLocalizations.of(detailContext);
+        for (final label in [l.detailFirstRelease, l.detailLastUpdate]) {
+          final dateLabel = tester.widget<Text>(find.text(label));
+          expect(dateLabel.style?.fontFamily == 'SuperMarioWorldTextBox',
+              id == AppThemeId.mangaDeluxe);
+        }
         expect(tester.takeException(), isNull);
         await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
         await tester.pumpAndSettle();
