@@ -72,9 +72,9 @@ flutter:
       fonts:
         - asset: fonts/manga_deluxe/SuperMarioWorldTextBoxRegular-Y86j.ttf
           weight: 400
-    - family: WonderMermaid
+    - family: SupremeSpike
       fonts:
-        - asset: fonts/manga_deluxe/WonderMermaid.otf
+        - asset: fonts/manga_deluxe/SupremeSpike.otf
           weight: 400
     - family: TypefaceMario64
       fonts:

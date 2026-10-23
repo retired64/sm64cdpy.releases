@@ -967,3 +967,12 @@ descripción pasan de 16 a 12 sp (-25 %), etiquetas de 16 a 8 sp (-50 %).
 Fechas y cabeceras conservan tamaño. El escalado de accesibilidad del sistema
 permanece activo. Pruebas de fuente y tamaño actualizadas; ejecución de Flutter
 pendiente en CI por falta de SDK local.
+
+## Fuente de opciones Supreme Spike — 2026-10-22
+
+SupremeSpike sustituye a WonderMermaid en las opciones de submenús Manga
+Deluxe. Se registra el OTF proporcionado (~64 KB), manteniendo 20 sp, peso 400,
+fallback Roboto y colores heredados de selección. Sin cambios en títulos
+multicolor, descripción/autor/etiquetas/fechas ni otros temas. El directorio
+proporcionado no incluye archivo de licencia; no se atribuye una licencia
+no comprobada. Prueba de alcance actualizada; Flutter pendiente en CI.
