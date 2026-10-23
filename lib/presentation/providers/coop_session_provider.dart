@@ -75,7 +75,9 @@ class CoopSessionNotifier extends Notifier<CoopSessionState> {
             .read(coopSessionServiceProvider)
             .start(mode: mode, code: code, relayOnly: relayOnly),
       );
-      if (mode == CoopSessionMode.join) await _remember(code);
+      if (mode == CoopSessionMode.join) {
+        await _remember(normalizeCoopCode(code));
+      }
     } catch (error) {
       _error(error);
     }
@@ -91,9 +93,25 @@ class CoopSessionNotifier extends Notifier<CoopSessionState> {
 
   Future<bool> openGame() => ref.read(coopSessionServiceProvider).openGame();
 
+  Future<CoopBatteryOptimizationState> batteryOptimizationStatus() =>
+      ref.read(coopSessionServiceProvider).batteryOptimizationStatus();
+
+  Future<CoopBatteryOptimizationState> requestBatteryOptimizationExemption() =>
+      ref
+          .read(coopSessionServiceProvider)
+          .requestBatteryOptimizationExemption();
+
+  Future<CoopBatteryOptimizationState> openBatteryOptimizationSettings() =>
+      ref.read(coopSessionServiceProvider).openBatteryOptimizationSettings();
+
   Future<List<String>> recentCodes() async {
     final preferences = await SharedPreferences.getInstance();
-    return preferences.getStringList(_recentKey) ?? const [];
+    final stored = preferences.getStringList(_recentKey) ?? const [];
+    final normalized = _normalizedRecent(stored);
+    if (!_sameCodes(stored, normalized)) {
+      await preferences.setStringList(_recentKey, normalized);
+    }
+    return normalized;
   }
 
   Future<void> clearRecentCodes() async {
@@ -106,7 +124,27 @@ class CoopSessionNotifier extends Notifier<CoopSessionState> {
     final previous = preferences.getStringList(_recentKey) ?? const [];
     await preferences.setStringList(
       _recentKey,
-      [code, ...previous.where((item) => item != code)].take(4).toList(),
+      _normalizedRecent([code, ...previous]),
     );
+  }
+
+  List<String> _normalizedRecent(Iterable<String> values) {
+    final result = <String>[];
+    for (final value in values) {
+      final normalized = normalizeCoopCode(value);
+      if (isValidCoopCode(normalized) && !result.contains(normalized)) {
+        result.add(normalized);
+      }
+      if (result.length == 4) break;
+    }
+    return result;
+  }
+
+  bool _sameCodes(List<String> left, List<String> right) {
+    if (left.length != right.length) return false;
+    for (var index = 0; index < left.length; index++) {
+      if (left[index] != right[index]) return false;
+    }
+    return true;
   }
 }

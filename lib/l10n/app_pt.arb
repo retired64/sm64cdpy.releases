@@ -856,5 +856,15 @@
   "coopCopy": "Copiar código", "coopCopied": "Código copiado", "coopPeers": "Amigos: {count}",
   "@coopPeers": {"placeholders": {"count": {"type": "int"}}},
   "coopDirect": "Direta", "coopRelay": "Relay", "coopNoCode": "Digite um código válido de oito caracteres.",
-  "coopNetworkError": "Não foi possível iniciar a partida. Verifique a conexão e tente novamente."
+  "coopNetworkError": "Não foi possível iniciar a partida. Verifique a conexão e tente novamente.",
+  "coopBatteryTitle": "Conexão em segundo plano",
+  "coopBatteryDescription": "Opcional: permita o uso irrestrito da bateria para reduzir o risco de o Android pausar a partida enquanto o jogo estiver aberto.",
+  "coopBatteryAllowed": "O uso irrestrito da bateria está permitido. O Android poderá manter a partida ativa com mais confiabilidade.",
+  "coopBatteryAllow": "Permitir no Android",
+  "coopBatteryManage": "Gerenciar no Android",
+  "coopBatteryOpenError": "Não foi possível abrir os ajustes de bateria do Android neste dispositivo.",
+  "coopDiagnosticsTitle": "Diagnóstico da conexão",
+  "coopDiagnosticsSignal": "Conexões de sinalização: {count}",
+  "coopDiagnosticsPackets": "Pacotes do jogo: {toGame} recebidos · {toPage} enviados",
+  "coopDiagnosticsDelay": "Atraso da ponte: média de {average} ms · máximo de {max} ms"
 }

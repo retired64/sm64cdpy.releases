@@ -26,6 +26,11 @@ void main() {
           'gameInstalled': true,
           'revision': 7,
           'initialized': true,
+          'toGame': 18,
+          'toPage': 21,
+          'upDelaySamples': 9,
+          'upDelayAverageMs': 4,
+          'upDelayMaxMs': 12,
         });
 
         expect(state.phase, CoopSessionPhase.connected);
@@ -36,6 +41,10 @@ void main() {
         expect(state.peers.single.route, 'direct');
         expect(state.peers.single.game, isTrue);
         expect(state.revision, 7);
+        expect(state.diagnostics.toGame, 18);
+        expect(state.diagnostics.toPage, 21);
+        expect(state.diagnostics.upDelayAverageMs, 4);
+        expect(state.diagnostics.upDelayMaxMs, 12);
       },
     );
 
@@ -60,6 +69,24 @@ void main() {
 
       expect(state.copyWith().gameInstalled, isTrue);
       expect(state.copyWith(gameInstalled: false).gameInstalled, isFalse);
+    });
+
+    test('normalizes ambiguous Crockford characters before validation', () {
+      expect(normalizeCoopCode('ouil-12ab'), '0V11-12AB');
+      expect(isValidCoopCode(normalizeCoopCode('ouil-12ab')), isTrue);
+      expect(isValidCoopCode(normalizeCoopCode('short')), isFalse);
+    });
+
+    test('projects Android battery optimization capability', () {
+      final state = CoopBatteryOptimizationState.fromMap({
+        'supported': true,
+        'ignored': true,
+        'settingsOpened': true,
+      });
+
+      expect(state.supported, isTrue);
+      expect(state.ignored, isTrue);
+      expect(state.settingsOpened, isTrue);
     });
   });
 }

@@ -5,13 +5,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.Base64
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
+import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
@@ -48,6 +52,11 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
     private var ready = false
     private var pendingStart: PendingStart? = null
     private var ticker: ScheduledExecutorService? = null
+    private var stopRunnable: Runnable? = null
+    private var diagnosticTicks = 0
+    private var upDelaySamples = 0L
+    private var upDelayTotalMs = 0L
+    private var upDelayMaxMs = 0L
     private var revision = 0L
     private var snapshot = mutableMapOf<String, Any?>(
         "phase" to "idle",
@@ -55,6 +64,11 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         "initialized" to false,
         "friends" to emptyList<Map<String, Any?>>(),
         "trackers" to 0,
+        "toGame" to 0L,
+        "toPage" to 0L,
+        "upDelaySamples" to 0L,
+        "upDelayAverageMs" to 0L,
+        "upDelayMaxMs" to 0L,
     )
     private val bridge = CoopGameBridge(object : CoopGameBridge.Listener {
         override fun onPacket(peer: String, data: ByteArray) {
@@ -97,6 +111,9 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
                 "stop" -> { stop("user"); result.success(snapshot.toMap()) }
                 "openGame" -> result.success(openGame())
                 "gameInstalled" -> result.success(gameInstalled())
+                "batteryOptimizationStatus" -> result.success(batteryOptimizationState())
+                "requestBatteryOptimizationExemption" -> result.success(requestBatteryOptimizationExemption())
+                "openBatteryOptimizationSettings" -> result.success(openBatteryOptimizationSettings())
                 else -> result.notImplemented()
             }
         } catch (error: Exception) {
@@ -112,6 +129,8 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         require(mode == "host" || mode == "join") { "Invalid session mode" }
         require(CODE.matches(code)) { "Invalid room code" }
         val port = bridge.start(mode)
+        resetDiagnostics()
+        webView?.setKeepRunning(true)
         pendingStart = PendingStart(mode, code, relayOnly)
         update(
             mapOf(
@@ -125,14 +144,19 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
                 "message" to null,
                 "friends" to emptyList<Map<String, Any?>>(),
                 "trackers" to 0,
+                "toGame" to 0L,
+                "toPage" to 0L,
+                "upDelaySamples" to 0L,
+                "upDelayAverageMs" to 0L,
+                "upDelayMaxMs" to 0L,
                 "initialized" to true,
             ),
         )
         CoopSessionService.show(
             context,
-            if (mode == "host") "Hosting · code $code" else "Playing with a friend",
-            "Getting online…",
-            if (mode == "host") code else "",
+            host = mode == "host",
+            phase = "preparing",
+            code = if (mode == "host") code else "",
         )
         startTicker()
         launchPending()
@@ -153,13 +177,19 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
 
     private fun stop(reason: String) {
         if (!bridge.active() && snapshot["phase"] == "idle") return
-        update(mapOf("phase" to "stopping"))
+        update(mapOf("phase" to "stopping"), refreshNotification = false)
         evaluate("window.coopEngine?.stop(${JSONObject.quote(reason)})")
-        main.postDelayed({ finishStop() }, 450)
+        stopRunnable?.let(main::removeCallbacks)
+        val pending = Runnable { finishStop() }
+        stopRunnable = pending
+        main.postDelayed(pending, 450)
     }
 
     private fun finishStop() {
+        stopRunnable?.let(main::removeCallbacks)
+        stopRunnable = null
         pendingStart = null
+        webView?.setKeepRunning(false)
         bridge.stop()
         ticker?.shutdownNow()
         ticker = null
@@ -189,6 +219,8 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
                             evaluate("window.coopEngine?.setGameIn(${if (hosting) "true" else "false"})")
                         }
                     }
+                    diagnosticTicks = (diagnosticTicks + 1) % 4
+                    if (diagnosticTicks == 0) publishDiagnostics()
                 },
                 250,
                 250,
@@ -212,15 +244,22 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
                     update(mapOf("initialized" to true))
                     launchPending()
                 }
+
+                override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
+                    main.post { recoverWebView() }
+                    return true
+                }
             }
             loadUrl("file:///android_asset/flutter_assets/assets/coop/index.html")
         }
         val root = activity.findViewById<ViewGroup>(android.R.id.content)
         root.addView(view, FrameLayout.LayoutParams(1, 1))
         webView = view
+        view.setKeepRunning(bridge.active())
     }
 
-    private fun destroyWebView() {
+    private fun destroyWebView(terminateSession: Boolean = false) {
+        if (terminateSession && bridge.active()) terminateSessionForLifecycle()
         ready = false
         webView?.let { view ->
             (view.parent as? ViewGroup)?.removeView(view)
@@ -230,31 +269,53 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         webView = null
     }
 
+    private fun recoverWebView() {
+        val wasActive = bridge.active()
+        destroyWebView(terminateSession = wasActive)
+        activity?.let(::createWebView)
+    }
+
+    private fun terminateSessionForLifecycle() {
+        stopRunnable?.let(main::removeCallbacks)
+        stopRunnable = null
+        pendingStart = null
+        webView?.setKeepRunning(false)
+        bridge.stop()
+        ticker?.shutdownNow()
+        ticker = null
+        CoopSessionService.end(context)
+        update(
+            mapOf(
+                "phase" to "failed",
+                "friends" to emptyList<Map<String, Any?>>(),
+                "trackers" to 0,
+                "message" to context.getString(R.string.coop_session_interrupted),
+            ),
+        )
+    }
+
     private fun evaluate(script: String) {
         main.post { webView?.evaluateJavascript(script, null) }
     }
 
-    private fun update(values: Map<String, Any?>) {
+    private fun update(values: Map<String, Any?>, refreshNotification: Boolean = true) {
         main.post {
             revision++
             snapshot.putAll(values)
             snapshot["revision"] = revision
             sink?.success(snapshot.toMap())
             val phase = snapshot["phase"] as? String ?: return@post
-            if (bridge.active() && phase !in listOf("idle", "stopped")) {
+            if (refreshNotification && bridge.active() && phase !in listOf("idle", "stopped")) {
                 val host = snapshot["mode"] == "host"
                 val code = snapshot["code"] as? String ?: ""
                 val friends = (snapshot["friends"] as? List<*>)?.size ?: 0
                 CoopSessionService.show(
                     context,
-                    if (host) "Hosting · code $code" else "Playing with a friend",
-                    when (phase) {
-                        "connected" -> if (friends == 1) "1 friend connected" else "$friends friends connected"
-                        "reconnecting" -> "Reconnecting…"
-                        "failed" -> (snapshot["message"] as? String).orEmpty()
-                        else -> "Getting online…"
-                    },
-                    if (host) code else "",
+                    host = host,
+                    phase = phase,
+                    code = if (host) code else "",
+                    friends = friends,
+                    failure = (snapshot["message"] as? String).orEmpty(),
                 )
             }
         }
@@ -269,7 +330,7 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
 
     private fun normalizeCode(input: String): String {
         val raw = input.uppercase().filter { it.isLetterOrDigit() }.map {
-            when (it) { 'I', 'L' -> '1'; 'O' -> '0'; else -> it }
+            when (it) { 'I', 'L' -> '1'; 'O' -> '0'; 'U' -> 'V'; else -> it }
         }.joinToString("")
         return if (raw.length == 8) "${raw.take(4)}-${raw.drop(4)}" else input.uppercase()
     }
@@ -287,6 +348,81 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
         return true
+    }
+
+    private fun batteryOptimizationState(settingsOpened: Boolean = false): Map<String, Any> {
+        if (Build.VERSION.SDK_INT < 23) {
+            return mapOf("supported" to false, "ignored" to true, "settingsOpened" to settingsOpened)
+        }
+        val power = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        return mapOf(
+            "supported" to true,
+            "ignored" to power.isIgnoringBatteryOptimizations(context.packageName),
+            "settingsOpened" to settingsOpened,
+        )
+    }
+
+    private fun requestBatteryOptimizationExemption(): Map<String, Any> {
+        if (Build.VERSION.SDK_INT < 23 || batteryOptimizationState()["ignored"] == true) {
+            return batteryOptimizationState()
+        }
+        val direct = Intent(
+            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+            Uri.parse("package:${context.packageName}"),
+        )
+        val opened = launchSettings(direct) || launchSettings(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+        return batteryOptimizationState(settingsOpened = opened)
+    }
+
+    private fun openBatteryOptimizationSettings(): Map<String, Any> {
+        if (Build.VERSION.SDK_INT < 23) return batteryOptimizationState()
+        val opened = launchSettings(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) ||
+            launchSettings(
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")),
+            )
+        return batteryOptimizationState(settingsOpened = opened)
+    }
+
+    private fun launchSettings(intent: Intent): Boolean = try {
+        val owner = activity
+        if (owner == null) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val starter = owner ?: context
+        if (intent.resolveActivity(context.packageManager) == null) false
+        else { starter.startActivity(intent); true }
+    } catch (_: Exception) {
+        false
+    }
+
+    @Synchronized
+    private fun resetDiagnostics() {
+        diagnosticTicks = 0
+        upDelaySamples = 0
+        upDelayTotalMs = 0
+        upDelayMaxMs = 0
+    }
+
+    @Synchronized
+    private fun recordUpDelay(sentAt: Long) {
+        if (sentAt <= 0) return
+        val delay = (System.currentTimeMillis() - sentAt).coerceAtLeast(0)
+        upDelaySamples++
+        upDelayTotalMs += delay
+        upDelayMaxMs = maxOf(upDelayMaxMs, delay)
+    }
+
+    @Synchronized
+    private fun publishDiagnostics() {
+        val bridgeStats = bridge.stats()
+        update(
+            mapOf(
+                "toGame" to bridgeStats.toGame,
+                "toPage" to bridgeStats.toPage,
+                "upDelaySamples" to upDelaySamples,
+                "upDelayAverageMs" to if (upDelaySamples > 0) upDelayTotalMs / upDelaySamples else 0,
+                "upDelayMaxMs" to upDelayMaxMs,
+            ),
+            refreshNotification = false,
+        )
     }
 
     private inner class JsBridge {
@@ -325,7 +461,10 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
 
         @JavascriptInterface fun packet(peer: String, data: String, sentAt: Long) {
             if (peer.length !in 1..64 || data.length > 8192) return
-            try { bridge.fromRemote(peer, Base64.decode(data, Base64.NO_WRAP)) } catch (_: IllegalArgumentException) {}
+            try {
+                recordUpDelay(sentAt)
+                bridge.fromRemote(peer, Base64.decode(data, Base64.NO_WRAP))
+            } catch (_: IllegalArgumentException) {}
         }
 
         @JavascriptInterface fun peerOpen(peer: String) {
@@ -350,8 +489,22 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
     }
 
     private class SessionWebView(context: Context) : WebView(context) {
-        override fun onVisibilityChanged(changedView: View, visibility: Int) = super.onVisibilityChanged(changedView, VISIBLE)
-        override fun onWindowVisibilityChanged(visibility: Int) = super.onWindowVisibilityChanged(VISIBLE)
+        private var keepRunning = false
+
+        fun setKeepRunning(value: Boolean) {
+            if (keepRunning == value) return
+            keepRunning = value
+            if (value) {
+                onVisibilityChanged(this, VISIBLE)
+                onWindowVisibilityChanged(VISIBLE)
+            }
+        }
+
+        override fun onVisibilityChanged(changedView: View, visibility: Int) =
+            super.onVisibilityChanged(changedView, if (keepRunning) VISIBLE else visibility)
+
+        override fun onWindowVisibilityChanged(visibility: Int) =
+            super.onWindowVisibilityChanged(if (keepRunning) VISIBLE else visibility)
     }
 
     override fun onListen(arguments: Any?, eventSink: EventChannel.EventSink) {
@@ -366,12 +519,13 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         createWebView(binding.activity)
     }
 
-    override fun onDetachedFromActivityForConfigChanges() { destroyWebView(); activity = null }
+    override fun onDetachedFromActivityForConfigChanges() { destroyWebView(terminateSession = true); activity = null }
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) { onAttachedToActivity(binding) }
-    override fun onDetachedFromActivity() { destroyWebView(); activity = null }
+    override fun onDetachedFromActivity() { destroyWebView(terminateSession = true); activity = null }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        stop("engine detached")
+        if (bridge.active()) terminateSessionForLifecycle()
+        destroyWebView()
         methods.setMethodCallHandler(null)
         events.setStreamHandler(null)
         try { context.unregisterReceiver(stopReceiver) } catch (_: Exception) {}

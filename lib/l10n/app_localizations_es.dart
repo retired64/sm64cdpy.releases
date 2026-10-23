@@ -2828,6 +2828,45 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get coopNetworkError =>
       'No se pudo iniciar la partida. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get coopBatteryTitle => 'Conexión en segundo plano';
+
+  @override
+  String get coopBatteryDescription =>
+      'Opcional: permite uso de batería sin restricciones para reducir el riesgo de que Android pause la partida mientras el juego está abierto.';
+
+  @override
+  String get coopBatteryAllowed =>
+      'El uso de batería sin restricciones está permitido. Android podrá mantener la partida activa con mayor fiabilidad.';
+
+  @override
+  String get coopBatteryAllow => 'Permitir en Android';
+
+  @override
+  String get coopBatteryManage => 'Administrar en Android';
+
+  @override
+  String get coopBatteryOpenError =>
+      'No se pudieron abrir los ajustes de batería de Android en este dispositivo.';
+
+  @override
+  String get coopDiagnosticsTitle => 'Diagnóstico de conexión';
+
+  @override
+  String coopDiagnosticsSignal(int count) {
+    return 'Conexiones de señalización: $count';
+  }
+
+  @override
+  String coopDiagnosticsPackets(int toGame, int toPage) {
+    return 'Paquetes del juego: $toGame recibidos · $toPage enviados';
+  }
+
+  @override
+  String coopDiagnosticsDelay(int average, int max) {
+    return 'Demora del puente: $average ms promedio · $max ms máxima';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -5654,4 +5693,43 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get coopNetworkError =>
       'No se pudo iniciar la partida. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get coopBatteryTitle => 'Conexión en segundo plano';
+
+  @override
+  String get coopBatteryDescription =>
+      'Opcional: permite uso de batería sin restricciones para reducir el riesgo de que Android pause la partida mientras el juego está abierto.';
+
+  @override
+  String get coopBatteryAllowed =>
+      'El uso de batería sin restricciones está permitido. Android podrá mantener la partida activa con mayor fiabilidad.';
+
+  @override
+  String get coopBatteryAllow => 'Permitir en Android';
+
+  @override
+  String get coopBatteryManage => 'Administrar en Android';
+
+  @override
+  String get coopBatteryOpenError =>
+      'No se pudieron abrir los ajustes de batería de Android en este dispositivo.';
+
+  @override
+  String get coopDiagnosticsTitle => 'Diagnóstico de conexión';
+
+  @override
+  String coopDiagnosticsSignal(int count) {
+    return 'Conexiones de señalización: $count';
+  }
+
+  @override
+  String coopDiagnosticsPackets(int toGame, int toPage) {
+    return 'Paquetes del juego: $toGame recibidos · $toPage enviados';
+  }
+
+  @override
+  String coopDiagnosticsDelay(int average, int max) {
+    return 'Demora del puente: $average ms promedio · $max ms máxima';
+  }
 }

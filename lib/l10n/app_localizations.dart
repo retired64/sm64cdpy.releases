@@ -5069,6 +5069,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The session could not start. Check your connection and try again.'**
   String get coopNetworkError;
+
+  /// No description provided for @coopBatteryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Background connection'**
+  String get coopBatteryTitle;
+
+  /// No description provided for @coopBatteryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional: allow unrestricted battery use so Android is less likely to pause a session while the game is open.'**
+  String get coopBatteryDescription;
+
+  /// No description provided for @coopBatteryAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unrestricted battery use is allowed. Android can keep the session active more reliably.'**
+  String get coopBatteryAllowed;
+
+  /// No description provided for @coopBatteryAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow in Android'**
+  String get coopBatteryAllow;
+
+  /// No description provided for @coopBatteryManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage in Android'**
+  String get coopBatteryManage;
+
+  /// No description provided for @coopBatteryOpenError.
+  ///
+  /// In en, this message translates to:
+  /// **'Android battery settings could not be opened on this device.'**
+  String get coopBatteryOpenError;
+
+  /// No description provided for @coopDiagnosticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection diagnostics'**
+  String get coopDiagnosticsTitle;
+
+  /// No description provided for @coopDiagnosticsSignal.
+  ///
+  /// In en, this message translates to:
+  /// **'Signalling connections: {count}'**
+  String coopDiagnosticsSignal(int count);
+
+  /// No description provided for @coopDiagnosticsPackets.
+  ///
+  /// In en, this message translates to:
+  /// **'Game packets: {toGame} received · {toPage} sent'**
+  String coopDiagnosticsPackets(int toGame, int toPage);
+
+  /// No description provided for @coopDiagnosticsDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge delay: {average} ms average · {max} ms maximum'**
+  String coopDiagnosticsDelay(int average, int max);
 }
 
 class _AppLocalizationsDelegate

@@ -25,9 +25,15 @@ La primera versión del adaptador reproducirá el contrato compatible observado.
 - Historial local limitado a cuatro códigos, sin duplicados.
 - Motor de compatibilidad aislado en un WebView invisible y persistente, cargado desde assets locales; Flutter nunca ejecuta ni conoce el protocolo.
 - Señalización cifrada compatible mediante el Worker observado, sin enviar códigos ni identificadores de sala a trackers públicos.
-- Puente UDP nativo hacia SM64CoopDX, con puerto 7777, asignación alternativa para invitado, bþr acotado y liberación idempotente.
+- Puente UDP nativo hacia SM64CoopDX, con puerto 7777, asignación alternativa para invitado, búfer acotado y liberación idempotente.
 - Servicio Android de primer plano con WakeLock y WifiLock activos solo durante una sesión.
 - Detección y apertura directa de `com.maniscat2.sm64coopdx`.
+- WebView mantenido visible para Android solo mientras el puente está activo; fuera de una sesión conserva su ciclo de vida normal.
+- Detención autónoma desde la notificación: el servicio libera sus locks aunque Flutter o su receptor ya no existan.
+- Recuperación coherente: una pérdida del renderer o del Activity termina la sesión y publica un estado terminal; nunca conserva un falso estado conectado.
+- Diagnóstico local con paquetes hacia/desde el juego, demora del puente y disponibilidad de señalización, actualizado una vez por segundo y sin direcciones IP.
+- Normalización Crockford compatible (`I/L → 1`, `O → 0`, `U → V`) en Flutter y en el límite nativo.
+- Acceso opcional y explícito a la exclusión de optimización de batería de Android 6+, con consulta del estado al volver a la aplicación.
 
 La decisión de mantener WebRTC dentro del WebView local evita incorporar otra biblioteca nativa pesada y conserva el comportamiento del motor observado. UDP, ciclo de vida, notificación y recursos de segundo plano permanecen en Kotlin. El adaptador queda contenido en `assets/coop`, por lo que el futuro Worker propio podrá reemplazar la señalización sin cambiar la pantalla ni el puente del juego.
 
@@ -56,7 +62,7 @@ El análisis estático documenta el siguiente flujo:
 - Transporte de juego mediante un DataChannel WebRTC no ordenado y no confiable, apropiado para reproducir datagramas UDP sin crear cola por paquetes atrasados.
 - Puente Android entre WebRTC y el juego por loopback UDP, normalmente `127.0.0.1:7777`.
 - En modo invitado, si `7777` ya está ocupado, el puente selecciona otro puerto local y lo comunica a la interfaz.
-- Servicio de primer plano, WakeLock, WifiLock y recuperación de sesión para sostener la conexión al cambiar al juego.
+- Servicio de primer plano, WakeLock y WifiLock para sostener la conexión al cambiar al juego. El análisis estático no demuestra recuperación después de muerte del proceso.
 - Detección y apertura del paquete `com.maniscat2.sm64coopdx`.
 
 Evidencia de host y puente: `ev_c59f30b962680b94fb10bb87df0804239c3521a401a5b1c3dda16f6411efb2e8`, `ev_ec2ad5d070c723cfadf3515e8bd2203067cf0afae3213fb9274bde226510ca25`, `ev_8a17f384ce51cf83ae28561deaa065c9d7f99feba09d229c0cb6c7944688a763`.
@@ -127,6 +133,17 @@ Cada comprobación se representa individualmente. Un fallo no debe convertir tod
 - Estado del juego: no instalado, cerrado, abierto o hospedando.
 - Reconexión no bloqueante con intento actual y límite.
 - Acción **Detener sesión**, siempre disponible y con liberación completa de recursos.
+- Diagnóstico desplegable de señalización, tráfico del puente y demora, sin exponer IP, SDP ni el secreto de sala.
+
+### 5. Batería y segundo plano
+
+- La sesión funciona sin conceder acceso especial de batería; nunca se bloquea Crear o Unirse por no concederlo.
+- En Android 6 o posterior, la pantalla consulta `PowerManager.isIgnoringBatteryOptimizations()` y muestra una acción opcional.
+- La solicitud directa se realiza solo tras el toque del usuario mediante `ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`; si el fabricante no ofrece esa Activity, se abre la lista general o los detalles de la aplicación.
+- Al regresar desde Ajustes se vuelve a consultar Android en vez de asumir que el usuario concedió el acceso.
+- La aplicación explica el costo: mejora la continuidad de una conexión persistente, pero puede aumentar el consumo de batería.
+
+Android indica que esta exclusión debe reservarse para casos en los que Doze rompe una función central y que incluso una aplicación exenta conserva otras restricciones. Referencias oficiales: [Doze y App Standby](https://developer.android.com/training/monitoring-device-state/doze-standby) y [`ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`](https://developer.android.com/reference/android/provider/Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).
 
 ## Máquina de estados
 
@@ -156,6 +173,7 @@ Datos mínimos de la instantánea:
 - estado del juego;
 - error tipado y recuperable;
 - marcas de tiempo para diagnóstico local sin datos sensibles.
+- contadores acumulados de paquetes y demora del puente, reiniciados al iniciar cada sesión.
 
 ## Contratos propuestos
 
@@ -205,7 +223,7 @@ La pantalla solo conoce `CoopSessionEngine`. No conoce URLs, Worker, claves TURN
 - servicio de primer plano y notificación;
 - WakeLock y WifiLock limitados a una sesión activa;
 - detección/apertura del juego;
-- persistencia mínima necesaria para reconstruir una sesión tras recrear Activity/FlutterEngine.
+- finalización coherente si Android destruye el Activity, el FlutterEngine o el renderer; una sesión WebRTC en memoria no se presenta como recuperable después de perder esos procesos.
 
 Mantener transporte y sockets en Android evita depender del ciclo de vida de widgets y reduce pausas cuando Flutter pasa a segundo plano al abrir el juego.
 
@@ -298,10 +316,13 @@ Resultado: backend controlado, reemplazable y sin secretos dentro del APK.
 - notificación con acción detener;
 - WakeLock/WifiLock adquiridos tarde y liberados temprano;
 - recuperación tras recreación de Activity y proceso;
+- consulta y solicitud opcional de exclusión de optimización de batería;
 - comportamiento ante pérdida/cambio de red;
 - validación en Android 14+.
 
 Android exige declarar el tipo de servicio de primer plano apropiado; `specialUse` requiere además describir el caso mediante una propiedad del servicio. Fuente: [tipos de foreground service](https://developer.android.com/develop/background-work/services/fgs/service-types).
+
+La recuperación implementada no intenta reconstruir WebRTC después de muerte del proceso: cierra de forma terminal y pide iniciar otra sesión. La recuperación transparente exigiría persistir secretos y renegociar identidad/peers, lo que no está demostrado por el APK y sería menos seguro que un cierre claro.
 
 ### Fase 5 — Pruebas físicas y lanzamiento gradual
 

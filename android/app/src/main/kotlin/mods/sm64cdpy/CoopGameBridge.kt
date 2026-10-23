@@ -18,6 +18,8 @@ import java.util.zip.Inflater
 
 /** UDP bridge compatible with the SM64CoopDX connection helper protocol. */
 internal class CoopGameBridge(private val listener: Listener) {
+    data class Stats(val toGame: Long, val toPage: Long)
+
     interface Listener {
         fun onPacket(peer: String, data: ByteArray)
         fun onGameSeen()
@@ -193,6 +195,9 @@ internal class CoopGameBridge(private val listener: Listener) {
 
     @Synchronized
     fun active(): Boolean = mode != null
+
+    @Synchronized
+    fun stats(): Stats = Stats(toGame = toGameCount, toPage = toPageCount)
 
     private fun joinListen(socket: DatagramSocket, name: String) {
         joinSockets.add(socket)

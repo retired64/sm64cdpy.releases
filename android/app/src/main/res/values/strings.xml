@@ -15,4 +15,19 @@
   <string name="notification_extracting">Extracting %1$s…</string>
   <string name="notification_extracting_progress">Extracting %1$s · %2$d/%3$d files</string>
   <string name="notification_installing_mod">Installing mod</string>
+  <string name="channel_coop_session">Multiplayer session</string>
+  <string name="channel_coop_session_desc">Keeps the multiplayer connection active while the game is open</string>
+  <string name="coop_notification_hosting">Hosting · code %1$s</string>
+  <string name="coop_notification_joining">Playing with a friend</string>
+  <string name="coop_notification_preparing">Getting online…</string>
+  <string name="coop_notification_reconnecting">Reconnecting…</string>
+  <string name="coop_notification_stopping">Stopping session…</string>
+  <string name="coop_notification_failed">The multiplayer connection failed</string>
+  <string name="coop_notification_stop">Stop</string>
+  <string name="coop_notification_copy">Copy code</string>
+  <string name="coop_session_interrupted">Android recreated the connection engine. Start the session again.</string>
+  <plurals name="coop_notification_friends">
+    <item quantity="one">%1$d friend connected</item>
+    <item quantity="other">%1$d friends connected</item>
+  </plurals>
 </resources>

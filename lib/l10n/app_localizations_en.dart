@@ -2801,4 +2801,43 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get coopNetworkError =>
       'The session could not start. Check your connection and try again.';
+
+  @override
+  String get coopBatteryTitle => 'Background connection';
+
+  @override
+  String get coopBatteryDescription =>
+      'Optional: allow unrestricted battery use so Android is less likely to pause a session while the game is open.';
+
+  @override
+  String get coopBatteryAllowed =>
+      'Unrestricted battery use is allowed. Android can keep the session active more reliably.';
+
+  @override
+  String get coopBatteryAllow => 'Allow in Android';
+
+  @override
+  String get coopBatteryManage => 'Manage in Android';
+
+  @override
+  String get coopBatteryOpenError =>
+      'Android battery settings could not be opened on this device.';
+
+  @override
+  String get coopDiagnosticsTitle => 'Connection diagnostics';
+
+  @override
+  String coopDiagnosticsSignal(int count) {
+    return 'Signalling connections: $count';
+  }
+
+  @override
+  String coopDiagnosticsPackets(int toGame, int toPage) {
+    return 'Game packets: $toGame received · $toPage sent';
+  }
+
+  @override
+  String coopDiagnosticsDelay(int average, int max) {
+    return 'Bridge delay: $average ms average · $max ms maximum';
+  }
 }

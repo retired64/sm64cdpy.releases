@@ -33,11 +33,25 @@ class CoopSessionService {
   Future<bool> gameInstalled() async =>
       await _methods.invokeMethod<bool>('gameInstalled') ?? false;
 
+  Future<CoopBatteryOptimizationState> batteryOptimizationStatus() =>
+      _batteryState('batteryOptimizationStatus');
+
+  Future<CoopBatteryOptimizationState> requestBatteryOptimizationExemption() =>
+      _batteryState('requestBatteryOptimizationExemption');
+
+  Future<CoopBatteryOptimizationState> openBatteryOptimizationSettings() =>
+      _batteryState('openBatteryOptimizationSettings');
+
   Future<CoopSessionState> _state(String method, [Object? arguments]) async {
     final result = await _methods.invokeMapMethod<Object?, Object?>(
       method,
       arguments,
     );
     return CoopSessionState.fromMap(result ?? const {});
+  }
+
+  Future<CoopBatteryOptimizationState> _batteryState(String method) async {
+    final result = await _methods.invokeMapMethod<Object?, Object?>(method);
+    return CoopBatteryOptimizationState.fromMap(result ?? const {});
   }
 }

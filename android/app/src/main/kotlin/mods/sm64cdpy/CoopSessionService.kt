@@ -25,12 +25,21 @@ class CoopSessionService : Service() {
         const val ACTION_STOP_REQUESTED = "mods.sm64cdpy.coop.STOP_REQUESTED"
         private const val NOTIFICATION_ID = 7787
 
-        fun show(context: Context, title: String, text: String, code: String) {
+        fun show(
+            context: Context,
+            host: Boolean,
+            phase: String,
+            code: String,
+            friends: Int = 0,
+            failure: String = "",
+        ) {
             val intent = Intent(context, CoopSessionService::class.java).apply {
                 action = ACTION_SHOW
-                putExtra("title", title.take(80))
-                putExtra("text", text.take(200))
+                putExtra("host", host)
+                putExtra("phase", phase.take(24))
                 putExtra("code", code.take(16))
+                putExtra("friends", friends.coerceAtLeast(0))
+                putExtra("failure", failure.take(200))
             }
             if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(intent) else context.startService(intent)
         }
@@ -47,8 +56,12 @@ class CoopSessionService : Service() {
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= 26) {
-            val channel = NotificationChannel(CHANNEL_ID, "Multiplayer session", NotificationManager.IMPORTANCE_LOW).apply {
-                description = "Keeps the multiplayer connection active while the game is open"
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                getString(R.string.channel_coop_session),
+                NotificationManager.IMPORTANCE_LOW,
+            ).apply {
+                description = getString(R.string.channel_coop_session_desc)
                 setShowBadge(false)
             }
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
@@ -66,13 +79,30 @@ class CoopSessionService : Service() {
             }
             ACTION_STOP -> {
                 sendBroadcast(Intent(ACTION_STOP_REQUESTED).setPackage(packageName))
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf(startId)
                 return START_NOT_STICKY
             }
         }
         code = intent?.getStringExtra("code").orEmpty()
+        val host = intent?.getBooleanExtra("host", false) == true
+        val phase = intent?.getStringExtra("phase").orEmpty()
+        val friends = intent?.getIntExtra("friends", 0) ?: 0
+        val failure = intent?.getStringExtra("failure").orEmpty()
         val notification = buildNotification(
-            intent?.getStringExtra("title") ?: "Playing with friends",
-            intent?.getStringExtra("text").orEmpty(),
+            if (host) getString(R.string.coop_notification_hosting, code)
+            else getString(R.string.coop_notification_joining),
+            when (phase) {
+                "connected" -> resources.getQuantityString(
+                    R.plurals.coop_notification_friends,
+                    friends,
+                    friends,
+                )
+                "reconnecting" -> getString(R.string.coop_notification_reconnecting)
+                "failed" -> failure.ifEmpty { getString(R.string.coop_notification_failed) }
+                "stopping" -> getString(R.string.coop_notification_stopping)
+                else -> getString(R.string.coop_notification_preparing)
+            },
         )
         ServiceCompat.startForeground(
             this,
@@ -105,7 +135,7 @@ class CoopSessionService : Service() {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .addAction(0, "Stop", stop)
+            .addAction(0, getString(R.string.coop_notification_stop), stop)
         if (code.isNotEmpty()) {
             val copy = PendingIntent.getService(
                 this,
@@ -113,7 +143,7 @@ class CoopSessionService : Service() {
                 Intent(this, CoopSessionService::class.java).setAction(ACTION_COPY),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
-            builder.addAction(0, "Copy code", copy)
+            builder.addAction(0, getString(R.string.coop_notification_copy), copy)
         }
         return builder.build()
     }

@@ -2090,5 +2090,18 @@
   "coopDirect": "Direct",
   "coopRelay": "Relay",
   "coopNoCode": "Enter a valid eight-character code.",
-  "coopNetworkError": "The session could not start. Check your connection and try again."
+  "coopNetworkError": "The session could not start. Check your connection and try again.",
+  "coopBatteryTitle": "Background connection",
+  "coopBatteryDescription": "Optional: allow unrestricted battery use so Android is less likely to pause a session while the game is open.",
+  "coopBatteryAllowed": "Unrestricted battery use is allowed. Android can keep the session active more reliably.",
+  "coopBatteryAllow": "Allow in Android",
+  "coopBatteryManage": "Manage in Android",
+  "coopBatteryOpenError": "Android battery settings could not be opened on this device.",
+  "coopDiagnosticsTitle": "Connection diagnostics",
+  "coopDiagnosticsSignal": "Signalling connections: {count}",
+  "@coopDiagnosticsSignal": {"placeholders": {"count": {"type": "int"}}},
+  "coopDiagnosticsPackets": "Game packets: {toGame} received · {toPage} sent",
+  "@coopDiagnosticsPackets": {"placeholders": {"toGame": {"type": "int"}, "toPage": {"type": "int"}}},
+  "coopDiagnosticsDelay": "Bridge delay: {average} ms average · {max} ms maximum",
+  "@coopDiagnosticsDelay": {"placeholders": {"average": {"type": "int"}, "max": {"type": "int"}}}
 }

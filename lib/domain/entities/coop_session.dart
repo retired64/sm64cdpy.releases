@@ -1,5 +1,18 @@
 enum CoopSessionMode { host, join }
 
+String normalizeCoopCode(String input) {
+  final raw = input
+      .toUpperCase()
+      .replaceAll(RegExp('[^A-Z0-9]'), '')
+      .replaceAll(RegExp('[IL]'), '1')
+      .replaceAll('O', '0')
+      .replaceAll('U', 'V');
+  return raw.length == 8 ? '${raw.substring(0, 4)}-${raw.substring(4)}' : raw;
+}
+
+bool isValidCoopCode(String code) =>
+    RegExp(r'^[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$').hasMatch(code);
+
 enum CoopSessionPhase {
   idle,
   preparing,
@@ -45,6 +58,50 @@ class CoopPeer {
   final bool? game;
 }
 
+class CoopSessionDiagnostics {
+  const CoopSessionDiagnostics({
+    this.toGame = 0,
+    this.toPage = 0,
+    this.upDelaySamples = 0,
+    this.upDelayAverageMs = 0,
+    this.upDelayMaxMs = 0,
+  });
+
+  factory CoopSessionDiagnostics.fromMap(Map<Object?, Object?> value) =>
+      CoopSessionDiagnostics(
+        toGame: (value['toGame'] as num?)?.toInt() ?? 0,
+        toPage: (value['toPage'] as num?)?.toInt() ?? 0,
+        upDelaySamples: (value['upDelaySamples'] as num?)?.toInt() ?? 0,
+        upDelayAverageMs: (value['upDelayAverageMs'] as num?)?.toInt() ?? 0,
+        upDelayMaxMs: (value['upDelayMaxMs'] as num?)?.toInt() ?? 0,
+      );
+
+  final int toGame;
+  final int toPage;
+  final int upDelaySamples;
+  final int upDelayAverageMs;
+  final int upDelayMaxMs;
+}
+
+class CoopBatteryOptimizationState {
+  const CoopBatteryOptimizationState({
+    required this.supported,
+    required this.ignored,
+    this.settingsOpened = false,
+  });
+
+  factory CoopBatteryOptimizationState.fromMap(Map<Object?, Object?> value) =>
+      CoopBatteryOptimizationState(
+        supported: value['supported'] == true,
+        ignored: value['ignored'] == true,
+        settingsOpened: value['settingsOpened'] == true,
+      );
+
+  final bool supported;
+  final bool ignored;
+  final bool settingsOpened;
+}
+
 class CoopSessionState {
   const CoopSessionState({
     this.phase = CoopSessionPhase.idle,
@@ -60,6 +117,7 @@ class CoopSessionState {
     this.gameInstalled,
     this.revision = 0,
     this.initialized = false,
+    this.diagnostics = const CoopSessionDiagnostics(),
   });
 
   factory CoopSessionState.fromMap(Map<Object?, Object?> value) {
@@ -91,6 +149,7 @@ class CoopSessionState {
       gameInstalled: value['gameInstalled'] as bool?,
       revision: (value['revision'] as num?)?.toInt() ?? 0,
       initialized: value['initialized'] == true,
+      diagnostics: CoopSessionDiagnostics.fromMap(value),
     );
   }
 
@@ -107,6 +166,7 @@ class CoopSessionState {
   final bool? gameInstalled;
   final int revision;
   final bool initialized;
+  final CoopSessionDiagnostics diagnostics;
 
   bool get canStart => initialized && !phase.active;
 
@@ -124,5 +184,6 @@ class CoopSessionState {
     gameInstalled: gameInstalled ?? this.gameInstalled,
     revision: revision,
     initialized: initialized,
+    diagnostics: diagnostics,
   );
 }
