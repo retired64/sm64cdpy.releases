@@ -2,6 +2,33 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/domain/entities/coop_session.dart';
 
 void main() {
+  group('Coop network consent', () {
+    test('accepts the current terms with a valid timestamp', () {
+      final record = encodeCoopNetworkConsent(
+        acceptedAt: DateTime.utc(2026, 10, 23),
+      );
+
+      expect(isValidCoopNetworkConsent(record), isTrue);
+    });
+
+    test('rejects malformed, declined, and outdated records', () {
+      expect(isValidCoopNetworkConsent(null), isFalse);
+      expect(isValidCoopNetworkConsent('{broken'), isFalse);
+      expect(
+        isValidCoopNetworkConsent(
+          '{"accepted":false,"termsVersion":2,"at":"2026-10-23T00:00:00Z"}',
+        ),
+        isFalse,
+      );
+      expect(
+        isValidCoopNetworkConsent(
+          '{"accepted":true,"termsVersion":1,"at":"2026-10-23T00:00:00Z"}',
+        ),
+        isFalse,
+      );
+    });
+  });
+
   group('CoopSessionState', () {
     test(
       'projects a native connected snapshot without losing peer metadata',

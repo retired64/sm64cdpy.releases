@@ -2751,6 +2751,38 @@ class AppLocalizationsEs extends AppLocalizations {
       'El código de sala es un secreto compartido. La señalización usa el servicio compatible de Cloudflare; el tráfico del juego se conecta directamente cuando es posible y usa TURN solo cuando hace falta.';
 
   @override
+  String get coopConsentTitle => 'Privacidad de red';
+
+  @override
+  String get coopConsentIntro =>
+      'Antes de crear o unirte a una sala, revisa cómo funciona la conexión.';
+
+  @override
+  String get coopConsentEncrypted =>
+      'El código de sala deriva la clave que cifra la señalización WebRTC. Compártelo solo con personas de confianza.';
+
+  @override
+  String get coopConsentIp =>
+      'Tu dirección de internet puede ser visible para el amigo invitado y para los servicios de búsqueda de dirección de Google y Cloudflare.';
+
+  @override
+  String get coopConsentThirdParty =>
+      'La señalización y el relay usan un servicio compatible de Cloudflare operado por terceros. Su disponibilidad y retención dependen de ese servicio.';
+
+  @override
+  String get coopConsentAccept => 'Entiendo y quiero continuar';
+
+  @override
+  String get coopConsentCancel => 'Ahora no';
+
+  @override
+  String get coopConsentReview => 'Revisar privacidad de red';
+
+  @override
+  String get coopConsentSaveError =>
+      'No se pudo guardar tu elección. No se inició ninguna sesión de red.';
+
+  @override
   String get coopCreate => 'Crear partida';
 
   @override
@@ -5614,6 +5646,38 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get coopPrivacy =>
       'El código de sala es un secreto compartido. La señalización usa el servicio compatible de Cloudflare; el tráfico del juego se conecta directamente cuando es posible y usa TURN solo cuando hace falta.';
+
+  @override
+  String get coopConsentTitle => 'Privacidad de red';
+
+  @override
+  String get coopConsentIntro =>
+      'Antes de crear o unirte a una sala, revisa cómo funciona la conexión.';
+
+  @override
+  String get coopConsentEncrypted =>
+      'El código de sala deriva la clave que cifra la señalización WebRTC. Compártelo solo con personas de confianza.';
+
+  @override
+  String get coopConsentIp =>
+      'Tu dirección de internet puede ser visible para el amigo invitado y para los servicios de búsqueda de dirección de Google y Cloudflare.';
+
+  @override
+  String get coopConsentThirdParty =>
+      'La señalización y el relay usan un servicio compatible de Cloudflare operado por terceros. Su disponibilidad y retención dependen de ese servicio.';
+
+  @override
+  String get coopConsentAccept => 'Entiendo y quiero continuar';
+
+  @override
+  String get coopConsentCancel => 'Ahora no';
+
+  @override
+  String get coopConsentReview => 'Revisar privacidad de red';
+
+  @override
+  String get coopConsentSaveError =>
+      'No se pudo guardar tu elección. No se inició ninguna sesión de red.';
 
   @override
   String get coopCreate => 'Crear partida';

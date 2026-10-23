@@ -4926,6 +4926,60 @@ abstract class AppLocalizations {
   /// **'The room code is a shared secret. Signalling uses the compatible Cloudflare service; game traffic connects directly when possible and uses TURN only when needed.'**
   String get coopPrivacy;
 
+  /// No description provided for @coopConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Network privacy'**
+  String get coopConsentTitle;
+
+  /// No description provided for @coopConsentIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Before creating or joining a room, review how the connection works.'**
+  String get coopConsentIntro;
+
+  /// No description provided for @coopConsentEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'The room code derives the key that encrypts WebRTC signalling. Share it only with people you trust.'**
+  String get coopConsentEncrypted;
+
+  /// No description provided for @coopConsentIp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your internet address may be visible to your invited friend and to the Google and Cloudflare address-discovery services.'**
+  String get coopConsentIp;
+
+  /// No description provided for @coopConsentThirdParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Signalling and relay access use a compatible third-party Cloudflare service. Availability and retention are controlled by that service.'**
+  String get coopConsentThirdParty;
+
+  /// No description provided for @coopConsentAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand and continue'**
+  String get coopConsentAccept;
+
+  /// No description provided for @coopConsentCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get coopConsentCancel;
+
+  /// No description provided for @coopConsentReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review network privacy'**
+  String get coopConsentReview;
+
+  /// No description provided for @coopConsentSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your choice could not be saved. No network session was started.'**
+  String get coopConsentSaveError;
+
   /// No description provided for @coopCreate.
   ///
   /// In en, this message translates to:

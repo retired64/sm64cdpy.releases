@@ -2725,6 +2725,38 @@ class AppLocalizationsEn extends AppLocalizations {
       'The room code is a shared secret. Signalling uses the compatible Cloudflare service; game traffic connects directly when possible and uses TURN only when needed.';
 
   @override
+  String get coopConsentTitle => 'Network privacy';
+
+  @override
+  String get coopConsentIntro =>
+      'Before creating or joining a room, review how the connection works.';
+
+  @override
+  String get coopConsentEncrypted =>
+      'The room code derives the key that encrypts WebRTC signalling. Share it only with people you trust.';
+
+  @override
+  String get coopConsentIp =>
+      'Your internet address may be visible to your invited friend and to the Google and Cloudflare address-discovery services.';
+
+  @override
+  String get coopConsentThirdParty =>
+      'Signalling and relay access use a compatible third-party Cloudflare service. Availability and retention are controlled by that service.';
+
+  @override
+  String get coopConsentAccept => 'I understand and continue';
+
+  @override
+  String get coopConsentCancel => 'Not now';
+
+  @override
+  String get coopConsentReview => 'Review network privacy';
+
+  @override
+  String get coopConsentSaveError =>
+      'Your choice could not be saved. No network session was started.';
+
+  @override
   String get coopCreate => 'Create room';
 
   @override

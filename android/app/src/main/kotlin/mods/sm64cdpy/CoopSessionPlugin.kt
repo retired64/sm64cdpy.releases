@@ -16,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.RenderProcessGoneDetail
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
@@ -129,38 +131,48 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         require(mode == "host" || mode == "join") { "Invalid session mode" }
         require(CODE.matches(code)) { "Invalid room code" }
         val port = bridge.start(mode)
-        resetDiagnostics()
-        webView?.setKeepRunning(true)
-        pendingStart = PendingStart(mode, code, relayOnly)
-        update(
-            mapOf(
-                "sessionId" to UUID.randomUUID().toString(),
-                "mode" to mode,
-                "code" to code,
-                "phase" to "preparing",
-                "port" to port,
-                "gameIn" to false,
-                "gameHosting" to false,
-                "message" to null,
-                "friends" to emptyList<Map<String, Any?>>(),
-                "trackers" to 0,
-                "toGame" to 0L,
-                "toPage" to 0L,
-                "upDelaySamples" to 0L,
-                "upDelayAverageMs" to 0L,
-                "upDelayMaxMs" to 0L,
-                "initialized" to true,
-            ),
-        )
-        CoopSessionService.show(
-            context,
-            host = mode == "host",
-            phase = "preparing",
-            code = if (mode == "host") code else "",
-        )
-        startTicker()
-        launchPending()
-        return snapshot.toMap()
+        try {
+            resetDiagnostics()
+            webView?.setKeepRunning(true)
+            pendingStart = PendingStart(mode, code, relayOnly)
+            update(
+                mapOf(
+                    "sessionId" to UUID.randomUUID().toString(),
+                    "mode" to mode,
+                    "code" to code,
+                    "phase" to "preparing",
+                    "port" to port,
+                    "gameIn" to false,
+                    "gameHosting" to false,
+                    "message" to null,
+                    "friends" to emptyList<Map<String, Any?>>(),
+                    "trackers" to 0,
+                    "toGame" to 0L,
+                    "toPage" to 0L,
+                    "upDelaySamples" to 0L,
+                    "upDelayAverageMs" to 0L,
+                    "upDelayMaxMs" to 0L,
+                    "initialized" to true,
+                ),
+            )
+            CoopSessionService.show(
+                context,
+                host = mode == "host",
+                phase = "preparing",
+                code = if (mode == "host") code else "",
+            )
+            startTicker()
+            launchPending()
+            return snapshot.toMap()
+        } catch (error: Exception) {
+            pendingStart = null
+            webView?.setKeepRunning(false)
+            ticker?.shutdownNow()
+            ticker = null
+            bridge.stop()
+            CoopSessionService.end(context)
+            throw error
+        }
     }
 
     private fun launchPending() {
@@ -185,7 +197,7 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         main.postDelayed(pending, 450)
     }
 
-    private fun finishStop() {
+    private fun finishStop(finalPhase: String = "stopped", finalMessage: String? = null) {
         stopRunnable?.let(main::removeCallbacks)
         stopRunnable = null
         pendingStart = null
@@ -196,12 +208,26 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         CoopSessionService.end(context)
         update(
             mapOf(
-                "phase" to "stopped",
+                "phase" to finalPhase,
                 "friends" to emptyList<Map<String, Any?>>(),
                 "trackers" to 0,
-                "message" to null,
+                "message" to finalMessage,
             ),
         )
+    }
+
+    private fun failAndStop(message: String) {
+        val safeMessage = message.take(300)
+        if (!bridge.active()) {
+            update(mapOf("phase" to "failed", "message" to safeMessage))
+            return
+        }
+        update(mapOf("phase" to "stopping", "message" to safeMessage), refreshNotification = false)
+        evaluate("window.coopEngine?.stop()")
+        stopRunnable?.let(main::removeCallbacks)
+        val pending = Runnable { finishStop(finalPhase = "failed", finalMessage = safeMessage) }
+        stopRunnable = pending
+        main.postDelayed(pending, 450)
     }
 
     private fun startTicker() {
@@ -235,10 +261,21 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
             settings.mediaPlaybackRequiresUserGesture = false
+            settings.javaScriptCanOpenWindowsAutomatically = false
+            settings.setSupportMultipleWindows(false)
+            settings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+            settings.allowContentAccess = false
+            if (Build.VERSION.SDK_INT >= 26) {
+                settings.safeBrowsingEnabled = true
+                setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, false)
+            }
             setBackgroundColor(android.graphics.Color.TRANSPARENT)
             alpha = 0.01f
             addJavascriptInterface(JsBridge(), "NativeCoop")
             webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean =
+                    request?.url?.toString() != "file:///android_asset/flutter_assets/assets/coop/index.html"
+
                 override fun onPageFinished(view: WebView?, url: String?) {
                     ready = true
                     update(mapOf("initialized" to true))
@@ -446,6 +483,7 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
                         ),
                     )
                 }
+                if (json.optString("phase") == "stopped" && stopRunnable != null) return
                 update(
                     mapOf(
                         "phase" to json.optString("phase", "failed"),
@@ -484,7 +522,7 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
         }
 
         @JavascriptInterface fun failed(message: String) {
-            update(mapOf("phase" to "failed", "message" to message.take(300)))
+            main.post { failAndStop(message) }
         }
     }
 

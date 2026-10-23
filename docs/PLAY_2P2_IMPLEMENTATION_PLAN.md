@@ -34,6 +34,11 @@ La primera versión del adaptador reproducirá el contrato compatible observado.
 - Diagnóstico local con paquetes hacia/desde el juego, demora del puente y disponibilidad de señalización, actualizado una vez por segundo y sin direcciones IP.
 - Normalización Crockford compatible (`I/L → 1`, `O → 0`, `U → V`) en Flutter y en el límite nativo.
 - Acceso opcional y explícito a la exclusión de optimización de batería de Android 6+, con consulta del estado al volver a la aplicación.
+- Consentimiento de red versionado y persistente antes de la primera sesión; una versión nueva de los términos vuelve a solicitar aceptación.
+- Política CSP cerrada para el motor local, navegación externa bloqueada y renderer WebView con prioridad importante explícita.
+- Los fallos terminales detienen señalización, WebRTC, puente UDP, locks y servicio antes de habilitar otro intento.
+- La recuperación del enlace notifica el retorno al puente UDP para detener `STILL_HERE` y vaciar gradualmente estados retenidos.
+- Los intentos de peer que nunca abren el DataChannel caducan para no consumir los 15 slots del host.
 
 La decisión de mantener WebRTC dentro del WebView local evita incorporar otra biblioteca nativa pesada y conserva el comportamiento del motor observado. UDP, ciclo de vida, notificación y recursos de segundo plano permanecen en Kotlin. El adaptador queda contenido en `assets/coop`, por lo que el futuro Worker propio podrá reemplazar la señalización sin cambiar la pantalla ni el puente del juego.
 

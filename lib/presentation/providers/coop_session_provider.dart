@@ -17,6 +17,7 @@ final coopSessionProvider =
 
 class CoopSessionNotifier extends Notifier<CoopSessionState> {
   static const _recentKey = 'coop_recent_join_codes';
+  static const _networkConsentKey = 'coop_network_consent';
   StreamSubscription<CoopSessionState>? _subscription;
 
   @override
@@ -117,6 +118,20 @@ class CoopSessionNotifier extends Notifier<CoopSessionState> {
   Future<void> clearRecentCodes() async {
     final preferences = await SharedPreferences.getInstance();
     await preferences.remove(_recentKey);
+  }
+
+  Future<bool> networkConsentAccepted() async {
+    final preferences = await SharedPreferences.getInstance();
+    return isValidCoopNetworkConsent(preferences.getString(_networkConsentKey));
+  }
+
+  Future<void> acceptNetworkConsent() async {
+    final preferences = await SharedPreferences.getInstance();
+    final saved = await preferences.setString(
+      _networkConsentKey,
+      encodeCoopNetworkConsent(),
+    );
+    if (!saved) throw StateError('Could not persist network consent');
   }
 
   Future<void> _remember(String code) async {

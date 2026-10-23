@@ -2738,6 +2738,38 @@ class AppLocalizationsPt extends AppLocalizations {
       'O código da sala é um segredo compartilhado. A sinalização usa o serviço Cloudflare compatível; o tráfego conecta diretamente quando possível e usa TURN quando necessário.';
 
   @override
+  String get coopConsentTitle => 'Privacidade da rede';
+
+  @override
+  String get coopConsentIntro =>
+      'Antes de criar ou entrar em uma sala, veja como a conexão funciona.';
+
+  @override
+  String get coopConsentEncrypted =>
+      'O código da sala gera a chave que criptografa a sinalização WebRTC. Compartilhe-o apenas com pessoas de confiança.';
+
+  @override
+  String get coopConsentIp =>
+      'Seu endereço de internet pode ficar visível para o amigo convidado e para os serviços de descoberta de endereço do Google e da Cloudflare.';
+
+  @override
+  String get coopConsentThirdParty =>
+      'A sinalização e o relay usam um serviço compatível da Cloudflare operado por terceiros. A disponibilidade e a retenção dependem desse serviço.';
+
+  @override
+  String get coopConsentAccept => 'Entendi e quero continuar';
+
+  @override
+  String get coopConsentCancel => 'Agora não';
+
+  @override
+  String get coopConsentReview => 'Revisar privacidade da rede';
+
+  @override
+  String get coopConsentSaveError =>
+      'Não foi possível salvar sua escolha. Nenhuma sessão de rede foi iniciada.';
+
+  @override
   String get coopCreate => 'Criar partida';
 
   @override
@@ -5588,6 +5620,38 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get coopPrivacy =>
       'O código da sala é um segredo compartilhado. A sinalização usa o serviço Cloudflare compatível; o tráfego conecta diretamente quando possível e usa TURN quando necessário.';
+
+  @override
+  String get coopConsentTitle => 'Privacidade da rede';
+
+  @override
+  String get coopConsentIntro =>
+      'Antes de criar ou entrar em uma sala, veja como a conexão funciona.';
+
+  @override
+  String get coopConsentEncrypted =>
+      'O código da sala gera a chave que criptografa a sinalização WebRTC. Compartilhe-o apenas com pessoas de confiança.';
+
+  @override
+  String get coopConsentIp =>
+      'Seu endereço de internet pode ficar visível para o amigo convidado e para os serviços de descoberta de endereço do Google e da Cloudflare.';
+
+  @override
+  String get coopConsentThirdParty =>
+      'A sinalização e o relay usam um serviço compatível da Cloudflare operado por terceiros. A disponibilidade e a retenção dependem desse serviço.';
+
+  @override
+  String get coopConsentAccept => 'Entendi e quero continuar';
+
+  @override
+  String get coopConsentCancel => 'Agora não';
+
+  @override
+  String get coopConsentReview => 'Revisar privacidade da rede';
+
+  @override
+  String get coopConsentSaveError =>
+      'Não foi possível salvar sua escolha. Nenhuma sessão de rede foi iniciada.';
 
   @override
   String get coopCreate => 'Criar partida';

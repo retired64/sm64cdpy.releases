@@ -102,6 +102,8 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
   }
 
   Future<void> _create() async {
+    if (!await _ensureNetworkConsent()) return;
+    if (!mounted) return;
     setState(() => _starting = true);
     try {
       final code = await ref.read(coopSessionProvider.notifier).generateCode();
@@ -122,6 +124,8 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
       );
       return;
     }
+    if (!await _ensureNetworkConsent()) return;
+    if (!mounted) return;
     setState(() => _starting = true);
     try {
       await ref
@@ -130,6 +134,65 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
       await _loadRecent();
     } finally {
       if (mounted) setState(() => _starting = false);
+    }
+  }
+
+  Future<bool> _ensureNetworkConsent({bool forceReview = false}) async {
+    final notifier = ref.read(coopSessionProvider.notifier);
+    try {
+      if (!forceReview && await notifier.networkConsentAccepted()) return true;
+    } catch (_) {
+      // A damaged preference must fall back to explicit consent.
+    }
+    if (!mounted) return false;
+    final l = AppLocalizations.of(context);
+    final accepted = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l.coopConsentTitle),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l.coopConsentIntro),
+              const SizedBox(height: 16),
+              _ConsentPoint(
+                icon: Icons.lock_outline_rounded,
+                text: l.coopConsentEncrypted,
+              ),
+              const SizedBox(height: 12),
+              _ConsentPoint(icon: Icons.public_rounded, text: l.coopConsentIp),
+              const SizedBox(height: 12),
+              _ConsentPoint(
+                icon: Icons.cloud_outlined,
+                text: l.coopConsentThirdParty,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l.coopConsentCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l.coopConsentAccept),
+          ),
+        ],
+      ),
+    );
+    if (accepted != true) return false;
+    try {
+      await notifier.acceptNetworkConsent();
+      return true;
+    } catch (_) {
+      if (mounted) {
+        AppSnackbar.error(context, message: l.coopConsentSaveError);
+      }
+      return false;
     }
   }
 
@@ -180,6 +243,15 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                       size: 13,
                       color: retro.inkDim,
                       height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TextButton.icon(
+                      onPressed: () => _ensureNetworkConsent(forceReview: true),
+                      icon: const Icon(Icons.privacy_tip_outlined),
+                      label: Text(l.coopConsentReview),
                     ),
                   ),
                 ],
@@ -444,6 +516,26 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
               ? null
               : () => ref.read(coopSessionProvider.notifier).stop(),
         ),
+      ],
+    );
+  }
+}
+
+class _ConsentPoint extends StatelessWidget {
+  const _ConsentPoint({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: retro.accentText),
+        const SizedBox(width: 10),
+        Expanded(child: Text(text, style: retro.body(size: 14, height: 1.4))),
       ],
     );
   }

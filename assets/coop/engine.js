@@ -152,7 +152,7 @@
       api.publish(this.state);
     }
     slot(id) {
-      const value = { id, link: null, joined: false, modern: false, leaving: false, lastHeard: Date.now(), lastPing: 0, lostAt: null, route: null, game: null, restarting: false };
+      const value = { id, link: null, joined: false, modern: false, leaving: false, firstSeen: Date.now(), lastHeard: Date.now(), lastPing: 0, lostAt: null, route: null, game: null, restarting: false };
       this.slots.set(id, value); return value;
     }
     async start() {
@@ -188,8 +188,9 @@
         if (this.slots.get(slot.id) !== slot || slot.link !== link) return;
         this.control(link, [HELLO, VERSION]);
         if (this.mode === "host" && !slot.joined) api.open(slot.id);
-        slot.joined = true; slot.lostAt = null; slot.route = await route(link.pc);
+        slot.joined = true; slot.route = await route(link.pc);
         this.publish({ phase: "connected", message: null });
+        this.check(slot);
       };
       channel.onmessage = event => this.receive(slot, link, new Uint8Array(event.data));
       channel.onclose = () => this.check(slot);
@@ -252,13 +253,21 @@
     check(slot) {
       if (!slot.joined || this.stopped) return;
       const state = slot.link?.pc.connectionState, channel = slot.link?.dc;
-      const up = channel?.readyState === "open" && state !== "failed" && state !== "closed" && (!slot.modern || Date.now() - slot.lastHeard <= 2000);
-      if (!up && slot.lostAt === null) { slot.lostAt = Date.now(); api.link(slot.id, false); this.publish({ phase: "reconnecting" }); }
+      const up = channel?.readyState === "open" && state !== "failed" && state !== "closed" && (slot.modern ? Date.now() - slot.lastHeard <= 2000 : state !== "disconnected");
+      if (!up && slot.lostAt === null) {
+        slot.lostAt = Date.now(); api.link(slot.id, false); this.publish({ phase: "reconnecting" });
+      } else if (up && slot.lostAt !== null) {
+        slot.lostAt = null; api.link(slot.id, true); this.publish({ phase: "connected", message: null });
+      }
     }
     tick() {
       if (this.stopped) return; const now = Date.now();
       if (this.mode === "join" && this.state.phase === "connecting" && now - this.started > 90000) return this.fail("Couldn’t find your friend. Check the code and that they are hosting.");
       for (const slot of [...this.slots.values()]) {
+        if (!slot.joined) {
+          if (now - slot.firstSeen > 60000) this.drop(slot);
+          continue;
+        }
         if (slot.link?.dc?.readyState === "open" && slot.modern && now - slot.lastPing >= 500) {
           slot.lastPing = now; const time = performance.now() >>> 0;
           this.control(slot.link, [PING, time & 255, (time >>> 8) & 255, (time >>> 16) & 255, time >>> 24, this.gameIn ? 1 : 0]);

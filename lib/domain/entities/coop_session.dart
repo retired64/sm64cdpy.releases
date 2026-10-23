@@ -1,3 +1,27 @@
+import 'dart:convert';
+
+const coopNetworkConsentTermsVersion = 2;
+
+String encodeCoopNetworkConsent({DateTime? acceptedAt}) => jsonEncode({
+  'accepted': true,
+  'termsVersion': coopNetworkConsentTermsVersion,
+  'at': (acceptedAt ?? DateTime.now()).toUtc().toIso8601String(),
+});
+
+bool isValidCoopNetworkConsent(String? value) {
+  if (value == null || value.isEmpty) return false;
+  try {
+    final decoded = jsonDecode(value);
+    if (decoded is! Map<String, dynamic>) return false;
+    final acceptedAt = DateTime.tryParse(decoded['at'] as String? ?? '');
+    return decoded['accepted'] == true &&
+        decoded['termsVersion'] == coopNetworkConsentTermsVersion &&
+        acceptedAt != null;
+  } catch (_) {
+    return false;
+  }
+}
+
 enum CoopSessionMode { host, join }
 
 String normalizeCoopCode(String input) {
