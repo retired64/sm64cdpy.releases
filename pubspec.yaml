@@ -69,13 +69,9 @@ flutter:
     - assets/themes/manga/navigation/
 
   fonts:
-    - family: SuperMarioWorldTextBox
+    - family: FamiljenGrotesk
       fonts:
-        - asset: fonts/manga_deluxe/SuperMarioWorldTextBoxRegular-Y86j.ttf
-          weight: 400
-    - family: SupremeSpike
-      fonts:
-        - asset: fonts/manga_deluxe/SupremeSpike.otf
+        - asset: fonts/manga_deluxe/FamiljenGrotesk-Regular.ttf
           weight: 400
     - family: TypefaceMario64
       fonts:

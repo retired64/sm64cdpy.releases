@@ -15,7 +15,7 @@ TextStyle coopPlayBody(RetroTheme retro, {
   final base = retro.body(size: size, color: color, height: height);
   if (!retro.isDeluxe) return base;
   return base.copyWith(
-    fontFamily: 'SuperMarioWorldTextBox',
+    fontFamily: 'FamiljenGrotesk',
     fontFamilyFallback: const ['Roboto'],
     fontWeight: FontWeight.w400,
   );
@@ -100,7 +100,7 @@ class CoopPlayAction extends StatelessWidget {
                     Expanded(child: Text(label, style: labelStyle ?? retro.heading(
                       size: 18, color: foreground, height: 1.3,
                     ).copyWith(
-                      fontFamily: retro.isDeluxe ? 'SupremeSpike' : retro.headingFamily,
+                      fontFamily: retro.isDeluxe ? 'FamiljenGrotesk' : retro.headingFamily,
                       fontWeight: FontWeight.w400,
                       fontFamilyFallback: const ['Roboto'],
                     ))),

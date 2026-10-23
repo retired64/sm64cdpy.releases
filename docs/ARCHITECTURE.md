@@ -969,3 +969,15 @@ reducida de 14 a 7 sp (-50 %), conservando escalado de accesibilidad del sistema
 Sin cambios en provider, servicios, motor, Kotlin, WebView, UDP ni assets/coop.
 Sin caches ni suscripciones nuevos. Pruebas verifican la ubicación de textos,
 tamaño y consulta sin ProviderScope ni acceso al motor. Flutter pendiente en CI.
+
+## Tipografía unificada Familjen Grotesk — 2026-10-23
+
+FamiljenGrotesk (Regular 400) sustituye a SupremeSpike y SuperMarioWorldTextBox
+en todos sus lectores: opciones de submenús, acciones/lectura Play y autor,
+descripción, etiquetas y fechas del detalle de mod en Manga Deluxe. Una sola
+familia registrada desde fonts/manga_deluxe/FamiljenGrotesk-Regular.ttf (~83 KB),
+fallback Roboto. Se eliminan ambos binarios sustituidos y sus registros. Tamaños,
+colores, escalado del sistema y títulos Mario multicolor permanecen intactos.
+Otros temas conservan sus familias. Pruebas existentes actualizadas; sin cambios
+de conexión, providers, preferencias, caches, motores ni canales Android.
+Pendiente format/analyze/tests en CI por falta de Flutter/Dart local.

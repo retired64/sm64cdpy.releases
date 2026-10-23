@@ -340,7 +340,7 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                                 // el color lo hereda del ListTile seleccionado.
                                 style: retro.isDeluxe
                                     ? const TextStyle(
-                                        fontFamily: 'SupremeSpike',
+                                        fontFamily: 'FamiljenGrotesk',
                                         fontFamilyFallback: ['Roboto'],
                                         fontSize: 20,
                                         fontWeight: FontWeight.w400,

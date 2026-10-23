@@ -34,7 +34,7 @@ import '../widgets/dynos_install_flow.dart';
 TextStyle _detailReadingStyle(RetroTheme retro, TextStyle base, {double scale = 1}) {
   if (!retro.isDeluxe) return base;
   return base.copyWith(
-    fontFamily: 'SuperMarioWorldTextBox',
+    fontFamily: 'FamiljenGrotesk',
     fontFamilyFallback: const ['Roboto'],
     fontWeight: FontWeight.w400,
     fontSize: ((base.fontSize ?? 16) < 16 ? 16 : base.fontSize!) * scale,

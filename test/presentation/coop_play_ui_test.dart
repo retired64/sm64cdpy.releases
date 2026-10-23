@@ -102,7 +102,7 @@ void main() {
       )),
     );
     await tester.pumpWidget(scene(true));
-    expect(tester.widget<Text>(find.text('Create room')).style?.fontFamily, 'SupremeSpike');
+    expect(tester.widget<Text>(find.text('Create room')).style?.fontFamily, 'FamiljenGrotesk');
     await tester.tap(find.text('Create room'));
     expect(calls, 1);
     await tester.pumpWidget(scene(false));
