@@ -10,6 +10,8 @@ import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
 import '../providers/manga_menu_audio_provider.dart';
 import 'app_snackbar.dart';
+import 'manga_submenu_header.dart';
+import 'mario_multicolor_label.dart';
 import 'manga_menu_sound_setting.dart';
 
 const _navigationAssets = [
@@ -269,9 +271,18 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: CloseButton(onPressed: () => Navigator.pop(context)),
+            MangaSubmenuHeader(
+              title: switch (group) {
+                1 => l.mangaNavExplore,
+                3 => l.gameToolTitle,
+                _ => l.mangaNavMore,
+              },
+              asset: _navigationAssets[group],
+              fallbackIcon: switch (group) {
+                1 => Icons.explore_outlined,
+                3 => Icons.sports_esports_outlined,
+                _ => Icons.dashboard_outlined,
+              },
             ),
             Flexible(
               child: ListView(
@@ -279,13 +290,22 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 children: [
                   for (final section in sections) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(
-                        section.title,
-                        style: retro.heading(size: 16),
+                    if (sections.length > 1)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Semantics(
+                          header: true,
+                          label: section.title,
+                          child: ExcludeSemantics(child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: MarioMulticolorLabel(
+                              label: section.title,
+                              fontSize: 16,
+                              keyPrefix: 'manga-section-${section.title}',
+                            ),
+                          )),
+                        ),
                       ),
-                    ),
                     for (final destination in section.entries)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),

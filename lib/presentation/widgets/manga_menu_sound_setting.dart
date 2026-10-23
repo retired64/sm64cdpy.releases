@@ -1,3 +1,4 @@
+import 'manga_submenu_header.dart';
 import 'deluxe_preferences.dart';
 import 'manga_switch.dart';
 import 'package:flutter/material.dart';
@@ -31,21 +32,10 @@ Future<void> showMangaAudioMenu(BuildContext context) async {
         key: const ValueKey('manga-audio-menu'),
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 8),
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/themes/manga/navigation/audio.webp',
-                  width: 40, height: 40, cacheWidth: 128, cacheHeight: 128,
-                  excludeFromSemantics: true,
-                  errorBuilder: (_, _, _) => Icon(Icons.volume_up_outlined, color: retro.ink),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: Text(l.mangaNavAudio, style: retro.heading(size: 20))),
-                const CloseButton(),
-              ],
-            ),
+          MangaSubmenuHeader(
+            title: l.mangaNavAudio,
+            asset: 'assets/themes/manga/navigation/audio.webp',
+            fallbackIcon: Icons.volume_up_outlined,
           ),
           Flexible(
             child: SingleChildScrollView(

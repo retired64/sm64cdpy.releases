@@ -916,3 +916,15 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Período 12 s y planos fijos con traslación sin relayout por fotograma.
 - [x] Prueba de posición al activar/desactivar/reactivar sin remontar el fondo.
 - [ ] Ejecutar format/analyze/tests en CI y verificar switch en Android.
+
+## Cabeceras del menú deslizable — 2026-10-22
+
+Audio, Mods, Herramientas y Más comparten `MangaSubmenuHeader`: WebP de su
+opción a 40 dp, decodificación acotada a 128 px, título Mario multicolor y cierre
+localizado. Las secciones internas de Más usan el mismo rótulo multicolor;
+los grupos simples evitan repetir su título. Semántica de encabezado única,
+texto ajustable al ancho y cierre táctil de 48 dp. Sin nuevas imágenes,
+animaciones, dependencias ni cambios de navegación/estado/audio.
+
+Prueba de cabecera a 320 px/texto 1,6× en EN/ES/PT y claro/oscuro con cierre.
+Pendiente format/analyze/tests en CI y revisión física por falta de SDK local.
