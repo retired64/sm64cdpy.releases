@@ -25,7 +25,9 @@
 - [x] Pruebas de persistencia, capacidades, assets, fondo, editoriales y tres idiomas.
 - [x] Revisado Actions 39868942338: análisis correcto, 423 pruebas verdes;
       corregidos dos fallos de japonés en Deluxe y la comprobación global del scheduler.
-- [ ] Repetir CI y confirmar las pruebas completas tras la corrección.
+- [x] Actions 39875000418 pasó las pruebas y detectó un import de collection
+      ausente en Home al compilar release. Import corregido; prueba real de Home añadida.
+- [ ] Repetir CI y confirmar APK release completo.
 - [ ] Teléfono: Home/Audio/Biblioteca/Partidas/Jugador, claro/oscuro, contraste y texto grande.
 - [ ] Teléfono: movimiento, ahorro batería, minimizar, retorno del vídeo y música sin solape.
 

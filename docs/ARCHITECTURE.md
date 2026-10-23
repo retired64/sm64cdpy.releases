@@ -842,3 +842,16 @@ respetando lifecycle/TickerMode/accesibilidad. No se cambia el overlay.
 Contenido Deluxe: bienvenida CoopDX, editorial DNC, demostración externa bajo
 demanda, FAQ y enlaces del port Android. Preferencias y reset solo por escritores
 canónicos. Procedencia, rutas, pruebas y límites en [MANGA_DELUXE.md](MANGA_DELUXE.md).
+
+### Home y compilación release — Actions 39875000418
+
+La búsqueda del spotlight Deluxe usa firstWhereOrNull de package:collection,
+igual que ModDetail y los lectores OTA. Home debe importar collection de forma
+explícita; core/utils/extensions.dart no declara esa extensión. La dependencia
+ya estaba en pubspec y no se añade ningún paquete. Se auditó cada consumidor de
+firstWhereOrNull y los otros tres ya importan collection.
+
+Se añade una prueba que importa HomeScreen real y comprueba la transición de
+carga a error de catálogo, en claro/oscuro Deluxe, sin IO nativo. La prueba
+anterior de Deluxe montaba componentes independientes y no compilaba Home.
+Pruebas verdes no sustituyen la compilación APK release; nueva CI pendiente.
