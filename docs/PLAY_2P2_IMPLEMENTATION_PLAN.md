@@ -477,3 +477,14 @@ reducida de 14 a 7 sp (-50 %), conservando escalado de accesibilidad del sistema
 Sin cambios en provider, servicios, motor, Kotlin, WebView, UDP ni assets/coop.
 Sin caches ni suscripciones nuevos. Pruebas verifican la ubicación de textos,
 tamaño y consulta sin ProviderScope ni acceso al motor. Flutter pendiente en CI.
+
+## Lectura uniforme Play — 2026-10-23
+
+Introducción aumentada de 7 a 8,4 sp (+20 %). Constante coopPlayReadingSize
+compartida con Friend code (etiqueta, placeholder y entrada), Join room (rótulo
+y acción) e instrucciones de conexión del anfitrión/invitado. Todos usan
+coopPlayBody, con Super Mario World en Deluxe y la familia de lectura de los
+demás temas. El título principal conserva Mario multicolor; el resto de acciones
+conservan su estilo. Sin cambios de lógica, código, puertos, provider ni servicios.
+Las pruebas de UI comprueban tamaños del texto inicial, campo y acción. Pendiente
+Flutter en CI y revisión física de legibilidad; git diff --check validado.

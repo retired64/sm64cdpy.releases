@@ -227,7 +227,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                         const SizedBox(width: 12),
                       ],
                       Expanded(child: Text(l.coopIntro,
-                        style: coopPlayBody(retro, size: 7, height: 1.4))),
+                        style: coopPlayBody(retro, size: coopPlayReadingSize, height: 1.4))),
                     ],
                   ),
                 ],
@@ -307,12 +307,13 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                   const CoopPlayIcon(asset: 'explore', size: 36),
                   const SizedBox(width: 10),
                 ],
-                Expanded(child: CoopPlayTitle(label: l.coopJoin, size: 18)),
+                Expanded(child: Text(l.coopJoin,
+                  style: coopPlayBody(retro, size: coopPlayReadingSize, height: 1.4))),
               ]),
               const SizedBox(height: 12),
               TextField(
                 controller: _code,
-                style: coopPlayBody(retro, size: 18, color: retro.ink),
+                style: coopPlayBody(retro, size: coopPlayReadingSize, color: retro.ink),
                 enabled: enabled,
                 textCapitalization: TextCapitalization.characters,
                 inputFormatters: [
@@ -322,6 +323,9 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                 decoration: InputDecoration(
                   labelText: l.coopCode,
                   hintText: l.coopCodeHint,
+                  labelStyle: coopPlayBody(retro, size: coopPlayReadingSize),
+                  floatingLabelStyle: coopPlayBody(retro, size: coopPlayReadingSize),
+                  hintStyle: coopPlayBody(retro, size: coopPlayReadingSize),
                 ),
                 onSubmitted: (_) => enabled ? _join() : null,
               ),
@@ -361,6 +365,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
               const SizedBox(height: 14),
               CoopPlayAction(
                 label: l.coopJoin,
+                labelStyle: coopPlayBody(retro, size: coopPlayReadingSize, height: 1.4),
                 icon: Icons.login_rounded,
                 onPressed: enabled ? _join : null,
               ),
@@ -469,11 +474,10 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
         _DiagnosticsPanel(state: state),
         const SizedBox(height: 14),
         _Panel(
-          child: GameSetupStatus(
+          child: CoopPlayInstructions(
             label: state.mode == CoopSessionMode.host
                 ? l.coopHostInstruction
                 : l.coopJoinInstruction(state.port ?? 7777),
-            icon: Icons.info_outline_rounded,
             detail: state.gameInstalled == false ? l.coopGameMissing : null,
             ready: state.gameInstalled,
           ),
