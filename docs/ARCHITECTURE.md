@@ -839,19 +839,25 @@ switches, audio y acento sin confundirlos con `showJapaneseDecorations`, que
 permanece exclusivo de Retro Manga. Paleta propia y fondo en AppShell (también
 en Home), con gorros/patrón optimizados, quieto por defecto y movimiento opcional
 respetando lifecycle/TickerMode/accesibilidad. No se cambia el overlay.
-Contenido Deluxe: bienvenida CoopDX, editorial DNC, demostración externa bajo
+Contenido Deluxe: bienvenida CoopDX compacta y descartable, demostración externa bajo
 demanda, FAQ y enlaces del port Android. Preferencias y reset solo por escritores
 canónicos. Procedencia, rutas, pruebas y límites en [MANGA_DELUXE.md](MANGA_DELUXE.md).
 
-### Home y compilación release — Actions 39875000418
+### Home compacto y fondo Deluxe — 2026-10-22
 
-La búsqueda del spotlight Deluxe usa firstWhereOrNull de package:collection,
-igual que ModDetail y los lectores OTA. Home debe importar collection de forma
-explícita; core/utils/extensions.dart no declara esa extensión. La dependencia
-ya estaba en pubspec y no se añade ningún paquete. Se auditó cada consumidor de
-firstWhereOrNull y los otros tres ya importan collection.
+Home ya no busca un spotlight DNC ni necesita collection para ello. El fondo
+repite gorros a 80 dp y trama a 110 dp mediante DecorationImage.scale; la
+traslación usa exactamente ese período para evitar saltos. Opacidad moderada,
+papel neutro al 88 %, fotos y rellenos de acciones intactos. Conserva los dos
+RepaintBoundary, movimiento opcional, pausa y accesibilidad existentes.
 
-Se añade una prueba que importa HomeScreen real y comprueba la transición de
-carga a error de catálogo, en claro/oscuro Deluxe, sin IO nativo. La prueba
-anterior de Deluxe montaba componentes independientes y no compilaba Home.
-Pruebas verdes no sustituyen la compilación APK release; nueva CI pendiente.
+`deluxeWelcomeHiddenProvider` lee/escribe exclusivamente la clave Hive
+`manga_deluxe_welcome_hidden` del box de ajustes. Omitir espera la escritura;
+si falla conserva la tarjeta y ofrece reintentar. Tras guardarse no reserva
+espacio y sobrevive al proceso, navegación y reset visual/audio. Solo se lee
+en Home del engine principal; el overlay no muestra introducción ni necesita
+replicación. Sin timers, IO en build ni Futures nuevos sin esperar.
+
+La prueba que importa HomeScreen real conserva cobertura de carga/error.
+Las pruebas Deluxe verifican persistencia entre contenedores, fallo de guardado,
+intro omitida, papel neutro y adaptación a 320 px/texto 1,6× en tres idiomas.

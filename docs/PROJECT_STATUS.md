@@ -8,7 +8,7 @@ Revisado para la candidata `1.9.0+28` en `how-to-play-guide` el 2026-10-20. La
 Nuevo diseño independiente `manga_deluxe`, basado en Retro Manga sin modificar
 su paleta ni sus decoraciones japonesas. Integra los assets de la web CoopDX,
 fondo estático por defecto con movimiento opcional/accesible, superficies de
-papel, showcase editorial, vídeo oficial externo bajo demanda y FAQ enlazada a
+papel, bienvenida compacta que se puede omitir, vídeo oficial externo bajo demanda y FAQ enlazada a
 los flujos Android. Hereda menú, switches y audio de la familia Manga.
 Preferencias, reset limitado y matriz de pruebas en [MANGA_DELUXE.md](MANGA_DELUXE.md).
 Código preparado; CI y validación física pendientes por SDK local no disponible.

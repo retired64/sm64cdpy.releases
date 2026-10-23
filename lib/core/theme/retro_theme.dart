@@ -85,7 +85,10 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         _isNeutralSurface(value.color) &&
         (value.border == null || value.borderRadius != null)) {
       return value.copyWith(
-        color: value.color ?? surface,
+        // Deluxe deja ver el mosaico bajo papel neutro; fotos/acentos no cambian.
+        color: isDeluxe
+            ? (value.color ?? surface).withValues(alpha: 0.88)
+            : value.color ?? surface,
         borderRadius: value.borderRadius ?? radius,
         border:
             value.border ?? Border.all(color: border, width: borderWidth(2)),

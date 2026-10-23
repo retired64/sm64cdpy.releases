@@ -814,7 +814,7 @@
   "ambientMusicVolume": "Volumen de música",
   "mangaNavAudio": "Audio",
   "themeMangaDeluxe": "Manga Deluxe",
-  "deluxeWelcome": "Tu rincón de CoopDX",
+  "deluxeWelcome": "Bienvenido a CoopDX",
   "deluxeWelcomeBody": "Tu compañero de mods en Android: prepara el juego, descubre mods y encuentra la comunidad de CoopDX.",
   "deluxeSpotlight": "De la selección de CoopDX",
   "deluxeDncBody": "Cielos, iluminación y un ciclo completo de día y noche. Mira el mod en acción antes de explorar sus detalles.",
@@ -839,5 +839,8 @@
   "deluxeResetDone": "Diseño y audio Deluxe restablecidos.",
   "deluxeMusicDescription": "Una pista suave para Manga Deluxe. Se pausa al salir de la app.",
   "deluxeAccentDescription": "Elige los acentos y el color del patrón de fondo de Manga Deluxe.",
-  "deluxeResetHint": "Restaura el acento y el audio compartidos. Conserva tus carpetas, mods y partidas."
+  "deluxeResetHint": "Restaura el acento y el audio compartidos. Conserva tus carpetas, mods y partidas.",
+  "deluxeWelcomeCompact": "¿Primera vez? Prepara el juego con nuestra guía.",
+  "deluxeSkip": "Omitir",
+  "deluxeSkipHint": "Ocultar esta introducción. La guía seguirá en el menú."
 }

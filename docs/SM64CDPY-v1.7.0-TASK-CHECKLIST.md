@@ -901,3 +901,12 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Testing nuevo con APK arm64 y pruebas nativas completos: 39344333533.
 
 - [ ] Comprobación física de conversión/rutas y retratos de Player con cdpy-f10f833-TESTING.
+
+## Home Deluxe compacto — 2026-10-22
+
+- [x] Retirar showcase especial DNC de Home, conservando catálogo y demo en detalle.
+- [x] Bienvenida compacta, guía y Omitir persistente con salida ante error.
+- [x] Gorros a 80 dp, trama a 110 dp y papel neutro translúcido solo en Deluxe.
+- [x] Traducciones EN/ES/ES-419/PT/PT-BR y pruebas de restauración/layout.
+- [ ] Ejecutar gen-l10n, dart format, analyze y tests en CI (sin SDK local).
+- [ ] Revisar Home Deluxe claro/oscuro en Android, texto grande y movimiento reducido.

@@ -51,7 +51,7 @@ class _DeluxeBackdropState extends ConsumerState<DeluxeBackdrop>
       child: RepaintBoundary(
         key: const ValueKey('manga-deluxe-backdrop'),
         child: LayoutBuilder(builder: (context, size) {
-          Widget layer(String asset, double tile, double opacity, double t, {Color? tint}) => Positioned(
+          Widget layer(String asset, double tile, double opacity, double t, {Color? tint, double scale = 1}) => Positioned(
             left: -tile * t, top: -tile * t,
             width: size.maxWidth + ((_motion.isAnimating || t != 0) ? tile : 0),
             height: size.maxHeight + ((_motion.isAnimating || t != 0) ? tile : 0),
@@ -59,6 +59,7 @@ class _DeluxeBackdropState extends ConsumerState<DeluxeBackdrop>
               image: DecorationImage(
                 image: AssetImage('assets/themes/manga_deluxe/$asset.webp'),
                 repeat: ImageRepeat.repeat,
+                scale: scale,
                 alignment: Alignment.topLeft,
                 opacity: opacity,
                 colorFilter: tint == null ? null : ColorFilter.mode(tint, BlendMode.srcIn),
@@ -70,8 +71,8 @@ class _DeluxeBackdropState extends ConsumerState<DeluxeBackdrop>
             clipBehavior: Clip.hardEdge,
             children: [
               Positioned.fill(child: ColoredBox(color: retro.background)),
-              layer('pattern', 330, retro.isDark ? 0.07 : 0.09, _motion.value, tint: retro.accent),
-              layer('hats', 256, retro.isDark ? 0.08 : 0.09, _motion.value),
+              layer('pattern', 110, retro.isDark ? 0.14 : 0.12, _motion.value, tint: retro.accent, scale: 3),
+              layer('hats', 80, retro.isDark ? 0.30 : 0.24, _motion.value, scale: 3.2),
             ],
           ));
         }),

@@ -27,3 +27,29 @@ class DeluxeMotionNotifier extends Notifier<bool> {
     finally { _saving = false; }
   }
 }
+
+final deluxeWelcomeHiddenProvider = NotifierProvider<DeluxeWelcomeHiddenNotifier, bool>(
+  DeluxeWelcomeHiddenNotifier.new,
+);
+
+/// Omitir es una decisión duradera; el reset de diseño/audio no vuelve a mostrarla.
+class DeluxeWelcomeHiddenNotifier extends Notifier<bool> {
+  static const storageKey = 'manga_deluxe_welcome_hidden';
+  bool _saving = false;
+  @override
+  bool build() {
+    try {
+      return Hive.box<String>(AppConstants.settingsBoxKey).get(storageKey) == 'true';
+    } catch (_) { return false; }
+  }
+  Future<bool> dismiss() async {
+    if (_saving) return false;
+    _saving = true;
+    try {
+      await Hive.box<String>(AppConstants.settingsBoxKey).put(storageKey, 'true');
+      if (ref.mounted) state = true;
+      return true;
+    } catch (_) { return false; }
+    finally { _saving = false; }
+  }
+}

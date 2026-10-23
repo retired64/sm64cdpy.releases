@@ -1,11 +1,9 @@
 import '../widgets/deluxe_content.dart';
-import '../../services/deluxe_links.dart';
 import '../widgets/mario_multicolor_label.dart';
 import '../widgets/featured_mod_frame.dart';
 import '../widgets/game_launch_flow.dart';
 import '../widgets/game_folder_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,8 +46,6 @@ class _HomeBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final deluxe = RetroTheme.of(context).isDeluxe;
-    final mods = ref.watch(allModsProvider).asData?.value ?? const <ModEntity>[];
-    final spotlight = deluxe ? mods.firstWhereOrNull(DeluxeLinks.hasDemo) : null;
     final featuredAsync = ref.watch(featuredModsProvider);
     final topAsync = ref.watch(topModsProvider);
 
@@ -82,9 +78,6 @@ class _HomeBody extends ConsumerWidget {
           orElse: () => false,
         ))
           const SliverToBoxAdapter(child: SizedBox(height: 14)),
-
-        if (spotlight != null)
-          SliverToBoxAdapter(child: DeluxeFeaturedStory(mod: spotlight)),
 
         // ── Browse carousel ─────────────────────────────────────
         const SliverToBoxAdapter(child: _BrowseCarousel()),

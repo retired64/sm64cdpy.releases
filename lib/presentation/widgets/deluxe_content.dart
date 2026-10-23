@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
-import '../../domain/entities/mod_entity.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/deluxe_links.dart';
+import '../providers/deluxe_visual_provider.dart';
 import 'app_snackbar.dart';
 
 Future<void> _open(BuildContext context, String url) async {
@@ -37,76 +36,72 @@ class _DeluxeDemoButtonState extends State<DeluxeDemoButton> {
   );
 }
 
-class DeluxeWelcomePanel extends StatelessWidget {
+class DeluxeWelcomePanel extends ConsumerStatefulWidget {
   const DeluxeWelcomePanel({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    final l = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-      child: Container(
-        key: const ValueKey('deluxe-welcome'),
-        padding: const EdgeInsets.all(16),
-        decoration: retro.surfaceDecoration(color: retro.surface.withValues(alpha: 0.96)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Image.asset('assets/themes/manga_deluxe/coopdx.webp', width: 164, height: 82,
-            cacheWidth: 328, excludeFromSemantics: true),
-          const SizedBox(height: 8),
-          Text(l.deluxeWelcome, style: retro.heading(size: 20)),
-          const SizedBox(height: 6),
-          Text(l.deluxeWelcomeBody, style: retro.body(size: 14)),
-          const SizedBox(height: 12),
-          Wrap(spacing: 8, runSpacing: 8, children: [
-            FilledButton.icon(onPressed: () => context.go('/how-to-play'),
-              icon: const Icon(Icons.menu_book_outlined), label: Text(l.playGuideTitle)),
-            OutlinedButton.icon(onPressed: () => _open(context, AppConstants.officialweb),
-              icon: const Icon(Icons.public), label: Text(l.linksWebsite)),
-          ]),
-        ]),
-      ),
-    );
-  }
+  ConsumerState<DeluxeWelcomePanel> createState() => _DeluxeWelcomePanelState();
 }
 
-class DeluxeFeaturedStory extends StatelessWidget {
-  const DeluxeFeaturedStory({super.key, required this.mod});
-  final ModEntity mod;
+class _DeluxeWelcomePanelState extends ConsumerState<DeluxeWelcomePanel> {
+  bool _saving = false;
+
+  Future<void> _dismiss() async {
+    if (_saving) return;
+    setState(() => _saving = true);
+    final saved = await ref.read(deluxeWelcomeHiddenProvider.notifier).dismiss();
+    if (!mounted) return;
+    setState(() => _saving = false);
+    if (!saved) {
+      AppSnackbar.error(context,
+          message: AppLocalizations.of(context).themeSaveFailed);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (ref.watch(deluxeWelcomeHiddenProvider)) return const SizedBox.shrink();
     final retro = RetroTheme.of(context);
     final l = AppLocalizations.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
       child: Container(
-        key: const ValueKey('deluxe-editorial'),
-        padding: const EdgeInsets.all(16), decoration: retro.surfaceDecoration(),
+        key: const ValueKey('deluxe-welcome'),
+        padding: const EdgeInsets.all(12),
+        decoration: retro.surfaceDecoration(),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(l.deluxeSpotlight, style: retro.heading(size: 12, color: retro.accentText)),
-          const SizedBox(height: 12),
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            if (mod.imageUrl?.isNotEmpty == true) ...[
-              SizedBox(width: 64, height: 64, child: CachedNetworkImage(
-                imageUrl: mod.imageUrl!, memCacheWidth: 128, fit: BoxFit.cover,
-                errorWidget: (_, _, _) => Icon(Icons.landscape, color: retro.accentText),
-              )),
-              const SizedBox(width: 12),
-            ],
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(mod.title, style: retro.heading(size: 18)),
-              const SizedBox(height: 4),
-              Text(mod.author, style: retro.body(size: 12, color: retro.inkDim)),
-            ])),
+            Image.asset('assets/themes/manga_deluxe/coopdx.webp',
+                width: 64, height: 36, cacheWidth: 192,
+                excludeFromSemantics: true),
+            const SizedBox(width: 10),
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l.deluxeWelcome, style: retro.heading(size: 17)),
+                const SizedBox(height: 4),
+                Text(l.deluxeWelcomeCompact, style: retro.body(size: 13)),
+              ],
+            )),
           ]),
-          const SizedBox(height: 12),
-          Text(l.deluxeDncBody, style: retro.body(size: 14)),
-          const SizedBox(height: 12),
-          Wrap(spacing: 8, runSpacing: 8, children: [
-            FilledButton(onPressed: () => context.push('/mod/${Uri.encodeComponent(mod.id)}'),
-              child: Text(l.deluxeViewMod)),
-            const DeluxeDemoButton(),
+          const SizedBox(height: 8),
+          Wrap(spacing: 8, runSpacing: 4, children: [
+            FilledButton.icon(
+              onPressed: _saving ? null : () => context.go('/how-to-play'),
+              icon: const Icon(Icons.menu_book_outlined, size: 18),
+              label: Text(l.playGuideTitle),
+            ),
+            Tooltip(
+              message: l.deluxeSkipHint,
+              child: TextButton(
+                key: const ValueKey('deluxe-skip'),
+                style: TextButton.styleFrom(
+                    minimumSize: const Size(48, 48)),
+                onPressed: _saving ? null : _dismiss,
+                child: Text(l.deluxeSkip),
+              ),
+            ),
           ]),
-          Text(l.deluxeDemoHint, style: retro.body(size: 12, color: retro.inkDim)),
         ]),
       ),
     );

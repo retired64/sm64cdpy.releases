@@ -24,6 +24,21 @@ ModEntity _mod({String id = '3', String url = 'https://mods.sm64coopdx.com/mods/
   downloadUrls: const [], updates: const [], extractedAt: '',
 );
 
+class _DismissibleWelcome extends DeluxeWelcomeHiddenNotifier {
+  @override
+  bool build() => false;
+  @override
+  Future<bool> dismiss() async {
+    state = true;
+    return true;
+  }
+}
+
+class _HiddenWelcome extends DeluxeWelcomeHiddenNotifier {
+  @override
+  bool build() => true;
+}
+
 class _MovingBackdrop extends DeluxeMotionNotifier {
   @override
   bool build() => true;
@@ -62,17 +77,25 @@ void main() {
       expect(container.read(deluxeMotionProvider), isFalse);
       expect(await container.read(appearanceProvider.notifier).setTheme(AppThemeId.mangaDeluxe), isTrue);
       expect(await container.read(deluxeMotionProvider.notifier).select(true), isTrue);
+      expect(await container.read(deluxeWelcomeHiddenProvider.notifier).dismiss(), isTrue);
       await box.put('auto_install_mods', 'false');
       final restored = ProviderContainer();
       try {
         expect(restored.read(themeDesignProvider).id, AppThemeId.mangaDeluxe);
         expect(restored.read(deluxeMotionProvider), isTrue);
+        expect(restored.read(deluxeWelcomeHiddenProvider), isTrue);
       } finally { restored.dispose(); }
       expect(await container.read(deluxeMotionProvider.notifier).select(false), isTrue);
       expect(box.get('auto_install_mods'), 'false');
+      expect(container.read(deluxeWelcomeHiddenProvider), isTrue);
       await box.close();
       expect(await container.read(deluxeMotionProvider.notifier).select(true), isFalse);
       expect(container.read(deluxeMotionProvider), isFalse);
+      final unavailable = ProviderContainer();
+      try {
+        expect(await unavailable.read(deluxeWelcomeHiddenProvider.notifier).dismiss(), isFalse);
+        expect(unavailable.read(deluxeWelcomeHiddenProvider), isFalse);
+      } finally { unavailable.dispose(); }
     } finally {
       container.dispose(); await Hive.close(); await directory.delete(recursive: true);
     }
@@ -128,29 +151,69 @@ void main() {
 
   for (final language in ['en', 'es', 'pt']) {
     for (final dark in [false, true]) {
-      testWidgets('Deluxe editorial and help fit 320px $language dark=$dark', (tester) async {
+      testWidgets('Deluxe welcome and help fit 320px $language dark=$dark', (tester) async {
         tester.view.physicalSize = const Size(320, 640);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
-        await tester.pumpWidget(MaterialApp(
+        await tester.pumpWidget(ProviderScope(child: MaterialApp(
           locale: Locale(language),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: RetroTheme.materialTheme(dark, design: design),
           home: Scaffold(body: MediaQuery(data: const MediaQueryData(textScaler: TextScaler.linear(1.6)),
             child: SingleChildScrollView(child: Column(children: [
-              const DeluxeWelcomePanel(), DeluxeFeaturedStory(mod: _mod()), const DeluxeHelpPanel(),
+              const DeluxeWelcomePanel(), const DeluxeHelpPanel(),
             ])))),
-        ));
+        )));
         await tester.pumpAndSettle();
         expect(find.byKey(const ValueKey('deluxe-welcome')), findsOneWidget);
-        expect(find.byKey(const ValueKey('deluxe-editorial')), findsOneWidget);
         expect(find.byKey(const ValueKey('deluxe-help')), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
     }
   }
+
+  testWidgets('Skip immediately removes the introduction after confirmation', (tester) async {
+    await tester.pumpWidget(ProviderScope(
+      overrides: [deluxeWelcomeHiddenProvider.overrideWith(_DismissibleWelcome.new)],
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: RetroTheme.materialTheme(false, design: design),
+        home: const Scaffold(body: SingleChildScrollView(child: DeluxeWelcomePanel())),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('deluxe-skip')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('deluxe-welcome')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('dismissed welcome leaves no card or spacing', (tester) async {
+    await tester.pumpWidget(ProviderScope(
+      overrides: [deluxeWelcomeHiddenProvider.overrideWith(_HiddenWelcome.new)],
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: RetroTheme.materialTheme(false, design: design),
+        home: const Scaffold(body: DeluxeWelcomePanel()),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('deluxe-welcome')), findsNothing);
+    expect(tester.getSize(find.byType(DeluxeWelcomePanel)), Size.zero);
+  });
+
+  test('only Deluxe neutral paper lets the backdrop through', () {
+    for (final dark in [false, true]) {
+      final retro = RetroTheme(dark, design: design);
+      expect(retro.surfaceDecoration().color!.a, closeTo(0.88, 0.01));
+      expect(RetroTheme(dark).surfaceDecoration().color!.a, 1);
+      expect(retro.surfaceDecoration(color: retro.accent).color, retro.accent);
+    }
+  });
 
   test('Deluxe assets are small bundled WebPs', () async {
     for (final name in ['hats', 'pattern', 'coopdx']) {
