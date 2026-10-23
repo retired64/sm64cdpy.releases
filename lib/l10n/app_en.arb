@@ -261,7 +261,7 @@
     "description": "Button label to launch the game after installing a mod"
   },
 
-  "homeExclusiveContent": "Exclusive Content",
+  "homeExclusiveContent": "Exclusive",
   "@homeExclusiveContent": {
     "description": "Home screen section title for exclusive content"
   },
@@ -357,7 +357,7 @@
   "@homeDownload": {
     "description": "Home screen button label to download the game"
   },
-  "homeLaunchGame": "LAUNCH  GAME",
+  "homeLaunchGame": "START GAME",
   "@homeLaunchGame": {
     "description": "Home screen button label to launch the game"
   },

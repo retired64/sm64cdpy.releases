@@ -68,7 +68,7 @@
   "postInstallClose": "Fechar",
   "postInstallLaunchGame": "ABRIR JOGO",
 
-  "homeExclusiveContent": "Conteúdo Exclusivo",
+  "homeExclusiveContent": "Exclusivo",
   "homeTopDownloads": "Mais Baixados",
   "homeSeeAll": "Ver tudo",
   "homeFeatured": "Destaques",
@@ -92,7 +92,7 @@
   "homeGameNotInstalledBody": "SM64CoopDX (com.maniscat2.sm64coopdx)\nnão está instalado neste dispositivo.",
   "homeClose": "Fechar",
   "homeDownload": "Download",
-  "homeLaunchGame": "ABRIR JOGO",
+  "homeLaunchGame": "INICIAR JOGO",
   "homeSoon": "EM BREVE",
   "homeFailedToLoad": "Falha ao carregar mods",
   "homeRetry": "Tentar novamente",

@@ -593,8 +593,10 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 178,
+          height: 194 + (MediaQuery.textScalerOf(context).scale(16) - 16)
+              .clamp(0.0, 80.0).toDouble() * 5,
           child: PageView.builder(
+            key: const ValueKey('home-browse-pages'),
             controller: _ctrl,
             itemCount: items.length,
             onPageChanged: (i) => setState(() => _current = i),
@@ -608,6 +610,7 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
                 route: item.route,
                 imageUrl: item.imageUrl,
                 accent: colors[item.colorKey] ?? retro.accent,
+                isActive: _current == i,
               );
             },
           ),
@@ -649,6 +652,7 @@ class _BrowseCard extends StatefulWidget {
     required this.description,
     required this.route,
     required this.accent,
+    required this.isActive,
     this.imageUrl,
   });
 
@@ -658,6 +662,7 @@ class _BrowseCard extends StatefulWidget {
   final String description;
   final String route;
   final Color accent;
+  final bool isActive;
   // Cuando haya arte real por categoría, esto trae la miniatura por red;
   // mientras sea null, la tarjeta usa el ícono como placeholder permanente.
   final String? imageUrl;
@@ -695,8 +700,12 @@ class _BrowseCardState extends State<_BrowseCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
+    return AnimatedContainer(
+      key: ValueKey('home-browse-card-${widget.route}'),
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero : const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+      margin: EdgeInsets.symmetric(horizontal: 6, vertical: widget.isActive ? 0 : 8),
       child: GestureDetector(
         onTapDown: (_) => _ctrl.forward(),
         onTapUp: (_) {
@@ -719,6 +728,16 @@ class _BrowseCardState extends State<_BrowseCard>
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (retro.isManga)
+                      HomeBrowseIcon(
+                        asset: switch (widget.route) {
+                          '/favourites' => 'favorites',
+                          '/popular' => 'popular',
+                          _ => 'catalog',
+                        },
+                        fallback: widget.icon,
+                      )
+                    else
                     ClipRRect(
                       borderRadius: retro.radius,
                       child: Container(
@@ -1083,7 +1102,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                     children: [
                       const HomeLaunchIcon(),
                       const SizedBox(width: 8),
-                      Flexible(child: HomeMarioLabel(label: l10n.homeLaunchGame, size: 18)),
+                      Flexible(child: HomeMarioLabel(label: l10n.homeLaunchGame, size: 14, singleLine: true)),
                     ],
                   ),
                 ),
@@ -1191,7 +1210,7 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                 children: [
                   const HomeLaunchIcon(),
                   SizedBox(width: 8),
-                  Flexible(child: HomeMarioLabel(label: l10n.homeLaunchGame, size: 18)),
+                  Flexible(child: HomeMarioLabel(label: l10n.homeLaunchGame, size: 14, singleLine: true)),
                   MarioGameIcon(
                     Icons.arrow_forward,
                     size: 18,

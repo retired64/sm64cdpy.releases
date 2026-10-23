@@ -1072,3 +1072,26 @@ Los textos restantes heredan la fuente local, incluidas tarjetas y acciones.
 Pruebas a 320 px/texto 1,6×, ambos Manga y claro/oscuro: contorno, familia,
 icono y ausencia de overflow. Sin nuevos caches/estado/Futures. Pendiente
 format/analyze/tests en CI y verificación física; git diff --check validado.
+
+## Home compacto e iconos propios — 2026-10-23
+
+Start game (Iniciar juego/Iniciar jogo) sustituye al rótulo anterior en las cinco
+ARB; Exclusive se acorta a Exclusivo en ES/PT. HomeMarioLabel acepta singleLine:
+letras de 14 sp en el lanzamiento, ajustadas al ancho sin salto de línea. Icono
+propio de cartucho a 32 dp. Catalog/Favorites/Popular usan libro, corazón y estrella
+con flecha: ilustraciones nuevas de papel/tinta generadas con imagegen, WebP
+transparente 192×192, decode 128 px. Solo se incluyen los WebP finales: 4.932,
+7.700, 5.192 y 7.588 bytes respectivamente (25.412 bytes en total).
+
+Browse comparte el relieve de Featured: margen vertical 0 activo / 8 dp lateral,
+250 ms easeOut y sin animación cuando disableAnimations está activo. No se añade
+autoplay ni ticker permanente. _current y PageController siguen siendo estado
+visual local; se libera el controlador al desmontar. Altura de tarjetas adaptable
+al texto para evitar overflow al reducirse la tarjeta inactiva.
+
+Navegación de las categorías, comprobación del juego y launchGameWithGuide no
+cambian; tampoco providers, permisos, instalación, overlay ni motor Play. Pruebas
+actualizadas y Home real con catálogo vacío: 320 px, texto 1,6×, ES/EN/PT, ambos
+Manga, desplazamiento, foco y reducción de movimiento. Validación local JSON,
+transparencia/dimensiones/peso de assets y git diff --check; pendientes gen-l10n,
+dart format, flutter analyze y tests en CI por falta de SDK, más revisión física.

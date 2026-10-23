@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
 import 'package:sm64cdpy/core/theme/app_theme_design.dart';
@@ -6,6 +7,14 @@ import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import 'package:sm64cdpy/presentation/widgets/home_typography.dart';
 
 void main() {
+  test('custom Home icons are small bundled WebPs', () async {
+    for (final name in ['start-game', 'catalog', 'favorites', 'popular']) {
+      final data = await rootBundle.load('assets/themes/manga/navigation/home-$name.webp');
+      expect(data.getUint32(0), 0x52494646);
+      expect(data.lengthInBytes, lessThan(12000));
+    }
+  });
+
   for (final id in [AppThemeId.retroManga, AppThemeId.mangaDeluxe]) {
     for (final dark in [false, true]) {
       testWidgets('Home type fits narrow layouts $id dark=$dark', (tester) async {
@@ -21,11 +30,11 @@ void main() {
               child: const SingleChildScrollView(child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(children: [
-                  HomeMarioLabel(label: 'Exclusive Content'),
+                  HomeMarioLabel(label: 'Exclusive'),
                   Text('Author and description', key: ValueKey('home-body')),
                   Row(children: [
                     HomeLaunchIcon(), SizedBox(width: 8),
-                    Expanded(child: HomeMarioLabel(label: 'Abrir el juego')),
+                    Expanded(child: HomeMarioLabel(label: 'INICIAR JUEGO', size: 14, singleLine: true)),
                   ]),
                 ]),
               )),
@@ -49,7 +58,7 @@ void main() {
           }
         }
         final image = tester.widget<Image>(find.byType(Image));
-        expect(image.width, 36);
+        expect(image.width, 32);
         expect(tester.takeException(), isNull);
       });
     }
