@@ -1,3 +1,4 @@
+import '../widgets/home_typography.dart';
 import '../widgets/deluxe_content.dart';
 import '../widgets/mario_multicolor_label.dart';
 import '../widgets/featured_mod_frame.dart';
@@ -29,11 +30,11 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allAsync = ref.watch(allModsProvider);
 
-    return allAsync.when(
+    return HomeTypography(child: allAsync.when(
       loading: () => const _HomeSkeleton(),
       error: (e, _) => _HomeError(message: e.toString()),
       data: (_) => const _HomeBody(),
-    );
+    ));
   }
 }
 
@@ -1080,22 +1081,9 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      MarioGameIcon(
-                        Icons.play_arrow_rounded,
-                        size: 22,
-                        color: retro.inkDim,
-                      ),
+                      const HomeLaunchIcon(),
                       const SizedBox(width: 8),
-                      Text(
-                        l10n.homeLaunchGame,
-                        style: TextStyle(
-                          fontFamily: retro.headingFamily,
-                          color: retro.inkDim,
-                          fontSize: 14,
-                          fontWeight: retro.design.headingWeight,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
+                      Flexible(child: HomeMarioLabel(label: l10n.homeLaunchGame, size: 18)),
                     ],
                   ),
                 ),
@@ -1201,22 +1189,9 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  MarioGameIcon(
-                    Icons.play_arrow_rounded,
-                    size: 22,
-                    color: retro.inkOnAccent,
-                  ),
+                  const HomeLaunchIcon(),
                   SizedBox(width: 8),
-                  Text(
-                    l10n.homeLaunchGame,
-                    style: TextStyle(
-                      fontFamily: retro.headingFamily,
-                      color: retro.inkOnAccent,
-                      fontSize: 14,
-                      fontWeight: retro.design.headingWeight,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                  Flexible(child: HomeMarioLabel(label: l10n.homeLaunchGame, size: 18)),
                   MarioGameIcon(
                     Icons.arrow_forward,
                     size: 18,
@@ -1480,7 +1455,7 @@ class _SectionHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(title, style: retro.heading(size: 16)),
+          Expanded(child: HomeMarioLabel(label: title, size: 18)),
           if (actionLabel != null && onAction != null)
             GestureDetector(
               onTap: onAction,

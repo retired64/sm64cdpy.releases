@@ -981,3 +981,18 @@ colores, escalado del sistema y títulos Mario multicolor permanecen intactos.
 Otros temas conservan sus familias. Pruebas existentes actualizadas; sin cambios
 de conexión, providers, preferencias, caches, motores ni canales Android.
 Pendiente format/analyze/tests en CI por falta de Flutter/Dart local.
+
+## Tipografía Home Manga — 2026-10-23
+
+`HomeTypography` limita Familjen Grotesk al subárbol de Home (incluye carga/error)
+en Retro Manga y Manga Deluxe. No cambia el catálogo de temas, preferencias ni
+otras rutas. Featured, Browse, Recent, Exclusive Content y Top Downloads usan
+`HomeMarioLabel`: TypefaceMario64 blanca, contorno negro uniforme, sin colores
+por letra. Respeta escalado y saltos de línea; cabecera SM64CDPY multicolor intacta.
+Launch game reutiliza el mismo rótulo e icono play.webp a 36 dp con decode 128 px,
+sin nuevos assets. Su callback, comprobación del juego y bloqueo siguen iguales.
+Los textos restantes heredan la fuente local, incluidas tarjetas y acciones.
+
+Pruebas a 320 px/texto 1,6×, ambos Manga y claro/oscuro: contorno, familia,
+icono y ausencia de overflow. Sin nuevos caches/estado/Futures. Pendiente
+format/analyze/tests en CI y verificación física; git diff --check validado.
