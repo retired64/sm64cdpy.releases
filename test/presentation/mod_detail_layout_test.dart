@@ -90,15 +90,18 @@ void main() {
         final author = tester.widget<Text>(find.text(mod.author));
         expect(author.style?.fontFamily == 'SuperMarioWorldTextBox',
             id == AppThemeId.mangaDeluxe);
+        if (id == AppThemeId.mangaDeluxe) expect(author.style?.fontSize, 12);
         final description = tester.widgetList<Text>(find.text(mod.description));
         expect(description, isNotEmpty);
         for (final text in description) {
+          if (id == AppThemeId.mangaDeluxe) expect(text.style?.fontSize, 12);
           expect(text.style?.fontFamily == 'SuperMarioWorldTextBox',
               id == AppThemeId.mangaDeluxe);
         }
         final tag = tester.widget<Text>(find.text('romhack'));
         expect(tag.style?.fontFamily == 'SuperMarioWorldTextBox',
             id == AppThemeId.mangaDeluxe);
+        if (id == AppThemeId.mangaDeluxe) expect(tag.style?.fontSize, 8);
         final detailContext = tester.element(find.byType(ModDetailScreen));
         final l = AppLocalizations.of(detailContext);
         for (final label in [l.detailFirstRelease, l.detailLastUpdate]) {

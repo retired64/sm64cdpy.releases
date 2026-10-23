@@ -692,7 +692,7 @@ void main() {
         expect(tiles, isNotEmpty);
         for (final tile in tiles) {
           final title = tile.title! as Text;
-          expect(title.style?.fontFamily, deluxe ? 'MarioAndLuigi' : null);
+          expect(title.style?.fontFamily, deluxe ? 'WonderMermaid' : null);
         }
         expect(tester.takeException(), isNull);
         await tester.tap(find.byType(CloseButton));

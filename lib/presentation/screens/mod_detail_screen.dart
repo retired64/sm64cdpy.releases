@@ -31,13 +31,13 @@ import '../widgets/installation_action_presentation.dart';
 import '../widgets/dynos_install_flow.dart';
 
 /// Fuente de lectura exclusiva de Deluxe, sin alterar títulos ni otros temas.
-TextStyle _detailReadingStyle(RetroTheme retro, TextStyle base) {
+TextStyle _detailReadingStyle(RetroTheme retro, TextStyle base, {double scale = 1}) {
   if (!retro.isDeluxe) return base;
   return base.copyWith(
     fontFamily: 'SuperMarioWorldTextBox',
     fontFamilyFallback: const ['Roboto'],
     fontWeight: FontWeight.w400,
-    fontSize: (base.fontSize ?? 16) < 16 ? 16 : base.fontSize,
+    fontSize: ((base.fontSize ?? 16) < 16 ? 16 : base.fontSize!) * scale,
     letterSpacing: 0,
     height: 1.5,
   );
@@ -523,7 +523,7 @@ class _TitleSection extends StatelessWidget {
                     size: 14,
                     weight: FontWeight.w700,
                     color: retro.ink,
-                  )),
+                  ), scale: 0.75),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -2163,7 +2163,7 @@ class _TagCloud extends StatelessWidget {
               color: retro.inkDim,
               fontSize: retro.isMario ? 16 : 12,
               fontWeight: FontWeight.w600,
-            )),
+            ), scale: 0.5),
           ),
         );
       }).toList(),
@@ -2196,7 +2196,7 @@ class _ExpandableText extends StatelessWidget {
       fontFamily: retro.isMario ? 'Roboto' : retro.bodyFamily,
       letterSpacing: 0,
       height: 1.5,
-    ));
+    ), scale: 0.75);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

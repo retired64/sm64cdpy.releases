@@ -72,9 +72,9 @@ flutter:
       fonts:
         - asset: fonts/manga_deluxe/SuperMarioWorldTextBoxRegular-Y86j.ttf
           weight: 400
-    - family: MarioAndLuigi
+    - family: WonderMermaid
       fonts:
-        - asset: fonts/manga_deluxe/MarioAndLuigi-0v99.ttf
+        - asset: fonts/manga_deluxe/WonderMermaid.otf
           weight: 400
     - family: TypefaceMario64
       fonts:

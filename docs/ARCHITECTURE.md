@@ -908,3 +908,16 @@ Las fechas mantienen formato localizado y disposición adaptable existentes.
 
 Prueba de layout existente ampliada para verificar alcance de fuente por tema.
 Pendiente ejecutar format/analyze/tests en CI y revisar texto grande en Android.
+
+## Ajuste tipográfico Deluxe — 2026-10-22
+
+WonderMermaid sustituye a MarioAndLuigi en el registro y opciones de submenús
+Deluxe, manteniendo 20 sp y fallback Roboto. Archivo OTF original (~26 KB) y
+licencia adjunta en fonts/manga_deluxe; el autor indica uso personal gratuito,
+con licencia comercial separada. No se altera la tipografía de otros temas.
+
+El helper de lectura del detalle acepta una escala exclusiva Deluxe: autor y
+descripción pasan de 16 a 12 sp (-25 %), etiquetas de 16 a 8 sp (-50 %).
+Fechas y cabeceras conservan tamaño. El escalado de accesibilidad del sistema
+permanece activo. Pruebas de fuente y tamaño actualizadas; ejecución de Flutter
+pendiente en CI por falta de SDK local.
