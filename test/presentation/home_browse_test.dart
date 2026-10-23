@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
@@ -37,13 +38,28 @@ void main() {
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
-        await tester.pumpWidget(ProviderScope(
-          overrides: [
+        const launcher = MethodChannel('sm64cdpy/launcher');
+        final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+        messenger.setMockMethodCallHandler(launcher, (call) async {
+          if (call.method == 'isInstalled') return true;
+          throw PlatformException(code: 'unexpected-method', message: call.method);
+        });
+        addTearDown(() => messenger.setMockMethodCallHandler(launcher, null));
+        final container = ProviderContainer(overrides: [
             allModsProvider.overrideWith((ref) async => []),
             gameFolderProvider.overrideWith(_Folder.new),
             deluxeWelcomeHiddenProvider.overrideWith(_Welcome.new),
             installationLibraryProvider.overrideWith(_Library.new),
-          ],
+          ]);
+        addTearDown(container.dispose);
+        // Esta prueba mide UI ya cargada, no esperas del catálogo o de Android.
+        await tester.runAsync(() async {
+          await container.read(allModsProvider.future);
+          await container.read(installationLibraryProvider.future);
+        });
+        expect(container.read(allModsProvider).hasValue, isTrue);
+        await tester.pumpWidget(UncontrolledProviderScope(
+          container: container,
           child: MaterialApp(
             locale: Locale(language),
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -59,7 +75,9 @@ void main() {
             home: const Scaffold(body: HomeScreen()),
           ),
         ));
-        await tester.pumpAndSettle();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(tester.takeException(), isNull);
         final pages = find.byKey(const ValueKey('home-browse-pages'));
         await tester.scrollUntilVisible(pages, 140,
           scrollable: find.byType(Scrollable).first);

@@ -1095,3 +1095,18 @@ actualizadas y Home real con catálogo vacío: 320 px, texto 1,6×, ES/EN/PT, am
 Manga, desplazamiento, foco y reducción de movimiento. Validación local JSON,
 transparencia/dimensiones/peso de assets y git diff --check; pendientes gen-l10n,
 dart format, flutter analyze y tests en CI por falta de SDK, más revisión física.
+
+## Fixture Home — Actions 40032193746
+
+flutter analyze pasó y 477 pruebas aprobaron; las seis variantes home_browse
+agotaron pumpAndSettle durante el montaje inicial (línea 76 del archivo formateado
+en CI). La prueba mezclaba la carga async del catálogo y la comprobación nativa
+de instalación con las aserciones de presentación.
+
+Se precargan catálogo y biblioteca falsos en un ProviderContainer explícito antes
+del montaje usando runAsync y se simula isInstalled en sm64cdpy/launcher. El
+handler rechaza llamadas inesperadas y se retira al terminar; el contenedor se
+libera. El primer render usa pumps acotados, sin aumentar timeouts. Las pruebas
+de scroll/foco/tamaño se mantienen; la prueba separada de carga/error de Home
+sigue intacta. No cambia código del producto, estado compartido ni motor Play.
+Pendiente repetir Flutter en CI; no hay SDK local. git diff --check validado.
