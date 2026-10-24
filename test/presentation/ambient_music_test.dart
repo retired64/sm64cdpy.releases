@@ -57,7 +57,7 @@ void main() {
       child: const MaterialApp(home: AmbientMusicCoordinator(child: Text('App'))),
     ));
     await tester.pump();
-    expect(music.calls.last, (enabled: true, volume: 0.18));
+    expect(music.calls.last, (enabled: true, volume: 0.05));
     await container.read(appAudioSettingsProvider.notifier).setMusicVolume(0.1);
     await tester.pump();
     expect(music.calls.last, (enabled: true, volume: 0.1));

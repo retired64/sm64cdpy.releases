@@ -6,8 +6,8 @@ import '../../core/constants/app_constants.dart';
 /// Mezcla interna independiente: efectos y música conservan sus propios niveles.
 class AppAudioSettings {
   const AppAudioSettings({
-    this.effectsVolume = 0.65,
-    this.musicVolume = 0.18,
+    this.effectsVolume = 0.05,
+    this.musicVolume = 0.05,
     this.musicEnabled = true,
   });
   final double effectsVolume;
@@ -37,8 +37,8 @@ class AppAudioSettingsNotifier extends Notifier<AppAudioSettings> {
             : fallback;
       }
       return AppAudioSettings(
-        effectsVolume: gain(effectsVolumeKey, 0.65),
-        musicVolume: gain(musicVolumeKey, 0.18),
+        effectsVolume: gain(effectsVolumeKey, 0.05),
+        musicVolume: gain(musicVolumeKey, 0.05),
         musicEnabled: box.get(musicEnabledKey) != 'false',
       );
     } catch (_) {

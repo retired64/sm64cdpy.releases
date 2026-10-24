@@ -8,7 +8,7 @@ class AmbientMusic {
     try {
       await _channel.invokeMethod<void>('configure', {
         'enabled': enabled,
-        'volume': volume.isFinite ? volume.clamp(0.0, 1.0).toDouble() : 0.18,
+        'volume': volume.isFinite ? volume.clamp(0.0, 1.0).toDouble() : 0.05,
       });
     } on PlatformException catch (error) {
       debugPrint('AmbientMusic: ${error.code}');

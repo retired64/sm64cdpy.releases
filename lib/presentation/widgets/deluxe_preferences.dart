@@ -67,9 +67,9 @@ class _DeluxeResetButtonState extends ConsumerState<DeluxeResetButton> {
       saved = await ref.read(retroAccentProvider.notifier).select(RetroAccent.cyan) && saved;
       if (!mounted) return;
       final mix = ref.read(appAudioSettingsProvider.notifier);
-      saved = await mix.setEffectsVolume(0.65) && saved;
+      saved = await mix.setEffectsVolume(0.05) && saved;
       if (!mounted) return;
-      saved = await mix.setMusicVolume(0.18) && saved;
+      saved = await mix.setMusicVolume(0.05) && saved;
       if (!mounted) return;
       saved = await mix.setMusicEnabled(true) && saved;
       if (!mounted) return;

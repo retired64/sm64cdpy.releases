@@ -19,7 +19,7 @@ class _Audio extends MangaMenuAudio {
   final stoppedSounds = <String>[];
 
   @override
-  Future<void> play(String sound, {double volume = 0.65}) async {
+  Future<void> play(String sound, {double volume = 0.05}) async {
     played.add(sound);
     volumes.add(volume);
   }
@@ -82,7 +82,8 @@ void main() {
       mangaMenuAudioProvider.overrideWithValue(audio),
     ]);
     try {
-      expect(container.read(appAudioSettingsProvider).effectsVolume, 0.65);
+      expect(container.read(appAudioSettingsProvider).effectsVolume, 0.05);
+      expect(container.read(appAudioSettingsProvider).musicVolume, 0.05);
       final settings = container.read(appAudioSettingsProvider.notifier);
       final sounds = container.read(mangaMenuSoundsProvider.notifier);
       expect(await settings.setMusicVolume(0.12), isTrue);
@@ -133,7 +134,7 @@ void main() {
         await box.put(HomeCardSoundsNotifier.volumeKey, raw);
         final container = ProviderContainer();
         try {
-          expect(container.read(appAudioSettingsProvider).effectsVolume, 0.65);
+          expect(container.read(appAudioSettingsProvider).effectsVolume, 0.05);
           expect(container.read(homeCardSoundsProvider).volume, 0.45);
         } finally {
           container.dispose();
@@ -227,8 +228,8 @@ void main() {
     await audio.play('home_slide', volume: 0.45);
     await audio.stopSound('home_slide');
     expect(calls.map((call) => call.method), ['prepare', 'play', 'play', 'play', 'stop', 'play', 'stopSound']);
-    expect(calls[1].arguments, {'sound': 'press', 'volume': 0.65});
-    expect(calls[2].arguments, {'sound': 'slide', 'volume': 0.65});
+    expect(calls[1].arguments, {'sound': 'press', 'volume': 0.05});
+    expect(calls[2].arguments, {'sound': 'slide', 'volume': 0.05});
     expect(calls[3].arguments, {'sound': 'press', 'volume': 0.2});
     expect(calls[5].arguments, {'sound': 'home_slide', 'volume': 0.45});
     expect(calls[6].arguments, {'sound': 'home_slide'});

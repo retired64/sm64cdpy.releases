@@ -72,8 +72,8 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             "play" -> {
                 val name = call.argument<String>("sound")
                 // Ganancia por efecto: nunca modifica AudioManager ni el volumen global.
-                val requestedVolume = call.argument<Number>("volume")?.toFloat() ?: 0.65f
-                val volume = if (requestedVolume.isFinite()) requestedVolume.coerceIn(0f, 1f) else 0.65f
+                val requestedVolume = call.argument<Number>("volume")?.toFloat() ?: 0.05f
+                val volume = if (requestedVolume.isFinite()) requestedVolume.coerceIn(0f, 1f) else 0.05f
                 val id = samples[name]
                 val now = SystemClock.elapsedRealtime()
                 if (volume > 0f && id != null && ready.contains(id) && now - lastPlay >= 75) {

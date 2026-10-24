@@ -34,7 +34,7 @@ class AmbientMusicPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCal
     private var blocked = false
     private var ducked = false
     private var failed = false
-    private var volume = 0.18f
+    private var volume = 0.05f
     private val attributes = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()
     private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
@@ -70,8 +70,8 @@ class AmbientMusicPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCal
         val next = call.argument<Boolean>("enabled") == true
         if (next != enabled) { blocked = false; failed = false }
         enabled = next
-        val value = call.argument<Number>("volume")?.toFloat() ?: 0.18f
-        volume = if (value.isFinite()) value.coerceIn(0f, 1f) else 0.18f
+        val value = call.argument<Number>("volume")?.toFloat() ?: 0.05f
+        volume = if (value.isFinite()) value.coerceIn(0f, 1f) else 0.05f
         reconcile()
         result.success(null)
     }

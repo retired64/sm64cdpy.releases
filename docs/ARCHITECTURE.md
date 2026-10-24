@@ -1079,3 +1079,13 @@ capacidad existente del componente, para permitir ajuste vertical sin reducir
 accesibilidad ni modificar globalmente las etiquetas de otras pantallas.
 La prueba de Home comprueba explícitamente esa configuración además del layout.
 Audio y motor Play no cambian. git diff --check validado; Flutter pendiente en CI.
+
+## Volúmenes iniciales suaves — 2026-10-23
+
+Música ambiental y efectos del menú usan 0,05 (5 %) por defecto. Alineados el
+modelo/proveedor Hive, fallbacks de valores ausentes/corruptos, adaptadores Dart,
+valores defensivos nativos y Restablecer Deluxe. Los niveles ya guardados por
+el usuario se conservan; el sonido de tarjetas Home mantiene su 45 % propio.
+No se cambia el volumen Android ni se replica audio al overlay. Sin nuevos
+caches, preferencias o Futures. Pruebas de defaults y música actualizadas;
+git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
