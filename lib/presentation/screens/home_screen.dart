@@ -402,6 +402,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                             RetroTag(
                               retro: retro,
                               label: l10n.badgeFeatured,
+                              flexibleLabel: true,
                               icon: Icons.star,
                               filled: true,
                               dense: true,

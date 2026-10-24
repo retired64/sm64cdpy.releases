@@ -1145,3 +1145,13 @@ git diff --check pasa. Pendiente gen-l10n, format/analyze/tests y compilación
 Kotlin en CI: no hay SDK Flutter/Dart/Kotlin ni gradlew local. Prueba física:
 primer swipe, swipes rápidos, volumen 0/100, desactivar/reabrir, background,
 cambio de tema y coexistencia de música/menu. Motor Play/Workers intactos.
+
+## Etiqueta Featured adaptable — Actions 40044057555
+
+482 pruebas pasaron y dos variantes ES de Home fallaron por overflow horizontal
+de 6,2 px en RetroTag, con ancho 320 y texto 1,6×. La nueva cobertura de Featured
+hizo visible el problema preexistente. Su badge ahora activa flexibleLabel,
+capacidad existente del componente, para permitir ajuste vertical sin reducir
+accesibilidad ni modificar globalmente las etiquetas de otras pantallas.
+La prueba de Home comprueba explícitamente esa configuración además del layout.
+Audio y motor Play no cambian. git diff --check validado; Flutter pendiente en CI.

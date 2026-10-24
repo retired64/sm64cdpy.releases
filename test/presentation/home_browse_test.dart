@@ -102,6 +102,11 @@ void main() {
         await tester.pump(const Duration(milliseconds: 300));
         expect(tester.takeException(), isNull);
         expect(audio.played, isEmpty);
+        final strings = AppLocalizations.of(tester.element(find.byType(HomeScreen)));
+        final badges = tester.widgetList<RetroTag>(find.byType(RetroTag))
+            .where((tag) => tag.label == strings.badgeFeatured);
+        expect(badges, isNotEmpty);
+        expect(badges.every((tag) => tag.flexibleLabel), isTrue);
         final featured = find.byKey(const ValueKey('home-featured-pages'));
         await tester.scrollUntilVisible(featured, 140,
           scrollable: find.byType(Scrollable).first);
