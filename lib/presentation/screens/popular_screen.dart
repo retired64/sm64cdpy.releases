@@ -11,6 +11,7 @@ import '../../domain/entities/mod_entity.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/manga_deluxe_screen_visuals.dart';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const _kPageSize = 15;
@@ -48,29 +49,23 @@ class _PopularScreenState extends ConsumerState<PopularScreen> {
   @override
   Widget build(BuildContext context) {
     final popularAsync = ref.watch(popularModsProvider);
-    final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
-    final title = RichText(
-      text: TextSpan(
-        children: [
-          const TextSpan(text: '🔥 '),
-          TextSpan(text: l10n.popularTitle, style: retro.heading(size: 16)),
-        ],
-      ),
-    );
+    final title = MangaDeluxeScreenTitle(label: l10n.popularTitle, size: 18);
 
-    return popularAsync.when(
-      loading: () =>
-          RetroFixedHeaderView(title: title, child: const _PopularSkeleton()),
-      error: (e, _) => RetroFixedHeaderView(
-        title: title,
-        child: _PopularError(message: e.toString()),
-      ),
-      data: (mods) => _PopularBody(
-        mods: mods,
-        page: _page,
-        scrollCtrl: _scrollCtrl,
-        onPageChanged: _goToPage,
+    return MangaDeluxeTypography(
+      child: popularAsync.when(
+        loading: () =>
+            RetroFixedHeaderView(title: title, child: const _PopularSkeleton()),
+        error: (e, _) => RetroFixedHeaderView(
+          title: title,
+          child: _PopularError(message: e.toString()),
+        ),
+        data: (mods) => _PopularBody(
+          mods: mods,
+          page: _page,
+          scrollCtrl: _scrollCtrl,
+          onPageChanged: _goToPage,
+        ),
       ),
     );
   }
@@ -113,23 +108,13 @@ class _PopularBody extends StatelessWidget {
       slivers: [
         // ── App bar ───────────────────────────────────────────
         RetroPinnedAppBar(
-          title: RichText(
-            text: TextSpan(
-              children: [
-                const TextSpan(text: '🔥 '),
-                TextSpan(
-                  text: l10n.popularTitle,
-                  style: retro.heading(size: 16),
-                ),
-              ],
-            ),
-          ),
+          title: MangaDeluxeScreenTitle(label: l10n.popularTitle, size: 18),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 16),
               child: SkewChip(
                 retro: retro,
-                icon: Icons.local_fire_department_rounded,
+                icon: Icons.trending_up_rounded,
                 label: l10n.popularModCount(mods.length),
                 dense: true,
                 selected: true,

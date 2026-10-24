@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/manga_deluxe_screen_visuals.dart';
 import '../widgets/mod_card.dart';
 import 'vip_mods_screen.dart';
 import 'dynos_screen.dart';
@@ -41,42 +42,52 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen>
     final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
 
-    return CustomScrollView(
-      slivers: [
-        RetroPinnedAppBar(
-          title: Text(l10n.favouritesTitle, style: retro.heading(size: 18)),
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(text: l10n.favTabMods),
-              Tab(text: l10n.favTabVip),
-              Tab(text: l10n.favTabDynos),
-              Tab(text: l10n.favTabTouch),
-            ],
-            indicatorColor: retro.accent,
-            labelColor: retro.accent,
-            unselectedLabelColor: retro.inkDim,
-            indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(
-                color: retro.accent,
-                width: retro.borderWidth(3),
+    return MangaDeluxeTypography(
+      child: CustomScrollView(
+        slivers: [
+          RetroPinnedAppBar(
+            title: MangaDeluxeScreenTitle(
+              label: l10n.favouritesTitle,
+              size: 20,
+            ),
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: [
+                Tab(text: l10n.favTabMods),
+                Tab(text: l10n.favTabVip),
+                Tab(text: l10n.favTabDynos),
+                Tab(text: l10n.favTabTouch),
+              ],
+              labelStyle: retro.body(size: 13, weight: FontWeight.w800),
+              unselectedLabelStyle: retro.body(
+                size: 13,
+                weight: FontWeight.w600,
               ),
-              insets: const EdgeInsets.symmetric(horizontal: 16),
+              indicatorColor: retro.accent,
+              labelColor: retro.accent,
+              unselectedLabelColor: retro.inkDim,
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(
+                  color: retro.accent,
+                  width: retro.borderWidth(3),
+                ),
+                insets: const EdgeInsets.symmetric(horizontal: 16),
+              ),
             ),
           ),
-        ),
-        SliverFillRemaining(
-          child: TabBarView(
-            controller: _tabController,
-            children: const [
-              _ModsFavTab(),
-              _VipFavTab(),
-              _DynosFavTab(),
-              _TouchFavTab(),
-            ],
+          SliverFillRemaining(
+            child: TabBarView(
+              controller: _tabController,
+              children: const [
+                _ModsFavTab(),
+                _VipFavTab(),
+                _DynosFavTab(),
+                _TouchFavTab(),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

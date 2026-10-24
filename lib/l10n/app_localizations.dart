@@ -5094,6 +5094,30 @@ abstract class AppLocalizations {
   /// **'Code copied'**
   String get coopCopied;
 
+  /// No description provided for @coopShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite'**
+  String get coopShare;
+
+  /// No description provided for @coopShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CoopDX game invite'**
+  String get coopShareSubject;
+
+  /// No description provided for @coopShareMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Join my SM64CoopDX game!\n\nFriend code: {code}\n\nOpen SM64CDPY, go to Play, choose Join room and enter this code. Share it only with people you trust.'**
+  String coopShareMessage(String code);
+
+  /// No description provided for @coopShareError.
+  ///
+  /// In en, this message translates to:
+  /// **'The invite could not be shared. Try copying the code instead.'**
+  String get coopShareError;
+
   /// No description provided for @coopPeers.
   ///
   /// In en, this message translates to:

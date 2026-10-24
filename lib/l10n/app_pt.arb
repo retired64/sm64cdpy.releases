@@ -862,7 +862,7 @@
   "coopHostInstruction": "No jogo, abra Multiplayer > Direct Connection > Host. Seus amigos entram com o código exibido aqui.",
   "coopJoinInstruction": "No jogo, abra Multiplayer > Direct Connection e conecte a 127.0.0.1 usando a porta {port}.",
   "@coopJoinInstruction": {"placeholders": {"port": {"type": "int"}}},
-  "coopCopy": "Copiar código", "coopCopied": "Código copiado", "coopPeers": "Amigos: {count}",
+  "coopCopy": "Copiar código", "coopCopied": "Código copiado", "coopShare": "Compartilhar convite", "coopShareSubject": "Convite para partida de SM64CoopDX", "coopShareMessage": "Entre na minha partida de SM64CoopDX!\n\nCódigo do amigo: {code}\n\nAbra o SM64CDPY, entre em Jogar, toque em Entrar na partida e digite este código. Compartilhe somente com pessoas de confiança.", "@coopShareMessage": {"placeholders": {"code": {"type": "String"}}}, "coopShareError": "Não foi possível compartilhar o convite. Tente copiar o código.", "coopPeers": "Amigos: {count}",
   "@coopPeers": {"placeholders": {"count": {"type": "int"}}},
   "coopDirect": "Direta", "coopRelay": "Relay", "coopNoCode": "Digite um código válido de oito caracteres.",
   "coopNetworkError": "Não foi possível iniciar a partida. Verifique a conexão e tente novamente.",

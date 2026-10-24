@@ -2844,6 +2844,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get coopCopied => 'Código copiado';
 
   @override
+  String get coopShare => 'Compartir invitación';
+
+  @override
+  String get coopShareSubject => 'Invitación a partida de SM64CoopDX';
+
+  @override
+  String coopShareMessage(String code) {
+    return '¡Únete a mi partida de SM64CoopDX!\n\nCódigo de amigo: $code\n\nAbre SM64CDPY, entra en Jugar, pulsa Unirse a partida y escribe este código. Compártelo solo con personas de confianza.';
+  }
+
+  @override
+  String get coopShareError =>
+      'No se pudo compartir la invitación. Intenta copiar el código.';
+
+  @override
   String coopPeers(int count) {
     return 'Amigos: $count';
   }
@@ -5749,6 +5764,21 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get coopCopied => 'Código copiado';
+
+  @override
+  String get coopShare => 'Compartir invitación';
+
+  @override
+  String get coopShareSubject => 'Invitación a partida de SM64CoopDX';
+
+  @override
+  String coopShareMessage(String code) {
+    return '¡Únete a mi partida de SM64CoopDX!\n\nCódigo de amigo: $code\n\nAbre SM64CDPY, entra en Jugar, pulsa Unirse a partida y escribe este código. Compártelo solo con personas de confianza.';
+  }
+
+  @override
+  String get coopShareError =>
+      'No se pudo compartir la invitación. Intenta copiar el código.';
 
   @override
   String coopPeers(int count) {

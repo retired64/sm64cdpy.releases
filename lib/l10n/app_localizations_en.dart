@@ -2817,6 +2817,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coopCopied => 'Code copied';
 
   @override
+  String get coopShare => 'Share invite';
+
+  @override
+  String get coopShareSubject => 'SM64CoopDX game invite';
+
+  @override
+  String coopShareMessage(String code) {
+    return 'Join my SM64CoopDX game!\n\nFriend code: $code\n\nOpen SM64CDPY, go to Play, choose Join room and enter this code. Share it only with people you trust.';
+  }
+
+  @override
+  String get coopShareError =>
+      'The invite could not be shared. Try copying the code instead.';
+
+  @override
   String coopPeers(int count) {
     return 'Friends: $count';
   }

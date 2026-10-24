@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/coop_session.dart';
@@ -28,6 +29,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
   CoopBatteryOptimizationState? _battery;
   bool _starting = false;
   bool _batteryBusy = false;
+  bool _sharing = false;
 
   @override
   void initState() {
@@ -99,6 +101,26 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
       }
     } finally {
       if (mounted) setState(() => _batteryBusy = false);
+    }
+  }
+
+  Future<void> _shareInvite(String code) async {
+    if (_sharing || !isValidCoopCode(code)) return;
+    final l = AppLocalizations.of(context);
+    setState(() => _sharing = true);
+    try {
+      await SharePlus.instance.share(
+        ShareParams(
+          text: l.coopShareMessage(code),
+          subject: l.coopShareSubject,
+        ),
+      );
+    } catch (_) {
+      if (mounted) {
+        AppSnackbar.error(context, message: l.coopShareError);
+      }
+    } finally {
+      if (mounted) setState(() => _sharing = false);
     }
   }
 
@@ -226,8 +248,12 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                         const CoopPlayIcon(size: 48),
                         const SizedBox(width: 12),
                       ],
-                      Expanded(child: Text(l.coopIntro,
-                        style: coopPlayBody(retro, size: 14, height: 1.4))),
+                      Expanded(
+                        child: Text(
+                          l.coopIntro,
+                          style: coopPlayBody(retro, size: 14, height: 1.4),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -261,7 +287,8 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
           ),
           const SizedBox(height: 14),
         ],
-        if (_battery case final battery? when battery.supported && !battery.ignored) ...[
+        if (_battery case final battery?
+            when battery.supported && !battery.ignored) ...[
           const SizedBox(height: 14),
           _Panel(
             key: const ValueKey('coop-battery-help'),
@@ -302,14 +329,20 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(children: [
-                if (retro.isManga) ...[
-                  const CoopPlayIcon(asset: 'explore', size: 36),
-                  const SizedBox(width: 10),
+              Row(
+                children: [
+                  if (retro.isManga) ...[
+                    const CoopPlayIcon(asset: 'explore', size: 36),
+                    const SizedBox(width: 10),
+                  ],
+                  Expanded(
+                    child: Text(
+                      l.coopJoin,
+                      style: coopPlayBody(retro, size: 18, height: 1.4),
+                    ),
+                  ),
                 ],
-                Expanded(child: Text(l.coopJoin,
-                  style: coopPlayBody(retro, size: 18, height: 1.4))),
-              ]),
+              ),
               const SizedBox(height: 12),
               TextField(
                 controller: _code,
@@ -336,7 +369,11 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                     Expanded(
                       child: Text(
                         l.coopRecent,
-                        style: coopPlayBody(retro, size: 13, color: retro.inkDim),
+                        style: coopPlayBody(
+                          retro,
+                          size: 13,
+                          color: retro.inkDim,
+                        ),
                       ),
                     ),
                     TextButton(
@@ -385,6 +422,13 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
     final l = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
     final code = state.code ?? '';
+    final canShare = switch (state.phase) {
+      CoopSessionPhase.waiting ||
+      CoopSessionPhase.connecting ||
+      CoopSessionPhase.connected ||
+      CoopSessionPhase.reconnecting => true,
+      _ => false,
+    };
     final status = switch (state.phase) {
       CoopSessionPhase.waiting => l.coopWaiting,
       CoopSessionPhase.connecting => l.coopConnecting,
@@ -417,13 +461,36 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
                   ),
                 ),
                 const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: code));
-                    AppSnackbar.success(context, message: l.coopCopied);
-                  },
-                  icon: const Icon(Icons.copy_rounded),
-                  label: Text(l.coopCopy),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 8,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        await Clipboard.setData(ClipboardData(text: code));
+                        if (context.mounted) {
+                          AppSnackbar.success(context, message: l.coopCopied);
+                        }
+                      },
+                      icon: const Icon(Icons.copy_rounded),
+                      label: Text(l.coopCopy),
+                    ),
+                    if (canShare)
+                      FilledButton.icon(
+                        key: const ValueKey('coop-share-invite'),
+                        onPressed: _sharing ? null : () => _shareInvite(code),
+                        icon: _sharing
+                            ? const SizedBox.square(
+                                dimension: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.share_rounded),
+                        label: Text(l.coopShare),
+                      ),
+                  ],
                 ),
               ],
               const SizedBox(height: 14),
@@ -613,7 +680,10 @@ class _ErrorPanel extends StatelessWidget {
           Icon(Icons.error_outline_rounded, color: retro.red),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(message, style: coopPlayBody(retro, size: 14, color: retro.red)),
+            child: Text(
+              message,
+              style: coopPlayBody(retro, size: 14, color: retro.red),
+            ),
           ),
         ],
       ),
