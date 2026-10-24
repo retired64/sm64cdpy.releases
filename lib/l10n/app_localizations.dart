@@ -1344,6 +1344,18 @@ abstract class AppLocalizations {
   /// **'Screenshots'**
   String get detailScreenshots;
 
+  /// Heading for YouTube videos embedded in a mod description
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube Videos'**
+  String get detailYoutubeVideos;
+
+  /// Heading for directly hosted videos embedded in a mod description
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get detailDirectVideos;
+
   /// Detail screen section title for tags
   ///
   /// In en, this message translates to:

@@ -226,6 +226,8 @@
   "detailContentUnavailable": "Este download não está mais disponível (404). O link pode ter sido removido ou alterado.",
   "detailFriendlyDownloadError": "Não foi possível concluir o download. Verifique sua conexão e tente novamente.",
   "detailScreenshots": "Capturas de Tela",
+  "detailYoutubeVideos": "Vídeos do YouTube",
+  "detailDirectVideos": "Vídeos",
   "detailTags": "Tags",
   "detailAbout": "Sobre",
   "detailRating": "Avaliação",

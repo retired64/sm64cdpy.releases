@@ -733,6 +733,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get detailScreenshots => 'Capturas de Tela';
 
   @override
+  String get detailYoutubeVideos => 'Vídeos do YouTube';
+
+  @override
+  String get detailDirectVideos => 'Vídeos';
+
+  @override
   String get detailTags => 'Tags';
 
   @override
@@ -3640,6 +3646,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get detailScreenshots => 'Capturas de Tela';
+
+  @override
+  String get detailYoutubeVideos => 'Vídeos do YouTube';
+
+  @override
+  String get detailDirectVideos => 'Vídeos';
 
   @override
   String get detailTags => 'Tags';

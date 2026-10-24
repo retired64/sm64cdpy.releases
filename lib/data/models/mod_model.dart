@@ -13,6 +13,7 @@ class ModModel {
     required this.isFeatured,
     this.imageUrl,
     required this.descriptionImages,
+    this.descriptionVideos = const [],
     required this.downloads,
     required this.views,
     this.rating,
@@ -42,6 +43,7 @@ class ModModel {
   final bool isFeatured;
   final String? imageUrl;
   final List<String> descriptionImages;
+  final List<ModVideoModel> descriptionVideos;
   final int downloads;
   final int views;
   final double? rating;
@@ -76,6 +78,7 @@ class ModModel {
           json['featured'] == 1,
       imageUrl: json['image_url'] as String? ?? json['icon_url'] as String?,
       descriptionImages: _strings(json['description_images']),
+      descriptionVideos: _videos(json['description_videos']),
       downloads: (json['downloads'] as num?)?.toInt() ?? 0,
       views: (json['views'] as num?)?.toInt() ?? 0,
       rating:
@@ -110,6 +113,15 @@ class ModModel {
       return value.map((e) => e.toString()).toList();
     }
     return [];
+  }
+
+  static List<ModVideoModel> _videos(dynamic value) {
+    if (value is! List) return [];
+    return value
+        .whereType<Map<String, dynamic>>()
+        .map(ModVideoModel.fromJson)
+        .where((video) => video.url.isNotEmpty)
+        .toList(growable: false);
   }
 
   static List<String> _extractDownloadUrls(Map<String, dynamic> json) {
@@ -257,6 +269,9 @@ class ModModel {
     isFeatured: isFeatured,
     imageUrl: imageUrl,
     descriptionImages: descriptionImages,
+    descriptionVideos: descriptionVideos
+        .map((video) => video.toEntity())
+        .toList(),
     downloads: downloads,
     views: views,
     rating: rating,
@@ -274,6 +289,34 @@ class ModModel {
     category: category,
     threadUrl: threadUrl,
     downloadDomainHint: downloadDomainHint,
+  );
+}
+
+class ModVideoModel {
+  const ModVideoModel({
+    required this.provider,
+    required this.url,
+    this.videoId = '',
+    this.thumbnailUrl = '',
+  });
+
+  final String provider;
+  final String url;
+  final String videoId;
+  final String thumbnailUrl;
+
+  factory ModVideoModel.fromJson(Map<String, dynamic> json) => ModVideoModel(
+    provider: json['provider'] as String? ?? '',
+    url: json['url'] as String? ?? '',
+    videoId: json['video_id'] as String? ?? '',
+    thumbnailUrl: json['thumbnail_url'] as String? ?? '',
+  );
+
+  ModVideoEntity toEntity() => ModVideoEntity(
+    provider: provider,
+    url: url,
+    videoId: videoId,
+    thumbnailUrl: thumbnailUrl,
   );
 }
 

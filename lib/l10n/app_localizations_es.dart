@@ -738,6 +738,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailScreenshots => 'Capturas';
 
   @override
+  String get detailYoutubeVideos => 'Videos de YouTube';
+
+  @override
+  String get detailDirectVideos => 'Videos';
+
+  @override
   String get detailTags => 'Etiquetas';
 
   @override
@@ -3658,6 +3664,12 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get detailScreenshots => 'Capturas';
+
+  @override
+  String get detailYoutubeVideos => 'Videos de YouTube';
+
+  @override
+  String get detailDirectVideos => 'Videos';
 
   @override
   String get detailTags => 'Etiquetas';

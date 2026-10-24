@@ -61,6 +61,14 @@ void main() {
       'description_images': <String>[
         'https://mods.sm64coopdx.com/attachments/preview-png.1/',
       ],
+      'description_videos': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'provider': 'youtube',
+          'video_id': 'qTkWn9PrSSA',
+          'url': 'https://www.youtube.com/watch?v=qTkWn9PrSSA',
+          'thumbnail_url': 'https://i.ytimg.com/vi/qTkWn9PrSSA/hqdefault.jpg',
+        },
+      ],
       'versions': <Map<String, dynamic>>[
         version(id: '100', label: 'v2', fileId: '900'),
       ],
@@ -75,6 +83,12 @@ void main() {
     expect(entity.descriptionImages, <String>[
       'https://mods.sm64coopdx.com/attachments/preview-png.1/',
     ]);
+    expect(entity.descriptionVideos, hasLength(1));
+    expect(entity.descriptionVideos.single.isYouTube, isTrue);
+    expect(
+      entity.descriptionVideos.single.url,
+      'https://www.youtube.com/watch?v=qTkWn9PrSSA',
+    );
     expect(entity.versions.single.id, '100');
     expect(entity.versions.single.files.single.id, '900');
     expect(entity.versions.single.isResolved, isTrue);

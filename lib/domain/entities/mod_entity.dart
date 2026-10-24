@@ -11,6 +11,7 @@ class ModEntity {
     required this.isFeatured,
     this.imageUrl,
     required this.descriptionImages,
+    this.descriptionVideos = const [],
     required this.downloads,
     required this.views,
     this.rating,
@@ -40,6 +41,7 @@ class ModEntity {
   final bool isFeatured;
   final String? imageUrl;
   final List<String> descriptionImages;
+  final List<ModVideoEntity> descriptionVideos;
   final int downloads;
   final int views;
   final double? rating;
@@ -63,6 +65,22 @@ class ModEntity {
 
   @override
   int get hashCode => id.hashCode;
+}
+
+class ModVideoEntity {
+  const ModVideoEntity({
+    required this.provider,
+    required this.url,
+    this.videoId = '',
+    this.thumbnailUrl = '',
+  });
+
+  final String provider;
+  final String url;
+  final String videoId;
+  final String thumbnailUrl;
+
+  bool get isYouTube => provider == 'youtube' && videoId.isNotEmpty;
 }
 
 class ModUpdate {

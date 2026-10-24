@@ -19,6 +19,15 @@ before `src`, excludes placeholders, reactions, avatars and later discussion
 wrappers, and caps the list defensively. The app loads these URLs on demand
 and never treats them as downloadable mod artifacts.
 
+Each mod may also include `description_videos`, an ordered list of bounded
+media descriptors from that same description. A YouTube descriptor contains
+`provider: youtube`, its `video_id`, the canonical `url` and an optimized
+`thumbnail_url`; a directly hosted video contains `provider: direct` and its
+HTTPS `url`. These fields are optional and invalid records are ignored. The
+app only downloads preview thumbnails, never video streams: selecting a card
+hands the canonical URL to Android so YouTube links can open in the YouTube
+app and direct files can open in a compatible external player.
+
 ## Durable identity
 
 Array position is presentation only and must never identify installed content.

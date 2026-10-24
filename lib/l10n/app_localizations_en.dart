@@ -730,6 +730,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailScreenshots => 'Screenshots';
 
   @override
+  String get detailYoutubeVideos => 'YouTube Videos';
+
+  @override
+  String get detailDirectVideos => 'Videos';
+
+  @override
   String get detailTags => 'Tags';
 
   @override

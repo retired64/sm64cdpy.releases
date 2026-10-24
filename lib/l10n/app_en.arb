@@ -886,6 +886,10 @@
   "@detailScreenshots": {
     "description": "Detail screen section title for screenshots gallery"
   },
+  "detailYoutubeVideos": "YouTube Videos",
+  "@detailYoutubeVideos": {"description": "Heading for YouTube videos embedded in a mod description"},
+  "detailDirectVideos": "Videos",
+  "@detailDirectVideos": {"description": "Heading for directly hosted videos embedded in a mod description"},
   "detailTags": "Tags",
   "@detailTags": {
     "description": "Detail screen section title for tags"
