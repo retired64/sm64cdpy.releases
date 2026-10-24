@@ -203,7 +203,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postInstallLaunchGame => 'LAUNCH GAME';
 
   @override
-  String get homeExclusiveContent => 'Exclusive Content';
+  String get homeExclusiveContent => 'Exclusive';
 
   @override
   String get homeTopDownloads => 'Top Downloads';
@@ -277,7 +277,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeDownload => 'Download';
 
   @override
-  String get homeLaunchGame => 'LAUNCH  GAME';
+  String get homeLaunchGame => 'START GAME';
 
   @override
   String get homeSoon => 'SOON';
@@ -2872,4 +2872,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String coopDiagnosticsDelay(int average, int max) {
     return 'Bridge delay: $average ms average · $max ms maximum';
   }
+
+  @override
+  String get homeCardSoundsTitle => 'Home card sounds';
+
+  @override
+  String get homeCardSoundsDescription =>
+      'Play a sound when changing Featured or Browse cards. Separate from menu effects and music.';
+
+  @override
+  String get homeCardSoundsVolume => 'Card volume';
 }

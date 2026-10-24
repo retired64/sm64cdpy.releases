@@ -453,7 +453,7 @@ abstract class AppLocalizations {
   /// Home screen section title for exclusive content
   ///
   /// In en, this message translates to:
-  /// **'Exclusive Content'**
+  /// **'Exclusive'**
   String get homeExclusiveContent;
 
   /// Home screen section title for top downloads
@@ -597,7 +597,7 @@ abstract class AppLocalizations {
   /// Home screen button label to launch the game
   ///
   /// In en, this message translates to:
-  /// **'LAUNCH  GAME'**
+  /// **'START GAME'**
   String get homeLaunchGame;
 
   /// Home screen badge label indicating a section is coming soon
@@ -5183,6 +5183,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bridge delay: {average} ms average · {max} ms maximum'**
   String coopDiagnosticsDelay(int average, int max);
+
+  /// No description provided for @homeCardSoundsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Home card sounds'**
+  String get homeCardSoundsTitle;
+
+  /// No description provided for @homeCardSoundsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Play a sound when changing Featured or Browse cards. Separate from menu effects and music.'**
+  String get homeCardSoundsDescription;
+
+  /// No description provided for @homeCardSoundsVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Card volume'**
+  String get homeCardSoundsVolume;
 }
 
 class _AppLocalizationsDelegate

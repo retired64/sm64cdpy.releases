@@ -203,7 +203,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get postInstallLaunchGame => 'ABRIR JUEGO';
 
   @override
-  String get homeExclusiveContent => 'Contenido Exclusivo';
+  String get homeExclusiveContent => 'Exclusivo';
 
   @override
   String get homeTopDownloads => 'Más Descargados';
@@ -279,7 +279,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeDownload => 'Descargar';
 
   @override
-  String get homeLaunchGame => 'ABRIR JUEGO';
+  String get homeLaunchGame => 'INICIAR JUEGO';
 
   @override
   String get homeSoon => 'PRONTO';
@@ -2899,6 +2899,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String coopDiagnosticsDelay(int average, int max) {
     return 'Demora del puente: $average ms promedio · $max ms máxima';
   }
+
+  @override
+  String get homeCardSoundsTitle => 'Sonidos de tarjetas de Inicio';
+
+  @override
+  String get homeCardSoundsDescription =>
+      'Sonido al cambiar tarjetas de Destacados o Explorar. Independiente del menú y la música.';
+
+  @override
+  String get homeCardSoundsVolume => 'Volumen de tarjetas';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -3100,7 +3110,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get postInstallLaunchGame => 'ABRIR JUEGO';
 
   @override
-  String get homeExclusiveContent => 'Contenido Exclusivo';
+  String get homeExclusiveContent => 'Exclusivo';
 
   @override
   String get homeTopDownloads => 'Más Descargados';
@@ -3176,7 +3186,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get homeDownload => 'Descargar';
 
   @override
-  String get homeLaunchGame => 'ABRIR JUEGO';
+  String get homeLaunchGame => 'INICIAR JUEGO';
 
   @override
   String get homeSoon => 'PRONTO';
@@ -5796,4 +5806,14 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String coopDiagnosticsDelay(int average, int max) {
     return 'Demora del puente: $average ms promedio · $max ms máxima';
   }
+
+  @override
+  String get homeCardSoundsTitle => 'Sonidos de tarjetas de Inicio';
+
+  @override
+  String get homeCardSoundsDescription =>
+      'Sonido al cambiar tarjetas de Destacados o Explorar. Independiente del menú y la música.';
+
+  @override
+  String get homeCardSoundsVolume => 'Volumen de tarjetas';
 }

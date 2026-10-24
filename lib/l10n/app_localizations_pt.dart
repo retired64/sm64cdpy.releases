@@ -203,7 +203,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get postInstallLaunchGame => 'ABRIR JOGO';
 
   @override
-  String get homeExclusiveContent => 'Conteúdo Exclusivo';
+  String get homeExclusiveContent => 'Exclusivo';
 
   @override
   String get homeTopDownloads => 'Mais Baixados';
@@ -278,7 +278,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeDownload => 'Download';
 
   @override
-  String get homeLaunchGame => 'ABRIR JOGO';
+  String get homeLaunchGame => 'INICIAR JOGO';
 
   @override
   String get homeSoon => 'EM BREVE';
@@ -2886,6 +2886,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String coopDiagnosticsDelay(int average, int max) {
     return 'Atraso da ponte: média de $average ms · máximo de $max ms';
   }
+
+  @override
+  String get homeCardSoundsTitle => 'Sons dos cartões do Início';
+
+  @override
+  String get homeCardSoundsDescription =>
+      'Som ao trocar cartões de Destaques ou Explorar. Independente do menu e da música.';
+
+  @override
+  String get homeCardSoundsVolume => 'Volume dos cartões';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3087,7 +3097,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get postInstallLaunchGame => 'ABRIR JOGO';
 
   @override
-  String get homeExclusiveContent => 'Conteúdo Exclusivo';
+  String get homeExclusiveContent => 'Exclusivo';
 
   @override
   String get homeTopDownloads => 'Mais Baixados';
@@ -3162,7 +3172,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get homeDownload => 'Download';
 
   @override
-  String get homeLaunchGame => 'ABRIR JOGO';
+  String get homeLaunchGame => 'INICIAR JOGO';
 
   @override
   String get homeSoon => 'EM BREVE';
@@ -5770,4 +5780,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String coopDiagnosticsDelay(int average, int max) {
     return 'Atraso da ponte: média de $average ms · máximo de $max ms';
   }
+
+  @override
+  String get homeCardSoundsTitle => 'Sons dos cartões do Início';
+
+  @override
+  String get homeCardSoundsDescription =>
+      'Som ao trocar cartões de Destaques ou Explorar. Independente do menu e da música.';
+
+  @override
+  String get homeCardSoundsVolume => 'Volume dos cartões';
 }
