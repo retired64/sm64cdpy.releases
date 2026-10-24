@@ -2112,5 +2112,8 @@
   "coopDiagnosticsPackets": "Game packets: {toGame} received · {toPage} sent",
   "@coopDiagnosticsPackets": {"placeholders": {"toGame": {"type": "int"}, "toPage": {"type": "int"}}},
   "coopDiagnosticsDelay": "Bridge delay: {average} ms average · {max} ms maximum",
-  "@coopDiagnosticsDelay": {"placeholders": {"average": {"type": "int"}, "max": {"type": "int"}}}
+  "@coopDiagnosticsDelay": {"placeholders": {"average": {"type": "int"}, "max": {"type": "int"}}},
+  "homeCardSoundsTitle": "Home card sounds",
+  "homeCardSoundsDescription": "Play a sound when changing Featured or Browse cards. Separate from menu effects and music.",
+  "homeCardSoundsVolume": "Card volume"
 }

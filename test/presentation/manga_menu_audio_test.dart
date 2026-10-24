@@ -9,12 +9,14 @@ import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/presentation/providers/manga_menu_audio_provider.dart';
 import 'package:sm64cdpy/presentation/providers/theme_provider.dart';
 import 'package:sm64cdpy/presentation/providers/app_audio_settings_provider.dart';
+import 'package:sm64cdpy/presentation/providers/home_card_audio_provider.dart';
 import 'package:sm64cdpy/services/manga_menu_audio.dart';
 
 class _Audio extends MangaMenuAudio {
   final played = <String>[];
   final volumes = <double>[];
   int stops = 0;
+  final stoppedSounds = <String>[];
 
   @override
   Future<void> play(String sound, {double volume = 0.65}) async {
@@ -24,6 +26,8 @@ class _Audio extends MangaMenuAudio {
 
   @override
   Future<void> stop() async { stops++; }
+  @override
+  Future<void> stopSound(String sound) async { stoppedSounds.add(sound); }
 }
 
 void main() {
@@ -126,9 +130,11 @@ void main() {
     try {
       for (final raw in ['NaN', 'Infinity', 'invalid']) {
         await box.put(AppAudioSettingsNotifier.effectsVolumeKey, raw);
+        await box.put(HomeCardSoundsNotifier.volumeKey, raw);
         final container = ProviderContainer();
         try {
           expect(container.read(appAudioSettingsProvider).effectsVolume, 0.65);
+          expect(container.read(homeCardSoundsProvider).volume, 0.45);
         } finally {
           container.dispose();
         }
@@ -139,8 +145,68 @@ void main() {
     }
   });
 
+  test('Home card sound persists independently and stops selectively', () async {
+    final directory = await Directory.systemTemp.createTemp('home-card-audio-');
+    Hive.init(directory.path);
+    final box = await Hive.openBox<String>(AppConstants.settingsBoxKey);
+    final audio = _Audio();
+    final container = ProviderContainer(overrides: [
+      mangaMenuAudioProvider.overrideWithValue(audio),
+    ]);
+    try {
+      final cards = container.read(homeCardSoundsProvider.notifier);
+      final mix = container.read(appAudioSettingsProvider.notifier);
+      expect(container.read(homeCardSoundsProvider).volume, 0.45);
+      await cards.play();
+      expect(audio.played, ['home_slide']);
+      expect(audio.volumes, [0.45]);
+      await container.read(mangaMenuSoundsProvider.notifier).setEnabled(false);
+      await mix.setEffectsVolume(0);
+      await mix.setMusicVolume(0.12);
+      expect(await cards.setVolume(0.25), isTrue);
+      await cards.play();
+      expect(audio.volumes.last, 0.25);
+      expect(await cards.setEnabled(false), isTrue);
+      expect(audio.stoppedSounds.last, 'home_slide');
+      final count = audio.played.length;
+      await cards.play();
+      expect(audio.played.length, count);
+      final restored = ProviderContainer();
+      try {
+        expect(restored.read(homeCardSoundsProvider).enabled, isFalse);
+        expect(restored.read(homeCardSoundsProvider).volume, 0.25);
+      } finally { restored.dispose(); }
+      expect(await cards.reset(), isTrue);
+      expect(container.read(homeCardSoundsProvider).enabled, isTrue);
+      expect(container.read(homeCardSoundsProvider).volume, 0.45);
+      expect(container.read(appAudioSettingsProvider).effectsVolume, 0);
+      expect(container.read(appAudioSettingsProvider).musicVolume, 0.12);
+      for (final theme in [AppThemeId.minimal, AppThemeId.marioKart64]) {
+        await container.read(appearanceProvider.notifier).setTheme(theme);
+        await cards.play();
+      }
+      expect(audio.played.length, count);
+      await container.read(appearanceProvider.notifier).setTheme(AppThemeId.mangaDeluxe);
+      await cards.play();
+      expect(audio.played.length, count + 1);
+      await cards.setVolume(0);
+      await cards.play();
+      expect(audio.played.length, count + 1);
+      expect(await cards.setVolume(double.nan), isFalse);
+      expect(await cards.setVolume(2), isTrue);
+      expect(container.read(homeCardSoundsProvider).volume, 1);
+      await box.close();
+      expect(await cards.setEnabled(false), isFalse);
+      expect(container.read(homeCardSoundsProvider).enabled, isTrue);
+    } finally {
+      container.dispose();
+      await Hive.close();
+      await directory.delete(recursive: true);
+    }
+  });
+
   test('effects are bundled and requests reach the native channel', () async {
-    for (final file in ['menu-button-press.wav', 'slide.mp3']) {
+    for (final file in ['menu-button-press.wav', 'slide.mp3', 'home-cards-slide.mp3']) {
       final data = await rootBundle.load('assets/audio/manga/$file');
       expect(data.lengthInBytes, greaterThan(0));
     }
@@ -158,10 +224,14 @@ void main() {
     await audio.play('slide');
     await audio.play('press', volume: 0.2);
     await audio.stop();
-    expect(calls.map((call) => call.method), ['prepare', 'play', 'play', 'play', 'stop']);
+    await audio.play('home_slide', volume: 0.45);
+    await audio.stopSound('home_slide');
+    expect(calls.map((call) => call.method), ['prepare', 'play', 'play', 'play', 'stop', 'play', 'stopSound']);
     expect(calls[1].arguments, {'sound': 'press', 'volume': 0.65});
     expect(calls[2].arguments, {'sound': 'slide', 'volume': 0.65});
     expect(calls[3].arguments, {'sound': 'press', 'volume': 0.2});
+    expect(calls[5].arguments, {'sound': 'home_slide', 'volume': 0.45});
+    expect(calls[6].arguments, {'sound': 'home_slide'});
   });
 
   test('optional native audio failures do not escape to navigation', () async {
@@ -175,5 +245,6 @@ void main() {
     await expectLater(audio.prepare(), completes);
     await expectLater(audio.play('press'), completes);
     await expectLater(audio.stop(), completes);
+    await expectLater(audio.stopSound('home_slide'), completes);
   });
 }

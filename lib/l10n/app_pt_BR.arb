@@ -875,5 +875,8 @@
   "coopDiagnosticsTitle": "Diagnóstico da conexão",
   "coopDiagnosticsSignal": "Conexões de sinalização: {count}",
   "coopDiagnosticsPackets": "Pacotes do jogo: {toGame} recebidos · {toPage} enviados",
-  "coopDiagnosticsDelay": "Atraso da ponte: média de {average} ms · máximo de {max} ms"
+  "coopDiagnosticsDelay": "Atraso da ponte: média de {average} ms · máximo de {max} ms",
+  "homeCardSoundsTitle": "Sons dos cartões do Início",
+  "homeCardSoundsDescription": "Som ao trocar cartões de Destaques ou Explorar. Independente do menu e da música.",
+  "homeCardSoundsVolume": "Volume dos cartões"
 }

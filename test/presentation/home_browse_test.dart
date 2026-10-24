@@ -6,6 +6,9 @@ import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
 import 'package:sm64cdpy/core/theme/app_theme_design.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import 'package:sm64cdpy/domain/entities/installation_library.dart';
+import 'package:sm64cdpy/domain/entities/mod_entity.dart';
+import 'package:sm64cdpy/services/manga_menu_audio.dart';
+import 'package:sm64cdpy/presentation/providers/manga_menu_audio_provider.dart';
 import 'package:sm64cdpy/l10n/app_localizations.dart';
 import 'package:sm64cdpy/presentation/providers/deluxe_visual_provider.dart';
 import 'package:sm64cdpy/presentation/providers/game_folder_provider.dart';
@@ -13,6 +16,22 @@ import 'package:sm64cdpy/presentation/providers/installation_library_provider.da
 import 'package:sm64cdpy/presentation/providers/mod_providers.dart';
 import 'package:sm64cdpy/presentation/screens/home_screen.dart';
 import 'package:sm64cdpy/presentation/widgets/home_typography.dart';
+
+class _Audio extends MangaMenuAudio {
+  final played = <String>[];
+  @override
+  Future<void> play(String sound, {double volume = 0.65}) async { played.add(sound); }
+}
+class _Favourites extends FavouritesNotifier {
+  @override
+  Set<String> build() => {};
+}
+ModEntity _featured(String id) => ModEntity(
+  id: id, url: 'https://example.com/$id', title: id, version: '1', author: 'Author',
+  description: '', tags: const [], isFeatured: true, descriptionImages: const [],
+  downloads: 0, views: 0, ratingCount: 0, reviewCount: 0, updateCount: 0,
+  downloadUrls: const [], updates: const [], extractedAt: '',
+);
 
 class _Folder extends GameFolderNotifier {
   @override
@@ -45,7 +64,11 @@ void main() {
           throw PlatformException(code: 'unexpected-method', message: call.method);
         });
         addTearDown(() => messenger.setMockMethodCallHandler(launcher, null));
+        final audio = _Audio();
         final container = ProviderContainer(overrides: [
+            mangaMenuAudioProvider.overrideWithValue(audio),
+            favouritesProvider.overrideWith(_Favourites.new),
+            featuredModsProvider.overrideWith((ref) => AsyncData([_featured('First'), _featured('Second')])),
             allModsProvider.overrideWith((ref) async => []),
             gameFolderProvider.overrideWith(_Folder.new),
             deluxeWelcomeHiddenProvider.overrideWith(_Welcome.new),
@@ -78,6 +101,13 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 300));
         expect(tester.takeException(), isNull);
+        expect(audio.played, isEmpty);
+        final featured = find.byKey(const ValueKey('home-featured-pages'));
+        await tester.scrollUntilVisible(featured, 140,
+          scrollable: find.byType(Scrollable).first);
+        await tester.drag(featured, const Offset(-190, 0));
+        await tester.pumpAndSettle();
+        expect(audio.played, ['home_slide']);
         final pages = find.byKey(const ValueKey('home-browse-pages'));
         await tester.scrollUntilVisible(pages, 140,
           scrollable: find.byType(Scrollable).first);
@@ -93,6 +123,7 @@ void main() {
         expect(card('/catalogue').margin,
           const EdgeInsets.symmetric(horizontal: 6, vertical: 8));
         expect(find.byType(HomeBrowseIcon), findsWidgets);
+        expect(audio.played, ['home_slide', 'home_slide']);
         final launch = find.byType(HomeLaunchIcon);
         await tester.scrollUntilVisible(launch, 140,
           scrollable: find.byType(Scrollable).first);

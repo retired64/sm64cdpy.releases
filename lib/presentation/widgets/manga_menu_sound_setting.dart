@@ -1,3 +1,4 @@
+import 'home_card_sound_setting.dart';
 import 'manga_submenu_header.dart';
 import 'deluxe_preferences.dart';
 import 'manga_switch.dart';
@@ -182,6 +183,7 @@ class _MangaMenuSoundSettingState extends ConsumerState<MangaMenuSoundSetting> {
                 ],
               ),
             ),
+            const HomeCardSoundSetting(),
           ],
         ),
       ),

@@ -353,6 +353,11 @@ void main() {
         await tester.ensureVisible(effects);
         await tester.pumpAndSettle();
         expect(effects.hitTestable(), findsOneWidget);
+        final cardVolume = find.byKey(const ValueKey('home-card-sounds-volume'));
+        await tester.ensureVisible(cardVolume);
+        await tester.pumpAndSettle();
+        expect(cardVolume.hitTestable(), findsOneWidget);
+        expect(find.byKey(const ValueKey('home-card-sounds-enabled')), findsOneWidget);
         expect(find.byType(AlertDialog), findsNothing);
         expect(router.routeInformationProvider.value.uri.path, '/player');
         await tester.binding.handlePopRoute();

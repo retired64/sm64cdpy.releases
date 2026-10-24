@@ -5,6 +5,7 @@ import '../../core/theme/retro_accent.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/app_audio_settings_provider.dart';
+import '../providers/home_card_audio_provider.dart';
 import '../providers/deluxe_visual_provider.dart';
 import '../providers/manga_menu_audio_provider.dart';
 import '../providers/retro_accent_provider.dart';
@@ -71,6 +72,8 @@ class _DeluxeResetButtonState extends ConsumerState<DeluxeResetButton> {
       saved = await mix.setMusicVolume(0.18) && saved;
       if (!mounted) return;
       saved = await mix.setMusicEnabled(true) && saved;
+      if (!mounted) return;
+      saved = await ref.read(homeCardSoundsProvider.notifier).reset() && saved;
       if (!mounted) return;
       saved = await ref.read(mangaMenuSoundsProvider.notifier).setEnabled(true) && saved;
       if (!mounted) return;

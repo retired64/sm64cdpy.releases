@@ -1,3 +1,5 @@
+import 'dart:async';
+import '../providers/home_card_audio_provider.dart';
 import '../widgets/home_typography.dart';
 import '../widgets/deluxe_content.dart';
 import '../widgets/mario_multicolor_label.dart';
@@ -188,16 +190,16 @@ class _HomeAppBar extends StatelessWidget {
 
 // ── Featured carousel ─────────────────────────────────────────────────────────
 
-class _FeaturedCarousel extends StatefulWidget {
+class _FeaturedCarousel extends ConsumerStatefulWidget {
   const _FeaturedCarousel({required this.mods});
 
   final List<ModEntity> mods;
 
   @override
-  State<_FeaturedCarousel> createState() => _FeaturedCarouselState();
+  ConsumerState<_FeaturedCarousel> createState() => _FeaturedCarouselState();
 }
 
-class _FeaturedCarouselState extends State<_FeaturedCarousel> {
+class _FeaturedCarouselState extends ConsumerState<_FeaturedCarousel> {
   late final PageController _ctrl;
   int _current = 0;
 
@@ -234,9 +236,17 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
         SizedBox(
           height: carouselHeight,
           child: PageView.builder(
+            key: const ValueKey('home-featured-pages'),
             controller: _ctrl,
             itemCount: widget.mods.length,
-            onPageChanged: (i) => setState(() => _current = i),
+            onPageChanged: (i) {
+              if (_current == i) return;
+              setState(() => _current = i);
+              // Una emisión por cambio de página, nunca por fotograma o montaje.
+              if (_ctrl.hasClients && _ctrl.position.isScrollingNotifier.value) {
+                unawaited(ref.read(homeCardSoundsProvider.notifier).play());
+              }
+            },
             itemBuilder: (context, i) =>
                 _FeaturedCard(mod: widget.mods[i], isActive: _current == i),
           ),
@@ -515,14 +525,14 @@ class _FeaturedPlaceholder extends StatelessWidget {
 // y botón inclinado "GO TO" en la esquina inferior derecha. Misma mecánica
 // de swipe + dots que el carrusel de Featured. ─────────────────────────────
 
-class _BrowseCarousel extends StatefulWidget {
+class _BrowseCarousel extends ConsumerStatefulWidget {
   const _BrowseCarousel();
 
   @override
-  State<_BrowseCarousel> createState() => _BrowseCarouselState();
+  ConsumerState<_BrowseCarousel> createState() => _BrowseCarouselState();
 }
 
-class _BrowseCarouselState extends State<_BrowseCarousel> {
+class _BrowseCarouselState extends ConsumerState<_BrowseCarousel> {
   late final PageController _ctrl;
   int _current = 0;
 
@@ -599,7 +609,14 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
             key: const ValueKey('home-browse-pages'),
             controller: _ctrl,
             itemCount: items.length,
-            onPageChanged: (i) => setState(() => _current = i),
+            onPageChanged: (i) {
+              if (_current == i) return;
+              setState(() => _current = i);
+              // Una emisión por cambio de página, nunca por fotograma o montaje.
+              if (_ctrl.hasClients && _ctrl.position.isScrollingNotifier.value) {
+                unawaited(ref.read(homeCardSoundsProvider.notifier).play());
+              }
+            },
             itemBuilder: (context, i) {
               final item = items[i];
               return _BrowseCard(

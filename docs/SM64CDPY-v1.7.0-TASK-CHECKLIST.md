@@ -1110,3 +1110,38 @@ libera. El primer render usa pumps acotados, sin aumentar timeouts. Las pruebas
 de scroll/foco/tamaño se mantienen; la prueba separada de carga/error de Home
 sigue intacta. No cambia código del producto, estado compartido ni motor Play.
 Pendiente repetir Flutter en CI; no hay SDK local. git diff --check validado.
+
+## Audio de tarjetas Home — 2026-10-23
+
+Featured y Browse emiten home_slide al cambiar realmente de página durante un
+scroll activo. No se reproduce por frame, al montar/restaurar Home ni por scroll
+vertical. Ambos carruseles pasan a ConsumerStatefulWidget conservando sus
+PageController y animaciones. Sonido proporcionado: home-cards-slide.mp3,
+19.968 bytes, aproximadamente 0,62 s; ya cubierto por assets/audio/manga/.
+
+HomeCardSoundsNotifier es el único escritor de audio_home_cards_enabled y
+audio_home_cards_volume en Hive settings (true/0,45 por defecto). Audio y ambos
+carruseles leen la misma proyección; cada cambio espera persistencia y conserva
+estado anterior ante fallo. Volumen acotado 0–1, valores corruptos/NaN seguros.
+Sonido exclusivo de Retro Manga/Manga Deluxe, independiente de efectos del menú
+y música. El submenú Audio permite apagar, ajustar y oír una muestra al soltar;
+Restablecer Deluxe incluye esta preferencia. Sin IO/preview por fotograma.
+
+El canal existente sm64cdpy/manga_menu_audio agrega stopSound(sound). Kotlin
+precarga el sample con SoundPool, sin colas ni reproducción diferida, manteniendo
+un solo stream y límite de 75 ms. Mutear tarjetas o llevar su volumen a cero
+detiene solo home_slide; stop global del dock al salir/background sigue vigente.
+La tabla de streams está acotada a uno; samples/ready/streams se liberan al
+desconectar el plugin. No modifica AudioManager, volumen del dispositivo ni
+focus/música. No se replica esta preferencia al engine overlay, que no presenta
+Home ni usa estos sonidos. Sin nuevos timers/subscriptions ni caches de archivos.
+Los dos unawaited son intencionales: navegación no espera audio y el adaptador
+captura PlatformException/MissingPluginException.
+
+Pruebas: persistencia/recreación, reset, mute/volumen cero, independencia de
+menú/música, temas permitidos, errores de Hive/Android, asset/canal, gesto real
+en Featured/Browse y controles accesibles en Audio. JSON y MP3 verificados,
+git diff --check pasa. Pendiente gen-l10n, format/analyze/tests y compilación
+Kotlin en CI: no hay SDK Flutter/Dart/Kotlin ni gradlew local. Prueba física:
+primer swipe, swipes rápidos, volumen 0/100, desactivar/reabrir, background,
+cambio de tema y coexistencia de música/menu. Motor Play/Workers intactos.

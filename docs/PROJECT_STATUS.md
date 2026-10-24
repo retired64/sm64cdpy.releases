@@ -394,3 +394,10 @@ Pantalla gris de conversión reproducida: colisión PageStorage entre booleano
 de ExpansionTile y offset de SelectableText. Claves separadas para conversión,
 rutas y cada texto. Testing 39344333533 aprobó ocho pruebas Python, 253 Flutter,
 APK arm64 y pruebas nativas. Revisión física pendiente.
+
+## Sonido de tarjetas Home — 2026-10-23
+
+MP3 breve conectado a Featured/Browse en los dos temas Manga. Audio incluye
+interruptor y volumen propios guardados en Hive, preview al soltar y reset
+Deluxe. Reutiliza SoundPool; no altera el volumen Android ni el motor Play.
+Pruebas preparadas, ejecución de Flutter/Kotlin y validación física pendientes.

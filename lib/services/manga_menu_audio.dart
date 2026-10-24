@@ -7,6 +7,7 @@ class MangaMenuAudio {
 
   Future<void> prepare() => _invoke('prepare');
   Future<void> stop() => _invoke('stop');
+  Future<void> stopSound(String sound) => _invoke('stopSound', {'sound': sound});
   Future<void> play(String sound, {double volume = 0.65}) =>
       _invoke('play', {
         'sound': sound,

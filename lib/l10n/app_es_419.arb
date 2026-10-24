@@ -891,5 +891,8 @@
   "coopDiagnosticsTitle": "Diagnóstico de conexión",
   "coopDiagnosticsSignal": "Conexiones de señalización: {count}",
   "coopDiagnosticsPackets": "Paquetes del juego: {toGame} recibidos · {toPage} enviados",
-  "coopDiagnosticsDelay": "Demora del puente: {average} ms promedio · {max} ms máxima"
+  "coopDiagnosticsDelay": "Demora del puente: {average} ms promedio · {max} ms máxima",
+  "homeCardSoundsTitle": "Sonidos de tarjetas de Inicio",
+  "homeCardSoundsDescription": "Sonido al cambiar tarjetas de Destacados o Explorar. Independiente del menú y la música.",
+  "homeCardSoundsVolume": "Volumen de tarjetas"
 }

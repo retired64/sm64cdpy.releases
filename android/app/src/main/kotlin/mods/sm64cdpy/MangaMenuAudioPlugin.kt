@@ -14,6 +14,7 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
     private var pool: SoundPool? = null
     private val samples = mutableMapOf<String, Int>()
     private val ready = java.util.concurrent.ConcurrentHashMap.newKeySet<Int>()
+    private val streams = mutableMapOf<String, Int>()
     private var lastPlay = 0L
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -33,7 +34,11 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 Log.w("MangaMenuAudio", "No se pudo decodificar sample $id: $status")
             }
         }
-        for ((name, file) in mapOf("press" to "menu-button-press.wav", "slide" to "slide.mp3")) {
+        for ((name, file) in mapOf(
+            "press" to "menu-button-press.wav",
+            "slide" to "slide.mp3",
+            "home_slide" to "home-cards-slide.mp3",
+        )) {
             try {
                 val key = binding.flutterAssets.getAssetFilePathByName("assets/audio/manga/$file")
                 binding.applicationContext.assets.openFd(key).use { descriptor ->
@@ -56,6 +61,12 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             "prepare" -> result.success(null)
             "stop" -> {
                 pool?.autoPause()
+                streams.clear()
+                result.success(null)
+            }
+            "stopSound" -> {
+                val name = call.argument<String>("sound")
+                if (name != null) streams.remove(name)?.let { pool?.stop(it) }
                 result.success(null)
             }
             "play" -> {
@@ -69,6 +80,11 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                     lastPlay = now
                     try {
                         val stream = pool?.play(id, volume, volume, 1, 0, 1f) ?: 0
+                        if (stream != 0 && name != null) {
+                            // Solo un stream: no se acumulan efectos al deslizar rápido.
+                            streams.clear()
+                            streams[name] = stream
+                        }
                         if (stream == 0) Log.w("MangaMenuAudio", "Reproducción rechazada: $name")
                     } catch (error: RuntimeException) {
                         Log.w("MangaMenuAudio", "No se pudo reproducir $name", error)
@@ -88,5 +104,6 @@ class MangaMenuAudioPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         pool = null
         samples.clear()
         ready.clear()
+        streams.clear()
     }
 }
