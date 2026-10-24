@@ -13,6 +13,7 @@ import '../../services/game_mod_activation.dart';
 import '../../services/mod_installer.dart';
 import '../providers/game_mod_activation_provider.dart';
 import 'app_snackbar.dart';
+import 'manga_deluxe_screen_visuals.dart';
 
 enum _ModFilter { all, enabled, disabled }
 
@@ -65,18 +66,16 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _folderSubscription = ModInstaller.libraryInvalidations.listen(
-      (reason) {
-        if (const {
-          'modsFolderChanged',
-          'dynosFolderChanged',
-          'modsFolderCleared',
-          'dynosFolderCleared',
-        }.contains(reason)) {
-          unawaited(_refreshInBackground());
-        }
-      },
-    );
+    _folderSubscription = ModInstaller.libraryInvalidations.listen((reason) {
+      if (const {
+        'modsFolderChanged',
+        'dynosFolderChanged',
+        'modsFolderCleared',
+        'dynosFolderCleared',
+      }.contains(reason)) {
+        unawaited(_refreshInBackground());
+      }
+    });
     _subscription = BackgroundInstallService.instance.events.listen((event) {
       if (mounted) setState(() {});
       if (event is BgInstallCompleted) unawaited(_refreshInBackground());
@@ -138,10 +137,11 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     } catch (_) {
       if (mounted) setState(() => _error = 'access');
     } finally {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _busy = false;
         });
+      }
     }
   }
 
@@ -238,11 +238,12 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
         },
       );
     } finally {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _busy = false;
           _confirming = false;
         });
+      }
     }
     return mounted && confirmed == true;
   }
@@ -252,8 +253,9 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
     FocusScope.of(context).unfocus();
     if (!_closedGameConfirmed) {
       if (!await _confirm(restore: false, mod: mod, enabled: enabled) ||
-          !mounted)
+          !mounted) {
         return;
+      }
       _closedGameConfirmed = true;
     }
     final key = mod.keyName;
@@ -266,10 +268,11 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
       _queuedWrites++;
     });
     final operation = _changeQueue.then(
-      (_) => notifier.perform(
-        'setGameModActivation',
-        {'name': mod.name, 'enabled': enabled, 'kind': mod.kind},
-      ),
+      (_) => notifier.perform('setGameModActivation', {
+        'name': mod.name,
+        'enabled': enabled,
+        'kind': mod.kind,
+      }),
     );
     _changeQueue = operation.catchError((Object _) {});
     unawaited(_finishChange(operation, key: key, version: version));
@@ -324,8 +327,9 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
   Future<void> _access(_AccessAction action) async {
     if (_busy || _queuedWrites > 0) return;
     if (action == _AccessAction.restore &&
-        (!await _confirm(restore: true) || !mounted))
+        (!await _confirm(restore: true) || !mounted)) {
       return;
+    }
     _closedGameConfirmed = false;
     if (action == _AccessAction.select) {
       await _run(() async {
@@ -446,137 +450,118 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
               ),
             ),
           ),
-        Container(
+        Padding(
           key: const ValueKey('game-mods-header'),
-          decoration: retro.surfaceDecoration(shadowDx: 3, shadowDy: 3),
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          padding: const EdgeInsets.fromLTRB(2, 0, 2, 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: retro.surfaceDecoration(
-                      color: retro.accent,
-                      shadowDx: 2,
-                      shadowDy: 2,
-                    ),
-                    child: MarioGameIcon(
-                      retro.design.playfulSelection
-                          ? Icons.star_rounded
-                          : Icons.sports_esports_rounded,
-                      color: retro.inkOnAccent,
-                      size: 26,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          retro.displayLabel(
-                            widget.dynosOnly
-                                ? l10n.gameModsDynosType
-                                : l10n.gameModsTitle,
-                          ),
-                          style: retro.heading(size: 18),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          ready
-                              ? l10n.gameModsCount(active, mods.length)
-                              : l10n.gameModsSubtitle,
-                          style: retro.body(size: 12, color: retro.inkDim),
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuButton<_AccessAction>(
-                    tooltip: l10n.gameModsManage,
-                    enabled: !_busy && _queuedWrites == 0,
-                    icon: MarioGameIcon(
-                      Icons.more_horiz_rounded,
-                      color: retro.ink,
-                    ),
-                    onSelected: _access,
-                    itemBuilder: (_) => [
-                      PopupMenuItem(
-                        value: _AccessAction.select,
-                        child: Text(l10n.gameModsSelect),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MangaDeluxeScreenTitle(
+                      label: retro.displayLabel(
+                        widget.dynosOnly
+                            ? l10n.gameModsDynosType
+                            : l10n.gameModsTitle,
                       ),
-                      if (snapshot != null && snapshot.status != 'unselected')
-                        PopupMenuItem(
-                          value: _AccessAction.disconnect,
-                          child: Text(l10n.gameModsDisconnect),
-                        ),
-                      if (restoreAvailable)
-                        PopupMenuItem(
-                          value: _AccessAction.restore,
-                          child: Text(l10n.gameModsRestore),
-                        ),
-                    ],
+                      size: 18,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      ready
+                          ? l10n.gameModsCount(active, mods.length)
+                          : l10n.gameModsSubtitle,
+                      style: retro.body(size: 12, color: retro.inkDim),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuButton<_AccessAction>(
+                tooltip: l10n.gameModsManage,
+                enabled: !_busy && _queuedWrites == 0,
+                icon: MarioGameIcon(Icons.more_horiz_rounded, color: retro.ink),
+                onSelected: _access,
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: _AccessAction.select,
+                    child: Text(l10n.gameModsSelect),
                   ),
+                  if (snapshot != null && snapshot.status != 'unselected')
+                    PopupMenuItem(
+                      value: _AccessAction.disconnect,
+                      child: Text(l10n.gameModsDisconnect),
+                    ),
+                  if (restoreAvailable)
+                    PopupMenuItem(
+                      value: _AccessAction.restore,
+                      child: Text(l10n.gameModsRestore),
+                    ),
                 ],
               ),
-              const SizedBox(height: 16),
-              _LibraryNotice(
-                message: value.isLoading ? l10n.gameModsSubtitle : message,
-                icon: hasError
-                    ? Icons.error_outline_rounded
-                    : ready
-                    ? Icons.info_outline_rounded
-                    : Icons.folder_open_rounded,
-                warning: hasError,
-              ),
-              if (installing) ...[
-                const SizedBox(height: 10),
-                _LibraryNotice(
-                  message: l10n.gameModsInstalling,
-                  icon: Icons.downloading_rounded,
-                  warning: true,
-                ),
-              ],
-              if ((_busy && !_confirming) || value.isLoading) ...[
-                const SizedBox(height: 12),
-                LinearProgressIndicator(
-                  color: retro.accent,
-                  backgroundColor: retro.surfaceAlt,
-                  minHeight: 3,
-                ),
-              ],
-              if (!ready && !value.isLoading) ...[
-                const SizedBox(height: 14),
-                _LibraryAction(
-                  label: l10n.gameModsSelect,
-                  icon: Icons.folder_open_rounded,
-                  primary: true,
-                  onPressed: _busy ? null : () => _access(_AccessAction.select),
-                ),
-              ],
-              if (hasError) ...[
-                const SizedBox(height: 10),
-                _LibraryAction(
-                  label: l10n.generalRetry,
-                  icon: Icons.refresh_rounded,
-                  onPressed: _busy ? null : _refresh,
-                ),
-              ],
-              if (_error == 'write' || _error == 'verify') ...[
-                const SizedBox(height: 10),
-                _LibraryAction(
-                  label: l10n.gameModsRestore,
-                  icon: Icons.restore_rounded,
-                  onPressed: _busy
-                      ? null
-                      : () => _access(_AccessAction.restore),
-                ),
-              ],
             ],
           ),
         ),
+        if (!ready || hasError || installing || value.isLoading) ...[
+          if (!ready || hasError || value.isLoading)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _LibraryNotice(
+                message: value.isLoading ? l10n.gameModsSubtitle : message,
+                icon: hasError
+                    ? Icons.error_outline_rounded
+                    : Icons.folder_open_rounded,
+                warning: hasError,
+              ),
+            ),
+          if (installing)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _LibraryNotice(
+                message: l10n.gameModsInstalling,
+                icon: Icons.downloading_rounded,
+                warning: true,
+              ),
+            ),
+          if ((_busy && !_confirming) || value.isLoading)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: LinearProgressIndicator(
+                color: retro.accent,
+                backgroundColor: retro.surfaceAlt,
+                minHeight: 3,
+              ),
+            ),
+          if (!ready && !value.isLoading)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _LibraryAction(
+                label: l10n.gameModsSelect,
+                icon: Icons.folder_open_rounded,
+                primary: true,
+                onPressed: _busy ? null : () => _access(_AccessAction.select),
+              ),
+            ),
+          if (hasError)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _LibraryAction(
+                label: l10n.generalRetry,
+                icon: Icons.refresh_rounded,
+                onPressed: _busy ? null : _refresh,
+              ),
+            ),
+          if (_error == 'write' || _error == 'verify')
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _LibraryAction(
+                label: l10n.gameModsRestore,
+                icon: Icons.restore_rounded,
+                onPressed: _busy ? null : () => _access(_AccessAction.restore),
+              ),
+            ),
+        ],
         if (ready) ...[
           TextField(
             key: const ValueKey('game-mods-search'),
@@ -972,9 +957,7 @@ class _GameModCard extends StatelessWidget {
                         activeThumbColor: retro.inkOnAccent,
                         inactiveTrackColor: retro.surfaceAlt,
                         inactiveThumbColor: retro.inkDim,
-                        trackOutlineColor: WidgetStatePropertyAll(
-                          retro.border,
-                        ),
+                        trackOutlineColor: WidgetStatePropertyAll(retro.border),
                         thumbIcon: WidgetStateProperty.resolveWith(
                           (states) => states.contains(WidgetState.selected)
                               ? Icon(

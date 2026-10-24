@@ -58,6 +58,9 @@ void main() {
       'category': 'Gameplay',
       'thread_url': 'https://example.test/thread',
       'download_domain_hint': 'MediaFire',
+      'description_images': <String>[
+        'https://mods.sm64coopdx.com/attachments/preview-png.1/',
+      ],
       'versions': <Map<String, dynamic>>[
         version(id: '100', label: 'v2', fileId: '900'),
       ],
@@ -69,6 +72,9 @@ void main() {
     expect(entity.category, 'Gameplay');
     expect(entity.threadUrl, 'https://example.test/thread');
     expect(entity.downloadDomainHint, 'MediaFire');
+    expect(entity.descriptionImages, <String>[
+      'https://mods.sm64coopdx.com/attachments/preview-png.1/',
+    ]);
     expect(entity.versions.single.id, '100');
     expect(entity.versions.single.files.single.id, '900');
     expect(entity.versions.single.isResolved, isTrue);

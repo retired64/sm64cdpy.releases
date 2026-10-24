@@ -14,6 +14,7 @@ import '../widgets/app_shell.dart';
 import '../widgets/game_mod_activation_panel.dart';
 import '../providers/game_mod_activation_provider.dart';
 import '../widgets/installation_library_card.dart';
+import '../widgets/manga_deluxe_screen_visuals.dart';
 
 enum _LibraryView { gameMods, dynos, installed, updates, recent }
 
@@ -110,107 +111,100 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         : null;
     if (gameActivation != null) _gameModsLoaded = true;
     final gameEntries = gameActivation?.asData?.value.mods;
-    return RefreshIndicator(
-      onRefresh: _refresh,
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
-        ),
-        slivers: [
-          RetroPinnedAppBar(
-            title: Text(
-              l10n.libraryTitle,
-              style: retro.heading(size: 18, color: retro.accentText),
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsetsDirectional.only(end: 14),
-                child: _RetroIconButton(
-                  tooltip: l10n.libraryRefresh,
-                  onPressed: value.isLoading && !_isGameView ? null : _refresh,
-                  icon: Icons.refresh_rounded,
-                  busy: value.isLoading && !_isGameView,
+    return MangaDeluxeTypography(
+      child: RefreshIndicator(
+        onRefresh: _refresh,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          slivers: [
+            RetroPinnedAppBar(
+              title: MangaDeluxeScreenTitle(label: l10n.libraryTitle, size: 20),
+              actions: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 14),
+                  child: _RetroIconButton(
+                    tooltip: l10n.libraryRefresh,
+                    onPressed: value.isLoading && !_isGameView
+                        ? null
+                        : _refresh,
+                    icon: Icons.refresh_rounded,
+                    busy: value.isLoading && !_isGameView,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: SectionKicker(
-                      retro: retro,
-                      label: l10n.libraryTitle,
-                      japanese: 'ライブラリ',
-                    ),
-                  ),
-                  _viewSelector(
-                    l10n,
-                    retro,
-                    value.isLoading ? null : value.asData?.value.snapshot,
-                    updates,
-                    luaCount: gameEntries
-                        ?.where((mod) => !mod.isDynos)
-                        .length,
-                    dynosCount: gameEntries
-                        ?.where((mod) => mod.isDynos)
-                        .length,
-                  ),
-                  const SizedBox(height: 18),
-                ],
-              ),
+              ],
             ),
-          ),
-          if (_isGameView)
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               sliver: SliverToBoxAdapter(
-                child: GameModActivationPanel(
-                  dynosOnly: _view == _LibraryView.dynos,
-                ),
-              ),
-            )
-          else
-            value.when(
-              skipLoadingOnRefresh: false,
-              skipLoadingOnReload: false,
-              loading: () => SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(
-                  child: CircularProgressIndicator(color: retro.accent),
-                ),
-              ),
-              error: (error, _) => SliverFillRemaining(
-                hasScrollBody: false,
-                child: _MessageState(
-                  icon: Icons.error_outline_rounded,
-                  title: l10n.libraryErrorTitle,
-                  body: l10n.libraryErrorBody,
-                  action: l10n.generalRetry,
-                  onAction: () => ref.invalidate(installationLibraryProvider),
-                ),
-              ),
-              data: (state) => SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
-                sliver: SliverList.list(
+                child: Column(
                   children: [
-                    if (state.status == InstallationLibraryLoadStatus.partial)
-                      _Notice(
-                        text: l10n.libraryPartialWarning,
-                        color: retro.amber,
-                      ),
-                    _filters(l10n, retro, state.snapshot, updates),
+                    _viewSelector(
+                      l10n,
+                      retro,
+                      value.isLoading ? null : value.asData?.value.snapshot,
+                      updates,
+                      luaCount: gameEntries
+                          ?.where((mod) => !mod.isDynos)
+                          .length,
+                      dynosCount: gameEntries
+                          ?.where((mod) => mod.isDynos)
+                          .length,
+                    ),
                     const SizedBox(height: 18),
-                    ..._content(l10n, state.snapshot, updates),
                   ],
                 ),
               ),
             ),
-          const MangaNavigationSliverInset(),
-        ],
+            if (_isGameView)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+                sliver: SliverToBoxAdapter(
+                  child: GameModActivationPanel(
+                    dynosOnly: _view == _LibraryView.dynos,
+                  ),
+                ),
+              )
+            else
+              value.when(
+                skipLoadingOnRefresh: false,
+                skipLoadingOnReload: false,
+                loading: () => SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: CircularProgressIndicator(color: retro.accent),
+                  ),
+                ),
+                error: (error, _) => SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _MessageState(
+                    icon: Icons.error_outline_rounded,
+                    title: l10n.libraryErrorTitle,
+                    body: l10n.libraryErrorBody,
+                    action: l10n.generalRetry,
+                    onAction: () => ref.invalidate(installationLibraryProvider),
+                  ),
+                ),
+                data: (state) => SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+                  sliver: SliverList.list(
+                    children: [
+                      if (state.status == InstallationLibraryLoadStatus.partial)
+                        _Notice(
+                          text: l10n.libraryPartialWarning,
+                          color: retro.amber,
+                        ),
+                      _filters(l10n, retro, state.snapshot, updates),
+                      const SizedBox(height: 18),
+                      ..._content(l10n, state.snapshot, updates),
+                    ],
+                  ),
+                ),
+              ),
+            const MangaNavigationSliverInset(),
+          ],
+        ),
       ),
     );
   }

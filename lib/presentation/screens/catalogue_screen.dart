@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../providers/mod_providers.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/manga_deluxe_screen_visuals.dart';
 import '../widgets/mod_card.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -83,91 +84,97 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
     ref.listen(selectedCategoryProvider, (_, _) => _resetPage());
     ref.listen(sortOrderProvider, (_, _) => _resetPage());
 
-    return RefreshIndicator(
-      color: retro.inkOnAccent,
-      backgroundColor: retro.accent,
-      displacement: 80,
-      onRefresh: () async {
-        ref.read(localDatasourceProvider).invalidateCache();
-        ref.invalidate(allModsProvider);
-      },
-      child: CustomScrollView(
-        controller: _scrollCtrl,
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          // ── App bar ─────────────────────────────────────
-          _CatalogueAppBar(searchCtrl: _searchCtrl, onClear: _clearSearch),
-
-          // ── Section label ─────────────────────────────────
-          if (retro.showJapaneseDecorations)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
-              child: Text('検索・カタログ', style: retro.body(size: 12)),
-            ),
+    return MangaDeluxeTypography(
+      child: RefreshIndicator(
+        color: retro.inkOnAccent,
+        backgroundColor: retro.accent,
+        displacement: 80,
+        onRefresh: () async {
+          ref.read(localDatasourceProvider).invalidateCache();
+          ref.invalidate(allModsProvider);
+        },
+        child: CustomScrollView(
+          controller: _scrollCtrl,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
-              child: SectionKicker(retro: retro, label: l10n.catalogueTitle),
-            ),
-          ),
+          slivers: [
+            // ── App bar ─────────────────────────────────────
+            _CatalogueAppBar(searchCtrl: _searchCtrl, onClear: _clearSearch),
 
-          // ── Filter bar ────────────────────────────────────
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _FilterBarDelegate(
-              selectedCategory: selectedCategory,
-              currentSort: currentSort,
-            ),
-          ),
-
-          // ── Results header ────────────────────────────────
-          SliverToBoxAdapter(
-            child: _ResultsHeader(filteredAsync: filteredAsync),
-          ),
-
-          // ── List ──────────────────────────────────────────
-          filteredAsync.when(
-            loading: () => _SliverSkeletonList(),
-            error: (e, _) =>
-                SliverFillRemaining(child: _ErrorView(message: e.toString())),
-            data: (mods) => mods.isEmpty
-                ? const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: _EmptyView(),
-                  )
-                : _SliverModList(mods: mods, page: _page, pageSize: _pageSize),
-          ),
-
-          // ── Pagination bar ────────────────────────────────
-          filteredAsync.maybeWhen(
-            data: (mods) {
-              if (mods.isEmpty) {
-                return const SliverToBoxAdapter(child: SizedBox.shrink());
-              }
-              final totalPages = (mods.length / _pageSize).ceil();
-              if (totalPages <= 1) {
-                return const SliverToBoxAdapter(child: SizedBox.shrink());
-              }
-              return SliverToBoxAdapter(
-                child: _PaginationBar(
-                  currentPage: _page,
-                  totalPages: totalPages,
-                  totalItems: mods.length,
-                  pageSize: _pageSize,
-                  onPageChanged: _goToPage,
+            // ── Section label ─────────────────────────────────
+            if (retro.showJapaneseDecorations)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+                  child: Text('検索・カタログ', style: retro.body(size: 12)),
                 ),
-              );
-            },
-            orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-          ),
+              ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                child: SectionKicker(retro: retro, label: l10n.catalogueTitle),
+              ),
+            ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          const MangaNavigationSliverInset(),
-        ],
+            // ── Filter bar ────────────────────────────────────
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _FilterBarDelegate(
+                selectedCategory: selectedCategory,
+                currentSort: currentSort,
+              ),
+            ),
+
+            // ── Results header ────────────────────────────────
+            SliverToBoxAdapter(
+              child: _ResultsHeader(filteredAsync: filteredAsync),
+            ),
+
+            // ── List ──────────────────────────────────────────
+            filteredAsync.when(
+              loading: () => _SliverSkeletonList(),
+              error: (e, _) =>
+                  SliverFillRemaining(child: _ErrorView(message: e.toString())),
+              data: (mods) => mods.isEmpty
+                  ? const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _EmptyView(),
+                    )
+                  : _SliverModList(
+                      mods: mods,
+                      page: _page,
+                      pageSize: _pageSize,
+                    ),
+            ),
+
+            // ── Pagination bar ────────────────────────────────
+            filteredAsync.maybeWhen(
+              data: (mods) {
+                if (mods.isEmpty) {
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                }
+                final totalPages = (mods.length / _pageSize).ceil();
+                if (totalPages <= 1) {
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                }
+                return SliverToBoxAdapter(
+                  child: _PaginationBar(
+                    currentPage: _page,
+                    totalPages: totalPages,
+                    totalItems: mods.length,
+                    pageSize: _pageSize,
+                    onPageChanged: _goToPage,
+                  ),
+                );
+              },
+              orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            const MangaNavigationSliverInset(),
+          ],
+        ),
       ),
     );
   }
@@ -215,20 +222,7 @@ class _CatalogueAppBarState extends ConsumerState<_CatalogueAppBar> {
     );
 
     return RetroPinnedAppBar(
-      title: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: 'MOD ',
-              style: retro.heading(size: 18, color: retro.ink),
-            ),
-            TextSpan(
-              text: 'CATALOG',
-              style: retro.heading(size: 18, color: retro.accentText),
-            ),
-          ],
-        ),
-      ),
+      title: MangaDeluxeScreenTitle(label: l10n.catalogueTitle, size: 19),
       actions: [
         if (count != null)
           Padding(

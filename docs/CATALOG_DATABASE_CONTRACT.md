@@ -11,6 +11,14 @@ The root object contains `schema_version`, `catalog_id`, `catalog_status`,
 The application accepts legacy schema 1 and schema 2. It rejects unknown
 future schemas and every schema-2 catalog marked `partial`.
 
+Each mod may include `description_images`, an ordered list of unique HTTPS
+images embedded in the official XenForo description. The field is optional
+within schema 2 for backward compatibility; absent or invalid values project
+to an empty gallery. The scraper reads the lazy-load `data-src`/`data-url`
+before `src`, excludes placeholders, reactions, avatars and later discussion
+wrappers, and caps the list defensively. The app loads these URLs on demand
+and never treats them as downloadable mod artifacts.
+
 ## Durable identity
 
 Array position is presentation only and must never identify installed content.
