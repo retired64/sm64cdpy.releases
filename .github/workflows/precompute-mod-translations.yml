@@ -1,0 +1,147 @@
+name: Preview translated mod catalogue
+
+on:
+  workflow_dispatch:
+    inputs:
+      catalog_url:
+        description: "HTTPS del JSON generado; vacío usa el catálogo incluido en esta rama"
+        required: false
+        default: ""
+        type: string
+      locales:
+        description: "Locales separados por comas"
+        required: true
+        default: "es,pt_BR,fr,it"
+        type: string
+      upload_to_drive:
+        description: "Subir únicamente el JSON traducido a Google Drive"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: translated-catalog-preview-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    name: Traducir y validar catálogo
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scripts/catalog_translation_requirements.txt
+
+      - name: Instalar motor local
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/catalog_translation_requirements.txt
+
+      - name: Restaurar modelos y traducciones previas
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/share/argos-translate
+            ~/.cache/argos-translate
+            .cache/catalog-translations.sqlite3
+          key: catalog-translations-v1-${{ runner.os }}-${{ inputs.locales }}-${{ github.run_id }}
+          restore-keys: |
+            catalog-translations-v1-${{ runner.os }}-${{ inputs.locales }}-
+
+      - name: Preparar catálogo de entrada
+        env:
+          CATALOG_URL: ${{ inputs.catalog_url }}
+        run: |
+          mkdir -p translation-output
+          if [ -n "$CATALOG_URL" ]; then
+            case "$CATALOG_URL" in
+              https://*) curl --fail --location --retry 3 "$CATALOG_URL" -o translation-output/source.json ;;
+              *) echo "::error::catalog_url debe usar HTTPS"; exit 1 ;;
+            esac
+          else
+            cp assets/db/database_sm64coopdx.json translation-output/source.json
+          fi
+
+      - name: Probar scripts de traducción
+        run: python -m unittest test/scripts/catalog_translation_test.py -v
+
+      - name: Traducir descripciones
+        run: |
+          python scripts/precompute_catalog_translations.py \
+            translation-output/source.json \
+            translation-output/database_sm64coopdx.translated.json \
+            --locales "${{ inputs.locales }}" \
+            --cache .cache/catalog-translations.sqlite3 \
+            --download-models \
+            --compact
+
+      - name: Verificar compatibilidad del JSON
+        run: |
+          python scripts/validate_translated_catalog.py \
+            translation-output/database_sm64coopdx.translated.json \
+            --source translation-output/source.json \
+            --locales "${{ inputs.locales }}"
+
+      - name: Configurar Google Drive
+        if: inputs.upload_to_drive == true
+        env:
+          GDRIVE_OAUTH_TOKEN: ${{ secrets.GDRIVE_OAUTH_TOKEN }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: |
+          test -n "$GDRIVE_OAUTH_TOKEN"
+          test -n "$GDRIVE_FOLDER_ID"
+          curl https://rclone.org/install.sh | sudo bash
+          mkdir -p ~/.config/rclone
+          cat > ~/.config/rclone/rclone.conf << EOF
+          [gdrive]
+          type = drive
+          scope = drive
+          token = $GDRIVE_OAUTH_TOKEN
+          root_folder_id = $GDRIVE_FOLDER_ID
+          team_drive =
+          EOF
+
+      - name: Subir vista previa únicamente a Drive
+        if: inputs.upload_to_drive == true
+        run: |
+          REMOTE_DIR="translated-catalog-previews/run-${{ github.run_id }}"
+          rclone copyto \
+            translation-output/database_sm64coopdx.translated.json \
+            "gdrive:${REMOTE_DIR}/database_sm64coopdx.translated.json" \
+            --progress
+          rclone lsl "gdrive:${REMOTE_DIR}/database_sm64coopdx.translated.json"
+          echo "REMOTE_DIR=${REMOTE_DIR}" >> "$GITHUB_ENV"
+
+      - name: Resumen
+        if: always()
+        run: |
+          SOURCE_SIZE=$(du -h translation-output/source.json 2>/dev/null | cut -f1 || echo n/a)
+          OUTPUT_SIZE=$(du -h translation-output/database_sm64coopdx.translated.json 2>/dev/null | cut -f1 || echo n/a)
+          {
+            echo "## Catálogo traducido"
+            echo ""
+            echo "- Locales: \`${{ inputs.locales }}\`"
+            echo "- Entrada: \`${SOURCE_SIZE}\`"
+            echo "- Salida: \`${OUTPUT_SIZE}\`"
+            echo "- Subido a Drive: \`${{ inputs.upload_to_drive }}\`"
+            if [ -n "${REMOTE_DIR:-}" ]; then
+              echo "- Carpeta: \`${REMOTE_DIR}\`"
+            fi
+            echo ""
+            echo "El workflow no publica commits, releases ni artifacts de GitHub."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Limpiar credenciales
+        if: always() && inputs.upload_to_drive == true
+        run: rm -rf ~/.config/rclone
