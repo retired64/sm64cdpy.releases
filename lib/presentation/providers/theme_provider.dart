@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -172,7 +174,10 @@ class LocaleNotifier extends Notifier<String?> {
         rethrow;
       }
       if (ref.mounted) state = tag;
-      await _refreshNative();
+      // The durable preference and provider state are already committed. The
+      // Android notification-channel projection is best effort and handles
+      // its own platform failures, so it must not hold the selector open.
+      unawaited(_refreshNative());
     } finally {
       _saving = false;
     }

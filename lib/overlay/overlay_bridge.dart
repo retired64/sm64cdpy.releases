@@ -45,7 +45,7 @@ class OverlayBridge {
     });
     ModInstaller.libraryInvalidations.listen((reason) {
       final folderChanged = reason.contains('Folder');
-      if (_panelOpen || folderChanged)
+      if (_panelOpen || folderChanged) {
         unawaited(
           _refreshLibrary(
             verify: true,
@@ -54,6 +54,7 @@ class OverlayBridge {
             force: folderChanged,
           ),
         );
+      }
     });
     unawaited(refreshAutoInstall());
   }

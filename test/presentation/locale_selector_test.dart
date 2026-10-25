@@ -79,7 +79,8 @@ void main() {
         ]) {
           expect(
             find.byWidgetPredicate(
-              (widget) => widget is SettingsExpansionGroup &&
+              (widget) =>
+                  widget is SettingsExpansionGroup &&
                   widget.key == PageStorageKey<String>(key),
             ),
             findsOneWidget,

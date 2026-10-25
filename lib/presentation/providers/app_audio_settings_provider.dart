@@ -36,6 +36,7 @@ class AppAudioSettingsNotifier extends Notifier<AppAudioSettings> {
             ? value.clamp(0.0, 1.0).toDouble()
             : fallback;
       }
+
       return AppAudioSettings(
         effectsVolume: gain(effectsVolumeKey, 0.05),
         musicVolume: gain(musicVolumeKey, 0.05),
@@ -51,8 +52,11 @@ class AppAudioSettingsNotifier extends Notifier<AppAudioSettings> {
   Future<bool> setMusicEnabled(bool value) => _save(enabled: value);
 
   Future<bool> _save({double? effects, double? music, bool? enabled}) async {
-    if (_saving || (effects != null && !effects.isFinite) ||
-        (music != null && !music.isFinite)) return false;
+    if (_saving ||
+        (effects != null && !effects.isFinite) ||
+        (music != null && !music.isFinite)) {
+      return false;
+    }
     _saving = true;
     final next = AppAudioSettings(
       effectsVolume: effects?.clamp(0.0, 1.0).toDouble() ?? state.effectsVolume,

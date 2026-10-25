@@ -167,6 +167,7 @@ class CoopSessionService : Service() {
         return builder.build()
     }
 
+    @Suppress("DEPRECATION") // Required only on Android 7–9; low-latency starts at API 29.
     private fun holdLocks() {
         if (wakeLock == null) {
             wakeLock = (getSystemService(POWER_SERVICE) as PowerManager)

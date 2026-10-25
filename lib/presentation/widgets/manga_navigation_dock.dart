@@ -23,7 +23,8 @@ class MangaNavigationDock extends ConsumerStatefulWidget {
   final Widget child;
 
   @override
-  ConsumerState<MangaNavigationDock> createState() => _MangaNavigationDockState();
+  ConsumerState<MangaNavigationDock> createState() =>
+      _MangaNavigationDockState();
 }
 
 class _MangaNavigationDockState extends ConsumerState<MangaNavigationDock>
@@ -128,8 +129,9 @@ class _MangaNavigationDockState extends ConsumerState<MangaNavigationDock>
     return BackButtonListener(
       onBackButtonPressed: () async {
         // Los diálogos y paneles modales tienen prioridad sobre este menú.
-        if (!_expanded || ModalRoute.of(context)?.isCurrent == false)
+        if (!_expanded || ModalRoute.of(context)?.isCurrent == false) {
           return false;
+        }
         _setExpanded(false);
         return true;
       },
@@ -173,7 +175,8 @@ class _MangaNavigationDockState extends ConsumerState<MangaNavigationDock>
                                     child: MangaNavigationBar(
                                       currentRoute: widget.currentRoute,
                                       bottomSafeArea: false,
-                                      onDestinationSelected: () => _setExpanded(false),
+                                      onDestinationSelected: () =>
+                                          _setExpanded(false),
                                     ),
                                   ),
                                 ),
@@ -203,7 +206,11 @@ class _MangaNavigationDockState extends ConsumerState<MangaNavigationDock>
                           if (!_expanded) {
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
-                          unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('press'));
+                          unawaited(
+                            ref
+                                .read(mangaMenuSoundsProvider.notifier)
+                                .play('press'),
+                          );
                           _setExpanded(!_expanded);
                         },
                       ),
@@ -242,11 +249,8 @@ class _MangaMenuToggle extends StatelessWidget {
     cacheHeight: 192,
     filterQuality: FilterQuality.medium,
     excludeFromSemantics: true,
-    errorBuilder: (context, error, stackTrace) => Icon(
-      fallback,
-      size: 30,
-      color: color,
-    ),
+    errorBuilder: (context, error, stackTrace) =>
+        Icon(fallback, size: 30, color: color),
   );
 
   @override
@@ -277,7 +281,8 @@ class _MangaMenuToggle extends StatelessWidget {
                   children: [
                     Transform.scale(
                       // El cierre ocupa la mitad visual, conservando el área táctil.
-                      scale: (1 - 0.5 * progress) *
+                      scale:
+                          (1 - 0.5 * progress) *
                           (1 - 0.24 * progress * (1 - progress)),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -295,11 +300,19 @@ class _MangaMenuToggle extends StatelessWidget {
                             children: [
                               Opacity(
                                 opacity: 1 - progress,
-                                child: _badge('menu-button', Icons.more_horiz, retro.ink),
+                                child: _badge(
+                                  'menu-button',
+                                  Icons.more_horiz,
+                                  retro.ink,
+                                ),
                               ),
                               Opacity(
                                 opacity: progress,
-                                child: _badge('close-button', Icons.close_rounded, retro.ink),
+                                child: _badge(
+                                  'close-button',
+                                  Icons.close_rounded,
+                                  retro.ink,
+                                ),
                               ),
                             ],
                           ),

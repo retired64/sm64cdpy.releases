@@ -281,8 +281,9 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
           !_librarySync.accept(
             data['sessionId'] as String?,
             data['requestId'] as int? ?? 0,
-          ))
+          )) {
         return;
+      }
       if (_librarySync.sessionChanged ||
           (type == 'installation_library_loading' && data['reset'] == true)) {
         setState(() {

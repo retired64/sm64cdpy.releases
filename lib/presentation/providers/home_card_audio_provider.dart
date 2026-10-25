@@ -30,7 +30,8 @@ class HomeCardSoundsNotifier extends Notifier<HomeCardSoundSettings> {
       return HomeCardSoundSettings(
         enabled: box.get(enabledKey) != 'false',
         volume: raw != null && raw.isFinite
-            ? raw.clamp(0.0, 1.0).toDouble() : 0.45,
+            ? raw.clamp(0.0, 1.0).toDouble()
+            : 0.45,
       );
     } catch (_) {
       return const HomeCardSoundSettings();
@@ -49,9 +50,9 @@ class HomeCardSoundsNotifier extends Notifier<HomeCardSoundSettings> {
         enabled: enabled ?? state.enabled,
         volume: volume?.clamp(0.0, 1.0).toDouble() ?? state.volume,
       );
-      await Hive.box<String>(AppConstants.settingsBoxKey).putAll({
-        enabledKey: '${next.enabled}', volumeKey: '${next.volume}',
-      });
+      await Hive.box<String>(
+        AppConstants.settingsBoxKey,
+      ).putAll({enabledKey: '${next.enabled}', volumeKey: '${next.volume}'});
       if (!ref.mounted) return true;
       state = next;
       if (!next.enabled || next.volume == 0) {
@@ -66,9 +67,14 @@ class HomeCardSoundsNotifier extends Notifier<HomeCardSoundSettings> {
   }
 
   Future<void> play() async {
-    if (!state.enabled || state.volume <= 0 ||
-        !ref.read(themeDesignProvider).id.isManga) return;
+    if (!state.enabled ||
+        state.volume <= 0 ||
+        !ref.read(themeDesignProvider).id.isManga) {
+      return;
+    }
     // El adaptador captura errores de plataforma: el gesto nunca espera al audio.
-    await ref.read(mangaMenuAudioProvider).play('home_slide', volume: state.volume);
+    await ref
+        .read(mangaMenuAudioProvider)
+        .play('home_slide', volume: state.volume);
   }
 }
