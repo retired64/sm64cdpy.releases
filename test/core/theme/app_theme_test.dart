@@ -11,12 +11,53 @@ double contrast(Color a, Color b) {
 }
 
 void main() {
+  for (final dark in [false, true]) {
+    testWidgets('real buttons animate between available themes dark=$dark', (
+      tester,
+    ) async {
+      Widget app(AppThemeDesign design) => MaterialApp(
+        theme: RetroTheme.materialTheme(dark, design: design),
+        home: Scaffold(
+          body: Column(
+            children: [
+              FilledButton(onPressed: () {}, child: const Text('Filled')),
+              ElevatedButton(onPressed: () {}, child: const Text('Elevated')),
+              OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
+              TextButton(onPressed: () {}, child: const Text('Text')),
+            ],
+          ),
+        ),
+      );
+      // Conservar los mismos elementos para ejercitar AnimatedDefaultTextStyle,
+      // incluidos los estilos predeterminados que Material resuelve y combina.
+      for (final from in AppThemeCatalog.designs) {
+        for (final to in AppThemeCatalog.designs) {
+          await tester.pumpWidget(app(from));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(app(to));
+          await tester.pump(const Duration(milliseconds: 75));
+          expect(tester.takeException(), isNull);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+        }
+      }
+    });
+  }
+
   test('unknown/absent IDs use Retro Manga by default', () {
     expect(AppThemeId.fromStorage(null), AppThemeId.retroManga);
     expect(AppThemeId.fromStorage('removed-theme'), AppThemeId.retroManga);
     expect(
+      AppThemeCatalog.designs.map((design) => design.id).toList(),
+      [AppThemeId.minimal, AppThemeId.retroManga, AppThemeId.mangaDeluxe, AppThemeId.marioKart64],
+    );
+    for (final key in ['mario64', 'sm64_intro', 'minish_cap']) {
+      expect(AppThemeId.fromStorage(key), AppThemeId.retroManga);
+    }
+    expect(
       AppThemeCatalog.designs.map((d) => d.id).toSet().length,
-      AppThemeId.values.length,
+      AppThemeId.values.where((id) => id.isAvailable).length,
     );
   });
 
@@ -266,7 +307,7 @@ void main() {
 
   test('comic control themes stay isolated from the other designs', () {
     for (final design in AppThemeCatalog.designs) {
-      if (design.id == AppThemeId.retroManga) continue;
+      if (design.id.isManga) continue;
       final retro = RetroTheme(false, design: design);
       expect(retro.usesComicSurfaces, isFalse);
       final material = retro.toMaterialTheme();

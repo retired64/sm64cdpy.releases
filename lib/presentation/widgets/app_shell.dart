@@ -1,3 +1,4 @@
+import 'deluxe_backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,6 +9,8 @@ import '../providers/auto_install_provider.dart';
 import '../providers/extra_providers.dart';
 import '../providers/game_folder_provider.dart';
 import 'app_drawer.dart';
+import 'manga_navigation_dock.dart';
+import 'manga_navigation_scope.dart';
 import 'game_folder_card.dart';
 import 'game_setup_widgets.dart';
 
@@ -25,6 +28,7 @@ class AppShell extends ConsumerStatefulWidget {
 
 class _AppShellState extends ConsumerState<AppShell> {
   final ScrollController _drawerScrollController = ScrollController();
+  final PageStorageBucket _pageStorage = PageStorageBucket();
   bool _setupFlowScheduled = false;
   bool _setupFlowRunning = false;
 
@@ -101,10 +105,12 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final bottomNavigation = retro.isManga;
     final autoInstall = ref.watch(autoInstallProvider);
     ref.watch(gameFolderProvider);
     _scheduleSetupFlow(autoInstall);
     final showBackdrop =
+        retro.isDeluxe ||
         retro.isIntro ||
         retro.showN64Backdrop ||
         retro.showParchmentBackdrop ||
@@ -112,10 +118,15 @@ class _AppShellState extends ConsumerState<AppShell> {
         (retro.showHalftone &&
             !_noHalftoneRoutes.contains(widget.currentRoute));
 
-    return Scaffold(
+    // El viewport debe llegar detrás de la navegación; la separación final
+    // pertenece al contenido desplazable, no al tamaño de la pantalla.
+    final scaffold = Scaffold(
+      extendBody: bottomNavigation,
       backgroundColor: retro.background,
-      drawer: AppDrawer(scrollController: _drawerScrollController),
-      drawerEnableOpenDragGesture: true,
+      drawer: bottomNavigation
+          ? null
+          : AppDrawer(scrollController: _drawerScrollController),
+      drawerEnableOpenDragGesture: !bottomNavigation,
       drawerEdgeDragWidth: 32,
       drawerScrimColor: Colors.black.withValues(alpha: 0.62),
       onDrawerChanged: (isOpened) {
@@ -126,25 +137,53 @@ class _AppShellState extends ConsumerState<AppShell> {
           }
         });
       },
-      body: showBackdrop
-          ? Stack(
-              children: [
-                Positioned.fill(
-                  child: ThemeBackdrop(
-                    menuSurface:
-                        widget.currentRoute == '/library' ||
-                        widget.currentRoute == '/settings',
-                    allowHalftone: !_noHalftoneRoutes.contains(
-                      widget.currentRoute,
+      body: PageStorage(
+        bucket: _pageStorage,
+        child: KeyedSubtree(
+          key: PageStorageKey(widget.currentRoute),
+          child: showBackdrop
+              ? Stack(
+                  children: [
+                    Positioned.fill(
+                      child: retro.isDeluxe ? const DeluxeBackdrop() : ThemeBackdrop(
+                        menuSurface:
+                            widget.currentRoute == '/library' ||
+                            widget.currentRoute == '/settings',
+                        allowHalftone: !_noHalftoneRoutes.contains(
+                          widget.currentRoute,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                ThemePageFrame(child: widget.child),
-              ],
-            )
-          : widget.child,
+                    ThemePageFrame(child: widget.child),
+                  ],
+                )
+              : widget.child,
+        ),
+      ),
     );
+    return bottomNavigation
+        ? MangaNavigationDock(
+            currentRoute: widget.currentRoute,
+            child: scaffold,
+          )
+        : MangaNavigationScope(enabled: false, child: scaffold);
   }
+}
+
+/// Espacio final desplazable: no recorta el viewport ni pinta una franja.
+double mangaNavigationScrollInset(BuildContext context) {
+  if (!MangaNavigationScope.of(context)) return 0;
+  // El dock publica su altura real: botón cerrado o carrusel desplegado.
+  return MangaNavigationScope.insetOf(context) + 24;
+}
+
+class MangaNavigationSliverInset extends StatelessWidget {
+  const MangaNavigationSliverInset({super.key});
+
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+    child: SizedBox(height: mangaNavigationScrollInset(context)),
+  );
 }
 
 class DrawerMenuButton extends StatelessWidget {
@@ -161,6 +200,7 @@ class DrawerMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (MangaNavigationScope.of(context)) return const SizedBox.shrink();
     final retro = RetroTheme.of(context);
     final decoration = retro.surfaceDecoration(
       shadowDx: retro.borderWidth(2),
@@ -254,13 +294,14 @@ class RetroPinnedAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final bottomNavigation = MangaNavigationScope.of(context);
 
     return SliverAppBar(
       pinned: true,
       floating: false,
       snap: false,
       toolbarHeight: 56,
-      backgroundColor: retro.background,
+      backgroundColor: retro.isDeluxe ? retro.background.withValues(alpha: 0.96) : retro.background,
       surfaceTintColor: Colors.transparent,
       systemOverlayStyle: retro.systemUiStyle,
       elevation: 0,
@@ -273,9 +314,10 @@ class RetroPinnedAppBar extends StatelessWidget {
               ),
             )
           : null,
-      leadingWidth: 56,
-      leading: DrawerMenuButton(color: leadingColor),
-      titleSpacing: 0,
+      automaticallyImplyLeading: !bottomNavigation,
+      leadingWidth: bottomNavigation ? null : 56,
+      leading: bottomNavigation ? null : DrawerMenuButton(color: leadingColor),
+      titleSpacing: bottomNavigation ? 16 : 0,
       title: title,
       actions: actions,
       bottom: bottom,
@@ -320,7 +362,10 @@ class RetroFixedHeaderView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                DrawerMenuButton(color: leadingColor),
+                if (MangaNavigationScope.of(context))
+                  const SizedBox(width: 16)
+                else
+                  DrawerMenuButton(color: leadingColor),
                 Expanded(child: title),
                 const SizedBox(width: 16),
               ],

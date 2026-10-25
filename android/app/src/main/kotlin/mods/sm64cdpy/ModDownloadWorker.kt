@@ -230,7 +230,7 @@ class ModDownloadWorker(
         progressPct: Int?,
         indeterminate: Boolean?
     ): Notification {
-        val ctx = applicationContext
+        val ctx = AppLanguage.context(applicationContext)
         val title = ctx.getString(R.string.notification_downloading_mod)
         val text = if (modName != null && progressPct != null) {
             ctx.getString(R.string.notification_downloading_progress, modName, progressPct)

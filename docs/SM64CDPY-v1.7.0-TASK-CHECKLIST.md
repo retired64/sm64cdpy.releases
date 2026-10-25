@@ -12,7 +12,171 @@
 | Current phase | Stabilization and validation |
 | Release owner | Retired64 |
 
+## Manga Deluxe — 2026-10-22
+
+- [x] ID, catálogo, selector y restauración; paleta clara/oscura propia.
+- [x] Familia Manga separada de decoraciones japonesas; menú/switches/audio/acento heredados.
+- [x] Assets WebP optimizados de la web; ningún HTML ni vídeo dentro del APK.
+- [x] Fondo estático por defecto, movimiento opcional con pausa/lifecycle/accesibilidad.
+- [x] Paneles de papel, bienvenida, historia editorial DNC y demo externa bajo demanda.
+- [x] FAQ en Cómo jugar, comunidad y releases Android; instalación Android existente conservada.
+- [x] Reset solo visual/audio por escritores canónicos, sin borrar datos del juego.
+- [x] ARB en cinco variantes, documentación y notas públicas actualizadas.
+- [x] Pruebas de persistencia, capacidades, assets, fondo, editoriales y tres idiomas.
+- [x] Revisado Actions 39868942338: análisis correcto, 423 pruebas verdes;
+      corregidos dos fallos de japonés en Deluxe y la comprobación global del scheduler.
+- [x] Actions 39875000418 pasó las pruebas y detectó un import de collection
+      ausente en Home al compilar release. Import corregido; prueba real de Home añadida.
+- [ ] Repetir CI y confirmar APK release completo.
+- [ ] Teléfono: Home/Audio/Biblioteca/Partidas/Jugador, claro/oscuro, contraste y texto grande.
+- [ ] Teléfono: movimiento, ahorro batería, minimizar, retorno del vídeo y música sin solape.
+
 ## How to use this checklist
+
+### Switches Retro Manga — 2026-10-22
+
+- [x] Control compartido de riel/selector cuadrados, claro y oscuro según referencias.
+- [x] Audio, Biblioteca/mods/DynOS/Touch, Partidas y Ajustes migrados.
+- [x] Objetivo táctil 56×48, semántica, teclado, deshabilitado y movimiento reducido.
+- [x] Otros temas y lógica de persistencia/activación sin cambios.
+- [x] Pruebas de forma, interacción, contraste e aislamiento con texto ampliado.
+- [ ] CI: formato/análisis/tests y revisión en teléfono de ambos estados/modos.
+
+### Marca de Inicio — 2026-10-22
+
+- [x] Home: SM64CDPY multicolor con la fuente/contornos de Menú; lupa retirada.
+- [x] Helper compartido con ajuste de ancho, sin assets o estado nuevos.
+- [ ] CI y revisión en teléfono de Home claro/oscuro y ancho pequeño.
+
+### Audio en menú deslizable — 2026-10-22
+
+- [x] Sexta viñeta Audio con bocina de papel optimizada WebP 256 px (~19 KiB).
+- [x] Controles retirados de Ajustes y reutilizados en modal con scroll/cierre.
+- [x] Inicio sigue centrado, rutas y preferencias previas conservadas.
+- [x] Pruebas de asset, vecinos, tres idiomas, pantalla pequeña y cierre en Jugador.
+- [ ] CI: l10n/formato/análisis/tests; revisar icono y modal en teléfono.
+
+### Música ambiental y destacados Manga — 2026-10-22
+
+- [x] Pista Opus local, MediaPlayer asíncrono único y bucle, sin servicio de fondo.
+- [x] Música al 18% inicial, switch/volumen persistentes separados de efectos.
+- [x] Solo Retro Manga, propietario raíz estable, lifecycle y foco nativo 24+.
+- [x] Viñeta con marco/sombra/placa semántica, favoritos 48 dp y decode máximo 960 px.
+- [x] Pruebas de contrato, coordinador, persistencia y aislamiento del marco.
+- [ ] CI: generar l10n, formatear, analizar, tests y Kotlin (sin SDK local).
+- [ ] Teléfono: bucle sin reinicio al navegar, minimizar/llamada/rotación/juego.
+- [ ] Revisar Home claro/oscuro con texto grande, imágenes remotas y gama baja.
+
+### Volumen interno — 2026-10-22
+
+- [x] Slider 0–100% de efectos, ganancia inicial 65%, persistente e independiente del mute.
+- [x] Guardado al soltar y muestra única, reversión ante fallo y sin IPC por frame.
+- [x] Ganancia Flutter → Kotlin por reproducción, sin alterar volumen del sistema.
+- [x] Documentado canal independiente de música ambiental para futuro, sin pistas añadidas.
+- [x] Pruebas de restauración, cero, mute, valores inválidos, fallo y payloads.
+- [ ] CI: gen-l10n, dart format, analyze, tests y compilación Kotlin.
+- [ ] Teléfono: 0/25/65/100%, reinicio, desactivar/activar, volumen multimedia intacto.
+
+### Audio inaudible — 2026-10-22
+
+- [x] APK Testing 39731678882 inspeccionado: ambos assets presentes sin compresión.
+- [x] Canal de juego/multimedia y teclas de volumen alineados; sin forzar nivel.
+- [x] Registros nativos de carga/decodificación/reproducción, errores Dart visibles.
+- [x] Prueba de assets y payloads nativos para ambos efectos.
+- [ ] Repetir CI y escuchar en teléfono con volumen multimedia y preferencia activos.
+
+### Sonidos del menú Retro Manga — 2026-10-21
+
+- [x] Efectos originales integrados como assets locales, SoundPool de una voz.
+- [x] Pulsaciones, pasos del carrusel y cierres automáticos diferenciados.
+- [x] Preferencia persistente solo Manga, traducida en cinco ARB.
+- [x] Parada al minimizar/desmontar y liberación nativa al destruir el engine.
+- [x] Pruebas de persistencia, aislamiento por tema y fallo del canal.
+- [ ] Generar l10n/formatear/analizar/tests y compilar Kotlin en CI.
+- [ ] Revisar latencia, volumen/silencio y arrastre rápido en teléfono de gama baja.
+
+### Regresión de pruebas — Actions 39730665442
+
+- [x] Prueba tipográfica sobre botones reales y animación entre todos los pares.
+- [x] Prueba de idioma comprueba grupos por clave, incluyendo selector de acento.
+- [ ] Confirmar análisis, pruebas y compilación con una nueva ejecución de CI.
+
+### Retirada de temas — 2026-10-21
+
+- [x] Solo Minimal, Retro Manga y Mario Kart 64 en el selector.
+- [x] Preferencias antiguas de Mario 64, Intro y Minish Cap pasan a Retro Manga.
+- [x] Guardado normalizado y pruebas de restauración sin perder el modo oscuro.
+- [x] Revisado Actions 39724113377: corregida herencia tipográfica al cambiar
+      a MK64 y dos expectativas antiguas de pruebas tras retirar temas.
+- [ ] Ejecutar Flutter analyze/tests en CI y comprobar una actualización real.
+
+### Menu-slide: navegación bajo demanda — 2026-10-21
+
+- [x] Rama menu-slide desde drawer-ui; carrusel inicialmente oculto.
+- [x] Botón Menú fijo abajo a la derecha, accesible y con acento del usuario.
+- [x] Apertura/cierre por opacidad y desplazamiento breve; reducción de movimiento.
+- [x] Cierre tras elegir destino, con Atrás y al pausar; modales conservan prioridad.
+- [x] Teclado, texto ampliado y margen de listas coordinados por el scope.
+- [x] Carga al primer uso y retención del carrusel sin actividad oculta.
+- [x] Tres claves en cinco ARB y pruebas de integración del dock.
+- [x] Testing 39687239343: generación/análisis correctos; fuentes sincronizadas
+      desde el artefacto del runner. 436 pruebas verdes y una fallida por fixture
+      de primer inicio sin Router; corregido para usar GoRouter + ShellRoute.
+- [x] Tira anclada al borde inferior y cierre elevado sin solapar opciones.
+- [x] Dos badges Mario Run PNG convertidos a WebP 192 px, con transición
+      de imagen, elevación y compresión breve compartiendo el mismo controlador.
+- [x] Palabras únicas sin cortes de letras; nombres compuestos pueden usar dos líneas.
+- [x] Rótulo Menú con TypefaceMario64, letras multicolor, contorno negro
+      y filete blanco adicional en oscuro; sin imágenes o tickers nuevos.
+- [x] Menú abierto sin rótulo y X al 50% visual; área táctil accesible intacta.
+- [ ] Repetir CI y confirmar las pruebas completas tras este ajuste.
+- [ ] Comprobar en teléfono modo claro/oscuro, Atrás con borrador de Jugador,
+      modales, teclado, rotación, pausa/reapertura y texto grande.
+
+### Drawer-ui: navegación inferior Manga — 2026-10-20
+
+- [x] Cinco grupos con acceso a todos los destinos del drawer.
+- [x] Swipe para explorar; pulsación para navegar. Jugar permanece en Inicio.
+- [x] Área inferior, SafeArea, teclado y variante horizontal.
+- [x] Protección de borradores y ciclo de vida de controllers/modales.
+- [x] Cuatro claves en cinco ARB y pruebas de regresión de navegación.
+- [x] Generar localizaciones, ejecutar formato, análisis y tests en Flutter/CI:
+      Testing 39494649064, 428 pruebas correctas para bd74160.
+- [x] Compactar a una fila, destacar la sección activa y conservar el área táctil.
+- [x] Cinco assets papercraft WebP, decodificación acotada, etiquetas accesibles
+      y tests de empaquetado; sin cajas ni borde superior en la tira.
+- [x] Selector compacto con escala continua al deslizar y halo del acento
+      de accesibilidad; tests de foco, acento claro/oscuro y ruta sin cambiar.
+- [x] Reducir la barra a unos 48 dp (sin SafeArea), con tooltip y objetivos
+      táctiles de 48 dp; permitir expansión con texto accesible.
+- [x] Fondo transparente sin capa oscura; cápsulas sutiles para etiquetas,
+      amarillo/contorno negro en ambos modos y contraste interno en tests.
+- [x] Icono centrado a escala 2 (52 dp) elevado sin cubrir la etiqueta;
+      pruebas de tamaño y separación visual, conservando la barra compacta.
+- [x] Fuente Mario limitada a etiquetas del carrusel, doble capa de contorno
+      con semántica única y nombre corto Taller en español.
+- [ ] Regenerar localizaciones (mangaNavTools en cinco ARB) y validar Flutter.
+- [x] Carrusel sin trama de fondo; Game Tool en inglés y MAS sin tilde
+      en español, limitados a las etiquetas de navegación.
+- [x] Fondo de pantalla extendido detrás del carrusel transparente, contenido
+      protegido por SafeArea y Mods como nombre de Explorar en español.
+- [ ] Regenerar mangaNavExplore en CI y comprobar transparencia en teléfono.
+- [x] Corregir franja persistente: quitar SafeArea global y pasar la separación
+      a footers/padding desplazables; revisar listas hermanas y acción final.
+- [x] Cápsulas azules en oscuro y rojas en claro, con 65 % de transparencia
+      en todos los tonos del gradiente; mantener texto y barra transparente.
+- [x] Mis Mods sustituye Biblioteca solo en el carrusel español, con clave
+      mangaNavLibrary en cinco ARB; regeneración y prueba Flutter pendientes.
+- [x] Conjunto cartoon-v2 a partir de mods.png: cinco WebP 256 px, con alfa
+      real y bordes de pegatina; originales/prompts locales fuera del APK.
+- [ ] Revisar nuevos iconos claros/oscuros a tamaño real en teléfono.
+- [x] Ajuste 2026-10-21: fondo del tema al 85 % de opacidad y etiquetas
+      completas sin elipsis; dos líneas al ampliar texto. Validación CI pendiente.
+- [x] Inicio simplificado a champiñón rojo de silueta limpia y bordes de
+      papel; WebP 256 px con alfa, sin cambiar navegación ni animación.
+- [ ] Validar en CI el ajuste posterior a las capturas (la build anterior no lo cubre).
+- [ ] Revisar Inicio/Catálogo Manga claro/oscuro en teléfono, texto grande,
+      gestos Android, teclado y retorno desde CoopDX; comprobar los otros temas.
 
 ### Seguimiento de rama — Jugador, 2026-10-19
 
@@ -694,7 +858,7 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [ ] Validar físicamente permiso concedido/revocado, ZIP, 7z, archivo suelto, cancelación y refresco de Biblioteca.
 - [ ] Ejecutar Testing en `main`, confirmar `publishedAt` y publicar solo con autorización explícita.
 
-## Preparación de release 1.9.0 — ROM converter y Retro Manga
+## Preparación de release 1.9.0 — Play, ROM, Manga Deluxe y localización
 
 - [x] Integrar el preparador local de ROM desde Cómo jugar y GameTool.
 - [x] Detectar z64/v64/n64 por cabecera, validar tamaño/MD5 USA y exportar `.z64` por SAF sin modificar el original.
@@ -705,7 +869,11 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Preparar manifiesto canónico y previews EN/ES/PT-BR con fecha provisional.
 - [x] Validar manifiesto contra pubspec, pruebas Python, formato, análisis y 280 pruebas Flutter.
 - [x] Mantener la desinstalación segura fuera de esta candidata; sigue como roadmap posterior.
-- [ ] Fusionar `how-to-play-guide` en `main` sin crear todavía el tag.
+- [x] Integrar Play por código, compartir invitaciones y ciclo de vida Android de sesión.
+- [x] Integrar Manga Deluxe, menú slide, audio configurable y snapshots persistentes.
+- [x] Integrar multimedia de detalles, idiomas francés/italiano y autores de Touch Controls.
+- [x] Clasificar la aplicación Android con `android:appCategory="game"`.
+- [ ] Fusionar `localization-fr-it-touch-authors` en `main` sin crear todavía el tag.
 - [ ] Ejecutar Testing en `main` y revisar el APK arm64 firmado.
 - [ ] Matriz física: proveedores SAF locales/remotos/lentos, rotación, poco espacio, cancelación, ROM real y exportación.
 - [ ] Revisión visual física de Retro Manga en claro/oscuro, 320/360 px, texto ampliado, ROM, Save Files, diálogos y estados deshabilitados.
@@ -737,3 +905,283 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Testing nuevo con APK arm64 y pruebas nativas completos: 39344333533.
 
 - [ ] Comprobación física de conversión/rutas y retratos de Player con cdpy-f10f833-TESTING.
+
+## Home Deluxe compacto — 2026-10-22
+
+- [x] Retirar showcase especial DNC de Home, conservando catálogo y demo en detalle.
+- [x] Bienvenida compacta, guía y Omitir persistente con salida ante error.
+- [x] Gorros a 80 dp, trama a 110 dp y papel neutro translúcido solo en Deluxe.
+- [x] Traducciones EN/ES/ES-419/PT/PT-BR y pruebas de restauración/layout.
+- [ ] Ejecutar gen-l10n, dart format, analyze y tests en CI (sin SDK local).
+- [ ] Revisar Home Deluxe claro/oscuro en Android, texto grande y movimiento reducido.
+
+## Movimiento Deluxe perceptible — 2026-10-22
+
+- [x] Período 12 s y planos fijos con traslación sin relayout por fotograma.
+- [x] Prueba de posición al activar/desactivar/reactivar sin remontar el fondo.
+- [ ] Ejecutar format/analyze/tests en CI y verificar switch en Android.
+
+## Cabeceras del menú deslizable — 2026-10-22
+
+Audio, Mods, Herramientas y Más comparten `MangaSubmenuHeader`: WebP de su
+opción a 40 dp, decodificación acotada a 128 px, título Mario multicolor y cierre
+localizado. Las secciones internas de Más usan el mismo rótulo multicolor;
+los grupos simples evitan repetir su título. Semántica de encabezado única,
+texto ajustable al ancho y cierre táctil de 48 dp. Sin nuevas imágenes,
+animaciones, dependencias ni cambios de navegación/estado/audio.
+
+Prueba de cabecera a 320 px/texto 1,6× en EN/ES/PT y claro/oscuro con cierre.
+Pendiente format/analyze/tests en CI y revisión física por falta de SDK local.
+
+## Fuente de opciones Manga Deluxe — 2026-10-22
+
+Las opciones de los submenús Mods, Herramientas y Más usan `MarioAndLuigi`
+(400, 20 sp, altura 1,25) solo en Manga Deluxe. Registrada en pubspec desde
+`fonts/manga_deluxe/MarioAndLuigi-0v99.ttf` (~20 KB), con nota de procedencia
+original y fallback Roboto. El color continúa heredando ListTile para respetar
+la selección; las filas crecen con el texto, sin altura fija. Cabeceras Mario
+multicolor y tipografía de los demás temas permanecen independientes. No se
+aplica a descripciones, volúmenes ni controles de Audio.
+
+Prueba añadida de alcance Deluxe/Retro Manga en los tres grupos, con texto
+1,6×. Pendiente format/analyze/tests en CI y revisión física por falta de SDK.
+
+## Lectura del detalle Manga Deluxe — 2026-10-22
+
+`SuperMarioWorldTextBox` se registra desde el TTF proporcionado (~12 KB), con
+nota de procedencia en fonts/manga_deluxe. Solo descripción (contraída/expandida),
+autor, etiquetas y rótulos/valores de primera publicación y última actualización
+del detalle general usan esta fuente en Manga Deluxe. Helper local conserva
+colores, usa peso real 400, mínimo 16 sp, interlínea 1,5 y fallback Roboto.
+No se cambia el tema global, las cabeceras, acciones ni otros temas/pantallas.
+Las fechas mantienen formato localizado y disposición adaptable existentes.
+
+Prueba de layout existente ampliada para verificar alcance de fuente por tema.
+Pendiente ejecutar format/analyze/tests en CI y revisar texto grande en Android.
+
+## Ajuste tipográfico Deluxe — 2026-10-22
+
+WonderMermaid sustituye a MarioAndLuigi en el registro y opciones de submenús
+Deluxe, manteniendo 20 sp y fallback Roboto. Archivo OTF original (~26 KB) y
+licencia adjunta en fonts/manga_deluxe; el autor indica uso personal gratuito,
+con licencia comercial separada. No se altera la tipografía de otros temas.
+
+El helper de lectura del detalle acepta una escala exclusiva Deluxe: autor y
+descripción pasan de 16 a 12 sp (-25 %), etiquetas de 16 a 8 sp (-50 %).
+Fechas y cabeceras conservan tamaño. El escalado de accesibilidad del sistema
+permanece activo. Pruebas de fuente y tamaño actualizadas; ejecución de Flutter
+pendiente en CI por falta de SDK local.
+
+## Fuente de opciones Supreme Spike — 2026-10-22
+
+SupremeSpike sustituye a WonderMermaid en las opciones de submenús Manga
+Deluxe. Se registra el OTF proporcionado (~64 KB), manteniendo 20 sp, peso 400,
+fallback Roboto y colores heredados de selección. Sin cambios en títulos
+multicolor, descripción/autor/etiquetas/fechas ni otros temas. El directorio
+proporcionado no incluye archivo de licencia; no se atribuye una licencia
+no comprobada. Prueba de alcance actualizada; Flutter pendiente en CI.
+
+## Presentación Play — 2026-10-23
+
+`coop_play_visuals.dart` contiene únicamente título, icono, estilo de lectura y
+acción visual. Ambos temas Manga usan rótulos Mario multicolor, bordes/sombras
+existentes y WebPs Play/Explore compartidos (decode 128 px). Deluxe usa Supreme
+Spike en acciones y Super Mario World en lectura; otros temas conservan sus
+controles GameSetupAction. Sin nuevas imágenes, dependencias ni animaciones.
+
+CoopSessionScreen mantiene íntegros controlador, lifecycle, consentimiento,
+validación, callbacks y selección de fases. La presentación evita repetir el
+título; privacidad puede expandirse y revisar consentimiento sigue accesible.
+Solo muestra falta de juego cuando gameInstalled == false; el estado desconocido
+no se presenta como éxito. La tarjeta de batería aparece únicamente si supported
+&& !ignored, y desaparece al actualizar el permiso con el flujo existente.
+
+Provider, servicios, dominio, WebView, Kotlin, Manifest y assets/coop no cambian.
+Las vistas leen el estado existente y no escriben preferencias nuevas ni tienen
+caches. El reset, navegación, notificación y overlay no cambian. No hay nuevos
+Futures sin esperar ni suscripciones.
+
+Pruebas añadidas: 320 px/texto 1,5×, claro/oscuro, ES/EN/PT, ambos Manga,
+requisitos resueltos/pendientes, entrada del código, acciones por fase y callback
+habilitado/deshabilitado. Pendiente dart format, flutter analyze y flutter test
+por falta del SDK local, además de revisión física del teclado y ciclo de sesión.
+
+## Corrección de pruebas — Actions 40007818120
+
+El análisis pasó; 457 pruebas pasaron y las 12 variantes de Play compacto
+fallaron con `Bad state: No element` antes de alcanzar el formulario. El test
+usaba `.last` sobre botones aún no construidos por ListView, seguido de
+ensureVisible. Se desplaza primero con scrollUntilVisible sobre el Scrollable
+principal hasta el TextField y la acción de unirse identificada por su icono.
+Se mantienen comprobaciones de layout, código y ambos temas/idiomas/modos.
+Sin cambios en código de app, motor ni contratos. Pendiente repetir CI; SDK
+Flutter/Dart no disponible localmente. git diff --check validado.
+
+## Privacidad en Disclaimer — 2026-10-23
+
+La información de privacidad de red y su botón de consulta se trasladan de Play
+al Disclaimer mediante CoopNetworkPrivacyPanel. La consulta muestra los textos
+localizados vigentes en un diálogo informativo, sin aceptar términos, persistir
+preferencias ni iniciar una sesión. El consentimiento obligatorio previo a crear
+o unirse permanece en Play con validación/persistencia existentes; se retira solo
+el parámetro de revisión forzada que ya no tiene llamadores. Introducción Play
+reducida de 14 a 7 sp (-50 %), conservando escalado de accesibilidad del sistema.
+
+Sin cambios en provider, servicios, motor, Kotlin, WebView, UDP ni assets/coop.
+Sin caches ni suscripciones nuevos. Pruebas verifican la ubicación de textos,
+tamaño y consulta sin ProviderScope ni acceso al motor. Flutter pendiente en CI.
+
+## Lectura uniforme Play — 2026-10-23
+
+Introducción aumentada de 7 a 8,4 sp (+20 %). Constante coopPlayReadingSize
+compartida con Friend code (etiqueta, placeholder y entrada), Join room (rótulo
+y acción) e instrucciones de conexión del anfitrión/invitado. Todos usan
+coopPlayBody, con Super Mario World en Deluxe y la familia de lectura de los
+demás temas. El título principal conserva Mario multicolor; el resto de acciones
+conservan su estilo. Sin cambios de lógica, código, puertos, provider ni servicios.
+Las pruebas de UI comprueban tamaños del texto inicial, campo y acción. Pendiente
+Flutter en CI y revisión física de legibilidad; git diff --check validado.
+
+## Tipografía unificada Familjen Grotesk — 2026-10-23
+
+FamiljenGrotesk (Regular 400) sustituye a SupremeSpike y SuperMarioWorldTextBox
+en todos sus lectores: opciones de submenús, acciones/lectura Play y autor,
+descripción, etiquetas y fechas del detalle de mod en Manga Deluxe. Una sola
+familia registrada desde fonts/manga_deluxe/FamiljenGrotesk-Regular.ttf (~83 KB),
+fallback Roboto. Se eliminan ambos binarios sustituidos y sus registros. Tamaños,
+colores, escalado del sistema y títulos Mario multicolor permanecen intactos.
+Otros temas conservan sus familias. Pruebas existentes actualizadas; sin cambios
+de conexión, providers, preferencias, caches, motores ni canales Android.
+Pendiente format/analyze/tests en CI por falta de Flutter/Dart local.
+
+## Restauración de tamaños Play — 2026-10-23
+
+Con Familjen Grotesk se retiran las reducciones de lectura: introducción 14 sp,
+Join room/campo Friend code/acción de unirse 18 sp e instrucciones de conexión
+16 sp. Se mantiene la familia actual y el escalado de accesibilidad. No cambian
+acciones, estado, consentimiento ni motor. Pruebas de tamaños actualizadas;
+git diff --check validado, Flutter pendiente en CI por falta de SDK local.
+
+## Tipografía Home Manga — 2026-10-23
+
+`HomeTypography` limita Familjen Grotesk al subárbol de Home (incluye carga/error)
+en Retro Manga y Manga Deluxe. No cambia el catálogo de temas, preferencias ni
+otras rutas. Featured, Browse, Recent, Exclusive Content y Top Downloads usan
+`HomeMarioLabel`: TypefaceMario64 blanca, contorno negro uniforme, sin colores
+por letra. Respeta escalado y saltos de línea; cabecera SM64CDPY multicolor intacta.
+Launch game reutiliza el mismo rótulo e icono play.webp a 36 dp con decode 128 px,
+sin nuevos assets. Su callback, comprobación del juego y bloqueo siguen iguales.
+Los textos restantes heredan la fuente local, incluidas tarjetas y acciones.
+
+Pruebas a 320 px/texto 1,6×, ambos Manga y claro/oscuro: contorno, familia,
+icono y ausencia de overflow. Sin nuevos caches/estado/Futures. Pendiente
+format/analyze/tests en CI y verificación física; git diff --check validado.
+
+## Home compacto e iconos propios — 2026-10-23
+
+Start game (Iniciar juego/Iniciar jogo) sustituye al rótulo anterior en las cinco
+ARB; Exclusive se acorta a Exclusivo en ES/PT. HomeMarioLabel acepta singleLine:
+letras de 14 sp en el lanzamiento, ajustadas al ancho sin salto de línea. Icono
+propio de cartucho a 32 dp. Catalog/Favorites/Popular usan libro, corazón y estrella
+con flecha: ilustraciones nuevas de papel/tinta generadas con imagegen, WebP
+transparente 192×192, decode 128 px. Solo se incluyen los WebP finales: 4.932,
+7.700, 5.192 y 7.588 bytes respectivamente (25.412 bytes en total).
+
+Browse comparte el relieve de Featured: margen vertical 0 activo / 8 dp lateral,
+250 ms easeOut y sin animación cuando disableAnimations está activo. No se añade
+autoplay ni ticker permanente. _current y PageController siguen siendo estado
+visual local; se libera el controlador al desmontar. Altura de tarjetas adaptable
+al texto para evitar overflow al reducirse la tarjeta inactiva.
+
+Navegación de las categorías, comprobación del juego y launchGameWithGuide no
+cambian; tampoco providers, permisos, instalación, overlay ni motor Play. Pruebas
+actualizadas y Home real con catálogo vacío: 320 px, texto 1,6×, ES/EN/PT, ambos
+Manga, desplazamiento, foco y reducción de movimiento. Validación local JSON,
+transparencia/dimensiones/peso de assets y git diff --check; pendientes gen-l10n,
+dart format, flutter analyze y tests en CI por falta de SDK, más revisión física.
+
+## Fixture Home — Actions 40032193746
+
+flutter analyze pasó y 477 pruebas aprobaron; las seis variantes home_browse
+agotaron pumpAndSettle durante el montaje inicial (línea 76 del archivo formateado
+en CI). La prueba mezclaba la carga async del catálogo y la comprobación nativa
+de instalación con las aserciones de presentación.
+
+Se precargan catálogo y biblioteca falsos en un ProviderContainer explícito antes
+del montaje usando runAsync y se simula isInstalled en sm64cdpy/launcher. El
+handler rechaza llamadas inesperadas y se retira al terminar; el contenedor se
+libera. El primer render usa pumps acotados, sin aumentar timeouts. Las pruebas
+de scroll/foco/tamaño se mantienen; la prueba separada de carga/error de Home
+sigue intacta. No cambia código del producto, estado compartido ni motor Play.
+Pendiente repetir Flutter en CI; no hay SDK local. git diff --check validado.
+
+## Audio de tarjetas Home — 2026-10-23
+
+Featured y Browse emiten home_slide al cambiar realmente de página durante un
+scroll activo. No se reproduce por frame, al montar/restaurar Home ni por scroll
+vertical. Ambos carruseles pasan a ConsumerStatefulWidget conservando sus
+PageController y animaciones. Sonido proporcionado: home-cards-slide.mp3,
+19.968 bytes, aproximadamente 0,62 s; ya cubierto por assets/audio/manga/.
+
+HomeCardSoundsNotifier es el único escritor de audio_home_cards_enabled y
+audio_home_cards_volume en Hive settings (true/0,45 por defecto). Audio y ambos
+carruseles leen la misma proyección; cada cambio espera persistencia y conserva
+estado anterior ante fallo. Volumen acotado 0–1, valores corruptos/NaN seguros.
+Sonido exclusivo de Retro Manga/Manga Deluxe, independiente de efectos del menú
+y música. El submenú Audio permite apagar, ajustar y oír una muestra al soltar;
+Restablecer Deluxe incluye esta preferencia. Sin IO/preview por fotograma.
+
+El canal existente sm64cdpy/manga_menu_audio agrega stopSound(sound). Kotlin
+precarga el sample con SoundPool, sin colas ni reproducción diferida, manteniendo
+un solo stream y límite de 75 ms. Mutear tarjetas o llevar su volumen a cero
+detiene solo home_slide; stop global del dock al salir/background sigue vigente.
+La tabla de streams está acotada a uno; samples/ready/streams se liberan al
+desconectar el plugin. No modifica AudioManager, volumen del dispositivo ni
+focus/música. No se replica esta preferencia al engine overlay, que no presenta
+Home ni usa estos sonidos. Sin nuevos timers/subscriptions ni caches de archivos.
+Los dos unawaited son intencionales: navegación no espera audio y el adaptador
+captura PlatformException/MissingPluginException.
+
+Pruebas: persistencia/recreación, reset, mute/volumen cero, independencia de
+menú/música, temas permitidos, errores de Hive/Android, asset/canal, gesto real
+en Featured/Browse y controles accesibles en Audio. JSON y MP3 verificados,
+git diff --check pasa. Pendiente gen-l10n, format/analyze/tests y compilación
+Kotlin en CI: no hay SDK Flutter/Dart/Kotlin ni gradlew local. Prueba física:
+primer swipe, swipes rápidos, volumen 0/100, desactivar/reabrir, background,
+cambio de tema y coexistencia de música/menu. Motor Play/Workers intactos.
+
+## Etiqueta Featured adaptable — Actions 40044057555
+
+482 pruebas pasaron y dos variantes ES de Home fallaron por overflow horizontal
+de 6,2 px en RetroTag, con ancho 320 y texto 1,6×. La nueva cobertura de Featured
+hizo visible el problema preexistente. Su badge ahora activa flexibleLabel,
+capacidad existente del componente, para permitir ajuste vertical sin reducir
+accesibilidad ni modificar globalmente las etiquetas de otras pantallas.
+La prueba de Home comprueba explícitamente esa configuración además del layout.
+Audio y motor Play no cambian. git diff --check validado; Flutter pendiente en CI.
+
+## Volúmenes iniciales suaves — 2026-10-23
+
+Música ambiental y efectos del menú usan 0,05 (5 %) por defecto. Alineados el
+modelo/proveedor Hive, fallbacks de valores ausentes/corruptos, adaptadores Dart,
+valores defensivos nativos y Restablecer Deluxe. Los niveles ya guardados por
+el usuario se conservan; el sonido de tarjetas Home mantiene su 45 % propio.
+No se cambia el volumen Android ni se replica audio al overlay. Sin nuevos
+caches, preferencias o Futures. Pruebas de defaults y música actualizadas;
+git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
+
+
+## Localización y créditos — 2026-10-24
+
+- [x] Rama independiente desde play-2p2.
+- [x] ARB FR/IT completos y selector con persistencia compatible.
+- [x] Localización nativa FR/IT y proyección del idioma para notificaciones.
+- [x] Mensajes de errores localizados con detalles copiables; formatos regionales.
+- [x] Autor Touch Controls opcional, fallback Release Soon y catálogos alineados.
+- [x] Burbuja excluida por petición del usuario; protocolo intacto.
+- [x] Tests offline de claves, argumentos, recursos nativos y catálogo.
+- [x] Generación oficial de seis archivos Dart y análisis Dart sin errores/warnings.
+- [x] Formato, comprobación del modelo Dart y git diff --check.
+- [ ] Ejecutar tests Flutter y compilación Kotlin en el entorno canónico de CI;
+      CLI Flutter no soporta este anfitrión Android y falta android/gradlew.
+- [ ] Revisión física: idiomas, texto ampliado, notificaciones y reapertura.

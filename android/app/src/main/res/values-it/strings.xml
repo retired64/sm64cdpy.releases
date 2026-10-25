@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="channel_mod_installation">Installazione mod</string>
+  <string name="channel_mod_installation_desc">Mostra l’avanzamento dell’installazione delle mod</string>
+  <string name="channel_mod_download">Download delle mod</string>
+  <string name="channel_mod_download_desc">Mostra l’avanzamento del download delle mod</string>
+  <string name="channel_mod_results">Risultati delle installazioni</string>
+  <string name="channel_mod_results_desc">Avvisa quando termina l’installazione di una mod</string>
+  <string name="notification_downloading_mod">Download della mod</string>
+  <string name="notification_downloading_progress">%1$s · %2$d%%</string>
+  <string name="notification_preparing_download">Preparazione del download…</string>
+  <string name="notification_cancel">Annulla</string>
+  <string name="notification_install_complete">Installazione completata</string>
+  <string name="notification_preparing">Preparazione…</string>
+  <string name="notification_extracting">Estrazione di %1$s…</string>
+  <string name="notification_extracting_progress">Estrazione di %1$s · %2$d/%3$d file</string>
+  <string name="notification_installing_mod">Installazione della mod</string>
+  <string name="channel_coop_session">Partita multigiocatore</string>
+  <string name="channel_coop_session_desc">Mantiene attiva la connessione multigiocatore mentre il gioco è aperto</string>
+  <string name="coop_notification_hosting">Partita ospitata · codice %1$s</string>
+  <string name="coop_notification_joining">Partita con un amico</string>
+  <string name="coop_notification_preparing">Connessione…</string>
+  <string name="coop_notification_reconnecting">Riconnessione…</string>
+  <string name="coop_notification_stopping">Chiusura della partita…</string>
+  <string name="coop_notification_failed">Connessione multigiocatore non riuscita</string>
+  <string name="coop_notification_stop">Termina</string>
+  <string name="coop_notification_copy">Copia codice</string>
+  <string name="coop_session_interrupted">Android ha ricreato il motore di connessione. Avvia di nuovo la partita.</string>
+  <plurals name="coop_notification_friends">
+    <item quantity="one">%1$d amico connesso</item>
+    <item quantity="other">%1$d amici connessi</item>
+  </plurals>
+</resources>

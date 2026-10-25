@@ -16,6 +16,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    // openFd necesita la pista sin compresión dentro del APK.
+    androidResources { noCompress += "opus" }
     namespace = "mods.sm64cdpy"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion

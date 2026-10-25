@@ -399,7 +399,7 @@ class ModInstallWorker(
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        val ctx = applicationContext
+        val ctx = AppLanguage.context(applicationContext)
         return buildForegroundInfo(
             notificationId,
             buildNotification(ctx.getString(R.string.notification_preparing), 0, 0, true)
@@ -412,7 +412,7 @@ class ModInstallWorker(
         total: Int,
         indeterminate: Boolean
     ): Notification {
-        val ctx = applicationContext
+        val ctx = AppLanguage.context(applicationContext)
         val contentText = if (indeterminate) {
             ctx.getString(R.string.notification_extracting, modName)
         } else {
@@ -446,7 +446,7 @@ class ModInstallWorker(
         )
         val notification = NotificationCompat.Builder(applicationContext, RESULT_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_sm64cdpy)
-            .setContentTitle(applicationContext.getString(R.string.notification_install_complete))
+            .setContentTitle(AppLanguage.context(applicationContext).getString(R.string.notification_install_complete))
             .setContentText(modName)
             .setContentIntent(contentIntent)
             .setAutoCancel(true)

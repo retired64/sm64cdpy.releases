@@ -244,6 +244,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                 ],
               ),
             ),
+            const MangaNavigationSliverInset(),
           ],
         ),
       ),

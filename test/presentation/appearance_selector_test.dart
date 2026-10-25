@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sm64cdpy/core/constants/app_constants.dart';
 import 'package:sm64cdpy/core/theme/app_theme_design.dart';
+import 'package:sm64cdpy/core/theme/app_theme_catalog.dart';
 import 'package:sm64cdpy/core/theme/retro_theme.dart';
 import 'package:sm64cdpy/l10n/app_localizations.dart';
 import 'package:sm64cdpy/presentation/providers/theme_provider.dart';
@@ -69,10 +70,15 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('manga-menu-sounds')), findsNothing);
+        expect(find.byKey(const ValueKey('ambient-music-enabled')), findsNothing);
         await tester.tap(find.text('Interface theme'));
         await tester.pumpAndSettle();
 
-        final mario = find.byKey(const ValueKey('theme-mario64'));
+        for (final id in ['mario64', 'sm64_intro', 'minish_cap']) {
+          expect(find.byKey(ValueKey('theme-$id')), findsNothing);
+        }
+        final mario = find.byKey(const ValueKey('theme-mario_kart_64'));
         await tester.ensureVisible(mario);
         await tester.runAsync(() async {
           await tester.tap(mario);
@@ -80,15 +86,15 @@ void main() {
           await Hive.box<String>(AppConstants.settingsBoxKey).flush();
         });
         await tester.pumpAndSettle();
-        expect(container.read(themeDesignProvider).id, AppThemeId.mario64);
+        expect(container.read(themeDesignProvider).id, AppThemeId.marioKart64);
         var theme = Theme.of(
           tester.element(find.byKey(const ValueKey('theme-probe'))),
         );
-        expect(theme.extension<RetroTheme>()!.design.id, AppThemeId.mario64);
-        expect(theme.extension<RetroTheme>()!.radius, BorderRadius.circular(0));
-        expect(theme.extension<RetroTheme>()!.showN64Backdrop, isTrue);
-        expect(theme.extension<RetroTheme>()!.usesBeveledSurfaces, isTrue);
-        expect(theme.colorScheme.primary, const Color(0xFFA82010));
+        expect(theme.extension<RetroTheme>()!.design.id, AppThemeId.marioKart64);
+        expect(theme.extension<RetroTheme>()!.design.id, AppThemeId.marioKart64);
+        expect(theme.extension<RetroTheme>()!.showN64Backdrop, isFalse);
+        expect(theme.extension<RetroTheme>()!.usesBeveledSurfaces, isFalse);
+        expect(theme.colorScheme.primary, RetroTheme(false, design: AppThemeCatalog.resolve(AppThemeId.marioKart64)).accent);
 
         tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
         await tester.pumpAndSettle();
@@ -96,7 +102,7 @@ void main() {
           tester.element(find.byKey(const ValueKey('theme-probe'))),
         );
         expect(theme.brightness, Brightness.dark);
-        expect(theme.colorScheme.primary, const Color(0xFFFFC928));
+        expect(theme.colorScheme.primary, RetroTheme(true, design: AppThemeCatalog.resolve(AppThemeId.marioKart64)).accent);
         expect(find.byKey(const ValueKey('theme-odyssey')), findsNothing);
         expect(find.byKey(const ValueKey('theme-gamecube')), findsNothing);
         final modeHeader = find.text(
@@ -122,7 +128,7 @@ void main() {
         });
         await tester.pumpAndSettle();
         expect(container.read(themeModeProvider), ThemeMode.light);
-        expect(container.read(themeDesignProvider).id, AppThemeId.mario64);
+        expect(container.read(themeDesignProvider).id, AppThemeId.marioKart64);
         theme = Theme.of(
           tester.element(find.byKey(const ValueKey('theme-probe'))),
         );

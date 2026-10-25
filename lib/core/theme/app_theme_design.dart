@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 enum AppThemeId {
   minimal('minimal'),
   retroManga('retro_manga'),
+  mangaDeluxe('manga_deluxe'),
   minishCap('minish_cap'),
   marioKart64('mario_kart_64'),
   mario64('mario64'),
@@ -12,9 +13,17 @@ enum AppThemeId {
   const AppThemeId(this.storageKey);
   final String storageKey;
 
+  // Los IDs retirados siguen identificando definiciones internas, nunca opciones.
+  bool get isAvailable => switch (this) {
+    minimal || retroManga || mangaDeluxe || marioKart64 => true,
+    _ => false,
+  };
+
+  bool get isManga => this == retroManga || this == mangaDeluxe;
+
   static AppThemeId fromStorage(String? value) {
     for (final id in values) {
-      if (id.storageKey == value) return id;
+      if (id.isAvailable && id.storageKey == value) return id;
     }
     return retroManga;
   }

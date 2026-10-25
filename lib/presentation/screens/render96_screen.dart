@@ -1,3 +1,6 @@
+import '../widgets/catalog_error_details.dart';
+import '../../core/utils/extensions.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -57,6 +60,14 @@ class _Render96ScreenState extends ConsumerState<Render96Screen> {
     );
   }
 }
+
+String render96CategoryLabel(AppLocalizations l10n, String category) =>
+    switch (category) {
+      'Skinpack' => l10n.render96Skinpack,
+      'Dependency' => l10n.render96Required,
+      'Texture Pack' => l10n.render96Optional,
+      _ => l10n.render96CategoryOther,
+    };
 
 // ── Body ──────────────────────────────────────────────────────────────────────
 
@@ -126,6 +137,7 @@ class _Render96Body extends StatelessWidget {
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }
@@ -193,7 +205,7 @@ class _Render96Hero extends StatelessWidget {
                     children: [
                       SkewChip(
                         retro: retro,
-                        label: retro.displayLabel(mainMod.category),
+                        label: render96CategoryLabel(l10n, mainMod.category),
                         selected: true,
                         dense: true,
                         accentColor: retro.amber,
@@ -211,7 +223,10 @@ class _Render96Hero extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    mainMod.name,
+                    catalogTitle(
+                      mainMod.name,
+                      AppLocalizations.of(context).sharedUntitled,
+                    ),
                     style: retro.heading(size: 24, letterSpacing: -0.5),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -278,16 +293,8 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
     }
   }
 
-  String get _badgeLabel {
-    switch (widget.mod.category) {
-      case 'Dependency':
-        return 'REQUIRED';
-      case 'Texture Pack':
-        return 'OPTIONAL';
-      default:
-        return RetroTheme.of(context).displayLabel(widget.mod.category);
-    }
-  }
+  String get _badgeLabel =>
+      render96CategoryLabel(AppLocalizations.of(context), widget.mod.category);
 
   Color get _categoryColor {
     switch (widget.mod.category) {
@@ -407,7 +414,13 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                 const SizedBox(height: 12),
 
                 // Title
-                Text(widget.mod.name, style: retro.heading(size: 16.5)),
+                Text(
+                  catalogTitle(
+                    widget.mod.name,
+                    AppLocalizations.of(context).sharedUntitled,
+                  ),
+                  style: retro.heading(size: 16.5),
+                ),
 
                 // Author · Repo — antes vivían en lugares distintos (autor
                 // debajo del título, repo apretado en el row de badges sin
@@ -571,7 +584,7 @@ class _Render96MainCardState extends ConsumerState<_Render96MainCard> {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: _ActionButton(
                       retro: retro,
-                      label: 'WATCH TRAILER',
+                      label: widget.l10n.render96WatchTrailer,
                       icon: Icons.play_circle_fill_rounded,
                       color: retro.red,
                       onTap: _openTrailer,
@@ -735,6 +748,7 @@ class _Render96Skeleton extends StatelessWidget {
             ),
           ),
         ),
+        const MangaNavigationSliverInset(),
       ],
     );
   }
@@ -787,8 +801,8 @@ class _Render96Error extends StatelessWidget {
                     style: retro.heading(size: 14, color: retro.red),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    message,
+                  CatalogErrorDetails(
+                    details: message,
                     textAlign: TextAlign.center,
                     style: retro.body(size: 12),
                   ),

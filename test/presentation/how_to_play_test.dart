@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +19,18 @@ class _UnconnectedFolder extends GameFolderNotifier {
 }
 
 void main() {
+  const launcher = MethodChannel('sm64cdpy/launcher');
+  setUp(() {
+    // Los escenarios de esta guía parten de un juego ausente, también al
+    // ejecutar la plataforma Android simulada en el host de pruebas.
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(launcher, (_) async => false);
+  });
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(launcher, null);
+  });
+
   for (final language in ['en', 'es', 'pt']) {
     for (final design in AppThemeCatalog.designs) {
       for (final dark in [false, true]) {

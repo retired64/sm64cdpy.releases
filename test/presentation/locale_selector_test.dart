@@ -57,7 +57,7 @@ void main() {
         Hive.init(directory.path);
         final box = await Hive.openBox<String>(AppConstants.settingsBoxKey);
         await box.putAll({
-          'theme_id': 'mario64',
+          'theme_id': 'mario_kart_64',
           'theme_mode': 'light',
           'locale': 'en_US',
         });
@@ -71,7 +71,21 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.byType(SettingsExpansionGroup), findsNWidgets(3));
+        for (final key in [
+          'bundled-theme-selector',
+          'theme-mode-selector',
+          'retro-accent-selector',
+          'locale-selector',
+        ]) {
+          expect(
+            find.byWidgetPredicate(
+              (widget) =>
+                  widget is SettingsExpansionGroup &&
+                  widget.key == PageStorageKey<String>(key),
+            ),
+            findsOneWidget,
+          );
+        }
         expect(
           find.byKey(const PageStorageKey('mario-rom-assets')),
           findsNothing,

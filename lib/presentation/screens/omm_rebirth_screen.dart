@@ -1,3 +1,6 @@
+import '../widgets/catalog_error_details.dart';
+import '../../core/utils/extensions.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -107,11 +110,11 @@ class _OmmBody extends StatelessWidget {
         // ── Section label ─────────────────────────────────────
         if (retro.showJapaneseDecorations)
           SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
-            child: Text('改造・すべてのMOD', style: retro.body(size: 12)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
+              child: Text('改造・すべてのMOD', style: retro.body(size: 12)),
+            ),
           ),
-        ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
@@ -140,6 +143,7 @@ class _OmmBody extends StatelessWidget {
           ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }
@@ -401,7 +405,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
           if (copyError != null) {
             AppSnackbar.errorWithCopy(
               context,
-              message: copyError,
+              message: AppLocalizations.of(context).detailInstallFailed,
               copyText: copyError,
             );
           } else {
@@ -540,7 +544,10 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                   children: [
                     // Title
                     Text(
-                      widget.mod.title,
+                      catalogTitle(
+                        widget.mod.title,
+                        AppLocalizations.of(context).sharedUntitled,
+                      ),
                       style: retro.heading(size: 16.5, letterSpacing: -0.2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -904,8 +911,8 @@ class _OmmError extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
-                message,
+              CatalogErrorDetails(
+                details: message,
                 style: TextStyle(color: retro.inkDim, fontSize: 12),
                 textAlign: TextAlign.center,
                 maxLines: 3,

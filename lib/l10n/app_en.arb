@@ -261,7 +261,7 @@
     "description": "Button label to launch the game after installing a mod"
   },
 
-  "homeExclusiveContent": "Exclusive Content",
+  "homeExclusiveContent": "Exclusive",
   "@homeExclusiveContent": {
     "description": "Home screen section title for exclusive content"
   },
@@ -357,7 +357,7 @@
   "@homeDownload": {
     "description": "Home screen button label to download the game"
   },
-  "homeLaunchGame": "LAUNCH  GAME",
+  "homeLaunchGame": "START GAME",
   "@homeLaunchGame": {
     "description": "Home screen button label to launch the game"
   },
@@ -489,7 +489,7 @@
   "@popularRankings": {
     "description": "Popular screen section header for rankings list"
   },
-  "popularPage": "PG {page}/{total}",
+  "popularPage": "Page {page}/{total}",
   "@popularPage": {
     "description": "Popular screen page indicator",
     "placeholders": {
@@ -642,7 +642,7 @@
   "@dynosEmpty": {
     "description": "DynOS screen empty state title"
   },
-  "dynosEmptyHint": "Check back later for runtime patches.",
+  "dynosEmptyHint": "Check back later for new DynOS packs.",
   "@dynosEmptyHint": {
     "description": "DynOS screen empty state hint"
   },
@@ -876,7 +876,7 @@
   "@detailDownloadedNotInstalled": {
     "placeholders": {"name": {"type": "String"}}
   },
-  "detailInstallQueued": "Download and installation started: {name}",
+  "detailInstallQueued": "Download and installation queued: {name}",
   "@detailInstallQueued": {
     "placeholders": {"name": {"type": "String"}}
   },
@@ -886,6 +886,10 @@
   "@detailScreenshots": {
     "description": "Detail screen section title for screenshots gallery"
   },
+  "detailYoutubeVideos": "YouTube Videos",
+  "@detailYoutubeVideos": {"description": "Heading for YouTube videos embedded in a mod description"},
+  "detailDirectVideos": "Videos",
+  "@detailDirectVideos": {"description": "Heading for directly hosted videos embedded in a mod description"},
   "detailTags": "Tags",
   "@detailTags": {
     "description": "Detail screen section title for tags"
@@ -2009,5 +2013,192 @@
   "romPrepareErrorStorage": "There is not enough available storage, or the file could not be read.",
   "romPrepareErrorExport": "The saved copy could not be verified. Choose another destination and try again.",
   "romPrepareErrorBusy": "Another ROM operation is already active.",
-  "romPrepareErrorUnexpected": "Something unexpected happened. Your original file was not changed."
+  "romPrepareErrorUnexpected": "Something unexpected happened. Your original file was not changed.",
+  "mangaNavLibrary": "Library",
+  "@mangaNavLibrary": {"description": "Library label in the Retro Manga bottom carousel only; Spanish uses Mis Mods."},
+  "mangaNavExplore": "Explore",
+  "@mangaNavExplore": {"description": "Explore group label in the Retro Manga bottom carousel only."},
+  "mangaMenuLabel": "Menu",
+  "mangaMenuOpen": "Open menu",
+  "mangaMenuClose": "Close menu",
+  "mangaNavTools": "Tools",
+  "@mangaNavTools": {"description": "Short label for the game tools group in the Retro Manga bottom carousel only."},
+  "mangaNavMore": "More",
+  "mangaNavPlay": "Play",
+  "mangaNavHint": "Swipe to browse. Tap to open.",
+  "mangaNavError": "Could not complete this action. Try again.",
+  "mangaMenuSoundsTitle": "Menu sounds",
+  "mangaMenuSoundsDescription": "Sound effects when opening, selecting and swiping the menu.",
+  "appEffectsVolume": "Effects volume",
+  "appEffectsVolumeDescription": "Adjusts only this app’s effects. Your device’s media volume remains the limit.",
+  "ambientMusicTitle": "Ambient music",
+  "ambientMusicDescription": "A soft background track while using Retro Manga. Pauses when you leave the app.",
+  "ambientMusicVolume": "Music volume",
+  "mangaNavAudio": "Audio",
+  "themeMangaDeluxe": "Manga Deluxe",
+  "deluxeWelcome": "Welcome to CoopDX",
+  "deluxeWelcomeBody": "Your Android mod companion: prepare the game, discover mods and find the CoopDX community.",
+  "deluxeSpotlight": "From the CoopDX showcase",
+  "deluxeDncBody": "Changing skies, lighting and a full day/night cycle. See the mod in motion before exploring its details.",
+  "deluxeViewMod": "View mod",
+  "deluxeWatchDemo": "Watch demo",
+  "deluxeDemoHint": "Opens the official video outside the app. Requires internet.",
+  "deluxeLinkError": "Could not open the link. Check your connection and try again.",
+  "deluxeHelpTitle": "Quick help",
+  "deluxeFaqRom": "Which ROM do I need?",
+  "deluxeFaqRomAnswer": "Use your own verified USA dump in .z64 format. ROM Preparation can convert a copy without changing the original.",
+  "deluxeFaqFolders": "Which folder should I select?",
+  "deluxeFaqFoldersAnswer": "Use Connect game folder. The guide explains the location to select and the manager discovers supported mods and packs.",
+  "deluxeFaqPacks": "Game Mods or DynOS?",
+  "deluxeFaqPacksAnswer": "Lua mods change game behavior. DynOS packs provide models, textures and Touch Controls. Use their separate Library sections to manage them.",
+  "deluxeOpenGuide": "Open",
+  "deluxeCommunity": "Community and links",
+  "deluxeGameNews": "Android game updates",
+  "deluxeMotion": "Moving background",
+  "deluxeMotionHint": "Optional scrolling hats and pattern. Leave off to save battery.",
+  "deluxeReducedMotion": "Motion is paused by your accessibility settings.",
+  "deluxeReset": "Reset Deluxe appearance and audio",
+  "deluxeResetDone": "Deluxe appearance and audio restored.",
+  "deluxeMusicDescription": "A soft background track for Manga Deluxe. Pauses when you leave the app.",
+  "deluxeAccentDescription": "Choose the ink accents and background pattern color for Manga Deluxe.",
+  "deluxeResetHint": "Restores the shared accent and audio levels. Your folders, mods and save files stay unchanged.",
+  "deluxeWelcomeCompact": "New here? Set up the game with our quick guide.",
+  "deluxeSkip": "Skip",
+  "deluxeSkipHint": "Hide this introduction permanently. The guide stays in the menu.",
+  "coopTitle": "Play with friends",
+  "coopNav": "Play",
+  "coopIntro": "Create a private room or join your friend's code. The helper connects SM64CoopDX through the internet while the game uses its local Direct Connection.",
+  "coopPrivacy": "The room code is a shared secret. Signalling uses the compatible Cloudflare service; game traffic connects directly when possible and uses TURN only when needed.",
+  "coopConsentTitle": "Network privacy",
+  "coopConsentIntro": "Before creating or joining a room, review how the connection works.",
+  "coopConsentEncrypted": "The room code derives the key that encrypts WebRTC signalling. Share it only with people you trust.",
+  "coopConsentIp": "Your internet address may be visible to your invited friend and to the Google and Cloudflare address-discovery services.",
+  "coopConsentThirdParty": "Signalling and relay access use a compatible third-party Cloudflare service. Availability and retention are controlled by that service.",
+  "coopConsentAccept": "I understand and continue",
+  "coopConsentCancel": "Not now",
+  "coopConsentReview": "Review network privacy",
+  "coopConsentSaveError": "Your choice could not be saved. No network session was started.",
+  "coopCreate": "Create room",
+  "coopJoin": "Join room",
+  "coopCode": "Friend code",
+  "coopCodeHint": "ABCD-1234",
+  "coopRecent": "Recent codes",
+  "coopClearRecent": "Clear",
+  "coopWaiting": "Waiting for friends",
+  "coopConnecting": "Looking for your friend",
+  "coopConnected": "Session connected",
+  "coopReconnecting": "Reconnecting",
+  "coopPreparing": "Preparing secure room",
+  "coopStop": "Stop session",
+  "coopOpenGame": "Open SM64CoopDX",
+  "coopGameMissing": "SM64CoopDX is not installed on this device.",
+  "coopGameReady": "SM64CoopDX detected",
+  "coopHostInstruction": "Open Multiplayer > Direct Connection > Host in the game. Friends join using the code shown here.",
+  "coopJoinInstruction": "Open Multiplayer > Direct Connection in the game and connect to 127.0.0.1 using port {port}.",
+  "@coopJoinInstruction": {"placeholders": {"port": {"type": "int"}}},
+  "coopCopy": "Copy code",
+  "coopCopied": "Code copied",
+  "coopShare": "Share invite",
+  "coopShareSubject": "SM64CoopDX game invite",
+  "coopShareMessage": "Join my SM64CoopDX game!\n\nFriend code: {code}\n\nOpen SM64CDPY, go to Play, choose Join room and enter this code. Share it only with people you trust.",
+  "@coopShareMessage": {"placeholders": {"code": {"type": "String"}}},
+  "coopShareError": "The invite could not be shared. Try copying the code instead.",
+  "coopPeers": "Friends: {count}",
+  "@coopPeers": {"placeholders": {"count": {"type": "int"}}},
+  "coopDirect": "Direct",
+  "coopRelay": "Relay",
+  "coopNoCode": "Enter a valid eight-character code.",
+  "coopNetworkError": "The session could not start. Check your connection and try again.",
+  "coopBatteryTitle": "Background connection",
+  "coopBatteryDescription": "Optional: allow unrestricted battery use so Android is less likely to pause a session while the game is open.",
+  "coopBatteryAllowed": "Unrestricted battery use is allowed. Android can keep the session active more reliably.",
+  "coopBatteryAllow": "Allow in Android",
+  "coopBatteryManage": "Manage in Android",
+  "coopBatteryOpenError": "Android battery settings could not be opened on this device.",
+  "coopDiagnosticsTitle": "Connection diagnostics",
+  "coopDiagnosticsSignal": "Signalling connections: {count}",
+  "@coopDiagnosticsSignal": {"placeholders": {"count": {"type": "int"}}},
+  "coopDiagnosticsPackets": "Game packets: {toGame} received · {toPage} sent",
+  "@coopDiagnosticsPackets": {"placeholders": {"toGame": {"type": "int"}, "toPage": {"type": "int"}}},
+  "coopDiagnosticsDelay": "Bridge delay: {average} ms average · {max} ms maximum",
+  "@coopDiagnosticsDelay": {"placeholders": {"average": {"type": "int"}, "max": {"type": "int"}}},
+  "homeCardSoundsTitle": "Home card sounds",
+  "homeCardSoundsDescription": "Play a sound when changing Featured or Browse cards. Separate from menu effects and music.",
+  "homeCardSoundsVolume": "Card volume",
+  "languageFrench": "Français",
+  "languageItalian": "Italiano",
+  "languageSaveFailed": "Could not save the language. Try again.",
+  "sharedCopyDetails": "Copy details",
+  "sharedCopied": "Copied to clipboard",
+  "sharedAuthor": "Author: {author}",
+  "sharedUntitled": "Untitled",
+  "render96Required": "REQUIRED",
+  "render96Optional": "OPTIONAL",
+  "render96Skinpack": "MODEL PACK",
+  "settingsExportFailed": "Could not export your favorites. Try again.",
+  "settingsImportFailed": "Could not import this file. Choose a favorites file exported by SM64CDPY.",
+  "settingsDatabaseFailed": "Could not refresh the catalog. Check your connection and try again.",
+  "updateActionFailed": "Could not complete the update. Try again or download it in your browser.",
+  "@sharedAuthor": {
+    "description": "Creator credit on Touch Controls cards. Keep the creator name unchanged.",
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "@languageFrench": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@languageItalian": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@languageSaveFailed": {
+    "description": "Language preference could not be persisted."
+  },
+  "@sharedCopyDetails": {
+    "description": "Action to copy the technical diagnostic, not the user-facing explanation."
+  },
+  "@sharedCopied": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@sharedUntitled": {
+    "description": "Fallback for missing catalog titles; not an ID."
+  },
+  "@render96Required": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@render96Optional": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@render96Skinpack": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@settingsExportFailed": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@settingsImportFailed": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@settingsDatabaseFailed": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@updateActionFailed": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "render96WatchTrailer": "WATCH TRAILER",
+  "@render96WatchTrailer": {
+    "description": "Contextual UI label or multiplayer failure explanation."
+  },
+  "render96CategoryOther": "CONTENT",
+  "@render96CategoryOther": {
+    "description": "Contextual UI label or multiplayer failure explanation."
+  },
+  "coopConnectionFailed": "The session could not continue. Check your connection and start it again.",
+  "@coopConnectionFailed": {
+    "description": "Contextual UI label or multiplayer failure explanation."
+  },
+  "catalogLoadFailed": "Could not load this content. Check your connection and try again.",
+  "settingsFavouritesShareSubject": "SM64CoopDX favorites",
+  "favEmptyActionHint": "Tap ♥ on a card to save it here."
 }

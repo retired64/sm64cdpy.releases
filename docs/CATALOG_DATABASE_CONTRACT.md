@@ -11,6 +11,23 @@ The root object contains `schema_version`, `catalog_id`, `catalog_status`,
 The application accepts legacy schema 1 and schema 2. It rejects unknown
 future schemas and every schema-2 catalog marked `partial`.
 
+Each mod may include `description_images`, an ordered list of unique HTTPS
+images embedded in the official XenForo description. The field is optional
+within schema 2 for backward compatibility; absent or invalid values project
+to an empty gallery. The scraper reads the lazy-load `data-src`/`data-url`
+before `src`, excludes placeholders, reactions, avatars and later discussion
+wrappers, and caps the list defensively. The app loads these URLs on demand
+and never treats them as downloadable mod artifacts.
+
+Each mod may also include `description_videos`, an ordered list of bounded
+media descriptors from that same description. A YouTube descriptor contains
+`provider: youtube`, its `video_id`, the canonical `url` and an optimized
+`thumbnail_url`; a directly hosted video contains `provider: direct` and its
+HTTPS `url`. These fields are optional and invalid records are ignored. The
+app only downloads preview thumbnails, never video streams: selecting a card
+hands the canonical URL to Android so YouTube links can open in the YouTube
+app and direct files can open in a compatible external player.
+
 ## Durable identity
 
 Array position is presentation only and must never identify installed content.
@@ -70,3 +87,15 @@ final fallback.
 
 Do not silently change the semantics of a production endpoint used by released
 clients. Prefer versioned paths such as `db/v1/` and `db/v2/`.
+
+
+## Touch Controls credits (independent curated catalog)
+
+The `touch_controls` object may include an optional `author` string per item.
+The app trims nonempty strings and projects missing, null, blank or malformed
+values to the literal `Release Soon`, as requested for the pending credits.
+Do not infer authors from titles or file names. This field does not participate
+in equality, favorites, installation identity or destination selection.
+`db/touch_controls.json` and `assets/db/touch_controls.json` must be valid and
+match. Existing endpoints without the field remain readable. Names and credits
+are source content; only the surrounding Author label is localized.

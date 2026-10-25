@@ -40,7 +40,7 @@ Future<bool> connectGameFolder(
       .perform('connectGameFolder');
   if (!context.mounted) return result;
   final error = ref.read(gameFolderProvider).error;
-  if (error != null)
+  if (error != null) {
     AppSnackbar.error(
       context,
       message: error == 'installing'
@@ -49,6 +49,7 @@ Future<bool> connectGameFolder(
           ? l10n.gameFolderInvalid
           : l10n.gameFolderAccessLost,
     );
+  }
   return result;
 }
 
@@ -67,13 +68,14 @@ Future<bool> disconnectGameFolder(BuildContext context, WidgetRef ref) async {
       .read(gameFolderProvider.notifier)
       .perform('disconnectGameFolder');
   if (!context.mounted) return done;
-  if (!done)
+  if (!done) {
     AppSnackbar.error(
       context,
       message: ref.read(gameFolderProvider).error == 'installing'
           ? l10n.gameFolderBusy
           : l10n.gameFolderAccessLost,
     );
+  }
   return done;
 }
 
@@ -113,8 +115,9 @@ class _GameFolderCardState extends ConsumerState<GameFolderCard>
     if (!state.initialized) return const SizedBox.shrink();
     final folder = state.connection;
     if (widget.optional &&
-        ((folder.connected && folder.fullAccess) || folder.dismissed))
+        ((folder.connected && folder.fullAccess) || folder.dismissed)) {
       return const SizedBox.shrink();
+    }
     final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
     final warning = folder.status == 'access' || state.error == 'access';

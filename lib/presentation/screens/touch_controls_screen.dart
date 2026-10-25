@@ -1,3 +1,6 @@
+import '../widgets/catalog_error_details.dart';
+import '../../core/utils/extensions.dart';
+
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -113,11 +116,11 @@ class _TouchBody extends StatelessWidget {
         // ── Section label ─────────────────────────────────────
         if (retro.showJapaneseDecorations)
           SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
-            child: Text('タッチ操作・レイアウト', style: retro.body(size: 12)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
+              child: Text('タッチ操作・レイアウト', style: retro.body(size: 12)),
+            ),
           ),
-        ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
@@ -146,6 +149,7 @@ class _TouchBody extends StatelessWidget {
           ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }
@@ -353,7 +357,7 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
           if (installError != null) {
             AppSnackbar.errorWithCopy(
               context,
-              message: installError,
+              message: AppLocalizations.of(context).detailInstallFailed,
               copyText: installError,
             );
           } else {
@@ -493,12 +497,21 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                   children: [
                     // Title
                     Text(
-                      widget.mod.title,
+                      catalogTitle(
+                        widget.mod.title,
+                        AppLocalizations.of(context).sharedUntitled,
+                      ),
                       style: retro.heading(size: 16.5, letterSpacing: -0.2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 10),
+
+                    Text(
+                      l10n.sharedAuthor(widget.mod.author),
+                      style: retro.body(size: 12),
+                    ),
+                    const SizedBox(height: 8),
 
                     // Added date
                     Row(
@@ -511,7 +524,11 @@ class _TouchControlCardState extends ConsumerState<TouchControlCard>
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          widget.mod.addedAt,
+                          formatDate(
+                                widget.mod.addedAt,
+                                locale: l10n.localeName,
+                              ) ??
+                              '',
                           style: TextStyle(
                             color: retro.inkDim,
                             fontSize: 11,
@@ -840,8 +857,8 @@ class _TouchError extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
-                message,
+              CatalogErrorDetails(
+                details: message,
                 style: TextStyle(color: retro.inkDim, fontSize: 12),
                 textAlign: TextAlign.center,
                 maxLines: 3,

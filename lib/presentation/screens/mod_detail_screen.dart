@@ -1,3 +1,8 @@
+import '../widgets/catalog_error_details.dart';
+import '../widgets/deluxe_backdrop.dart';
+import '../widgets/deluxe_content.dart';
+import '../../services/deluxe_links.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +31,23 @@ import '../widgets/app_snackbar.dart';
 import '../widgets/post_install_dialog.dart';
 import '../widgets/installation_action_presentation.dart';
 import '../widgets/dynos_install_flow.dart';
+
+/// Fuente de lectura exclusiva de Deluxe, sin alterar títulos ni otros temas.
+TextStyle _detailReadingStyle(
+  RetroTheme retro,
+  TextStyle base, {
+  double scale = 1,
+}) {
+  if (!retro.isDeluxe) return base;
+  return base.copyWith(
+    fontFamily: 'FamiljenGrotesk',
+    fontFamilyFallback: const ['Roboto'],
+    fontWeight: FontWeight.w400,
+    fontSize: ((base.fontSize ?? 16) < 16 ? 16 : base.fontSize!) * scale,
+    letterSpacing: 0,
+    height: 1.5,
+  );
+}
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -87,30 +109,39 @@ class _DetailScaffoldState extends ConsumerState<_DetailScaffold> {
     return Scaffold(
       backgroundColor: retro.isMario ? Colors.transparent : retro.background,
       appBar: _buildAppBar(retro, isFav),
-      body: CustomScrollView(
-        controller: _scrollCtrl,
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: _ModHeader(mod: widget.mod),
+      body: DeluxeScene(
+        child: CustomScrollView(
+          controller: _scrollCtrl,
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: _ModHeader(mod: widget.mod),
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: _ContentCard(
-              mod: widget.mod,
-              descExpanded: _descExpanded,
-              changelogExpanded: _changelogExpanded,
-              onExpandDesc: () =>
-                  setState(() => _descExpanded = !_descExpanded),
-              onExpandChangelog: () =>
-                  setState(() => _changelogExpanded = !_changelogExpanded),
+            if (retro.isDeluxe && DeluxeLinks.hasDemo(widget.mod))
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: const DeluxeDemoButton(),
+                ),
+              ),
+            SliverToBoxAdapter(
+              child: _ContentCard(
+                mod: widget.mod,
+                descExpanded: _descExpanded,
+                changelogExpanded: _changelogExpanded,
+                onExpandDesc: () =>
+                    setState(() => _descExpanded = !_descExpanded),
+                onExpandChangelog: () =>
+                    setState(() => _changelogExpanded = !_changelogExpanded),
+              ),
             ),
-          ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
-        ],
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+          ],
+        ),
       ),
     );
   }
@@ -388,6 +419,34 @@ class _ContentCard extends StatelessWidget {
               ],
             ),
           ],
+          if (mod.descriptionVideos.any((video) => video.isYouTube)) ...[
+            const SizedBox(height: 16),
+            _DetailPanel(
+              children: [
+                _SectionTitle(label: l10n.detailYoutubeVideos),
+                const SizedBox(height: 12),
+                _DescriptionVideoGallery(
+                  videos: mod.descriptionVideos
+                      .where((video) => video.isYouTube)
+                      .toList(growable: false),
+                ),
+              ],
+            ),
+          ],
+          if (mod.descriptionVideos.any((video) => !video.isYouTube)) ...[
+            const SizedBox(height: 16),
+            _DetailPanel(
+              children: [
+                _SectionTitle(label: l10n.detailDirectVideos),
+                const SizedBox(height: 12),
+                _DescriptionVideoGallery(
+                  videos: mod.descriptionVideos
+                      .where((video) => !video.isYouTube)
+                      .toList(growable: false),
+                ),
+              ],
+            ),
+          ],
           if (mod.tags.isNotEmpty) ...[
             const SizedBox(height: 16),
             _DetailPanel(
@@ -470,7 +529,11 @@ class _TitleSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Título limpio, sin efecto estampado.
-        Text(mod.title, style: titleStyle, softWrap: true),
+        Text(
+          catalogTitle(mod.title, AppLocalizations.of(context).sharedUntitled),
+          style: titleStyle,
+          softWrap: true,
+        ),
         const SizedBox(height: 10),
         Row(
           children: [
@@ -498,10 +561,14 @@ class _TitleSection extends StatelessWidget {
                       ),
                 child: Text(
                   mod.author,
-                  style: retro.body(
-                    size: 14,
-                    weight: FontWeight.w700,
-                    color: retro.ink,
+                  style: _detailReadingStyle(
+                    retro,
+                    retro.body(
+                      size: 14,
+                      weight: FontWeight.w700,
+                      color: retro.ink,
+                    ),
+                    scale: 0.75,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -555,7 +622,11 @@ class _StatsBar extends StatelessWidget {
               SizedBox(
                 width: width,
                 child: _StatCell(
-                  value: mod.rating?.star ?? '—',
+                  value:
+                      mod.rating?.starFor(
+                        AppLocalizations.of(context).localeName,
+                      ) ??
+                      '—',
                   label: l10n.detailRating,
                   icon: Icons.star_rounded,
                   iconColor: retro.amber,
@@ -565,7 +636,9 @@ class _StatsBar extends StatelessWidget {
               SizedBox(
                 width: width,
                 child: _StatCell(
-                  value: mod.downloads.compact,
+                  value: mod.downloads.compactFor(
+                    AppLocalizations.of(context).localeName,
+                  ),
                   label: l10n.detailDownloads,
                   icon: Icons.download_rounded,
                   iconColor: retro.accentText,
@@ -575,7 +648,9 @@ class _StatsBar extends StatelessWidget {
               SizedBox(
                 width: width,
                 child: _StatCell(
-                  value: mod.views.compact,
+                  value: mod.views.compactFor(
+                    AppLocalizations.of(context).localeName,
+                  ),
                   label: l10n.detailViews,
                   icon: Icons.visibility_rounded,
                   iconColor: retro.inkDim,
@@ -585,7 +660,9 @@ class _StatsBar extends StatelessWidget {
               SizedBox(
                 width: width,
                 child: _StatCell(
-                  value: mod.reviewCount.compact,
+                  value: mod.reviewCount.compactFor(
+                    AppLocalizations.of(context).localeName,
+                  ),
                   label: l10n.detailReviews,
                   icon: Icons.rate_review_rounded,
                   iconColor: retro.inkDim,
@@ -961,7 +1038,9 @@ class _VersionCardState extends State<_VersionCard> {
                     ),
                     const SizedBox(width: 3),
                     Text(
-                      widget.version.rating!.toStringAsFixed(1),
+                      widget.version.rating!.starFor(
+                        AppLocalizations.of(context).localeName,
+                      ),
                       style: retro.body(size: 11, weight: FontWeight.w700),
                     ),
                   ],
@@ -1218,7 +1297,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           if (copyError != null) {
             AppSnackbar.errorWithCopy(
               context,
-              message: copyError,
+              message: AppLocalizations.of(context).detailInstallFailed,
               copyText: copyError,
             );
           } else {
@@ -1236,7 +1315,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: _l10n!.detailError(error),
+            message: friendlyDownloadError(_l10n!, error),
             copyText: error,
           );
         },
@@ -1249,7 +1328,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: _l10n!.detailError(e.toString()),
+        message: friendlyDownloadError(_l10n!, e),
         copyText: e.toString(),
       );
     }
@@ -1292,7 +1371,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: _l10n!.detailError(error),
+            message: friendlyDownloadError(_l10n!, error),
             copyText: error,
           );
         },
@@ -1305,7 +1384,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: _l10n!.detailError(e.toString()),
+        message: friendlyDownloadError(_l10n!, e),
         copyText: e.toString(),
       );
     }
@@ -1645,7 +1724,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           if (copyError != null) {
             AppSnackbar.errorWithCopy(
               context,
-              message: copyError,
+              message: AppLocalizations.of(context).detailInstallFailed,
               copyText: copyError,
             );
           } else {
@@ -1663,7 +1742,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: _l10n!.detailError(error),
+            message: friendlyDownloadError(_l10n!, error),
             copyText: error,
           );
         },
@@ -1676,7 +1755,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: _l10n!.detailError(e.toString()),
+        message: friendlyDownloadError(_l10n!, e),
         copyText: e.toString(),
       );
     }
@@ -1719,7 +1798,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: _l10n!.detailError(error),
+            message: friendlyDownloadError(_l10n!, error),
             copyText: error,
           );
         },
@@ -1732,7 +1811,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: _l10n!.detailError(e.toString()),
+        message: friendlyDownloadError(_l10n!, e),
         copyText: e.toString(),
       );
     }
@@ -1997,6 +2076,97 @@ class _ScreenshotGalleryState extends State<_ScreenshotGallery> {
   }
 }
 
+class _DescriptionVideoGallery extends StatelessWidget {
+  const _DescriptionVideoGallery({required this.videos});
+
+  final List<ModVideoEntity> videos;
+
+  Future<void> _open(ModVideoEntity video) async {
+    final uri = Uri.tryParse(video.url);
+    if (uri == null || uri.scheme != 'https') return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    return SizedBox(
+      height: 142,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: videos.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final video = videos[index];
+          return Semantics(
+            button: true,
+            label: video.isYouTube
+                ? '${l10n.socialYouTube} ${index + 1}'
+                : '${l10n.detailDirectVideos} ${index + 1}',
+            child: InkWell(
+              onTap: () => _open(video),
+              borderRadius: retro.radius,
+              child: Container(
+                width: 220,
+                clipBehavior: Clip.antiAlias,
+                decoration: retro.surfaceDecoration(shadowDx: 2, shadowDy: 2),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (video.thumbnailUrl.isNotEmpty)
+                      CachedNetworkImage(
+                        imageUrl: video.thumbnailUrl,
+                        fit: BoxFit.cover,
+                        memCacheWidth: 720,
+                        maxWidthDiskCache: 960,
+                        placeholder: (_, _) =>
+                            ColoredBox(color: retro.surfaceAlt),
+                        errorWidget: (_, _, _) => ColoredBox(
+                          color: retro.surfaceAlt,
+                          child: MarioGameIcon(
+                            Icons.ondemand_video_rounded,
+                            color: retro.accentText,
+                          ),
+                        ),
+                      )
+                    else
+                      ColoredBox(
+                        color: retro.surfaceAlt,
+                        child: MarioGameIcon(
+                          Icons.movie_outlined,
+                          size: 42,
+                          color: retro.accentText,
+                        ),
+                      ),
+                    ColoredBox(color: Colors.black.withValues(alpha: 0.16)),
+                    Center(
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: const BoxDecoration(
+                          color: Color(0xD9FF0000),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 34,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 // ── Fullscreen gallery ────────────────────────────────────────────────────────
 
 class _FullscreenGallery extends StatefulWidget {
@@ -2138,10 +2308,14 @@ class _TagCloud extends StatelessWidget {
           ),
           child: Text(
             tag,
-            style: TextStyle(
-              color: retro.inkDim,
-              fontSize: retro.isMario ? 16 : 12,
-              fontWeight: FontWeight.w600,
+            style: _detailReadingStyle(
+              retro,
+              TextStyle(
+                color: retro.inkDim,
+                fontSize: retro.isMario ? 16 : 12,
+                fontWeight: FontWeight.w600,
+              ),
+              scale: 0.5,
             ),
           ),
         );
@@ -2169,12 +2343,16 @@ class _ExpandableText extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final isLong = text.length > AppConstants.descriptionMaxLen;
 
-    final baseStyle = TextStyle(
-      color: retro.inkDim,
-      fontSize: retro.isMario ? 18 : 14,
-      fontFamily: retro.isMario ? 'Roboto' : retro.bodyFamily,
-      letterSpacing: 0,
-      height: 1.5,
+    final baseStyle = _detailReadingStyle(
+      retro,
+      TextStyle(
+        color: retro.inkDim,
+        fontSize: retro.isMario ? 18 : 14,
+        fontFamily: retro.isMario ? 'Roboto' : retro.bodyFamily,
+        letterSpacing: 0,
+        height: 1.5,
+      ),
+      scale: 0.75,
     );
 
     return Column(
@@ -2340,11 +2518,14 @@ class _DateCell extends StatelessWidget {
                 label,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: retro.inkDim,
-                  fontSize: retro.isMario ? 16 : 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: retro.isMario ? 0 : 0.5,
+                style: _detailReadingStyle(
+                  retro,
+                  TextStyle(
+                    color: retro.inkDim,
+                    fontSize: retro.isMario ? 16 : 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: retro.isMario ? 0 : 0.5,
+                  ),
                 ),
               ),
               const SizedBox(height: 2),
@@ -2352,10 +2533,13 @@ class _DateCell extends StatelessWidget {
                 formatDate(date, locale: l10n.localeName) ?? date,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: retro.ink,
-                  fontSize: retro.isMario ? 16 : 13,
-                  fontWeight: FontWeight.w700,
+                style: _detailReadingStyle(
+                  retro,
+                  TextStyle(
+                    color: retro.ink,
+                    fontSize: retro.isMario ? 16 : 13,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
@@ -2780,8 +2964,8 @@ class _DetailError extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                message,
+              CatalogErrorDetails(
+                details: message,
                 style: TextStyle(color: retro.inkDim, fontSize: 12),
                 textAlign: TextAlign.center,
                 maxLines: 4,

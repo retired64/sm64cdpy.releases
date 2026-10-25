@@ -12,7 +12,7 @@ void main() {
 
   for (final accent in RetroAccent.values) {
     for (final dark in [false, true]) {
-      for (final themeId in [AppThemeId.retroManga, AppThemeId.marioKart64]) {
+      for (final themeId in [AppThemeId.retroManga, AppThemeId.mangaDeluxe, AppThemeId.marioKart64]) {
         test(
           '${themeId.name} ${accent.name} dark=$dark has readable roles',
           () {
@@ -67,7 +67,7 @@ void main() {
 
   test('designs without accent accessibility keep their own palette', () {
     for (final design in AppThemeCatalog.designs) {
-      if (design.id == AppThemeId.retroManga ||
+      if (design.id.isManga ||
           design.id == AppThemeId.marioKart64) {
         continue;
       }

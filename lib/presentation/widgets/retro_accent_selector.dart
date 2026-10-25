@@ -16,7 +16,7 @@ class RetroAccentSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeId = ref.watch(appearanceProvider).themeId;
-    if (themeId != AppThemeId.retroManga && themeId != AppThemeId.marioKart64) {
+    if (!themeId.isManga && themeId != AppThemeId.marioKart64) {
       return const SizedBox.shrink();
     }
     final selected = ref.watch(retroAccentProvider);
@@ -40,7 +40,7 @@ class RetroAccentSelector extends ConsumerWidget {
         subtitle: names[selected.index],
         icon: Icons.color_lens_outlined,
         children: [
-          Text(l10n.retroAccentDescription, style: retro.body(size: 14)),
+          Text(retro.isDeluxe ? l10n.deluxeAccentDescription : l10n.retroAccentDescription, style: retro.body(size: 14)),
           const SizedBox(height: 12),
           for (final accent in RetroAccent.values)
             SettingsSelectionOption(

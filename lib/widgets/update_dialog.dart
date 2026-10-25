@@ -4,12 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ota_update/ota_update.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/theme/retro_theme.dart';
 import '../core/constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
 import '../services/update_config.dart';
+import '../presentation/widgets/app_snackbar.dart';
 
 class UpdateDialog extends StatefulWidget {
   const UpdateDialog({super.key, required this.config, this.isForce = false});
@@ -26,6 +28,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   bool _downloading = false;
   double _progress = 0;
   String? _error;
+  String? _errorDetails;
   late AppLocalizations _l10n;
 
   bool get _canOtaUpdate =>
@@ -44,6 +47,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
       _downloading = true;
       _progress = 0;
       _error = null;
+      _errorDetails = null;
     });
 
     try {
@@ -86,9 +90,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
                 case OtaStatus.INTERNAL_ERROR:
                   setState(() {
-                    _error = _l10n.updateInternalError(
-                      event.value ?? 'unknown',
-                    );
+                    _error = _l10n.updateActionFailed;
+                    _errorDetails = event.value;
                     _downloading = false;
                   });
                   break;
@@ -109,7 +112,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
                 case OtaStatus.INSTALLATION_ERROR:
                   setState(() {
-                    _error = _l10n.updateInstallError(event.value ?? 'unknown');
+                    _error = _l10n.updateActionFailed;
+                    _errorDetails = event.value;
                     _downloading = false;
                   });
                   break;
@@ -118,7 +122,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
             onError: (dynamic e) {
               if (!mounted) return;
               setState(() {
-                _error = _l10n.updateUnexpectedError(e.toString());
+                _error = _l10n.updateActionFailed;
+                _errorDetails = e.toString();
                 _downloading = false;
               });
             },
@@ -126,7 +131,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
           );
     } catch (e) {
       setState(() {
-        _error = _l10n.updateCantStart(e.toString());
+        _error = _l10n.updateActionFailed;
+        _errorDetails = e.toString();
         _downloading = false;
       });
     }
@@ -210,8 +216,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
                       const SizedBox(height: 4),
                       Text(
                         _l10n.updateSize(
-                          (widget.config.apkSize! / 1024 / 1024)
-                              .toStringAsFixed(1),
+                          NumberFormat(
+                            '0.0',
+                            _l10n.localeName,
+                          ).format(widget.config.apkSize! / 1024 / 1024),
                         ),
                         style: retro.body(size: 12),
                       ),
@@ -248,6 +256,17 @@ class _UpdateDialogState extends State<UpdateDialog> {
                           style: retro.body(size: 12, color: retro.red),
                         ),
                       ),
+                      if (_errorDetails != null)
+                        TextButton.icon(
+                          onPressed: () async {
+                            await AppSnackbar.copyDetails(
+                              context,
+                              _errorDetails!,
+                            );
+                          },
+                          icon: const Icon(Icons.copy_rounded),
+                          label: Text(_l10n.sharedCopyDetails),
+                        ),
                     ],
                   ],
                 ),

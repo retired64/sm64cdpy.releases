@@ -7,6 +7,8 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_it.dart';
 import 'app_localizations_pt.dart';
 
 // ignore_for_file: type=lint
@@ -98,6 +100,8 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('es'),
     Locale('es', '419'),
+    Locale('fr'),
+    Locale('it'),
     Locale('pt'),
     Locale('pt', 'BR'),
   ];
@@ -453,7 +457,7 @@ abstract class AppLocalizations {
   /// Home screen section title for exclusive content
   ///
   /// In en, this message translates to:
-  /// **'Exclusive Content'**
+  /// **'Exclusive'**
   String get homeExclusiveContent;
 
   /// Home screen section title for top downloads
@@ -597,7 +601,7 @@ abstract class AppLocalizations {
   /// Home screen button label to launch the game
   ///
   /// In en, this message translates to:
-  /// **'LAUNCH  GAME'**
+  /// **'START GAME'**
   String get homeLaunchGame;
 
   /// Home screen badge label indicating a section is coming soon
@@ -771,7 +775,7 @@ abstract class AppLocalizations {
   /// Popular screen page indicator
   ///
   /// In en, this message translates to:
-  /// **'PG {page}/{total}'**
+  /// **'Page {page}/{total}'**
   String popularPage(int page, int total);
 
   /// Popular screen section header for the top 3 mods
@@ -1005,7 +1009,7 @@ abstract class AppLocalizations {
   /// DynOS screen empty state hint
   ///
   /// In en, this message translates to:
-  /// **'Check back later for runtime patches.'**
+  /// **'Check back later for new DynOS packs.'**
   String get dynosEmptyHint;
 
   /// DynOS screen error message when content cannot be loaded
@@ -1323,7 +1327,7 @@ abstract class AppLocalizations {
   /// No description provided for @detailInstallQueued.
   ///
   /// In en, this message translates to:
-  /// **'Download and installation started: {name}'**
+  /// **'Download and installation queued: {name}'**
   String detailInstallQueued(String name);
 
   /// No description provided for @detailContentUnavailable.
@@ -1343,6 +1347,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Screenshots'**
   String get detailScreenshots;
+
+  /// Heading for YouTube videos embedded in a mod description
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube Videos'**
+  String get detailYoutubeVideos;
+
+  /// Heading for directly hosted videos embedded in a mod description
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get detailDirectVideos;
 
   /// Detail screen section title for tags
   ///
@@ -4613,6 +4629,738 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something unexpected happened. Your original file was not changed.'**
   String get romPrepareErrorUnexpected;
+
+  /// Library label in the Retro Manga bottom carousel only; Spanish uses Mis Mods.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get mangaNavLibrary;
+
+  /// Explore group label in the Retro Manga bottom carousel only.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get mangaNavExplore;
+
+  /// No description provided for @mangaMenuLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get mangaMenuLabel;
+
+  /// No description provided for @mangaMenuOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open menu'**
+  String get mangaMenuOpen;
+
+  /// No description provided for @mangaMenuClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close menu'**
+  String get mangaMenuClose;
+
+  /// Short label for the game tools group in the Retro Manga bottom carousel only.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get mangaNavTools;
+
+  /// No description provided for @mangaNavMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get mangaNavMore;
+
+  /// No description provided for @mangaNavPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get mangaNavPlay;
+
+  /// No description provided for @mangaNavHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to browse. Tap to open.'**
+  String get mangaNavHint;
+
+  /// No description provided for @mangaNavError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete this action. Try again.'**
+  String get mangaNavError;
+
+  /// No description provided for @mangaMenuSoundsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu sounds'**
+  String get mangaMenuSoundsTitle;
+
+  /// No description provided for @mangaMenuSoundsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound effects when opening, selecting and swiping the menu.'**
+  String get mangaMenuSoundsDescription;
+
+  /// No description provided for @appEffectsVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects volume'**
+  String get appEffectsVolume;
+
+  /// No description provided for @appEffectsVolumeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjusts only this app’s effects. Your device’s media volume remains the limit.'**
+  String get appEffectsVolumeDescription;
+
+  /// No description provided for @ambientMusicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient music'**
+  String get ambientMusicTitle;
+
+  /// No description provided for @ambientMusicDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A soft background track while using Retro Manga. Pauses when you leave the app.'**
+  String get ambientMusicDescription;
+
+  /// No description provided for @ambientMusicVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Music volume'**
+  String get ambientMusicVolume;
+
+  /// No description provided for @mangaNavAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get mangaNavAudio;
+
+  /// No description provided for @themeMangaDeluxe.
+  ///
+  /// In en, this message translates to:
+  /// **'Manga Deluxe'**
+  String get themeMangaDeluxe;
+
+  /// No description provided for @deluxeWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to CoopDX'**
+  String get deluxeWelcome;
+
+  /// No description provided for @deluxeWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Android mod companion: prepare the game, discover mods and find the CoopDX community.'**
+  String get deluxeWelcomeBody;
+
+  /// No description provided for @deluxeSpotlight.
+  ///
+  /// In en, this message translates to:
+  /// **'From the CoopDX showcase'**
+  String get deluxeSpotlight;
+
+  /// No description provided for @deluxeDncBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing skies, lighting and a full day/night cycle. See the mod in motion before exploring its details.'**
+  String get deluxeDncBody;
+
+  /// No description provided for @deluxeViewMod.
+  ///
+  /// In en, this message translates to:
+  /// **'View mod'**
+  String get deluxeViewMod;
+
+  /// No description provided for @deluxeWatchDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch demo'**
+  String get deluxeWatchDemo;
+
+  /// No description provided for @deluxeDemoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens the official video outside the app. Requires internet.'**
+  String get deluxeDemoHint;
+
+  /// No description provided for @deluxeLinkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link. Check your connection and try again.'**
+  String get deluxeLinkError;
+
+  /// No description provided for @deluxeHelpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick help'**
+  String get deluxeHelpTitle;
+
+  /// No description provided for @deluxeFaqRom.
+  ///
+  /// In en, this message translates to:
+  /// **'Which ROM do I need?'**
+  String get deluxeFaqRom;
+
+  /// No description provided for @deluxeFaqRomAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your own verified USA dump in .z64 format. ROM Preparation can convert a copy without changing the original.'**
+  String get deluxeFaqRomAnswer;
+
+  /// No description provided for @deluxeFaqFolders.
+  ///
+  /// In en, this message translates to:
+  /// **'Which folder should I select?'**
+  String get deluxeFaqFolders;
+
+  /// No description provided for @deluxeFaqFoldersAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Connect game folder. The guide explains the location to select and the manager discovers supported mods and packs.'**
+  String get deluxeFaqFoldersAnswer;
+
+  /// No description provided for @deluxeFaqPacks.
+  ///
+  /// In en, this message translates to:
+  /// **'Game Mods or DynOS?'**
+  String get deluxeFaqPacks;
+
+  /// No description provided for @deluxeFaqPacksAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Lua mods change game behavior. DynOS packs provide models, textures and Touch Controls. Use their separate Library sections to manage them.'**
+  String get deluxeFaqPacksAnswer;
+
+  /// No description provided for @deluxeOpenGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get deluxeOpenGuide;
+
+  /// No description provided for @deluxeCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Community and links'**
+  String get deluxeCommunity;
+
+  /// No description provided for @deluxeGameNews.
+  ///
+  /// In en, this message translates to:
+  /// **'Android game updates'**
+  String get deluxeGameNews;
+
+  /// No description provided for @deluxeMotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Moving background'**
+  String get deluxeMotion;
+
+  /// No description provided for @deluxeMotionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional scrolling hats and pattern. Leave off to save battery.'**
+  String get deluxeMotionHint;
+
+  /// No description provided for @deluxeReducedMotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Motion is paused by your accessibility settings.'**
+  String get deluxeReducedMotion;
+
+  /// No description provided for @deluxeReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Deluxe appearance and audio'**
+  String get deluxeReset;
+
+  /// No description provided for @deluxeResetDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Deluxe appearance and audio restored.'**
+  String get deluxeResetDone;
+
+  /// No description provided for @deluxeMusicDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A soft background track for Manga Deluxe. Pauses when you leave the app.'**
+  String get deluxeMusicDescription;
+
+  /// No description provided for @deluxeAccentDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the ink accents and background pattern color for Manga Deluxe.'**
+  String get deluxeAccentDescription;
+
+  /// No description provided for @deluxeResetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Restores the shared accent and audio levels. Your folders, mods and save files stay unchanged.'**
+  String get deluxeResetHint;
+
+  /// No description provided for @deluxeWelcomeCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'New here? Set up the game with our quick guide.'**
+  String get deluxeWelcomeCompact;
+
+  /// No description provided for @deluxeSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get deluxeSkip;
+
+  /// No description provided for @deluxeSkipHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide this introduction permanently. The guide stays in the menu.'**
+  String get deluxeSkipHint;
+
+  /// No description provided for @coopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play with friends'**
+  String get coopTitle;
+
+  /// No description provided for @coopNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get coopNav;
+
+  /// No description provided for @coopIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a private room or join your friend\'s code. The helper connects SM64CoopDX through the internet while the game uses its local Direct Connection.'**
+  String get coopIntro;
+
+  /// No description provided for @coopPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'The room code is a shared secret. Signalling uses the compatible Cloudflare service; game traffic connects directly when possible and uses TURN only when needed.'**
+  String get coopPrivacy;
+
+  /// No description provided for @coopConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Network privacy'**
+  String get coopConsentTitle;
+
+  /// No description provided for @coopConsentIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Before creating or joining a room, review how the connection works.'**
+  String get coopConsentIntro;
+
+  /// No description provided for @coopConsentEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'The room code derives the key that encrypts WebRTC signalling. Share it only with people you trust.'**
+  String get coopConsentEncrypted;
+
+  /// No description provided for @coopConsentIp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your internet address may be visible to your invited friend and to the Google and Cloudflare address-discovery services.'**
+  String get coopConsentIp;
+
+  /// No description provided for @coopConsentThirdParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Signalling and relay access use a compatible third-party Cloudflare service. Availability and retention are controlled by that service.'**
+  String get coopConsentThirdParty;
+
+  /// No description provided for @coopConsentAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand and continue'**
+  String get coopConsentAccept;
+
+  /// No description provided for @coopConsentCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get coopConsentCancel;
+
+  /// No description provided for @coopConsentReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review network privacy'**
+  String get coopConsentReview;
+
+  /// No description provided for @coopConsentSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your choice could not be saved. No network session was started.'**
+  String get coopConsentSaveError;
+
+  /// No description provided for @coopCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create room'**
+  String get coopCreate;
+
+  /// No description provided for @coopJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join room'**
+  String get coopJoin;
+
+  /// No description provided for @coopCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend code'**
+  String get coopCode;
+
+  /// No description provided for @coopCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'ABCD-1234'**
+  String get coopCodeHint;
+
+  /// No description provided for @coopRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent codes'**
+  String get coopRecent;
+
+  /// No description provided for @coopClearRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get coopClearRecent;
+
+  /// No description provided for @coopWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for friends'**
+  String get coopWaiting;
+
+  /// No description provided for @coopConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for your friend'**
+  String get coopConnecting;
+
+  /// No description provided for @coopConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Session connected'**
+  String get coopConnected;
+
+  /// No description provided for @coopReconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting'**
+  String get coopReconnecting;
+
+  /// No description provided for @coopPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing secure room'**
+  String get coopPreparing;
+
+  /// No description provided for @coopStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop session'**
+  String get coopStop;
+
+  /// No description provided for @coopOpenGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Open SM64CoopDX'**
+  String get coopOpenGame;
+
+  /// No description provided for @coopGameMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CoopDX is not installed on this device.'**
+  String get coopGameMissing;
+
+  /// No description provided for @coopGameReady.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CoopDX detected'**
+  String get coopGameReady;
+
+  /// No description provided for @coopHostInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Multiplayer > Direct Connection > Host in the game. Friends join using the code shown here.'**
+  String get coopHostInstruction;
+
+  /// No description provided for @coopJoinInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Multiplayer > Direct Connection in the game and connect to 127.0.0.1 using port {port}.'**
+  String coopJoinInstruction(int port);
+
+  /// No description provided for @coopCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy code'**
+  String get coopCopy;
+
+  /// No description provided for @coopCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get coopCopied;
+
+  /// No description provided for @coopShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite'**
+  String get coopShare;
+
+  /// No description provided for @coopShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CoopDX game invite'**
+  String get coopShareSubject;
+
+  /// No description provided for @coopShareMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Join my SM64CoopDX game!\n\nFriend code: {code}\n\nOpen SM64CDPY, go to Play, choose Join room and enter this code. Share it only with people you trust.'**
+  String coopShareMessage(String code);
+
+  /// No description provided for @coopShareError.
+  ///
+  /// In en, this message translates to:
+  /// **'The invite could not be shared. Try copying the code instead.'**
+  String get coopShareError;
+
+  /// No description provided for @coopPeers.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends: {count}'**
+  String coopPeers(int count);
+
+  /// No description provided for @coopDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct'**
+  String get coopDirect;
+
+  /// No description provided for @coopRelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Relay'**
+  String get coopRelay;
+
+  /// No description provided for @coopNoCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid eight-character code.'**
+  String get coopNoCode;
+
+  /// No description provided for @coopNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'The session could not start. Check your connection and try again.'**
+  String get coopNetworkError;
+
+  /// No description provided for @coopBatteryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Background connection'**
+  String get coopBatteryTitle;
+
+  /// No description provided for @coopBatteryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional: allow unrestricted battery use so Android is less likely to pause a session while the game is open.'**
+  String get coopBatteryDescription;
+
+  /// No description provided for @coopBatteryAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unrestricted battery use is allowed. Android can keep the session active more reliably.'**
+  String get coopBatteryAllowed;
+
+  /// No description provided for @coopBatteryAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow in Android'**
+  String get coopBatteryAllow;
+
+  /// No description provided for @coopBatteryManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage in Android'**
+  String get coopBatteryManage;
+
+  /// No description provided for @coopBatteryOpenError.
+  ///
+  /// In en, this message translates to:
+  /// **'Android battery settings could not be opened on this device.'**
+  String get coopBatteryOpenError;
+
+  /// No description provided for @coopDiagnosticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection diagnostics'**
+  String get coopDiagnosticsTitle;
+
+  /// No description provided for @coopDiagnosticsSignal.
+  ///
+  /// In en, this message translates to:
+  /// **'Signalling connections: {count}'**
+  String coopDiagnosticsSignal(int count);
+
+  /// No description provided for @coopDiagnosticsPackets.
+  ///
+  /// In en, this message translates to:
+  /// **'Game packets: {toGame} received · {toPage} sent'**
+  String coopDiagnosticsPackets(int toGame, int toPage);
+
+  /// No description provided for @coopDiagnosticsDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge delay: {average} ms average · {max} ms maximum'**
+  String coopDiagnosticsDelay(int average, int max);
+
+  /// No description provided for @homeCardSoundsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Home card sounds'**
+  String get homeCardSoundsTitle;
+
+  /// No description provided for @homeCardSoundsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Play a sound when changing Featured or Browse cards. Separate from menu effects and music.'**
+  String get homeCardSoundsDescription;
+
+  /// No description provided for @homeCardSoundsVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Card volume'**
+  String get homeCardSoundsVolume;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get languageFrench;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get languageItalian;
+
+  /// Language preference could not be persisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the language. Try again.'**
+  String get languageSaveFailed;
+
+  /// Action to copy the technical diagnostic, not the user-facing explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy details'**
+  String get sharedCopyDetails;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get sharedCopied;
+
+  /// Creator credit on Touch Controls cards. Keep the creator name unchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Author: {author}'**
+  String sharedAuthor(String author);
+
+  /// Fallback for missing catalog titles; not an ID.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled'**
+  String get sharedUntitled;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'REQUIRED'**
+  String get render96Required;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'OPTIONAL'**
+  String get render96Optional;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'MODEL PACK'**
+  String get render96Skinpack;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not export your favorites. Try again.'**
+  String get settingsExportFailed;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not import this file. Choose a favorites file exported by SM64CDPY.'**
+  String get settingsImportFailed;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not refresh the catalog. Check your connection and try again.'**
+  String get settingsDatabaseFailed;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete the update. Try again or download it in your browser.'**
+  String get updateActionFailed;
+
+  /// Contextual UI label or multiplayer failure explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'WATCH TRAILER'**
+  String get render96WatchTrailer;
+
+  /// Contextual UI label or multiplayer failure explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTENT'**
+  String get render96CategoryOther;
+
+  /// Contextual UI label or multiplayer failure explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'The session could not continue. Check your connection and start it again.'**
+  String get coopConnectionFailed;
+
+  /// No description provided for @catalogLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this content. Check your connection and try again.'**
+  String get catalogLoadFailed;
+
+  /// No description provided for @settingsFavouritesShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CoopDX favorites'**
+  String get settingsFavouritesShareSubject;
+
+  /// No description provided for @favEmptyActionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap ♥ on a card to save it here.'**
+  String get favEmptyActionHint;
 }
 
 class _AppLocalizationsDelegate
@@ -4626,7 +5374,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'pt'].contains(locale.languageCode);
+      <String>['en', 'es', 'fr', 'it', 'pt'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -4659,6 +5407,10 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'it':
+      return AppLocalizationsIt();
     case 'pt':
       return AppLocalizationsPt();
   }

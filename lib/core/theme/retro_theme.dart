@@ -48,11 +48,13 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
   final AppThemeDesign design;
   final RetroAccent retroAccent;
   bool get supportsAdaptiveAccent =>
-      design.id == AppThemeId.retroManga || design.id == AppThemeId.marioKart64;
+      design.id.isManga || design.id == AppThemeId.marioKart64;
   bool get _adaptiveRacingPalette => design.id == AppThemeId.marioKart64;
   final MarioThemeAssets marioAssets;
 
   /// Japanese captions are decoration exclusive to the manga design.
+  bool get isManga => design.id.isManga;
+  bool get isDeluxe => design.id == AppThemeId.mangaDeluxe;
   bool get showJapaneseDecorations => design.id == AppThemeId.retroManga;
   bool get isIntro => design.id == AppThemeId.sm64Intro;
   bool get isMario => design.id == AppThemeId.mario64 || isIntro;
@@ -83,7 +85,10 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         _isNeutralSurface(value.color) &&
         (value.border == null || value.borderRadius != null)) {
       return value.copyWith(
-        color: value.color ?? surface,
+        // Deluxe deja ver el mosaico bajo papel neutro; fotos/acentos no cambian.
+        color: isDeluxe
+            ? (value.color ?? surface).withValues(alpha: 0.88)
+            : value.color ?? surface,
         borderRadius: value.borderRadius ?? radius,
         border:
             value.border ?? Border.all(color: border, width: borderWidth(2)),
@@ -707,6 +712,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         side: BorderSide(color: border, width: borderWidth(2)),
       );
       final labelStyle = TextStyle(
+        // Material interpola estos estilos con estilos completos sin herencia.
+        inherit: false,
         fontFamily: headingFamily,
         fontFamilyFallback: design.headingFontFamilyFallback,
         fontWeight: FontWeight.w400,
@@ -789,6 +796,8 @@ class RetroTheme extends ThemeExtension<RetroTheme> {
         side: BorderSide(color: border, width: borderWidth(2)),
       );
       final labelStyle = TextStyle(
+        // Material interpola estos estilos con estilos completos sin herencia.
+        inherit: false,
         fontFamily: headingFamily,
         fontFamilyFallback: design.headingFontFamilyFallback,
         fontWeight: FontWeight.w400,
@@ -1446,7 +1455,7 @@ class SectionKicker extends StatelessWidget {
               flexibleLabel: true,
             ),
           ),
-          if (japanese != null) ...[
+          if (retro.showJapaneseDecorations && japanese != null) ...[
             const SizedBox(width: 9),
             Text(japanese!, style: retro.body(size: 12, color: retro.inkDim)),
           ],

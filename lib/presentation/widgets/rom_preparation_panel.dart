@@ -5,6 +5,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/rom_preparation.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/rom_preparation_provider.dart';
+import 'manga_deluxe_screen_visuals.dart';
 
 class RomPreparationPanel extends ConsumerWidget {
   const RomPreparationPanel({super.key, this.onContinueGuide});
@@ -36,9 +37,18 @@ class RomPreparationPanel extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SectionKicker(retro: retro, label: l.romPrepareTitle),
-              const SizedBox(height: 10),
-              Text(l.romPrepareDescription, style: retro.body(size: 15)),
+              if (retro.isDeluxe)
+                MangaDeluxeHeroPanel(
+                  asset: 'rom-prepare',
+                  fallback: Icons.memory_rounded,
+                  title: l.romPrepareTitle,
+                  body: l.romPrepareDescription,
+                )
+              else ...[
+                SectionKicker(retro: retro, label: l.romPrepareTitle),
+                const SizedBox(height: 10),
+                Text(l.romPrepareDescription, style: retro.body(size: 15)),
+              ],
               const SizedBox(height: 14),
               Container(
                 padding: const EdgeInsets.all(14),
@@ -52,7 +62,19 @@ class RomPreparationPanel extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(status, style: retro.heading(size: 16)),
+                    MangaDeluxeRainbowText(
+                      label: status,
+                      enabled:
+                          state.phase == RomPreparationPhase.prepared ||
+                          state.phase == RomPreparationPhase.saved,
+                      style: retro
+                          .heading(size: 16)
+                          .copyWith(
+                            fontFamily: retro.isDeluxe
+                                ? 'FamiljenGrotesk'
+                                : null,
+                          ),
+                    ),
                     if (state.inputName != null) ...[
                       const SizedBox(height: 6),
                       Text(
@@ -109,38 +131,39 @@ class RomPreparationPanel extends ConsumerWidget {
                   ),
                 )
               else if (state.phase.busy)
-                OutlinedButton.icon(
+                MangaDeluxeAction(
                   onPressed: state.phase == RomPreparationPhase.cancelling
                       ? null
                       : notifier.cancel,
-                  icon: const Icon(Icons.close),
-                  label: Text(l.romPrepareCancel),
+                  icon: Icons.close,
+                  label: l.romPrepareCancel,
                 )
               else ...[
                 if (state.phase == RomPreparationPhase.prepared ||
                     state.canExport)
-                  FilledButton.icon(
+                  MangaDeluxeAction(
                     onPressed: notifier.export,
-                    icon: const Icon(Icons.save_alt_rounded),
-                    label: Text(l.romPrepareSave),
+                    icon: Icons.save_alt_rounded,
+                    label: l.romPrepareSave,
+                    primary: true,
                   ),
                 if (state.phase == RomPreparationPhase.saved &&
                     onContinueGuide != null)
-                  FilledButton.icon(
+                  MangaDeluxeAction(
                     onPressed: onContinueGuide,
-                    icon: const Icon(Icons.arrow_forward_rounded),
-                    label: Text(l.romPrepareContinue),
+                    icon: Icons.arrow_forward_rounded,
+                    label: l.romPrepareContinue,
+                    primary: true,
                   ),
                 if (state.phase != RomPreparationPhase.prepared &&
                     !state.canExport)
-                  FilledButton.icon(
+                  MangaDeluxeAction(
                     onPressed: notifier.pickAndPrepare,
-                    icon: const Icon(Icons.folder_open_rounded),
-                    label: Text(
-                      state.phase == RomPreparationPhase.saved
-                          ? l.romPrepareAnother
-                          : l.romPrepareChoose,
-                    ),
+                    icon: Icons.folder_open_rounded,
+                    label: state.phase == RomPreparationPhase.saved
+                        ? l.romPrepareAnother
+                        : l.romPrepareChoose,
+                    primary: true,
                   ),
                 if (state.phase == RomPreparationPhase.prepared ||
                     state.canExport)

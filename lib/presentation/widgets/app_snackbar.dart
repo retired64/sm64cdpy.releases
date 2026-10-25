@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/retro_theme.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Centralised snackbar helper — consistent styling across the entire app.
 ///
@@ -63,21 +64,24 @@ class AppSnackbar {
       message: message,
       duration: duration,
       action: SnackBarAction(
-        label: 'COPY',
+        label: AppLocalizations.of(context).sharedCopyDetails,
         textColor: RetroTheme.of(context).red,
-        onPressed: () {
-          Clipboard.setData(ClipboardData(text: copyText));
-          ScaffoldMessenger.of(context).clearSnackBars();
-          _show(
-            context,
-            accentOf: (retro) => retro.accent,
-            icon: Icons.check_rounded,
-            message: 'Copied to clipboard',
-            duration: const Duration(seconds: 1),
-          );
+        onPressed: () async {
+          await copyDetails(context, copyText);
         },
       ),
     );
+  }
+
+  static Future<void> copyDetails(BuildContext context, String details) async {
+    try {
+      await Clipboard.setData(ClipboardData(text: details));
+    } catch (error) {
+      debugPrint('Clipboard copy failed: $error');
+      return;
+    }
+    if (!context.mounted) return;
+    success(context, message: AppLocalizations.of(context).sharedCopied);
   }
 
   static void info(

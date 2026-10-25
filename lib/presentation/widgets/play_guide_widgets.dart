@@ -78,7 +78,7 @@ class PlayGuideCard extends StatelessWidget {
     final retro = RetroTheme.of(context);
     final minimal =
         retro.design.surfaceTreatment == AppSurfaceTreatment.minimal;
-    final manga = retro.design.id == AppThemeId.retroManga;
+    final manga = retro.isManga;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Container(

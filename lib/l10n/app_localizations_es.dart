@@ -203,7 +203,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get postInstallLaunchGame => 'ABRIR JUEGO';
 
   @override
-  String get homeExclusiveContent => 'Contenido Exclusivo';
+  String get homeExclusiveContent => 'Exclusivo';
 
   @override
   String get homeTopDownloads => 'Más Descargados';
@@ -279,7 +279,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeDownload => 'Descargar';
 
   @override
-  String get homeLaunchGame => 'ABRIR JUEGO';
+  String get homeLaunchGame => 'INICIAR JUEGO';
 
   @override
   String get homeSoon => 'PRONTO';
@@ -395,7 +395,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String popularPage(int page, int total) {
-    return 'PG $page/$total';
+    return 'Pág. $page/$total';
   }
 
   @override
@@ -522,7 +522,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get dynosEmptyHint =>
-      'Vuelve más tarde para ver parches en tiempo de ejecución.';
+      'Vuelve más tarde para encontrar nuevos packs DynOS.';
 
   @override
   String get dynosFailedToLoad => 'ERROR AL CARGAR DYNOS';
@@ -723,7 +723,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String detailInstallQueued(String name) {
-    return 'Descarga e instalación iniciadas: $name';
+    return 'Descarga e instalación en cola: $name';
   }
 
   @override
@@ -736,6 +736,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get detailScreenshots => 'Capturas';
+
+  @override
+  String get detailYoutubeVideos => 'Videos de YouTube';
+
+  @override
+  String get detailDirectVideos => 'Videos';
 
   @override
   String get detailTags => 'Etiquetas';
@@ -1132,7 +1138,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get disclaimerUnofficialBanner => 'App No Oficial';
 
   @override
-  String get disclaimerAppSubtitle => 'SM64CoopDX Mods Manager';
+  String get disclaimerAppSubtitle => 'Gestor de mods de SM64CoopDX';
 
   @override
   String get disclaimerWarningBody =>
@@ -2052,7 +2058,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get saveFileCourseNames =>
-      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+      'Campo de los Bob-omb|Fortaleza de Whomp|Bahía del Capitán|Montaña helada|Mansión encantada|Cueva laberíntica|Tierra de lava|Desierto cambiante|Muelles sombríos|País de nieve|Ciudad acuática|Montaña alta|Isla cambiante|Reloj|Camino del arcoíris|Bowser en el mundo oscuro|Bowser en el mar de fuego|Bowser en el cielo|Tobogán secreto de la princesa|Caverna de la gorra de metal|Torre de la gorra alada|Gorra invisible bajo el foso|Mario alado sobre el arcoíris|Acuario secreto';
 
   @override
   String get saveFileCopies => 'Progreso del juego';
@@ -2573,6 +2579,426 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get romPrepareErrorUnexpected =>
       'Ocurrió algo inesperado. Tu archivo original no fue modificado.';
+
+  @override
+  String get mangaNavLibrary => 'Mis Mods';
+
+  @override
+  String get mangaNavExplore => 'Mods';
+
+  @override
+  String get mangaMenuLabel => 'Menú';
+
+  @override
+  String get mangaMenuOpen => 'Abrir menú';
+
+  @override
+  String get mangaMenuClose => 'Cerrar menú';
+
+  @override
+  String get mangaNavTools => 'Taller';
+
+  @override
+  String get mangaNavMore => 'MAS';
+
+  @override
+  String get mangaNavPlay => 'Jugar';
+
+  @override
+  String get mangaNavHint => 'Desliza para explorar. Toca para abrir.';
+
+  @override
+  String get mangaNavError =>
+      'No se pudo completar la acción. Inténtalo de nuevo.';
+
+  @override
+  String get mangaMenuSoundsTitle => 'Sonidos del menú';
+
+  @override
+  String get mangaMenuSoundsDescription =>
+      'Efectos al abrir, seleccionar y deslizar el menú.';
+
+  @override
+  String get appEffectsVolume => 'Volumen de efectos';
+
+  @override
+  String get appEffectsVolumeDescription =>
+      'Ajusta solo los efectos de esta app. El volumen multimedia del teléfono sigue siendo el límite.';
+
+  @override
+  String get ambientMusicTitle => 'Música ambiental';
+
+  @override
+  String get ambientMusicDescription =>
+      'Una pista suave mientras usas Retro Manga. Se pausa al salir de la app.';
+
+  @override
+  String get ambientMusicVolume => 'Volumen de música';
+
+  @override
+  String get mangaNavAudio => 'Audio';
+
+  @override
+  String get themeMangaDeluxe => 'Manga Deluxe';
+
+  @override
+  String get deluxeWelcome => 'Bienvenido a CoopDX';
+
+  @override
+  String get deluxeWelcomeBody =>
+      'Tu compañero de mods en Android: prepara el juego, descubre mods y encuentra la comunidad de CoopDX.';
+
+  @override
+  String get deluxeSpotlight => 'De la selección de CoopDX';
+
+  @override
+  String get deluxeDncBody =>
+      'Cielos, iluminación y un ciclo completo de día y noche. Mira el mod en acción antes de explorar sus detalles.';
+
+  @override
+  String get deluxeViewMod => 'Ver mod';
+
+  @override
+  String get deluxeWatchDemo => 'Ver demostración';
+
+  @override
+  String get deluxeDemoHint =>
+      'Abre el vídeo oficial fuera de la app. Requiere internet.';
+
+  @override
+  String get deluxeLinkError =>
+      'No se pudo abrir el enlace. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get deluxeHelpTitle => 'Ayuda rápida';
+
+  @override
+  String get deluxeFaqRom => '¿Qué ROM necesito?';
+
+  @override
+  String get deluxeFaqRomAnswer =>
+      'Usa tu propio volcado USA verificado en formato .z64. El Preparador de ROM puede convertir una copia sin cambiar el original.';
+
+  @override
+  String get deluxeFaqFolders => '¿Qué carpeta selecciono?';
+
+  @override
+  String get deluxeFaqFoldersAnswer =>
+      'Usa Conectar carpeta del juego. La guía explica qué ubicación seleccionar y el gestor detecta los mods y packs compatibles.';
+
+  @override
+  String get deluxeFaqPacks => '¿Mods del juego o DynOS?';
+
+  @override
+  String get deluxeFaqPacksAnswer =>
+      'Los mods Lua cambian el comportamiento del juego. Los packs DynOS aportan modelos, texturas y Touch Controls. Adminístralos desde sus secciones separadas en Biblioteca.';
+
+  @override
+  String get deluxeOpenGuide => 'Abrir';
+
+  @override
+  String get deluxeCommunity => 'Comunidad y enlaces';
+
+  @override
+  String get deluxeGameNews => 'Novedades del juego Android';
+
+  @override
+  String get deluxeMotion => 'Fondo en movimiento';
+
+  @override
+  String get deluxeMotionHint =>
+      'Desplazamiento opcional de gorros y patrón. Déjalo apagado para ahorrar batería.';
+
+  @override
+  String get deluxeReducedMotion =>
+      'El movimiento está pausado por tus ajustes de accesibilidad.';
+
+  @override
+  String get deluxeReset => 'Restablecer diseño y audio Deluxe';
+
+  @override
+  String get deluxeResetDone => 'Diseño y audio Deluxe restablecidos.';
+
+  @override
+  String get deluxeMusicDescription =>
+      'Una pista suave para Manga Deluxe. Se pausa al salir de la app.';
+
+  @override
+  String get deluxeAccentDescription =>
+      'Elige los acentos y el color del patrón de fondo de Manga Deluxe.';
+
+  @override
+  String get deluxeResetHint =>
+      'Restaura el acento y el audio compartidos. Conserva tus carpetas, mods y partidas.';
+
+  @override
+  String get deluxeWelcomeCompact =>
+      '¿Primera vez? Prepara el juego con nuestra guía.';
+
+  @override
+  String get deluxeSkip => 'Omitir';
+
+  @override
+  String get deluxeSkipHint =>
+      'Ocultar esta introducción. La guía seguirá en el menú.';
+
+  @override
+  String get coopTitle => 'Jugar con amigos';
+
+  @override
+  String get coopNav => 'Jugar';
+
+  @override
+  String get coopIntro =>
+      'Crea una sala privada o únete con el código de tu amigo. El asistente conecta SM64CoopDX por internet mientras el juego usa su Conexión directa local.';
+
+  @override
+  String get coopPrivacy =>
+      'El código de sala es un secreto compartido. La señalización usa el servicio compatible de Cloudflare; el tráfico del juego se conecta directamente cuando es posible y usa TURN solo cuando hace falta.';
+
+  @override
+  String get coopConsentTitle => 'Privacidad de red';
+
+  @override
+  String get coopConsentIntro =>
+      'Antes de crear o unirte a una sala, revisa cómo funciona la conexión.';
+
+  @override
+  String get coopConsentEncrypted =>
+      'El código de sala deriva la clave que cifra la señalización WebRTC. Compártelo solo con personas de confianza.';
+
+  @override
+  String get coopConsentIp =>
+      'Tu dirección de internet puede ser visible para el amigo invitado y para los servicios de búsqueda de dirección de Google y Cloudflare.';
+
+  @override
+  String get coopConsentThirdParty =>
+      'La señalización y el relay usan un servicio compatible de Cloudflare operado por terceros. Su disponibilidad y retención dependen de ese servicio.';
+
+  @override
+  String get coopConsentAccept => 'Entiendo y quiero continuar';
+
+  @override
+  String get coopConsentCancel => 'Ahora no';
+
+  @override
+  String get coopConsentReview => 'Revisar privacidad de red';
+
+  @override
+  String get coopConsentSaveError =>
+      'No se pudo guardar tu elección. No se inició ninguna sesión de red.';
+
+  @override
+  String get coopCreate => 'Crear partida';
+
+  @override
+  String get coopJoin => 'Unirse a partida';
+
+  @override
+  String get coopCode => 'Código de amigo';
+
+  @override
+  String get coopCodeHint => 'ABCD-1234';
+
+  @override
+  String get coopRecent => 'Códigos recientes';
+
+  @override
+  String get coopClearRecent => 'Borrar';
+
+  @override
+  String get coopWaiting => 'Esperando amigos';
+
+  @override
+  String get coopConnecting => 'Buscando a tu amigo';
+
+  @override
+  String get coopConnected => 'Partida conectada';
+
+  @override
+  String get coopReconnecting => 'Reconectando';
+
+  @override
+  String get coopPreparing => 'Preparando sala segura';
+
+  @override
+  String get coopStop => 'Detener partida';
+
+  @override
+  String get coopOpenGame => 'Abrir SM64CoopDX';
+
+  @override
+  String get coopGameMissing =>
+      'SM64CoopDX no está instalado en este dispositivo.';
+
+  @override
+  String get coopGameReady => 'SM64CoopDX detectado';
+
+  @override
+  String get coopHostInstruction =>
+      'En el juego abre Multijugador > Conexión directa > Host. Tus amigos se unen con el código mostrado aquí.';
+
+  @override
+  String coopJoinInstruction(int port) {
+    return 'En el juego abre Multijugador > Conexión directa y conéctate a 127.0.0.1 usando el puerto $port.';
+  }
+
+  @override
+  String get coopCopy => 'Copiar código';
+
+  @override
+  String get coopCopied => 'Código copiado';
+
+  @override
+  String get coopShare => 'Compartir invitación';
+
+  @override
+  String get coopShareSubject => 'Invitación a partida de SM64CoopDX';
+
+  @override
+  String coopShareMessage(String code) {
+    return '¡Únete a mi partida de SM64CoopDX!\n\nCódigo de amigo: $code\n\nAbre SM64CDPY, entra en Jugar, pulsa Unirse a partida y escribe este código. Compártelo solo con personas de confianza.';
+  }
+
+  @override
+  String get coopShareError =>
+      'No se pudo compartir la invitación. Intenta copiar el código.';
+
+  @override
+  String coopPeers(int count) {
+    return 'Amigos: $count';
+  }
+
+  @override
+  String get coopDirect => 'Directa';
+
+  @override
+  String get coopRelay => 'Relay';
+
+  @override
+  String get coopNoCode => 'Introduce un código válido de ocho caracteres.';
+
+  @override
+  String get coopNetworkError =>
+      'No se pudo iniciar la partida. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get coopBatteryTitle => 'Conexión en segundo plano';
+
+  @override
+  String get coopBatteryDescription =>
+      'Opcional: permite uso de batería sin restricciones para reducir el riesgo de que Android pause la partida mientras el juego está abierto.';
+
+  @override
+  String get coopBatteryAllowed =>
+      'El uso de batería sin restricciones está permitido. Android podrá mantener la partida activa con mayor fiabilidad.';
+
+  @override
+  String get coopBatteryAllow => 'Permitir en Android';
+
+  @override
+  String get coopBatteryManage => 'Administrar en Android';
+
+  @override
+  String get coopBatteryOpenError =>
+      'No se pudieron abrir los ajustes de batería de Android en este dispositivo.';
+
+  @override
+  String get coopDiagnosticsTitle => 'Diagnóstico de conexión';
+
+  @override
+  String coopDiagnosticsSignal(int count) {
+    return 'Conexiones de señalización: $count';
+  }
+
+  @override
+  String coopDiagnosticsPackets(int toGame, int toPage) {
+    return 'Paquetes del juego: $toGame recibidos · $toPage enviados';
+  }
+
+  @override
+  String coopDiagnosticsDelay(int average, int max) {
+    return 'Demora del puente: $average ms promedio · $max ms máxima';
+  }
+
+  @override
+  String get homeCardSoundsTitle => 'Sonidos de tarjetas de Inicio';
+
+  @override
+  String get homeCardSoundsDescription =>
+      'Sonido al cambiar tarjetas de Destacados o Explorar. Independiente del menú y la música.';
+
+  @override
+  String get homeCardSoundsVolume => 'Volumen de tarjetas';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageItalian => 'Italiano';
+
+  @override
+  String get languageSaveFailed =>
+      'No se pudo guardar el idioma. Inténtalo de nuevo.';
+
+  @override
+  String get sharedCopyDetails => 'Copiar detalles';
+
+  @override
+  String get sharedCopied => 'Copiado al portapapeles';
+
+  @override
+  String sharedAuthor(String author) {
+    return 'Autor: $author';
+  }
+
+  @override
+  String get sharedUntitled => 'Sin título';
+
+  @override
+  String get render96Required => 'NECESARIO';
+
+  @override
+  String get render96Optional => 'OPCIONAL';
+
+  @override
+  String get render96Skinpack => 'PACK DE MODELOS';
+
+  @override
+  String get settingsExportFailed =>
+      'No se pudieron exportar tus favoritos. Inténtalo de nuevo.';
+
+  @override
+  String get settingsImportFailed =>
+      'No se pudo importar este archivo. Elige un archivo de favoritos exportado por SM64CDPY.';
+
+  @override
+  String get settingsDatabaseFailed =>
+      'No se pudo actualizar el catálogo. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get updateActionFailed =>
+      'No se pudo completar la actualización. Inténtalo de nuevo o descárgala desde el navegador.';
+
+  @override
+  String get render96WatchTrailer => 'VER TRÁILER';
+
+  @override
+  String get render96CategoryOther => 'CONTENIDO';
+
+  @override
+  String get coopConnectionFailed =>
+      'La partida no pudo continuar. Revisa tu conexión e iníciala de nuevo.';
+
+  @override
+  String get catalogLoadFailed =>
+      'No se pudo cargar este contenido. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get settingsFavouritesShareSubject => 'Favoritos de SM64CoopDX';
+
+  @override
+  String get favEmptyActionHint => 'Toca ♥ en una tarjeta para guardarla aquí.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2774,7 +3200,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get postInstallLaunchGame => 'ABRIR JUEGO';
 
   @override
-  String get homeExclusiveContent => 'Contenido Exclusivo';
+  String get homeExclusiveContent => 'Exclusivo';
 
   @override
   String get homeTopDownloads => 'Más Descargados';
@@ -2850,7 +3276,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get homeDownload => 'Descargar';
 
   @override
-  String get homeLaunchGame => 'ABRIR JUEGO';
+  String get homeLaunchGame => 'INICIAR JUEGO';
 
   @override
   String get homeSoon => 'PRONTO';
@@ -2966,7 +3392,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String popularPage(int page, int total) {
-    return 'PG $page/$total';
+    return 'Pág. $page/$total';
   }
 
   @override
@@ -3093,7 +3519,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get dynosEmptyHint =>
-      'Vuelve más tarde para ver parches en tiempo de ejecución.';
+      'Vuelve más tarde para encontrar nuevos packs DynOS.';
 
   @override
   String get dynosFailedToLoad => 'ERROR AL CARGAR DYNOS';
@@ -3294,7 +3720,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String detailInstallQueued(String name) {
-    return 'Descarga e instalación iniciadas: $name';
+    return 'Descarga e instalación en cola: $name';
   }
 
   @override
@@ -3307,6 +3733,12 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get detailScreenshots => 'Capturas';
+
+  @override
+  String get detailYoutubeVideos => 'Videos de YouTube';
+
+  @override
+  String get detailDirectVideos => 'Videos';
 
   @override
   String get detailTags => 'Etiquetas';
@@ -3703,7 +4135,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get disclaimerUnofficialBanner => 'App No Oficial';
 
   @override
-  String get disclaimerAppSubtitle => 'SM64CoopDX Mods Manager';
+  String get disclaimerAppSubtitle => 'Gestor de mods de SM64CoopDX';
 
   @override
   String get disclaimerWarningBody =>
@@ -4623,7 +5055,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get saveFileCourseNames =>
-      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+      'Campo de los Bob-omb|Fortaleza de Whomp|Bahía del Capitán|Montaña helada|Mansión encantada|Cueva laberíntica|Tierra de lava|Desierto cambiante|Muelles sombríos|País de nieve|Ciudad acuática|Montaña alta|Isla cambiante|Reloj|Camino del arcoíris|Bowser en el mundo oscuro|Bowser en el mar de fuego|Bowser en el cielo|Tobogán secreto de la princesa|Caverna de la gorra de metal|Torre de la gorra alada|Gorra invisible bajo el foso|Mario alado sobre el arcoíris|Acuario secreto';
 
   @override
   String get saveFileCopies => 'Progreso del juego';
@@ -5144,4 +5576,424 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get romPrepareErrorUnexpected =>
       'Ocurrió algo inesperado. Tu archivo original no fue modificado.';
+
+  @override
+  String get mangaNavLibrary => 'Mis Mods';
+
+  @override
+  String get mangaNavExplore => 'Mods';
+
+  @override
+  String get mangaMenuLabel => 'Menú';
+
+  @override
+  String get mangaMenuOpen => 'Abrir menú';
+
+  @override
+  String get mangaMenuClose => 'Cerrar menú';
+
+  @override
+  String get mangaNavTools => 'Taller';
+
+  @override
+  String get mangaNavMore => 'MAS';
+
+  @override
+  String get mangaNavPlay => 'Jugar';
+
+  @override
+  String get mangaNavHint => 'Desliza para explorar. Toca para abrir.';
+
+  @override
+  String get mangaNavError =>
+      'No se pudo completar la acción. Inténtalo de nuevo.';
+
+  @override
+  String get mangaMenuSoundsTitle => 'Sonidos del menú';
+
+  @override
+  String get mangaMenuSoundsDescription =>
+      'Efectos al abrir, seleccionar y deslizar el menú.';
+
+  @override
+  String get appEffectsVolume => 'Volumen de efectos';
+
+  @override
+  String get appEffectsVolumeDescription =>
+      'Ajusta solo los efectos de esta app. El volumen multimedia del teléfono sigue siendo el límite.';
+
+  @override
+  String get ambientMusicTitle => 'Música ambiental';
+
+  @override
+  String get ambientMusicDescription =>
+      'Una pista suave mientras usas Retro Manga. Se pausa al salir de la app.';
+
+  @override
+  String get ambientMusicVolume => 'Volumen de música';
+
+  @override
+  String get mangaNavAudio => 'Audio';
+
+  @override
+  String get themeMangaDeluxe => 'Manga Deluxe';
+
+  @override
+  String get deluxeWelcome => 'Bienvenido a CoopDX';
+
+  @override
+  String get deluxeWelcomeBody =>
+      'Tu compañero de mods en Android: prepara el juego, descubre mods y encuentra la comunidad de CoopDX.';
+
+  @override
+  String get deluxeSpotlight => 'De la selección de CoopDX';
+
+  @override
+  String get deluxeDncBody =>
+      'Cielos, iluminación y un ciclo completo de día y noche. Mira el mod en acción antes de explorar sus detalles.';
+
+  @override
+  String get deluxeViewMod => 'Ver mod';
+
+  @override
+  String get deluxeWatchDemo => 'Ver demostración';
+
+  @override
+  String get deluxeDemoHint =>
+      'Abre el vídeo oficial fuera de la app. Requiere internet.';
+
+  @override
+  String get deluxeLinkError =>
+      'No se pudo abrir el enlace. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get deluxeHelpTitle => 'Ayuda rápida';
+
+  @override
+  String get deluxeFaqRom => '¿Qué ROM necesito?';
+
+  @override
+  String get deluxeFaqRomAnswer =>
+      'Usa tu propio volcado USA verificado en formato .z64. El Preparador de ROM puede convertir una copia sin cambiar el original.';
+
+  @override
+  String get deluxeFaqFolders => '¿Qué carpeta selecciono?';
+
+  @override
+  String get deluxeFaqFoldersAnswer =>
+      'Usa Conectar carpeta del juego. La guía explica qué ubicación seleccionar y el gestor detecta los mods y packs compatibles.';
+
+  @override
+  String get deluxeFaqPacks => '¿Mods del juego o DynOS?';
+
+  @override
+  String get deluxeFaqPacksAnswer =>
+      'Los mods Lua cambian el comportamiento del juego. Los packs DynOS aportan modelos, texturas y Touch Controls. Adminístralos desde sus secciones separadas en Biblioteca.';
+
+  @override
+  String get deluxeOpenGuide => 'Abrir';
+
+  @override
+  String get deluxeCommunity => 'Comunidad y enlaces';
+
+  @override
+  String get deluxeGameNews => 'Novedades del juego Android';
+
+  @override
+  String get deluxeMotion => 'Fondo en movimiento';
+
+  @override
+  String get deluxeMotionHint =>
+      'Desplazamiento opcional de gorros y patrón. Déjalo apagado para ahorrar batería.';
+
+  @override
+  String get deluxeReducedMotion =>
+      'El movimiento está pausado por tus ajustes de accesibilidad.';
+
+  @override
+  String get deluxeReset => 'Restablecer diseño y audio Deluxe';
+
+  @override
+  String get deluxeResetDone => 'Diseño y audio Deluxe restablecidos.';
+
+  @override
+  String get deluxeMusicDescription =>
+      'Una pista suave para Manga Deluxe. Se pausa al salir de la app.';
+
+  @override
+  String get deluxeAccentDescription =>
+      'Elige los acentos y el color del patrón de fondo de Manga Deluxe.';
+
+  @override
+  String get deluxeResetHint =>
+      'Restaura el acento y el audio compartidos. Conserva tus carpetas, mods y partidas.';
+
+  @override
+  String get deluxeWelcomeCompact =>
+      '¿Primera vez? Prepara el juego con nuestra guía.';
+
+  @override
+  String get deluxeSkip => 'Omitir';
+
+  @override
+  String get deluxeSkipHint =>
+      'Ocultar esta introducción. La guía seguirá en el menú.';
+
+  @override
+  String get coopTitle => 'Jugar con amigos';
+
+  @override
+  String get coopNav => 'Jugar';
+
+  @override
+  String get coopIntro =>
+      'Crea una sala privada o únete con el código de tu amigo. El asistente conecta SM64CoopDX por internet mientras el juego usa su Conexión directa local.';
+
+  @override
+  String get coopPrivacy =>
+      'El código de sala es un secreto compartido. La señalización usa el servicio compatible de Cloudflare; el tráfico del juego se conecta directamente cuando es posible y usa TURN solo cuando hace falta.';
+
+  @override
+  String get coopConsentTitle => 'Privacidad de red';
+
+  @override
+  String get coopConsentIntro =>
+      'Antes de crear o unirte a una sala, revisa cómo funciona la conexión.';
+
+  @override
+  String get coopConsentEncrypted =>
+      'El código de sala deriva la clave que cifra la señalización WebRTC. Compártelo solo con personas de confianza.';
+
+  @override
+  String get coopConsentIp =>
+      'Tu dirección de internet puede ser visible para el amigo invitado y para los servicios de búsqueda de dirección de Google y Cloudflare.';
+
+  @override
+  String get coopConsentThirdParty =>
+      'La señalización y el relay usan un servicio compatible de Cloudflare operado por terceros. Su disponibilidad y retención dependen de ese servicio.';
+
+  @override
+  String get coopConsentAccept => 'Entiendo y quiero continuar';
+
+  @override
+  String get coopConsentCancel => 'Ahora no';
+
+  @override
+  String get coopConsentReview => 'Revisar privacidad de red';
+
+  @override
+  String get coopConsentSaveError =>
+      'No se pudo guardar tu elección. No se inició ninguna sesión de red.';
+
+  @override
+  String get coopCreate => 'Crear partida';
+
+  @override
+  String get coopJoin => 'Unirse a partida';
+
+  @override
+  String get coopCode => 'Código de amigo';
+
+  @override
+  String get coopCodeHint => 'ABCD-1234';
+
+  @override
+  String get coopRecent => 'Códigos recientes';
+
+  @override
+  String get coopClearRecent => 'Borrar';
+
+  @override
+  String get coopWaiting => 'Esperando amigos';
+
+  @override
+  String get coopConnecting => 'Buscando a tu amigo';
+
+  @override
+  String get coopConnected => 'Partida conectada';
+
+  @override
+  String get coopReconnecting => 'Reconectando';
+
+  @override
+  String get coopPreparing => 'Preparando sala segura';
+
+  @override
+  String get coopStop => 'Detener partida';
+
+  @override
+  String get coopOpenGame => 'Abrir SM64CoopDX';
+
+  @override
+  String get coopGameMissing =>
+      'SM64CoopDX no está instalado en este dispositivo.';
+
+  @override
+  String get coopGameReady => 'SM64CoopDX detectado';
+
+  @override
+  String get coopHostInstruction =>
+      'En el juego abre Multijugador > Conexión directa > Host. Tus amigos se unen con el código mostrado aquí.';
+
+  @override
+  String coopJoinInstruction(int port) {
+    return 'En el juego abre Multijugador > Conexión directa y conéctate a 127.0.0.1 usando el puerto $port.';
+  }
+
+  @override
+  String get coopCopy => 'Copiar código';
+
+  @override
+  String get coopCopied => 'Código copiado';
+
+  @override
+  String get coopShare => 'Compartir invitación';
+
+  @override
+  String get coopShareSubject => 'Invitación a partida de SM64CoopDX';
+
+  @override
+  String coopShareMessage(String code) {
+    return '¡Únete a mi partida de SM64CoopDX!\n\nCódigo de amigo: $code\n\nAbre SM64CDPY, entra en Jugar, pulsa Unirse a partida y escribe este código. Compártelo solo con personas de confianza.';
+  }
+
+  @override
+  String get coopShareError =>
+      'No se pudo compartir la invitación. Intenta copiar el código.';
+
+  @override
+  String coopPeers(int count) {
+    return 'Amigos: $count';
+  }
+
+  @override
+  String get coopDirect => 'Directa';
+
+  @override
+  String get coopRelay => 'Relay';
+
+  @override
+  String get coopNoCode => 'Ingresa un código válido de ocho caracteres.';
+
+  @override
+  String get coopNetworkError =>
+      'No se pudo iniciar la partida. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get coopBatteryTitle => 'Conexión en segundo plano';
+
+  @override
+  String get coopBatteryDescription =>
+      'Opcional: permite uso de batería sin restricciones para reducir el riesgo de que Android pause la partida mientras el juego está abierto.';
+
+  @override
+  String get coopBatteryAllowed =>
+      'El uso de batería sin restricciones está permitido. Android podrá mantener la partida activa con mayor fiabilidad.';
+
+  @override
+  String get coopBatteryAllow => 'Permitir en Android';
+
+  @override
+  String get coopBatteryManage => 'Administrar en Android';
+
+  @override
+  String get coopBatteryOpenError =>
+      'No se pudieron abrir los ajustes de batería de Android en este dispositivo.';
+
+  @override
+  String get coopDiagnosticsTitle => 'Diagnóstico de conexión';
+
+  @override
+  String coopDiagnosticsSignal(int count) {
+    return 'Conexiones de señalización: $count';
+  }
+
+  @override
+  String coopDiagnosticsPackets(int toGame, int toPage) {
+    return 'Paquetes del juego: $toGame recibidos · $toPage enviados';
+  }
+
+  @override
+  String coopDiagnosticsDelay(int average, int max) {
+    return 'Demora del puente: $average ms promedio · $max ms máxima';
+  }
+
+  @override
+  String get homeCardSoundsTitle => 'Sonidos de tarjetas de Inicio';
+
+  @override
+  String get homeCardSoundsDescription =>
+      'Sonido al cambiar tarjetas de Destacados o Explorar. Independiente del menú y la música.';
+
+  @override
+  String get homeCardSoundsVolume => 'Volumen de tarjetas';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageItalian => 'Italiano';
+
+  @override
+  String get languageSaveFailed =>
+      'No se pudo guardar el idioma. Inténtalo de nuevo.';
+
+  @override
+  String get sharedCopyDetails => 'Copiar detalles';
+
+  @override
+  String get sharedCopied => 'Copiado al portapapeles';
+
+  @override
+  String sharedAuthor(String author) {
+    return 'Autor: $author';
+  }
+
+  @override
+  String get sharedUntitled => 'Sin título';
+
+  @override
+  String get render96Required => 'NECESARIO';
+
+  @override
+  String get render96Optional => 'OPCIONAL';
+
+  @override
+  String get render96Skinpack => 'PACK DE MODELOS';
+
+  @override
+  String get settingsExportFailed =>
+      'No se pudieron exportar tus favoritos. Inténtalo de nuevo.';
+
+  @override
+  String get settingsImportFailed =>
+      'No se pudo importar este archivo. Elige un archivo de favoritos exportado por SM64CDPY.';
+
+  @override
+  String get settingsDatabaseFailed =>
+      'No se pudo actualizar el catálogo. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get updateActionFailed =>
+      'No se pudo completar la actualización. Inténtalo de nuevo o descárgala desde el navegador.';
+
+  @override
+  String get render96WatchTrailer => 'VER TRÁILER';
+
+  @override
+  String get render96CategoryOther => 'CONTENIDO';
+
+  @override
+  String get coopConnectionFailed =>
+      'La partida no pudo continuar. Revisa tu conexión e iníciala de nuevo.';
+
+  @override
+  String get catalogLoadFailed =>
+      'No se pudo cargar este contenido. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get settingsFavouritesShareSubject => 'Favoritos de SM64CoopDX';
+
+  @override
+  String get favEmptyActionHint => 'Toca ♥ en una tarjeta para guardarla aquí.';
 }

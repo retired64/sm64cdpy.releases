@@ -1,6 +1,7 @@
 import '../../presentation/screens/how_to_play_screen.dart';
 import '../../presentation/screens/game_save_screen.dart';
 import '../../presentation/screens/rom_preparation_screen.dart';
+import '../../presentation/screens/coop_session_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -53,6 +54,10 @@ final appRouter = GoRouter(
             ),
             s,
           ),
+        ),
+        GoRoute(
+          path: '/game-tool/play-2p2',
+          pageBuilder: (_, s) => _page(const CoopSessionScreen(), s),
         ),
         GoRoute(
           path: '/player',

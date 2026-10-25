@@ -50,8 +50,9 @@ class MarioRomAssetsPanel extends ConsumerWidget {
                 if (!context.mounted) return;
                 if (!ref.read(gameFolderProvider).connection.connected) {
                   if (!await connectGameFolder(context, ref) ||
-                      !context.mounted)
+                      !context.mounted) {
                     return;
+                  }
                 }
                 await notifier.perform('import');
               },

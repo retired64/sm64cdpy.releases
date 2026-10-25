@@ -5,7 +5,9 @@ import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/update_service.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/manga_navigation_scope.dart';
 import '../widgets/app_snackbar.dart';
+import '../widgets/coop_network_privacy_panel.dart';
 
 class DisclaimerScreen extends StatelessWidget {
   const DisclaimerScreen({super.key});
@@ -25,8 +27,12 @@ class DisclaimerScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16),
             child: Row(
               children: [
-                const DrawerMenuButton(),
-                const SizedBox(width: 8),
+                if (MangaNavigationScope.of(context))
+                  const SizedBox(width: 16)
+                else ...[
+                  const DrawerMenuButton(),
+                  const SizedBox(width: 8),
+                ],
                 Expanded(
                   child: Text(
                     l10n.disclaimerTitle,
@@ -90,7 +96,12 @@ class _DisclaimerBody extends StatelessWidget {
     ];
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        12,
+        20,
+        120 + mangaNavigationScrollInset(context),
+      ),
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 8),
@@ -106,6 +117,7 @@ class _DisclaimerBody extends StatelessWidget {
             ),
           ),
         ),
+        const CoopNetworkPrivacyPanel(),
         const SizedBox(height: 8),
         _WarningBanner(l10n: l10n),
         const SizedBox(height: 28),

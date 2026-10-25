@@ -39,8 +39,8 @@ descarga e instalación.
 - Importación y exportación de favoritos en JSON.
 - Biblioteca local de contenido instalado, reciente, mods del juego y con
   actualizaciones disponibles.
-- Interfaz en inglés, español y portugués brasileño; diseños incluidos Retro Manga, Mario 64 y SM64 Intro, con apariencia clara, oscura o del teléfono. El panel flotante conserva su diseño oscuro fijo.
-- Elegir Mario 64 o SM64 Intro prepara una vez materiales de menú, cielos, HUD y tipografías desde la ROM estadounidense .z64 sin modificar de tu carpeta del juego conectada. Las siguientes selecciones reutilizan los recursos locales privados. Cancelar conserva el tema anterior. [Detalles de importación](docs/MARIO_ROM_THEME.md).
+- Interfaz en inglés, español, portugués brasileño, francés e italiano; diseños Minimal, Retro Manga, Manga Deluxe y Mario Kart 64, con apariencia clara, oscura o del teléfono. El panel flotante conserva su diseño oscuro fijo.
+- Manga Deluxe remasteriza la interfaz de tinta y papel con imágenes de CoopDX, fondo móvil opcional, bienvenida compacta que puedes omitir, enlaces a vídeos oficiales bajo demanda y ayuda rápida. [Diseño y funcionamiento](docs/MANGA_DELUXE.md).
 - Actualización manual de bases JSON remotas.
 - Conecta una vez la carpeta user del juego con el selector de Android. Mods, DynOS/Touch Controls y detección de ROM reutilizan esa conexión.
 - Resolución de enlaces, incluidos assets de GitHub Releases.

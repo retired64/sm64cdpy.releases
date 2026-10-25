@@ -1,3 +1,6 @@
+import '../widgets/catalog_error_details.dart';
+import '../../core/utils/extensions.dart';
+
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -16,8 +19,10 @@ import '../providers/installation_action_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../../l10n/app_localizations.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../core/constants/app_constants.dart';
 import '../../services/background_install_service.dart';
 import '../../services/download_url_resolver.dart';
@@ -113,11 +118,11 @@ class _DynosBody extends StatelessWidget {
         // ── Section label ─────────────────────────────────────
         if (retro.showJapaneseDecorations)
           SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
-            child: Text('動的・カスタムMOD', style: retro.body(size: 12)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
+              child: Text('動的・カスタムMOD', style: retro.body(size: 12)),
+            ),
           ),
-        ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
@@ -146,6 +151,7 @@ class _DynosBody extends StatelessWidget {
           ),
 
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }
@@ -408,7 +414,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
           if (installError != null) {
             AppSnackbar.errorWithCopy(
               context,
-              message: installError,
+              message: AppLocalizations.of(context).detailInstallFailed,
               copyText: installError,
             );
           } else {
@@ -549,7 +555,10 @@ class _DynosCardState extends ConsumerState<DynosCard>
                   children: [
                     // Title
                     Text(
-                      widget.mod.title,
+                      catalogTitle(
+                        widget.mod.title,
+                        AppLocalizations.of(context).sharedUntitled,
+                      ),
                       style: retro.heading(size: 16.5, letterSpacing: -0.2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -587,7 +596,7 @@ class _DynosCardState extends ConsumerState<DynosCard>
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${widget.mod.rating!.toStringAsFixed(1)} (${widget.mod.ratingCount})',
+                            '${widget.mod.rating!.starFor(AppLocalizations.of(context).localeName)} (${widget.mod.ratingCount})',
                             style: TextStyle(
                               color: retro.inkDim,
                               fontSize: 11,
@@ -1021,8 +1030,8 @@ class _DynosError extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
-                message,
+              CatalogErrorDetails(
+                details: message,
                 style: TextStyle(color: retro.inkDim, fontSize: 12),
                 textAlign: TextAlign.center,
                 maxLines: 3,

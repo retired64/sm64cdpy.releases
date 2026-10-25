@@ -1,10 +1,7 @@
 package mods.sm64cdpy
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.media.AudioManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -18,6 +15,9 @@ class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
+        // Los botones físicos ajustan el mismo volumen que los efectos del menú.
+        // Esto elige el canal; no cambia ni fuerza el volumen del usuario.
+        volumeControlStream = AudioManager.STREAM_MUSIC
         createNotificationChannel()
     }
 
@@ -27,10 +27,17 @@ class MainActivity : FlutterActivity() {
         flutterEngine.plugins.add(MarioAssetsPlugin())
         flutterEngine.plugins.add(Player3DPlugin())
         flutterEngine.plugins.add(RomPreparationPlugin())
+        flutterEngine.plugins.add(MangaMenuAudioPlugin())
+        flutterEngine.plugins.add(AmbientMusicPlugin())
+        flutterEngine.plugins.add(CoopSessionPlugin())
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
+                    "refreshNotificationLanguage" -> {
+                        AppLanguage.refreshChannels(this)
+                        result.success(null)
+                    }
                     "isInstalled" -> {
                         try {
                             packageManager.getPackageInfo(GAME_PACKAGE, 0)
@@ -59,39 +66,6 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val installChannel = NotificationChannel(
-                ModInstallWorker.CHANNEL_ID,
-                getString(R.string.channel_mod_installation),
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = getString(R.string.channel_mod_installation_desc)
-                setShowBadge(false)
-            }
-
-            val downloadChannel = NotificationChannel(
-                ModDownloadWorker.DOWNLOAD_CHANNEL_ID,
-                getString(R.string.channel_mod_download),
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = getString(R.string.channel_mod_download_desc)
-                setShowBadge(false)
-            }
-
-            val resultChannel = NotificationChannel(
-                ModInstallWorker.RESULT_CHANNEL_ID,
-                getString(R.string.channel_mod_results),
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = getString(R.string.channel_mod_results_desc)
-                setShowBadge(true)
-                enableVibration(true)
-            }
-
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(installChannel)
-            manager.createNotificationChannel(downloadChannel)
-            manager.createNotificationChannel(resultChannel)
-        }
+        AppLanguage.refreshChannels(this)
     }
 }

@@ -57,11 +57,11 @@ void main() {
     'theme and brightness persist independently across containers',
     () async {
       final writer = container.read(appearanceProvider.notifier);
-      expect(await writer.setTheme(AppThemeId.mario64), isTrue);
+      expect(await writer.setTheme(AppThemeId.marioKart64), isTrue);
       expect(await writer.setThemeMode(ThemeMode.light), isTrue);
       final restored = ProviderContainer();
       try {
-        expect(restored.read(themeDesignProvider).id, AppThemeId.mario64);
+        expect(restored.read(themeDesignProvider).id, AppThemeId.marioKart64);
         expect(restored.read(themeModeProvider), ThemeMode.light);
       } finally {
         restored.dispose();
@@ -73,15 +73,15 @@ void main() {
     'rapid selections cannot produce out-of-order confirmed state',
     () async {
       final writer = container.read(appearanceProvider.notifier);
-      final saving = writer.setTheme(AppThemeId.mario64);
+      final saving = writer.setTheme(AppThemeId.marioKart64);
       expect(container.read(appearanceProvider).isSaving, isTrue);
       expect(await writer.setTheme(AppThemeId.retroManga), isFalse);
       expect(await saving, isTrue);
-      expect(container.read(themeDesignProvider).id, AppThemeId.mario64);
+      expect(container.read(themeDesignProvider).id, AppThemeId.marioKart64);
       expect(container.read(appearanceProvider).isSaving, isFalse);
       expect(
         Hive.box<String>(AppConstants.settingsBoxKey).get('theme_id'),
-        'mario64',
+        'mario_kart_64',
       );
     },
   );

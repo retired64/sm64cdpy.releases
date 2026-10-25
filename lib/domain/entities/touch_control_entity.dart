@@ -3,6 +3,7 @@ class TouchControlEntity {
   const TouchControlEntity({
     required this.id,
     required this.title,
+    this.author = 'Release Soon',
     this.imageUrl,
     required this.downloadUrl,
     required this.addedAt,
@@ -10,6 +11,7 @@ class TouchControlEntity {
 
   final String id;
   final String title;
+  final String author;
   final String? imageUrl;
   final String downloadUrl;
   final String addedAt;

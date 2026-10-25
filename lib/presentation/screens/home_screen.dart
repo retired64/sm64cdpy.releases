@@ -1,3 +1,10 @@
+import '../widgets/catalog_error_details.dart';
+import 'dart:async';
+import '../providers/home_card_audio_provider.dart';
+import '../widgets/home_typography.dart';
+import '../widgets/deluxe_content.dart';
+import '../widgets/mario_multicolor_label.dart';
+import '../widgets/featured_mod_frame.dart';
 import '../widgets/game_launch_flow.dart';
 import '../widgets/game_folder_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -26,11 +33,11 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allAsync = ref.watch(allModsProvider);
 
-    return allAsync.when(
+    return HomeTypography(child: allAsync.when(
       loading: () => const _HomeSkeleton(),
       error: (e, _) => _HomeError(message: e.toString()),
       data: (_) => const _HomeBody(),
-    );
+    ));
   }
 }
 
@@ -42,6 +49,7 @@ class _HomeBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final deluxe = RetroTheme.of(context).isDeluxe;
     final featuredAsync = ref.watch(featuredModsProvider);
     final topAsync = ref.watch(topModsProvider);
 
@@ -56,6 +64,8 @@ class _HomeBody extends ConsumerWidget {
             child: GameFolderCard(optional: true),
           ),
         ),
+
+        if (deluxe) const SliverToBoxAdapter(child: DeluxeWelcomePanel()),
 
         // ── Featured carousel ─────────────────────────────────
         SliverToBoxAdapter(
@@ -109,6 +119,7 @@ class _HomeBody extends ConsumerWidget {
 
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
         const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        const MangaNavigationSliverInset(),
       ],
     );
   }
@@ -163,33 +174,33 @@ class _HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-
     return RetroPinnedAppBar(
-      title: Text('SM64CoopDX', style: retro.heading(size: 17)),
-      actions: [
-        IconButton(
-          icon: MarioGameIcon(Icons.search, color: retro.inkDim, size: 22),
-          onPressed: () => context.go('/catalogue'),
+      title: Semantics(
+        header: true,
+        label: 'SM64CDPY',
+        excludeSemantics: true,
+        child: const MarioMulticolorLabel(
+          label: 'SM64CDPY',
+          fontSize: 17,
+          keyPrefix: 'home-brand',
         ),
-        const SizedBox(width: 4),
-      ],
+      ),
     );
   }
 }
 
 // ── Featured carousel ─────────────────────────────────────────────────────────
 
-class _FeaturedCarousel extends StatefulWidget {
+class _FeaturedCarousel extends ConsumerStatefulWidget {
   const _FeaturedCarousel({required this.mods});
 
   final List<ModEntity> mods;
 
   @override
-  State<_FeaturedCarousel> createState() => _FeaturedCarouselState();
+  ConsumerState<_FeaturedCarousel> createState() => _FeaturedCarouselState();
 }
 
-class _FeaturedCarouselState extends State<_FeaturedCarousel> {
+class _FeaturedCarouselState extends ConsumerState<_FeaturedCarousel> {
   late final PageController _ctrl;
   int _current = 0;
 
@@ -209,10 +220,12 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    final extraTextHeight = (MediaQuery.textScalerOf(context).scale(17) - 17)
+        .clamp(0.0, 80.0).toDouble() * 3;
     final carouselHeight =
         (MediaQuery.orientationOf(context) == Orientation.landscape)
-        ? 160.0
-        : 220.0;
+        ? 160.0 + extraTextHeight
+        : 220.0 + extraTextHeight;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -224,9 +237,17 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
         SizedBox(
           height: carouselHeight,
           child: PageView.builder(
+            key: const ValueKey('home-featured-pages'),
             controller: _ctrl,
             itemCount: widget.mods.length,
-            onPageChanged: (i) => setState(() => _current = i),
+            onPageChanged: (i) {
+              if (_current == i) return;
+              setState(() => _current = i);
+              // Una emisión por cambio de página, nunca por fotograma o montaje.
+              if (_ctrl.hasClients && _ctrl.position.isScrollingNotifier.value) {
+                unawaited(ref.read(homeCardSoundsProvider.notifier).play());
+              }
+            },
             itemBuilder: (context, i) =>
                 _FeaturedCard(mod: widget.mods[i], isActive: _current == i),
           ),
@@ -298,6 +319,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    final manga = retro.isManga;
     final isFav = ref.watch(favouritesProvider).contains(widget.mod.id);
 
     return AnimatedContainer(
@@ -316,7 +338,8 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
         onTapCancel: () => _pressCtrl.reverse(),
         child: ScaleTransition(
           scale: _pressScale,
-          child: ClipRRect(
+          child: FeaturedModFrame(
+            child: ClipRRect(
             borderRadius: retro.radius,
             child: Stack(
               fit: StackFit.expand,
@@ -329,6 +352,9 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                       ? CachedNetworkImage(
                           imageUrl: widget.mod.imageUrl!,
                           fit: BoxFit.cover,
+                          memCacheWidth: (MediaQuery.sizeOf(context).width *
+                                  MediaQuery.devicePixelRatioOf(context))
+                              .round().clamp(1, 960).toInt(),
                           placeholder: (_, _) =>
                               Container(color: retro.surfaceAlt),
                           errorWidget: (_, _, _) => _FeaturedPlaceholder(),
@@ -336,7 +362,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                       : _FeaturedPlaceholder(),
                 ),
 
-                Positioned.fill(
+                if (!manga) Positioned.fill(
                   child: DecoratedBox(
                     decoration: retro.gameDecoration(
                       BoxDecoration(
@@ -358,10 +384,15 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                 ),
 
                 Positioned(
-                  left: 16,
-                  right: 16,
-                  bottom: 14,
-                  child: Row(
+                  left: manga ? 8 : 16,
+                  right: manga ? 8 : 16,
+                  bottom: manga ? 8 : 14,
+                  child: Container(
+                    padding: manga ? const EdgeInsets.all(10) : EdgeInsets.zero,
+                    decoration: manga ? retro.surfaceDecoration(
+                      color: retro.surface, border: 2, shadowDx: 2, shadowDy: 2,
+                    ) : null,
+                    child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Expanded(
@@ -372,18 +403,22 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                             RetroTag(
                               retro: retro,
                               label: l10n.badgeFeatured,
+                              flexibleLabel: true,
                               icon: Icons.star,
                               filled: true,
                               dense: true,
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              widget.mod.title,
+                              catalogTitle(
+                                widget.mod.title,
+                                AppLocalizations.of(context).sharedUntitled,
+                              ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: retro.headingFamily,
-                                color: Colors.white,
+                                color: manga ? retro.ink : Colors.white,
                                 fontSize: 17,
                                 fontWeight: retro.design.headingWeight,
                                 height: 1.2,
@@ -396,7 +431,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                 MarioGameIcon(
                                   Icons.person,
                                   size: 11,
-                                  color: Colors.white.withValues(alpha: 0.7),
+                                  color: manga ? retro.inkDim : Colors.white.withValues(alpha: 0.7),
                                 ),
                                 const SizedBox(width: 4),
                                 Flexible(
@@ -405,9 +440,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.75,
-                                      ),
+                                      color: manga ? retro.inkDim : Colors.white.withValues(alpha: 0.75),
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -422,9 +455,11 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                   ),
                                   const SizedBox(width: 3),
                                   Text(
-                                    widget.mod.rating!.star,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    widget.mod.rating!.starFor(
+                                      AppLocalizations.of(context).localeName,
+                                    ),
+                                    style: TextStyle(
+                                      color: manga ? retro.ink : Colors.white,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -441,14 +476,14 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                             .read(favouritesProvider.notifier)
                             .toggle(widget.mod.id),
                         child: Container(
-                          width: 36,
-                          height: 36,
+                          width: manga ? 48 : 36,
+                          height: manga ? 48 : 36,
                           decoration: retro.gameDecoration(
                             BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.3),
+                              color: manga ? retro.accent : Colors.black.withValues(alpha: 0.3),
                               borderRadius: retro.radius,
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
+                                color: manga ? retro.border : Colors.white.withValues(alpha: 0.2),
                                 width: retro.borderWidth(1.5),
                               ),
                             ),
@@ -456,15 +491,17 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                           child: MarioGameIcon(
                             isFav ? Icons.favorite : Icons.favorite_border,
                             size: 17,
-                            color: isFav ? retro.red : Colors.white,
+                            color: isFav ? retro.red : (manga ? retro.inkOnAccent : Colors.white),
                           ),
                         ),
                       ),
                     ],
+                    ),
                   ),
                 ),
               ],
             ),
+          ),
           ),
         ),
       ),
@@ -495,14 +532,14 @@ class _FeaturedPlaceholder extends StatelessWidget {
 // y botón inclinado "GO TO" en la esquina inferior derecha. Misma mecánica
 // de swipe + dots que el carrusel de Featured. ─────────────────────────────
 
-class _BrowseCarousel extends StatefulWidget {
+class _BrowseCarousel extends ConsumerStatefulWidget {
   const _BrowseCarousel();
 
   @override
-  State<_BrowseCarousel> createState() => _BrowseCarouselState();
+  ConsumerState<_BrowseCarousel> createState() => _BrowseCarouselState();
 }
 
-class _BrowseCarouselState extends State<_BrowseCarousel> {
+class _BrowseCarouselState extends ConsumerState<_BrowseCarousel> {
   late final PageController _ctrl;
   int _current = 0;
 
@@ -573,11 +610,20 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 178,
+          height: 194 + (MediaQuery.textScalerOf(context).scale(16) - 16)
+              .clamp(0.0, 80.0).toDouble() * 5,
           child: PageView.builder(
+            key: const ValueKey('home-browse-pages'),
             controller: _ctrl,
             itemCount: items.length,
-            onPageChanged: (i) => setState(() => _current = i),
+            onPageChanged: (i) {
+              if (_current == i) return;
+              setState(() => _current = i);
+              // Una emisión por cambio de página, nunca por fotograma o montaje.
+              if (_ctrl.hasClients && _ctrl.position.isScrollingNotifier.value) {
+                unawaited(ref.read(homeCardSoundsProvider.notifier).play());
+              }
+            },
             itemBuilder: (context, i) {
               final item = items[i];
               return _BrowseCard(
@@ -588,6 +634,7 @@ class _BrowseCarouselState extends State<_BrowseCarousel> {
                 route: item.route,
                 imageUrl: item.imageUrl,
                 accent: colors[item.colorKey] ?? retro.accent,
+                isActive: _current == i,
               );
             },
           ),
@@ -629,6 +676,7 @@ class _BrowseCard extends StatefulWidget {
     required this.description,
     required this.route,
     required this.accent,
+    required this.isActive,
     this.imageUrl,
   });
 
@@ -638,6 +686,7 @@ class _BrowseCard extends StatefulWidget {
   final String description;
   final String route;
   final Color accent;
+  final bool isActive;
   // Cuando haya arte real por categoría, esto trae la miniatura por red;
   // mientras sea null, la tarjeta usa el ícono como placeholder permanente.
   final String? imageUrl;
@@ -675,8 +724,12 @@ class _BrowseCardState extends State<_BrowseCard>
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
+    return AnimatedContainer(
+      key: ValueKey('home-browse-card-${widget.route}'),
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero : const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+      margin: EdgeInsets.symmetric(horizontal: 6, vertical: widget.isActive ? 0 : 8),
       child: GestureDetector(
         onTapDown: (_) => _ctrl.forward(),
         onTapUp: (_) {
@@ -699,6 +752,16 @@ class _BrowseCardState extends State<_BrowseCard>
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (retro.isManga)
+                      HomeBrowseIcon(
+                        asset: switch (widget.route) {
+                          '/favourites' => 'favorites',
+                          '/popular' => 'popular',
+                          _ => 'catalog',
+                        },
+                        fallback: widget.icon,
+                      )
+                    else
                     ClipRRect(
                       borderRadius: retro.radius,
                       child: Container(
@@ -1061,22 +1124,9 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      MarioGameIcon(
-                        Icons.play_arrow_rounded,
-                        size: 22,
-                        color: retro.inkDim,
-                      ),
+                      const HomeLaunchIcon(),
                       const SizedBox(width: 8),
-                      Text(
-                        l10n.homeLaunchGame,
-                        style: TextStyle(
-                          fontFamily: retro.headingFamily,
-                          color: retro.inkDim,
-                          fontSize: 14,
-                          fontWeight: retro.design.headingWeight,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
+                      Flexible(child: HomeMarioLabel(label: l10n.homeLaunchGame, size: 14, singleLine: true)),
                     ],
                   ),
                 ),
@@ -1182,22 +1232,9 @@ class _LaunchGameButtonState extends ConsumerState<_LaunchGameButton> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  MarioGameIcon(
-                    Icons.play_arrow_rounded,
-                    size: 22,
-                    color: retro.inkOnAccent,
-                  ),
+                  const HomeLaunchIcon(),
                   SizedBox(width: 8),
-                  Text(
-                    l10n.homeLaunchGame,
-                    style: TextStyle(
-                      fontFamily: retro.headingFamily,
-                      color: retro.inkOnAccent,
-                      fontSize: 14,
-                      fontWeight: retro.design.headingWeight,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                  Flexible(child: HomeMarioLabel(label: l10n.homeLaunchGame, size: 14, singleLine: true)),
                   MarioGameIcon(
                     Icons.arrow_forward,
                     size: 18,
@@ -1376,7 +1413,10 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.mod.title,
+                      catalogTitle(
+                        widget.mod.title,
+                        AppLocalizations.of(context).sharedUntitled,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -1400,7 +1440,9 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                         ),
                         const SizedBox(width: 3),
                         Text(
-                          widget.mod.downloads.compact,
+                          widget.mod.downloads.compactFor(
+                            AppLocalizations.of(context).localeName,
+                          ),
                           style: retro.body(size: 11),
                         ),
                         if (widget.mod.rating != null) ...[
@@ -1412,7 +1454,9 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            widget.mod.rating!.star,
+                            widget.mod.rating!.starFor(
+                              AppLocalizations.of(context).localeName,
+                            ),
                             style: retro.body(size: 11),
                           ),
                         ],
@@ -1461,7 +1505,7 @@ class _SectionHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(title, style: retro.heading(size: 16)),
+          Expanded(child: HomeMarioLabel(label: title, size: 18)),
           if (actionLabel != null && onAction != null)
             GestureDetector(
               onTap: onAction,
@@ -1499,7 +1543,12 @@ class _HomeSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 80, 20, 32),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        80,
+        20,
+        32 + mangaNavigationScrollInset(context),
+      ),
       children: [
         const _Bone(height: 220),
         const SizedBox(height: 20),
@@ -1596,8 +1645,8 @@ class _HomeError extends StatelessWidget {
             const SizedBox(height: 16),
             Text(l10n.homeFailedToLoad, style: retro.heading(size: 16)),
             const SizedBox(height: 6),
-            Text(
-              message,
+            CatalogErrorDetails(
+              details: message,
               style: retro.body(size: 12),
               textAlign: TextAlign.center,
               maxLines: 3,

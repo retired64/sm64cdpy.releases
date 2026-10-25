@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,7 +49,8 @@ class AppearanceNotifier extends Notifier<AppearanceSettings> {
     },
   );
 
-  Future<bool> setTheme(AppThemeId id) => _save(themeId: id);
+  Future<bool> setTheme(AppThemeId id) =>
+      _save(themeId: AppThemeId.fromStorage(id.storageKey));
   Future<bool> setThemeMode(ThemeMode mode) => _save(mode: mode);
 
   Future<bool> _save({AppThemeId? themeId, ThemeMode? mode}) async {
@@ -107,33 +111,75 @@ final themeDesignProvider = Provider<AppThemeDesign>(
 /// the device's system locale. When non-null, the locale is forced
 /// to the specified language tag (e.g. 'es_419', 'pt_BR', 'en_US').
 class LocaleNotifier extends Notifier<String?> {
+  static const supportedTags = ['en_US', 'es_419', 'pt_BR', 'fr', 'it'];
+  static const _native = MethodChannel('sm64cdpy/launcher');
+  bool _saving = false;
+
+  static String? _savedTag() {
+    final saved = _readSetting('locale');
+    return supportedTags.contains(saved) ? saved : null;
+  }
+
+  /// Hive owns the preference; refresh Android's durable projection at startup.
+  /// This does not initialize or send data to the floating engine.
+  static Future<void> synchronizeNativeLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!await prefs.setString(
+      AppConstants.appLocaleKey,
+      _savedTag() ?? 'system',
+    )) {
+      throw StateError('Could not mirror app language');
+    }
+    await _refreshNative();
+  }
+
+  static Future<void> _refreshNative() async {
+    try {
+      await _native.invokeMethod<void>('refreshNotificationLanguage');
+    } on MissingPluginException {
+      // Widget tests have no Android activity.
+    } on PlatformException catch (error) {
+      // The saved preference is still read by every future notification.
+      debugPrint('Could not refresh notification channel names: $error');
+    }
+  }
+
   @override
   String? build() {
-    final saved = _readSetting('locale') ?? 'system';
-
-    if (saved == 'system') return null;
-    if (['en_US', 'es_419', 'pt_BR'].contains(saved)) return saved;
-    return null;
+    return _savedTag();
   }
 
   Future<void> setLocale(String? tag) async {
-    state = tag;
-
-    try {
-      await Hive.box<String>(
-        AppConstants.settingsBoxKey,
-      ).put('locale', tag ?? 'system');
-    } catch (e) {
-      debugPrint('Failed to save locale preference: $e');
+    if (tag != null && !supportedTags.contains(tag)) {
+      throw ArgumentError.value(tag, 'tag', 'Unsupported app language');
     }
-
-    // Réplica en SharedPreferences para que el overlay engine
-    // (segundo isolate) pueda leer la preferencia sin inicializar Hive.
+    if (_saving) return;
+    _saving = true;
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.appLocaleKey, tag ?? 'system');
-    } catch (e) {
-      debugPrint('Failed to mirror locale to SharedPreferences: $e');
+      final previousMirror = prefs.getString(AppConstants.appLocaleKey);
+      if (!await prefs.setString(AppConstants.appLocaleKey, tag ?? 'system')) {
+        throw StateError('Could not mirror app language');
+      }
+      try {
+        await Hive.box<String>(
+          AppConstants.settingsBoxKey,
+        ).put('locale', tag ?? 'system');
+      } catch (_) {
+        if (previousMirror == null) {
+          await prefs.remove(AppConstants.appLocaleKey);
+        } else {
+          await prefs.setString(AppConstants.appLocaleKey, previousMirror);
+        }
+        rethrow;
+      }
+      if (ref.mounted) state = tag;
+      // The durable preference and provider state are already committed. The
+      // Android notification-channel projection is best effort and handles
+      // its own platform failures, so it must not hold the selector open.
+      unawaited(_refreshNative());
+    } finally {
+      _saving = false;
     }
   }
 

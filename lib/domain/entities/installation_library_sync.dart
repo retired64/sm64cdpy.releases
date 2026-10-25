@@ -8,8 +8,9 @@ class InstallationLibrarySyncGate {
 
   bool accept(String? incomingSession, int incomingRequest) {
     sessionChanged = false;
-    if (incomingRequest < 0 || (session != null && incomingSession == null))
+    if (incomingRequest < 0 || (session != null && incomingSession == null)) {
       return false;
+    }
     if (incomingSession != null && incomingSession != session) {
       if (_retired.contains(incomingSession)) return false;
       if (session != null) _retired.add(session!);

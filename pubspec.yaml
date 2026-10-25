@@ -51,6 +51,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/audio/manga/
     - assets/db/database_sm64coopdx.json
     - assets/db/vip.json
     - assets/db/dynos.json
@@ -61,10 +62,17 @@ flutter:
     - assets/icons/menu/
     - assets/icons/player/
     - assets/player3d/
+    - assets/coop/
     - assets/themes/minish/
     - assets/themes/mk64/
+    - assets/themes/manga_deluxe/
+    - assets/themes/manga/navigation/
 
   fonts:
+    - family: FamiljenGrotesk
+      fonts:
+        - asset: fonts/manga_deluxe/FamiljenGrotesk-Regular.ttf
+          weight: 400
     - family: TypefaceMario64
       fonts:
         - asset: fonts/TypefaceMario64.otf
