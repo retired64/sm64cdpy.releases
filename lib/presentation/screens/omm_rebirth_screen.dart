@@ -25,6 +25,7 @@ import '../widgets/app_snackbar.dart';
 import '../widgets/dynos_install_flow.dart';
 import '../../l10n/app_localizations.dart';
 import '../widgets/installation_action_presentation.dart';
+import '../widgets/route_settled.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -838,23 +839,28 @@ class _Bone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final retro = RetroTheme.of(context);
-    return Shimmer.fromColors(
-      baseColor: retro.surface,
-      highlightColor: retro.surfaceAlt,
-      child: Container(
-        height: height,
-        decoration: retro.gameDecoration(
-          BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: retro.border,
-              width: retro.borderWidth(3),
+    return RouteSettledBuilder(
+      builder: (context, settled) {
+        final retro = RetroTheme.of(context);
+        return Shimmer.fromColors(
+          enabled: settled && !MediaQuery.disableAnimationsOf(context),
+          baseColor: retro.surface,
+          highlightColor: retro.surfaceAlt,
+          child: Container(
+            height: height,
+            decoration: retro.gameDecoration(
+              BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                  color: retro.border,
+                  width: retro.borderWidth(3),
+                ),
+                borderRadius: retro.radius,
+              ),
             ),
-            borderRadius: retro.radius,
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

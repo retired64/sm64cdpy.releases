@@ -77,7 +77,11 @@ class _MangaNavigationDockState extends ConsumerState<MangaNavigationDock>
   @override
   void didUpdateWidget(covariant MangaNavigationDock oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentRoute != widget.currentRoute) _setExpanded(false);
+    if (oldWidget.currentRoute != widget.currentRoute) {
+      // La transición de página ya comunica el cambio; cerrar el dock de
+      // inmediato evita dos animaciones compitiendo por el mismo frame.
+      _setExpanded(false, animate: false);
+    }
   }
 
   @override
@@ -176,7 +180,7 @@ class _MangaNavigationDockState extends ConsumerState<MangaNavigationDock>
                                       currentRoute: widget.currentRoute,
                                       bottomSafeArea: false,
                                       onDestinationSelected: () =>
-                                          _setExpanded(false),
+                                          _setExpanded(false, animate: false),
                                     ),
                                   ),
                                 ),

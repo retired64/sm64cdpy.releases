@@ -274,6 +274,8 @@ class _ModHeader extends StatelessWidget {
           ? CachedNetworkImage(
               imageUrl: mod.imageUrl!,
               fit: BoxFit.contain,
+              memCacheWidth: 336,
+              maxWidthDiskCache: 448,
               placeholder: (_, _) => _HeroPlaceholder(retro: retro),
               errorWidget: (_, _, _) => _HeroPlaceholder(retro: retro),
             )
@@ -2008,6 +2010,8 @@ class _ScreenshotGalleryState extends State<_ScreenshotGallery> {
                     child: CachedNetworkImage(
                       imageUrl: widget.images[i],
                       fit: BoxFit.cover,
+                      memCacheWidth: 720,
+                      maxWidthDiskCache: 960,
                       placeholder: (_, _) => Container(
                         color: retro.surfaceAlt,
                         child: Center(

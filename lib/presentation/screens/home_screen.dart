@@ -332,7 +332,7 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
       child: GestureDetector(
         onTapDown: (_) => _pressCtrl.forward(),
         onTapUp: (_) {
-          _pressCtrl.reverse();
+          _pressCtrl.value = 0;
           context.push('/mod/${Uri.encodeComponent(widget.mod.id)}');
         },
         onTapCancel: () => _pressCtrl.reverse(),
@@ -733,7 +733,7 @@ class _BrowseCardState extends State<_BrowseCard>
       child: GestureDetector(
         onTapDown: (_) => _ctrl.forward(),
         onTapUp: (_) {
-          _ctrl.reverse();
+          _ctrl.value = 0;
           context.go(widget.route);
         },
         onTapCancel: () => _ctrl.reverse(),
@@ -971,7 +971,7 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) {
-        _ctrl.reverse();
+        _ctrl.value = 0;
         context.go(widget.route);
       },
       onTapCancel: () => _ctrl.reverse(),
@@ -1324,7 +1324,7 @@ class _TopModRowState extends ConsumerState<_TopModRow>
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) {
-        _ctrl.reverse();
+        _ctrl.value = 0;
         context.push('/mod/${Uri.encodeComponent(widget.mod.id)}');
       },
       onTapCancel: () => _ctrl.reverse(),

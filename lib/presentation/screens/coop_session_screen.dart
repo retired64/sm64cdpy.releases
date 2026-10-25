@@ -14,6 +14,7 @@ import '../widgets/app_snackbar.dart';
 import '../widgets/game_setup_widgets.dart';
 import '../widgets/coop_play_visuals.dart';
 import '../widgets/manga_navigation_scope.dart';
+import '../widgets/route_settled.dart';
 
 class CoopSessionScreen extends ConsumerStatefulWidget {
   const CoopSessionScreen({super.key});
@@ -30,11 +31,25 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
   bool _starting = false;
   bool _batteryBusy = false;
   bool _sharing = false;
+  bool _initialLoadsStarted = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialLoadsStarted) return;
+    _initialLoadsStarted = true;
+    unawaited(_loadAfterTransition());
+  }
+
+  Future<void> _loadAfterTransition() async {
+    await waitForRouteSettled(context);
+    if (!mounted) return;
     unawaited(_loadRecent());
     unawaited(_loadBatteryStatus());
   }

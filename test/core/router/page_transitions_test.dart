@@ -15,7 +15,7 @@ void main() {
     expect(page.reverseTransitionDuration, appPageReverseTransitionDuration);
     expect(
       page.transitionDuration,
-      lessThanOrEqualTo(const Duration(milliseconds: 250)),
+      lessThanOrEqualTo(const Duration(milliseconds: 200)),
     );
   });
 
@@ -35,7 +35,7 @@ void main() {
     expect(play.transitionDuration, playTransitionDuration);
     expect(
       play.transitionDuration,
-      lessThan(const Duration(milliseconds: 350)),
+      lessThanOrEqualTo(const Duration(milliseconds: 200)),
     );
   });
 
@@ -48,7 +48,6 @@ void main() {
           builder: (context) => buildLightweightPageTransition(
             context,
             const AlwaysStoppedAnimation(0.5),
-            const AlwaysStoppedAnimation(0),
             const Text('destination'),
           ),
         ),
@@ -57,7 +56,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('app-page-fade')), findsOneWidget);
     expect(find.byKey(const ValueKey('app-page-slide')), findsOneWidget);
-    expect(find.byKey(const ValueKey('app-page-scale')), findsOneWidget);
+    expect(find.byType(ScaleTransition), findsNothing);
     final slide = tester.widget<SlideTransition>(
       find.byKey(const ValueKey('app-page-slide')),
     );
@@ -78,7 +77,6 @@ void main() {
             builder: (context) => buildLightweightPageTransition(
               context,
               const AlwaysStoppedAnimation(0.5),
-              const AlwaysStoppedAnimation(0),
               const Text('destination'),
             ),
           ),
