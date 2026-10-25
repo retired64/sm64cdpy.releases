@@ -7,7 +7,7 @@
   "locales": {
     "en": {
       "title": "Play together, prepare your ROM and explore in five languages",
-      "summary": "Version 1.9.0 adds the Play multiplayer flow, local ROM preparation, a complete How to Play guide, French and Italian, richer mod media and a polished Manga interface with faster cached Library and Save Files entry.",
+      "summary": "Version 1.9.0 adds the Play multiplayer flow, local ROM preparation, a complete How to Play guide, French and Italian, localized mod descriptions, richer mod media and a polished Manga interface with faster cached Library and Save Files entry.",
       "highlights": [
         "Create or join a compatible multiplayer session with a short code, share it as text and keep the bridge active while SM64CoopDX is open.",
         "Prepare a valid user-provided USA z64, v64 or n64 dump locally, with bounded conversion, progress, cancellation and verified SAF export.",
@@ -15,6 +15,7 @@
         "Use the redesigned Retro Manga slide menu or the new Manga Deluxe theme with optimized WebP artwork, ambient music and independent interface sounds.",
         "Open Library and Save Files from their last persisted snapshot while the app refreshes the real data in the background.",
         "Read mod descriptions with supported images and video previews; YouTube links open through Android's recognized URL handler.",
+        "Read mod descriptions in Spanish, Brazilian Portuguese, French or Italian with precomputed translations, and switch to the original English at any time.",
         "Use the complete interface in English, Spanish, Brazilian Portuguese, French or Italian, including native Android notifications.",
         "See Touch Controls creator credits and a safe Release Soon fallback when an author is not available.",
         "Android now classifies SM64CDPY as a game."
@@ -51,6 +52,7 @@
           "heading": "Languages and catalog data",
           "items": [
             "French and Italian join English, Spanish and Brazilian Portuguese across the main Flutter interface, shared diagnostics and native Android notifications.",
+            "Mod descriptions include precomputed translations for Spanish, Brazilian Portuguese, French and Italian. The original English remains the source, and a themed icon switches between languages offline; older catalogs fall back safely to English.",
             "The chosen language persists across launches. Dates, numbers, pagination, course labels and Render96 categories use localized presentation.",
             "Touch Controls now display creator attribution in listings, details and favorites, with Release Soon when the source has no author."
           ]
@@ -59,7 +61,7 @@
           "heading": "Before publishing",
           "items": [
             "This candidate does not force an update. The release timestamp remains provisional until publication.",
-            "Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, media previews and all three ABI APKs.",
+            "Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, mod-description language switching, media previews and all three ABI APKs.",
             "The floating overlay language and the planned safe-uninstall workflow are not part of version 1.9.0."
           ]
         }
@@ -67,7 +69,7 @@
     },
     "es": {
       "title": "Juega en compañía, prepara tu ROM y navega en cinco idiomas",
-      "summary": "La versión 1.9.0 añade el flujo multijugador Jugar, preparación local de ROM, una guía completa de Cómo jugar, francés e italiano, contenido multimedia de mods y una interfaz Manga pulida con entrada más rápida a Biblioteca y Partidas guardadas mediante caché persistente.",
+      "summary": "La versión 1.9.0 añade el flujo multijugador Jugar, preparación local de ROM, una guía completa de Cómo jugar, francés e italiano, descripciones de mods localizadas, contenido multimedia de mods y una interfaz Manga pulida con entrada más rápida a Biblioteca y Partidas guardadas mediante caché persistente.",
       "highlights": [
         "Crea o únete a una sesión multijugador compatible con un código corto, compártelo como texto y conserva el puente activo mientras SM64CoopDX está abierto.",
         "Prepara localmente un volcado USA válido z64, v64 o n64 aportado por el usuario, con conversión acotada, progreso, cancelación y exportación SAF verificada.",
@@ -75,6 +77,7 @@
         "Usa el menú deslizante rediseñado de Retro Manga o el nuevo tema Manga Deluxe con gráficos WebP optimizados, música ambiental y sonidos de interfaz independientes.",
         "Abre Biblioteca y Partidas guardadas desde el último snapshot persistido mientras la app verifica los datos reales en segundo plano.",
         "Visualiza imágenes y videos compatibles dentro de la descripción del mod; los enlaces de YouTube se abren con el controlador reconocido por Android.",
+        "Lee las descripciones de los mods en español, portugués brasileño, francés o italiano con traducciones precalculadas y vuelve al inglés original cuando quieras.",
         "Usa toda la interfaz en inglés, español, portugués brasileño, francés o italiano, incluidas las notificaciones nativas de Android.",
         "Consulta los créditos de autor de Touch Controls y el valor seguro Release Soon cuando no existe autor disponible.",
         "Android ahora clasifica SM64CDPY como juego."
@@ -111,6 +114,7 @@
           "heading": "Idiomas y datos del catálogo",
           "items": [
             "Francés e italiano se suman a inglés, español y portugués brasileño en la interfaz Flutter, diagnósticos compartidos y notificaciones nativas de Android.",
+            "Las descripciones de los mods incluyen traducciones precalculadas al español, portugués brasileño, francés e italiano. El inglés original sigue siendo la fuente y un icono temático alterna entre idiomas sin conexión; los catálogos antiguos vuelven de forma segura al inglés.",
             "El idioma elegido persiste entre aperturas. Fechas, números, paginación, cursos y categorías Render96 usan presentación localizada.",
             "Touch Controls muestra autoría en listados, detalles y favoritos, con Release Soon cuando la fuente no incluye autor."
           ]
@@ -119,7 +123,7 @@
           "heading": "Antes de publicar",
           "items": [
             "Esta candidata no obliga a actualizar. La fecha del manifiesto es provisional hasta la publicación.",
-            "Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, multimedia y los APK de las tres ABI.",
+            "Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, cambio de idioma en descripciones de mods, multimedia y los APK de las tres ABI.",
             "El idioma de la burbuja flotante y el flujo planificado de desinstalación segura no forman parte de la versión 1.9.0."
           ]
         }
@@ -127,7 +131,7 @@
     },
     "pt-BR": {
       "title": "Jogue com amigos, prepare sua ROM e navegue em cinco idiomas",
-      "summary": "A versão 1.9.0 adiciona o fluxo multiplayer Jogar, preparação local de ROM, um guia completo de Como jogar, francês e italiano, mídia enriquecida de mods e uma interface Manga refinada com entrada mais rápida na Biblioteca e nos Saves por cache persistente.",
+      "summary": "A versão 1.9.0 adiciona o fluxo multiplayer Jogar, preparação local de ROM, um guia completo de Como jogar, francês e italiano, descrições localizadas de mods, mídia enriquecida de mods e uma interface Manga refinada com entrada mais rápida na Biblioteca e nos Saves por cache persistente.",
       "highlights": [
         "Crie ou entre em uma sessão multiplayer compatível com um código curto, compartilhe-o como texto e mantenha a ponte ativa enquanto o SM64CoopDX estiver aberto.",
         "Prepare localmente um dump USA válido z64, v64 ou n64 fornecido pelo usuário, com conversão limitada, progresso, cancelamento e exportação SAF verificada.",
@@ -135,6 +139,7 @@
         "Use o menu deslizante redesenhado do Retro Manga ou o novo tema Manga Deluxe com gráficos WebP otimizados, música ambiente e sons independentes da interface.",
         "Abra Biblioteca e Saves pelo último snapshot persistido enquanto o app verifica os dados reais em segundo plano.",
         "Veja imagens e vídeos compatíveis na descrição do mod; links do YouTube abrem pelo controlador reconhecido pelo Android.",
+        "Leia as descrições dos mods em espanhol, português brasileiro, francês ou italiano com traduções pré-calculadas e volte ao inglês original quando quiser.",
         "Use toda a interface em inglês, espanhol, português brasileiro, francês ou italiano, incluindo notificações nativas do Android.",
         "Veja os créditos de autoria de Touch Controls e o fallback seguro Release Soon quando não houver autor disponível.",
         "O Android agora classifica o SM64CDPY como jogo."
@@ -171,6 +176,7 @@
           "heading": "Idiomas e dados do catálogo",
           "items": [
             "Francês e italiano se juntam ao inglês, espanhol e português brasileiro na interface Flutter, nos diagnósticos compartilhados e nas notificações nativas do Android.",
+            "As descrições dos mods incluem traduções pré-calculadas para espanhol, português brasileiro, francês e italiano. O inglês original continua sendo a fonte, e um ícone temático alterna entre os idiomas sem conexão; catálogos antigos recorrem ao inglês com segurança.",
             "O idioma escolhido persiste entre aberturas. Datas, números, paginação, cursos e categorias Render96 usam apresentação localizada.",
             "Touch Controls exibe autoria em listas, detalhes e favoritos, com Release Soon quando a fonte não informa autor."
           ]
@@ -179,7 +185,7 @@
           "heading": "Antes de publicar",
           "items": [
             "Esta candidata não força atualização. A data do manifesto permanece provisória até a publicação.",
-            "Ainda é necessária validação física da continuidade multiplayer, ajustes de bateria, provedores de ROM, pouco espaço, rotação, layouts em cinco idiomas, mídia e APKs das três ABI.",
+            "Ainda é necessária validação física da continuidade multiplayer, ajustes de bateria, provedores de ROM, pouco espaço, rotação, layouts em cinco idiomas, troca de idioma nas descrições dos mods, mídia e APKs das três ABI.",
             "O idioma da bolha flutuante e o fluxo planejado de desinstalação segura não fazem parte da versão 1.9.0."
           ]
         }

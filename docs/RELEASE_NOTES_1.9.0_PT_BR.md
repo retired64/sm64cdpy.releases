@@ -1,6 +1,6 @@
 ## SM64CDPY v1.9.0 — Jogue com amigos, prepare sua ROM e navegue em cinco idiomas
 
-A versão 1.9.0 adiciona o fluxo multiplayer Jogar, preparação local de ROM, um guia completo de Como jogar, francês e italiano, mídia enriquecida de mods e uma interface Manga refinada com entrada mais rápida na Biblioteca e nos Saves por cache persistente.
+A versão 1.9.0 adiciona o fluxo multiplayer Jogar, preparação local de ROM, um guia completo de Como jogar, francês e italiano, descrições localizadas de mods, mídia enriquecida de mods e uma interface Manga refinada com entrada mais rápida na Biblioteca e nos Saves por cache persistente.
 
 ### Jogar com amigos
 
@@ -26,11 +26,12 @@ A versão 1.9.0 adiciona o fluxo multiplayer Jogar, preparação local de ROM, u
 ### Idiomas e dados do catálogo
 
 - Francês e italiano se juntam ao inglês, espanhol e português brasileiro na interface Flutter, nos diagnósticos compartilhados e nas notificações nativas do Android.
+- As descrições dos mods incluem traduções pré-calculadas para espanhol, português brasileiro, francês e italiano. O inglês original continua sendo a fonte, e um ícone temático alterna entre os idiomas sem conexão; catálogos antigos recorrem ao inglês com segurança.
 - O idioma escolhido persiste entre aberturas. Datas, números, paginação, cursos e categorias Render96 usam apresentação localizada.
 - Touch Controls exibe autoria em listas, detalhes e favoritos, com Release Soon quando a fonte não informa autor.
 
 ### Antes de publicar
 
 - Esta candidata não força atualização. A data do manifesto permanece provisória até a publicação.
-- Ainda é necessária validação física da continuidade multiplayer, ajustes de bateria, provedores de ROM, pouco espaço, rotação, layouts em cinco idiomas, mídia e APKs das três ABI.
+- Ainda é necessária validação física da continuidade multiplayer, ajustes de bateria, provedores de ROM, pouco espaço, rotação, layouts em cinco idiomas, troca de idioma nas descrições dos mods, mídia e APKs das três ABI.
 - O idioma da bolha flutuante e o fluxo planejado de desinstalação segura não fazem parte da versão 1.9.0.

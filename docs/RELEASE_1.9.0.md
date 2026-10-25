@@ -23,6 +23,9 @@ fusiona la rama en `main`.
   reconstrucciones visibles innecesarias.
 - **Catálogo multimedia:** el detalle admite imágenes y miniaturas de video
   normalizadas; YouTube se abre mediante el manejador de URL de Android.
+- **Descripciones localizadas:** traducciones precalculadas ES/PT-BR/FR/IT con
+  icono temático para volver al inglés original, sin red ni IA en la app y con
+  fallback seguro para catálogos antiguos.
 - **Idiomas y créditos:** francés e italiano completos se suman a EN/ES/PT-BR,
   con selección persistente, notificaciones nativas localizadas y autoría de
   Touch Controls.
@@ -50,7 +53,7 @@ otro día.
 ## Validación completada en la rama
 
 - `flutter analyze lib`: sin problemas.
-- `flutter test`: **494 pruebas aprobadas**.
+- `flutter test`: **519 pruebas aprobadas**.
 - `python3 test/scripts/localization_contract_test.py`: **3 pruebas aprobadas**.
 - `./gradlew :app:compileDebugKotlin`: compilación correcta.
 - `git diff --check`: limpio.

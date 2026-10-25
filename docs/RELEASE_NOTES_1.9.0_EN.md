@@ -1,6 +1,6 @@
 ## SM64CDPY v1.9.0 — Play together, prepare your ROM and explore in five languages
 
-Version 1.9.0 adds the Play multiplayer flow, local ROM preparation, a complete How to Play guide, French and Italian, richer mod media and a polished Manga interface with faster cached Library and Save Files entry.
+Version 1.9.0 adds the Play multiplayer flow, local ROM preparation, a complete How to Play guide, French and Italian, localized mod descriptions, richer mod media and a polished Manga interface with faster cached Library and Save Files entry.
 
 ### Play with friends
 
@@ -26,11 +26,12 @@ Version 1.9.0 adds the Play multiplayer flow, local ROM preparation, a complete 
 ### Languages and catalog data
 
 - French and Italian join English, Spanish and Brazilian Portuguese across the main Flutter interface, shared diagnostics and native Android notifications.
+- Mod descriptions include precomputed translations for Spanish, Brazilian Portuguese, French and Italian. The original English remains the source, and a themed icon switches between languages offline; older catalogs fall back safely to English.
 - The chosen language persists across launches. Dates, numbers, pagination, course labels and Render96 categories use localized presentation.
 - Touch Controls now display creator attribution in listings, details and favorites, with Release Soon when the source has no author.
 
 ### Before publishing
 
 - This candidate does not force an update. The release timestamp remains provisional until publication.
-- Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, media previews and all three ABI APKs.
+- Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, mod-description language switching, media previews and all three ABI APKs.
 - The floating overlay language and the planned safe-uninstall workflow are not part of version 1.9.0.

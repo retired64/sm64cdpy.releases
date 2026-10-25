@@ -1,6 +1,6 @@
 ## SM64CDPY v1.9.0 — Juega en compañía, prepara tu ROM y navega en cinco idiomas
 
-La versión 1.9.0 añade el flujo multijugador Jugar, preparación local de ROM, una guía completa de Cómo jugar, francés e italiano, contenido multimedia de mods y una interfaz Manga pulida con entrada más rápida a Biblioteca y Partidas guardadas mediante caché persistente.
+La versión 1.9.0 añade el flujo multijugador Jugar, preparación local de ROM, una guía completa de Cómo jugar, francés e italiano, descripciones de mods localizadas, contenido multimedia de mods y una interfaz Manga pulida con entrada más rápida a Biblioteca y Partidas guardadas mediante caché persistente.
 
 ### Jugar con amigos
 
@@ -26,11 +26,12 @@ La versión 1.9.0 añade el flujo multijugador Jugar, preparación local de ROM,
 ### Idiomas y datos del catálogo
 
 - Francés e italiano se suman a inglés, español y portugués brasileño en la interfaz Flutter, diagnósticos compartidos y notificaciones nativas de Android.
+- Las descripciones de los mods incluyen traducciones precalculadas al español, portugués brasileño, francés e italiano. El inglés original sigue siendo la fuente y un icono temático alterna entre idiomas sin conexión; los catálogos antiguos vuelven de forma segura al inglés.
 - El idioma elegido persiste entre aperturas. Fechas, números, paginación, cursos y categorías Render96 usan presentación localizada.
 - Touch Controls muestra autoría en listados, detalles y favoritos, con Release Soon cuando la fuente no incluye autor.
 
 ### Antes de publicar
 
 - Esta candidata no obliga a actualizar. La fecha del manifiesto es provisional hasta la publicación.
-- Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, multimedia y los APK de las tres ABI.
+- Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, cambio de idioma en descripciones de mods, multimedia y los APK de las tres ABI.
 - El idioma de la burbuja flotante y el flujo planificado de desinstalación segura no forman parte de la versión 1.9.0.

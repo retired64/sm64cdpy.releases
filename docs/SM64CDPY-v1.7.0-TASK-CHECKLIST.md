@@ -872,6 +872,7 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Integrar Play por código, compartir invitaciones y ciclo de vida Android de sesión.
 - [x] Integrar Manga Deluxe, menú slide, audio configurable y snapshots persistentes.
 - [x] Integrar multimedia de detalles, idiomas francés/italiano y autores de Touch Controls.
+- [x] Integrar traducciones precalculadas de descripciones (ES/PT-BR/FR/IT) con alternancia al inglés original, icono temático y fallback para catálogos antiguos.
 - [x] Clasificar la aplicación Android con `android:appCategory="game"`.
 - [ ] Fusionar `localization-fr-it-touch-authors` en `main` sin crear todavía el tag.
 - [ ] Ejecutar Testing en `main` y revisar el APK arm64 firmado.
