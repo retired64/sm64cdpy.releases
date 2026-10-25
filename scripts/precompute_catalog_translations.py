@@ -14,12 +14,14 @@ import json
 import re
 import sqlite3
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable, Protocol
 
 SUPPORTED_LOCALES = {"es": "es", "pt_BR": "pt", "fr": "fr", "it": "it"}
-ENGINE_ID = "argos-translate-1"
+ENGINE_ID = "argos-translate-2"
+TRANSLATION_ATTEMPTS = 3
 TOKEN_RE = re.compile(r"ZXQPROTECTED(\d{4})QXZ")
 PROTECTED_RE = re.compile(
     r"```.*?```|`[^`\n]+`|https?://[^\s<>]+|"
@@ -59,16 +61,6 @@ def _protect(text: str) -> tuple[str, list[str]]:
     return PROTECTED_RE.sub(replace, text), values
 
 
-def _restore(text: str, values: list[str]) -> str:
-    found = {int(index) for index in TOKEN_RE.findall(text)}
-    expected = set(range(len(values)))
-    if found != expected:
-        raise TranslationError(
-            f"El motor alteró marcadores protegidos: esperados={expected}, vistos={found}"
-        )
-    return TOKEN_RE.sub(lambda match: values[int(match.group(1))], text)
-
-
 def _chunks(text: str, maximum: int = 850) -> list[str]:
     if len(text) <= maximum:
         return [text]
@@ -97,23 +89,83 @@ def _chunks(text: str, maximum: int = 850) -> list[str]:
     return chunks
 
 
+def _translate_plain_fragment(text: str, translator: Translator) -> str:
+    """Translate prose while retaining whitespace adjacent to protected spans."""
+    if not text or not text.strip():
+        return text
+    leading = text[: len(text) - len(text.lstrip())]
+    trailing = text[len(text.rstrip()) :]
+    core = text.strip()
+    # Rules, emoji-only lines and other decoration are presentation, not prose.
+    # Passing them to Argos legitimately produces an empty result.
+    if not any(character.isalpha() for character in core):
+        return text
+
+    translated_chunks: list[str] = []
+    for chunk in _chunks(core):
+        last_error: Exception | None = None
+        translated = ""
+        for attempt in range(1, TRANSLATION_ATTEMPTS + 1):
+            try:
+                translated = translator.translate(chunk).strip()
+                if translated:
+                    break
+                last_error = TranslationError("el motor devolvió texto vacío")
+            except Exception as exc:  # third-party model/runtime boundary
+                last_error = exc
+            if attempt < TRANSLATION_ATTEMPTS:
+                time.sleep(0.15 * attempt)
+        if not translated:
+            preview = chunk.replace("\n", " ")[:120]
+            raise TranslationError(
+                f"falló tras {TRANSLATION_ATTEMPTS} intentos para {preview!r}: "
+                f"{last_error}"
+            )
+        translated_chunks.append(translated)
+    translated = " ".join(translated_chunks)
+    return leading + translated + trailing
+
+
+def _translate_protected_body(
+    body: str, values: list[str], translator: Translator
+) -> tuple[str, set[int]]:
+    """Never expose protected values or their placeholders to the MT engine."""
+    output: list[str] = []
+    cursor = 0
+    found: set[int] = set()
+    for match in TOKEN_RE.finditer(body):
+        output.append(_translate_plain_fragment(body[cursor : match.start()], translator))
+        index = int(match.group(1))
+        if index >= len(values):
+            raise TranslationError(f"Marcador protegido fuera de rango: {index}")
+        output.append(values[index])
+        found.add(index)
+        cursor = match.end()
+    output.append(_translate_plain_fragment(body[cursor:], translator))
+    return "".join(output), found
+
+
 def translate_description(text: str, translator: Translator) -> str:
     """Translate prose while preserving paragraphs, bullets and technical spans."""
     protected, values = _protect(text)
     output: list[str] = []
+    restored: set[int] = set()
     for line in protected.splitlines():
         if not line.strip():
             output.append("")
             continue
         match = LIST_PREFIX_RE.match(line)
         prefix, body = (match.group(1), match.group(2)) if match else ("", line)
-        translated = " ".join(
-            translator.translate(chunk).strip() for chunk in _chunks(body)
-        ).strip()
-        if not translated:
-            raise TranslationError("El motor devolvió una traducción vacía")
+        translated, line_restored = _translate_protected_body(body, values, translator)
+        restored.update(line_restored)
         output.append(prefix + translated)
-    return _restore("\n".join(output), values)
+    expected = set(range(len(values)))
+    if restored != expected:
+        raise TranslationError(
+            f"No se restauraron todos los valores protegidos: "
+            f"esperados={expected}, restaurados={restored}"
+        )
+    return "\n".join(output)
 
 
 class TranslationCache:
@@ -231,7 +283,12 @@ def translate_catalog(
                     translations[locale] = cached
                     cache_hits += 1
                     continue
-                value = translate_description(description, translators[locale])
+                try:
+                    value = translate_description(description, translators[locale])
+                except TranslationError as exc:
+                    raise TranslationError(
+                        f"mod {mod.get('id')} ({mod.get('name')}), locale {locale}: {exc}"
+                    ) from exc
                 cache.put(source_hash, locale, value)
                 translations[locale] = value
                 translated += 1

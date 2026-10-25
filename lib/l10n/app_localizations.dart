@@ -1372,6 +1372,18 @@ abstract class AppLocalizations {
   /// **'About'**
   String get detailAbout;
 
+  /// Shows the original English mod description instead of its translation
+  ///
+  /// In en, this message translates to:
+  /// **'View original'**
+  String get detailDescriptionViewOriginal;
+
+  /// Switches the mod description back to the current app language
+  ///
+  /// In en, this message translates to:
+  /// **'View translation'**
+  String get detailDescriptionViewTranslation;
+
   /// Detail screen label for mod rating
   ///
   /// In en, this message translates to:

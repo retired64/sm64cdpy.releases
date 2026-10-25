@@ -7,6 +7,7 @@ class ModEntity {
     required this.version,
     required this.author,
     required this.description,
+    this.descriptionTranslations = const {},
     required this.tags,
     required this.isFeatured,
     this.imageUrl,
@@ -36,7 +37,11 @@ class ModEntity {
   final String title;
   final String version;
   final String author;
+
+  /// Original English description. Translated text is only read from
+  /// [descriptionTranslations] for display.
   final String description;
+  final Map<String, String> descriptionTranslations;
   final List<String> tags;
   final bool isFeatured;
   final String? imageUrl;

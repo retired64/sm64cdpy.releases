@@ -17,6 +17,7 @@ import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../core/utils/extensions.dart';
+import '../../core/utils/mod_description_translation.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/entities/mod_entity.dart';
 import '../../domain/entities/install_identity.dart';
@@ -399,10 +400,8 @@ class _ContentCard extends StatelessWidget {
             const SizedBox(height: 16),
             _DetailPanel(
               children: [
-                _SectionTitle(label: l10n.detailAbout),
-                const SizedBox(height: 12),
-                _ExpandableText(
-                  text: mod.description,
+                _AboutDescription(
+                  mod: mod,
                   expanded: descExpanded,
                   onToggle: onExpandDesc,
                 ),
@@ -2324,6 +2323,106 @@ class _TagCloud extends StatelessWidget {
   }
 }
 
+// ── Translatable description ──────────────────────────────────────────────────
+
+class _AboutDescription extends StatefulWidget {
+  const _AboutDescription({
+    required this.mod,
+    required this.expanded,
+    required this.onToggle,
+  });
+
+  final ModEntity mod;
+  final bool expanded;
+  final VoidCallback onToggle;
+
+  @override
+  State<_AboutDescription> createState() => _AboutDescriptionState();
+}
+
+class _AboutDescriptionState extends State<_AboutDescription> {
+  bool _showOriginal = false;
+  String? _localeTag;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final localeTag = Localizations.localeOf(context).toLanguageTag();
+    if (_localeTag != localeTag) {
+      _localeTag = localeTag;
+      _showOriginal = false;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _AboutDescription oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.mod.id != widget.mod.id ||
+        oldWidget.mod.descriptionTranslations !=
+            widget.mod.descriptionTranslations) {
+      _showOriginal = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final localeTag =
+        _localeTag ?? Localizations.localeOf(context).toLanguageTag();
+    final translation = resolveDescriptionTranslation(
+      description: widget.mod.description,
+      translations: widget.mod.descriptionTranslations,
+      localeTag: localeTag,
+    );
+    final showingTranslation = translation != null && !_showOriginal;
+    final toggleTooltip = _showOriginal
+        ? l10n.detailDescriptionViewTranslation
+        : l10n.detailDescriptionViewOriginal;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: KeyedSubtree(
+                key: const ValueKey('mod-description-about-heading'),
+                child: _SectionTitle(label: l10n.detailAbout),
+              ),
+            ),
+            if (translation != null) ...[
+              const SizedBox(width: 4),
+              IconButton(
+                key: const ValueKey('mod-description-language-toggle'),
+                tooltip: toggleTooltip,
+                onPressed: () => setState(() => _showOriginal = !_showOriginal),
+                style: IconButton.styleFrom(
+                  minimumSize: const Size(48, 48),
+                  padding: const EdgeInsets.all(8),
+                  tapTargetSize: MaterialTapTargetSize.padded,
+                ),
+                icon: Image.asset(
+                  'assets/icons/translate.webp',
+                  width: 30,
+                  height: 30,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.medium,
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 12),
+        _ExpandableText(
+          text: showingTranslation ? translation : widget.mod.description,
+          expanded: widget.expanded,
+          onToggle: widget.onToggle,
+        ),
+      ],
+    );
+  }
+}
+
 // ── Expandable description ────────────────────────────────────────────────────
 
 class _ExpandableText extends StatelessWidget {
@@ -2378,12 +2477,14 @@ class _ExpandableText extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  expanded ? l10n.detailShowLess : l10n.detailShowMore,
-                  style: TextStyle(
-                    color: retro.accentText,
-                    fontSize: retro.isMario ? 16 : 13,
-                    fontWeight: FontWeight.w700,
+                Flexible(
+                  child: Text(
+                    expanded ? l10n.detailShowLess : l10n.detailShowMore,
+                    style: TextStyle(
+                      color: retro.accentText,
+                      fontSize: retro.isMario ? 16 : 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 4),

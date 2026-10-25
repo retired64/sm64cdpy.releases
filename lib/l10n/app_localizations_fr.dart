@@ -753,6 +753,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get detailAbout => 'À propos';
 
   @override
+  String get detailDescriptionViewOriginal => 'Voir l’original';
+
+  @override
+  String get detailDescriptionViewTranslation => 'Voir la traduction';
+
+  @override
   String get detailRating => 'Note';
 
   @override

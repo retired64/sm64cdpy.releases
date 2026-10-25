@@ -898,6 +898,14 @@
   "@detailAbout": {
     "description": "Detail screen section title for about/description"
   },
+  "detailDescriptionViewOriginal": "View original",
+  "@detailDescriptionViewOriginal": {
+    "description": "Shows the original English mod description instead of its translation"
+  },
+  "detailDescriptionViewTranslation": "View translation",
+  "@detailDescriptionViewTranslation": {
+    "description": "Switches the mod description back to the current app language"
+  },
   "detailRating": "Rating",
   "@detailRating": {
     "description": "Detail screen label for mod rating"

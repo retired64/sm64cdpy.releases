@@ -750,6 +750,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailAbout => 'Acerca de';
 
   @override
+  String get detailDescriptionViewOriginal => 'Ver original';
+
+  @override
+  String get detailDescriptionViewTranslation => 'Ver traducción';
+
+  @override
   String get detailRating => 'Calificación';
 
   @override
@@ -3745,6 +3751,12 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get detailAbout => 'Acerca de';
+
+  @override
+  String get detailDescriptionViewOriginal => 'Ver original';
+
+  @override
+  String get detailDescriptionViewTranslation => 'Ver traducción';
 
   @override
   String get detailRating => 'Calificación';

@@ -83,6 +83,31 @@ class CatalogTranslationTest(unittest.TestCase):
             translate.canonical_mods_id(result["mods"]), result["catalog_id"]
         )
 
+    def test_visual_separator_is_preserved_without_calling_engine(self):
+        class RejectingTranslator:
+            def translate(self, text):
+                raise AssertionError(f"No se debió traducir {text!r}")
+
+        separator = "_____________________________________"
+        self.assertEqual(
+            separator,
+            translate.translate_description(separator, RejectingTranslator()),
+        )
+
+    def test_empty_engine_result_is_retried(self):
+        calls = []
+
+        class FlakyTranslator:
+            def translate(self, text):
+                calls.append(text)
+                return "" if len(calls) < 3 else "Traducido"
+
+        self.assertEqual(
+            "Traducido",
+            translate.translate_description("English prose", FlakyTranslator()),
+        )
+        self.assertEqual(3, len(calls))
+
     def test_cache_avoids_retranslating_unchanged_descriptions(self):
         cache = translate.TranslationCache(self.root / "cache.sqlite3")
         calls = []
@@ -92,16 +117,24 @@ class CatalogTranslationTest(unittest.TestCase):
                 calls.append(text)
                 return super().translate(text)
 
-        for _ in range(2):
-            translate.translate_catalog(
-                catalog(),
-                ["es"],
-                cache,
-                lambda locale: CountingTranslator(locale),
-                progress=lambda _: None,
-            )
+        translate.translate_catalog(
+            catalog(),
+            ["es"],
+            cache,
+            lambda locale: CountingTranslator(locale),
+            progress=lambda _: None,
+        )
+        first_run_calls = len(calls)
+        translate.translate_catalog(
+            catalog(),
+            ["es"],
+            cache,
+            lambda locale: CountingTranslator(locale),
+            progress=lambda _: None,
+        )
         cache.close()
-        self.assertEqual(2, len(calls))  # two non-empty lines, only first run
+        self.assertGreater(first_run_calls, 0)
+        self.assertEqual(first_run_calls, len(calls))
 
     def test_validator_accepts_output_and_rejects_source_mutation(self):
         source = catalog()

@@ -746,6 +746,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get detailAbout => 'Sobre';
 
   @override
+  String get detailDescriptionViewOriginal => 'Ver original';
+
+  @override
+  String get detailDescriptionViewTranslation => 'Ver tradução';
+
+  @override
   String get detailRating => 'Avaliação';
 
   @override
@@ -3730,6 +3736,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get detailAbout => 'Sobre';
+
+  @override
+  String get detailDescriptionViewOriginal => 'Ver original';
+
+  @override
+  String get detailDescriptionViewTranslation => 'Ver tradução';
 
   @override
   String get detailRating => 'Avaliação';

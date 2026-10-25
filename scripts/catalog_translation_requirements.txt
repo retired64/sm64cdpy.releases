@@ -1,1 +1,3 @@
-argostranslate==1.11.1
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.5.1+cpu; platform_system == "Linux"
+argostranslate==1.11.0

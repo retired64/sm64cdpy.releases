@@ -26,7 +26,13 @@ as `translation_metadata.source_catalog_id`.
 
 ## Local use
 
+Use Python 3.11. The requirements explicitly select the CPU-only PyTorch
+wheel on Linux so the translation environment does not download CUDA packages.
+
 ```bash
+python3.11 -m venv .venv-translations
+source .venv-translations/bin/activate
+python -m pip install --upgrade pip
 python -m pip install -r scripts/catalog_translation_requirements.txt
 python scripts/precompute_catalog_translations.py \
   assets/db/database_sm64coopdx.json \
@@ -39,6 +45,9 @@ python scripts/validate_translated_catalog.py \
 
 The SQLite cache is keyed by description hash, locale and translation-engine
 version. Unchanged descriptions are therefore reused on subsequent runs.
+If a run is interrupted or a description fails, launch the same command again:
+completed descriptions are read from the cache instead of being translated
+again. Decorative lines made only from symbols are preserved verbatim.
 
 ## Manual workflow
 

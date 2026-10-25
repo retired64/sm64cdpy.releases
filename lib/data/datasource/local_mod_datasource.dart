@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../core/constants/app_constants.dart';
 import '../models/mod_model.dart';
 import 'remote_json_datasource.dart';
@@ -47,6 +49,10 @@ void _validateModDatabase(Map<String, dynamic> decoded) {
     if (id.isEmpty || name.isEmpty || !ids.add(id)) {
       throw const FormatException('Missing or duplicate mod identity');
     }
+    final translations = value['description_translations'];
+    if (translations != null && translations is! Map) {
+      throw const FormatException('description_translations must be an object');
+    }
     final versions = value['versions'];
     if (versions != null && versions is! List) {
       throw const FormatException('versions must be a list');
@@ -78,4 +84,10 @@ void _validateModDatabase(Map<String, dynamic> decoded) {
       }
     }
   }
+}
+
+/// Internal hook used by tests; production validates through the datasource.
+@visibleForTesting
+void validateModDatabaseForTesting(Map<String, dynamic> decoded) {
+  _validateModDatabase(decoded);
 }

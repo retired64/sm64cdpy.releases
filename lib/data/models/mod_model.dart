@@ -9,6 +9,7 @@ class ModModel {
     required this.version,
     required this.author,
     required this.description,
+    this.descriptionTranslations = const {},
     required this.tags,
     required this.isFeatured,
     this.imageUrl,
@@ -39,6 +40,7 @@ class ModModel {
   final String version;
   final String author;
   final String description;
+  final Map<String, String> descriptionTranslations;
   final List<String> tags;
   final bool isFeatured;
   final String? imageUrl;
@@ -70,6 +72,9 @@ class ModModel {
       version: json['version'] as String? ?? 'N/A',
       author: json['author'] as String? ?? 'N/A',
       description: json['description'] as String? ?? '',
+      descriptionTranslations: _descriptionTranslations(
+        json['description_translations'],
+      ),
       tags: _strings(json['tags']),
       isFeatured:
           json['is_featured'] == true ||
@@ -105,6 +110,21 @@ class ModModel {
       threadUrl: json['thread_url'] as String? ?? '',
       downloadDomainHint: json['download_domain_hint'] as String? ?? '',
     );
+  }
+
+  /// Optional precomputed translations keyed by locale. Invalid entries are
+  /// ignored so an old or partially enriched catalog never breaks parsing.
+  static Map<String, String> _descriptionTranslations(dynamic value) {
+    if (value is! Map) return const {};
+    final translations = <String, String>{};
+    for (final entry in value.entries) {
+      final key = entry.key;
+      final text = entry.value;
+      if (key is String && key.trim().isNotEmpty && text is String) {
+        translations[key] = text;
+      }
+    }
+    return Map.unmodifiable(translations);
   }
 
   static List<String> _strings(dynamic value) {
@@ -265,6 +285,7 @@ class ModModel {
     version: version,
     author: author,
     description: description,
+    descriptionTranslations: Map.unmodifiable(descriptionTranslations),
     tags: tags,
     isFeatured: isFeatured,
     imageUrl: imageUrl,

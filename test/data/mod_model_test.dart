@@ -95,6 +95,83 @@ void main() {
     expect(entity.versions.single.files.single.resolutionSource, 'test');
   });
 
+  test('description translations are optional and keep the English source', () {
+    final oldModel = ModModel.fromJson('old', <String, dynamic>{
+      'name': 'Old catalog',
+      'description': 'English only',
+    });
+    expect(oldModel.descriptionTranslations, isEmpty);
+    expect(oldModel.description, 'English only');
+    expect(oldModel.toEntity().descriptionTranslations, isEmpty);
+
+    final enriched = ModModel.fromJson('new', <String, dynamic>{
+      'name': 'Enriched catalog',
+      'description': 'Original English description',
+      'description_source_hash': 'sha256:abc',
+      'description_translations': <String, dynamic>{
+        'es': 'Descripción en español',
+        'pt_BR': 'Descrição em português',
+        'fr': 'Description française',
+        'it': 'Descrizione italiana',
+      },
+      'description_images': <String>['https://example.test/image.png'],
+      'description_videos': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'provider': 'youtube',
+          'video_id': 'abc',
+          'url': 'https://www.youtube.com/watch?v=abc',
+        },
+      ],
+    });
+    expect(enriched.description, 'Original English description');
+    expect(enriched.descriptionTranslations, <String, String>{
+      'es': 'Descripción en español',
+      'pt_BR': 'Descrição em português',
+      'fr': 'Description française',
+      'it': 'Descrizione italiana',
+    });
+
+    final entity = enriched.toEntity();
+    expect(entity.description, 'Original English description');
+    expect(entity.descriptionTranslations['es'], 'Descripción en español');
+    expect(entity.descriptionImages, <String>[
+      'https://example.test/image.png',
+    ]);
+    expect(entity.descriptionVideos.single.videoId, 'abc');
+    expect(
+      () => entity.descriptionTranslations['es'] = 'mutated',
+      throwsUnsupportedError,
+    );
+  });
+
+  test('invalid translation entries are ignored without losing valid ones', () {
+    final model = ModModel.fromJson('mixed', <String, dynamic>{
+      'name': 'Mixed',
+      'description': 'Source',
+      'description_translations': <dynamic, dynamic>{
+        'es': 'Válida',
+        'pt_BR': 42,
+        'fr': null,
+        'it': <String>['no'],
+        7: 'clave no textual',
+        '': 'clave vacía',
+      },
+    });
+    expect(model.descriptionTranslations, <String, String>{'es': 'Válida'});
+    expect(model.description, 'Source');
+
+    final listValue = ModModel.fromJson('list', <String, dynamic>{
+      'name': 'List',
+      'description_translations': <String>['es'],
+    });
+    final stringValue = ModModel.fromJson('string', <String, dynamic>{
+      'name': 'String',
+      'description_translations': 'es',
+    });
+    expect(listValue.descriptionTranslations, isEmpty);
+    expect(stringValue.descriptionTranslations, isEmpty);
+  });
+
   test('artifact identity remains stable when a newer version is inserted', () {
     final oldModel = ModModel.fromJson('42', <String, dynamic>{
       'name': 'Example',
