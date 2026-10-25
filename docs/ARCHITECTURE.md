@@ -1109,7 +1109,7 @@ sus archivos ni su protocolo. Los recursos ARB nuevos están disponibles para
 la resolución normal del sistema, sin sincronización adicional entre engines.
 
 Touch Controls incorpora `author` opcional en JSON/modelo/entidad. Ausente,
-nulo, vacío o inválido se presenta como `Release Soon`; los 28 registros
+nulo, vacío o inválido se presenta como `Release Soon`; los 27 registros
 incluidos usan ese texto literal por petición del usuario. El catálogo fuente
 se repara y coincide con assets. Tarjetas y Favoritos reutilizan la misma vista;
 la identidad no depende del crédito. El catálogo remoto sigue pudiendo omitir

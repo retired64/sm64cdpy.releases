@@ -93,7 +93,8 @@ clients. Prefer versioned paths such as `db/v1/` and `db/v2/`.
 
 The `touch_controls` object may include an optional `author` string per item.
 The app trims nonempty strings and projects missing, null, blank or malformed
-values to the literal `Release Soon`, as requested for the pending credits.
+values to the known creator name. Missing, blank or malformed values continue
+to use `Release Soon` as the presentation fallback.
 Do not infer authors from titles or file names. This field does not participate
 in equality, favorites, installation identity or destination selection.
 `db/touch_controls.json` and `assets/db/touch_controls.json` must be valid and

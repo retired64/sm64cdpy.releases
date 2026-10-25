@@ -42,9 +42,9 @@ class LocalizationContractTest(unittest.TestCase):
         source = json.loads((ROOT / 'db/touch_controls.json').read_text())
         bundled = json.loads((ROOT / 'assets/db/touch_controls.json').read_text())
         self.assertEqual(source, bundled)
-        self.assertEqual(28, len(source['touch_controls']))
+        self.assertEqual(27, len(source['touch_controls']))
         for item in source['touch_controls'].values():
-            self.assertEqual('Release Soon', item['author'])
+            self.assertTrue(item['author'].strip())
             self.assertTrue(item['download_url'].startswith('https://'))
 
 
