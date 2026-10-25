@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 
 /// Short enough to keep navigation responsive on low-end devices while still
 /// making a route change perceptible.
-const appPageTransitionDuration = Duration(milliseconds: 190);
-const appPageReverseTransitionDuration = Duration(milliseconds: 150);
+const appPageTransitionDuration = Duration(milliseconds: 220);
+const appPageReverseTransitionDuration = Duration(milliseconds: 170);
 
 CustomTransitionPage<void> buildAppTransitionPage({
   required LocalKey key,
@@ -32,8 +32,11 @@ Widget buildLightweightPageTransition(
     curve: Curves.easeOutCubic,
     reverseCurve: Curves.easeInCubic,
   );
+  // Same bottom-to-top language used by Flutter's PageRouteBuilder cookbook,
+  // with a shorter travel distance so navigation stays responsive on modest
+  // hardware and repeated menu changes do not feel theatrical.
   final position = Tween<Offset>(
-    begin: const Offset(0.018, 0),
+    begin: const Offset(0, 0.08),
     end: Offset.zero,
   ).animate(curvedAnimation);
 

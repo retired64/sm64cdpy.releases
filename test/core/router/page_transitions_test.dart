@@ -37,6 +37,11 @@ void main() {
 
     expect(find.byKey(const ValueKey('app-page-fade')), findsOneWidget);
     expect(find.byKey(const ValueKey('app-page-slide')), findsOneWidget);
+    final slide = tester.widget<SlideTransition>(
+      find.byKey(const ValueKey('app-page-slide')),
+    );
+    expect(slide.position.value.dx, 0);
+    expect(slide.position.value.dy, greaterThan(0));
     expect(find.byType(RepaintBoundary), findsWidgets);
     expect(find.text('destination'), findsOneWidget);
   });
