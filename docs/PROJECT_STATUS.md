@@ -401,3 +401,35 @@ MP3 breve conectado a Featured/Browse en los dos temas Manga. Audio incluye
 interruptor y volumen propios guardados en Hive, preview al soltar y reset
 Deluxe. Reutiliza SoundPool; no altera el volumen Android ni el motor Play.
 Pruebas preparadas, ejecución de Flutter/Kotlin y validación física pendientes.
+
+
+## Localización FR/IT y autor de Touch Controls — 2026-10-24
+
+Rama `localization-fr-it-touch-authors` creada desde `play-2p2`. Traducciones
+completas FR/IT de la interfaz, selector persistente y recursos nativos;
+correcciones de contexto, paginación, fechas, números, categorías Render96,
+mensajes copiables y créditos de Touch Controls con `Release Soon`. Catálogo
+fuente reparado y alineado con assets. La burbuja y su sincronización de idioma
+quedan excluidas expresamente por el usuario.
+
+Validación local: 11 tests Python correctos (paridad de 876 claves en siete
+ARB, argumentos, recursos Android y catálogos/créditos), comprobación Dart
+con assertions del modelo de autor, formato y `git diff --check` correctos.
+`dart analyze lib test/data/touch_control_model_test.dart
+test/presentation/localization_flow_test.dart`: sin errores ni warnings; 17
+infos preexistentes. Las pruebas de persistencia, rollback y widgets FR/IT
+quedan preparadas y analizadas, pero no ejecutadas.
+
+Los seis archivos Dart de localización se generaron con el LocalizationsGenerator
+oficial de Flutter 3.41.7 leyendo l10n.yaml, mediante un lanzador temporal: el
+CLI `flutter gen-l10n`, `flutter analyze lib` y `flutter test` encuentran
+`Unsupported operating system: android` en este Termux. El SDK temporal usa
+Dart 3.13.7 para Android y adapta únicamente la firma NetworkInterface en las
+herramientas temporales; el proyecto/CI mantiene Flutter 3.41.7 y Dart 3.11.x,
+sin cambios en dependencias o lockfile. No se editaron generados manualmente.
+
+Kotlin no pudo compilarse porque esta copia no contiene `android/gradlew`.
+Pendientes: validación canónica en CI, tests Flutter/Kotlin y revisión física
+de idiomas, texto ampliado, notificaciones, reapertura y flujos de instalación.
+Los recursos externos y los diálogos del sistema Android conservan sus propias
+reglas de idioma.

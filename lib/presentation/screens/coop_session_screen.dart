@@ -434,7 +434,7 @@ class _CoopSessionScreenState extends ConsumerState<CoopSessionScreen>
       CoopSessionPhase.connecting => l.coopConnecting,
       CoopSessionPhase.connected => l.coopConnected,
       CoopSessionPhase.reconnecting => l.coopReconnecting,
-      CoopSessionPhase.failed => state.message ?? l.coopNetworkError,
+      CoopSessionPhase.failed => l.coopConnectionFailed,
       _ => l.coopPreparing,
     };
     return Column(
@@ -681,9 +681,16 @@ class _ErrorPanel extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              message,
+              AppLocalizations.of(context).coopConnectionFailed,
               style: coopPlayBody(retro, size: 14, color: retro.red),
             ),
+          ),
+          IconButton(
+            tooltip: AppLocalizations.of(context).sharedCopyDetails,
+            icon: const Icon(Icons.copy_rounded),
+            onPressed: () async {
+              await AppSnackbar.copyDetails(context, message);
+            },
           ),
         ],
       ),

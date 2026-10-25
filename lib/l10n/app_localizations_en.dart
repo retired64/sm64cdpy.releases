@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -391,7 +392,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String popularPage(int page, int total) {
-    return 'PG $page/$total';
+    return 'Page $page/$total';
   }
 
   @override
@@ -517,7 +518,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dynosEmpty => 'NO DYNOS YET';
 
   @override
-  String get dynosEmptyHint => 'Check back later for runtime patches.';
+  String get dynosEmptyHint => 'Check back later for new DynOS packs.';
 
   @override
   String get dynosFailedToLoad => 'FAILED TO LOAD DYNOS';
@@ -715,7 +716,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String detailInstallQueued(String name) {
-    return 'Download and installation started: $name';
+    return 'Download and installation queued: $name';
   }
 
   @override
@@ -2903,4 +2904,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeCardSoundsVolume => 'Card volume';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageItalian => 'Italiano';
+
+  @override
+  String get languageSaveFailed => 'Could not save the language. Try again.';
+
+  @override
+  String get sharedCopyDetails => 'Copy details';
+
+  @override
+  String get sharedCopied => 'Copied to clipboard';
+
+  @override
+  String sharedAuthor(String author) {
+    return 'Author: $author';
+  }
+
+  @override
+  String get sharedUntitled => 'Untitled';
+
+  @override
+  String get render96Required => 'REQUIRED';
+
+  @override
+  String get render96Optional => 'OPTIONAL';
+
+  @override
+  String get render96Skinpack => 'MODEL PACK';
+
+  @override
+  String get settingsExportFailed =>
+      'Could not export your favorites. Try again.';
+
+  @override
+  String get settingsImportFailed =>
+      'Could not import this file. Choose a favorites file exported by SM64CDPY.';
+
+  @override
+  String get settingsDatabaseFailed =>
+      'Could not refresh the catalog. Check your connection and try again.';
+
+  @override
+  String get updateActionFailed =>
+      'Could not complete the update. Try again or download it in your browser.';
+
+  @override
+  String get render96WatchTrailer => 'WATCH TRAILER';
+
+  @override
+  String get render96CategoryOther => 'CONTENT';
+
+  @override
+  String get coopConnectionFailed =>
+      'The session could not continue. Check your connection and start it again.';
+
+  @override
+  String get catalogLoadFailed =>
+      'Could not load this content. Check your connection and try again.';
+
+  @override
+  String get settingsFavouritesShareSubject => 'SM64CoopDX favorites';
+
+  @override
+  String get favEmptyActionHint => 'Tap ♥ on a card to save it here.';
 }

@@ -489,7 +489,7 @@
   "@popularRankings": {
     "description": "Popular screen section header for rankings list"
   },
-  "popularPage": "PG {page}/{total}",
+  "popularPage": "Page {page}/{total}",
   "@popularPage": {
     "description": "Popular screen page indicator",
     "placeholders": {
@@ -642,7 +642,7 @@
   "@dynosEmpty": {
     "description": "DynOS screen empty state title"
   },
-  "dynosEmptyHint": "Check back later for runtime patches.",
+  "dynosEmptyHint": "Check back later for new DynOS packs.",
   "@dynosEmptyHint": {
     "description": "DynOS screen empty state hint"
   },
@@ -876,7 +876,7 @@
   "@detailDownloadedNotInstalled": {
     "placeholders": {"name": {"type": "String"}}
   },
-  "detailInstallQueued": "Download and installation started: {name}",
+  "detailInstallQueued": "Download and installation queued: {name}",
   "@detailInstallQueued": {
     "placeholders": {"name": {"type": "String"}}
   },
@@ -2124,5 +2124,81 @@
   "@coopDiagnosticsDelay": {"placeholders": {"average": {"type": "int"}, "max": {"type": "int"}}},
   "homeCardSoundsTitle": "Home card sounds",
   "homeCardSoundsDescription": "Play a sound when changing Featured or Browse cards. Separate from menu effects and music.",
-  "homeCardSoundsVolume": "Card volume"
+  "homeCardSoundsVolume": "Card volume",
+  "languageFrench": "Français",
+  "languageItalian": "Italiano",
+  "languageSaveFailed": "Could not save the language. Try again.",
+  "sharedCopyDetails": "Copy details",
+  "sharedCopied": "Copied to clipboard",
+  "sharedAuthor": "Author: {author}",
+  "sharedUntitled": "Untitled",
+  "render96Required": "REQUIRED",
+  "render96Optional": "OPTIONAL",
+  "render96Skinpack": "MODEL PACK",
+  "settingsExportFailed": "Could not export your favorites. Try again.",
+  "settingsImportFailed": "Could not import this file. Choose a favorites file exported by SM64CDPY.",
+  "settingsDatabaseFailed": "Could not refresh the catalog. Check your connection and try again.",
+  "updateActionFailed": "Could not complete the update. Try again or download it in your browser.",
+  "@sharedAuthor": {
+    "description": "Creator credit on Touch Controls cards. Keep the creator name unchanged.",
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "@languageFrench": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@languageItalian": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@languageSaveFailed": {
+    "description": "Language preference could not be persisted."
+  },
+  "@sharedCopyDetails": {
+    "description": "Action to copy the technical diagnostic, not the user-facing explanation."
+  },
+  "@sharedCopied": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@sharedUntitled": {
+    "description": "Fallback for missing catalog titles; not an ID."
+  },
+  "@render96Required": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@render96Optional": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@render96Skinpack": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@settingsExportFailed": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@settingsImportFailed": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@settingsDatabaseFailed": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "@updateActionFailed": {
+    "description": "UI label or actionable feedback; translate for the named action."
+  },
+  "render96WatchTrailer": "WATCH TRAILER",
+  "@render96WatchTrailer": {
+    "description": "Contextual UI label or multiplayer failure explanation."
+  },
+  "render96CategoryOther": "CONTENT",
+  "@render96CategoryOther": {
+    "description": "Contextual UI label or multiplayer failure explanation."
+  },
+  "coopConnectionFailed": "The session could not continue. Check your connection and start it again.",
+  "@coopConnectionFailed": {
+    "description": "Contextual UI label or multiplayer failure explanation."
+  },
+  "catalogLoadFailed": "Could not load this content. Check your connection and try again.",
+  "settingsFavouritesShareSubject": "SM64CoopDX favorites",
+  "favEmptyActionHint": "Tap ♥ on a card to save it here."
 }

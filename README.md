@@ -54,7 +54,7 @@ in-game mod workflow.
 - Save favourites locally and import or export them as JSON.
 - Review installed, recently changed, game-managed, and updateable
   content in the local Library.
-- Use English, Spanish, or Brazilian Portuguese; choose Minimal, Retro Manga, Manga Deluxe or Mario Kart 64 independently from light, dark or system appearance. The floating panel keeps its fixed dark design.
+- Use English, Spanish, Brazilian Portuguese, French, or Italian; choose Minimal, Retro Manga, Manga Deluxe or Mario Kart 64 independently from light, dark or system appearance. The floating panel keeps its fixed dark design.
 - Manga Deluxe remasters the paper-and-ink interface with CoopDX artwork, an optional moving backdrop, a compact, dismissible introduction, on-demand official video links and quick help. [Design and behavior](docs/MANGA_DELUXE.md).
 - Refresh bundled catalogues from their remote JSON sources.
 - Connect the main com.maniscat2.sm64coopdx game folder once with Android's folder picker. Mods, DynOS/Touch Controls and ROM detection reuse that connection.

@@ -74,3 +74,9 @@ v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
 - [Guía de inicio para jugar](HOW_TO_PLAY.md): instalación Android, ROM, carpetas y primeros mods.
 
 - [Manga Deluxe: diseño, estado y validación](MANGA_DELUXE.md).
+
+
+- Localización FR/IT y créditos de Touch Controls: contrato y alcance en
+  [Arquitectura](ARCHITECTURE.md#idiomas-y-créditos--rama-localization-fr-it-touch-authors)
+  y validación en [Estado del proyecto](PROJECT_STATUS.md). La sincronización
+  de idioma de la burbuja queda fuera de esta rama.

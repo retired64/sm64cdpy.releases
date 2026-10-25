@@ -7,6 +7,8 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_it.dart';
 import 'app_localizations_pt.dart';
 
 // ignore_for_file: type=lint
@@ -98,6 +100,8 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('es'),
     Locale('es', '419'),
+    Locale('fr'),
+    Locale('it'),
     Locale('pt'),
     Locale('pt', 'BR'),
   ];
@@ -771,7 +775,7 @@ abstract class AppLocalizations {
   /// Popular screen page indicator
   ///
   /// In en, this message translates to:
-  /// **'PG {page}/{total}'**
+  /// **'Page {page}/{total}'**
   String popularPage(int page, int total);
 
   /// Popular screen section header for the top 3 mods
@@ -1005,7 +1009,7 @@ abstract class AppLocalizations {
   /// DynOS screen empty state hint
   ///
   /// In en, this message translates to:
-  /// **'Check back later for runtime patches.'**
+  /// **'Check back later for new DynOS packs.'**
   String get dynosEmptyHint;
 
   /// DynOS screen error message when content cannot be loaded
@@ -1323,7 +1327,7 @@ abstract class AppLocalizations {
   /// No description provided for @detailInstallQueued.
   ///
   /// In en, this message translates to:
-  /// **'Download and installation started: {name}'**
+  /// **'Download and installation queued: {name}'**
   String detailInstallQueued(String name);
 
   /// No description provided for @detailContentUnavailable.
@@ -5237,6 +5241,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Card volume'**
   String get homeCardSoundsVolume;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get languageFrench;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get languageItalian;
+
+  /// Language preference could not be persisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the language. Try again.'**
+  String get languageSaveFailed;
+
+  /// Action to copy the technical diagnostic, not the user-facing explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy details'**
+  String get sharedCopyDetails;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get sharedCopied;
+
+  /// Creator credit on Touch Controls cards. Keep the creator name unchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Author: {author}'**
+  String sharedAuthor(String author);
+
+  /// Fallback for missing catalog titles; not an ID.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled'**
+  String get sharedUntitled;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'REQUIRED'**
+  String get render96Required;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'OPTIONAL'**
+  String get render96Optional;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'MODEL PACK'**
+  String get render96Skinpack;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not export your favorites. Try again.'**
+  String get settingsExportFailed;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not import this file. Choose a favorites file exported by SM64CDPY.'**
+  String get settingsImportFailed;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not refresh the catalog. Check your connection and try again.'**
+  String get settingsDatabaseFailed;
+
+  /// UI label or actionable feedback; translate for the named action.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete the update. Try again or download it in your browser.'**
+  String get updateActionFailed;
+
+  /// Contextual UI label or multiplayer failure explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'WATCH TRAILER'**
+  String get render96WatchTrailer;
+
+  /// Contextual UI label or multiplayer failure explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTENT'**
+  String get render96CategoryOther;
+
+  /// Contextual UI label or multiplayer failure explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'The session could not continue. Check your connection and start it again.'**
+  String get coopConnectionFailed;
+
+  /// No description provided for @catalogLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this content. Check your connection and try again.'**
+  String get catalogLoadFailed;
+
+  /// No description provided for @settingsFavouritesShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'SM64CoopDX favorites'**
+  String get settingsFavouritesShareSubject;
+
+  /// No description provided for @favEmptyActionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap ♥ on a card to save it here.'**
+  String get favEmptyActionHint;
 }
 
 class _AppLocalizationsDelegate
@@ -5250,7 +5374,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'pt'].contains(locale.languageCode);
+      <String>['en', 'es', 'fr', 'it', 'pt'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -5283,6 +5407,10 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'it':
+      return AppLocalizationsIt();
     case 'pt':
       return AppLocalizationsPt();
   }

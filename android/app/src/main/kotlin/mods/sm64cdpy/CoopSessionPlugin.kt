@@ -326,7 +326,7 @@ class CoopSessionPlugin : FlutterPlugin, ActivityAware, EventChannel.StreamHandl
                 "phase" to "failed",
                 "friends" to emptyList<Map<String, Any?>>(),
                 "trackers" to 0,
-                "message" to context.getString(R.string.coop_session_interrupted),
+                "message" to AppLanguage.context(context).getString(R.string.coop_session_interrupted),
             ),
         )
     }

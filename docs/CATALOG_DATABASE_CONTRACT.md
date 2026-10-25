@@ -87,3 +87,15 @@ final fallback.
 
 Do not silently change the semantics of a production endpoint used by released
 clients. Prefer versioned paths such as `db/v1/` and `db/v2/`.
+
+
+## Touch Controls credits (independent curated catalog)
+
+The `touch_controls` object may include an optional `author` string per item.
+The app trims nonempty strings and projects missing, null, blank or malformed
+values to the literal `Release Soon`, as requested for the pending credits.
+Do not infer authors from titles or file names. This field does not participate
+in equality, favorites, installation identity or destination selection.
+`db/touch_controls.json` and `assets/db/touch_controls.json` must be valid and
+match. Existing endpoints without the field remain readable. Names and credits
+are source content; only the surrounding Author label is localized.

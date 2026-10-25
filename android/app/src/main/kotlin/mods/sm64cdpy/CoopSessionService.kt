@@ -5,6 +5,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -49,19 +51,36 @@ class CoopSessionService : Service() {
         }
     }
 
+    private var lastShow: Intent? = null
+    private val languageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == Intent.ACTION_LOCALE_CHANGED) {
+                AppLanguage.refreshChannels(this@CoopSessionService)
+            }
+            lastShow?.let { onStartCommand(it, 0, 0) }
+        }
+    }
+    private fun localizedText(id: Int, vararg args: Any): String =
+        AppLanguage.context(this).getString(id, *args)
+
     private var code = ""
     private var wakeLock: PowerManager.WakeLock? = null
     private var wifiLock: WifiManager.WifiLock? = null
 
     override fun onCreate() {
         super.onCreate()
+        val filter = IntentFilter(AppLanguage.ACTION_CHANGED).apply {
+            addAction(Intent.ACTION_LOCALE_CHANGED)
+        }
+        if (Build.VERSION.SDK_INT >= 33) registerReceiver(languageReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        else @Suppress("DEPRECATION") registerReceiver(languageReceiver, filter)
         if (Build.VERSION.SDK_INT >= 26) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                getString(R.string.channel_coop_session),
+                localizedText(R.string.channel_coop_session),
                 NotificationManager.IMPORTANCE_LOW,
             ).apply {
-                description = getString(R.string.channel_coop_session_desc)
+                description = localizedText(R.string.channel_coop_session_desc)
                 setShowBadge(false)
             }
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
@@ -73,7 +92,7 @@ class CoopSessionService : Service() {
             ACTION_COPY -> {
                 if (code.isNotEmpty()) {
                     (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager)
-                        .setPrimaryClip(ClipData.newPlainText("Join code", code))
+                        .setPrimaryClip(ClipData.newPlainText(localizedText(R.string.coop_notification_copy), code))
                 }
                 return START_NOT_STICKY
             }
@@ -84,24 +103,24 @@ class CoopSessionService : Service() {
                 return START_NOT_STICKY
             }
         }
+        lastShow = intent
         code = intent?.getStringExtra("code").orEmpty()
         val host = intent?.getBooleanExtra("host", false) == true
         val phase = intent?.getStringExtra("phase").orEmpty()
         val friends = intent?.getIntExtra("friends", 0) ?: 0
-        val failure = intent?.getStringExtra("failure").orEmpty()
         val notification = buildNotification(
-            if (host) getString(R.string.coop_notification_hosting, code)
-            else getString(R.string.coop_notification_joining),
+            if (host) localizedText(R.string.coop_notification_hosting, code)
+            else localizedText(R.string.coop_notification_joining),
             when (phase) {
-                "connected" -> resources.getQuantityString(
+                "connected" -> AppLanguage.context(this).resources.getQuantityString(
                     R.plurals.coop_notification_friends,
                     friends,
                     friends,
                 )
-                "reconnecting" -> getString(R.string.coop_notification_reconnecting)
-                "failed" -> failure.ifEmpty { getString(R.string.coop_notification_failed) }
-                "stopping" -> getString(R.string.coop_notification_stopping)
-                else -> getString(R.string.coop_notification_preparing)
+                "reconnecting" -> localizedText(R.string.coop_notification_reconnecting)
+                "failed" -> localizedText(R.string.coop_notification_failed)
+                "stopping" -> localizedText(R.string.coop_notification_stopping)
+                else -> localizedText(R.string.coop_notification_preparing)
             },
         )
         ServiceCompat.startForeground(
@@ -135,7 +154,7 @@ class CoopSessionService : Service() {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .addAction(0, getString(R.string.coop_notification_stop), stop)
+            .addAction(0, localizedText(R.string.coop_notification_stop), stop)
         if (code.isNotEmpty()) {
             val copy = PendingIntent.getService(
                 this,
@@ -143,7 +162,7 @@ class CoopSessionService : Service() {
                 Intent(this, CoopSessionService::class.java).setAction(ACTION_COPY),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
-            builder.addAction(0, getString(R.string.coop_notification_copy), copy)
+            builder.addAction(0, localizedText(R.string.coop_notification_copy), copy)
         }
         return builder.build()
     }
@@ -164,6 +183,8 @@ class CoopSessionService : Service() {
     }
 
     override fun onDestroy() {
+        unregisterReceiver(languageReceiver)
+        lastShow = null
         wakeLock?.takeIf { it.isHeld }?.release()
         wifiLock?.takeIf { it.isHeld }?.release()
         wakeLock = null

@@ -1,6 +1,7 @@
 import 'presentation/widgets/ambient_music_coordinator.dart';
 import 'presentation/providers/retro_accent_provider.dart';
 import 'presentation/providers/game_folder_provider.dart';
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -92,6 +93,12 @@ Future<void> _bootstrapMainApp() async {
   // Migrate any explicit legacy boolean and expose undecided installs to the
   // main UI before providers are created.
   await AutoInstallPreferenceService.init();
+
+  try {
+    await LocaleNotifier.synchronizeNativeLocale();
+  } catch (error) {
+    debugPrint('Could not synchronize notification language: $error');
+  }
 
   // OTA — Obtiene versión instalada para comparar con GitHub Releases
   await UpdateService.init();

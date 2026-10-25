@@ -1,6 +1,8 @@
+import '../widgets/catalog_error_details.dart';
 import '../widgets/deluxe_backdrop.dart';
 import '../widgets/deluxe_content.dart';
 import '../../services/deluxe_links.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -527,7 +529,11 @@ class _TitleSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Título limpio, sin efecto estampado.
-        Text(mod.title, style: titleStyle, softWrap: true),
+        Text(
+          catalogTitle(mod.title, AppLocalizations.of(context).sharedUntitled),
+          style: titleStyle,
+          softWrap: true,
+        ),
         const SizedBox(height: 10),
         Row(
           children: [
@@ -616,7 +622,11 @@ class _StatsBar extends StatelessWidget {
               SizedBox(
                 width: width,
                 child: _StatCell(
-                  value: mod.rating?.star ?? '—',
+                  value:
+                      mod.rating?.starFor(
+                        AppLocalizations.of(context).localeName,
+                      ) ??
+                      '—',
                   label: l10n.detailRating,
                   icon: Icons.star_rounded,
                   iconColor: retro.amber,
@@ -626,7 +636,9 @@ class _StatsBar extends StatelessWidget {
               SizedBox(
                 width: width,
                 child: _StatCell(
-                  value: mod.downloads.compact,
+                  value: mod.downloads.compactFor(
+                    AppLocalizations.of(context).localeName,
+                  ),
                   label: l10n.detailDownloads,
                   icon: Icons.download_rounded,
                   iconColor: retro.accentText,
@@ -636,7 +648,9 @@ class _StatsBar extends StatelessWidget {
               SizedBox(
                 width: width,
                 child: _StatCell(
-                  value: mod.views.compact,
+                  value: mod.views.compactFor(
+                    AppLocalizations.of(context).localeName,
+                  ),
                   label: l10n.detailViews,
                   icon: Icons.visibility_rounded,
                   iconColor: retro.inkDim,
@@ -646,7 +660,9 @@ class _StatsBar extends StatelessWidget {
               SizedBox(
                 width: width,
                 child: _StatCell(
-                  value: mod.reviewCount.compact,
+                  value: mod.reviewCount.compactFor(
+                    AppLocalizations.of(context).localeName,
+                  ),
                   label: l10n.detailReviews,
                   icon: Icons.rate_review_rounded,
                   iconColor: retro.inkDim,
@@ -1022,7 +1038,9 @@ class _VersionCardState extends State<_VersionCard> {
                     ),
                     const SizedBox(width: 3),
                     Text(
-                      widget.version.rating!.toStringAsFixed(1),
+                      widget.version.rating!.starFor(
+                        AppLocalizations.of(context).localeName,
+                      ),
                       style: retro.body(size: 11, weight: FontWeight.w700),
                     ),
                   ],
@@ -1279,7 +1297,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           if (copyError != null) {
             AppSnackbar.errorWithCopy(
               context,
-              message: copyError,
+              message: AppLocalizations.of(context).detailInstallFailed,
               copyText: copyError,
             );
           } else {
@@ -1297,7 +1315,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: _l10n!.detailError(error),
+            message: friendlyDownloadError(_l10n!, error),
             copyText: error,
           );
         },
@@ -1310,7 +1328,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: _l10n!.detailError(e.toString()),
+        message: friendlyDownloadError(_l10n!, e),
         copyText: e.toString(),
       );
     }
@@ -1353,7 +1371,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: _l10n!.detailError(error),
+            message: friendlyDownloadError(_l10n!, error),
             copyText: error,
           );
         },
@@ -1366,7 +1384,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: _l10n!.detailError(e.toString()),
+        message: friendlyDownloadError(_l10n!, e),
         copyText: e.toString(),
       );
     }
@@ -1706,7 +1724,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           if (copyError != null) {
             AppSnackbar.errorWithCopy(
               context,
-              message: copyError,
+              message: AppLocalizations.of(context).detailInstallFailed,
               copyText: copyError,
             );
           } else {
@@ -1724,7 +1742,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: _l10n!.detailError(error),
+            message: friendlyDownloadError(_l10n!, error),
             copyText: error,
           );
         },
@@ -1737,7 +1755,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: _l10n!.detailError(e.toString()),
+        message: friendlyDownloadError(_l10n!, e),
         copyText: e.toString(),
       );
     }
@@ -1780,7 +1798,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: _l10n!.detailError(error),
+            message: friendlyDownloadError(_l10n!, error),
             copyText: error,
           );
         },
@@ -1793,7 +1811,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: _l10n!.detailError(e.toString()),
+        message: friendlyDownloadError(_l10n!, e),
         copyText: e.toString(),
       );
     }
@@ -2946,8 +2964,8 @@ class _DetailError extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                message,
+              CatalogErrorDetails(
+                details: message,
                 style: TextStyle(color: retro.inkDim, fontSize: 12),
                 textAlign: TextAlign.center,
                 maxLines: 4,

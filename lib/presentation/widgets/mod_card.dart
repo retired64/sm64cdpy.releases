@@ -88,7 +88,10 @@ class _ModCardState extends ConsumerState<ModCard>
                   children: [
                     // Title
                     MarioGameTitle(
-                      text: widget.mod.title,
+                      text: catalogTitle(
+                        widget.mod.title,
+                        AppLocalizations.of(context).sharedUntitled,
+                      ),
                       retro: retro,
                       size: 14.5,
                       maxLines: 2,
@@ -112,13 +115,19 @@ class _ModCardState extends ConsumerState<ModCard>
                         RetroMeta(
                           retro: retro,
                           icon: Icons.star_rounded,
-                          label: widget.mod.rating?.star ?? '—',
+                          label:
+                              widget.mod.rating?.starFor(
+                                AppLocalizations.of(context).localeName,
+                              ) ??
+                              '—',
                           color: retro.amber,
                         ),
                         RetroMeta(
                           retro: retro,
                           icon: Icons.download_rounded,
-                          label: widget.mod.downloads.compact,
+                          label: widget.mod.downloads.compactFor(
+                            AppLocalizations.of(context).localeName,
+                          ),
                           color: retro.accent,
                         ),
                         if (widget.mod.isFeatured)

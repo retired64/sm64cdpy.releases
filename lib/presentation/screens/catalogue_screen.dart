@@ -1,3 +1,5 @@
+import '../widgets/catalog_error_details.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -1129,8 +1131,8 @@ class _ErrorView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            Text(
-              message,
+            CatalogErrorDetails(
+              details: message,
               style: TextStyle(color: retro.inkDim, fontSize: 12),
               textAlign: TextAlign.center,
               maxLines: 4,

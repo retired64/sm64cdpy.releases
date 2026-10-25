@@ -1165,3 +1165,19 @@ el usuario se conservan; el sonido de tarjetas Home mantiene su 45 % propio.
 No se cambia el volumen Android ni se replica audio al overlay. Sin nuevos
 caches, preferencias o Futures. Pruebas de defaults y música actualizadas;
 git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
+
+
+## Localización y créditos — 2026-10-24
+
+- [x] Rama independiente desde play-2p2.
+- [x] ARB FR/IT completos y selector con persistencia compatible.
+- [x] Localización nativa FR/IT y proyección del idioma para notificaciones.
+- [x] Mensajes de errores localizados con detalles copiables; formatos regionales.
+- [x] Autor Touch Controls opcional, fallback Release Soon y catálogos alineados.
+- [x] Burbuja excluida por petición del usuario; protocolo intacto.
+- [x] Tests offline de claves, argumentos, recursos nativos y catálogo.
+- [x] Generación oficial de seis archivos Dart y análisis Dart sin errores/warnings.
+- [x] Formato, comprobación del modelo Dart y git diff --check.
+- [ ] Ejecutar tests Flutter y compilación Kotlin en el entorno canónico de CI;
+      CLI Flutter no soporta este anfitrión Android y falta android/gradlew.
+- [ ] Revisión física: idiomas, texto ampliado, notificaciones y reapertura.

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
@@ -281,7 +282,7 @@ class FavouritesNotifier extends Notifier<Set<String>> {
   // ── Export ────────────────────────────────────────────────────────────────
   /// Serializa los IDs favoritos a JSON y los comparte via share sheet nativo.
   /// Retorna null si todo OK, o un mensaje de error si algo falló.
-  Future<String?> exportFavourites() async {
+  Future<String?> exportFavourites({required String shareSubject}) async {
     try {
       if (state.isEmpty) return 'No favourites to export.';
 
@@ -299,7 +300,7 @@ class FavouritesNotifier extends Notifier<Set<String>> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path, mimeType: 'application/json')],
-          subject: 'SM64CoopDX Favourites',
+          subject: shareSubject,
         ),
       );
 

@@ -1089,3 +1089,43 @@ el usuario se conservan; el sonido de tarjetas Home mantiene su 45 % propio.
 No se cambia el volumen Android ni se replica audio al overlay. Sin nuevos
 caches, preferencias o Futures. Pruebas de defaults y música actualizadas;
 git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
+
+
+## Idiomas y créditos — rama localization-fr-it-touch-authors
+
+La app principal admite EN, ES/ES-419, PT/PT-BR, FR e IT. Los siete ARB
+mantienen paridad de claves y argumentos ICU; inglés es la referencia. El
+selector conserva en Hive las etiquetas antiguas y añade `fr`/`it`. Publica el
+nuevo idioma solo después de guardar; una proyección fallida se revierte. En
+arranque Hive reconcilia `app_locale` en SharedPreferences. Android lee esa
+proyección sin caché mediante `AppLanguage.context`, sin alterar la configuración
+global. Los Workers consultan el contexto al construir cada notificación y el
+servicio cooperativo refresca la suya mediante un broadcast interno. Los nombres
+de canales se actualizan preservando IDs y decisiones del usuario.
+
+La burbuja queda explícitamente fuera de esta modificación por petición del
+usuario: sigue el sistema y no recibe la selección de Ajustes. No se modifican
+sus archivos ni su protocolo. Los recursos ARB nuevos están disponibles para
+la resolución normal del sistema, sin sincronización adicional entre engines.
+
+Touch Controls incorpora `author` opcional en JSON/modelo/entidad. Ausente,
+nulo, vacío o inválido se presenta como `Release Soon`; los 28 registros
+incluidos usan ese texto literal por petición del usuario. El catálogo fuente
+se repara y coincide con assets. Tarjetas y Favoritos reutilizan la misma vista;
+la identidad no depende del crédito. El catálogo remoto sigue pudiendo omitir
+el campo. Su caché actual se invalida mediante el refresco existente.
+
+Fechas y cifras de la app reciben el locale explícitamente, sin cambiar
+`Intl.defaultLocale`. Los nombres de recursos, autores y contenido externo
+conservan su idioma original. Los nombres de niveles de Partidas son etiquetas
+descriptivas localizadas, conservando sus 24 posiciones e IDs del juego; no se
+presentan como traducciones oficiales. La decoración japonesa de Retro Manga
+se conserva. Errores de catálogos, instalación manual, favoritos y OTA ofrecen
+explicaciones localizadas; los diagnósticos se pueden copiar.
+
+No hay nuevas cachés persistentes ni Futures de IO añadidos sin await. El
+servicio nativo conserva solo el último Intent de su notificación para
+redibujarla al cambiar idioma; lo limpia y retira su receiver al destruirse. No cambian IDs de descargas,
+Workers, archivos, destinos ni notificaciones. Validación de esta rama registrada
+en PROJECT_STATUS; la revisión física de los cinco idiomas funcionales, texto
+ampliado, cambio de idioma, notificaciones y reapertura sigue siendo necesaria.

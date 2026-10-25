@@ -21,6 +21,8 @@ class _LocaleSelectorState extends ConsumerState<LocaleSelector> {
     'en_US' => '🇺🇸',
     'es_419' => '🇲🇽',
     'pt_BR' => '🇧🇷',
+    'fr' => '🇫🇷',
+    'it' => '🇮🇹',
     _ => '🌐',
   };
 
@@ -28,6 +30,8 @@ class _LocaleSelectorState extends ConsumerState<LocaleSelector> {
     'en_US' => l10n.languageEnglish,
     'es_419' => l10n.languageSpanish,
     'pt_BR' => l10n.languagePortuguese,
+    'fr' => l10n.languageFrench,
+    'it' => l10n.languageItalian,
     _ => l10n.languageFollowSystem,
   };
 
@@ -43,7 +47,7 @@ class _LocaleSelectorState extends ConsumerState<LocaleSelector> {
       if (!mounted) return;
       AppSnackbar.error(
         context,
-        message: AppLocalizations.of(context).themeSaveFailed,
+        message: AppLocalizations.of(context).languageSaveFailed,
       );
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -62,7 +66,7 @@ class _LocaleSelectorState extends ConsumerState<LocaleSelector> {
       expanded: _expanded,
       onExpansionChanged: (expanded) => setState(() => _expanded = expanded),
       children: [
-        for (final option in <String?>[null, 'en_US', 'es_419', 'pt_BR'])
+        for (final option in <String?>[null, ...LocaleNotifier.supportedTags])
           SettingsSelectionOption(
             key: ValueKey('locale-${option ?? 'system'}'),
             label: _name(l10n, option),

@@ -1,5 +1,7 @@
+import '../../core/utils/extensions.dart';
 import 'manga_switch.dart';
 import 'game_folder_card.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -198,7 +200,13 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
                     ),
                     if (mod != null) ...[
                       const SizedBox(height: 12),
-                      Text(mod.title, style: retro.heading(size: 15)),
+                      Text(
+                        catalogTitle(
+                          mod.title,
+                          AppLocalizations.of(context).sharedUntitled,
+                        ),
+                        style: retro.heading(size: 15),
+                      ),
                       Text(
                         enabled == true
                             ? l10n.gameModsEnabled

@@ -1,3 +1,6 @@
+import '../widgets/catalog_error_details.dart';
+import '../../core/utils/extensions.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -110,11 +113,11 @@ class _VipBody extends StatelessWidget {
         // ── Section label ─────────────────────────────────────
         if (retro.showJapaneseDecorations)
           SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
-            child: Text('限定・プレミアムコンテンツ', style: retro.body(size: 12)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
+              child: Text('限定・プレミアムコンテンツ', style: retro.body(size: 12)),
+            ),
           ),
-        ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
@@ -355,7 +358,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
           if (copyError != null) {
             AppSnackbar.errorWithCopy(
               context,
-              message: copyError,
+              message: AppLocalizations.of(context).detailInstallFailed,
               copyText: copyError,
             );
           } else {
@@ -373,7 +376,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
           });
           AppSnackbar.errorWithCopy(
             context,
-            message: AppLocalizations.of(context).detailError(error),
+            message: friendlyDownloadError(AppLocalizations.of(context), error),
             copyText: error,
           );
         },
@@ -386,7 +389,7 @@ class _VipModCardState extends ConsumerState<VipModCard>
       });
       AppSnackbar.errorWithCopy(
         context,
-        message: AppLocalizations.of(context).detailError(e.toString()),
+        message: friendlyDownloadError(AppLocalizations.of(context), e),
         copyText: e.toString(),
       );
     }
@@ -493,7 +496,10 @@ class _VipModCardState extends ConsumerState<VipModCard>
                   children: [
                     // Title
                     Text(
-                      widget.mod.title,
+                      catalogTitle(
+                        widget.mod.title,
+                        AppLocalizations.of(context).sharedUntitled,
+                      ),
                       style: retro.heading(size: 16.5, letterSpacing: -0.2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -905,8 +911,8 @@ class _VipError extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
-                message,
+              CatalogErrorDetails(
+                details: message,
                 style: TextStyle(color: retro.inkDim, fontSize: 12),
                 textAlign: TextAlign.center,
                 maxLines: 3,

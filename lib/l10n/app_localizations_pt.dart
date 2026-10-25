@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -393,7 +394,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String popularPage(int page, int total) {
-    return 'PG $page/$total';
+    return 'Pág. $page/$total';
   }
 
   @override
@@ -519,7 +520,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get dynosEmpty => 'NENHUM DYNOS AINDA';
 
   @override
-  String get dynosEmptyHint => 'Volte mais tarde para patches em tempo real.';
+  String get dynosEmptyHint =>
+      'Volte mais tarde para encontrar novos pacotes DynOS.';
 
   @override
   String get dynosFailedToLoad => 'FALHA AO CARREGAR DYNOS';
@@ -718,7 +720,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String detailInstallQueued(String name) {
-    return 'Download e instalação iniciados: $name';
+    return 'Download e instalação na fila: $name';
   }
 
   @override
@@ -1128,7 +1130,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get disclaimerUnofficialBanner => 'App Não Oficial';
 
   @override
-  String get disclaimerAppSubtitle => 'SM64CoopDX Mods Manager';
+  String get disclaimerAppSubtitle => 'Gerenciador de mods do SM64CoopDX';
 
   @override
   String get disclaimerWarningBody =>
@@ -2048,7 +2050,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get saveFileCourseNames =>
-      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+      'Campo dos Bob-ombs|Fortaleza do Whomp|Baía dos Piratas|Montanha Gelada|Mansão do Grande Boo|Caverna Labiríntica|Terra de Lava|Deserto de Areias Movediças|Docas Sombrias|Terra do Boneco de Neve|Cidade Seca e Molhada|Montanha Alta|Ilha Grande e Pequena|Relógio|Caminho do Arco-Íris|Bowser no Mundo Sombrio|Bowser no Mar de Fogo|Bowser no Céu|Escorregador Secreto da Princesa|Caverna do Boné de Metal|Torre do Boné Alado|Boné Invisível sob o Fosso|Mario Alado sobre o Arco-Íris|Aquário Secreto';
 
   @override
   String get saveFileCopies => 'Progresso do jogo';
@@ -2917,6 +2919,76 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get homeCardSoundsVolume => 'Volume dos cartões';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageItalian => 'Italiano';
+
+  @override
+  String get languageSaveFailed =>
+      'Não foi possível salvar o idioma. Tente novamente.';
+
+  @override
+  String get sharedCopyDetails => 'Copiar detalhes';
+
+  @override
+  String get sharedCopied => 'Copiado para a área de transferência';
+
+  @override
+  String sharedAuthor(String author) {
+    return 'Autor: $author';
+  }
+
+  @override
+  String get sharedUntitled => 'Sem título';
+
+  @override
+  String get render96Required => 'NECESSÁRIO';
+
+  @override
+  String get render96Optional => 'OPCIONAL';
+
+  @override
+  String get render96Skinpack => 'PACOTE DE MODELOS';
+
+  @override
+  String get settingsExportFailed =>
+      'Não foi possível exportar seus favoritos. Tente novamente.';
+
+  @override
+  String get settingsImportFailed =>
+      'Não foi possível importar este arquivo. Escolha um arquivo de favoritos exportado pelo SM64CDPY.';
+
+  @override
+  String get settingsDatabaseFailed =>
+      'Não foi possível atualizar o catálogo. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get updateActionFailed =>
+      'Não foi possível concluir a atualização. Tente novamente ou baixe pelo navegador.';
+
+  @override
+  String get render96WatchTrailer => 'ASSISTIR AO TRAILER';
+
+  @override
+  String get render96CategoryOther => 'CONTEÚDO';
+
+  @override
+  String get coopConnectionFailed =>
+      'A partida não pôde continuar. Verifique sua conexão e inicie novamente.';
+
+  @override
+  String get catalogLoadFailed =>
+      'Não foi possível carregar este conteúdo. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get settingsFavouritesShareSubject => 'Favoritos do SM64CoopDX';
+
+  @override
+  String get favEmptyActionHint =>
+      'Toque em ♥ em um cartão para salvá-lo aqui.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3308,7 +3380,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String popularPage(int page, int total) {
-    return 'PG $page/$total';
+    return 'Pág. $page/$total';
   }
 
   @override
@@ -3434,7 +3506,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get dynosEmpty => 'NENHUM DYNOS AINDA';
 
   @override
-  String get dynosEmptyHint => 'Volte mais tarde para patches em tempo real.';
+  String get dynosEmptyHint =>
+      'Volte mais tarde para encontrar novos pacotes DynOS.';
 
   @override
   String get dynosFailedToLoad => 'FALHA AO CARREGAR DYNOS';
@@ -3633,7 +3706,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String detailInstallQueued(String name) {
-    return 'Download e instalação iniciados: $name';
+    return 'Download e instalação na fila: $name';
   }
 
   @override
@@ -4043,7 +4116,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get disclaimerUnofficialBanner => 'App Não Oficial';
 
   @override
-  String get disclaimerAppSubtitle => 'SM64CoopDX Mods Manager';
+  String get disclaimerAppSubtitle => 'Gerenciador de mods do SM64CoopDX';
 
   @override
   String get disclaimerWarningBody =>
@@ -4963,7 +5036,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get saveFileCourseNames =>
-      'Bob-omb Battlefield|Whomp\'s Fortress|Jolly Roger Bay|Cool, Cool Mountain|Big Boo\'s Haunt|Hazy Maze Cave|Lethal Lava Land|Shifting Sand Land|Dire, Dire Docks|Snowman\'s Land|Wet-Dry World|Tall, Tall Mountain|Tiny-Huge Island|Tick Tock Clock|Rainbow Ride|Bowser in the Dark World|Bowser in the Fire Sea|Bowser in the Sky|The Princess\'s Secret Slide|Cavern of the Metal Cap|Tower of the Wing Cap|Vanish Cap Under the Moat|Wing Mario Over the Rainbow|The Secret Aquarium';
+      'Campo dos Bob-ombs|Fortaleza do Whomp|Baía dos Piratas|Montanha Gelada|Mansão do Grande Boo|Caverna Labiríntica|Terra de Lava|Deserto de Areias Movediças|Docas Sombrias|Terra do Boneco de Neve|Cidade Seca e Molhada|Montanha Alta|Ilha Grande e Pequena|Relógio|Caminho do Arco-Íris|Bowser no Mundo Sombrio|Bowser no Mar de Fogo|Bowser no Céu|Escorregador Secreto da Princesa|Caverna do Boné de Metal|Torre do Boné Alado|Boné Invisível sob o Fosso|Mario Alado sobre o Arco-Íris|Aquário Secreto';
 
   @override
   String get saveFileCopies => 'Progresso do jogo';
@@ -5832,4 +5905,74 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get homeCardSoundsVolume => 'Volume dos cartões';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageItalian => 'Italiano';
+
+  @override
+  String get languageSaveFailed =>
+      'Não foi possível salvar o idioma. Tente novamente.';
+
+  @override
+  String get sharedCopyDetails => 'Copiar detalhes';
+
+  @override
+  String get sharedCopied => 'Copiado para a área de transferência';
+
+  @override
+  String sharedAuthor(String author) {
+    return 'Autor: $author';
+  }
+
+  @override
+  String get sharedUntitled => 'Sem título';
+
+  @override
+  String get render96Required => 'NECESSÁRIO';
+
+  @override
+  String get render96Optional => 'OPCIONAL';
+
+  @override
+  String get render96Skinpack => 'PACOTE DE MODELOS';
+
+  @override
+  String get settingsExportFailed =>
+      'Não foi possível exportar seus favoritos. Tente novamente.';
+
+  @override
+  String get settingsImportFailed =>
+      'Não foi possível importar este arquivo. Escolha um arquivo de favoritos exportado pelo SM64CDPY.';
+
+  @override
+  String get settingsDatabaseFailed =>
+      'Não foi possível atualizar o catálogo. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get updateActionFailed =>
+      'Não foi possível concluir a atualização. Tente novamente ou baixe pelo navegador.';
+
+  @override
+  String get render96WatchTrailer => 'ASSISTIR AO TRAILER';
+
+  @override
+  String get render96CategoryOther => 'CONTEÚDO';
+
+  @override
+  String get coopConnectionFailed =>
+      'A partida não pôde continuar. Verifique sua conexão e inicie novamente.';
+
+  @override
+  String get catalogLoadFailed =>
+      'Não foi possível carregar este conteúdo. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get settingsFavouritesShareSubject => 'Favoritos do SM64CoopDX';
+
+  @override
+  String get favEmptyActionHint =>
+      'Toque em ♥ em um cartão para salvá-lo aqui.';
 }

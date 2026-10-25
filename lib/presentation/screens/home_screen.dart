@@ -1,3 +1,4 @@
+import '../widgets/catalog_error_details.dart';
 import 'dart:async';
 import '../providers/home_card_audio_provider.dart';
 import '../widgets/home_typography.dart';
@@ -409,7 +410,10 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              widget.mod.title,
+                              catalogTitle(
+                                widget.mod.title,
+                                AppLocalizations.of(context).sharedUntitled,
+                              ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -451,7 +455,9 @@ class _FeaturedCardState extends ConsumerState<_FeaturedCard>
                                   ),
                                   const SizedBox(width: 3),
                                   Text(
-                                    widget.mod.rating!.star,
+                                    widget.mod.rating!.starFor(
+                                      AppLocalizations.of(context).localeName,
+                                    ),
                                     style: TextStyle(
                                       color: manga ? retro.ink : Colors.white,
                                       fontSize: 12,
@@ -1407,7 +1413,10 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.mod.title,
+                      catalogTitle(
+                        widget.mod.title,
+                        AppLocalizations.of(context).sharedUntitled,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -1431,7 +1440,9 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                         ),
                         const SizedBox(width: 3),
                         Text(
-                          widget.mod.downloads.compact,
+                          widget.mod.downloads.compactFor(
+                            AppLocalizations.of(context).localeName,
+                          ),
                           style: retro.body(size: 11),
                         ),
                         if (widget.mod.rating != null) ...[
@@ -1443,7 +1454,9 @@ class _TopModRowState extends ConsumerState<_TopModRow>
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            widget.mod.rating!.star,
+                            widget.mod.rating!.starFor(
+                              AppLocalizations.of(context).localeName,
+                            ),
                             style: retro.body(size: 11),
                           ),
                         ],
@@ -1632,8 +1645,8 @@ class _HomeError extends StatelessWidget {
             const SizedBox(height: 16),
             Text(l10n.homeFailedToLoad, style: retro.heading(size: 16)),
             const SizedBox(height: 6),
-            Text(
-              message,
+            CatalogErrorDetails(
+              details: message,
               style: retro.body(size: 12),
               textAlign: TextAlign.center,
               maxLines: 3,

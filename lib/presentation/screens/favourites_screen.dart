@@ -1,3 +1,5 @@
+import '../widgets/catalog_error_details.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -105,13 +107,15 @@ class _ModsFavTab extends ConsumerWidget {
       loading: () =>
           Center(child: CircularProgressIndicator(color: retro.accent)),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
+        child: CatalogErrorDetails(
+          details: e.toString(),
           style: retro.body(size: 13, color: retro.inkDim),
         ),
       ),
       data: (mods) {
-        if (mods.isEmpty) return const _EmptyFavourites(type: 'mods');
+        if (mods.isEmpty) {
+          return const _EmptyFavourites(type: _FavouriteSection.mods);
+        }
         return ListView.separated(
           shrinkWrap: true,
           padding: EdgeInsets.fromLTRB(
@@ -148,13 +152,15 @@ class _VipFavTab extends ConsumerWidget {
       loading: () =>
           Center(child: CircularProgressIndicator(color: retro.accent)),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
+        child: CatalogErrorDetails(
+          details: e.toString(),
           style: retro.body(size: 13, color: retro.inkDim),
         ),
       ),
       data: (mods) {
-        if (mods.isEmpty) return const _EmptyFavourites(type: 'VIP mods');
+        if (mods.isEmpty) {
+          return const _EmptyFavourites(type: _FavouriteSection.vip);
+        }
         return ListView.separated(
           shrinkWrap: true,
           padding: EdgeInsets.fromLTRB(
@@ -188,13 +194,15 @@ class _DynosFavTab extends ConsumerWidget {
       loading: () =>
           Center(child: CircularProgressIndicator(color: retro.accent)),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
+        child: CatalogErrorDetails(
+          details: e.toString(),
           style: retro.body(size: 13, color: retro.inkDim),
         ),
       ),
       data: (mods) {
-        if (mods.isEmpty) return const _EmptyFavourites(type: 'DynOS');
+        if (mods.isEmpty) {
+          return const _EmptyFavourites(type: _FavouriteSection.dynos);
+        }
         return ListView.separated(
           shrinkWrap: true,
           padding: EdgeInsets.fromLTRB(
@@ -228,13 +236,15 @@ class _TouchFavTab extends ConsumerWidget {
       loading: () =>
           Center(child: CircularProgressIndicator(color: retro.accent)),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
+        child: CatalogErrorDetails(
+          details: e.toString(),
           style: retro.body(size: 13, color: retro.inkDim),
         ),
       ),
       data: (mods) {
-        if (mods.isEmpty) return const _EmptyFavourites(type: 'Touch Controls');
+        if (mods.isEmpty) {
+          return const _EmptyFavourites(type: _FavouriteSection.touch);
+        }
         return ListView.separated(
           shrinkWrap: true,
           padding: EdgeInsets.fromLTRB(
@@ -257,29 +267,23 @@ class _TouchFavTab extends ConsumerWidget {
 
 // ── Empty state (shared) ──────────────────────────────────────────────────
 
+enum _FavouriteSection { mods, vip, dynos, touch }
+
 class _EmptyFavourites extends StatelessWidget {
   const _EmptyFavourites({required this.type});
-  final String type;
+  final _FavouriteSection type;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final retro = RetroTheme.of(context);
 
-    String emptyTitle() {
-      switch (type) {
-        case 'mods':
-          return l10n.favEmptyMods;
-        case 'VIP mods':
-          return l10n.favEmptyVip;
-        case 'DynOS':
-          return l10n.favEmptyDynos;
-        case 'Touch Controls':
-          return l10n.favEmptyTouch;
-        default:
-          return 'No $type favourited yet';
-      }
-    }
+    final emptyTitle = switch (type) {
+      _FavouriteSection.mods => l10n.favEmptyMods,
+      _FavouriteSection.vip => l10n.favEmptyVip,
+      _FavouriteSection.dynos => l10n.favEmptyDynos,
+      _FavouriteSection.touch => l10n.favEmptyTouch,
+    };
 
     return Center(
       child: Column(
@@ -305,20 +309,17 @@ class _EmptyFavourites extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(emptyTitle(), style: retro.heading(size: 18)),
+          Text(emptyTitle, style: retro.heading(size: 18)),
           const SizedBox(height: 8),
-          Text(l10n.favEmptyHint(type), style: retro.body(size: 13)),
+          Text(l10n.favEmptyActionHint, style: retro.body(size: 13)),
           const SizedBox(height: 24),
           GestureDetector(
-            onTap: () => context.go(
-              type == 'mods'
-                  ? '/'
-                  : type == 'VIP mods'
-                  ? '/vip'
-                  : type == 'DynOS'
-                  ? '/dynos'
-                  : '/touch-controls',
-            ),
+            onTap: () => context.go(switch (type) {
+              _FavouriteSection.mods => '/',
+              _FavouriteSection.vip => '/vip',
+              _FavouriteSection.dynos => '/dynos',
+              _FavouriteSection.touch => '/touch-controls',
+            }),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
               decoration: retro.gameDecoration(

@@ -1,5 +1,8 @@
+import '../../core/utils/extensions.dart';
+import '../widgets/catalog_error_details.dart';
 import '../widgets/manga_switch.dart';
 import '../widgets/game_folder_card.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -140,11 +143,15 @@ class SettingsScreen extends ConsumerWidget {
 
     final error = await ref
         .read(favouritesProvider.notifier)
-        .exportFavourites();
+        .exportFavourites(shareSubject: l10n.settingsFavouritesShareSubject);
     if (!context.mounted) return;
 
     if (error != null) {
-      AppSnackbar.error(context, message: error);
+      AppSnackbar.errorWithCopy(
+        context,
+        message: l10n.settingsExportFailed,
+        copyText: error,
+      );
     }
     // Si error == null el share sheet ya se abrió; no hace falta snackbar.
   }
@@ -165,7 +172,11 @@ class SettingsScreen extends ConsumerWidget {
     if (result.cancelled) return;
 
     if (result.error != null) {
-      AppSnackbar.error(context, message: result.error!);
+      AppSnackbar.errorWithCopy(
+        context,
+        message: l10n.settingsImportFailed,
+        copyText: result.error!,
+      );
       return;
     }
 
@@ -263,7 +274,7 @@ class _RetroDialog extends StatelessWidget {
           children: [
             Text(title, style: retro.heading(size: 15)),
             const SizedBox(height: 12),
-            Text(message, style: retro.body(size: 13)),
+            CatalogErrorDetails(details: message, style: retro.body(size: 13)),
             const SizedBox(height: 22),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -787,21 +798,22 @@ class _ReloadDatabaseTileState extends ConsumerState<_ReloadDatabaseTile> {
       ref.invalidate(allModsProvider);
       FloatyChatheads.shareData({'type': 'db_reloaded'});
 
-      final modCount = result.modCount ?? 0;
-      final date = result.generatedAt?.isNotEmpty == true
-          ? ' · Generated ${result.generatedAt}'
-          : '';
-
       final l10n = AppLocalizations.of(context);
+      final modCount = result.modCount ?? 0;
+      final generated = result.generatedAt;
+      final date = generated != null && DateTime.tryParse(generated) != null
+          ? ' · ${formatDate(generated, locale: l10n.localeName)}'
+          : '';
       AppSnackbar.success(
         context,
         message: l10n.settingsDatabaseUpdated(modCount, date),
       );
     } else {
       final l10n = AppLocalizations.of(context);
-      AppSnackbar.error(
+      AppSnackbar.errorWithCopy(
         context,
-        message: result.errorMessage ?? l10n.settingsUnknownError,
+        message: l10n.settingsDatabaseFailed,
+        copyText: result.errorMessage ?? l10n.settingsDatabaseFailed,
       );
     }
   }

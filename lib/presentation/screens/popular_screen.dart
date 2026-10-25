@@ -1,3 +1,5 @@
+import '../widgets/catalog_error_details.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -394,7 +396,10 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
             Text(_medal, style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 2),
             Text(
-              widget.mod.title,
+              catalogTitle(
+                widget.mod.title,
+                AppLocalizations.of(context).sharedUntitled,
+              ),
               maxLines: 2,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
@@ -418,7 +423,9 @@ class _PodiumColumnState extends ConsumerState<_PodiumColumn>
                 ),
               ),
               child: Text(
-                widget.mod.downloads.compact,
+                widget.mod.downloads.compactFor(
+                  AppLocalizations.of(context).localeName,
+                ),
                 style: TextStyle(
                   fontFamily: retro.headingFamily,
                   color: retro.onColor(widget.color),
@@ -625,7 +632,10 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.mod.title,
+                      catalogTitle(
+                        widget.mod.title,
+                        AppLocalizations.of(context).sharedUntitled,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: retro.heading(size: 13, letterSpacing: -0.1),
@@ -638,14 +648,18 @@ class _RankedRowState extends ConsumerState<_RankedRow>
                         RetroMeta(
                           retro: retro,
                           icon: Icons.download_rounded,
-                          label: widget.mod.downloads.compact,
+                          label: widget.mod.downloads.compactFor(
+                            AppLocalizations.of(context).localeName,
+                          ),
                           color: retro.accent,
                         ),
                         if (widget.mod.rating != null)
                           RetroMeta(
                             retro: retro,
                             icon: Icons.star_rounded,
-                            label: widget.mod.rating!.star,
+                            label: widget.mod.rating!.starFor(
+                              AppLocalizations.of(context).localeName,
+                            ),
                             color: retro.amber,
                           ),
                         if (widget.mod.isFeatured)
@@ -988,8 +1002,8 @@ class _PopularError extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              Text(
-                message,
+              CatalogErrorDetails(
+                details: message,
                 style: retro.body(size: 12),
                 textAlign: TextAlign.center,
                 maxLines: 3,

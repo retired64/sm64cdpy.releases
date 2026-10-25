@@ -39,7 +39,7 @@ descarga e instalación.
 - Importación y exportación de favoritos en JSON.
 - Biblioteca local de contenido instalado, reciente, mods del juego y con
   actualizaciones disponibles.
-- Interfaz en inglés, español y portugués brasileño; diseños Minimal, Retro Manga, Manga Deluxe y Mario Kart 64, con apariencia clara, oscura o del teléfono. El panel flotante conserva su diseño oscuro fijo.
+- Interfaz en inglés, español, portugués brasileño, francés e italiano; diseños Minimal, Retro Manga, Manga Deluxe y Mario Kart 64, con apariencia clara, oscura o del teléfono. El panel flotante conserva su diseño oscuro fijo.
 - Manga Deluxe remasteriza la interfaz de tinta y papel con imágenes de CoopDX, fondo móvil opcional, bienvenida compacta que puedes omitir, enlaces a vídeos oficiales bajo demanda y ayuda rápida. [Diseño y funcionamiento](docs/MANGA_DELUXE.md).
 - Actualización manual de bases JSON remotas.
 - Conecta una vez la carpeta user del juego con el selector de Android. Mods, DynOS/Touch Controls y detección de ROM reutilizan esa conexión.
