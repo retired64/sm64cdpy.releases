@@ -14,6 +14,7 @@
         "Learn setup through a themed swipeable guide, including game installation, ROM preparation, folders, connection and the first mod.",
         "Use the redesigned Retro Manga slide menu or the new Manga Deluxe theme with optimized WebP artwork, ambient music and independent interface sounds.",
         "Open Library and Save Files from their last persisted snapshot while the app refreshes the real data in the background.",
+        "Move between Home, Play, mod details and exclusive sections with a shorter fade-and-slide transition; full-screen scaling and outgoing page animation were removed.",
         "Read mod descriptions with supported images and video previews; YouTube links open through Android's recognized URL handler.",
         "Read mod descriptions in Spanish, Brazilian Portuguese, French or Italian with precomputed translations, and switch to the original English at any time.",
         "Use the complete interface in English, Spanish, Brazilian Portuguese, French or Italian, including native Android notifications.",
@@ -45,6 +46,7 @@
             "Manga Deluxe adds its own typography, optimized artwork, optional moving backdrop, compact welcome, themed navigation and dedicated visuals for ROM, saves and multiplayer.",
             "Ambient music, menu sounds and Home card sounds have separate persisted enable and volume controls, with conservative defaults.",
             "Library and Save Files show a persisted snapshot immediately and validate it in the background. Player profile state is also restored without unnecessary visible rebuilding.",
+            "Route changes use a shorter fade-and-slide transition. The previous screen stays static, and Play, mod details and exclusive sections defer or suppress competing dock, shimmer and first-load animations.",
             "Mod details support normalized description images, video thumbnails and external YouTube playback while keeping loading and error states bounded."
           ]
         },
@@ -61,7 +63,7 @@
           "heading": "Before publishing",
           "items": [
             "This candidate does not force an update. The release timestamp remains provisional until publication.",
-            "Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, mod-description language switching, media previews and all three ABI APKs.",
+            "Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, mod-description language switching, screen-transition smoothness, media previews and all three ABI APKs.",
             "The floating overlay language and the planned safe-uninstall workflow are not part of version 1.9.0."
           ]
         }
@@ -76,6 +78,7 @@
         "Aprende la configuración mediante una guía temática deslizable que cubre instalación del juego, ROM, carpetas, conexión y primer mod.",
         "Usa el menú deslizante rediseñado de Retro Manga o el nuevo tema Manga Deluxe con gráficos WebP optimizados, música ambiental y sonidos de interfaz independientes.",
         "Abre Biblioteca y Partidas guardadas desde el último snapshot persistido mientras la app verifica los datos reales en segundo plano.",
+        "Navega entre Inicio, Jugar, detalles de mods y secciones exclusivas con una transición más corta de fundido y deslizamiento; se eliminaron la escala de pantalla completa y la animación de salida.",
         "Visualiza imágenes y videos compatibles dentro de la descripción del mod; los enlaces de YouTube se abren con el controlador reconocido por Android.",
         "Lee las descripciones de los mods en español, portugués brasileño, francés o italiano con traducciones precalculadas y vuelve al inglés original cuando quieras.",
         "Usa toda la interfaz en inglés, español, portugués brasileño, francés o italiano, incluidas las notificaciones nativas de Android.",
@@ -107,6 +110,7 @@
             "Manga Deluxe añade tipografías, gráficos optimizados, fondo móvil opcional, bienvenida compacta, navegación temática y diseños propios para ROM, partidas y multijugador.",
             "La música ambiental, los sonidos del menú y los sonidos de tarjetas de Inicio tienen controles independientes y persistentes de activación y volumen, con valores predeterminados prudentes.",
             "Biblioteca y Partidas guardadas muestran un snapshot persistido al instante y lo validan en segundo plano. El perfil del Jugador también se restaura sin reconstrucciones visibles innecesarias.",
+            "Los cambios de pantalla usan una transición más corta de fundido y deslizamiento. La pantalla anterior permanece estática y Jugar, los detalles de mods y las secciones exclusivas aplazan o suprimen animaciones paralelas del dock, shimmer y carga inicial.",
             "El detalle de mods admite imágenes normalizadas, miniaturas de video y reproducción externa de YouTube con estados de carga y error acotados."
           ]
         },
@@ -123,7 +127,7 @@
           "heading": "Antes de publicar",
           "items": [
             "Esta candidata no obliga a actualizar. La fecha del manifiesto es provisional hasta la publicación.",
-            "Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, cambio de idioma en descripciones de mods, multimedia y los APK de las tres ABI.",
+            "Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, cambio de idioma en descripciones de mods, fluidez de transiciones de pantalla, multimedia y los APK de las tres ABI.",
             "El idioma de la burbuja flotante y el flujo planificado de desinstalación segura no forman parte de la versión 1.9.0."
           ]
         }
@@ -138,6 +142,7 @@
         "Aprenda a configuração com um guia temático deslizável que cobre instalação do jogo, ROM, pastas, conexão e primeiro mod.",
         "Use o menu deslizante redesenhado do Retro Manga ou o novo tema Manga Deluxe com gráficos WebP otimizados, música ambiente e sons independentes da interface.",
         "Abra Biblioteca e Saves pelo último snapshot persistido enquanto o app verifica os dados reais em segundo plano.",
+        "Navegue entre Início, Jogar, detalhes dos mods e seções exclusivas com uma transição mais curta de fade e deslizamento; a escala em tela cheia e a animação da página anterior foram removidas.",
         "Veja imagens e vídeos compatíveis na descrição do mod; links do YouTube abrem pelo controlador reconhecido pelo Android.",
         "Leia as descrições dos mods em espanhol, português brasileiro, francês ou italiano com traduções pré-calculadas e volte ao inglês original quando quiser.",
         "Use toda a interface em inglês, espanhol, português brasileiro, francês ou italiano, incluindo notificações nativas do Android.",
@@ -169,6 +174,7 @@
             "Manga Deluxe adiciona tipografia, gráficos otimizados, fundo móvel opcional, boas-vindas compactas, navegação temática e visuais próprios para ROM, saves e multiplayer.",
             "Música ambiente, sons do menu e sons dos cartões da Home possuem controles independentes e persistentes de ativação e volume, com padrões conservadores.",
             "Biblioteca e Saves mostram imediatamente um snapshot persistido e o validam em segundo plano. O perfil do Jogador também é restaurado sem reconstruções visíveis desnecessárias.",
+            "As trocas de tela usam uma transição mais curta de fade e deslizamento. A tela anterior permanece estática, e Jogar, os detalhes dos mods e as seções exclusivas adiam ou suprimem animações paralelas do dock, shimmer e carregamento inicial.",
             "Os detalhes dos mods aceitam imagens normalizadas, miniaturas de vídeo e reprodução externa do YouTube com estados limitados de carregamento e erro."
           ]
         },
@@ -185,7 +191,7 @@
           "heading": "Antes de publicar",
           "items": [
             "Esta candidata não força atualização. A data do manifesto permanece provisória até a publicação.",
-            "Ainda é necessária validação física da continuidade multiplayer, ajustes de bateria, provedores de ROM, pouco espaço, rotação, layouts em cinco idiomas, troca de idioma nas descrições dos mods, mídia e APKs das três ABI.",
+            "Ainda é necessária validação física da continuidade multiplayer, ajustes de bateria, provedores de ROM, pouco espaço, rotação, layouts em cinco idiomas, troca de idioma nas descrições dos mods, fluidez das transições de tela, mídia e APKs das três ABI.",
             "O idioma da bolha flutuante e o fluxo planejado de desinstalação segura não fazem parte da versão 1.9.0."
           ]
         }

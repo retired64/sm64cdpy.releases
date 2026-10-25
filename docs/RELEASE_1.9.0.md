@@ -25,6 +25,9 @@ documento no crea el tag ni publica la release.
 - **Descripciones localizadas:** traducciones precalculadas ES/PT-BR/FR/IT con
   icono temático para volver al inglés original, sin red ni IA en la app y con
   fallback seguro para catálogos antiguos.
+- **Transiciones fluidas:** fade y deslizamiento cortos, sin escala de pantalla
+  completa ni animación de la página anterior; el dock, los skeletons y las
+  cargas iniciales no compiten con el cambio de pantalla.
 - **Idiomas y créditos:** francés e italiano completos se suman a EN/ES/PT-BR,
   con selección persistente, notificaciones nativas localizadas y autoría de
   Touch Controls.
@@ -52,7 +55,7 @@ otro día.
 ## Validación completada antes del merge
 
 - `flutter analyze lib`: sin problemas.
-- `flutter test`: **519 pruebas aprobadas**.
+- `flutter test`: **520 pruebas aprobadas**.
 - Pruebas de scripts: **16 aprobadas**, incluido el contrato de localización y el manifiesto.
 - `./gradlew :app:compileDebugKotlin`: compilación correcta.
 - `git diff --check`: limpio.
@@ -69,7 +72,8 @@ otro día.
   físico de pocos recursos.
 - Verificar sesiones host/invitado, regreso desde Ajustes de batería, cierre desde
   notificación, rotación, ROM/SAF, poco espacio, caché de Biblioteca/Partidas,
-  multimedia, cambio de idioma en descripciones y layouts EN/ES/PT-BR/FR/IT.
+  multimedia, cambio de idioma en descripciones, fluidez de transiciones y
+  layouts EN/ES/PT-BR/FR/IT.
 - Confirmar la fecha, crear `v1.9.0` y lanzar el workflow oficial solo con
   autorización explícita.
 

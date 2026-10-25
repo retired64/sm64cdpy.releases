@@ -360,7 +360,7 @@ usan snapshots persistentes; el detalle del mod admite imágenes, videos y
 descripciones localizadas precalculadas.
 
 Manifiesto canónico: `release-manifests/v1.9.0.json`. VersionCodes ABI
-`281/282/283`. Validación local previa al cierre: 519 pruebas Flutter, 16
+`281/282/283`. Validación local previa al cierre: 520 pruebas Flutter, 16
 pruebas de scripts, Kotlin correcto y análisis sin problemas.
 Detalles en [RELEASE_1.9.0.md](RELEASE_1.9.0.md). Testing, APK
 firmado, matriz física de SAF/ROM y revisión visual en dispositivo siguen

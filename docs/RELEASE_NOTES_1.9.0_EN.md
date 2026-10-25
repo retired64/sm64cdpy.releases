@@ -21,6 +21,7 @@ Version 1.9.0 adds the Play multiplayer flow, local ROM preparation, a complete 
 - Manga Deluxe adds its own typography, optimized artwork, optional moving backdrop, compact welcome, themed navigation and dedicated visuals for ROM, saves and multiplayer.
 - Ambient music, menu sounds and Home card sounds have separate persisted enable and volume controls, with conservative defaults.
 - Library and Save Files show a persisted snapshot immediately and validate it in the background. Player profile state is also restored without unnecessary visible rebuilding.
+- Route changes use a shorter fade-and-slide transition. The previous screen stays static, and Play, mod details and exclusive sections defer or suppress competing dock, shimmer and first-load animations.
 - Mod details support normalized description images, video thumbnails and external YouTube playback while keeping loading and error states bounded.
 
 ### Languages and catalog data
@@ -33,5 +34,5 @@ Version 1.9.0 adds the Play multiplayer flow, local ROM preparation, a complete 
 ### Before publishing
 
 - This candidate does not force an update. The release timestamp remains provisional until publication.
-- Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, mod-description language switching, media previews and all three ABI APKs.
+- Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, mod-description language switching, screen-transition smoothness, media previews and all three ABI APKs.
 - The floating overlay language and the planned safe-uninstall workflow are not part of version 1.9.0.

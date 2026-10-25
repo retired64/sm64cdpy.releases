@@ -873,6 +873,7 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Integrar Manga Deluxe, menú slide, audio configurable y snapshots persistentes.
 - [x] Integrar multimedia de detalles, idiomas francés/italiano y autores de Touch Controls.
 - [x] Integrar traducciones precalculadas de descripciones (ES/PT-BR/FR/IT) con alternancia al inglés original, icono temático y fallback para catálogos antiguos.
+- [x] Simplificar transiciones a fade/deslizamiento corto y eliminar animaciones simultáneas del dock, skeletons y carga inicial de Play.
 - [x] Clasificar la aplicación Android con `android:appCategory="game"`.
 - [x] Fusionar `localization-fr-it-touch-authors` y `precomputed-mod-translations` en `main` sin crear todavía el tag.
 - [ ] Ejecutar Testing en `main` y revisar el APK arm64 firmado.

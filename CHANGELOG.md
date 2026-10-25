@@ -8,6 +8,7 @@
 - Improve Library and Save Files startup with persisted snapshots refreshed in the background, and make Player profile restoration more immediate.
 - Display supported images and video previews in mod descriptions; YouTube links open through Android's recognized URL handler.
 - Add precomputed mod-description translations for Spanish, Brazilian Portuguese, French and Italian, with an offline themed toggle to return to the original English and a safe English fallback for older catalogs.
+- Shorten screen transitions to a fade-and-slide that leaves the previous screen static, removing full-screen scaling and overlapping dock, shimmer and first-load animations.
 - Expand Retro Manga/Manga Deluxe styling across Home, Catalog, Popular, Favorites, Library, mod details, Prepare ROM, Save Files and Play while retaining low-end-device safeguards.
 - Add complete French and Italian UI localization, persistent language selection and localized Android notifications.
 - Show Touch Controls creator credits, including favorites, with `Release Soon` as the safe fallback.

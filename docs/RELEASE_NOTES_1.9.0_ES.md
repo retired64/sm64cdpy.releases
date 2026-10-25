@@ -21,6 +21,7 @@ La versión 1.9.0 añade el flujo multijugador Jugar, preparación local de ROM,
 - Manga Deluxe añade tipografías, gráficos optimizados, fondo móvil opcional, bienvenida compacta, navegación temática y diseños propios para ROM, partidas y multijugador.
 - La música ambiental, los sonidos del menú y los sonidos de tarjetas de Inicio tienen controles independientes y persistentes de activación y volumen, con valores predeterminados prudentes.
 - Biblioteca y Partidas guardadas muestran un snapshot persistido al instante y lo validan en segundo plano. El perfil del Jugador también se restaura sin reconstrucciones visibles innecesarias.
+- Los cambios de pantalla usan una transición más corta de fundido y deslizamiento. La pantalla anterior permanece estática y Jugar, los detalles de mods y las secciones exclusivas aplazan o suprimen animaciones paralelas del dock, shimmer y carga inicial.
 - El detalle de mods admite imágenes normalizadas, miniaturas de video y reproducción externa de YouTube con estados de carga y error acotados.
 
 ### Idiomas y datos del catálogo
@@ -33,5 +34,5 @@ La versión 1.9.0 añade el flujo multijugador Jugar, preparación local de ROM,
 ### Antes de publicar
 
 - Esta candidata no obliga a actualizar. La fecha del manifiesto es provisional hasta la publicación.
-- Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, cambio de idioma en descripciones de mods, multimedia y los APK de las tres ABI.
+- Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, cambio de idioma en descripciones de mods, fluidez de transiciones de pantalla, multimedia y los APK de las tres ABI.
 - El idioma de la burbuja flotante y el flujo planificado de desinstalación segura no forman parte de la versión 1.9.0.
