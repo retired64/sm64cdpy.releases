@@ -127,5 +127,11 @@ final appRouter = GoRouter(
 // here prevents individual screens and both navigation systems from diverging.
 // ─────────────────────────────────────────────────────────────────────────────
 CustomTransitionPage<void> _page(Widget child, GoRouterState state) {
-  return buildAppTransitionPage(key: state.pageKey, child: child);
+  final path = state.uri.path;
+  final style = path == '/game-tool/play-2p2'
+      ? AppPageTransitionStyle.play
+      : path.startsWith('/mod/')
+      ? AppPageTransitionStyle.modDetail
+      : AppPageTransitionStyle.standard;
+  return buildAppTransitionPage(key: state.pageKey, child: child, style: style);
 }

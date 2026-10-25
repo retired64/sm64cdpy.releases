@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -140,6 +141,9 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
       }
       if (!await _canLeave() || !mounted) return;
       FocusManager.instance.primaryFocus?.unfocus();
+      if (route == '/game-tool/play-2p2') {
+        unawaited(HapticFeedback.selectionClick());
+      }
       context.go(route);
       widget.onDestinationSelected?.call();
     } catch (_) {

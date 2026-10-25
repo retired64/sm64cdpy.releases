@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,6 +17,9 @@ const Duration _kNavDelay = Duration.zero;
 const Curve _kCurve = Curves.easeOutCubic;
 
 void _navigateTo(BuildContext context, String route) {
+  if (route == '/game-tool/play-2p2') {
+    unawaited(HapticFeedback.selectionClick());
+  }
   Navigator.of(context).pop();
   if (context.mounted) context.go(route);
 }

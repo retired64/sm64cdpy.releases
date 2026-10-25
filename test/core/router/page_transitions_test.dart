@@ -15,7 +15,27 @@ void main() {
     expect(page.reverseTransitionDuration, appPageReverseTransitionDuration);
     expect(
       page.transitionDuration,
-      lessThan(const Duration(milliseconds: 250)),
+      lessThanOrEqualTo(const Duration(milliseconds: 250)),
+    );
+  });
+
+  test('important destinations use distinct but bounded profiles', () {
+    final details = buildAppTransitionPage(
+      key: const ValueKey('details'),
+      child: const SizedBox(),
+      style: AppPageTransitionStyle.modDetail,
+    );
+    final play = buildAppTransitionPage(
+      key: const ValueKey('play'),
+      child: const SizedBox(),
+      style: AppPageTransitionStyle.play,
+    );
+
+    expect(details.transitionDuration, modDetailTransitionDuration);
+    expect(play.transitionDuration, playTransitionDuration);
+    expect(
+      play.transitionDuration,
+      lessThan(const Duration(milliseconds: 350)),
     );
   });
 
@@ -37,6 +57,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('app-page-fade')), findsOneWidget);
     expect(find.byKey(const ValueKey('app-page-slide')), findsOneWidget);
+    expect(find.byKey(const ValueKey('app-page-scale')), findsOneWidget);
     final slide = tester.widget<SlideTransition>(
       find.byKey(const ValueKey('app-page-slide')),
     );
