@@ -21,6 +21,7 @@ import '../../presentation/screens/vip_mods_screen.dart';
 import '../../presentation/screens/omm_rebirth_screen.dart';
 import '../../presentation/screens/render96_screen.dart';
 import '../../presentation/widgets/app_shell.dart';
+import 'page_transitions.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -122,9 +123,9 @@ final appRouter = GoRouter(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Root and detail routes render immediately; motion stays inside interactions
-// where it communicates state instead of delaying navigation.
+// All destinations share one short, accessibility-aware transition. Keeping it
+// here prevents individual screens and both navigation systems from diverging.
 // ─────────────────────────────────────────────────────────────────────────────
-NoTransitionPage<void> _page(Widget child, GoRouterState state) {
-  return NoTransitionPage<void>(key: state.pageKey, child: child);
+CustomTransitionPage<void> _page(Widget child, GoRouterState state) {
+  return buildAppTransitionPage(key: state.pageKey, child: child);
 }
