@@ -874,7 +874,7 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Integrar multimedia de detalles, idiomas francés/italiano y autores de Touch Controls.
 - [x] Integrar traducciones precalculadas de descripciones (ES/PT-BR/FR/IT) con alternancia al inglés original, icono temático y fallback para catálogos antiguos.
 - [x] Clasificar la aplicación Android con `android:appCategory="game"`.
-- [ ] Fusionar `localization-fr-it-touch-authors` en `main` sin crear todavía el tag.
+- [x] Fusionar `localization-fr-it-touch-authors` y `precomputed-mod-translations` en `main` sin crear todavía el tag.
 - [ ] Ejecutar Testing en `main` y revisar el APK arm64 firmado.
 - [ ] Matriz física: proveedores SAF locales/remotos/lentos, rotación, poco espacio, cancelación, ROM real y exportación.
 - [ ] Revisión visual física de Retro Manga en claro/oscuro, 320/360 px, texto ampliado, ROM, Save Files, diálogos y estados deshabilitados.

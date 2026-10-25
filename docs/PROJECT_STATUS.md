@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado para la candidata `1.9.0+28` en `localization-fr-it-touch-authors` el 2026-10-24. La
+Revisado para la candidata `1.9.0+28` en `main` el 2026-10-25. La
 `1.8.8+27` es la candidata anterior.
 
 ## Manga Deluxe — 2026-10-22
@@ -346,8 +346,8 @@ validación final, APK de prueba y matriz física de permisos/extracción pendie
 ## Candidata 1.9.0+28
 
 La candidata integra Play, la guía completa, el preparador local de ROM, Manga
-Deluxe, cachés persistentes e idiomas francés e italiano en la rama
-`localization-fr-it-touch-authors`. La herramienta detecta z64, v64 y n64 por
+Deluxe, cachés persistentes, idiomas francés e italiano y descripciones de mods
+localizadas en `main`. La herramienta detecta z64, v64 y n64 por
 cabecera, valida tamaño y MD5 USA, transforma por bloques con staging aislado y
 exporta una copia `.z64` mediante SAF sin modificar el original ni solicitar
 acceso general al almacenamiento.
@@ -356,12 +356,13 @@ Play permite crear o unirse por código, compartir la invitación como texto y
 mantener el puente Android durante el juego con consentimiento, diagnósticos y
 controles opcionales de batería. Retro Manga y Manga Deluxe cubren las pantallas
 principales con recursos optimizados y audio configurable. Biblioteca y Partidas
-usan snapshots persistentes; el detalle del mod admite imágenes y videos.
+usan snapshots persistentes; el detalle del mod admite imágenes, videos y
+descripciones localizadas precalculadas.
 
 Manifiesto canónico: `release-manifests/v1.9.0.json`. VersionCodes ABI
-`281/282/283`. Validación local previa al cierre: 494 pruebas Flutter, tres
-pruebas del contrato de localización, Kotlin correcto y análisis sin problemas.
-Detalles en [RELEASE_1.9.0.md](RELEASE_1.9.0.md). Merge a `main`, Testing, APK
+`281/282/283`. Validación local previa al cierre: 519 pruebas Flutter, 16
+pruebas de scripts, Kotlin correcto y análisis sin problemas.
+Detalles en [RELEASE_1.9.0.md](RELEASE_1.9.0.md). Testing, APK
 firmado, matriz física de SAF/ROM y revisión visual en dispositivo siguen
 pendientes. `publishedAt` es provisional. La desinstalación segura del roadmap
 no forma parte de esta candidata.
