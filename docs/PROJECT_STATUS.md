@@ -1,6 +1,6 @@
 # Estado y próximos pasos
 
-Revisado para la candidata `1.9.0+28` en `how-to-play-guide` el 2026-10-20. La
+Revisado para la candidata `1.9.0+28` en `localization-fr-it-touch-authors` el 2026-10-24. La
 `1.8.8+27` es la candidata anterior.
 
 ## Manga Deluxe — 2026-10-22
@@ -345,22 +345,22 @@ validación final, APK de prueba y matriz física de permisos/extracción pendie
 
 ## Candidata 1.9.0+28
 
-El preparador local de ROM y el acabado completo de Retro Manga están integrados
-en la rama `how-to-play-guide`. La herramienta detecta z64, v64 y n64 por
+La candidata integra Play, la guía completa, el preparador local de ROM, Manga
+Deluxe, cachés persistentes e idiomas francés e italiano en la rama
+`localization-fr-it-touch-authors`. La herramienta detecta z64, v64 y n64 por
 cabecera, valida tamaño y MD5 USA, transforma por bloques con staging aislado y
 exporta una copia `.z64` mediante SAF sin modificar el original ni solicitar
 acceso general al almacenamiento.
 
-Retro Manga completa su política compartida de superficies: borde de tinta,
-sombra dura y geometría rectangular en tarjetas, paneles, ROM, Save Files,
-drawer, ajustes, diálogos, campos, menús y controles secundarios. Los encabezados
-inclinados aplican `displayLabel` y truncan etiquetas largas; los otros cinco
-diseños permanecen aislados. La optimización es de composición y política de
-tema, sin blur, shaders ni recursos raster nuevos.
+Play permite crear o unirse por código, compartir la invitación como texto y
+mantener el puente Android durante el juego con consentimiento, diagnósticos y
+controles opcionales de batería. Retro Manga y Manga Deluxe cubren las pantallas
+principales con recursos optimizados y audio configurable. Biblioteca y Partidas
+usan snapshots persistentes; el detalle del mod admite imágenes y videos.
 
 Manifiesto canónico: `release-manifests/v1.9.0.json`. VersionCodes ABI
-`281/282/283`. Validación local: 280 pruebas Flutter, manifiesto sincronizado
-con `pubspec.yaml`, cuatro pruebas Python y análisis sin errores nuevos.
+`281/282/283`. Validación local previa al cierre: 494 pruebas Flutter, tres
+pruebas del contrato de localización, Kotlin correcto y análisis sin problemas.
 Detalles en [RELEASE_1.9.0.md](RELEASE_1.9.0.md). Merge a `main`, Testing, APK
 firmado, matriz física de SAF/ROM y revisión visual en dispositivo siguen
 pendientes. `publishedAt` es provisional. La desinstalación segura del roadmap

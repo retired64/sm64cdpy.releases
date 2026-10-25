@@ -1,36 +1,36 @@
-## SM64CDPY v1.9.0 — Prepara tu ROM y un Retro Manga más consistente
+## SM64CDPY v1.9.0 — Juega en compañía, prepara tu ROM y navega en cinco idiomas
 
-La versión 1.9.0 añade un preparador local de ROM para el juego de Android y completa el sistema visual de papel y tinta de Retro Manga en tarjetas, diálogos, campos, menús y controles secundarios, manteniendo aislados los demás temas.
+La versión 1.9.0 añade el flujo multijugador Jugar, preparación local de ROM, una guía completa de Cómo jugar, francés e italiano, contenido multimedia de mods y una interfaz Manga pulida con entrada más rápida a Biblioteca y Partidas guardadas mediante caché persistente.
 
-### Preparación local de ROM
+### Jugar con amigos
 
-- Abre el preparador desde el capítulo 2 de Cómo jugar o desde GameTool. Ambos accesos comparten servicio, provider y estado de operación.
-- Elige tu propio archivo .z64, .v64 o .n64. La herramienta detecta el formato por cabecera, lo normaliza si hace falta y valida el volcado USA de 8 MiB y su MD5.
-- La conversión se ejecuta de forma nativa por bloques con un staging aislado. El original permanece en solo lectura y ningún byte de la ROM cruza a Flutter.
-- La exportación usa el selector de documentos de Android y después reabre la copia para verificar tamaño y hash antes de confirmar el éxito. No se necesita el permiso general de administrar todos los archivos.
-- Hay progreso real por fase, cancelación, reintento y errores accionables. La copia privada preparada y la copia externa verificada se muestran como estados distintos.
+- Jugar es un destino principal. Crea una sala o introduce un código de ocho caracteres, copia o comparte la invitación como texto y abre SM64CoopDX desde el mismo flujo.
+- El puente Android usa un servicio en primer plano solo durante una sesión activa, libera bloqueos de red y CPU al detenerse y muestra diagnósticos de conexión, tráfico y recuperación sin exponer direcciones IP.
+- El consentimiento de red es explícito y versionado. La exclusión de optimización de batería es opcional, iniciada por el usuario y se vuelve a comprobar al regresar de Ajustes de Android.
+- Los códigos recientes se guardan localmente con un límite pequeño. Los fallos terminales detienen señalización, WebRTC, UDP y servicio antes de reintentar.
 
-### Consistencia de Retro Manga
+### Configuración y herramientas de ROM
 
-- Las tarjetas y paneles neutros completan automáticamente su borde de tinta y sombra dura, incluidos el preparador de ROM, Save Files, los grupos de Ajustes y las filas activas del drawer.
-- Diálogos, campos de texto, menús, chips, botones estándar, switches, checkboxes, sliders, barras de progreso, pestañas, ExpansionTile y tooltips comparten ahora la misma geometría rectangular de papel y tinta.
-- Save Files, Cómo jugar, el detalle de mods, Jugador y el diálogo posterior a la instalación ya no anulan el tema compartido con bordes o controles redondeados locales.
-- Los encabezados de sección conservan su identidad manga inclinada, aplican las mayúsculas del tema y truncan los títulos largos solo cuando falta espacio.
-- Minimalista, Minish Cap, Mario Kart 64, Mario 64 y SM64 Intro conservan sus propios tratamientos. La burbuja flotante tampoco cambia.
+- La nueva guía Cómo jugar usa tarjetas temáticas, navegación por capítulos y acciones contextuales para instalar el juego Android, preparar la ROM, elegir la carpeta e instalar el primer mod.
+- Preparar ROM detecta z64, v64 y n64 por cabecera, valida el volcado USA esperado, convierte de forma nativa por bloques y verifica la copia exportada sin modificar el archivo original.
+- El progreso, cancelación, reintento y errores accionables mantienen la interfaz fluida en dispositivos con poca memoria; las copias preparada y guardada externamente aparecen como estados distintos.
 
-### Optimizaciones menores
+### Interfaz, contenido multimedia y rendimiento
 
-- Una única política de decoración compartida sustituye condiciones repetidas por pantalla y evita overrides locales redundantes.
-- No se introducen blur, shaders, animaciones ni recursos raster nuevos. El fondo de semitono permanece aislado en su RepaintBoundary.
-- Las transiciones de tema mantienen estilos de texto compatibles y las pruebas cubren layouts de 320/360 px con texto español ampliado.
+- Retro Manga incorpora navegación deslizante compacta, controles coherentes de papel y tinta y personalización ampliada en Inicio, Catálogo, Popular, Favoritos, Biblioteca, detalle del mod, Jugador, Partidas, Preparar ROM y Jugar.
+- Manga Deluxe añade tipografías, gráficos optimizados, fondo móvil opcional, bienvenida compacta, navegación temática y diseños propios para ROM, partidas y multijugador.
+- La música ambiental, los sonidos del menú y los sonidos de tarjetas de Inicio tienen controles independientes y persistentes de activación y volumen, con valores predeterminados prudentes.
+- Biblioteca y Partidas guardadas muestran un snapshot persistido al instante y lo validan en segundo plano. El perfil del Jugador también se restaura sin reconstrucciones visibles innecesarias.
+- El detalle de mods admite imágenes normalizadas, miniaturas de video y reproducción externa de YouTube con estados de carga y error acotados.
 
-### Límites conocidos
+### Idiomas y datos del catálogo
 
-- El preparador acepta el volcado USA original de Super Mario 64 para el juego de Android. No cambia regiones, aplica parches, repara dumps ni lee archivos ZIP/7z.
-- Este release exporta una copia verificada; no reemplaza la ROM que ya usa el juego. Cierra el juego antes de mover la copia manualmente.
-- Sigue pendiente la validación física con proveedores SAF locales, remotos y lentos, rotación, poco espacio, cancelación y un volcado real de cartucho.
+- Francés e italiano se suman a inglés, español y portugués brasileño en la interfaz Flutter, diagnósticos compartidos y notificaciones nativas de Android.
+- El idioma elegido persiste entre aperturas. Fechas, números, paginación, cursos y categorías Render96 usan presentación localizada.
+- Touch Controls muestra autoría en listados, detalles y favoritos, con Release Soon cuando la fuente no incluye autor.
 
-### Primeros pasos
+### Antes de publicar
 
-- La guía Cómo jugar explica el juego de Android, tu propia ROM, las carpetas y el primer mod. Al abrir sin el juego instalado se ofrece la guía.
-- Puedes volver al preparador desde GameTool sin recorrer de nuevo toda la guía.
+- Esta candidata no obliga a actualizar. La fecha del manifiesto es provisional hasta la publicación.
+- Falta validar físicamente continuidad multijugador, ajustes de batería, proveedores de ROM, poco espacio, rotación, layouts en cinco idiomas, multimedia y los APK de las tres ABI.
+- El idioma de la burbuja flotante y el flujo planificado de desinstalación segura no forman parte de la versión 1.9.0.

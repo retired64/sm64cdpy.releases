@@ -1,36 +1,36 @@
-## SM64CDPY v1.9.0 — Prepare your ROM and a more consistent Retro Manga
+## SM64CDPY v1.9.0 — Play together, prepare your ROM and explore in five languages
 
-Version 1.9.0 adds a local ROM preparation tool for the Android game and completes Retro Manga's paper-and-ink visual system across cards, dialogs, fields, menus and secondary controls, while keeping the other themes isolated.
+Version 1.9.0 adds the Play multiplayer flow, local ROM preparation, a complete How to Play guide, French and Italian, richer mod media and a polished Manga interface with faster cached Library and Save Files entry.
 
-### Local ROM preparation
+### Play with friends
 
-- Open ROM preparation from How to Play chapter 2 or from GameTool. Both entries share the same service, provider and operation state.
-- Choose your own .z64, .v64 or .n64 file. The tool detects the format from its header, normalizes it if needed and validates the expected 8 MiB USA dump and MD5.
-- Conversion runs natively in bounded blocks with an isolated staging file. The original remains read-only and no ROM byte is sent to Flutter.
-- Export uses Android's document picker, then reopens the new copy to verify its size and hash before reporting success. A broad all-files permission is not required.
-- Real phase progress, cancellation, retry and actionable errors are available. A prepared private copy and a verified exported copy are reported as different states.
+- Play is a top-level destination. Create a room or enter an eight-character code, copy or share the invitation as plain text, then open SM64CoopDX from the same flow.
+- The Android bridge uses a foreground service only for an active session, releases network and CPU locks when stopped, and reports connection, game traffic and recovery diagnostics without exposing IP addresses.
+- Network consent is explicit and versioned. Battery-optimization exemption is optional, user initiated and rechecked when returning from Android settings.
+- Recent join codes are stored locally with a small limit. Terminal failures cleanly stop signaling, WebRTC, UDP and service resources before retry.
 
-### Retro Manga consistency
+### Setup and ROM tools
 
-- Neutral cards and panels complete their ink border and hard shadow automatically, including ROM preparation, Save Files, settings groups and active drawer rows.
-- Dialogs, text fields, menus, chips, standard buttons, switches, checkboxes, sliders, progress bars, tabs, ExpansionTile and tooltips now share the same rectangular paper-and-ink geometry.
-- Save Files, How to Play, mod detail, Player and post-install dialogs no longer override the shared theme with local borders or rounded controls.
-- Section headers keep their slanted manga identity, apply the theme's uppercase labels and truncate long titles only when space is limited.
-- Minimal, Minish Cap, Mario Kart 64, Mario 64 and SM64 Intro keep their own treatments. The floating overlay is also unchanged.
+- The new How to Play guide uses themed cards, chapter navigation and contextual actions for installing the Android game, preparing a ROM, selecting the game folder and installing a first mod.
+- Prepare ROM detects z64, v64 and n64 by header, validates the expected USA dump, converts natively in bounded blocks and verifies the exported copy without modifying the source file.
+- Progress, cancellation, retry and actionable errors stay responsive on low-memory devices; prepared and externally saved copies are shown as distinct states.
 
-### Smaller optimizations
+### Interface, media and performance
 
-- A single shared decoration policy replaces repeated per-screen conditions and avoids redundant local style overrides.
-- No new blur, shaders, animations or raster assets are introduced. The halftone backdrop remains isolated in its RepaintBoundary.
-- Theme transitions keep compatible text styles, and narrow-screen tests cover 320/360 px layouts with enlarged Spanish text.
+- Retro Manga receives compact slide navigation, consistent paper-and-ink controls and expanded styling across Home, Catalog, Popular, Favorites, Library, mod details, Player, Save Files, Prepare ROM and Play.
+- Manga Deluxe adds its own typography, optimized artwork, optional moving backdrop, compact welcome, themed navigation and dedicated visuals for ROM, saves and multiplayer.
+- Ambient music, menu sounds and Home card sounds have separate persisted enable and volume controls, with conservative defaults.
+- Library and Save Files show a persisted snapshot immediately and validate it in the background. Player profile state is also restored without unnecessary visible rebuilding.
+- Mod details support normalized description images, video thumbnails and external YouTube playback while keeping loading and error states bounded.
 
-### Known limits
+### Languages and catalog data
 
-- The preparer accepts the original USA Super Mario 64 dump for the Android game. It does not change regions, apply patches, repair dumps or read ZIP/7z archives.
-- This release exports a verified copy; it does not replace the ROM already used by the game. Close the game before moving the copy manually.
-- Physical validation with local, remote and slow SAF providers, rotation, low storage, cancellation and a real cartridge dump is still pending.
+- French and Italian join English, Spanish and Brazilian Portuguese across the main Flutter interface, shared diagnostics and native Android notifications.
+- The chosen language persists across launches. Dates, numbers, pagination, course labels and Render96 categories use localized presentation.
+- Touch Controls now display creator attribution in listings, details and favorites, with Release Soon when the source has no author.
 
-### Getting started
+### Before publishing
 
-- The localized How to Play guide explains the Android game, your own ROM, game folders and the first mod. Launching without the game offers the guide.
-- Use GameTool to reopen ROM preparation at any time without walking through the whole guide again.
+- This candidate does not force an update. The release timestamp remains provisional until publication.
+- Physical validation is still required for multiplayer continuity, battery settings, ROM providers, low storage, rotation, five-language layouts, media previews and all three ABI APKs.
+- The floating overlay language and the planned safe-uninstall workflow are not part of version 1.9.0.

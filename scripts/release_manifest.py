@@ -149,6 +149,7 @@ def main() -> int:
     parser.add_argument("--pubspec", type=Path)
     parser.add_argument("--github-output", type=Path)
     parser.add_argument("--discord-output", type=Path)
+    parser.add_argument("--pt-br-output", type=Path)
     args = parser.parse_args()
 
     try:
@@ -160,6 +161,8 @@ def main() -> int:
             write_output(args.github_output, render_markdown(manifest, "en", include_force=True))
         if args.discord_output is not None:
             write_output(args.discord_output, render_markdown(manifest, "es", include_force=False))
+        if args.pt_br_output is not None:
+            write_output(args.pt_br_output, render_markdown(manifest, "pt-BR", include_force=False))
     except ManifestError as error:
         print(f"release manifest error: {error}", file=sys.stderr)
         return 1

@@ -858,7 +858,7 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [ ] Validar físicamente permiso concedido/revocado, ZIP, 7z, archivo suelto, cancelación y refresco de Biblioteca.
 - [ ] Ejecutar Testing en `main`, confirmar `publishedAt` y publicar solo con autorización explícita.
 
-## Preparación de release 1.9.0 — ROM converter y Retro Manga
+## Preparación de release 1.9.0 — Play, ROM, Manga Deluxe y localización
 
 - [x] Integrar el preparador local de ROM desde Cómo jugar y GameTool.
 - [x] Detectar z64/v64/n64 por cabecera, validar tamaño/MD5 USA y exportar `.z64` por SAF sin modificar el original.
@@ -869,7 +869,11 @@ Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
 - [x] Preparar manifiesto canónico y previews EN/ES/PT-BR con fecha provisional.
 - [x] Validar manifiesto contra pubspec, pruebas Python, formato, análisis y 280 pruebas Flutter.
 - [x] Mantener la desinstalación segura fuera de esta candidata; sigue como roadmap posterior.
-- [ ] Fusionar `how-to-play-guide` en `main` sin crear todavía el tag.
+- [x] Integrar Play por código, compartir invitaciones y ciclo de vida Android de sesión.
+- [x] Integrar Manga Deluxe, menú slide, audio configurable y snapshots persistentes.
+- [x] Integrar multimedia de detalles, idiomas francés/italiano y autores de Touch Controls.
+- [x] Clasificar la aplicación Android con `android:appCategory="game"`.
+- [ ] Fusionar `localization-fr-it-touch-authors` en `main` sin crear todavía el tag.
 - [ ] Ejecutar Testing en `main` y revisar el APK arm64 firmado.
 - [ ] Matriz física: proveedores SAF locales/remotos/lentos, rotación, poco espacio, cancelación, ROM real y exportación.
 - [ ] Revisión visual física de Retro Manga en claro/oscuro, 320/360 px, texto ampliado, ROM, Save Files, diálogos y estados deshabilitados.

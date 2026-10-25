@@ -1,7 +1,7 @@
 # Documentación de SM64CDPY
 
 Este directorio es el punto de entrada técnico del proyecto. `1.8.8+27` es la
-candidata anterior; `1.9.0+28` está preparada en `how-to-play-guide` para merge,
+candidata anterior; `1.9.0+28` está preparada en `localization-fr-it-touch-authors` para merge,
 validación y publicación manual. Otros documentos conservan su fecha y alcance
 de revisión explícitos.
 
@@ -14,7 +14,7 @@ de revisión explícitos.
 | [Renderizador 3D de Jugador](PLAYER_3D_RENDERER.md) | Arquitectura, recursos locales, ciclo de vida y límites de la vista previa | Implementado; ampliar matriz física de GPU/WebView |
 | [Preparación de release 1.8.7](RELEASE_1.8.7.md) | Minish Cap, Mario Kart 64, acentos de Retro Manga y datos de distribución | Referencia histórica de la candidata |
 | [Preparación de release 1.8.8](RELEASE_1.8.8.md) | Overhaul visual, rendimiento e instalación directa opcional | Candidata anterior; referencia histórica |
-| [Preparación de release 1.9.0](RELEASE_1.9.0.md) | Preparador de ROM, consistencia de Retro Manga y optimizaciones menores | Preparada en `how-to-play-guide`; merge, Testing y publicación pendientes |
+| [Preparación de release 1.9.0](RELEASE_1.9.0.md) | Play, guía, preparador de ROM, Manga Deluxe, cachés e idiomas FR/IT | Preparada en `localization-fr-it-touch-authors`; merge, Testing y publicación pendientes |
 | [Preparación de release 1.8.6](RELEASE_1.8.6.md) | Versión/build, distribución, evidencia y puerta de publicación | Preparada en rama; pendiente merge y workflow final |
 | [Rendimiento visual 1.8.6](PERFORMANCE_MINIMAL_1.8.6.md) | Tema Minimalista opcional, drawer, navegación, detalle y eliminación de SVG | Implementado; pendiente perfil físico |
 | [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Incluidos desde 1.8.3; referencia técnica |
