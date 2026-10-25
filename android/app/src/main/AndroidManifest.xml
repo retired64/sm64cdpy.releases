@@ -22,6 +22,7 @@
         android:label="sm64cdpy"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:appCategory="game">
         <activity
             android:name=".MainActivity"
