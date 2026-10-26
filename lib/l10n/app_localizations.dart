@@ -5559,6 +5559,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reopens the welcome steps without changing any Android permission by itself.'**
   String get permissionRunGuideDescription;
+
+  /// No description provided for @detailArtifactRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'RECOMMENDED'**
+  String get detailArtifactRecommended;
+
+  /// No description provided for @detailArtifactTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'Textures'**
+  String get detailArtifactTextures;
+
+  /// No description provided for @detailArtifactVoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra voices'**
+  String get detailArtifactVoices;
+
+  /// No description provided for @detailArtifactPrimaryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete main package. Start with this file.'**
+  String get detailArtifactPrimaryDescription;
+
+  /// No description provided for @detailArtifactLiteDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Lighter variant with some non-essential features removed.'**
+  String get detailArtifactLiteDescription;
+
+  /// No description provided for @detailArtifactApiDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional add-ons that use this mod\'s API; not the main mod.'**
+  String get detailArtifactApiDescription;
+
+  /// No description provided for @detailArtifactTexturesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional visual resources for this mod.'**
+  String get detailArtifactTexturesDescription;
+
+  /// No description provided for @detailArtifactVoicesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional additional voice pack; install the main mod first.'**
+  String get detailArtifactVoicesDescription;
+
+  /// No description provided for @detailArtifactOptionalDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional companion file. Check the mod description before installing.'**
+  String get detailArtifactOptionalDescription;
 }
 
 class _AppLocalizationsDelegate

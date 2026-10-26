@@ -3085,4 +3085,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get permissionRunGuideDescription =>
       'Reopens the welcome steps without changing any Android permission by itself.';
+
+  @override
+  String get detailArtifactRecommended => 'RECOMMENDED';
+
+  @override
+  String get detailArtifactTextures => 'Textures';
+
+  @override
+  String get detailArtifactVoices => 'Extra voices';
+
+  @override
+  String get detailArtifactPrimaryDescription =>
+      'Complete main package. Start with this file.';
+
+  @override
+  String get detailArtifactLiteDescription =>
+      'Lighter variant with some non-essential features removed.';
+
+  @override
+  String get detailArtifactApiDescription =>
+      'Optional add-ons that use this mod\'s API; not the main mod.';
+
+  @override
+  String get detailArtifactTexturesDescription =>
+      'Optional visual resources for this mod.';
+
+  @override
+  String get detailArtifactVoicesDescription =>
+      'Optional additional voice pack; install the main mod first.';
+
+  @override
+  String get detailArtifactOptionalDescription =>
+      'Optional companion file. Check the mod description before installing.';
 }

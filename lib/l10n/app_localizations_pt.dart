@@ -3102,6 +3102,39 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get permissionRunGuideDescription =>
       'Reabre os passos sem alterar permissões do Android por si só.';
+
+  @override
+  String get detailArtifactRecommended => 'RECOMENDADO';
+
+  @override
+  String get detailArtifactTextures => 'Texturas';
+
+  @override
+  String get detailArtifactVoices => 'Vozes adicionais';
+
+  @override
+  String get detailArtifactPrimaryDescription =>
+      'Pacote principal completo. Comece com este arquivo.';
+
+  @override
+  String get detailArtifactLiteDescription =>
+      'Versão leve sem alguns recursos não essenciais.';
+
+  @override
+  String get detailArtifactApiDescription =>
+      'Complementos opcionais que usam a API do mod; não é o mod principal.';
+
+  @override
+  String get detailArtifactTexturesDescription =>
+      'Recursos visuais opcionais para este mod.';
+
+  @override
+  String get detailArtifactVoicesDescription =>
+      'Pacote adicional de vozes; instale primeiro o mod principal.';
+
+  @override
+  String get detailArtifactOptionalDescription =>
+      'Arquivo complementar opcional. Confira a descrição antes de instalar.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -6202,4 +6235,37 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get permissionRunGuideDescription =>
       'Reabre as etapas sem alterar permissões do Android por conta própria.';
+
+  @override
+  String get detailArtifactRecommended => 'RECOMENDADO';
+
+  @override
+  String get detailArtifactTextures => 'Texturas';
+
+  @override
+  String get detailArtifactVoices => 'Vozes adicionais';
+
+  @override
+  String get detailArtifactPrimaryDescription =>
+      'Pacote principal completo. Comece com este arquivo.';
+
+  @override
+  String get detailArtifactLiteDescription =>
+      'Versão leve sem alguns recursos não essenciais.';
+
+  @override
+  String get detailArtifactApiDescription =>
+      'Complementos opcionais que usam a API do mod; não é o mod principal.';
+
+  @override
+  String get detailArtifactTexturesDescription =>
+      'Recursos visuais opcionais para este mod.';
+
+  @override
+  String get detailArtifactVoicesDescription =>
+      'Pacote adicional de vozes; instale primeiro o mod principal.';
+
+  @override
+  String get detailArtifactOptionalDescription =>
+      'Arquivo complementar opcional. Confira a descrição antes de instalar.';
 }

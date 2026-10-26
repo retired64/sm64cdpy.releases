@@ -2240,5 +2240,14 @@
   "permissionNetworkTitle": "Network & Play",
   "permissionNetworkDescription": "Internet access powers the catalog and online sessions. Play asks for explicit consent before connecting to its service.",
   "permissionRunGuide": "Run guided setup again",
-  "permissionRunGuideDescription": "Reopens the welcome steps without changing any Android permission by itself."
+  "permissionRunGuideDescription": "Reopens the welcome steps without changing any Android permission by itself.",
+  "detailArtifactRecommended": "RECOMMENDED",
+  "detailArtifactTextures": "Textures",
+  "detailArtifactVoices": "Extra voices",
+  "detailArtifactPrimaryDescription": "Complete main package. Start with this file.",
+  "detailArtifactLiteDescription": "Lighter variant with some non-essential features removed.",
+  "detailArtifactApiDescription": "Optional add-ons that use this mod's API; not the main mod.",
+  "detailArtifactTexturesDescription": "Optional visual resources for this mod.",
+  "detailArtifactVoicesDescription": "Optional additional voice pack; install the main mod first.",
+  "detailArtifactOptionalDescription": "Optional companion file. Check the mod description before installing."
 }

@@ -3114,6 +3114,39 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get permissionRunGuideDescription =>
       'Vuelve a mostrar la bienvenida sin cambiar por sí solo ningún permiso de Android.';
+
+  @override
+  String get detailArtifactRecommended => 'RECOMENDADO';
+
+  @override
+  String get detailArtifactTextures => 'Texturas';
+
+  @override
+  String get detailArtifactVoices => 'Voces adicionales';
+
+  @override
+  String get detailArtifactPrimaryDescription =>
+      'Paquete principal completo. Empieza con este archivo.';
+
+  @override
+  String get detailArtifactLiteDescription =>
+      'Variante ligera que elimina algunas funciones no esenciales.';
+
+  @override
+  String get detailArtifactApiDescription =>
+      'Complementos opcionales que usan la API del mod; no es el mod principal.';
+
+  @override
+  String get detailArtifactTexturesDescription =>
+      'Recursos visuales opcionales para este mod.';
+
+  @override
+  String get detailArtifactVoicesDescription =>
+      'Paquete adicional de voces; instala primero el mod principal.';
+
+  @override
+  String get detailArtifactOptionalDescription =>
+      'Archivo complementario opcional. Revisa la descripción antes de instalarlo.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -6226,4 +6259,37 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get permissionRunGuideDescription =>
       'Vuelve a mostrar la bienvenida sin cambiar por sí solo ningún permiso de Android.';
+
+  @override
+  String get detailArtifactRecommended => 'RECOMENDADO';
+
+  @override
+  String get detailArtifactTextures => 'Texturas';
+
+  @override
+  String get detailArtifactVoices => 'Voces adicionales';
+
+  @override
+  String get detailArtifactPrimaryDescription =>
+      'Paquete principal completo. Empieza con este archivo.';
+
+  @override
+  String get detailArtifactLiteDescription =>
+      'Variante ligera que elimina algunas funciones no esenciales.';
+
+  @override
+  String get detailArtifactApiDescription =>
+      'Complementos opcionales que usan la API del mod; no es el mod principal.';
+
+  @override
+  String get detailArtifactTexturesDescription =>
+      'Recursos visuales opcionales para este mod.';
+
+  @override
+  String get detailArtifactVoicesDescription =>
+      'Paquete adicional de voces; instala primero el mod principal.';
+
+  @override
+  String get detailArtifactOptionalDescription =>
+      'Archivo complementario opcional. Revisa la descripción antes de instalarlo.';
 }

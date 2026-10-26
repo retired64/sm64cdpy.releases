@@ -27,6 +27,7 @@ import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/mod_providers.dart';
 import '../providers/installation_action_provider.dart';
+import '../models/mod_artifact_presentation.dart';
 import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/post_install_dialog.dart';
@@ -965,8 +966,14 @@ class _VersionCardState extends State<_VersionCard> {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final l10n = AppLocalizations.of(context);
-    final files = widget.version.files.asMap().entries.where(
-      (entry) => entry.value.downloadUrl.trim().isNotEmpty,
+    final files = widget.version.files
+        .asMap()
+        .entries
+        .where((entry) => entry.value.downloadUrl.trim().isNotEmpty)
+        .toList(growable: false);
+    final artifactPresentations = describeModArtifacts(
+      modTitle: widget.modTitle,
+      files: files.map((entry) => entry.value).toList(growable: false),
     );
     final folderUrl = widget.version.folderUrl.trim();
 
@@ -1050,19 +1057,20 @@ class _VersionCardState extends State<_VersionCard> {
             ),
           ),
           if (_expanded)
-            ...files.map(
-              (fileEntry) => Padding(
+            ...files.asMap().entries.map(
+              (visibleEntry) => Padding(
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
                 child: _PrimaryDownloadButton(
-                  url: fileEntry.value.downloadUrl,
+                  artifactPresentation: artifactPresentations[visibleEntry.key],
+                  url: visibleEntry.value.value.downloadUrl,
                   modId: widget.modId,
-                  fileKey: fileEntry.value.id,
+                  fileKey: visibleEntry.value.value.id,
                   versionId: widget.version.id,
                   legacyFileKeys: [
-                    'version-${widget.versionIndex}-file-${fileEntry.key}',
+                    'version-${widget.versionIndex}-file-${visibleEntry.value.key}',
                   ],
                   modTitle: widget.modTitle,
-                  filename: fileEntry.value.filename,
+                  filename: visibleEntry.value.value.filename,
                   versionLabel: widget.version.version,
                   retro: retro,
                 ),
@@ -1498,6 +1506,7 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
     this.versionLabel,
     this.versionId,
     this.legacyFileKeys = const <String>[],
+    this.artifactPresentation,
   });
 
   final String url;
@@ -1509,6 +1518,7 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
   final String? versionLabel;
   final String? versionId;
   final List<String> legacyFileKeys;
+  final ModArtifactPresentation? artifactPresentation;
 
   @override
   ConsumerState<_PrimaryDownloadButton> createState() =>
@@ -1833,6 +1843,10 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
               : null);
     final isInstalling =
         info != null && info.status == BgInstallStatus.installing;
+    final artifact = widget.artifactPresentation;
+    final filename = widget.filename?.trim();
+    final artifactTitle = _artifactTitle(artifact?.role, filename);
+    final artifactDescription = _artifactDescription(artifact?.role);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -1870,29 +1884,104 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
                   borderRadius: retro.radius,
                 ),
               ),
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    MarioGameIcon(
-                      isActive ? Icons.downloading_rounded : action.icon,
-                      color: retro.accentText,
-                      size: 20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (artifactTitle != null) ...[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        MarioGameIcon(
+                          _artifactIcon(artifact?.role),
+                          color: retro.accentText,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 6,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Text(
+                                    artifactTitle,
+                                    style: retro.heading(
+                                      size: 14,
+                                      color: retro.ink,
+                                    ),
+                                  ),
+                                  if (artifact?.isRecommended ?? false)
+                                    RetroTag(
+                                      retro: retro,
+                                      label: _l10n!.detailArtifactRecommended,
+                                    ),
+                                ],
+                              ),
+                              if (filename != null &&
+                                  filename.isNotEmpty &&
+                                  filename != artifactTitle) ...[
+                                const SizedBox(height: 3),
+                                Text(
+                                  filename,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: retro.body(
+                                    size: 10.5,
+                                    color: retro.inkDim,
+                                  ),
+                                ),
+                              ],
+                              if (artifactDescription != null) ...[
+                                const SizedBox(height: 5),
+                                Text(
+                                  artifactDescription,
+                                  style: retro.body(
+                                    size: 11,
+                                    color: retro.inkDim,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: Text(
-                        isActive
-                            ? '${downloadProgress ?? (_localProgress * 100).round()}% · ${action.label(_l10n!)}'
-                            : action.label(_l10n!),
-                        textAlign: TextAlign.center,
-                        style: retro.isMario
-                            ? retro.body(size: 18, color: retro.accentText)
-                            : retro.heading(size: 15, color: retro.accentText),
-                      ),
+                    const SizedBox(height: 12),
+                    Divider(
+                      height: 1,
+                      color: retro.border.withValues(alpha: 0.3),
                     ),
+                    const SizedBox(height: 10),
                   ],
-                ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      MarioGameIcon(
+                        isActive ? Icons.downloading_rounded : action.icon,
+                        color: retro.accentText,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          isActive
+                              ? '${downloadProgress ?? (_localProgress * 100).round()}% · ${action.label(_l10n!)}'
+                              : action.label(_l10n!),
+                          textAlign: TextAlign.end,
+                          style: retro.isMario
+                              ? retro.body(size: 16, color: retro.accentText)
+                              : retro.heading(
+                                  size: 14,
+                                  color: retro.accentText,
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -1950,6 +2039,45 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       ],
     );
   }
+
+  String? _artifactTitle(ModArtifactRole? role, String? filename) {
+    if (role == null || filename == null || filename.isEmpty) return null;
+    return switch (role) {
+      ModArtifactRole.primary => widget.modTitle,
+      ModArtifactRole.lite => '${widget.modTitle} Lite',
+      ModArtifactRole.api => '${widget.modTitle} API',
+      ModArtifactRole.textures =>
+        '${widget.modTitle} · ${_l10n!.detailArtifactTextures}',
+      ModArtifactRole.voices =>
+        '${widget.modTitle} · ${_l10n!.detailArtifactVoices}',
+      ModArtifactRole.optional => _readableFilename(filename),
+    };
+  }
+
+  String? _artifactDescription(ModArtifactRole? role) => switch (role) {
+    ModArtifactRole.primary => _l10n!.detailArtifactPrimaryDescription,
+    ModArtifactRole.lite => _l10n!.detailArtifactLiteDescription,
+    ModArtifactRole.api => _l10n!.detailArtifactApiDescription,
+    ModArtifactRole.textures => _l10n!.detailArtifactTexturesDescription,
+    ModArtifactRole.voices => _l10n!.detailArtifactVoicesDescription,
+    ModArtifactRole.optional => _l10n!.detailArtifactOptionalDescription,
+    null => null,
+  };
+
+  IconData _artifactIcon(ModArtifactRole? role) => switch (role) {
+    ModArtifactRole.primary => Icons.extension_rounded,
+    ModArtifactRole.lite => Icons.bolt_rounded,
+    ModArtifactRole.api => Icons.hub_rounded,
+    ModArtifactRole.textures => Icons.texture_rounded,
+    ModArtifactRole.voices => Icons.record_voice_over_rounded,
+    ModArtifactRole.optional || null => Icons.inventory_2_rounded,
+  };
+
+  String _readableFilename(String filename) => filename
+      .replaceFirst(RegExp(r'\.[^.]+$'), '')
+      .replaceAll(RegExp(r'[_-]+'), ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim();
 }
 
 // ── Screenshot gallery ────────────────────────────────────────────────────────

@@ -3124,4 +3124,37 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get permissionRunGuideDescription =>
       'Rouvre les étapes sans modifier directement les autorisations Android.';
+
+  @override
+  String get detailArtifactRecommended => 'RECOMMANDÉ';
+
+  @override
+  String get detailArtifactTextures => 'Textures';
+
+  @override
+  String get detailArtifactVoices => 'Voix supplémentaires';
+
+  @override
+  String get detailArtifactPrimaryDescription =>
+      'Pack principal complet. Commencez par ce fichier.';
+
+  @override
+  String get detailArtifactLiteDescription =>
+      'Variante légère sans certaines fonctions non essentielles.';
+
+  @override
+  String get detailArtifactApiDescription =>
+      'Extensions facultatives utilisant l’API du mod ; ce n’est pas le mod principal.';
+
+  @override
+  String get detailArtifactTexturesDescription =>
+      'Ressources visuelles facultatives pour ce mod.';
+
+  @override
+  String get detailArtifactVoicesDescription =>
+      'Pack de voix facultatif ; installez d’abord le mod principal.';
+
+  @override
+  String get detailArtifactOptionalDescription =>
+      'Fichier complémentaire facultatif. Consultez la description avant l’installation.';
 }

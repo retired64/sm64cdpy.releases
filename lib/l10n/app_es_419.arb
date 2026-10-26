@@ -955,4 +955,13 @@
   "permissionNetworkDescription": "Internet permite consultar el catálogo y usar sesiones en línea. Jugar pide consentimiento explícito antes de conectarse a su servicio.",
   "permissionRunGuide": "Repetir recorrido guiado",
   "permissionRunGuideDescription": "Vuelve a mostrar la bienvenida sin cambiar por sí solo ningún permiso de Android."
+  ,"detailArtifactRecommended": "RECOMENDADO",
+  "detailArtifactTextures": "Texturas",
+  "detailArtifactVoices": "Voces adicionales",
+  "detailArtifactPrimaryDescription": "Paquete principal completo. Empieza con este archivo.",
+  "detailArtifactLiteDescription": "Variante ligera que elimina algunas funciones no esenciales.",
+  "detailArtifactApiDescription": "Complementos opcionales que usan la API del mod; no es el mod principal.",
+  "detailArtifactTexturesDescription": "Recursos visuales opcionales para este mod.",
+  "detailArtifactVoicesDescription": "Paquete adicional de voces; instala primero el mod principal.",
+  "detailArtifactOptionalDescription": "Archivo complementario opcional. Revisa la descripción antes de instalarlo."
 }
