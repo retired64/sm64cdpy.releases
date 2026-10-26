@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../core/constants/app_constants.dart';
@@ -85,8 +86,13 @@ class SettingsScreen extends ConsumerWidget {
                 japanese: 'ゲーム連携',
               ),
               const SizedBox(height: 10),
+              _SettingsTile(
+                icon: Icons.admin_panel_settings_outlined,
+                title: l10n.permissionCenterTitle,
+                subtitle: l10n.permissionCenterSubtitle,
+                onTap: () => context.go('/settings/permissions'),
+              ),
               const GameFolderCard(),
-              const _FastInstallTile(),
               _AutoInstallToggle(),
               _OverlayToggle(),
 

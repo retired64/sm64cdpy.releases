@@ -4,15 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/retro_accent.dart';
 import '../../core/theme/retro_theme.dart';
-import '../../l10n/app_localizations.dart';
+import '../../services/guided_setup_service.dart';
 import '../providers/auto_install_provider.dart';
 import '../providers/extra_providers.dart';
 import '../providers/game_folder_provider.dart';
 import 'app_drawer.dart';
 import 'manga_navigation_dock.dart';
 import 'manga_navigation_scope.dart';
-import 'game_folder_card.dart';
-import 'game_setup_widgets.dart';
+import 'guided_setup_flow.dart';
 
 const _noHalftoneRoutes = {'/', '/favourites', '/disclaimer'};
 
@@ -40,10 +39,7 @@ class _AppShellState extends ConsumerState<AppShell> {
       return;
     }
     final folder = ref.read(gameFolderProvider);
-    final folderPending =
-        !folder.initialized ||
-        (!folder.connection.connected && !folder.connection.dismissed);
-    if (!autoInstall.needsDecision && !folderPending) return;
+    if (!folder.initialized || !GuidedSetupService.needsPrompt) return;
 
     _setupFlowScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -51,34 +47,15 @@ class _AppShellState extends ConsumerState<AppShell> {
       if (!mounted || _setupFlowRunning) return;
       _setupFlowRunning = true;
       try {
-        if (ref.read(autoInstallProvider).needsDecision) {
-          final l10n = AppLocalizations.of(context);
-          final enable = await showGameSetupDialog(
-            context,
-            title: l10n.autoInstallPromptTitle,
-            body: l10n.autoInstallPromptBody,
-            confirm: l10n.autoInstallPromptEnable,
-            cancel: l10n.autoInstallPromptDownloadOnly,
-            icon: Icons.auto_mode_rounded,
-            barrierDismissible: false,
-          );
-          if (!mounted || enable == null) return;
-          final saved = await ref
-              .read(autoInstallProvider.notifier)
-              .setEnabled(enable);
-          if (!mounted || !saved) return;
-        }
-
-        await ref.read(gameFolderProvider.notifier).initialize();
-        if (!mounted) return;
+        final currentAutoInstall = ref.read(autoInstallProvider);
         final connection = ref.read(gameFolderProvider).connection;
-        if (!connection.connected && !connection.dismissed) {
-          await connectGameFolder(
-            context,
-            ref,
-            dismissOnCancel: true,
-            barrierDismissible: false,
-          );
+        // Migration guard: established users keep their existing experience.
+        if (!currentAutoInstall.needsDecision ||
+            connection.connected ||
+            connection.dismissed) {
+          await GuidedSetupService.complete();
+        } else if (mounted) {
+          await showGuidedSetupFlow(context);
         }
       } finally {
         _setupFlowRunning = false;
@@ -145,14 +122,16 @@ class _AppShellState extends ConsumerState<AppShell> {
               ? Stack(
                   children: [
                     Positioned.fill(
-                      child: retro.isDeluxe ? const DeluxeBackdrop() : ThemeBackdrop(
-                        menuSurface:
-                            widget.currentRoute == '/library' ||
-                            widget.currentRoute == '/settings',
-                        allowHalftone: !_noHalftoneRoutes.contains(
-                          widget.currentRoute,
-                        ),
-                      ),
+                      child: retro.isDeluxe
+                          ? const DeluxeBackdrop()
+                          : ThemeBackdrop(
+                              menuSurface:
+                                  widget.currentRoute == '/library' ||
+                                  widget.currentRoute == '/settings',
+                              allowHalftone: !_noHalftoneRoutes.contains(
+                                widget.currentRoute,
+                              ),
+                            ),
                     ),
                     ThemePageFrame(child: widget.child),
                   ],
@@ -301,7 +280,9 @@ class RetroPinnedAppBar extends StatelessWidget {
       floating: false,
       snap: false,
       toolbarHeight: 56,
-      backgroundColor: retro.isDeluxe ? retro.background.withValues(alpha: 0.96) : retro.background,
+      backgroundColor: retro.isDeluxe
+          ? retro.background.withValues(alpha: 0.96)
+          : retro.background,
       surfaceTintColor: Colors.transparent,
       systemOverlayStyle: retro.systemUiStyle,
       elevation: 0,

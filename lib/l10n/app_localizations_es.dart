@@ -3005,6 +3005,98 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get favEmptyActionHint => 'Toca ♥ en una tarjeta para guardarla aquí.';
+
+  @override
+  String get guidedSetupWelcomeTitle => 'Bienvenido';
+
+  @override
+  String get guidedSetupWelcomeBody =>
+      'Preparemos lo esencial en pocos pasos claros. Tú mantienes el control y puedes conceder los accesos opcionales después.';
+
+  @override
+  String guidedSetupProgress(int current, int total) {
+    return 'Paso $current de $total';
+  }
+
+  @override
+  String get guidedSetupStart => 'Iniciar configuración';
+
+  @override
+  String get guidedSetupLater => 'Más tarde';
+
+  @override
+  String get guidedSetupDoneTitle => 'Todo listo';
+
+  @override
+  String get guidedSetupDoneBody =>
+      'La configuración básica terminó. Los accesos opcionales seguirán disponibles en Ajustes cuando una función los necesite.';
+
+  @override
+  String get guidedSetupFinish => 'Finalizar';
+
+  @override
+  String get permissionCenterTitle => 'Permisos y accesos';
+
+  @override
+  String get permissionCenterSubtitle =>
+      'Revisa qué puede usar la app y por qué';
+
+  @override
+  String get permissionCenterIntro =>
+      'Concede acceso solo cuando entiendas su finalidad. Los accesos opcionales se solicitan en contexto y la app consulta su estado actual en Android.';
+
+  @override
+  String get permissionStatusAllowed => 'Permitido';
+
+  @override
+  String get permissionStatusNotAllowed => 'No permitido';
+
+  @override
+  String get permissionStatusOptional => 'Opcional · verificando estado';
+
+  @override
+  String get permissionManage => 'Administrar';
+
+  @override
+  String get permissionFolderDescription =>
+      'Permite encontrar, instalar y administrar mods y archivos del jugador en la carpeta del juego que elijas.';
+
+  @override
+  String get permissionNotificationsDescription =>
+      'Muestra el progreso de descargas e instalaciones. Solo se solicita cuando una descarga lo necesita.';
+
+  @override
+  String get permissionAllFilesDescription =>
+      'Instalación rápida opcional en dispositivos Android compatibles. El acceso por carpeta sigue funcionando sin este permiso.';
+
+  @override
+  String get permissionOverlayDescription =>
+      'Burbuja flotante opcional de descargas sobre otras aplicaciones.';
+
+  @override
+  String get permissionBatteryDescription =>
+      'Opcional para mantener sesiones de Jugar más largas cuando la app está en segundo plano.';
+
+  @override
+  String get permissionUpdatesTitle => 'Instalar actualizaciones';
+
+  @override
+  String get permissionUpdatesDescription =>
+      'Android solicita este acceso especial solo cuando decides instalar una actualización de la app.';
+
+  @override
+  String get permissionNetworkTitle => 'Red y Jugar';
+
+  @override
+  String get permissionNetworkDescription =>
+      'Internet permite consultar el catálogo y usar sesiones en línea. Jugar pide consentimiento explícito antes de conectarse a su servicio.';
+
+  @override
+  String get permissionRunGuide => 'Repetir recorrido guiado';
+
+  @override
+  String get permissionRunGuideDescription =>
+      'Vuelve a mostrar la bienvenida sin cambiar por sí solo ningún permiso de Android.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -6008,4 +6100,96 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get favEmptyActionHint => 'Toca ♥ en una tarjeta para guardarla aquí.';
+
+  @override
+  String get guidedSetupWelcomeTitle => 'Bienvenido';
+
+  @override
+  String get guidedSetupWelcomeBody =>
+      'Preparemos lo esencial en pocos pasos claros. Tú mantienes el control y puedes conceder los accesos opcionales después.';
+
+  @override
+  String guidedSetupProgress(int current, int total) {
+    return 'Paso $current de $total';
+  }
+
+  @override
+  String get guidedSetupStart => 'Iniciar configuración';
+
+  @override
+  String get guidedSetupLater => 'Más tarde';
+
+  @override
+  String get guidedSetupDoneTitle => 'Todo listo';
+
+  @override
+  String get guidedSetupDoneBody =>
+      'La configuración básica terminó. Los accesos opcionales seguirán disponibles en Ajustes cuando una función los necesite.';
+
+  @override
+  String get guidedSetupFinish => 'Finalizar';
+
+  @override
+  String get permissionCenterTitle => 'Permisos y accesos';
+
+  @override
+  String get permissionCenterSubtitle =>
+      'Revisa qué puede usar la app y por qué';
+
+  @override
+  String get permissionCenterIntro =>
+      'Concede acceso solo cuando entiendas su finalidad. Los accesos opcionales se solicitan en contexto y la app consulta su estado actual en Android.';
+
+  @override
+  String get permissionStatusAllowed => 'Permitido';
+
+  @override
+  String get permissionStatusNotAllowed => 'No permitido';
+
+  @override
+  String get permissionStatusOptional => 'Opcional · verificando estado';
+
+  @override
+  String get permissionManage => 'Administrar';
+
+  @override
+  String get permissionFolderDescription =>
+      'Permite encontrar, instalar y administrar mods y archivos del jugador en la carpeta del juego que elijas.';
+
+  @override
+  String get permissionNotificationsDescription =>
+      'Muestra el progreso de descargas e instalaciones. Solo se solicita cuando una descarga lo necesita.';
+
+  @override
+  String get permissionAllFilesDescription =>
+      'Instalación rápida opcional en dispositivos Android compatibles. El acceso por carpeta sigue funcionando sin este permiso.';
+
+  @override
+  String get permissionOverlayDescription =>
+      'Burbuja flotante opcional de descargas sobre otras aplicaciones.';
+
+  @override
+  String get permissionBatteryDescription =>
+      'Opcional para mantener sesiones de Jugar más largas cuando la app está en segundo plano.';
+
+  @override
+  String get permissionUpdatesTitle => 'Instalar actualizaciones';
+
+  @override
+  String get permissionUpdatesDescription =>
+      'Android solicita este acceso especial solo cuando decides instalar una actualización de la app.';
+
+  @override
+  String get permissionNetworkTitle => 'Red y Jugar';
+
+  @override
+  String get permissionNetworkDescription =>
+      'Internet permite consultar el catálogo y usar sesiones en línea. Jugar pide consentimiento explícito antes de conectarse a su servicio.';
+
+  @override
+  String get permissionRunGuide => 'Repetir recorrido guiado';
+
+  @override
+  String get permissionRunGuideDescription =>
+      'Vuelve a mostrar la bienvenida sin cambiar por sí solo ningún permiso de Android.';
 }

@@ -2994,6 +2994,97 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get favEmptyActionHint =>
       'Toque em ♥ em um cartão para salvá-lo aqui.';
+
+  @override
+  String get guidedSetupWelcomeTitle => 'Boas-vindas';
+
+  @override
+  String get guidedSetupWelcomeBody =>
+      'Vamos preparar o essencial em poucos passos. Você mantém o controle e pode conceder acessos opcionais depois.';
+
+  @override
+  String guidedSetupProgress(int current, int total) {
+    return 'Passo $current de $total';
+  }
+
+  @override
+  String get guidedSetupStart => 'Iniciar configuração';
+
+  @override
+  String get guidedSetupLater => 'Mais tarde';
+
+  @override
+  String get guidedSetupDoneTitle => 'Tudo pronto';
+
+  @override
+  String get guidedSetupDoneBody =>
+      'A configuração básica foi concluída. Os acessos opcionais ficam disponíveis nas Definições.';
+
+  @override
+  String get guidedSetupFinish => 'Concluir';
+
+  @override
+  String get permissionCenterTitle => 'Permissões e acessos';
+
+  @override
+  String get permissionCenterSubtitle => 'Veja o que a aplicação usa e porquê';
+
+  @override
+  String get permissionCenterIntro =>
+      'Conceda acesso apenas quando entender a finalidade. Os acessos opcionais são pedidos em contexto e o estado atual vem do Android.';
+
+  @override
+  String get permissionStatusAllowed => 'Permitido';
+
+  @override
+  String get permissionStatusNotAllowed => 'Não permitido';
+
+  @override
+  String get permissionStatusOptional => 'Opcional · a verificar';
+
+  @override
+  String get permissionManage => 'Gerir';
+
+  @override
+  String get permissionFolderDescription =>
+      'Permite encontrar, instalar e gerir mods e ficheiros do jogador na pasta escolhida.';
+
+  @override
+  String get permissionNotificationsDescription =>
+      'Mostra o progresso de transferências e instalações. Só é pedido quando necessário.';
+
+  @override
+  String get permissionAllFilesDescription =>
+      'Instalação rápida opcional em dispositivos compatíveis. O acesso por pasta continua a funcionar sem isto.';
+
+  @override
+  String get permissionOverlayDescription =>
+      'Bolha flutuante opcional sobre outras aplicações.';
+
+  @override
+  String get permissionBatteryDescription =>
+      'Opcional para sessões de Jogo mais longas em segundo plano.';
+
+  @override
+  String get permissionUpdatesTitle => 'Instalar atualizações';
+
+  @override
+  String get permissionUpdatesDescription =>
+      'O Android pede este acesso especial apenas ao instalar uma atualização.';
+
+  @override
+  String get permissionNetworkTitle => 'Rede e Jogar';
+
+  @override
+  String get permissionNetworkDescription =>
+      'A Internet alimenta o catálogo e sessões online. Jogar pede consentimento antes de ligar ao serviço.';
+
+  @override
+  String get permissionRunGuide => 'Repetir configuração guiada';
+
+  @override
+  String get permissionRunGuideDescription =>
+      'Reabre os passos sem alterar permissões do Android por si só.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -5986,4 +6077,95 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get favEmptyActionHint =>
       'Toque em ♥ em um cartão para salvá-lo aqui.';
+
+  @override
+  String get guidedSetupWelcomeTitle => 'Boas-vindas';
+
+  @override
+  String get guidedSetupWelcomeBody =>
+      'Vamos preparar o essencial em poucos passos. Você mantém o controle e pode conceder acessos opcionais depois.';
+
+  @override
+  String guidedSetupProgress(int current, int total) {
+    return 'Etapa $current de $total';
+  }
+
+  @override
+  String get guidedSetupStart => 'Iniciar configuração';
+
+  @override
+  String get guidedSetupLater => 'Mais tarde';
+
+  @override
+  String get guidedSetupDoneTitle => 'Tudo pronto';
+
+  @override
+  String get guidedSetupDoneBody =>
+      'A configuração básica terminou. Os acessos opcionais continuam disponíveis nas Configurações.';
+
+  @override
+  String get guidedSetupFinish => 'Concluir';
+
+  @override
+  String get permissionCenterTitle => 'Permissões e acessos';
+
+  @override
+  String get permissionCenterSubtitle => 'Veja o que o app pode usar e por quê';
+
+  @override
+  String get permissionCenterIntro =>
+      'Conceda acesso apenas quando entender a finalidade. Os acessos opcionais são solicitados no contexto e o status atual vem do Android.';
+
+  @override
+  String get permissionStatusAllowed => 'Permitido';
+
+  @override
+  String get permissionStatusNotAllowed => 'Não permitido';
+
+  @override
+  String get permissionStatusOptional => 'Opcional · verificando';
+
+  @override
+  String get permissionManage => 'Gerenciar';
+
+  @override
+  String get permissionFolderDescription =>
+      'Permite encontrar, instalar e gerenciar mods e arquivos do jogador na pasta escolhida.';
+
+  @override
+  String get permissionNotificationsDescription =>
+      'Mostra o progresso de downloads e instalações. Só é solicitado quando necessário.';
+
+  @override
+  String get permissionAllFilesDescription =>
+      'Instalação rápida opcional em dispositivos compatíveis. O acesso por pasta continua funcionando sem isso.';
+
+  @override
+  String get permissionOverlayDescription =>
+      'Bolha flutuante opcional sobre outros aplicativos.';
+
+  @override
+  String get permissionBatteryDescription =>
+      'Opcional para sessões de Jogo mais longas em segundo plano.';
+
+  @override
+  String get permissionUpdatesTitle => 'Instalar atualizações';
+
+  @override
+  String get permissionUpdatesDescription =>
+      'O Android solicita este acesso especial apenas ao instalar uma atualização.';
+
+  @override
+  String get permissionNetworkTitle => 'Rede e Jogar';
+
+  @override
+  String get permissionNetworkDescription =>
+      'A internet alimenta o catálogo e sessões online. Jogar pede consentimento antes de conectar ao serviço.';
+
+  @override
+  String get permissionRunGuide => 'Repetir configuração guiada';
+
+  @override
+  String get permissionRunGuideDescription =>
+      'Reabre as etapas sem alterar permissões do Android por conta própria.';
 }

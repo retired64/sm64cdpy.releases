@@ -16,6 +16,7 @@ import '../../presentation/screens/mod_detail_screen.dart';
 import '../../presentation/screens/popular_screen.dart';
 import '../../presentation/screens/player_screen.dart';
 import '../../presentation/screens/settings_screen.dart';
+import '../../presentation/screens/permissions_access_screen.dart';
 import '../../presentation/screens/touch_controls_screen.dart';
 import '../../presentation/screens/vip_mods_screen.dart';
 import '../../presentation/screens/omm_rebirth_screen.dart';
@@ -71,6 +72,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/settings',
           pageBuilder: (_, s) => _page(const SettingsScreen(), s),
+        ),
+        GoRoute(
+          path: '/settings/permissions',
+          pageBuilder: (_, s) => _page(const PermissionsAccessScreen(), s),
         ),
         GoRoute(
           path: '/how-to-play',
