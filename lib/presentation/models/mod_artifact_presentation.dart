@@ -6,10 +6,14 @@ class ModArtifactPresentation {
   const ModArtifactPresentation({
     required this.role,
     required this.isRecommended,
+    this.displayName = '',
+    this.requiresPrimary = false,
   });
 
   final ModArtifactRole role;
   final bool isRecommended;
+  final String displayName;
+  final bool requiresPrimary;
 }
 
 /// Adds conservative presentation hints without changing catalogue identity.
@@ -35,12 +39,38 @@ List<ModArtifactPresentation> describeModArtifacts({
 
   return [
     for (var index = 0; index < files.length; index++)
-      ModArtifactPresentation(
-        role: _roleFor(files[index].filename, index == primaryIndex),
-        isRecommended: files.length > 1 && index == primaryIndex,
+      _presentationFor(
+        files[index],
+        inferredPrimary: index == primaryIndex,
+        hasAlternatives: files.length > 1,
       ),
   ];
 }
+
+ModArtifactPresentation _presentationFor(
+  ModFileEntity file, {
+  required bool inferredPrimary,
+  required bool hasAlternatives,
+}) {
+  final explicitRole = _parseRole(file.role);
+  return ModArtifactPresentation(
+    role: explicitRole ?? _roleFor(file.filename, inferredPrimary),
+    isRecommended: hasAlternatives && (file.recommended ?? inferredPrimary),
+    displayName: file.displayName.trim(),
+    requiresPrimary: file.requiresPrimary ?? !inferredPrimary,
+  );
+}
+
+ModArtifactRole? _parseRole(String value) =>
+    switch (value.trim().toLowerCase()) {
+      'primary' => ModArtifactRole.primary,
+      'lite' => ModArtifactRole.lite,
+      'api' => ModArtifactRole.api,
+      'textures' => ModArtifactRole.textures,
+      'voices' => ModArtifactRole.voices,
+      'optional' => ModArtifactRole.optional,
+      _ => null,
+    };
 
 ModArtifactRole _roleFor(String filename, bool isPrimary) {
   final value = filename.toLowerCase();

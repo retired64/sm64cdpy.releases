@@ -2042,6 +2042,8 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
 
   String? _artifactTitle(ModArtifactRole? role, String? filename) {
     if (role == null || filename == null || filename.isEmpty) return null;
+    final explicitName = widget.artifactPresentation?.displayName.trim() ?? '';
+    if (explicitName.isNotEmpty) return explicitName;
     return switch (role) {
       ModArtifactRole.primary => widget.modTitle,
       ModArtifactRole.lite => '${widget.modTitle} Lite',

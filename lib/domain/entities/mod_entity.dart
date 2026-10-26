@@ -137,6 +137,17 @@ class ModFileEntity {
     required this.downloadUrl,
     this.sourceUrl = '',
     this.resolutionSource = '',
+    this.displayName = '',
+    this.role = '',
+    this.recommended,
+    this.requiresPrimary,
+    this.artifactDescription = '',
+    this.requestedUrl = '',
+    this.finalUrl = '',
+    this.sizeBytes,
+    this.sha256 = '',
+    this.versionConsistency = '',
+    this.verificationStatus = '',
   });
 
   final String id;
@@ -144,4 +155,15 @@ class ModFileEntity {
   final String downloadUrl;
   final String sourceUrl;
   final String resolutionSource;
+  final String displayName;
+  final String role;
+  final bool? recommended;
+  final bool? requiresPrimary;
+  final String artifactDescription;
+  final String requestedUrl;
+  final String finalUrl;
+  final int? sizeBytes;
+  final String sha256;
+  final String versionConsistency;
+  final String verificationStatus;
 }

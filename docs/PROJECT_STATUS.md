@@ -87,6 +87,13 @@ Código preparado; CI y validación física pendientes por SDK local no disponib
 - Contrato de catálogo v2 con identidades estables de versión/archivo,
   compatibilidad temporal con recibos posicionales de 1.8.0 y aprovechamiento
   de metadata de resolución/procedencia del scraper.
+- Catálogo enriquecido compatible con traducción precalculada de `description`
+  al español y fallback inmediato al inglés. Los metadatos semánticos de cada
+  archivo (`display_name`, rol, recomendado y dependencia del principal)
+  sustituyen la inferencia por nombre cuando existen; bases antiguas conservan
+  la inferencia únicamente como compatibilidad. La validación remota rechaza
+  traducciones mal formadas, recomendaciones ambiguas y archivos asociados a
+  una versión distinta antes del reemplazo atómico.
 - Actualización remota transaccional: validación integral previa, control de
   esquema y conteo, barrera contra reducciones anómalas, reemplazo atómico,
   copia `last-good`, cuarentena y fallback a la base incluida en el APK.

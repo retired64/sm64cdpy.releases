@@ -42,6 +42,18 @@ void main() {
         'source_url':
             'https://mods.sm64coopdx.com/version/$id/download?file=$fileId',
         'resolution_source': 'test',
+        'display_name': 'Example package',
+        'role': 'primary',
+        'recommended': true,
+        'requires_primary': false,
+        'artifact_description': 'Complete main package.',
+        'requested_url':
+            'https://mods.sm64coopdx.com/version/$id/download?file=$fileId',
+        'final_url': 'https://example.test/$label.zip',
+        'size_bytes': 2048,
+        'sha256': 'sha256:test',
+        'version_consistency': 'match',
+        'verification_status': 'metadata_only',
       },
     ],
   };
@@ -93,6 +105,13 @@ void main() {
     expect(entity.versions.single.files.single.id, '900');
     expect(entity.versions.single.isResolved, isTrue);
     expect(entity.versions.single.files.single.resolutionSource, 'test');
+    final artifact = entity.versions.single.files.single;
+    expect(artifact.displayName, 'Example package');
+    expect(artifact.role, 'primary');
+    expect(artifact.recommended, isTrue);
+    expect(artifact.requiresPrimary, isFalse);
+    expect(artifact.sizeBytes, 2048);
+    expect(artifact.versionConsistency, 'match');
   });
 
   test('description translations are optional and keep the English source', () {

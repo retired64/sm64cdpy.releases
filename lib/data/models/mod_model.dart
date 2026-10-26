@@ -224,6 +224,17 @@ class ModModel {
         downloadUrl: url,
         sourceUrl: f['source_url'] as String? ?? '',
         resolutionSource: f['resolution_source'] as String? ?? '',
+        displayName: f['display_name'] as String? ?? '',
+        role: f['role'] as String? ?? '',
+        recommended: f['recommended'] as bool?,
+        requiresPrimary: f['requires_primary'] as bool?,
+        artifactDescription: f['artifact_description'] as String? ?? '',
+        requestedUrl: f['requested_url'] as String? ?? '',
+        finalUrl: f['final_url'] as String? ?? '',
+        sizeBytes: (f['size_bytes'] as num?)?.toInt(),
+        sha256: f['sha256'] as String? ?? '',
+        versionConsistency: f['version_consistency'] as String? ?? '',
+        verificationStatus: f['verification_status'] as String? ?? '',
       );
     }).toList();
   }
@@ -416,6 +427,17 @@ class ModFileModel {
     required this.downloadUrl,
     this.sourceUrl = '',
     this.resolutionSource = '',
+    this.displayName = '',
+    this.role = '',
+    this.recommended,
+    this.requiresPrimary,
+    this.artifactDescription = '',
+    this.requestedUrl = '',
+    this.finalUrl = '',
+    this.sizeBytes,
+    this.sha256 = '',
+    this.versionConsistency = '',
+    this.verificationStatus = '',
   });
 
   final String id;
@@ -423,6 +445,17 @@ class ModFileModel {
   final String downloadUrl;
   final String sourceUrl;
   final String resolutionSource;
+  final String displayName;
+  final String role;
+  final bool? recommended;
+  final bool? requiresPrimary;
+  final String artifactDescription;
+  final String requestedUrl;
+  final String finalUrl;
+  final int? sizeBytes;
+  final String sha256;
+  final String versionConsistency;
+  final String verificationStatus;
 
   ModFileEntity toEntity() => ModFileEntity(
     id: id,
@@ -430,5 +463,16 @@ class ModFileModel {
     downloadUrl: downloadUrl,
     sourceUrl: sourceUrl,
     resolutionSource: resolutionSource,
+    displayName: displayName,
+    role: role,
+    recommended: recommended,
+    requiresPrimary: requiresPrimary,
+    artifactDescription: artifactDescription,
+    requestedUrl: requestedUrl,
+    finalUrl: finalUrl,
+    sizeBytes: sizeBytes,
+    sha256: sha256,
+    versionConsistency: versionConsistency,
+    verificationStatus: verificationStatus,
   );
 }

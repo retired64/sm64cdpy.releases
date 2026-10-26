@@ -9,6 +9,39 @@ ModFileEntity file(String name) => ModFileEntity(
 );
 
 void main() {
+  test('explicit catalogue metadata wins over filename inference', () {
+    final result = describeModArtifacts(
+      modTitle: 'Ambiguous Mod',
+      files: [
+        ModFileEntity(
+          id: 'addon',
+          filename: 'looks-like-main.zip',
+          downloadUrl: 'https://example.com/addon.zip',
+          displayName: 'Online extras',
+          role: 'optional',
+          recommended: false,
+          requiresPrimary: true,
+        ),
+        ModFileEntity(
+          id: 'main',
+          filename: 'unknown.bin',
+          downloadUrl: 'https://example.com/main.zip',
+          displayName: 'Complete package',
+          role: 'primary',
+          recommended: true,
+          requiresPrimary: false,
+        ),
+      ],
+    );
+
+    expect(result.first.role, ModArtifactRole.optional);
+    expect(result.first.displayName, 'Online extras');
+    expect(result.first.requiresPrimary, isTrue);
+    expect(result.last.role, ModArtifactRole.primary);
+    expect(result.last.isRecommended, isTrue);
+    expect(result.last.displayName, 'Complete package');
+  });
+
   test('MarioHunt marks the full package as recommended', () {
     final result = describeModArtifacts(
       modTitle: 'MarioHunt',

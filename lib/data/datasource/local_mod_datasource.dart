@@ -36,6 +36,17 @@ void _validateModDatabase(Map<String, dynamic> decoded) {
       ).hasMatch(decoded['catalog_id']?.toString() ?? '')) {
     throw const FormatException('Invalid catalog identity');
   }
+  final translationMetadata = decoded['translation_metadata'];
+  if (translationMetadata != null) {
+    if (translationMetadata is! Map ||
+        translationMetadata['source_language'] != 'en' ||
+        translationMetadata['target_locales'] is! List ||
+        (translationMetadata['target_locales'] as List).any(
+          (locale) => locale is! String || locale.trim().isEmpty,
+        )) {
+      throw const FormatException('Invalid translation metadata');
+    }
+  }
   final mods = decoded['mods'];
   if (mods is! List && mods is! Map<String, dynamic>) {
     throw const FormatException('mods must be a list or object');
@@ -52,6 +63,22 @@ void _validateModDatabase(Map<String, dynamic> decoded) {
     final translations = value['description_translations'];
     if (translations != null && translations is! Map) {
       throw const FormatException('description_translations must be an object');
+    }
+    if (translations is Map &&
+        translations.entries.any(
+          (entry) =>
+              entry.key is! String ||
+              (entry.key as String).trim().isEmpty ||
+              entry.value is! String,
+        )) {
+      throw const FormatException('Invalid description translation');
+    }
+    final descriptionHash = value['description_source_hash'];
+    if (descriptionHash != null &&
+        !RegExp(
+          r'^sha256:[0-9a-f]{64}$',
+        ).hasMatch(descriptionHash.toString())) {
+      throw const FormatException('Invalid description source identity');
     }
     final versions = value['versions'];
     if (versions != null && versions is! List) {
@@ -72,6 +99,8 @@ void _validateModDatabase(Map<String, dynamic> decoded) {
         throw const FormatException('Resolved version has no files');
       }
       final fileIds = <String>{};
+      var explicitRecommended = 0;
+      var hasSemanticMetadata = false;
       for (final file in files as List? ?? const <dynamic>[]) {
         if (file is! Map ||
             (file['download_url']?.toString().trim().isEmpty ?? true)) {
@@ -81,6 +110,38 @@ void _validateModDatabase(Map<String, dynamic> decoded) {
             !fileIds.add(file['file_id']?.toString().trim() ?? '')) {
           throw const FormatException('Missing or duplicate file identity');
         }
+        final role = file['role'];
+        final recommended = file['recommended'];
+        final requiresPrimary = file['requires_primary'];
+        if (role != null || recommended != null || requiresPrimary != null) {
+          hasSemanticMetadata = true;
+          if (!const <String>{
+                'primary',
+                'lite',
+                'api',
+                'textures',
+                'voices',
+                'optional',
+              }.contains(role) ||
+              recommended is! bool ||
+              requiresPrimary is! bool ||
+              (file['display_name']?.toString().trim().isEmpty ?? true)) {
+            throw const FormatException('Invalid artifact metadata');
+          }
+          if (recommended) explicitRecommended++;
+          if ((recommended && (role != 'primary' || requiresPrimary)) ||
+              (!recommended && role == 'primary')) {
+            throw const FormatException('Invalid primary artifact metadata');
+          }
+          if (file['version_consistency'] == 'mismatch') {
+            throw const FormatException('Cross-version artifact rejected');
+          }
+        }
+      }
+      if (hasSemanticMetadata && explicitRecommended != 1) {
+        throw const FormatException(
+          'Resolved artifacts require exactly one recommended file',
+        );
       }
     }
   }
