@@ -523,7 +523,7 @@ Use this section as the checklist is executed.
 - [ ] Completar matriz física de temas, operaciones en curso y overlay fijo.
 
 No se instaló SDK ni se afirmó compilación local. Registro de cambios de
-esta rama y guía: [cuatom_themea.md](../cuatom_themea.md). La versión/manifiestos
+esta rama y guía: [CUSTOM_THEMES.md](CUSTOM_THEMES.md). La versión/manifiestos
 publicados permanecen sin cambios.
 
 ### Primera build de custom-themes — corrección del análisis
@@ -581,7 +581,7 @@ y revisión física de este ajuste; no se modificó overlay ni Android nativo.
 - [ ] Autorizar publicación y comprobar tag/assets/Discord/sitio; no iniciado.
 
 Fuente canónica: `release-manifests/v1.8.3.json`. Plan completo:
-[RELEASE_1.8.3.md](RELEASE_1.8.3.md). No se modifican releases históricas.
+[releases/RELEASE_1.8.3.md](releases/RELEASE_1.8.3.md). No se modifican releases históricas.
 
 ## Activación de mods — candidata 1.8.3
 
@@ -611,7 +611,7 @@ texto ampliado. Pendiente la revisión visual en dispositivo.
 
 ## Puerta de salida consolidada 1.8.3 (2026-10-14)
 
-La preparación anterior queda consolidada en [RELEASE_1.8.3.md](RELEASE_1.8.3.md).
+La preparación anterior queda consolidada en [releases/RELEASE_1.8.3.md](releases/RELEASE_1.8.3.md).
 Notas en tres idiomas y código generado/formateado del runner están alineados.
 Antes de merge/publicación quedan CI de las tres ABI, revisión física del APK
 final, fecha definitiva y autorizaciones respectivas. No marcar publicación
@@ -723,7 +723,7 @@ Actions validado en [Testing #240](https://github.com/retired64/sm64cdpy.release
 La 1.8.3 se fusionó y publicó oficialmente después de la instantánea de estado
 registrada en la sección anterior. La versión vigente en esta rama es 1.8.4+23.
 Detalle: [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md) y
-[RELEASE_1.8.4.md](RELEASE_1.8.4.md).
+[releases/RELEASE_1.8.4.md](releases/RELEASE_1.8.4.md).
 
 ## Preparación de versión 1.8.5+24 — Jugador
 
@@ -742,7 +742,7 @@ Detalle: [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md) y
 - [ ] Fijar `publishedAt` real y autorizar el workflow de publicación.
 
 Fuente canónica: `release-manifests/v1.8.5.json`. Puerta completa:
-[RELEASE_1.8.5.md](RELEASE_1.8.5.md).
+[releases/RELEASE_1.8.5.md](releases/RELEASE_1.8.5.md).
 
 ## Rendimiento visual y Minimalista — 1.8.6+25
 
@@ -760,7 +760,7 @@ Fuente canónica: `release-manifests/v1.8.5.json`. Puerta completa:
 - [ ] Validar visualmente los cuatro diseños, claro/oscuro y texto grande.
 
 Detalle y límites: [PERFORMANCE_MINIMAL_1.8.6.md](PERFORMANCE_MINIMAL_1.8.6.md).
-Puerta de publicación: [RELEASE_1.8.6.md](RELEASE_1.8.6.md).
+Puerta de publicación: [releases/RELEASE_1.8.6.md](releases/RELEASE_1.8.6.md).
 
 ## Retro Manga: selector de acento
 
@@ -1204,3 +1204,12 @@ git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
 - [ ] Matriz física de Atrás: destinos principales, drawer y diálogos abiertos, Jugador con cambios, rotación y reapertura.
 - [ ] Matriz física de permisos: conceder y revocar, reanudar, Android 13+, carpeta SAF revocada y recorrido repetido.
 - [ ] Confirmar `publishedAt`, tag `v1.9.1` y publicar solo con autorización explícita.
+
+
+## Mantenimiento del repositorio — 2026-10-26
+
+- [x] Salvar ROM_CONVERTER y guía de temas; corregir enlaces relativos.
+- [x] Separar releases, archivo histórico, herramientas y recursos promocionales.
+- [x] Documentar límites de capas y decisiones en REPOSITORY_LAYOUT.md.
+- [x] Mantener contratos de runtime, catálogos, manifiestos y workflows.
+- [ ] Revisión funcional en dispositivo: no ejecutada en esta tarea documental.

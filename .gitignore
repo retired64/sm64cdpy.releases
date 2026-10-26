@@ -1,47 +1,24 @@
 output/
 n64romconvert/
-docs/PLAYER_3D_RENDERER.md
 floating-apps-examples/
 app-flotante.md
 source-code.zip
 run-actions-github
 coopdx64.py
-# Historical/reference material in docs/ is intentionally ignored. Keep the
-# small canonical documentation set versioned.
-docs/*
-!docs/README.md
-!docs/ARCHITECTURE.md
-!docs/PLAYER_3D_RENDERER.md
-!docs/DOWNLOADS_AND_OVERLAY.md
-!docs/PROJECT_STATUS.md
-!docs/CI_CD.md
-!docs/PLAY_2P2_IMPLEMENTATION_PLAN.md
-!docs/PERFORMANCE_MINIMAL_1.8.6.md
-!docs/RELEASE_1.8.5.md
-!docs/RELEASE_NOTES_1.8.5_EN.md
-!docs/RELEASE_NOTES_1.8.5_ES.md
-!docs/RELEASE_NOTES_1.8.5_PT_BR.md
-!docs/RELEASE_1.9.0.md
-!docs/RELEASE_NOTES_1.9.0_EN.md
-!docs/RELEASE_NOTES_1.9.0_ES.md
-!docs/RELEASE_NOTES_1.9.0_PT_BR.md
-!docs/RELEASE_1.9.1.md
-!docs/RELEASE_NOTES_1.9.1_EN.md
-!docs/RELEASE_NOTES_1.9.1_ES.md
-!docs/RELEASE_NOTES_1.9.1_PT_BR.md
-!docs/SM64CDPY-v1.7.0-TASK-CHECKLIST.md
-!docs/INSTALLED-LIBRARY-ROADMAP.md
-!docs/INSTALLED-LIBRARY-PHASE-0.md
-!docs/IP-CONTENT-RISK-CHECKLIST.md
-!docs/SAFE-UNINSTALL-v1.9.0-ROADMAP.md
-!docs/CATALOG_DATABASE_CONTRACT.md
-!docs/PRECOMPUTED_MOD_TRANSLATIONS.md
-!docs/schemas/
-!docs/schemas/mod-catalog-v2.schema.json
-!docs/archive/
-docs/archive/*
-!docs/archive/README.md
-!docs/archive/FUTURE-TRANSLATION-IDEAS.md
+# Project documentation is versioned by default. External/local research stays out.
+/docs/komi-store/
+/docs/konami/
+/docs/Konami/
+/docs/db/
+/docs/res/
+/docs/*.7z
+/docs/*.zip
+/docs/coopdx64.py
+/docs/generate_mods_metadata.py
+/docs/DevilCoins.lua
+/docs/foreground_services.md
+/docs/lua_sm64coopdx.md
+/docs/AndroidManifest-sm64coopdxandroid.xml
 migrations-checklist.md
 guia-migracion-desing-screens.md
 foreground-services.md
@@ -102,3 +79,22 @@ guia_json_estructura.md
 release_apks/
 
 sm64coopdx/
+
+# Generated deliverables and retired local research (never product sources).
+*.apk
+*.aab
+__pycache__/
+/tools/preview-changelogs-PNG/*.png
+/database_sm64coopdx.translated.json
+/oracle/
+/html-web/
+/tools/context-floating-app/
+/Konami/
+/konami/
+/komi-store/
+/.opencode/
+/.vscode/
+/linux/
+
+# Local catalog analysis reports.
+**/categories_analysis.csv

@@ -57,7 +57,7 @@ Fuentes oficiales consultadas el 2026-10-19:
   `GameModActivationStore.kt` y [UNIFIED_GAME_FOLDER.md](UNIFIED_GAME_FOLDER.md).
   Raíz elegida `com.maniscat2.sm64coopdx`, escritura nueva en `user/mods` y
   `user/dynos/packs`; lectura de ambas ramas con precedencia diferente.
-- [Preparador de ROM](../ROM_CONVERTER.md): herramienta local integrada que
+- [Preparador de ROM](ROM_CONVERTER.md): herramienta local integrada que
   detecta z64/v64/n64 por cabecera, normaliza por streaming, valida tamaño/MD5 y
   exporta una copia mediante SAF. No usa un servidor ni modifica el original.
 

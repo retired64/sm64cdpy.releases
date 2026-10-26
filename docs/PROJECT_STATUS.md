@@ -19,7 +19,7 @@ Código preparado; CI y validación física pendientes por SDK local no disponib
   v64 y n64 por cabecera, genera una copia z64 mediante streaming nativo de
   memoria constante, valida el dump USA esperado y exporta con SAF sin permiso
   general de archivos. Estado único entre rutas, cancelación, reintento de
-  exportación y detalles técnicos en [ROM_CONVERTER.md](../ROM_CONVERTER.md).
+  exportación y detalles técnicos en [ROM_CONVERTER.md](ROM_CONVERTER.md).
   Pruebas sintéticas y de widgets aprobadas; matriz física pendiente.
 
 - Retro Manga completa su sistema de superficies y controles: las tarjetas
@@ -111,7 +111,7 @@ Código preparado; CI y validación física pendientes por SDK local no disponib
 - Persistencia confirmada y recuperación legacy; overlay mantiene diseño fijo.
 - ARB y pruebas preparados; generación, análisis, tests y APK pendientes en
   Actions porque el entorno Termux de esta tarea no tiene Flutter/Dart.
-- Guía/inventario completos: [cuatom_themea.md](../cuatom_themea.md).
+- Guía/inventario completos: [CUSTOM_THEMES.md](CUSTOM_THEMES.md).
 
 ## Experimental o pendiente de validación
 
@@ -157,7 +157,7 @@ para borrar archivos.
 
 ## Fuera del estado vigente
 
-`floating-check-list.md`, `revision-app.md` y `.opencode/plans/` son fotografías de análisis anteriores a/durante 1.7.0. Contienen puntos ya resueltos y otros no revalidados; no deben usarse como backlog sin contrastarlos con el código. El inventario completo está en [archive/README.md](archive/README.md).
+`archive/floating-check-list.md`, `archive/revision-app.md` y `archive/plans/` son fotografías de análisis anteriores a/durante 1.7.0. Contienen puntos ya resueltos y otros no revalidados; no deben usarse como backlog sin contrastarlos con el código. El inventario completo está en [archive/README.md](archive/README.md).
 
 ### Ajustes visuales posteriores a la prueba aprobada
 
@@ -175,7 +175,7 @@ física de idioma/tamaño de texto pendientes.
 - Merge simulado contra main remoto `8bdc996` sin conflictos, sin fusionar.
 - Testing admite todas las ABI por input manual o `[testing] [all-abis]`.
 - La publicación oficial de 1.8.3 se completó. Alcance y notas localizadas:
-  [registro del release](RELEASE_1.8.3.md).
+  [registro del release](releases/RELEASE_1.8.3.md).
 
 ## Activación de mods — release 1.8.3
 
@@ -196,7 +196,7 @@ no reconstruye todo el catálogo después de cada cambio y valida solo el objeti
 y los mods activos relacionados, manteniendo respaldo, control de conflictos,
 tamaño Lua y bloqueo durante instalaciones. La medición física ampliada sigue
 siendo recomendable. Detalle: [LIBRARY_PERFORMANCE.md](LIBRARY_PERFORMANCE.md) y
-[preparación 1.8.4](RELEASE_1.8.4.md).
+[preparación 1.8.4](releases/RELEASE_1.8.4.md).
 
 Biblioteca integra Mods del juego como pestaña nativa del sistema visual, con
 búsqueda y filtros locales, contador de activados, tarjetas adaptadas a cada
@@ -362,7 +362,7 @@ persiste progreso educativo en Hive, nunca el estado de un permiso.
 Manifiesto canónico: `release-manifests/v1.9.1.json`. VersionCodes ABI
 `291/292/293`. Validación local: 543 pruebas Flutter, análisis sin problemas,
 manifiesto alineado con `pubspec.yaml` y `git diff --check` limpio. Detalles en
-[RELEASE_1.9.1.md](RELEASE_1.9.1.md). Testing, APK firmado y la matriz física de
+[releases/RELEASE_1.9.1.md](releases/RELEASE_1.9.1.md). Testing, APK firmado y la matriz física de
 Atrás/permisos siguen pendientes; `publishedAt` es provisional.
 
 ## Release 1.9.0+28 — publicada
@@ -384,7 +384,7 @@ descripciones localizadas precalculadas.
 Manifiesto canónico: `release-manifests/v1.9.0.json`. VersionCodes ABI
 `281/282/283`. Validación local previa al cierre: 520 pruebas Flutter, 16
 pruebas de scripts, Kotlin correcto y análisis sin problemas.
-Detalles en [RELEASE_1.9.0.md](RELEASE_1.9.0.md). Se publicó como `v1.9.0`
+Detalles en [releases/RELEASE_1.9.0.md](releases/RELEASE_1.9.0.md). Se publicó como `v1.9.0`
 y su manifiesto se conserva como referencia histórica. La matriz física de
 SAF/ROM y la revisión visual en dispositivo siguen pendientes. La
 desinstalación segura del roadmap no forma parte de esa versión.

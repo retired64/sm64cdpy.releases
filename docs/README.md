@@ -6,20 +6,20 @@ documentos conservan su fecha y alcance de revisión explícitos.
 
 | Documento | Propósito | Estado |
 |---|---|---|
-| [Release 1.8.3](RELEASE_1.8.3.md) | Alcance, notas localizadas y evidencia del lanzamiento oficial | Publicada; referencia histórica |
-| [Preparación de release 1.8.4](RELEASE_1.8.4.md) | Versión/build y mejoras de fluidez de Biblioteca | Publicada; referencia histórica |
+| [Release 1.8.3](releases/RELEASE_1.8.3.md) | Alcance, notas localizadas y evidencia del lanzamiento oficial | Publicada; referencia histórica |
+| [Preparación de release 1.8.4](releases/RELEASE_1.8.4.md) | Versión/build y mejoras de fluidez de Biblioteca | Publicada; referencia histórica |
 | [Rendimiento de Biblioteca](LIBRARY_PERFORMANCE.md) | Cargas diferidas, snapshot reutilizado, activación inmediata y consistencia SAF | Incluido desde 1.8.4; referencia técnica |
-| [Preparación de release 1.8.5](RELEASE_1.8.5.md) | Versión/build, pantalla Jugador, vista 3D y puerta de publicación | Preparada en `main`; pendiente del workflow final |
+| [Preparación de release 1.8.5](releases/RELEASE_1.8.5.md) | Versión/build, pantalla Jugador, vista 3D y puerta de publicación | Preparada en `main`; pendiente del workflow final |
 | [Renderizador 3D de Jugador](PLAYER_3D_RENDERER.md) | Arquitectura, recursos locales, ciclo de vida y límites de la vista previa | Implementado; ampliar matriz física de GPU/WebView |
-| [Preparación de release 1.8.7](RELEASE_1.8.7.md) | Minish Cap, Mario Kart 64, acentos de Retro Manga y datos de distribución | Referencia histórica de la candidata |
-| [Preparación de release 1.8.8](RELEASE_1.8.8.md) | Overhaul visual, rendimiento e instalación directa opcional | Candidata anterior; referencia histórica |
-| [Preparación de release 1.9.1](RELEASE_1.9.1.md) | Navegación fluida con historial de destinos y centro de permisos con recorrido guiado | Integrada en `main`; Testing y publicación pendientes |
-| [Preparación de release 1.9.0](RELEASE_1.9.0.md) | Play, guía, preparador de ROM, Manga Deluxe, cachés, idiomas FR/IT y descripciones localizadas | Publicada; referencia histórica |
-| [Preparación de release 1.8.6](RELEASE_1.8.6.md) | Versión/build, distribución, evidencia y puerta de publicación | Preparada en rama; pendiente merge y workflow final |
+| [Preparación de release 1.8.7](releases/RELEASE_1.8.7.md) | Minish Cap, Mario Kart 64, acentos de Retro Manga y datos de distribución | Referencia histórica de la candidata |
+| [Preparación de release 1.8.8](releases/RELEASE_1.8.8.md) | Overhaul visual, rendimiento e instalación directa opcional | Candidata anterior; referencia histórica |
+| [Preparación de release 1.9.1](releases/RELEASE_1.9.1.md) | Navegación fluida con historial de destinos y centro de permisos con recorrido guiado | Integrada en `main`; Testing y publicación pendientes |
+| [Preparación de release 1.9.0](releases/RELEASE_1.9.0.md) | Play, guía, preparador de ROM, Manga Deluxe, cachés, idiomas FR/IT y descripciones localizadas | Publicada; referencia histórica |
+| [Preparación de release 1.8.6](releases/RELEASE_1.8.6.md) | Versión/build, distribución, evidencia y puerta de publicación | Preparada en rama; pendiente merge y workflow final |
 | [Rendimiento visual 1.8.6](PERFORMANCE_MINIMAL_1.8.6.md) | Tema Minimalista opcional, drawer, navegación, detalle y eliminación de SVG | Implementado; pendiente perfil físico |
-| [Temas propios incluidos](../cuatom_themea.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Incluidos desde 1.8.3; referencia técnica |
+| [Temas propios incluidos](CUSTOM_THEMES.md) | Implementación, inventario Dart, persistencia y flujo Termux/Actions | Incluidos desde 1.8.3; referencia técnica |
 | [GameTool Save File](GAME_SAVE_FILE.md) | Original-game save editing and verified backups | Testing candidate |
-| [Preparador de ROM](../ROM_CONVERTER.md) | Conversión local z64/v64/n64, validación, SAF, estado y rendimiento | Integrado para 1.9.0; validación física pendiente |
+| [Preparador de ROM](ROM_CONVERTER.md) | Conversión local z64/v64/n64, validación, SAF, estado y rendimiento | Integrado para 1.9.0; validación física pendiente |
 | [Arquitectura](ARCHITECTURE.md) | Componentes, engines, persistencia y flujo de datos | Vigente |
 | [Descargas y overlay](DOWNLOADS_AND_OVERLAY.md) | Flujo WorkManager/SAF, progreso y burbuja | Vigente |
 | [Contrato de la base de mods](CATALOG_DATABASE_CONTRACT.md) | Esquema v2, identidad durable, resolutores y publicación segura | Vigente |
@@ -30,18 +30,31 @@ documentos conservan su fecha y alcance de revisión explícitos.
 | [Biblioteca — investigación y contratos](INSTALLED-LIBRARY-PHASE-0.md) | Auditoría de catálogos/instalador, identidad canónica, recibo v1 y fixtures legales | Vigente para la rama `historial-hive` |
 | [Checklist de propiedad intelectual y contenido](IP-CONTENT-RISK-CHECKLIST.md) | Evaluación preventiva, procedencia, permisos, retiradas y decisiones para app/web | Planificación; requiere criterio y revisión jurídica |
 | [CI/CD](CI_CD.md) | Workflows, secretos y publicación | Vigente |
-| [Compilación](../BUILDING.md) | Entorno y comandos de build | Vigente |
+| [Compilación](BUILDING.md) | Entorno y comandos de build | Vigente |
 | [Archivo](archive/README.md) | Notas antiguas, referencias copiadas y prototipos | Histórico |
+
+## Organización del repositorio
+
+- [Mapa, límites de capas y decisiones de limpieza](REPOSITORY_LAYOUT.md).
+- [Índice de registros de versiones](releases/README.md).
+- [Herramientas](../tools/README.md), [scripts](../scripts/README.md) y [material gráfico](../media/README.md).
+
+## Documentos trasladados desde la raíz
+
+- [Reglas de desarrollo para todo el repositorio](../AGENTS.md).
+- [README en español](README_ES.md) y [portugués brasileño](README_PT.md).
+- [Changelog](CHANGELOG.md) y [guía de compilación](BUILDING.md).
+- [Plan histórico de Jugador, antes APOYO.md](archive/PLAYER_IMPLEMENTATION_PLAN.md).
 
 ## Regla de mantenimiento
 
 Cuando cambien versión mínima, dependencias, workers, canales de plataforma, persistencia, overlay o workflows, actualiza el documento correspondiente y la fecha de revisión del archivo. Las ideas y auditorías puntuales no deben presentarse como arquitectura vigente: deben añadirse al índice del archivo.
 
-Última revisión: **2026-10-25**.
+Última revisión: **2026-10-26**.
 
 - [Activación de mods desde Biblioteca](GAME_MOD_ACTIVATION.md): contrato del juego, SAF, edición verificada, recuperación y pruebas.
 
-- [Preparación de merge/release 1.8.3](RELEASE_1.8.3.md): alcance final, previews EN/ES/PT-BR, evidencia, checklist y publicación autorizada.
+- [Preparación de merge/release 1.8.3](releases/RELEASE_1.8.3.md): alcance final, previews EN/ES/PT-BR, evidencia, checklist y publicación autorizada.
 - [Mejoras de fluidez de Biblioteca 1.8.4](LIBRARY_PERFORMANCE.md): fuentes de demora, nueva política de carga/invalidación y límites de latencia SAF.
 
 
@@ -80,3 +93,5 @@ v1 conserva sus recursos mientras se pide reimportación. Contrato actual en
   [Arquitectura](ARCHITECTURE.md#idiomas-y-créditos--rama-localization-fr-it-touch-authors)
   y validación en [Estado del proyecto](PROJECT_STATUS.md). La sincronización
   de idioma de la burbuja queda fuera de esta rama.
+
+- [Licencia MIT](../LICENSE) y [aviso del proyecto](DISCLAIMER.md).

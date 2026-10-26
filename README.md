@@ -1,6 +1,6 @@
 # SM64CDPY — SM64CoopDX Mods Browser
 
-**English** · [Español](README_ES.md) · [Português do Brasil](README_PT.md)
+**English** · [Español](docs/README_ES.md) · [Português do Brasil](docs/README_PT.md)
 
 SM64CDPY is an unofficial, Android-focused mod browser and manager for
 **SM64CoopDX**. It brings mod discovery, downloads, installation, game
@@ -19,6 +19,11 @@ devices and across process recreation scenarios.
 ![Flutter](https://img.shields.io/badge/Flutter-3.41.7-blue)
 ![Min Android](https://img.shields.io/badge/minSdk-24%20(Android%207.0)-orange)
 ![License](https://img.shields.io/badge/license-MIT-yellow)
+
+## Development instructions
+
+Before modifying this repository, read [the development rules](AGENTS.md).
+The documentation index is in [docs/README.md](docs/README.md).
 
 ## What the application is for
 
@@ -47,7 +52,7 @@ in-game mod workflow.
 ## Current features
 
 - Browse, search, filter, sort, and paginate the main mod catalogue.
-- Prepare your own USA Super Mario 64 ROM locally: the game tool detects `.z64`, `.v64` and `.n64`, validates the expected dump and exports a verified `.z64` copy without modifying the original. [ROM preparation details](ROM_CONVERTER.md).
+- Prepare your own USA Super Mario 64 ROM locally: the game tool detects `.z64`, `.v64` and `.n64`, validates the expected dump and exports a verified `.z64` copy without modifying the original. [ROM preparation details](docs/ROM_CONVERTER.md).
 - View popular and featured content.
 - Browse dedicated VIP, DynOS, Touch Controls, OMM Rebirth, and Render96
   sections.
@@ -117,7 +122,7 @@ flutter build apk --release --target-platform android-arm64 --split-per-abi
 The arm64 APK is written to
 `build/app/outputs/flutter-apk/app-arm64-v8a-release.apk`.
 
-See [BUILDING.md](BUILDING.md) for the complete environment, signing, and build
+See [BUILDING.md](docs/BUILDING.md) for the complete environment, signing, and build
 guide.
 
 ## Documentation
@@ -129,7 +134,7 @@ The canonical documentation index is [docs/README.md](docs/README.md):
 - [Project status, risks, and next steps](docs/PROJECT_STATUS.md)
 - [SM64CDPY v1.7.0 task checklist](docs/SM64CDPY-v1.7.0-TASK-CHECKLIST.md)
 - [GitHub Actions and releases](docs/CI_CD.md)
-- [Local build guide](BUILDING.md)
+- [Local build guide](docs/BUILDING.md)
 - [Archived documentation and local references](docs/archive/README.md)
 
 ## Local reference repositories
@@ -156,6 +161,11 @@ SM64CDPY is an independent, unofficial personal project. It is not affiliated
 with, endorsed by, or approved by SM64CoopDX, Nintendo, or any mod author. Mods,
 names, images, and related content belong to their respective creators.
 
+## License
+
+The project software is licensed under the [MIT License](LICENSE).
+See the [project disclaimer](docs/DISCLAIMER.md) for unofficial status and third-party content context.
+
 ## Contact
 
 [Discord](https://discord.com/invite/thuhUH2WNX) ·
@@ -164,7 +174,7 @@ names, images, and related content belong to their respective creators.
 Library also configures compatible local Lua mods for the next game start through the selected main game folder, with verified saves and a private recovery backup. Close the game before editing. DynOS and Touch Controls packs in dynos/packs and user/dynos/packs have their own switches in the same Library, using the game’s dynos-pack configuration.
 
 Version 1.8.4 improved Library responsiveness. Version 1.8.5 adds the Player
-workspace and interactive 3D preview; see the [release preparation](docs/RELEASE_1.8.5.md)
+workspace and interactive 3D preview; see the [release preparation](docs/releases/RELEASE_1.8.5.md)
 and [renderer architecture](docs/PLAYER_3D_RENDERER.md).
 
 Choose the main `com.maniscat2.sm64coopdx` folder to include mods and DynOS packs inside and outside `user`. Existing user-only connections can be upgraded in Settings. New installations, configuration and ROM stay under `user`.

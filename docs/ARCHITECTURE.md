@@ -4,7 +4,11 @@ Revisado para `1.9.1+29` en `main` el 2026-10-25.
 
 ## Alcance
 
-SM64CDPY es una aplicación Flutter orientada exclusivamente a Android. Combina una interfaz Flutter, integración nativa Kotlin y trabajo persistente de Android. El directorio `linux/` es scaffold generado y no representa soporte de escritorio.
+SM64CDPY es una aplicación Flutter orientada exclusivamente a Android. Combina una interfaz Flutter, integración nativa Kotlin y trabajo persistente de Android. El scaffold de escritorio Linux se retiró del repositorio; el único destino de producto es Android.
+
+La organización física y los límites para cambios futuros se describen en
+[REPOSITORY_LAYOUT.md](REPOSITORY_LAYOUT.md). La limpieza del 2026-10-26 conserva
+las rutas y contratos de ejecución.
 
 ## Capas
 
@@ -374,7 +378,7 @@ providers de operaciones por cambiar de diseño.
 La raíz del overlay produce su ThemeData desde `RetroTheme.overlay()` y conserva
 su política oscura fija, sin Hive ni mensajes nuevos de tema. El inventario de
 cada Dart, el flujo y el procedimiento para añadir diseños están en
-[cuatom_themea.md](../cuatom_themea.md). No se modificó Android nativo.
+[CUSTOM_THEMES.md](CUSTOM_THEMES.md). No se modificó Android nativo.
 
 ## Límites importantes
 

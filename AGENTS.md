@@ -1,7 +1,8 @@
 # AGENTS.md — Reglas permanentes de desarrollo de SM64CDPY
 
 Esta guía es obligatoria para cualquier persona o IA que modifique el
-repositorio. Léela completa antes de actuar. Su propósito es conservar el
+repositorio. Léela completa antes de actuar. Su ubicación canónica es `AGENTS.md`, en la raíz del proyecto,
+y se aplica a todo el repositorio. Su propósito es conservar el
 contexto técnico y de producto, evitar soluciones parciales y mantener un flujo
 coherente entre Flutter, Android nativo, WorkManager y la burbuja flotante.
 
@@ -24,12 +25,14 @@ escritorio salvo petición explícita.
 ## 2. Documentación y contenido fuera de alcance
 
 - `README.md` es el README canónico y permanece en inglés.
-- `README_ES.md` y `README_PT.md` son las versiones en español y portugués
+- `docs/README_ES.md` y `docs/README_PT.md` son las versiones en español y portugués
   brasileño.
 - `docs/README.md` indexa la documentación activa.
 - `docs/ARCHITECTURE.md`, `docs/DOWNLOADS_AND_OVERLAY.md`,
   `docs/PROJECT_STATUS.md` y `docs/CI_CD.md` describen el estado vigente.
-- `docs/SM64CDPY-v1.7.0-TASK-CHECKLIST.md` es el checklist operativo actual.
+- `docs/SM64CDPY-v1.7.0-TASK-CHECKLIST.md` conserva el checklist histórico y el
+  registro de mantenimiento. El estado actual está en `docs/PROJECT_STATUS.md`
+  y los registros de versión en `docs/releases/`.
 - Documentación retirada va a `docs/archive/`; no se mezcla con la vigente.
 
 Repositorios/carpetas de ejemplo como Konami/Komi Store,

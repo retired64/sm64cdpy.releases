@@ -102,21 +102,21 @@ del SDK completo.
 Para probar 1.9.1 después del merge, seleccionar `main` en el workflow manual de testing.
 Continúan siendo necesarios los secretos de firma existentes. No usar el
 workflow de publicación para obtener una prueba. La candidata actual se
-describe en [RELEASE_1.9.1.md](RELEASE_1.9.1.md).
-Ver [flujo y validación de temas](../cuatom_themea.md).
+describe en [releases/RELEASE_1.9.1.md](releases/RELEASE_1.9.1.md).
+Ver [flujo y validación de temas](CUSTOM_THEMES.md).
 
 ## Release oficial 1.8.3+22
 
 La versión 1.8.3 se fusionó a `main` y se publicó oficialmente. Su manifiesto y
 previews EN/ES/PT-BR se conservan como referencia histórica en
-`release-manifests/v1.8.3.json` y `RELEASE_1.8.3.md`.
+`release-manifests/v1.8.3.json` y `releases/RELEASE_1.8.3.md`.
 
 Una ejecución manual con `all_abis: true`, o un push `[testing] [all-abis]`, permite revisar los tres
 APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
 flujo manual autorizado. La candidata de esta preparación es
-[1.9.1](RELEASE_1.9.1.md); 1.9.0 ya está publicada.
+[1.9.1](releases/RELEASE_1.9.1.md); 1.9.0 ya está publicada.
 
 ## Activación de mods — release 1.8.3
 
