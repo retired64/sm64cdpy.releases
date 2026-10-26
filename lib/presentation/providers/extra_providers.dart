@@ -21,6 +21,7 @@ class CurrentRouteNotifier extends Notifier<String> {
   String build() => '/';
 
   void set(String route) {
+    if (state == route) return;
     state = route;
   }
 }

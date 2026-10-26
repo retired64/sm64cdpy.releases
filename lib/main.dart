@@ -24,6 +24,7 @@ import 'presentation/widgets/background_operation_coordinator.dart';
 import 'presentation/widgets/mario_assets_coordinator.dart';
 import 'services/background_install_service.dart';
 import 'services/auto_install_preference_service.dart';
+import 'services/guided_setup_service.dart';
 import 'services/installation_library_projection_service.dart';
 import 'services/update_service.dart';
 
@@ -93,6 +94,7 @@ Future<void> _bootstrapMainApp() async {
   // Migrate any explicit legacy boolean and expose undecided installs to the
   // main UI before providers are created.
   await AutoInstallPreferenceService.init();
+  await GuidedSetupService.init();
 
   try {
     await LocaleNotifier.synchronizeNativeLocale();

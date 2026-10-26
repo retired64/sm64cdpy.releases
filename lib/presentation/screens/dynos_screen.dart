@@ -16,12 +16,12 @@ import '../../domain/entities/install_identity.dart';
 import '../../domain/entities/installation_action.dart';
 import '../providers/extra_providers.dart';
 import '../providers/installation_action_provider.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../../l10n/app_localizations.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../services/background_install_service.dart';
@@ -308,7 +308,9 @@ class _DynosCardState extends ConsumerState<DynosCard>
       if (!hasDynosFolder) {
         if (!mounted) return;
         final goToSettings = await showDynosFolderRequiredDialog(context);
-        if (goToSettings && mounted) GoRouter.of(context).go('/settings');
+        if (goToSettings && mounted) {
+          openPrimaryDestination(context, '/settings');
+        }
         return;
       }
 
@@ -390,7 +392,9 @@ class _DynosCardState extends ConsumerState<DynosCard>
           if (!await installer.isDynosDirectorySelected()) {
             if (!mounted) return;
             final goToSettings = await showDynosFolderRequiredDialog(context);
-            if (goToSettings && mounted) GoRouter.of(context).go('/settings');
+            if (goToSettings && mounted) {
+              openPrimaryDestination(context, '/settings');
+            }
             if (mounted) {
               AppSnackbar.info(
                 context,

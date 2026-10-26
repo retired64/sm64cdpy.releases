@@ -5373,6 +5373,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap ♥ on a card to save it here.'**
   String get favEmptyActionHint;
+
+  /// No description provided for @guidedSetupWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get guidedSetupWelcomeTitle;
+
+  /// No description provided for @guidedSetupWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Great to see you here! Let\'s get your mod adventure ready together. You\'ll always stay in control, and optional access can wait until you need it.'**
+  String get guidedSetupWelcomeBody;
+
+  /// No description provided for @guidedSetupProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String guidedSetupProgress(int current, int total);
+
+  /// No description provided for @guidedSetupStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get guidedSetupStart;
+
+  /// No description provided for @guidedSetupLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Do it later'**
+  String get guidedSetupLater;
+
+  /// No description provided for @guidedSetupDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re ready'**
+  String get guidedSetupDoneTitle;
+
+  /// No description provided for @guidedSetupDoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The basic setup is complete. Optional access remains available in Settings whenever a feature needs it.'**
+  String get guidedSetupDoneBody;
+
+  /// No description provided for @guidedSetupFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get guidedSetupFinish;
+
+  /// No description provided for @permissionCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions & access'**
+  String get permissionCenterTitle;
+
+  /// No description provided for @permissionCenterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review what the app can use and why'**
+  String get permissionCenterSubtitle;
+
+  /// No description provided for @permissionCenterIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Only grant access when you understand its purpose. Optional access is requested in context and the app checks Android for the current status.'**
+  String get permissionCenterIntro;
+
+  /// No description provided for @permissionStatusAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get permissionStatusAllowed;
+
+  /// No description provided for @permissionStatusNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not allowed'**
+  String get permissionStatusNotAllowed;
+
+  /// No description provided for @permissionStatusOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional · checking status'**
+  String get permissionStatusOptional;
+
+  /// No description provided for @permissionManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get permissionManage;
+
+  /// No description provided for @permissionFolderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Lets the app find, install and manage mods and player files in the game folder you select.'**
+  String get permissionFolderDescription;
+
+  /// No description provided for @permissionNotificationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows download and installation progress. Requested only when a download needs it.'**
+  String get permissionNotificationsDescription;
+
+  /// No description provided for @permissionAllFilesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional faster installation on compatible Android devices. Folder access continues to work without it.'**
+  String get permissionAllFilesDescription;
+
+  /// No description provided for @permissionOverlayDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional floating download bubble displayed over other apps.'**
+  String get permissionOverlayDescription;
+
+  /// No description provided for @permissionBatteryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional for hosting or joining longer Play sessions while the app is in the background.'**
+  String get permissionBatteryDescription;
+
+  /// No description provided for @permissionUpdatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Install app updates'**
+  String get permissionUpdatesTitle;
+
+  /// No description provided for @permissionUpdatesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Android asks for this special access only when you choose to install an app update.'**
+  String get permissionUpdatesDescription;
+
+  /// No description provided for @permissionNetworkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Network & Play'**
+  String get permissionNetworkTitle;
+
+  /// No description provided for @permissionNetworkDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet access powers the catalog and online sessions. Play asks for explicit consent before connecting to its service.'**
+  String get permissionNetworkDescription;
+
+  /// No description provided for @permissionRunGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Run guided setup again'**
+  String get permissionRunGuide;
+
+  /// No description provided for @permissionRunGuideDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopens the welcome steps without changing any Android permission by itself.'**
+  String get permissionRunGuideDescription;
 }
 
 class _AppLocalizationsDelegate

@@ -1129,3 +1129,32 @@ redibujarla al cambiar idioma; lo limpia y retira su receiver al destruirse. No 
 Workers, archivos, destinos ni notificaciones. Validación de esta rama registrada
 en PROJECT_STATUS; la revisión física de los cinco idiomas funcionales, texto
 ampliado, cambio de idioma, notificaciones y reapertura sigue siendo necesaria.
+
+## Atrás e historial de destinos principales — navigation-back-history
+
+La navegación distingue destinos principales (Inicio, Catálogo, Popular,
+Favoritos, Biblioteca, Jugador, Jugar, Partidas, Preparar ROM, Ajustes,
+Cómo jugar, Recursos y colecciones) de pantallas secundarias. Las principales
+usan `AppNavigator.openPrimary`, que registra la URI completa en
+`MainNavigationHistory` y llama a `go`. Las secundarias usan `push`, incluidas
+Permisos y accesos, el detalle de mod y una guía abierta desde una pantalla.
+
+El historial vive solo en memoria, conserva query strings, identifica destinos
+por `uri.path`, evita duplicados consecutivos y se limita a 20 entradas. Atrás
+sigue este orden: cerrar drawer, diálogo, modal o submenú; hacer pop de una
+secundaria; volver al destino principal anterior; volver a Inicio; y permitir
+la salida únicamente desde Inicio sin historial.
+
+`AppNavigator` es la única fuente del historial y del guard de Jugador. AppShell
+lo expone mediante `AppNavigationScope`; drawer, dock Retro Manga, enlaces
+internos y flecha visual comparten la misma política. El título visible no es
+identidad. GoRouter sigue siendo autoridad de la ubicación activa y
+`currentRouteProvider` es solo una proyección para resaltar el drawer; AppShell
+la sincroniza al montar y al escuchar al router delegate.
+
+`RetroPinnedAppBar` y `RetroFixedHeaderView` muestran hamburguesa en principales
+clásicos, ningún leading en principales Manga/Deluxe y una flecha temática en
+secundarias. La flecha reutiliza el material del botón de drawer y conserva
+contraste, sombra, inclinación, tooltip y área táctil. Jugador mantiene
+`PopScope`; el descarte sigue usando el mismo diálogo localizado, pero el
+retroceso confirmado pasa por `AppNavigator` y ya no por `maybePop`.

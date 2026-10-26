@@ -8,9 +8,11 @@ import '../../core/theme/retro_theme.dart';
 import '../../domain/entities/player_profile.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/player_profile_provider.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/player_3d_preview.dart';
+import '../widgets/player_leave_guard.dart';
 import '../widgets/settings_expansion_group.dart';
 
 class PlayerScreen extends ConsumerStatefulWidget {
@@ -104,7 +106,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                       status: state.status,
                       onRetry: () async {
                         if (state.status == 'unselected') {
-                          context.go('/settings');
+                          openPrimaryDestination(context, '/settings');
                         } else {
                           await ref
                               .read(playerProfileProvider.notifier)
@@ -252,29 +254,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   }
 
   Future<void> _confirmDiscard() async {
-    final l10n = AppLocalizations.of(context);
-    final discard = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.playerUnsavedTitle),
-        content: Text(l10n.playerUnsavedBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.playerKeepEditing),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.playerDiscard),
-          ),
-        ],
-      ),
-    );
-    if (!mounted) return;
-    if (discard == true) {
-      ref.read(playerProfileProvider.notifier).reset();
-      Navigator.of(context).maybePop();
-    }
+    final confirmed = await confirmPlayerLeave(context, ref);
+    if (!confirmed || !mounted) return;
+    final router = GoRouter.of(context);
+    final navigator = AppNavigationScope.navigatorOf(context);
+    await navigator.goBack(router);
   }
 
   Future<void> _deletePreset(PlayerPalettePreset preset) async {

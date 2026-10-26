@@ -11,11 +11,17 @@ class GameSetupAction extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     this.primary = false,
+    this.imageAsset,
+    this.showTrailing = true,
+    this.marioLabel = false,
   });
   final String label;
   final IconData icon;
   final VoidCallback? onPressed;
   final bool primary;
+  final String? imageAsset;
+  final bool showTrailing;
+  final bool marioLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -47,19 +53,31 @@ class GameSetupAction extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      MarioGameIcon(icon, color: foreground, size: 22),
+                      if (imageAsset != null)
+                        Image.asset(
+                          imageAsset!,
+                          width: 30,
+                          height: 30,
+                          filterQuality: FilterQuality.low,
+                          excludeFromSemantics: true,
+                        )
+                      else
+                        MarioGameIcon(icon, color: foreground, size: 22),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           retro.displayLabel(label),
-                          style: retro.heading(
-                            size: 15,
-                            color: foreground,
-                            height: 1.3,
-                          ),
+                          style: marioLabel
+                              ? TextStyle(
+                                  fontFamily: 'TypefaceMario64',
+                                  fontSize: 15,
+                                  color: foreground,
+                                  height: 1.3,
+                                )
+                              : retro.heading(color: foreground, size: 15),
                         ),
                       ),
-                      if (primary) ...[
+                      if (primary && showTrailing) ...[
                         const SizedBox(width: 8),
                         MarioMenuGlyph(
                           retro: retro,

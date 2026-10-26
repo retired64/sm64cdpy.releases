@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/background_install_service.dart';
 import '../providers/installation_library_provider.dart';
 import '../providers/mod_providers.dart';
+import 'app_navigation_scope.dart';
 import 'app_snackbar.dart';
 
 class InstallationLibraryCard extends ConsumerWidget {
@@ -251,7 +252,7 @@ class InstallationLibraryCard extends ConsumerWidget {
     if (status == InstallationVerificationStatus.permissionRevoked ||
         status == InstallationVerificationStatus.folderNotSelected) {
       return OutlinedButton.icon(
-        onPressed: () => context.go('/settings'),
+        onPressed: () => openLinkedDestination(context, '/settings'),
         icon: const MarioGameIcon(Icons.folder_open_rounded, size: 18),
         label: Text(l10n.installationSelectFolder),
       );
@@ -271,7 +272,7 @@ class InstallationLibraryCard extends ConsumerWidget {
         if (record.section == 'mods') {
           context.push(route);
         } else {
-          context.go(route);
+          openPrimaryDestination(context, route);
         }
       },
       icon: MarioGameIcon(
@@ -347,7 +348,7 @@ class InstallationUpdateCard extends StatelessWidget {
                 if (update.installed.section == 'mods') {
                   context.push(update.available.route);
                 } else {
-                  context.go(update.available.route);
+                  openPrimaryDestination(context, update.available.route);
                 }
               },
               icon: const MarioGameIcon(

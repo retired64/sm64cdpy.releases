@@ -16,19 +16,30 @@ import '../../presentation/screens/mod_detail_screen.dart';
 import '../../presentation/screens/popular_screen.dart';
 import '../../presentation/screens/player_screen.dart';
 import '../../presentation/screens/settings_screen.dart';
+import '../../presentation/screens/permissions_access_screen.dart';
 import '../../presentation/screens/touch_controls_screen.dart';
 import '../../presentation/screens/vip_mods_screen.dart';
 import '../../presentation/screens/omm_rebirth_screen.dart';
 import '../../presentation/screens/render96_screen.dart';
 import '../../presentation/widgets/app_shell.dart';
+import '../navigation/app_navigation_policy.dart';
 import 'page_transitions.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     ShellRoute(
-      builder: (context, state, child) =>
-          AppShell(currentRoute: state.uri.path, child: child),
+      builder: (context, state, child) {
+        final isSecondary =
+            state.extra is AppSecondaryDestination ||
+            AppNavigationPolicy.isSecondaryLocation(state.uri);
+        return AppShell(
+          currentRoute: state.uri.path,
+          currentUri: state.uri,
+          isSecondary: isSecondary,
+          child: child,
+        );
+      },
       routes: [
         GoRoute(path: '/', pageBuilder: (_, s) => _page(const HomeScreen(), s)),
         GoRoute(
@@ -71,6 +82,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/settings',
           pageBuilder: (_, s) => _page(const SettingsScreen(), s),
+        ),
+        GoRoute(
+          path: '/settings/permissions',
+          pageBuilder: (_, s) => _page(const PermissionsAccessScreen(), s),
         ),
         GoRoute(
           path: '/how-to-play',

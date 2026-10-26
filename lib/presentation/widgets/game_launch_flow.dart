@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../services/game_launcher_service.dart';
+import 'app_navigation_scope.dart';
 import 'app_snackbar.dart';
 import 'game_setup_widgets.dart';
 
@@ -25,5 +25,7 @@ Future<void> launchGameWithGuide(BuildContext context) async {
     cancel: l10n.playGuideLater,
     icon: Icons.sports_esports_outlined,
   );
-  if (context.mounted && openGuide == true) context.go('/how-to-play');
+  if (context.mounted && openGuide == true) {
+    openSecondaryDestination(context, '/how-to-play');
+  }
 }

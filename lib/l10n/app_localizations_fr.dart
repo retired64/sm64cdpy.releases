@@ -3015,4 +3015,96 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get favEmptyActionHint =>
       'Touchez ♥ sur une carte pour l’enregistrer ici.';
+
+  @override
+  String get guidedSetupWelcomeTitle => 'Bienvenue';
+
+  @override
+  String get guidedSetupWelcomeBody =>
+      'Préparons l’essentiel en quelques étapes claires. Vous gardez le contrôle et pourrez accorder les accès facultatifs plus tard.';
+
+  @override
+  String guidedSetupProgress(int current, int total) {
+    return 'Étape $current sur $total';
+  }
+
+  @override
+  String get guidedSetupStart => 'Commencer';
+
+  @override
+  String get guidedSetupLater => 'Plus tard';
+
+  @override
+  String get guidedSetupDoneTitle => 'Tout est prêt';
+
+  @override
+  String get guidedSetupDoneBody =>
+      'La configuration de base est terminée. Les accès facultatifs restent disponibles dans les paramètres.';
+
+  @override
+  String get guidedSetupFinish => 'Terminer';
+
+  @override
+  String get permissionCenterTitle => 'Autorisations et accès';
+
+  @override
+  String get permissionCenterSubtitle =>
+      'Vérifiez ce que l’application utilise et pourquoi';
+
+  @override
+  String get permissionCenterIntro =>
+      'N’accordez un accès que lorsque son utilité est claire. Les accès facultatifs sont demandés en contexte et leur état vient d’Android.';
+
+  @override
+  String get permissionStatusAllowed => 'Autorisé';
+
+  @override
+  String get permissionStatusNotAllowed => 'Non autorisé';
+
+  @override
+  String get permissionStatusOptional => 'Facultatif · vérification';
+
+  @override
+  String get permissionManage => 'Gérer';
+
+  @override
+  String get permissionFolderDescription =>
+      'Permet de trouver, installer et gérer les mods et fichiers du joueur dans le dossier choisi.';
+
+  @override
+  String get permissionNotificationsDescription =>
+      'Affiche la progression des téléchargements et installations. Demandé uniquement si nécessaire.';
+
+  @override
+  String get permissionAllFilesDescription =>
+      'Installation rapide facultative sur les appareils compatibles. L’accès au dossier fonctionne sans elle.';
+
+  @override
+  String get permissionOverlayDescription =>
+      'Bulle de téléchargement facultative au-dessus des autres applications.';
+
+  @override
+  String get permissionBatteryDescription =>
+      'Facultatif pour maintenir les longues sessions de jeu en arrière-plan.';
+
+  @override
+  String get permissionUpdatesTitle => 'Installer les mises à jour';
+
+  @override
+  String get permissionUpdatesDescription =>
+      'Android demande cet accès spécial uniquement lors de l’installation d’une mise à jour.';
+
+  @override
+  String get permissionNetworkTitle => 'Réseau et Jouer';
+
+  @override
+  String get permissionNetworkDescription =>
+      'Internet alimente le catalogue et les sessions en ligne. Jouer demande votre accord avant la connexion.';
+
+  @override
+  String get permissionRunGuide => 'Relancer la configuration guidée';
+
+  @override
+  String get permissionRunGuideDescription =>
+      'Rouvre les étapes sans modifier directement les autorisations Android.';
 }

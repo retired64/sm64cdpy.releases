@@ -2,10 +2,10 @@ import '../widgets/manga_switch.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/game_save_provider.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/manga_deluxe_screen_visuals.dart';
@@ -239,7 +239,8 @@ class _GameSaveScreenState extends ConsumerState<GameSaveScreen>
                           child: Text(l.playerRetry),
                         ),
                         TextButton(
-                          onPressed: () => context.go('/settings'),
+                          onPressed: () =>
+                              openPrimaryDestination(context, '/settings'),
                           child: Text(l.settingsTitle),
                         ),
                       ],

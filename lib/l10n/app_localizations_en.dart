@@ -2977,4 +2977,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get favEmptyActionHint => 'Tap ♥ on a card to save it here.';
+
+  @override
+  String get guidedSetupWelcomeTitle => 'Welcome';
+
+  @override
+  String get guidedSetupWelcomeBody =>
+      'Great to see you here! Let\'s get your mod adventure ready together. You\'ll always stay in control, and optional access can wait until you need it.';
+
+  @override
+  String guidedSetupProgress(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get guidedSetupStart => 'Start';
+
+  @override
+  String get guidedSetupLater => 'Do it later';
+
+  @override
+  String get guidedSetupDoneTitle => 'You\'re ready';
+
+  @override
+  String get guidedSetupDoneBody =>
+      'The basic setup is complete. Optional access remains available in Settings whenever a feature needs it.';
+
+  @override
+  String get guidedSetupFinish => 'Finish';
+
+  @override
+  String get permissionCenterTitle => 'Permissions & access';
+
+  @override
+  String get permissionCenterSubtitle => 'Review what the app can use and why';
+
+  @override
+  String get permissionCenterIntro =>
+      'Only grant access when you understand its purpose. Optional access is requested in context and the app checks Android for the current status.';
+
+  @override
+  String get permissionStatusAllowed => 'Allowed';
+
+  @override
+  String get permissionStatusNotAllowed => 'Not allowed';
+
+  @override
+  String get permissionStatusOptional => 'Optional · checking status';
+
+  @override
+  String get permissionManage => 'Manage';
+
+  @override
+  String get permissionFolderDescription =>
+      'Lets the app find, install and manage mods and player files in the game folder you select.';
+
+  @override
+  String get permissionNotificationsDescription =>
+      'Shows download and installation progress. Requested only when a download needs it.';
+
+  @override
+  String get permissionAllFilesDescription =>
+      'Optional faster installation on compatible Android devices. Folder access continues to work without it.';
+
+  @override
+  String get permissionOverlayDescription =>
+      'Optional floating download bubble displayed over other apps.';
+
+  @override
+  String get permissionBatteryDescription =>
+      'Optional for hosting or joining longer Play sessions while the app is in the background.';
+
+  @override
+  String get permissionUpdatesTitle => 'Install app updates';
+
+  @override
+  String get permissionUpdatesDescription =>
+      'Android asks for this special access only when you choose to install an app update.';
+
+  @override
+  String get permissionNetworkTitle => 'Network & Play';
+
+  @override
+  String get permissionNetworkDescription =>
+      'Internet access powers the catalog and online sessions. Play asks for explicit consent before connecting to its service.';
+
+  @override
+  String get permissionRunGuide => 'Run guided setup again';
+
+  @override
+  String get permissionRunGuideDescription =>
+      'Reopens the welcome steps without changing any Android permission by itself.';
 }

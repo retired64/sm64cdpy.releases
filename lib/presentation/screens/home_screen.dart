@@ -21,6 +21,7 @@ import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
 import '../providers/installation_library_provider.dart';
 import '../widgets/installation_library_card.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -105,7 +106,7 @@ class _HomeBody extends ConsumerWidget {
           child: _SectionHeader(
             title: l10n.homeTopDownloads,
             actionLabel: l10n.homeSeeAll,
-            onAction: () => context.go('/popular'),
+            onAction: () => openPrimaryDestination(context, '/popular'),
           ),
         ),
         SliverToBoxAdapter(
@@ -142,7 +143,7 @@ class _RecentInstallations extends ConsumerWidget {
           _SectionHeader(
             title: l10n.libraryRecent,
             actionLabel: l10n.libraryViewAll,
-            onAction: () => context.go('/library?view=recent'),
+            onAction: () => openPrimaryDestination(context, '/library?view=recent'),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -734,7 +735,7 @@ class _BrowseCardState extends State<_BrowseCard>
         onTapDown: (_) => _ctrl.forward(),
         onTapUp: (_) {
           _ctrl.value = 0;
-          context.go(widget.route);
+          openPrimaryDestination(context, widget.route);
         },
         onTapCancel: () => _ctrl.reverse(),
         child: ScaleTransition(
@@ -972,7 +973,7 @@ class _ExclusiveCardState extends State<_ExclusiveCard>
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) {
         _ctrl.value = 0;
-        context.go(widget.route);
+        openPrimaryDestination(context, widget.route);
       },
       onTapCancel: () => _ctrl.reverse(),
       child: ScaleTransition(

@@ -19,6 +19,7 @@ import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
 import '../providers/auto_install_provider.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/appearance_selector.dart';
@@ -85,8 +86,14 @@ class SettingsScreen extends ConsumerWidget {
                 japanese: 'ゲーム連携',
               ),
               const SizedBox(height: 10),
+              _SettingsTile(
+                icon: Icons.admin_panel_settings_outlined,
+                title: l10n.permissionCenterTitle,
+                subtitle: l10n.permissionCenterSubtitle,
+                onTap: () =>
+                    openSecondaryDestination(context, '/settings/permissions'),
+              ),
               const GameFolderCard(),
-              const _FastInstallTile(),
               _AutoInstallToggle(),
               _OverlayToggle(),
 
