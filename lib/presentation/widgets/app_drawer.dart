@@ -6,22 +6,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/category_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../presentation/providers/mod_providers.dart';
 import '../../presentation/providers/extra_providers.dart';
 import '../../services/update_service.dart';
+import 'app_navigation_scope.dart';
 
 const Duration _kItemDuration = Duration(milliseconds: 150);
-const Duration _kNavDelay = Duration.zero;
 const Curve _kCurve = Curves.easeOutCubic;
 
-void _navigateTo(BuildContext context, String route) {
+Future<void> _navigateTo(BuildContext context, String route) async {
+  final router = GoRouter.of(context);
+  final navigator = AppNavigationScope.navigatorOf(context);
   if (route == '/game-tool/play-2p2') {
     unawaited(HapticFeedback.selectionClick());
   }
   Navigator.of(context).pop();
-  if (context.mounted) context.go(route);
+  if (!await navigator.allowLeave()) return;
+  navigator.openPrimary(router, route);
+}
+
+Future<void> _openCatalogue(GoRouter router, AppNavigator navigator) async {
+  if (!await navigator.allowLeave()) return;
+  navigator.openPrimary(router, '/catalogue');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -590,7 +599,7 @@ class _NavItem extends StatelessWidget {
       child: InkWell(
         onTap: isActive
             ? () => Navigator.of(context).pop()
-            : () => _navigateTo(context, route),
+            : () => unawaited(_navigateTo(context, route)),
         child: Container(
           constraints: BoxConstraints(minHeight: isTopLevel ? 52 : 48),
           margin: EdgeInsets.symmetric(
@@ -804,6 +813,8 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
       onTapCancel: () => _pressCtrl.reverse(),
       onTapUp: (_) {
         _pressCtrl.reverse();
+        final router = GoRouter.of(context);
+        final navigator = AppNavigationScope.navigatorOf(context);
         Navigator.of(context).pop();
         final notifier = ref.read(selectedCategoryProvider.notifier);
         if (isSelected) {
@@ -814,9 +825,7 @@ class _CategoryItemState extends ConsumerState<_CategoryItem>
           ref.read(searchQueryProvider.notifier).clear();
         }
         if (currentRoute != '/catalogue') {
-          Future.delayed(_kNavDelay, () {
-            if (context.mounted) context.go('/catalogue');
-          });
+          unawaited(_openCatalogue(router, navigator));
         }
       },
       child: ScaleTransition(
@@ -1016,13 +1025,13 @@ class _SortItemState extends ConsumerState<_SortItem>
       onTapCancel: () => _pressCtrl.reverse(),
       onTapUp: (_) {
         _pressCtrl.reverse();
+        final router = GoRouter.of(context);
+        final navigator = AppNavigationScope.navigatorOf(context);
         Navigator.of(context).pop();
         ref.read(sortOrderProvider.notifier).setSortOrder(widget.value);
         ref.read(currentPageProvider.notifier).setPage(0);
         if (currentRoute != '/catalogue') {
-          Future.delayed(_kNavDelay, () {
-            if (context.mounted) context.go('/catalogue');
-          });
+          unawaited(_openCatalogue(router, navigator));
         }
       },
       child: ScaleTransition(

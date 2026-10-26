@@ -1,6 +1,6 @@
+import 'app_navigation_scope.dart';
 import 'game_launch_flow.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
@@ -100,7 +100,7 @@ Future<void> showPostInstallDialog(BuildContext context) async {
   );
   if (!context.mounted) return;
   if (action == 'guide') {
-    context.go('/how-to-play');
+    openSecondaryDestination(context, '/how-to-play');
   } else if (action == 'launch') {
     await launchGameWithGuide(context);
   }

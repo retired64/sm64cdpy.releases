@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:floaty_chatheads/floaty_chatheads.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../core/constants/app_constants.dart';
@@ -20,6 +19,7 @@ import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
 import '../providers/auto_install_provider.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/appearance_selector.dart';
@@ -90,7 +90,8 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Icons.admin_panel_settings_outlined,
                 title: l10n.permissionCenterTitle,
                 subtitle: l10n.permissionCenterSubtitle,
-                onTap: () => context.go('/settings/permissions'),
+                onTap: () =>
+                    openSecondaryDestination(context, '/settings/permissions'),
               ),
               const GameFolderCard(),
               _AutoInstallToggle(),

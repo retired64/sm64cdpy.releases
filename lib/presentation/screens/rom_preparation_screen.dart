@@ -29,9 +29,7 @@ class RomPreparationScreen extends StatelessWidget {
             ),
             children: [
               RomPreparationPanel(
-                onContinueGuide: fromGuide
-                    ? () => context.go('/how-to-play?step=2')
-                    : null,
+                onContinueGuide: fromGuide ? () => context.pop(true) : null,
               ),
             ],
           ),

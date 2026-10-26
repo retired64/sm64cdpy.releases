@@ -6,7 +6,6 @@ import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -20,6 +19,7 @@ import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/extra_providers.dart';
 import '../providers/installation_action_provider.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/dynos_install_flow.dart';
@@ -207,12 +207,14 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
       if (isDynosMod) {
         if (!mounted) return;
         final goToSettings = await showDynosFolderRequiredDialog(context);
-        if (goToSettings && mounted) GoRouter.of(context).go('/settings');
+        if (goToSettings && mounted) {
+          openPrimaryDestination(context, '/settings');
+        }
         return;
       } else if (mounted) {
         final goToSettings = await showModsFolderRequiredDialog(context);
         if (goToSettings && mounted) {
-          GoRouter.of(context).go('/settings');
+          openPrimaryDestination(context, '/settings');
         }
         return;
       }
@@ -361,7 +363,7 @@ class _OmmRebirthCardState extends ConsumerState<OmmRebirthCard>
                   context,
                 );
                 if (goToSettings && mounted) {
-                  GoRouter.of(context).go('/settings');
+                  openPrimaryDestination(context, '/settings');
                 }
                 if (mounted) {
                   setState(() {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/deluxe_links.dart';
 import '../providers/deluxe_visual_provider.dart';
+import 'app_navigation_scope.dart';
 import 'app_snackbar.dart';
 
 Future<void> _open(BuildContext context, String url) async {
@@ -87,7 +87,7 @@ class _DeluxeWelcomePanelState extends ConsumerState<DeluxeWelcomePanel> {
           const SizedBox(height: 8),
           Wrap(spacing: 8, runSpacing: 4, children: [
             FilledButton.icon(
-              onPressed: _saving ? null : () => context.go('/how-to-play'),
+              onPressed: _saving ? null : () => openSecondaryDestination(context, '/how-to-play'),
               icon: const Icon(Icons.menu_book_outlined, size: 18),
               label: Text(l.playGuideTitle),
             ),
@@ -110,7 +110,9 @@ class _DeluxeWelcomePanelState extends ConsumerState<DeluxeWelcomePanel> {
 
 /// Ayuda local y rutas existentes: no replica el flujo de ROM/carpeta del juego.
 class DeluxeHelpPanel extends StatelessWidget {
-  const DeluxeHelpPanel({super.key});
+  const DeluxeHelpPanel({super.key, this.onOpenLocation});
+
+  final ValueChanged<String>? onOpenLocation;
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
@@ -131,10 +133,23 @@ class DeluxeHelpPanel extends StatelessWidget {
             children: [Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(item.$2, style: retro.body(size: 14)),
-                TextButton(onPressed: () => context.go(item.$3), child: Text(l.deluxeOpenGuide)),
+                TextButton(
+                  onPressed: () {
+                    final callback = onOpenLocation;
+                    if (callback != null) {
+                      callback(item.$3);
+                    } else if (item.$3 == '/library') {
+                      openPrimaryDestination(context, item.$3);
+                    } else {
+                      openSecondaryDestination(context, item.$3);
+                    }
+                  },
+                  child: Text(l.deluxeOpenGuide),
+                ),
               ]))]),
         Padding(padding: const EdgeInsets.all(12), child: Wrap(spacing: 8, runSpacing: 8, children: [
-          OutlinedButton.icon(onPressed: () => context.go('/links-resource'),
+          OutlinedButton.icon(
+            onPressed: () => openPrimaryDestination(context, '/links-resource'),
             icon: const Icon(Icons.people_outline), label: Text(l.deluxeCommunity)),
           OutlinedButton.icon(onPressed: () => _open(context, DeluxeLinks.gameReleases),
             icon: const Icon(Icons.new_releases_outlined), label: Text(l.deluxeGameNews)),

@@ -8,8 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../core/theme/themes/mario64_theme.dart';
 import '../../l10n/app_localizations.dart';
-import '../providers/player_profile_provider.dart';
 import '../providers/manga_menu_audio_provider.dart';
+import 'app_navigation_scope.dart';
 import 'app_snackbar.dart';
 import 'manga_submenu_header.dart';
 import 'mario_multicolor_label.dart';
@@ -90,34 +90,6 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
     super.dispose();
   }
 
-  Future<bool> _canLeave() async {
-    if (widget.currentRoute != '/player') return true;
-    final profile = ref.read(playerProfileProvider);
-    if (profile.busy) return false;
-    if (!profile.dirty) return true;
-    final l = AppLocalizations.of(context);
-    final discard = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l.playerUnsavedTitle),
-        content: Text(l.playerUnsavedBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l.playerKeepEditing),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l.playerDiscard),
-          ),
-        ],
-      ),
-    );
-    if (!mounted || discard != true) return false;
-    ref.read(playerProfileProvider.notifier).reset();
-    return true;
-  }
-
   Future<void> _select(int index) async {
     if (_busy) return;
     unawaited(ref.read(mangaMenuSoundsProvider.notifier).play('press'));
@@ -139,12 +111,14 @@ class _MangaNavigationBarState extends ConsumerState<MangaNavigationBar> {
         widget.onDestinationSelected?.call();
         return;
       }
-      if (!await _canLeave() || !mounted) return;
+      final router = GoRouter.of(context);
+      final navigator = AppNavigationScope.navigatorOf(context);
+      if (!await navigator.allowLeave() || !mounted) return;
       FocusManager.instance.primaryFocus?.unfocus();
       if (route == '/game-tool/play-2p2') {
         unawaited(HapticFeedback.selectionClick());
       }
-      context.go(route);
+      navigator.openPrimary(router, route);
       widget.onDestinationSelected?.call();
     } catch (_) {
       if (mounted) {

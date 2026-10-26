@@ -14,5 +14,6 @@
 - Show Touch Controls creator credits, including favorites, with `Release Soon` as the safe fallback.
 - Classify the Android application as a game with `android:appCategory="game"`.
 - Keep technical diagnostics behind user actions and add regression coverage for navigation, localization, ROM preparation, Play, caching, themes and media metadata.
+- Make Android Back, the classic drawer and the Retro Manga menu share one in-memory main-destination history, with secondary screens pushed, a coherent themed Back arrow and Player draft protection preserved.
 
 The floating overlay language remains unchanged in 1.9.0. Publication, tag creation and the final physical-device matrix are still pending.

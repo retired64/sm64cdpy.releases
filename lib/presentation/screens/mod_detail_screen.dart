@@ -8,7 +8,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,6 +27,7 @@ import '../../services/download_url_resolver.dart';
 import '../../services/mod_installer.dart';
 import '../providers/mod_providers.dart';
 import '../providers/installation_action_provider.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/post_install_dialog.dart';
 import '../widgets/installation_action_presentation.dart';
@@ -1205,7 +1205,7 @@ class _BuildDownloadButtonState extends ConsumerState<_BuildDownloadButton>
       if (autoInstall && mounted) {
         final goToSettings = await showModsFolderRequiredDialog(context);
         if (goToSettings && mounted) {
-          GoRouter.of(context).go('/settings');
+          openLinkedDestination(context, '/settings');
         }
         return;
       }
@@ -1628,7 +1628,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       if (autoInstall && mounted) {
         final goToSettings = await showModsFolderRequiredDialog(context);
         if (goToSettings && mounted) {
-          GoRouter.of(context).go('/settings');
+          openLinkedDestination(context, '/settings');
         }
         return;
       }

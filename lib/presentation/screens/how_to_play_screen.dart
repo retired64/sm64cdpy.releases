@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
@@ -12,6 +11,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/game_launcher_service.dart';
 import '../providers/game_folder_provider.dart';
 import '../providers/extra_providers.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/game_folder_card.dart';
@@ -471,9 +471,18 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                       action(
                                         l10n.romPrepareChoose,
                                         Icons.swap_horiz,
-                                        () async => context.push(
-                                          '/game-tool/rom-preparer?from=guide',
-                                        ),
+                                        () async {
+                                          final continued =
+                                              await pushSecondaryDestination<
+                                                bool
+                                              >(
+                                                context,
+                                                '/game-tool/rom-preparer?from=guide',
+                                              );
+                                          if (continued == true && mounted) {
+                                            _select(2);
+                                          }
+                                        },
                                         primary: true,
                                       ),
                                     ],
@@ -507,7 +516,10 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                         : Icons.folder_open_rounded,
                                     () async {
                                       if (connected) {
-                                        context.go('/library?view=game-mods');
+                                        openPrimaryDestination(
+                                          context,
+                                          '/library?view=game-mods',
+                                        );
                                       } else {
                                         await connectGameFolder(context, ref);
                                       }
@@ -532,7 +544,10 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                     l10n.playGuideLibrary,
                                     Icons.inventory_2_outlined,
                                     () async {
-                                      context.go('/library?view=game-mods');
+                                      openPrimaryDestination(
+                                        context,
+                                        '/library?view=game-mods',
+                                      );
                                     },
                                     primary: true,
                                   ),
@@ -602,7 +617,22 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen>
                                         : null,
                                   ),
                                 if (retro.isDeluxe && index == 5)
-                                  const DeluxeHelpPanel(),
+                                  DeluxeHelpPanel(
+                                    onOpenLocation: (location) {
+                                      final uri = Uri.parse(location);
+                                      if (uri.path == '/how-to-play') {
+                                        final step = int.tryParse(
+                                          uri.queryParameters['step'] ?? '',
+                                        );
+                                        if (step != null) _select(step);
+                                      } else {
+                                        openPrimaryDestination(
+                                          context,
+                                          location,
+                                        );
+                                      }
+                                    },
+                                  ),
                               ],
                             ),
                           ),

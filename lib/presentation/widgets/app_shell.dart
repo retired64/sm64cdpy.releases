@@ -1,25 +1,41 @@
+import 'dart:async';
+
 import 'deluxe_backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/navigation/app_navigation_policy.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/retro_accent.dart';
 import '../../core/theme/retro_theme.dart';
 import '../../services/guided_setup_service.dart';
 import '../providers/auto_install_provider.dart';
 import '../providers/extra_providers.dart';
 import '../providers/game_folder_provider.dart';
+import '../providers/navigation_provider.dart';
 import 'app_drawer.dart';
+import 'app_navigation_scope.dart';
+import 'guided_setup_flow.dart';
 import 'manga_navigation_dock.dart';
 import 'manga_navigation_scope.dart';
-import 'guided_setup_flow.dart';
+import 'player_leave_guard.dart';
 
 const _noHalftoneRoutes = {'/', '/favourites', '/disclaimer'};
 
 class AppShell extends ConsumerStatefulWidget {
-  const AppShell({super.key, required this.currentRoute, required this.child});
+  const AppShell({
+    super.key,
+    required this.currentRoute,
+    required this.child,
+    this.currentUri,
+    this.isSecondary,
+  });
 
   final String currentRoute;
   final Widget child;
+  final Uri? currentUri;
+  final bool? isSecondary;
 
   @override
   ConsumerState<AppShell> createState() => _AppShellState();
@@ -28,8 +44,66 @@ class AppShell extends ConsumerStatefulWidget {
 class _AppShellState extends ConsumerState<AppShell> {
   final ScrollController _drawerScrollController = ScrollController();
   final PageStorageBucket _pageStorage = PageStorageBucket();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final Future<bool> Function() _leaveGuard;
+  late final AppNavigator _navigator;
+  Listenable? _routerDelegate;
   bool _setupFlowScheduled = false;
   bool _setupFlowRunning = false;
+
+  Uri get _uri => widget.currentUri ?? Uri.parse(widget.currentRoute);
+  bool get _isSecondary =>
+      widget.isSecondary ?? AppNavigationPolicy.isSecondaryLocation(_uri);
+
+  Future<bool> _allowLeave() async {
+    if (widget.currentRoute != '/player') return true;
+    return confirmPlayerLeave(context, ref);
+  }
+
+  void _syncNavigation() {
+    _navigator.syncActive(_uri, isSecondary: _isSecondary);
+  }
+
+  void _syncRouteProjection() {
+    if (!mounted) return;
+    ref
+        .read(currentRouteProvider.notifier)
+        .set(GoRouter.of(context).state.uri.path);
+  }
+
+  Future<bool> _handleBack() async {
+    final scaffold = _scaffoldKey.currentState;
+    if (scaffold != null && scaffold.isDrawerOpen) {
+      scaffold.closeDrawer();
+      return true;
+    }
+    return _navigator.handleSystemBack(
+      GoRouter.of(context),
+      isSecondary: _isSecondary,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _navigator = ref.read(appNavigatorProvider);
+    _leaveGuard = _allowLeave;
+    _navigator.registerLeaveGuard(_leaveGuard);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _syncNavigation();
+      ref.read(currentRouteProvider.notifier).set(widget.currentRoute);
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_routerDelegate != null) return;
+    final delegate = GoRouter.of(context).routerDelegate;
+    _routerDelegate = delegate;
+    delegate.addListener(_syncRouteProjection);
+  }
 
   void _scheduleSetupFlow(AutoInstallSettings autoInstall) {
     if (widget.currentRoute != '/' ||
@@ -65,6 +139,8 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   @override
   void dispose() {
+    _routerDelegate?.removeListener(_syncRouteProjection);
+    _navigator.unregisterLeaveGuard(_leaveGuard);
     _drawerScrollController.dispose();
     super.dispose();
   }
@@ -72,10 +148,10 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   void didUpdateWidget(covariant AppShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.currentRoute != oldWidget.currentRoute) {
-      Future.microtask(() {
-        ref.read(currentRouteProvider.notifier).set(widget.currentRoute);
-      });
+    if (widget.currentRoute != oldWidget.currentRoute ||
+        widget.currentUri != oldWidget.currentUri ||
+        widget.isSecondary != oldWidget.isSecondary) {
+      _syncNavigation();
     }
   }
 
@@ -98,6 +174,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     // El viewport debe llegar detrás de la navegación; la separación final
     // pertenece al contenido desplazable, no al tamaño de la pantalla.
     final scaffold = Scaffold(
+      key: _scaffoldKey,
       extendBody: bottomNavigation,
       backgroundColor: retro.background,
       drawer: bottomNavigation
@@ -140,12 +217,19 @@ class _AppShellState extends ConsumerState<AppShell> {
         ),
       ),
     );
-    return bottomNavigation
-        ? MangaNavigationDock(
-            currentRoute: widget.currentRoute,
-            child: scaffold,
-          )
-        : MangaNavigationScope(enabled: false, child: scaffold);
+    return AppNavigationScope(
+      navigator: _navigator,
+      isSecondary: _isSecondary,
+      child: BackButtonListener(
+        onBackButtonPressed: _handleBack,
+        child: bottomNavigation
+            ? MangaNavigationDock(
+                currentRoute: widget.currentRoute,
+                child: scaffold,
+              )
+            : MangaNavigationScope(enabled: false, child: scaffold),
+      ),
+    );
   }
 }
 
@@ -180,22 +264,71 @@ class DrawerMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (MangaNavigationScope.of(context)) return const SizedBox.shrink();
+    return _NavigationSurfaceButton(
+      icon: icon,
+      tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+      color: color,
+      size: size,
+      surfaceKey: const ValueKey('drawer-menu-surface'),
+      onPressed: () => Scaffold.of(context).openDrawer(),
+    );
+  }
+}
+
+class AppBackButton extends StatelessWidget {
+  const AppBackButton({super.key, this.color, this.size = 22});
+
+  final Color? color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return _NavigationSurfaceButton(
+      icon: Icons.arrow_back_rounded,
+      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+      color: color,
+      size: size,
+      surfaceKey: const ValueKey('app-back-surface'),
+      onPressed: () {
+        final router = GoRouter.of(context);
+        final navigator = AppNavigationScope.navigatorOf(context);
+        unawaited(navigator.goBack(router));
+      },
+    );
+  }
+}
+
+class _NavigationSurfaceButton extends StatelessWidget {
+  const _NavigationSurfaceButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+    required this.surfaceKey,
+    this.color,
+    this.size = 22,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+  final Key surfaceKey;
+  final Color? color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final decoration = retro.surfaceDecoration(
       shadowDx: retro.borderWidth(2),
       shadowDy: retro.borderWidth(2),
     );
-    // La madera y los paneles comparten los materiales del resto de la app.
     final background = retro.usesMinimalSurfaces
         ? retro.background
         : decoration.color ?? retro.background;
     final requestedColor = color ?? retro.ink;
-    // Los colores de sección se conservan solo si siguen siendo legibles.
     final foreground = RetroAccent.contrast(requestedColor, background) >= 3
         ? requestedColor
         : retro.onColor(background);
-    // Reserva espacio para el borde, la sombra y la inclinación sin transformar
-    // el área táctil ni invadir el título o el límite superior de la barra.
     final inset =
         retro.borderWidth(3) +
         retro.chipSkew.abs() * kMinInteractiveDimension / 2;
@@ -216,15 +349,14 @@ class DrawerMenuButton extends StatelessWidget {
                     alignment: Alignment.center,
                     transform: Matrix4.skewX(-retro.chipSkew),
                     child: DecoratedBox(
-                      key: const ValueKey('drawer-menu-surface'),
+                      key: surfaceKey,
                       decoration: decoration,
                     ),
                   ),
                 ),
               ),
-            // Solo se inclina el material: el icono y su semántica quedan rectos.
             IconButton(
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              tooltip: tooltip,
               constraints: const BoxConstraints.tightFor(
                 width: kMinInteractiveDimension,
                 height: kMinInteractiveDimension,
@@ -240,7 +372,7 @@ class DrawerMenuButton extends StatelessWidget {
                 backgroundColor: Colors.transparent,
               ),
               icon: MarioGameIcon(icon, color: foreground, size: size),
-              onPressed: () => Scaffold.of(context).openDrawer(),
+              onPressed: onPressed,
             ),
           ],
         ),
@@ -274,6 +406,12 @@ class RetroPinnedAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
     final bottomNavigation = MangaNavigationScope.of(context);
+    final secondary = AppNavigationScope.maybeOf(context)?.isSecondary ?? false;
+    final leading = secondary
+        ? AppBackButton(color: leadingColor)
+        : bottomNavigation
+        ? null
+        : DrawerMenuButton(color: leadingColor);
 
     return SliverAppBar(
       pinned: true,
@@ -295,10 +433,10 @@ class RetroPinnedAppBar extends StatelessWidget {
               ),
             )
           : null,
-      automaticallyImplyLeading: !bottomNavigation,
-      leadingWidth: bottomNavigation ? null : 56,
-      leading: bottomNavigation ? null : DrawerMenuButton(color: leadingColor),
-      titleSpacing: bottomNavigation ? 16 : 0,
+      automaticallyImplyLeading: false,
+      leadingWidth: leading == null ? null : 56,
+      leading: leading,
+      titleSpacing: leading == null ? 16 : 0,
       title: title,
       actions: actions,
       bottom: bottom,
@@ -323,6 +461,7 @@ class RetroFixedHeaderView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retro = RetroTheme.of(context);
+    final secondary = AppNavigationScope.maybeOf(context)?.isSecondary ?? false;
 
     return Column(
       children: [
@@ -343,7 +482,9 @@ class RetroFixedHeaderView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                if (MangaNavigationScope.of(context))
+                if (secondary)
+                  AppBackButton(color: leadingColor)
+                else if (MangaNavigationScope.of(context))
                   const SizedBox(width: 16)
                 else
                   DrawerMenuButton(color: leadingColor),

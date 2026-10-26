@@ -9,6 +9,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/mod_providers.dart';
 import '../providers/extra_providers.dart';
+import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/manga_deluxe_screen_visuals.dart';
 import '../widgets/mod_card.dart';
@@ -314,7 +315,7 @@ class _EmptyFavourites extends StatelessWidget {
           Text(l10n.favEmptyActionHint, style: retro.body(size: 13)),
           const SizedBox(height: 24),
           GestureDetector(
-            onTap: () => context.go(switch (type) {
+            onTap: () => openPrimaryDestination(context, switch (type) {
               _FavouriteSection.mods => '/',
               _FavouriteSection.vip => '/vip',
               _FavouriteSection.dynos => '/dynos',

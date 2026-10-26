@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/installation_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/background_install_service.dart';
 import '../providers/installation_library_provider.dart';
+import 'app_navigation_scope.dart';
 
 extension InstallationActionPresentation on InstallationPrimaryAction {
   String label(AppLocalizations l10n) => switch (this) {
@@ -49,7 +49,7 @@ Future<void> runCanonicalInstallationAction({
           .read(installationLibraryProvider.notifier)
           .verifyArtifact(state.identity.artifactKey);
     case InstallationPrimaryAction.selectFolder:
-      if (context.mounted) context.go('/settings');
+      if (context.mounted) openLinkedDestination(context, '/settings');
     case InstallationPrimaryAction.download:
     case InstallationPrimaryAction.install:
     case InstallationPrimaryAction.update:

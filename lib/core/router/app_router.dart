@@ -22,14 +22,24 @@ import '../../presentation/screens/vip_mods_screen.dart';
 import '../../presentation/screens/omm_rebirth_screen.dart';
 import '../../presentation/screens/render96_screen.dart';
 import '../../presentation/widgets/app_shell.dart';
+import '../navigation/app_navigation_policy.dart';
 import 'page_transitions.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     ShellRoute(
-      builder: (context, state, child) =>
-          AppShell(currentRoute: state.uri.path, child: child),
+      builder: (context, state, child) {
+        final isSecondary =
+            state.extra is AppSecondaryDestination ||
+            AppNavigationPolicy.isSecondaryLocation(state.uri);
+        return AppShell(
+          currentRoute: state.uri.path,
+          currentUri: state.uri,
+          isSecondary: isSecondary,
+          child: child,
+        );
+      },
       routes: [
         GoRoute(path: '/', pageBuilder: (_, s) => _page(const HomeScreen(), s)),
         GoRoute(
