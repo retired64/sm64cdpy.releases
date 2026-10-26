@@ -7,6 +7,13 @@ import '../../services/guided_setup_service.dart';
 import '../providers/auto_install_provider.dart';
 import '../providers/game_folder_provider.dart';
 import 'game_setup_widgets.dart';
+import 'mario_multicolor_label.dart';
+
+const _welcomeAsset = 'assets/themes/manga_deluxe/onboarding/welcome-wave.webp';
+const _startAsset = 'assets/themes/manga_deluxe/onboarding/start.webp';
+const _laterAsset = 'assets/themes/manga_deluxe/onboarding/later.webp';
+const _folderAsset = 'assets/themes/manga/navigation/library.webp';
+const _readyAsset = 'assets/themes/manga/navigation/home-start-game.webp';
 
 Future<void> showGuidedSetupFlow(
   BuildContext context, {
@@ -100,11 +107,11 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
       l.autoInstallPromptBody,
       l.guidedSetupDoneBody,
     ];
-    final icons = [
-      Icons.waving_hand_outlined,
-      Icons.folder_open_rounded,
-      Icons.auto_mode_rounded,
-      Icons.check_circle_outline_rounded,
+    final visualAssets = [
+      _welcomeAsset,
+      _folderAsset,
+      _startAsset,
+      _readyAsset,
     ];
 
     return PopScope(
@@ -147,21 +154,38 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                         backgroundColor: retro.surfaceAlt,
                       ),
                       const SizedBox(height: 28),
-                      MarioGameIcon(
-                        icons[_step],
-                        color: retro.accentText,
-                        size: 46,
+                      Center(
+                        child: Image.asset(
+                          visualAssets[_step],
+                          width: _step == 0 ? 112 : 88,
+                          height: _step == 0 ? 112 : 88,
+                          filterQuality: FilterQuality.low,
+                          excludeFromSemantics: true,
+                        ),
                       ),
                       const SizedBox(height: 18),
-                      MarioGameTitle(
-                        text: titles[_step],
-                        retro: retro,
-                        size: 24,
-                      ),
+                      if (_step == 0)
+                        MarioMulticolorLabel(
+                          label: titles[_step],
+                          fontSize: 28,
+                          keyPrefix: 'guided-welcome-title',
+                        )
+                      else
+                        MarioGameTitle(
+                          text: titles[_step],
+                          retro: retro,
+                          size: 24,
+                        ),
                       const SizedBox(height: 16),
                       Text(
                         bodies[_step],
-                        style: retro.body(size: 17, height: 1.55),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'FamiljenGrotesk',
+                          fontSize: 17,
+                          height: 1.5,
+                          color: retro.ink,
+                        ),
                       ),
                       if (_step == 1) ...[
                         const SizedBox(height: 16),
@@ -198,6 +222,9 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                         GameSetupAction(
                           label: l.guidedSetupStart,
                           icon: Icons.arrow_forward_rounded,
+                          imageAsset: _startAsset,
+                          showTrailing: false,
+                          marioLabel: true,
                           primary: true,
                           onPressed: _busy
                               ? null
@@ -208,6 +235,8 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                           GameSetupAction(
                             label: l.guidedSetupLater,
                             icon: Icons.schedule_rounded,
+                            imageAsset: _laterAsset,
+                            marioLabel: true,
                             onPressed: _busy ? null : _dismiss,
                           ),
                         ],
@@ -215,6 +244,9 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                         GameSetupAction(
                           label: l.gameFolderChoose,
                           icon: Icons.folder_open_rounded,
+                          imageAsset: _folderAsset,
+                          showTrailing: false,
+                          marioLabel: true,
                           primary: true,
                           onPressed: _busy ? null : _connectFolder,
                         ),
@@ -222,12 +254,17 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                         GameSetupAction(
                           label: l.gameFolderLater,
                           icon: Icons.schedule_rounded,
+                          imageAsset: _laterAsset,
+                          marioLabel: true,
                           onPressed: _busy ? null : _skipFolder,
                         ),
                       ] else if (_step == 2) ...[
                         GameSetupAction(
                           label: l.autoInstallPromptEnable,
                           icon: Icons.auto_mode_rounded,
+                          imageAsset: _startAsset,
+                          showTrailing: false,
+                          marioLabel: true,
                           primary: true,
                           onPressed: _busy ? null : () => _setAutoInstall(true),
                         ),
@@ -235,6 +272,8 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                         GameSetupAction(
                           label: l.autoInstallPromptDownloadOnly,
                           icon: Icons.download_outlined,
+                          imageAsset: _laterAsset,
+                          marioLabel: true,
                           onPressed: _busy
                               ? null
                               : () => _setAutoInstall(false),
@@ -243,6 +282,9 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                         GameSetupAction(
                           label: l.guidedSetupFinish,
                           icon: Icons.check_rounded,
+                          imageAsset: _readyAsset,
+                          showTrailing: false,
+                          marioLabel: true,
                           primary: true,
                           onPressed: _busy ? null : _finish,
                         ),

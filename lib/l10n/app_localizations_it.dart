@@ -3004,7 +3004,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get guidedSetupWelcomeBody =>
-      'Prepariamo gli elementi essenziali in pochi passaggi chiari. Mantieni il controllo e puoi concedere gli accessi facoltativi in seguito.';
+      'Che bello averti qui! Prepariamo insieme la tua avventura tra i mod. Mantieni sempre il controllo e gli accessi facoltativi possono aspettare finché non servono.';
 
   @override
   String guidedSetupProgress(int current, int total) {
@@ -3012,7 +3012,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get guidedSetupStart => 'Avvia configurazione';
+  String get guidedSetupStart => 'Inizia';
 
   @override
   String get guidedSetupLater => 'Più tardi';

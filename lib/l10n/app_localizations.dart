@@ -5383,7 +5383,7 @@ abstract class AppLocalizations {
   /// No description provided for @guidedSetupWelcomeBody.
   ///
   /// In en, this message translates to:
-  /// **'Let\'s prepare the essentials in a few clear steps. You stay in control, and optional access can be granted later.'**
+  /// **'Great to see you here! Let\'s get your mod adventure ready together. You\'ll always stay in control, and optional access can wait until you need it.'**
   String get guidedSetupWelcomeBody;
 
   /// No description provided for @guidedSetupProgress.
@@ -5395,7 +5395,7 @@ abstract class AppLocalizations {
   /// No description provided for @guidedSetupStart.
   ///
   /// In en, this message translates to:
-  /// **'Start setup'**
+  /// **'Start'**
   String get guidedSetupStart;
 
   /// No description provided for @guidedSetupLater.

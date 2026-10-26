@@ -3011,7 +3011,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get guidedSetupWelcomeBody =>
-      'Preparemos lo esencial en pocos pasos claros. Tú mantienes el control y puedes conceder los accesos opcionales después.';
+      '¡Qué gusto verte por aquí! Preparemos juntos tu aventura de mods. Tú siempre tendrás el control y los accesos opcionales pueden esperar hasta que los necesites.';
 
   @override
   String guidedSetupProgress(int current, int total) {
@@ -3019,7 +3019,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get guidedSetupStart => 'Iniciar configuración';
+  String get guidedSetupStart => 'Iniciar';
 
   @override
   String get guidedSetupLater => 'Más tarde';
@@ -6106,7 +6106,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get guidedSetupWelcomeBody =>
-      'Preparemos lo esencial en pocos pasos claros. Tú mantienes el control y puedes conceder los accesos opcionales después.';
+      '¡Qué gusto verte por aquí! Preparemos juntos tu aventura de mods. Tú siempre tendrás el control y los accesos opcionales pueden esperar hasta que los necesites.';
 
   @override
   String guidedSetupProgress(int current, int total) {
@@ -6114,7 +6114,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   }
 
   @override
-  String get guidedSetupStart => 'Iniciar configuración';
+  String get guidedSetupStart => 'Iniciar';
 
   @override
   String get guidedSetupLater => 'Más tarde';
