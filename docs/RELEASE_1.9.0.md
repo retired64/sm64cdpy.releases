@@ -1,5 +1,7 @@
 # SM64CDPY 1.9.0 — preparación de release
 
+> Publicada como `v1.9.0`. Se conserva como referencia histórica.
+
 Candidata integrada en `main`: **1.9.0+28**, tomando `v1.8.8` como base. Este
 documento no crea el tag ni publica la release.
 

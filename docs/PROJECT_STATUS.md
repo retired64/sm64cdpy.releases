@@ -1,7 +1,7 @@
 # Estado y próximos pasos
 
-Revisado para la candidata `1.9.0+28` en `main` el 2026-10-25. La
-`1.8.8+27` es la candidata anterior.
+Revisado para la candidata `1.9.1+29` en `main` el 2026-10-25. La
+`1.9.0+28` es la release publicada anterior.
 
 ## Manga Deluxe — 2026-10-22
 
@@ -343,7 +343,29 @@ de administrar todos los archivos; SAF continúa como ruta estándar y fallback.
 Manifiesto canónico: `release-manifests/v1.8.8.json`. Notas EN/ES/PT-BR,
 validación final, APK de prueba y matriz física de permisos/extracción pendientes.
 
-## Candidata 1.9.0+28
+## Candidata 1.9.1+29 — navegación y permisos
+
+Parche de navegación sobre `v1.9.0`. `AppNavigator` y `MainNavigationHistory`
+centralizan el retroceso de los destinos principales: historial en memoria de
+20 entradas, identidad por ruta, query strings conservadas y duplicados
+consecutivos colapsados. Drawer clásico, menú Retro Manga, dock, enlaces internos
+y flecha visual comparten la misma política; los destinos secundarios hacen pop,
+Inicio es el respaldo y la app solo se cierra desde Inicio sin historial. Jugador
+conserva `PopScope`, su diálogo de descarte y el retorno al destino anterior.
+
+El centro Permisos y accesos, dentro de Ajustes, lee el estado real de Android en
+cada visita y al reanudar: carpeta del juego, notificaciones, todos los archivos
+cuando el dispositivo lo soporta, burbuja flotante y batería. El recorrido guiado
+de cuatro pasos aparece una vez en el primer inicio y puede repetirse; solo
+persiste progreso educativo en Hive, nunca el estado de un permiso.
+
+Manifiesto canónico: `release-manifests/v1.9.1.json`. VersionCodes ABI
+`291/292/293`. Validación local: 543 pruebas Flutter, análisis sin problemas,
+manifiesto alineado con `pubspec.yaml` y `git diff --check` limpio. Detalles en
+[RELEASE_1.9.1.md](RELEASE_1.9.1.md). Testing, APK firmado y la matriz física de
+Atrás/permisos siguen pendientes; `publishedAt` es provisional.
+
+## Release 1.9.0+28 — publicada
 
 La candidata integra Play, la guía completa, el preparador local de ROM, Manga
 Deluxe, cachés persistentes, idiomas francés e italiano y descripciones de mods
@@ -362,10 +384,10 @@ descripciones localizadas precalculadas.
 Manifiesto canónico: `release-manifests/v1.9.0.json`. VersionCodes ABI
 `281/282/283`. Validación local previa al cierre: 520 pruebas Flutter, 16
 pruebas de scripts, Kotlin correcto y análisis sin problemas.
-Detalles en [RELEASE_1.9.0.md](RELEASE_1.9.0.md). Testing, APK
-firmado, matriz física de SAF/ROM y revisión visual en dispositivo siguen
-pendientes. `publishedAt` es provisional. La desinstalación segura del roadmap
-no forma parte de esta candidata.
+Detalles en [RELEASE_1.9.0.md](RELEASE_1.9.0.md). Se publicó como `v1.9.0`
+y su manifiesto se conserva como referencia histórica. La matriz física de
+SAF/ROM y la revisión visual en dispositivo siguen pendientes. La
+desinstalación segura del roadmap no forma parte de esa versión.
 
 ## Guía de inicio — rama how-to-play-guide
 

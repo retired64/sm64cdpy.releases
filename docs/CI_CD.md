@@ -1,6 +1,6 @@
 # GitHub Actions y releases
 
-Revisado para 1.8.5 el 2026-10-15.
+Revisado para 1.9.1 el 2026-10-25.
 
 > **Fuente canónica:** la aplicación ya no incluye una pantalla de changelog ni
 > muestra el cuerpo del GitHub Release. Cada lanzamiento tiene un manifiesto
@@ -99,10 +99,10 @@ runner no crea commits. El artifact `flutter-source-sync` permite revisar e
 incorporar el parche de generación/formato cuando el entorno local no dispone
 del SDK completo.
 
-Para probar 1.9.0 después del merge, seleccionar `main` en el workflow manual de testing.
+Para probar 1.9.1 después del merge, seleccionar `main` en el workflow manual de testing.
 Continúan siendo necesarios los secretos de firma existentes. No usar el
 workflow de publicación para obtener una prueba. La candidata actual se
-describe en [RELEASE_1.9.0.md](RELEASE_1.9.0.md).
+describe en [RELEASE_1.9.1.md](RELEASE_1.9.1.md).
 Ver [flujo y validación de temas](../cuatom_themea.md).
 
 ## Release oficial 1.8.3+22
@@ -116,7 +116,7 @@ APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
 flujo manual autorizado. La candidata de esta preparación es
-[1.9.0](RELEASE_1.9.0.md).
+[1.9.1](RELEASE_1.9.1.md); 1.9.0 ya está publicada.
 
 ## Activación de mods — release 1.8.3
 

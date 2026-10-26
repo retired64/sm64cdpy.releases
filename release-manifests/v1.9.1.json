@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "version": "1.9.1",
+  "build": 29,
+  "publishedAt": "2026-10-25T00:00:00-07:00",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "Smoother navigation and guided permissions",
+      "summary": "Version 1.9.1 is a navigation patch: Back, the menus, the dock and the visual Back arrow share one history of main destinations, and a new Permissions & access center with a four-step guided setup explains and requests Android access only when it is actually needed.",
+      "highlights": [
+        "Android Back, the classic drawer, the Retro Manga menu, the dock, internal links and the themed Back arrow follow the same in-memory history of main destinations.",
+        "Back closes an open drawer, dialog, modal or submenu first, then pops a secondary screen, then returns to the previous main destination and finally to Home; the app exits only from Home without history.",
+        "Query strings survive the round trip, so a filtered catalogue or a specific collection comes back exactly as it was.",
+        "Settings adds Permissions & access, which re-reads the real Android state on every visit and after returning to the app.",
+        "A four-step guided setup covers welcome, game folder, automatic installation and a ready check; it appears once on first launch and can be replayed at any time.",
+        "The guide stores only its own progress: Android and SAF remain the authority for every permission."
+      ],
+      "sections": [
+        {
+          "heading": "Navigation that goes back where you expect",
+          "items": [
+            "Main destinations share one history of at most 20 entries, identified by route path, with consecutive duplicates collapsed and query strings preserved.",
+            "The Back order is explicit: close the drawer, dialog, modal or submenu; pop a secondary screen; return to the previous main destination; return to Home; and allow the app to exit only from Home without history.",
+            "The classic drawer, the Retro Manga menu, the dock, internal links and the themed Back arrow all use the same policy, so the same action is reached from every entry point.",
+            "Main destinations keep the menu button where their theme expects it and secondary screens show a themed Back arrow, including Permissions & access.",
+            "Player keeps its unsaved-changes dialog; a confirmed discard returns to the previous destination through the same policy instead of a separate pop path."
+          ]
+        },
+        {
+          "heading": "Guided permissions",
+          "items": [
+            "Permissions & access is a secondary screen inside Settings and shows the game folder, notifications, all-files access where the device supports it, the floating overlay and battery optimization.",
+            "Each card reports allowed, not allowed or optional, exposes a Manage action and blocks parallel requests, and the snapshot is refreshed when the app resumes.",
+            "Notifications are requested at the moment a background operation starts; declining them never blocks downloading or installation.",
+            "The guided setup covers welcome, folder selection, automatic installation and a final ready check, with a progress indicator and the option to postpone it on the first step.",
+            "Only the educational progress is persisted, so a permission revoked from Android settings is shown as not allowed the next time the screen is opened."
+          ]
+        },
+        {
+          "heading": "Before publishing",
+          "items": [
+            "This patch does not force an update and keeps the 1.9.0 download, installation, storage and overlay behavior.",
+            "The release timestamp is provisional until publication.",
+            "Physical validation is still required for Back from every destination, the open drawer and dialogs, Player drafts, rotation and reopening.",
+            "Physical validation is also required for granting and revoking each permission, returning from Android settings, notification denial on Android 13+ and a revoked game folder."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Navegación más fluida y permisos guiados",
+      "summary": "La versión 1.9.1 es un parche de navegación: Atrás, los menús, el dock y la flecha visual comparten un único historial de destinos principales, y un nuevo centro Permisos y accesos con un recorrido guiado de cuatro pasos explica y solicita los accesos de Android solo cuando hacen falta.",
+      "highlights": [
+        "Atrás de Android, el drawer clásico, el menú Retro Manga, el dock, los enlaces internos y la flecha visual siguen el mismo historial en memoria de destinos principales.",
+        "Atrás cierra primero un drawer, diálogo, modal o submenú abierto; después hace pop de una pantalla secundaria; luego vuelve al destino principal anterior y por último a Inicio; la app solo se cierra desde Inicio sin historial.",
+        "Las query strings se conservan en el recorrido, así que un catálogo filtrado o una colección concreta vuelven tal como estaban.",
+        "Ajustes incorpora Permisos y accesos, que vuelve a leer el estado real de Android en cada visita y al regresar a la app.",
+        "Un recorrido guiado de cuatro pasos cubre bienvenida, carpeta del juego, instalación automática y comprobación final; aparece una vez en el primer inicio y puede repetirse cuando quieras.",
+        "La guía guarda solo su propio progreso: Android y SAF siguen siendo la autoridad de cada permiso."
+      ],
+      "sections": [
+        {
+          "heading": "Atrás vuelve donde esperas",
+          "items": [
+            "Los destinos principales comparten un historial de 20 entradas como máximo, identificadas por la ruta, con duplicados consecutivos colapsados y query strings conservadas.",
+            "El orden de Atrás es explícito: cerrar drawer, diálogo, modal o submenú; hacer pop de una secundaria; volver al destino principal anterior; volver a Inicio; y permitir la salida solo desde Inicio sin historial.",
+            "El drawer clásico, el menú Retro Manga, el dock, los enlaces internos y la flecha temática usan la misma política, así que la misma acción se alcanza desde cualquier entrada.",
+            "Los destinos principales conservan el botón de menú donde su tema lo espera y las pantallas secundarias muestran una flecha temática, incluida Permisos y accesos.",
+            "Jugador mantiene el diálogo de cambios sin guardar; el descarte confirmado vuelve al destino anterior mediante la misma política y no por un pop separado."
+          ]
+        },
+        {
+          "heading": "Permisos guiados",
+          "items": [
+            "Permisos y accesos es una pantalla secundaria dentro de Ajustes y muestra la carpeta del juego, notificaciones, acceso a todos los archivos cuando el dispositivo lo soporta, la burbuja flotante y la optimización de batería.",
+            "Cada tarjeta indica permitido, no permitido u opcional, ofrece la acción Gestionar y bloquea solicitudes simultáneas; el estado se refresca al reanudar la app.",
+            "Las notificaciones se solicitan en el momento de iniciar una operación en segundo plano; rechazarlas nunca bloquea la descarga ni la instalación.",
+            "El recorrido guiado cubre bienvenida, selección de carpeta, instalación automática y comprobación final, con indicador de progreso y opción de posponerlo en el primer paso.",
+            "Solo se persiste el progreso educativo, de modo que un permiso revocado desde Ajustes de Android aparece como no permitido la próxima vez que se abre la pantalla."
+          ]
+        },
+        {
+          "heading": "Antes de publicar",
+          "items": [
+            "Este parche no obliga a actualizar y conserva el comportamiento de descarga, instalación, almacenamiento y overlay de 1.9.0.",
+            "La fecha del manifiesto es provisional hasta la publicación.",
+            "Falta validar físicamente Atrás desde cada destino, el drawer y los diálogos abiertos, los borradores de Jugador, la rotación y la reapertura.",
+            "También falta validar conceder y revocar cada permiso, regresar de Ajustes de Android, la denegación de notificaciones en Android 13+ y una carpeta del juego revocada."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Navegação mais fluida e permissões guiadas",
+      "summary": "A versão 1.9.1 é um patch de navegação: Voltar, os menus, o dock e a seta visual compartilham um único histórico de destinos principais, e uma nova central Permissões e acessos com um guia de quatro passos explica e solicita os acessos do Android só quando são necessários.",
+      "highlights": [
+        "Voltar do Android, a gaveta clássica, o menu Retro Manga, o dock, os links internos e a seta visual seguem o mesmo histórico em memória de destinos principais.",
+        "Voltar fecha primeiro uma gaveta, diálogo, modal ou submenu aberto; depois fecha uma tela secundária; em seguida retorna ao destino principal anterior e por fim ao Início; o app só fecha a partir do Início sem histórico.",
+        "As query strings são preservadas no percurso, então um catálogo filtrado ou uma coleção específica voltam exatamente como estavam.",
+        "As Configurações ganham Permissões e acessos, que relê o estado real do Android em cada visita e ao retornar ao app.",
+        "Um guia de quatro passos cobre boas-vindas, pasta do jogo, instalação automática e verificação final; aparece uma vez no primeiro início e pode ser repetido quando quiser.",
+        "O guia salva apenas o próprio progresso: Android e SAF continuam sendo a autoridade de cada permissão."
+      ],
+      "sections": [
+        {
+          "heading": "Voltar leva você aonde espera",
+          "items": [
+            "Os destinos principais compartilham um histórico de no máximo 20 entradas, identificadas pela rota, com duplicatas consecutivas recolhidas e query strings preservadas.",
+            "A ordem de Voltar é explícita: fechar gaveta, diálogo, modal ou submenu; fechar uma tela secundária; voltar ao destino principal anterior; voltar ao Início; e permitir a saída somente do Início sem histórico.",
+            "A gaveta clássica, o menu Retro Manga, o dock, os links internos e a seta temática usam a mesma política, então a mesma ação é alcançada por qualquer entrada.",
+            "Os destinos principais mantêm o botão de menu onde o tema espera e as telas secundárias mostram uma seta temática, incluindo Permissões e acessos.",
+            "O Jogador mantém o diálogo de alterações não salvas; o descarte confirmado volta ao destino anterior pela mesma política e não por um fechamento separado."
+          ]
+        },
+        {
+          "heading": "Permissões guiadas",
+          "items": [
+            "Permissões e acessos é uma tela secundária dentro das Configurações e mostra a pasta do jogo, notificações, acesso a todos os arquivos quando o dispositivo suporta, a bolha flutuante e a otimização de bateria.",
+            "Cada cartão indica permitido, não permitido ou opcional, oferece a ação Gerenciar e bloqueia solicitações simultâneas; o estado é atualizado ao retomar o app.",
+            "As notificações são solicitadas no momento de iniciar uma operação em segundo plano; recusá-las nunca bloqueia o download ou a instalação.",
+            "O guia cobre boas-vindas, seleção de pasta, instalação automática e verificação final, com indicador de progresso e opção de adiar no primeiro passo.",
+            "Apenas o progresso educativo é persistido, então uma permissão revogada nas Configurações do Android aparece como não permitida na próxima abertura da tela."
+          ]
+        },
+        {
+          "heading": "Antes de publicar",
+          "items": [
+            "Este patch não força atualização e mantém o comportamento de download, instalação, armazenamento e overlay da 1.9.0.",
+            "A data do manifesto é provisória até a publicação.",
+            "Ainda falta validar fisicamente Voltar a partir de cada destino, a gaveta e os diálogos abertos, os rascunhos do Jogador, a rotação e a reabertura.",
+            "Também falta validar conceder e revogar cada permissão, retornar das Configurações do Android, a recusa de notificações no Android 13+ e uma pasta do jogo revogada."
+          ]
+        }
+      ]
+    }
+  }
+}

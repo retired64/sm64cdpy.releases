@@ -1,6 +1,6 @@
 # Arquitectura actual
 
-Revisado para `1.8.5+24` en `main` el 2026-10-15.
+Revisado para `1.9.1+29` en `main` el 2026-10-25.
 
 ## Alcance
 

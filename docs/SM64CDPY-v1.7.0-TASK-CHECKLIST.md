@@ -1187,3 +1187,20 @@ git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
 - [ ] Ejecutar tests Flutter y compilación Kotlin en el entorno canónico de CI;
       CLI Flutter no soporta este anfitrión Android y falta android/gradlew.
 - [ ] Revisión física: idiomas, texto ampliado, notificaciones y reapertura.
+
+## Preparación de release 1.9.1 — navegación y permisos
+
+- [x] Fusionar `navigation-back-history` en `main` sin crear todavía el tag.
+- [x] Unificar Atrás, drawer clásico, menú Retro Manga, dock, enlaces internos y flecha visual en un historial en memoria de destinos principales.
+- [x] Conservar query strings, colapsar duplicados consecutivos y limitar el historial a 20 entradas.
+- [x] Mantener `PopScope`, diálogo de descarte y retorno coherente en Jugador.
+- [x] Añadir el centro Permisos y accesos en Ajustes con lectura real del estado Android al abrir y al reanudar.
+- [x] Añadir el recorrido guiado de cuatro pasos y persistir solo su progreso educativo.
+- [x] Solicitar notificaciones al iniciar la operación en segundo plano sin bloquear descarga ni instalación.
+- [x] Actualizar `pubspec.yaml` a `1.9.1+29` y reservar versionCodes ABI `291/292/293`.
+- [x] Preparar manifiesto canónico y previews EN/ES/PT-BR con fecha provisional.
+- [x] Validar manifiesto contra pubspec, `flutter analyze lib`, 543 pruebas Flutter y `git diff --check`.
+- [ ] Ejecutar Testing en `main` y revisar el APK arm64 firmado.
+- [ ] Matriz física de Atrás: destinos principales, drawer y diálogos abiertos, Jugador con cambios, rotación y reapertura.
+- [ ] Matriz física de permisos: conceder y revocar, reanudar, Android 13+, carpeta SAF revocada y recorrido repetido.
+- [ ] Confirmar `publishedAt`, tag `v1.9.1` y publicar solo con autorización explícita.
