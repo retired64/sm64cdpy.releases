@@ -3035,6 +3035,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get guidedSetupLater => 'Plus tard';
 
   @override
+  String get guidedSetupAudioTitle => 'Son de l’application';
+
+  @override
+  String get guidedSetupAudioBody =>
+      'Souhaitez-vous profiter de la musique d’ambiance et des effets sonores en explorant vos mods ? Vous pourrez les régler séparément plus tard dans les paramètres.';
+
+  @override
+  String get guidedSetupAudioOn => 'Avec le son';
+
+  @override
+  String get guidedSetupAudioOff => 'Mode silencieux';
+
+  @override
+  String get guidedSetupAudioSaveError =>
+      'Impossible d’enregistrer votre préférence sonore. Réessayez.';
+
+  @override
   String get guidedSetupDoneTitle => 'Tout est prêt';
 
   @override

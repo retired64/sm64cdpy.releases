@@ -5,6 +5,7 @@ import '../../core/theme/retro_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/guided_setup_service.dart';
 import '../providers/auto_install_provider.dart';
+import '../providers/audio_experience_provider.dart';
 import '../providers/game_folder_provider.dart';
 import 'game_setup_widgets.dart';
 import 'mario_multicolor_label.dart';
@@ -13,6 +14,7 @@ const _welcomeAsset = 'assets/themes/manga_deluxe/onboarding/welcome-wave.webp';
 const _startAsset = 'assets/themes/manga_deluxe/onboarding/start.webp';
 const _laterAsset = 'assets/themes/manga_deluxe/onboarding/later.webp';
 const _folderAsset = 'assets/themes/manga/navigation/library.webp';
+const _audioAsset = 'assets/themes/manga/navigation/audio.webp';
 const _readyAsset = 'assets/themes/manga/navigation/home-start-game.webp';
 
 Future<void> showGuidedSetupFlow(
@@ -86,6 +88,25 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
     });
   }
 
+  Future<void> _setAudioExperience(bool enabled) async {
+    if (_busy) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+
+    final saved = await ref.read(audioExperienceProvider).setEnabled(enabled);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      if (saved) {
+        _step = 4;
+      } else {
+        _error = 'audio';
+      }
+    });
+  }
+
   Future<void> _finish() async {
     await GuidedSetupService.complete();
     if (mounted) Navigator.of(context).pop();
@@ -99,18 +120,21 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
       l.guidedSetupWelcomeTitle,
       l.gameFolderTitle,
       l.autoInstallPromptTitle,
+      l.guidedSetupAudioTitle,
       l.guidedSetupDoneTitle,
     ];
     final bodies = [
       l.guidedSetupWelcomeBody,
       l.gameFolderGuide,
       l.autoInstallPromptBody,
+      l.guidedSetupAudioBody,
       l.guidedSetupDoneBody,
     ];
     final visualAssets = [
       _welcomeAsset,
       _folderAsset,
       _startAsset,
+      _audioAsset,
       _readyAsset,
     ];
 
@@ -134,7 +158,7 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                         children: [
                           Expanded(
                             child: Text(
-                              l.guidedSetupProgress(_step + 1, 4),
+                              l.guidedSetupProgress(_step + 1, 5),
                               style: retro.body(size: 14, color: retro.inkDim),
                             ),
                           ),
@@ -148,7 +172,7 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                       ),
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
-                        value: (_step + 1) / 4,
+                        value: (_step + 1) / 5,
                         minHeight: 6,
                         color: retro.accent,
                         backgroundColor: retro.surfaceAlt,
@@ -205,7 +229,9 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                       if (_error != null) ...[
                         const SizedBox(height: 14),
                         GameSetupStatus(
-                          label: l.gameFolderAccessLost,
+                          label: _error == 'audio'
+                              ? l.guidedSetupAudioSaveError
+                              : l.gameFolderAccessLost,
                           icon: Icons.error_outline_rounded,
                           ready: false,
                         ),
@@ -277,6 +303,28 @@ class _GuidedSetupDialogState extends ConsumerState<_GuidedSetupDialog> {
                           onPressed: _busy
                               ? null
                               : () => _setAutoInstall(false),
+                        ),
+                      ] else if (_step == 3) ...[
+                        GameSetupAction(
+                          label: l.guidedSetupAudioOn,
+                          icon: Icons.volume_up_rounded,
+                          imageAsset: _audioAsset,
+                          showTrailing: false,
+                          marioLabel: true,
+                          primary: true,
+                          onPressed: _busy
+                              ? null
+                              : () => _setAudioExperience(true),
+                        ),
+                        const SizedBox(height: 12),
+                        GameSetupAction(
+                          label: l.guidedSetupAudioOff,
+                          icon: Icons.volume_off_rounded,
+                          imageAsset: _laterAsset,
+                          marioLabel: true,
+                          onPressed: _busy
+                              ? null
+                              : () => _setAudioExperience(false),
                         ),
                       ] else
                         GameSetupAction(

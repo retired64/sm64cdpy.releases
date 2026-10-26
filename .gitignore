@@ -98,3 +98,11 @@ __pycache__/
 
 # Local catalog analysis reports.
 **/categories_analysis.csv
+
+# Private/local documentation not intended for version control.
+/docs/AGENTS.md
+/docs/MY-MODS-PARITY-AUDIT.md
+/docs/archive/PRIVATE-CATALOG-SECURITY-NOTES.md
+/docs/estructura-sm64cdpy.md
+/docs/ideas-coopdx64.md
+/docs/info.txt

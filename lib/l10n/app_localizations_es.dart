@@ -3025,6 +3025,23 @@ class AppLocalizationsEs extends AppLocalizations {
   String get guidedSetupLater => 'Más tarde';
 
   @override
+  String get guidedSetupAudioTitle => 'Sonido de la aplicación';
+
+  @override
+  String get guidedSetupAudioBody =>
+      '¿Quieres disfrutar música ambiental y efectos mientras exploras tus mods? Después podrás ajustar la música y los efectos por separado en Ajustes.';
+
+  @override
+  String get guidedSetupAudioOn => 'Con sonido';
+
+  @override
+  String get guidedSetupAudioOff => 'Modo silencioso';
+
+  @override
+  String get guidedSetupAudioSaveError =>
+      'No se pudo guardar tu preferencia de sonido. Inténtalo de nuevo.';
+
+  @override
   String get guidedSetupDoneTitle => 'Todo listo';
 
   @override
@@ -6118,6 +6135,23 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get guidedSetupLater => 'Más tarde';
+
+  @override
+  String get guidedSetupAudioTitle => 'Sonido de la aplicación';
+
+  @override
+  String get guidedSetupAudioBody =>
+      '¿Quieres disfrutar música ambiental y efectos mientras exploras tus mods? Después podrás ajustar la música y los efectos por separado en Ajustes.';
+
+  @override
+  String get guidedSetupAudioOn => 'Con sonido';
+
+  @override
+  String get guidedSetupAudioOff => 'Modo silencioso';
+
+  @override
+  String get guidedSetupAudioSaveError =>
+      'No se pudo guardar tu preferencia de sonido. Inténtalo de nuevo.';
 
   @override
   String get guidedSetupDoneTitle => 'Todo listo';

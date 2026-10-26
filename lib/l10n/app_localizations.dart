@@ -5404,6 +5404,36 @@ abstract class AppLocalizations {
   /// **'Do it later'**
   String get guidedSetupLater;
 
+  /// No description provided for @guidedSetupAudioTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound experience'**
+  String get guidedSetupAudioTitle;
+
+  /// No description provided for @guidedSetupAudioBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to enjoy ambient music and sound effects while exploring your mods? You can change music and effects separately later in Settings.'**
+  String get guidedSetupAudioBody;
+
+  /// No description provided for @guidedSetupAudioOn.
+  ///
+  /// In en, this message translates to:
+  /// **'With sound'**
+  String get guidedSetupAudioOn;
+
+  /// No description provided for @guidedSetupAudioOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Silent mode'**
+  String get guidedSetupAudioOff;
+
+  /// No description provided for @guidedSetupAudioSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sound preference could not be saved. Try again.'**
+  String get guidedSetupAudioSaveError;
+
   /// No description provided for @guidedSetupDoneTitle.
   ///
   /// In en, this message translates to:

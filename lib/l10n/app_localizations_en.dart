@@ -2997,6 +2997,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get guidedSetupLater => 'Do it later';
 
   @override
+  String get guidedSetupAudioTitle => 'Sound experience';
+
+  @override
+  String get guidedSetupAudioBody =>
+      'Would you like to enjoy ambient music and sound effects while exploring your mods? You can change music and effects separately later in Settings.';
+
+  @override
+  String get guidedSetupAudioOn => 'With sound';
+
+  @override
+  String get guidedSetupAudioOff => 'Silent mode';
+
+  @override
+  String get guidedSetupAudioSaveError =>
+      'Your sound preference could not be saved. Try again.';
+
+  @override
   String get guidedSetupDoneTitle => 'You\'re ready';
 
   @override
