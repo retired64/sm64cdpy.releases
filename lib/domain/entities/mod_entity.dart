@@ -148,6 +148,10 @@ class ModFileEntity {
     this.sha256 = '',
     this.versionConsistency = '',
     this.verificationStatus = '',
+    this.mirrorUrl = '',
+    this.mirrorStatus = '',
+    this.mirrorPriority = '',
+    this.mirrorSizeBytes,
   });
 
   final String id;
@@ -166,4 +170,19 @@ class ModFileEntity {
   final String sha256;
   final String versionConsistency;
   final String verificationStatus;
+  final String mirrorUrl;
+  final String mirrorStatus;
+  final String mirrorPriority;
+  final int? mirrorSizeBytes;
+
+  bool get hasAvailableMirror {
+    final uri = Uri.tryParse(mirrorUrl.trim());
+    return mirrorStatus == 'available' &&
+        mirrorPriority == 'fallback' &&
+        uri != null &&
+        uri.scheme == 'https' &&
+        uri.host.isNotEmpty &&
+        mirrorSizeBytes != null &&
+        mirrorSizeBytes! > 0;
+  }
 }

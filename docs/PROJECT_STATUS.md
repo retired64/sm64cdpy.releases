@@ -100,6 +100,11 @@ Código preparado; CI y validación física pendientes por SDK local no disponib
 - Resolución en tiempo de descarga para páginas estables de MediaFire,
   GameBanana y archivos de Google Drive; las carpetas Drive no resolubles se
   presentan como enlace de origen sin afirmar que fueron instaladas.
+- Catálogo compatible con mirror Cloudflare R2 opcional. El origen conserva
+  prioridad y WorkManager usa R2 automáticamente ante errores de red, timeout,
+  `4xx`, `429`, `5xx` o contenido inválido, dentro de la misma operación. El
+  detalle y el segundo engine del overlay comparten la política; catálogos
+  antiguos continúan funcionando sin cambios.
 - Pantalla Jugador para editar nombre, modelo Mario/Luigi/Toad/Waluigi/Wario y
   ocho grupos RGB de `user/sm64config.txt`. Android comparte bloqueo, respaldo,
   revisión y verificación con la activación de mods; Riverpod conserva un

@@ -183,6 +183,7 @@ class ModInstaller {
   /// 'mods' (KEY_TREE_URI) o 'dynos' (KEY_DYNOS_TREE_URI).
   Future<ModChainResult?> downloadAndInstallMod({
     required String url,
+    List<String> fallbackUrls = const [],
     required String modName,
     required String fileName,
     String? displayTitle,
@@ -193,6 +194,7 @@ class ModInstaller {
     try {
       final result = await _channel.invokeMethod<Map>('downloadAndInstallMod', {
         'url': url,
+        'fallbackUrls': fallbackUrls,
         'modName': modName,
         'fileName': fileName,
         'displayTitle': displayTitle ?? modName,

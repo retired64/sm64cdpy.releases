@@ -3,6 +3,8 @@ import '../widgets/deluxe_backdrop.dart';
 import '../widgets/deluxe_content.dart';
 import '../../services/deluxe_links.dart';
 
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -1063,6 +1065,10 @@ class _VersionCardState extends State<_VersionCard> {
                 child: _PrimaryDownloadButton(
                   artifactPresentation: artifactPresentations[visibleEntry.key],
                   url: visibleEntry.value.value.downloadUrl,
+                  availableMirrorUrl:
+                      visibleEntry.value.value.hasAvailableMirror
+                      ? visibleEntry.value.value.mirrorUrl
+                      : null,
                   modId: widget.modId,
                   fileKey: visibleEntry.value.value.id,
                   versionId: widget.version.id,
@@ -1507,6 +1513,7 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
     this.versionId,
     this.legacyFileKeys = const <String>[],
     this.artifactPresentation,
+    this.availableMirrorUrl,
   });
 
   final String url;
@@ -1519,6 +1526,7 @@ class _PrimaryDownloadButton extends ConsumerStatefulWidget {
   final String? versionId;
   final List<String> legacyFileKeys;
   final ModArtifactPresentation? artifactPresentation;
+  final String? availableMirrorUrl;
 
   @override
   ConsumerState<_PrimaryDownloadButton> createState() =>
@@ -1618,9 +1626,11 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     }
 
     final modName = _operationName;
-    final resolvedUrl = await DownloadUrlResolver.instance.resolveDownloadUrl(
+    final sources = await DownloadUrlResolver.instance.resolveDownloadSources(
       widget.url,
+      availableMirrorUrl: widget.availableMirrorUrl,
     );
+    final resolvedUrl = sources.first;
     final filename =
         widget.filename ??
         await DownloadUrlResolver.instance.resolveDownloadFilename(
@@ -1644,7 +1654,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       }
 
       if (!mounted) return;
-      await _downloadWithFileDownloader(resolvedUrl, filename);
+      await _downloadWithFileDownloader(sources, filename);
       return;
     }
 
@@ -1655,6 +1665,7 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       final chain = await BackgroundInstallService.instance
           .startDownloadAndInstall(
             url: resolvedUrl,
+            fallbackUrls: sources.skip(1).toList(growable: false),
             modName: modName,
             fileName: filename,
             displayTitle: widget.modTitle,
@@ -1672,20 +1683,20 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         // (ej. restricciones de Android 14+). Descargamos y extraemos inline.
         await _downloadToModsFolder(
           installer,
-          resolvedUrl,
+          sources,
           filename,
           extract: true,
           modName: modName,
         );
       }
     } else if (mounted) {
-      await _downloadToModsFolder(installer, resolvedUrl, filename);
+      await _downloadToModsFolder(installer, sources, filename);
     }
   }
 
   Future<void> _downloadToModsFolder(
     ModInstaller installer,
-    String url,
+    List<String> sources,
     String filename, {
     bool extract = false,
     String? modName,
@@ -1696,67 +1707,31 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
       _localProgress = 0.0;
     });
     try {
-      await FileDownloader.downloadFile(
-        url: url,
-        name: filename,
-        onProgress: (name, progress) {
-          if (!mounted) return;
-          final normalized = (progress > 1.0 ? progress / 100.0 : progress)
-              .clamp(0.0, 1.0);
-          setState(() => _localProgress = normalized);
-        },
-        onDownloadCompleted: (path) async {
-          if (!mounted) return;
-          final savedName = path.split('/').last;
-          String? copyError;
-          try {
-            if (extract && savedName.toLowerCase().endsWith('.zip')) {
-              final result = await installer.installMod(
-                zipPath: path,
-                modName: modName ?? savedName,
-              );
-              if (!result.success) {
-                copyError = result.errorMessage ?? _l10n!.detailInstallFailed;
-              }
-            } else {
-              await installer.copyFileToModsFolder(
-                sourcePath: path,
-                targetName: savedName,
-              );
-            }
-          } catch (e) {
-            copyError = e.toString();
-          }
-          if (!mounted) return;
-          setState(() {
-            _localDownloading = false;
-            _localProgress = 0.0;
-          });
-          if (copyError != null) {
-            AppSnackbar.errorWithCopy(
-              context,
-              message: AppLocalizations.of(context).detailInstallFailed,
-              copyText: copyError,
-            );
-          } else {
-            AppSnackbar.success(
-              context,
-              message: _l10n!.detailSavedToFolder(savedName, 'mod'),
-            );
-          }
-        },
-        onDownloadError: (error) {
-          if (!mounted) return;
-          setState(() {
-            _localDownloading = false;
-            _localProgress = 0.0;
-          });
-          AppSnackbar.errorWithCopy(
-            context,
-            message: friendlyDownloadError(_l10n!, error),
-            copyText: error,
-          );
-        },
+      final path = await _downloadFirstAvailable(sources, filename);
+      if (!mounted) return;
+      final savedName = path.split('/').last;
+      if (extract && savedName.toLowerCase().endsWith('.zip')) {
+        final result = await installer.installMod(
+          zipPath: path,
+          modName: modName ?? savedName,
+        );
+        if (!result.success) {
+          throw Exception(result.errorMessage ?? _l10n!.detailInstallFailed);
+        }
+      } else {
+        await installer.copyFileToModsFolder(
+          sourcePath: path,
+          targetName: savedName,
+        );
+      }
+      if (!mounted) return;
+      setState(() {
+        _localDownloading = false;
+        _localProgress = 0.0;
+      });
+      AppSnackbar.success(
+        context,
+        message: _l10n!.detailSavedToFolder(savedName, 'mod'),
       );
     } catch (e) {
       if (!mounted) return;
@@ -1772,48 +1747,28 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
     }
   }
 
-  Future<void> _downloadWithFileDownloader(String url, String filename) async {
+  Future<void> _downloadWithFileDownloader(
+    List<String> sources,
+    String filename,
+  ) async {
     if (!mounted) return;
     setState(() {
       _localDownloading = true;
       _localProgress = 0.0;
     });
     try {
-      await FileDownloader.downloadFile(
-        url: url,
-        name: filename,
-        onProgress: (name, progress) {
-          if (!mounted) return;
-          final normalized = (progress > 1.0 ? progress / 100.0 : progress)
-              .clamp(0.0, 1.0);
-          setState(() => _localProgress = normalized);
-        },
-        onDownloadCompleted: (path) {
-          if (!mounted) return;
-          setState(() {
-            _localDownloading = false;
-            _localProgress = 0.0;
-          });
-          final savedName = path.split('/').last;
-          AppSnackbar.success(
-            context,
-            message: _l10n!.detailDownloadedType(savedName, 'mod'),
-          );
-          showPostInstallDialog(context);
-        },
-        onDownloadError: (error) {
-          if (!mounted) return;
-          setState(() {
-            _localDownloading = false;
-            _localProgress = 0.0;
-          });
-          AppSnackbar.errorWithCopy(
-            context,
-            message: friendlyDownloadError(_l10n!, error),
-            copyText: error,
-          );
-        },
+      final path = await _downloadFirstAvailable(sources, filename);
+      if (!mounted) return;
+      setState(() {
+        _localDownloading = false;
+        _localProgress = 0.0;
+      });
+      final savedName = path.split('/').last;
+      AppSnackbar.success(
+        context,
+        message: _l10n!.detailDownloadedType(savedName, 'mod'),
       );
+      showPostInstallDialog(context);
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -1826,6 +1781,74 @@ class _PrimaryDownloadButtonState extends ConsumerState<_PrimaryDownloadButton>
         copyText: e.toString(),
       );
     }
+  }
+
+  Future<String> _downloadFirstAvailable(
+    List<String> sources,
+    String filename,
+  ) async {
+    Object? lastError;
+    for (final source in sources.take(2)) {
+      String? callbackError;
+      try {
+        final file = await FileDownloader.downloadFile(
+          url: source,
+          name: filename,
+          onProgress: (name, progress) {
+            if (!mounted) return;
+            final normalized = (progress > 1.0 ? progress / 100.0 : progress)
+                .clamp(0.0, 1.0);
+            setState(() => _localProgress = normalized);
+          },
+          onDownloadError: (error) => callbackError = error,
+        );
+        final validContent =
+            file != null &&
+            callbackError == null &&
+            await _hasExpectedDownloadContent(file, filename);
+        if (validContent) {
+          return file.path;
+        }
+        if (file != null && await file.exists()) {
+          await file.delete();
+        }
+        lastError =
+            callbackError ??
+            (file == null
+                ? 'Download returned no file'
+                : 'Download returned invalid content');
+      } catch (error) {
+        lastError = error;
+      }
+      if (mounted) setState(() => _localProgress = 0.0);
+    }
+    throw Exception(lastError ?? 'All download sources failed');
+  }
+
+  Future<bool> _hasExpectedDownloadContent(File file, String filename) async {
+    if (!await file.exists() || await file.length() <= 0) return false;
+    final handle = await file.open();
+    final header = await handle.read(8);
+    await handle.close();
+    if (header.length < 4) return false;
+    final extension = filename.split('.').last.toLowerCase();
+    if (extension == 'zip') return header[0] == 0x50 && header[1] == 0x4b;
+    if (extension == 'rar') {
+      return header[0] == 0x52 &&
+          header[1] == 0x61 &&
+          header[2] == 0x72 &&
+          header[3] == 0x21;
+    }
+    if (extension == '7z') {
+      const signature = <int>[0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c];
+      return header.length >= signature.length &&
+          List.generate(
+            signature.length,
+            (index) => header[index] == signature[index],
+          ).every((matches) => matches);
+    }
+    final prefix = String.fromCharCodes(header).trimLeft().toLowerCase();
+    return !prefix.startsWith('<html') && !prefix.startsWith('<!doctyp');
   }
 
   @override

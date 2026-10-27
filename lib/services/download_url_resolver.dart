@@ -169,6 +169,27 @@ class DownloadUrlResolver {
   final _filenameCache = <String, String>{};
   final _urlCache = <String, String>{};
 
+  /// Produces the bounded source order used by both Flutter and WorkManager.
+  /// The catalogue origin always remains first. An R2 URL is accepted only
+  /// when the model already validated its metadata as available fallback.
+  Future<List<String>> resolveDownloadSources(
+    String originalUrl, {
+    String? availableMirrorUrl,
+  }) async {
+    final primary = await resolveDownloadUrl(originalUrl);
+    final sources = <String>[primary];
+    final mirror = availableMirrorUrl?.trim() ?? '';
+    final parsed = Uri.tryParse(mirror);
+    if (mirror.isNotEmpty &&
+        parsed != null &&
+        parsed.scheme == 'https' &&
+        parsed.host.isNotEmpty &&
+        mirror != primary) {
+      sources.add(mirror);
+    }
+    return List.unmodifiable(sources);
+  }
+
   /// Resuelve una URL "de página" (no descargable directamente) a la URL
   /// real del asset binario que debe entregarse al downloader nativo.
   ///

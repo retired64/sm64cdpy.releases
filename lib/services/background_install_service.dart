@@ -46,7 +46,13 @@ class BgDownloadProgress extends BgInstallEvent {
 }
 
 class BgDownloadCompleted extends BgInstallEvent {
-  const BgDownloadCompleted({required super.modName, required super.workId});
+  const BgDownloadCompleted({
+    required super.modName,
+    required super.workId,
+    this.source = 'origin',
+  });
+
+  final String source;
 }
 
 class BgInstallProgress extends BgInstallEvent {
@@ -367,6 +373,7 @@ class BackgroundInstallService {
 
   Future<ModChainResult?> startDownloadAndInstall({
     required String url,
+    List<String> fallbackUrls = const [],
     required String modName,
     required String fileName,
     String? displayTitle,
@@ -379,6 +386,7 @@ class BackgroundInstallService {
     try {
       final chainResult = await installer.downloadAndInstallMod(
         url: url,
+        fallbackUrls: fallbackUrls,
         modName: modName,
         fileName: fileName,
         displayTitle: displayTitle,
@@ -509,6 +517,10 @@ class BackgroundInstallService {
         );
 
       case 'download_completed':
+        final downloadSource = map['downloadSource'] as String? ?? 'origin';
+        if (downloadSource == 'mirror') {
+          debugPrint('Download completed through the configured R2 fallback');
+        }
         _infoMap[modName] = BgInstallInfo(
           modName: modName,
           status: BgInstallStatus.downloading,
@@ -517,7 +529,11 @@ class BackgroundInstallService {
           downloadProgress: 100,
         );
         _controller.add(
-          BgDownloadCompleted(modName: modName, workId: workId ?? ''),
+          BgDownloadCompleted(
+            modName: modName,
+            workId: workId ?? '',
+            source: downloadSource,
+          ),
         );
 
       case 'install_progress':

@@ -5,10 +5,16 @@ Revisado contra `1.8.2+21` el 2026-09-28.
 ## Flujo de instalación
 
 1. La UI comprueba la preferencia de instalación automática y la carpeta SAF.
-2. `DownloadUrlResolver` normaliza el destino y resuelve assets de GitHub cuando corresponde.
+2. `DownloadUrlResolver` normaliza el destino, resuelve assets de GitHub cuando
+   corresponde y produce una lista acotada: origen primero y mirror R2
+   confirmado después.
 3. `BackgroundInstallService.startDownloadAndInstall()` invoca el MethodChannel `mods.sm64cdpy/mod_installer`.
 4. `ModInstallerPlugin` crea una cadena única de WorkManager: primero `ModDownloadWorker`, después `ModInstallWorker`.
-5. El downloader sigue redirects, limita reintentos, verifica el tamaño cuando el servidor lo informa y publica porcentaje mediante `setProgress`.
+5. El downloader sigue redirects, limita reintentos, verifica el tamaño cuando
+   el servidor lo informa y publica porcentaje mediante `setProgress`. Si el
+   origen falla por red, timeout, `4xx`, `429`, `5xx`, archivo vacío o firma
+   incompatible, prueba una sola vez el mirror `available`; nunca alterna en
+   bucle entre fuentes.
 6. El instalador copia archivos sueltos o extrae ZIP/7z hacia el árbol SAF.
 7. Tras completar todas las escrituras, el instalador guarda atómicamente un
    recibo privado con la identidad y hasta 32 rutas centinela; solo entonces
@@ -68,6 +74,22 @@ llegar el recibo durable, evitando confundir finalización con presencia física
 La pantalla de detalle presenta únicamente la versión actual expandida. El historial se abre bajo demanda en una hoja inferior con `ListView.builder`, evitando que decenas o cientos de versiones aumenten el alto inicial o se construyan simultáneamente.
 
 La preferencia `auto_install_mods` tiene SharedPreferences como fuente persistente y un caché `OverlayBridge._autoInstall` en el engine principal. El toggle de Settings escribe la preferencia y llama a `OverlayBridge.refreshAutoInstall()`. Este detalle no debe eliminarse: evita que el bridge opere con un valor antiguo.
+
+## Mirror Cloudflare R2
+
+Los campos `mirror_url`, `mirror_status`, `mirror_priority` y
+`mirror_size_bytes` son opcionales. Un catálogo antiguo se comporta exactamente
+como antes. Flutter solo acepta el mirror cuando el estado es `available`, la
+prioridad es `fallback`, el tamaño es positivo y la URL es HTTPS. La identidad
+de instalación continúa derivándose del artefacto y la URL original: cambiar de
+fuente no crea otra operación ni otro recibo.
+
+La app principal y el overlay transportan la misma lista al MethodChannel. El
+`ModDownloadWorker` conserva un solo UUID, temporal, progreso, notificación y
+cadena de instalación mientras cambia de origen a R2. Las descargas manuales
+del detalle aplican el mismo orden y validación básica. El evento
+`download_completed` registra internamente si terminó desde `origin` o
+`mirror`, sin exponer dos botones técnicos al usuario.
 
 ## Permisos Android
 

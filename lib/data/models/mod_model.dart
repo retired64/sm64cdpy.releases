@@ -235,6 +235,10 @@ class ModModel {
         sha256: f['sha256'] as String? ?? '',
         versionConsistency: f['version_consistency'] as String? ?? '',
         verificationStatus: f['verification_status'] as String? ?? '',
+        mirrorUrl: f['mirror_url'] as String? ?? '',
+        mirrorStatus: f['mirror_status'] as String? ?? '',
+        mirrorPriority: f['mirror_priority'] as String? ?? '',
+        mirrorSizeBytes: (f['mirror_size_bytes'] as num?)?.toInt(),
       );
     }).toList();
   }
@@ -438,6 +442,10 @@ class ModFileModel {
     this.sha256 = '',
     this.versionConsistency = '',
     this.verificationStatus = '',
+    this.mirrorUrl = '',
+    this.mirrorStatus = '',
+    this.mirrorPriority = '',
+    this.mirrorSizeBytes,
   });
 
   final String id;
@@ -456,6 +464,10 @@ class ModFileModel {
   final String sha256;
   final String versionConsistency;
   final String verificationStatus;
+  final String mirrorUrl;
+  final String mirrorStatus;
+  final String mirrorPriority;
+  final int? mirrorSizeBytes;
 
   ModFileEntity toEntity() => ModFileEntity(
     id: id,
@@ -474,5 +486,9 @@ class ModFileModel {
     sha256: sha256,
     versionConsistency: versionConsistency,
     verificationStatus: verificationStatus,
+    mirrorUrl: mirrorUrl,
+    mirrorStatus: mirrorStatus,
+    mirrorPriority: mirrorPriority,
+    mirrorSizeBytes: mirrorSizeBytes,
   );
 }

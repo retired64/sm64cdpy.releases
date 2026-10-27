@@ -951,6 +951,12 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         val url = call.argument<String>("url")
+        val fallbackUrls = call.argument<List<String>>("fallbackUrls")
+            .orEmpty()
+            .map { it.trim() }
+            .filter { it.startsWith("https://") && it != url }
+            .distinct()
+            .take(1)
         val requestedModName = call.argument<String>("modName")
         val displayTitle = call.argument<String>("displayTitle") ?: requestedModName
         val notificationTitle = call.argument<String>("notificationTitle") ?: displayTitle
@@ -978,6 +984,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         val downloadRequest = OneTimeWorkRequestBuilder<ModDownloadWorker>()
             .setInputData(workDataOf(
                 ModDownloadWorker.KEY_URL to url,
+                ModDownloadWorker.KEY_FALLBACK_URLS to fallbackUrls.toTypedArray(),
                 ModDownloadWorker.KEY_MOD_NAME to modName,
                 ModDownloadWorker.KEY_DISPLAY_TITLE to displayTitle,
                 ModDownloadWorker.KEY_FILE_NAME to fileName,
@@ -1033,6 +1040,9 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (workInfo.state == WorkInfo.State.SUCCEEDED) {
                     eventData["type"] = "download_completed"
+                    eventData["downloadSource"] = workInfo.outputData.getString(
+                        ModDownloadWorker.OUTPUT_SOURCE
+                    ) ?: "origin"
                 } else if (workInfo.state == WorkInfo.State.FAILED) {
                     eventData["type"] = "error"
                     eventData["error"] = workInfo.outputData.getString("error")
