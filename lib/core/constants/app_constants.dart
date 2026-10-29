@@ -56,6 +56,11 @@ class AppConstants {
   /// Clave en SharedPreferences para el estado de auto-instalación.
   static const String autoInstallModsKey = 'auto_install_mods';
 
+  /// Orden preferido de fuentes para descargas del catálogo general.
+  /// SharedPreferences es la autoridad porque también lo lee el overlay.
+  static const String downloadSourcePreferenceKey =
+      'download_source_preference';
+
   /// Clave en SharedPreferences para el set de IDs de mods favoritos (JSON).
   static const String favouritesKey = 'favourites';
 

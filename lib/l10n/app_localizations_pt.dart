@@ -948,6 +948,21 @@ class AppLocalizationsPt extends AppLocalizations {
       'Você será perguntado após cada download';
 
   @override
+  String get settingsDownloadSource => 'Preferir espelho de download R2';
+
+  @override
+  String get settingsDownloadSourceOriginalFirst =>
+      'Fonte original primeiro · R2 é usado automaticamente se ela falhar';
+
+  @override
+  String get settingsDownloadSourceMirrorFirst =>
+      'Espelho R2 primeiro · a fonte original permanece como alternativa';
+
+  @override
+  String get settingsDownloadSourceSaveFailed =>
+      'Não foi possível salvar a fonte de download preferida. Tente novamente.';
+
+  @override
   String get autoInstallPromptTitle => 'Instalar os mods depois de baixá-los?';
 
   @override
@@ -4079,6 +4094,21 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get settingsAutoInstallOff =>
       'Você será perguntado após cada download';
+
+  @override
+  String get settingsDownloadSource => 'Preferir espelho de download R2';
+
+  @override
+  String get settingsDownloadSourceOriginalFirst =>
+      'Fonte original primeiro · R2 é usado automaticamente se ela falhar';
+
+  @override
+  String get settingsDownloadSourceMirrorFirst =>
+      'Espelho R2 primeiro · a fonte original permanece como alternativa';
+
+  @override
+  String get settingsDownloadSourceSaveFailed =>
+      'Não foi possível salvar a fonte de download preferida. Tente novamente.';
 
   @override
   String get autoInstallPromptTitle => 'Instalar os mods depois de baixá-los?';

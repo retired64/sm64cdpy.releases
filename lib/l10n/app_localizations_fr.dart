@@ -957,6 +957,22 @@ class AppLocalizationsFr extends AppLocalizations {
       'Une confirmation sera demandée après chaque téléchargement';
 
   @override
+  String get settingsDownloadSource =>
+      'Préférer le miroir de téléchargement R2';
+
+  @override
+  String get settingsDownloadSourceOriginalFirst =>
+      'Source d’origine en premier · R2 est utilisé automatiquement en cas d’échec';
+
+  @override
+  String get settingsDownloadSourceMirrorFirst =>
+      'Miroir R2 en premier · la source d’origine reste disponible en secours';
+
+  @override
+  String get settingsDownloadSourceSaveFailed =>
+      'Impossible d’enregistrer la source de téléchargement préférée. Réessayez.';
+
+  @override
   String get autoInstallPromptTitle =>
       'Installer les mods après téléchargement ?';
 

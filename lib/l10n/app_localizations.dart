@@ -1720,6 +1720,30 @@ abstract class AppLocalizations {
   /// **'You will be asked after each download'**
   String get settingsAutoInstallOff;
 
+  /// Settings switch that changes the preferred mod download source
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer R2 download mirror'**
+  String get settingsDownloadSource;
+
+  /// Download source setting summary when origin is preferred
+  ///
+  /// In en, this message translates to:
+  /// **'Original source first · R2 is used automatically if it fails'**
+  String get settingsDownloadSourceOriginalFirst;
+
+  /// Download source setting summary when R2 is preferred
+  ///
+  /// In en, this message translates to:
+  /// **'R2 mirror first · the original source remains available as fallback'**
+  String get settingsDownloadSourceMirrorFirst;
+
+  /// Error shown when the download source preference cannot be saved
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the preferred download source. Try again.'**
+  String get settingsDownloadSourceSaveFailed;
+
   /// One-time auto-install choice banner title
   ///
   /// In en, this message translates to:

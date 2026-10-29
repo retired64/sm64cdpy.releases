@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'download_source_preference_service.dart';
+
 const _kValidExtensions = {'.zip', '.lua', '.luac', '.rar', '.7z'};
 
 final _mediaFirePageRe = RegExp(
@@ -175,18 +177,24 @@ class DownloadUrlResolver {
   Future<List<String>> resolveDownloadSources(
     String originalUrl, {
     String? availableMirrorUrl,
+    DownloadSourcePreference? preference,
   }) async {
     final primary = await resolveDownloadUrl(originalUrl);
-    final sources = <String>[primary];
     final mirror = availableMirrorUrl?.trim() ?? '';
     final parsed = Uri.tryParse(mirror);
-    if (mirror.isNotEmpty &&
+    final hasMirror =
+        mirror.isNotEmpty &&
         parsed != null &&
         parsed.scheme == 'https' &&
         parsed.host.isNotEmpty &&
-        mirror != primary) {
-      sources.add(mirror);
-    }
+        mirror != primary;
+    if (!hasMirror) return List.unmodifiable(<String>[primary]);
+
+    final effectivePreference =
+        preference ?? await DownloadSourcePreferenceService.read();
+    final sources = effectivePreference == DownloadSourcePreference.mirrorFirst
+        ? <String>[mirror, primary]
+        : <String>[primary, mirror];
     return List.unmodifiable(sources);
   }
 

@@ -1146,6 +1146,22 @@
   "@settingsAutoInstallOff": {
     "description": "Settings screen message when auto-install is off"
   },
+  "settingsDownloadSource": "Prefer R2 download mirror",
+  "@settingsDownloadSource": {
+    "description": "Settings switch that changes the preferred mod download source"
+  },
+  "settingsDownloadSourceOriginalFirst": "Original source first · R2 is used automatically if it fails",
+  "@settingsDownloadSourceOriginalFirst": {
+    "description": "Download source setting summary when origin is preferred"
+  },
+  "settingsDownloadSourceMirrorFirst": "R2 mirror first · the original source remains available as fallback",
+  "@settingsDownloadSourceMirrorFirst": {
+    "description": "Download source setting summary when R2 is preferred"
+  },
+  "settingsDownloadSourceSaveFailed": "Could not save the preferred download source. Try again.",
+  "@settingsDownloadSourceSaveFailed": {
+    "description": "Error shown when the download source preference cannot be saved"
+  },
   "autoInstallPromptTitle": "Install mods after downloading?",
   "@autoInstallPromptTitle": {
     "description": "One-time auto-install choice banner title"

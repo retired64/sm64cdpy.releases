@@ -91,6 +91,14 @@ del detalle aplican el mismo orden y validación básica. El evento
 `download_completed` registra internamente si terminó desde `origin` o
 `mirror`, sin exponer dos botones técnicos al usuario.
 
+`download_source_preference` en SharedPreferences define el orden global. Por
+defecto se intenta origen y después R2. El ajuste **Preferir mirror de descarga
+R2** invierte el orden a R2 y después origen, sin desactivar nunca el fallback.
+`DownloadUrlResolver` lee la preferencia en cada operación, por lo que detalle,
+descarga manual, WorkManager y overlay observan el cambio sin caches ni reinicio.
+Cuando un artefacto no tiene mirror válido, siempre se conserva únicamente el
+origen aunque el usuario prefiera R2.
+
 ## Permisos Android
 
 - `SYSTEM_ALERT_WINDOW`: mostrar la burbuja.

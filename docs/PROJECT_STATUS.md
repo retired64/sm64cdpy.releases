@@ -437,6 +437,13 @@ interruptor y volumen propios guardados en Hive, preview al soltar y reset
 Deluxe. Reutiliza SoundPool; no altera el volumen Android ni el motor Play.
 Pruebas preparadas, ejecución de Flutter/Kotlin y validación física pendientes.
 
+## Preferencia de fuente de descarga — 2026-10-28
+
+Ajustes permite priorizar la fuente original o el mirror R2. SharedPreferences
+es la autoridad compartida; el resolver central aplica el orden a la app, el
+overlay, la descarga manual y WorkManager, conservando siempre la otra fuente
+como fallback. Los artefactos sin mirror continúan usando su origen.
+
 
 ## Localización FR/IT y autor de Touch Controls — 2026-10-24
 
