@@ -892,5 +892,7 @@
   "detailArtifactApiDescription": "Extensions facultatives utilisant l’API du mod ; ce n’est pas le mod principal.",
   "detailArtifactTexturesDescription": "Ressources visuelles facultatives pour ce mod.",
   "detailArtifactVoicesDescription": "Pack de voix facultatif ; installez d’abord le mod principal.",
-  "detailArtifactOptionalDescription": "Fichier complémentaire facultatif. Consultez la description avant l’installation."
+  "detailArtifactOptionalDescription": "Fichier complémentaire facultatif. Consultez la description avant l’installation.",
+  "gameModsHeader": "Impossible de lire le script principal de ce mod. Vérifiez l’accès au dossier et actualisez.",
+  "gameModsActiveHeader": "Impossible de vérifier la compatibilité : le script d’un mod activé est illisible. Vérifiez l’accès ou désactivez ce mod."
 }

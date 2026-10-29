@@ -155,8 +155,8 @@ La comprobación de tamaño cuenta Lua/Luac recursivos y los tipos del juego en
 presupuesto de 4000 documentos; no lee los recursos grandes para sumarlos.
 Una ruta que no pueda comprobarse se rechaza conservadoramente al activar.
 Se puede desactivar una identidad válida aunque su encabezado no sea legible.
-Si no se pueden conocer los encabezados de las unidades de la carpeta, se
-bloquean nuevas activaciones para no ignorar una incompatibilidad desconocida.
+Solo un encabezado ilegible del candidato o de un mod activado relevante
+bloquea una nueva activación; los desactivados no interfieren.
 
 El respaldo privado se llama `game-mod-config-<hash-de-URI>.backup` y pertenece a la
 URI exacta de configuración guardada en `game_mod_backup_document`. No reemplaza
@@ -204,9 +204,8 @@ la ejecución Lua, generación DynOS, validación de partida ni carga del juego.
 Toda consulta SAF, metadata, respaldo y escritura corre en un thread nativo.
 No hay lectura de configuración por cada tarjeta/render, ni polling continuo.
 La proyección se actualiza al entrar en la pestaña, volver al primer plano,
-completar una instalación o refrescar Biblioteca. Encabezados limitados a 64 KiB
-se dejan de leer al terminar los comentarios; cada línea tiene límite de 800
-caracteres. La lista admite hasta 500 entradas y presenta 20 controles por página.
+completar una instalación o refrescar Biblioteca. Los encabezados se dejan de leer al terminar los comentarios; cada línea
+se trunca a 800 caracteres como en el juego, sin rechazar líneas más largas. La lista admite hasta 500 entradas y presenta 20 controles por página.
 El tamaño recursivo solo se comprueba para el mod que se intenta habilitar.
 
 No se añade una caché persistente de activación que compita con el archivo.
@@ -435,3 +434,35 @@ Historial conservan su finalidad. Se admiten enlaces ?view=dynos y
 ?view=touch-controls; los enlaces game-mods/detected mantienen compatibilidad.
 No cambia Kotlin, las rutas, el backup ni las directivas del juego. Validación
 Actions validado en [Testing #240](https://github.com/retired64/sm64cdpy.releases/actions/runs/38684870621), commit `a18779d`: generación l10n, formato, análisis, pruebas Flutter, APK arm64 y pruebas nativas correctos. Generados y formato del runner sincronizados posteriormente. Prueba física de los tres temas pendiente.
+
+## Compatibilidad de encabezados y bloqueos — 2026-10-29
+
+El lector sigue `utils/misc.c::file_get_line` y `mods/mod.c` del juego:
+filtra bytes no imprimibles, interpreta escapes, conserva hasta 800 caracteres
+por línea y consume el resto sin rechazar el mod. Continúa hasta el primer
+renglón que no sea comentario. Guarda solo la primera aparición de los campos
+utilizados, con memoria acotada; no hay un límite artificial de 64 KiB para el
+encabezado completo. Las incompatibilidades conservan el límite de 256 del juego.
+Esto permite encabezados como la descripción de 816 caracteres de Day Night
+Cycle DX sin bloquear ese mod ni los demás.
+
+Solo los mods activados participan en incompatibilidades. Un mod desactivado
+ilegible no bloquea otros mods. Si el candidato declara incompatibilidades y
+un mod activado no puede leerse, se comunica esa limitación de acceso en vez de
+inventar un conflicto. La instantánea incluye `blockedReason` opcional y la UI
+distingue conflicto, script del candidato ilegible y script de un mod activo
+ilegible. Clientes y snapshots anteriores siguen siendo compatibles.
+
+Guardar, incluso si los bytes ya coinciden, devuelve una instantánea completa:
+los switches hermanos y la caché Hive reflejan las nuevas incompatibilidades.
+`sm64config.txt` y los archivos actuales siguen siendo autoridad; no se agrega
+persistencia ni otro escritor. El overlay no escribe selección del juego.
+Se conservan las verificaciones de tamaño al activar, SAF, backup y exclusión de
+instalaciones. La equivalencia se refiere a selección persistida para el próximo
+inicio: el administrador no ejecuta Lua ni controla el juego abierto.
+
+Regresiones añadidas: líneas largas, encabezados mayores de 64 KiB, escapes,
+campos duplicados, fin del encabezado, cero mods activos con un mod desactivado
+ilegible, conflicto solo con activos y transporte/caché de motivos de bloqueo.
+Validación física pendiente con Day Night Cycle DX, Bowser y dos movesets
+incompatibles, desactivación, reinicio del juego y permisos revocados.

@@ -9,6 +9,7 @@ class GameModEntry {
     required this.title,
     required this.enabled,
     required this.selectable,
+    this.blockedReason,
     this.kind = 'lua',
     this.origin = 'user',
     this.author,
@@ -17,6 +18,7 @@ class GameModEntry {
     this.description,
   });
   factory GameModEntry.fromMap(Map<dynamic, dynamic> value) => GameModEntry(
+    blockedReason: value['blockedReason'] as String?,
     kind: value['kind'] as String? ?? 'lua',
     origin: value['origin'] as String? ?? 'user',
     name: value['name'] as String,
@@ -28,6 +30,7 @@ class GameModEntry {
     versionLabel: value['versionLabel'] as String?,
     description: value['description'] as String?,
   );
+  final String? blockedReason;
   final String kind;
   final String origin;
   String get gamePath =>
@@ -44,6 +47,7 @@ class GameModEntry {
   final String? description;
 
   Map<String, Object?> toMap() => {
+    'blockedReason': blockedReason,
     'kind': kind,
     'origin': origin,
     'name': name,
@@ -57,6 +61,7 @@ class GameModEntry {
   };
 
   GameModEntry withEnabled(bool value) => GameModEntry(
+    blockedReason: blockedReason,
     kind: kind,
     origin: origin,
     name: name,

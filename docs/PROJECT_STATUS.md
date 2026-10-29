@@ -1,5 +1,13 @@
 # Estado y próximos pasos
 
+## Biblioteca: activación coherente con el juego — 2026-10-29
+
+Lectura de encabezados largos por truncado como CoopDX, sin bloqueo global por
+mods desactivados ilegibles. Motivos concretos de bloqueo y recálculo de switches
+hermanos tras guardar. Regresiones añadidas; generación l10n, análisis, tests y
+compilación pendientes por ausencia local de Flutter/Dart y Gradle wrapper.
+Prueba física pendiente. Detalles en `docs/GAME_MOD_ACTIVATION.md`.
+
 Revisado para la candidata `1.9.1+29` en `main` el 2026-10-25. La
 `1.9.0+28` es la release publicada anterior.
 

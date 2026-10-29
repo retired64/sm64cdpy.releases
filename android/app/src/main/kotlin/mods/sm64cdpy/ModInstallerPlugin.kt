@@ -275,7 +275,7 @@ class ModInstallerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val value = action()
                 Handler(Looper.getMainLooper()).post { result.success(value) }
             } catch (error: Exception) {
-                val code = error.message?.takeIf { it in setOf("access", "missing", "folder", "mismatch", "limit", "format", "invalid", "conflict", "write", "verify", "installing", "size", "exists") } ?: "access"
+                val code = error.message?.takeIf { it in setOf("access", "missing", "folder", "mismatch", "limit", "format", "invalid", "header", "active_header", "conflict", "write", "verify", "installing", "size", "exists") } ?: "access"
                 Handler(Looper.getMainLooper()).post { result.error(code, code, null) }
             }
         }

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — Game mod activation
+
+- Match CoopDX header truncation instead of rejecting long descriptions; unreadable disabled mods no longer block other mods.
+- Explain unreadable scripts separately from active incompatibilities and refresh sibling switches after confirmed writes.
+- Add native and Flutter regression coverage. Local Flutter/Dart and Gradle wrapper are unavailable; generation, compilation, tests and device validation remain pending.
+
 ## Unreleased — Repository maintenance
 
 - Restore the standard MIT license text and move project clarifications into a separate disclaimer without additional licensing conditions.

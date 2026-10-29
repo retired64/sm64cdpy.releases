@@ -2265,5 +2265,7 @@
   "detailArtifactApiDescription": "Optional add-ons that use this mod's API; not the main mod.",
   "detailArtifactTexturesDescription": "Optional visual resources for this mod.",
   "detailArtifactVoicesDescription": "Optional additional voice pack; install the main mod first.",
-  "detailArtifactOptionalDescription": "Optional companion file. Check the mod description before installing."
+  "detailArtifactOptionalDescription": "Optional companion file. Check the mod description before installing.",
+  "gameModsHeader": "Cannot read this mod’s main script. Check folder access and refresh.",
+  "gameModsActiveHeader": "Cannot check compatibility with an enabled mod because its script is unreadable. Check folder access or disable that mod."
 }

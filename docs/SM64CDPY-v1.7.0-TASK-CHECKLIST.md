@@ -1,5 +1,13 @@
 # Task Checklist Manager — SM64CDPY v1.7.0
 
+## Biblioteca: activación coherente con el juego — 2026-10-29
+
+Lectura de encabezados largos por truncado como CoopDX, sin bloqueo global por
+mods desactivados ilegibles. Motivos concretos de bloqueo y recálculo de switches
+hermanos tras guardar. Regresiones añadidas; generación l10n, análisis, tests y
+compilación pendientes por ausencia local de Flutter/Dart y Gradle wrapper.
+Prueba física pendiente. Detalles en `docs/GAME_MOD_ACTIVATION.md`.
+
 > Incremental stabilization and pre-release plan for `1.7.0+18`.
 
 | Field | Value |

@@ -967,5 +967,7 @@
   "detailArtifactApiDescription": "Complementos opcionales que usan la API del mod; no es el mod principal.",
   "detailArtifactTexturesDescription": "Recursos visuales opcionales para este mod.",
   "detailArtifactVoicesDescription": "Paquete adicional de voces; instala primero el mod principal.",
-  "detailArtifactOptionalDescription": "Archivo complementario opcional. Revisa la descripción antes de instalarlo."
+  "detailArtifactOptionalDescription": "Archivo complementario opcional. Revisa la descripción antes de instalarlo.",
+  "gameModsHeader": "No se puede leer el script principal de este mod. Revisa el acceso a la carpeta y actualiza.",
+  "gameModsActiveHeader": "No se puede comprobar la compatibilidad porque el script de un mod activado no se puede leer. Revisa el acceso o desactiva ese mod."
 }

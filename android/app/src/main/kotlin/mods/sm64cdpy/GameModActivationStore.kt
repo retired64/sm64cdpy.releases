@@ -156,38 +156,15 @@ internal object GameModActivationStore {
         var tags = emptySet<String>()
         var metadata = LuaModMetadata.Info()
         try {
-            val lines = mutableListOf<String>()
-            context.contentResolver.openInputStream(script.uri)?.bufferedReader(Charsets.UTF_8)?.use { reader ->
-                var length = 0
-                while (true) {
-                    reader.mark(2)
-                    val first = reader.read()
-                    val second = reader.read()
-                    reader.reset()
-                    if (first != 45 || second != 45) break
-                    val lineBuffer = StringBuilder()
-                    var ended = false
-                    while (true) {
-                        val character = reader.read()
-                        if (character < 0) { ended = true; break }
-                        if (character == 10) break
-                        require(lineBuffer.length < 800) { "invalid" }
-                        lineBuffer.append(character.toChar())
-                    }
-                    if (ended && lineBuffer.isEmpty()) break
-                    val line = lineBuffer.toString().removeSuffix("\r")
-                    length += line.length + 1
-                    require(length <= 65536 && line.length <= 800) { "invalid" }
-                    if (!line.startsWith("--")) break
-                    lines += line
-                }
+            val lines = context.contentResolver.openInputStream(script.uri)?.use {
+                GameLuaHeader.read(it)
             } ?: error("access")
-            metadata = LuaModMetadata.parse(lines.joinToString("\n"), name)
+            metadata = LuaModMetadata.parse(lines.joinToString("\n") { it.replace("\n", "\\n") }, name)
             var foundTags = false
             for (line in lines) {
                 if (title == name && line.startsWith("-- name:")) title = line.removePrefix("-- name:").trim().take(64)
                 if (!foundTags && line.startsWith("-- incompatible:")) {
-                    tags = line.removePrefix("-- incompatible:").trim().take(256).split(' ').filter { it.isNotEmpty() }.toSet()
+                    tags = line.removePrefix("-- incompatible:").trimStart(' ', '\t').take(256).split(' ').filter { it.isNotEmpty() }.toSet()
                     foundTags = true
                 }
             }
@@ -256,22 +233,15 @@ internal object GameModActivationStore {
             val enabledPacks = GameDynosConfig.enabled(text)
             val dynos = packs(context, directory)
             val mods = scanMods(context, directory)
-            val activeMods = mods.filter { it.name in selected }
-            val conflictingNames = mutableSetOf<String>()
-            for (candidate in mods) {
-                if (activeMods.any { active ->
-                        active.name != candidate.name &&
-                            active.tags.intersect(candidate.tags).isNotEmpty()
-                    }) {
-                    conflictingNames += candidate.name
-                }
-            }
-            val allModsSafe = mods.all { it.safe }
+            val entries = mods.map { GameModSelection.Entry(it.name, it.safe, it.tags) }
             mapOf("status" to "ready", "backupAvailable" to (prefs(context).getString(BACKUP_DOCUMENT, null) == config.uri.toString()), "mods" to mods.map { mod ->
+                val blockedReason = GameModSelection.blockedReason(
+                    GameModSelection.Entry(mod.name, mod.safe, mod.tags), selected, entries)
                 mapOf("kind" to "lua", "origin" to mod.origin, "name" to mod.name, "title" to mod.title,
                     "author" to mod.metadata.author, "category" to mod.metadata.category,
                     "versionLabel" to mod.metadata.version, "description" to mod.metadata.description, "enabled" to (mod.name in selected),
-                    "selectable" to (mod.name in selected || (mod.safe && allModsSafe && mod.name !in conflictingNames)))
+                    "blockedReason" to blockedReason,
+                    "selectable" to (blockedReason == null))
             } + dynos.map { pack ->
                 val name = pack.name
                 mapOf("kind" to "dynos", "origin" to pack.origin, "name" to name, "title" to name,
@@ -305,7 +275,7 @@ internal object GameModActivationStore {
                 val active = GameModConfig.enabled(text)
                 if (enabled) {
                     val target = findMod(context, directory, name) ?: error("invalid")
-                    require(target.safe) { "invalid" }
+                    require(target.safe) { "header" }
                     val activeMods = if (target.tags.isEmpty()) {
                         emptyList()
                     } else {
@@ -315,7 +285,7 @@ internal object GameModActivationStore {
                             .mapNotNull { findMod(context, directory, it) }
                             .toList()
                     }
-                    require(activeMods.all { it.safe }) { "invalid" }
+                    require(activeMods.all { it.safe }) { "active_header" }
                     val base = if (target.origin == "root") GameFolderStore.gameRoot(context) else directory
                     verifySize(context, base?.findFile("mods")?.findFile(name) ?: error("invalid"))
                     require(activeMods.none { it.tags.intersect(target.tags).isNotEmpty() }) { "conflict" }
@@ -324,11 +294,7 @@ internal object GameModActivationStore {
             }.toByteArray(Charsets.UTF_8)
             require(updated.size <= MAX_CONFIG) { "limit" }
             if (original.contentEquals(updated)) {
-                return@synchronized mapOf(
-                    "status" to "ready",
-                    "backupAvailable" to (prefs(context).getString(BACKUP_DOCUMENT, null) == file.uri.toString()),
-                    "mods" to emptyList<Any>(),
-                )
+                return@synchronized snapshot(context)
             }
             val backup = AtomicFile(backupFile(context, file.uri))
             val stream = backup.startWrite()
@@ -351,11 +317,7 @@ internal object GameModActivationStore {
                 // Backup remains intact; never overwrite a possible intervening game write.
                 throw IllegalStateException("write", error)
             }
-            mapOf(
-                "status" to "ready",
-                "backupAvailable" to (prefs(context).getString(BACKUP_DOCUMENT, null) == file.uri.toString()),
-                "mods" to emptyList<Any>(),
-            )
+            snapshot(context)
         }
 
     private fun revision(bytes: ByteArray): String = java.security.MessageDigest.getInstance("SHA-256")
