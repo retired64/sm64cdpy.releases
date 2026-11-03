@@ -1,5 +1,13 @@
 # Estado y próximos pasos
 
+## Jugador articulado WebGL — 2026-11-03
+
+Integrado en `r2-phase6-flutter-fallback`: jerarquía y reposo real para los cinco
+personajes, caches versionadas y respuestas obsoletas descartadas. Pruebas CPU
+sintéticas y con ROM/ELF privados ejecutadas; CI Flutter/Gradle y GPU en teléfono
+pendientes. Contrato, reproducción de pruebas y límites en
+[PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md#reposo-articulado-javascriptwebgl--2026-11-03).
+
 ## Biblioteca: activación coherente con el juego — 2026-10-29
 
 Lectura de encabezados largos por truncado como CoopDX, sin bloqueo global por

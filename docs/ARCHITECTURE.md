@@ -351,7 +351,9 @@ lectura; las personales usan el formato real `[PALETTE]` en `user/palettes`.
 Cambiar la carpeta unificada invalida tanto la proyección de mods como la de
 Jugador. La vista previa es un PlatformView Android con WebView local y WebGL:
 reconstruye el modelo desde `libmain.so` de SM64CoopDX y la ROM USA autorizada,
-actualiza los uniformes de paleta sin generar PNG y libera el contexto al salir.
+conserva 20 articulaciones por personaje, reproduce tres clips de reposo de la ROM,
+actualiza uniformes de paleta y libera el contexto al salir. El fotograma WebP
+de arranque es cache derivada; no reemplaza la animación JavaScript/WebGL.
 El contrato completo está en [PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md).
 
 ## Navegación y estado

@@ -62,7 +62,7 @@ private class Player3DView(
     private val webView = WebView(context).apply {
         setBackgroundColor(Color.TRANSPARENT)
         settings.javaScriptEnabled = true
-        settings.domStorageEnabled = false
+        settings.domStorageEnabled = true // IndexedDB caches only derived local preview data.
         settings.databaseEnabled = true
         settings.allowFileAccess = false
         settings.allowContentAccess = false
@@ -143,8 +143,12 @@ private class Player3DView(
             val value = runCatching { org.json.JSONObject(json) }.getOrNull() ?: return
             val state = value.optString("state")
             if (state == "bridge-ready") {
-                bridgeReady = true
-                context.mainExecutor.execute { if (!disposed) pushProfile() }
+                context.mainExecutor.execute {
+                    if (!disposed) {
+                        bridgeReady = true
+                        pushProfile()
+                    }
+                }
             } else emit(state, value.optString("detail"))
         }
     }
@@ -162,6 +166,10 @@ private class Player3DView(
                     "app.js" -> asset("app.js", "application/javascript")
                     "player3d-index.js" -> asset("player3d-index.js", "application/javascript")
                     "player3d-renderer.js" -> asset("player3d-renderer.js", "application/javascript")
+                    "player3d-model.js" -> asset("player3d-model.js", "application/javascript")
+                    "player3d-clips.js" -> asset("player3d-clips.js", "application/javascript")
+                    "vendor/three.module.js" -> asset("vendor/three.module.js", "application/javascript")
+                    "vendor/three.core.js" -> asset("vendor/three.core.js", "application/javascript")
                     "source-key.txt" -> text(requireNotNull(inputs).cacheKey)
                     "game.bin" -> file(requireNotNull(inputs).game, "application/octet-stream")
                     "rom.bin" -> file(requireNotNull(inputs).rom, "application/octet-stream")

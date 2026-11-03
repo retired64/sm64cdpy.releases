@@ -8,6 +8,15 @@ Revisado para 1.9.1 el 2026-10-25.
 > el sitio Astro consumen ese mismo documento; Flutter solo conserva la
 > detección OTA y de actualización forzada.
 
+## Regresiones del visor local — 2026-11-03
+
+Ambos workflows preparan Node 22 y ejecutan `node --test test/player3d/*.test.mjs`
+antes del SDK Flutter. Son pruebas CPU de extracción, animación, lifecycle y
+recursos locales; no prueban WebGL/GPU ni sustituyen análisis Flutter o Gradle.
+El caso con archivos privados se omite en CI: nunca se descargan ni publican
+ROM, modelos, texturas o APK del juego como fixtures. Para ejecutarlo localmente,
+ver [PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md).
+
 ## Workflows actuales
 
 ### `buildAndroid-testing.yml`

@@ -1221,3 +1221,16 @@ git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
 - [x] Documentar límites de capas y decisiones en REPOSITORY_LAYOUT.md.
 - [x] Mantener contratos de runtime, catálogos, manifiestos y workflows.
 - [ ] Revisión funcional en dispositivo: no ejecutada en esta tarea documental.
+
+
+## Jugador articulado JavaScript/WebGL — 2026-11-03
+
+- [x] Trabajar en `r2-phase6-flutter-fallback` sin cambiar versión ni guardado del perfil.
+- [x] Conservar parser Android y portar jerarquía/nodos/materiales del launcher.
+- [x] Extraer y validar tres clips compartidos; interpolar rotación y traslación corporal.
+- [x] Mantener pose fija como salida si no hay clips válidos y respetar movimiento reducido.
+- [x] Versionar caches, habilitar IndexedDB local y descartar respuestas atrasadas.
+- [x] Probar los cinco rigs con ELF/ROM privados y comprobar pies de Mario.
+- [x] Añadir regresiones CPU y compuerta Node 22 a ambos workflows Android.
+- [ ] Ejecutar build completo Flutter/Gradle en CI; no disponible en este Termux.
+- [ ] Validar en teléfono shaders, animación, gestos, paletas, lifecycle y permisos.

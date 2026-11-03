@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — Animated Player WebGL preview
+
+- Reconstruct articulated rigs for all five built-in characters and play the ROM-derived three-clip idle cycle, including body translation and smooth transitions.
+- Keep the existing local Android WebView and profile editor; invalid optional animation falls back to the reference pose.
+- Isolate the Android game parser from the old application bundle, version derived caches, coalesce rapid profile changes and clean up animation/snapshot work on teardown.
+- Add CPU animation, lifecycle and resource-graph regressions to both Android workflows. Local private-input extraction and motion checks pass; full Flutter/Gradle build and physical GPU validation remain pending.
+
 ## Unreleased — Game mod activation
 
 - Match CoopDX header truncation instead of rejecting long descriptions; unreadable disabled mods no longer block other mods.
