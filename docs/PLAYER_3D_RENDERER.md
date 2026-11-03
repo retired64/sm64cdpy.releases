@@ -318,3 +318,33 @@ la prueba con insumos privados; 16 pruebas Python de scripts aprobadas; Kotlin
 modificado compilado contra API Android y stubs mínimos Flutter/proyecto. Esta
 última comprobación solo cubre sintaxis/tipos, no la integración Gradle real.
 `git diff --check` correcto. Flutter analyze y Gradle completos no disponibles.
+
+
+## Corrección de empaquetado y arranque — 2026-11-03
+
+La primera build `bf4d54e` pasó compilación y pruebas CPU, pero su APK no contenía
+`assets/flutter_assets/assets/player3d/vendor/three.core.js` ni `three.module.js`.
+Se confirmó abriendo el APK descargado: la declaración `assets/player3d/` en
+pubspec **no incluye subdirectorios recursivamente**. El grafo ESM fallaba antes
+de ejecutar `app.js` y emitir `bridge-ready`, dejando la proyección Flutter en
+loading. No era tiempo normal de extracción ni descarga de personajes.
+
+Se declara `assets/player3d/vendor/` explícitamente. La prueba de recursos ahora
+verifica también la declaración Flutter de cada dependencia, no solo su presencia
+en disco y la lista permitida Android. `scripts/verify_player3d_assets.py` recorre
+el grafo real desde HTML y comprueba presencia y bytes de los módulos dentro de
+cada APK; ambos workflows lo ejecutan antes de subir artifacts/publicar.
+
+HTML instala un manejador antes del módulo principal: errores de carga/rechazos
+se reportan por el bridge existente como `error` con detalle técnico. Un límite
+de arranque de 30 segundos evita loading permanente si nunca llega un resultado.
+`ready/error/pagehide` retiran el temporizador; no se introducen estados nuevos
+ni mensajes visibles sin localizar. La pantalla Flutter conserva sus textos de
+vista previa no disponible. No cambia el perfil, sus caches de configuración,
+el overlay ni WorkManager.
+
+Regresiones: 19 pruebas Python aprobadas y 19 pruebas JS aprobadas, incluida
+la adicional con insumos privados. El verificador rechaza el APK
+`bf4d54e` precisamente por los dos módulos faltantes. Pendiente verificar el APK
+corregido de Actions y el render real en teléfono. No se modifican claves,
+versión, shaders ni datos de los personajes en esta corrección.

@@ -2,6 +2,8 @@
 
 ## Unreleased — Animated Player WebGL preview
 
+- Fix the first animated-preview APK: explicitly bundle the nested Three.js assets, verify the actual packaged module graph before artifact upload, and report module startup failures instead of leaving an endless loading indicator.
+
 - Reconstruct articulated rigs for all five built-in characters and play the ROM-derived three-clip idle cycle, including body translation and smooth transitions.
 - Keep the existing local Android WebView and profile editor; invalid optional animation falls back to the reference pose.
 - Isolate the Android game parser from the old application bundle, version derived caches, coalesce rapid profile changes and clean up animation/snapshot work on teardown.

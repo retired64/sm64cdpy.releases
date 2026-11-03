@@ -9,6 +9,7 @@ Ejecutar desde la raíz del repositorio. Los workflows conservan sus rutas.
 | `precompute_catalog_translations.py` | Generar traducciones del catálogo fuera del APK |
 | `validate_translated_catalog.py` | Verificar el resultado antes de distribuirlo |
 | `analyze_catalog_categories.py` | Analizador interactivo histórico; busca JSON en el directorio de ejecución |
+| `verify_player3d_assets.py` | Verificar HTML y grafo WebGL local dentro de los APK antes de distribuirlos |
 | `check_doc_links.py` | Comprobar destinos locales de enlaces Markdown de documentación |
 
 Para analizar categorías: `cd db` y después

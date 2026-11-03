@@ -171,6 +171,9 @@ jobs:
       - name: Build APKs (arm64-v8a, armeabi-v7a, x86_64)
         run: flutter build apk --release --split-per-abi
 
+      - name: Verify packaged Player HTML and WebGL module graph
+        run: python3 scripts/verify_player3d_assets.py build/app/outputs/flutter-apk/app-*-release.apk
+
       # Flutter installs the wrapper and prepares local.properties during build.
       # Reuse release compilation, and gate artifact upload/publication on tests.
       - name: Pruebas nativas de configuración y biblioteca

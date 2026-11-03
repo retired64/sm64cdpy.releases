@@ -17,6 +17,12 @@ El caso con archivos privados se omite en CI: nunca se descargan ni publican
 ROM, modelos, texturas o APK del juego como fixtures. Para ejecutarlo localmente,
 ver [PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md).
 
+Ambos workflows verifican también el resultado del empaquetado con
+`python3 scripts/verify_player3d_assets.py build/app/outputs/flutter-apk/app-*-release.apk`.
+La compuerta exige HTML y todos los módulos ESM locales con los bytes del checkout
+antes de subir el artifact. Detecta omisiones de subdirectorios Flutter aunque
+compilación, análisis y pruebas CPU hayan pasado.
+
 ## Workflows actuales
 
 ### `buildAndroid-testing.yml`

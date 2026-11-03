@@ -2,6 +2,12 @@
 
 ## Jugador articulado WebGL — 2026-11-03
 
+Seguimiento: el APK `bf4d54e` compiló, pero omitió los módulos Three.js anidados.
+Causa confirmada inspeccionando el APK; corregida la declaración de pubspec y
+añadida compuerta que verifica el grafo real dentro del APK. También se reportan
+fallos previos a `bridge-ready` y se limita la espera de arranque. Nueva build y
+prueba física pendientes; ver corrección en PLAYER_3D_RENDERER.md.
+
 Integrado en `r2-phase6-flutter-fallback`: jerarquía y reposo real para los cinco
 personajes, caches versionadas y respuestas obsoletas descartadas. Pruebas CPU
 sintéticas y con ROM/ELF privados ejecutadas; CI Flutter/Gradle y GPU en teléfono

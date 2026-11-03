@@ -6,8 +6,14 @@ import {fileURLToPath} from 'node:url';
 const root=fileURLToPath(new URL('../../assets/player3d/',import.meta.url));
 test('every renderer module dependency is local, present and explicitly allowed by Android',()=>{
  const kotlin=fs.readFileSync(new URL('../../android/app/src/main/kotlin/mods/sm64cdpy/Player3DPlugin.kt',import.meta.url),'utf8');
+ const pubspec=fs.readFileSync(new URL('../../pubspec.yaml',import.meta.url),'utf8');
+ const declarations=[...pubspec.matchAll(/^\s*-\s*(assets\/[^\s#]+)/gm)].map(m=>m[1]);
  const seen=new Set();
  function visit(name){if(seen.has(name))return;seen.add(name);
+  const asset='assets/player3d/'+name;
+  assert.ok(declarations.some(entry=>entry===asset ||
+    (entry.endsWith('/') && path.posix.dirname(asset)+'/'===entry)),
+    'Flutter asset directories are non-recursive; explicitly declare '+asset);
   assert.ok(kotlin.includes(`"${name}" -> asset("${name}"`),'Android must serve '+name);
   const source=fs.readFileSync(path.join(root,name),'utf8');
   for(const match of source.matchAll(/(?:import|export)[^;]*?from\s*["']([^"']+)["']/g)){

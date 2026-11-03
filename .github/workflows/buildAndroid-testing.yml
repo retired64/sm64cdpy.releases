@@ -182,6 +182,9 @@ jobs:
             flutter build apk --release --target-platform=android-arm64 --split-per-abi
           fi
 
+      - name: Verify packaged Player HTML and WebGL module graph
+        run: python3 scripts/verify_player3d_assets.py build/app/outputs/flutter-apk/app-*-release.apk
+
       # Flutter installs the wrapper and prepares local.properties during build.
       # Reuse release compilation, and gate artifact upload/publication on tests.
       - name: Pruebas nativas de configuración y biblioteca

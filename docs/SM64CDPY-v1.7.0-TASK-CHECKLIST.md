@@ -1234,3 +1234,14 @@ git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
 - [x] Añadir regresiones CPU y compuerta Node 22 a ambos workflows Android.
 - [ ] Ejecutar build completo Flutter/Gradle en CI; no disponible en este Termux.
 - [ ] Validar en teléfono shaders, animación, gestos, paletas, lifecycle y permisos.
+
+
+### Seguimiento de arranque del visor — 2026-11-03
+
+- [x] Confirmar en APK bf4d54e la ausencia de los dos módulos vendor de Three.js.
+- [x] Declarar subcarpeta vendor explícitamente en pubspec (assets no recursivos).
+- [x] Comprobar declaraciones Flutter y grafo ESM local en las regresiones CPU.
+- [x] Validar módulos reales y bytes dentro de cada APK antes de subir artifacts.
+- [x] Reportar fallo de imports antes de bridge-ready y retirar watchdog al terminar/cerrar.
+- [x] Probar APK sintético completo, módulo omitido, archivo obsoleto y bootstrap fallido.
+- [ ] Completar nueva build de Actions y confirmar personajes en teléfono.

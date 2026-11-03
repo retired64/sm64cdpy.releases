@@ -15,6 +15,7 @@ const stage = document.getElementById("stage");
 const current = token => !disposed && token === generation;
 const report = (state, detail = "") => {
   if (disposed) return;
+  window.player3dStartup?.note(state);
   try { Player3DBridge.postState(JSON.stringify({state, detail})); } catch (_) {}
 };
 const colorMap = colors => Object.fromEntries(PARTS.map((part, index) =>

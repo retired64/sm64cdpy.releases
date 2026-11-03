@@ -62,6 +62,7 @@ flutter:
     - assets/icons/menu/
     - assets/icons/player/
     - assets/player3d/
+    - assets/player3d/vendor/
     - assets/coop/
     - assets/themes/minish/
     - assets/themes/mk64/
