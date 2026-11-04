@@ -12,6 +12,7 @@ void main() {
         'selectable': true,
       });
       expect(old.author, isNull);
+      expect(old.blockedReason, isNull);
       expect(old.kind, 'lua');
       expect(old.gamePath, 'user/mods/actual.lua');
       final external = GameModEntry.fromMap({
@@ -46,4 +47,22 @@ void main() {
       expect(merged.enabled, isTrue);
     },
   );
+  test('blocking reason survives persistent snapshot round trip', () {
+    final snapshot = GameModSnapshot.fromMap({
+      'status': 'ready',
+      'mods': [
+        {
+          'name': 'Bowser',
+          'title': 'Bowser',
+          'enabled': false,
+          'selectable': false,
+          'blockedReason': 'conflict',
+        },
+      ],
+    });
+    final restored = GameModSnapshot.fromMap(snapshot.toMap());
+    expect(restored.mods.single.blockedReason, 'conflict');
+    expect(restored.mods.single.selectable, isFalse);
+  });
+
 }

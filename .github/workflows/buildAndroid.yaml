@@ -42,6 +42,14 @@ jobs:
           fetch-depth: 0   # Historial completo (necesario para tags)
 
       # ── 2. Java 17 ───────────────────────────────────────────────────────────
+      - name: Set up Node for the local Player WebGL regressions
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test local Player model and animation engine
+        run: node --test test/player3d/*.test.mjs
+
       - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
@@ -162,6 +170,9 @@ jobs:
       # ── 9. Build APKs split por ABI ─────────────────────────────────────
       - name: Build APKs (arm64-v8a, armeabi-v7a, x86_64)
         run: flutter build apk --release --split-per-abi
+
+      - name: Verify packaged Player HTML and WebGL module graph
+        run: python3 scripts/verify_player3d_assets.py build/app/outputs/flutter-apk/app-*-release.apk
 
       # Flutter installs the wrapper and prepares local.properties during build.
       # Reuse release compilation, and gate artifact upload/publication on tests.

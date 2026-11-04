@@ -124,6 +124,7 @@ class OverlayBridge {
     final modTitle = data['modTitle'] as String?;
     final operationName = data['operationName'] as String?;
     final versionLabel = data['versionLabel'] as String?;
+    final mirrorUrl = data['mirrorUrl'] as String?;
     final destination = data['installDestination'] as String? ?? 'mods';
     if (url == null || modTitle == null) return;
 
@@ -150,9 +151,11 @@ class OverlayBridge {
       return;
     }
 
-    final resolvedUrl = await DownloadUrlResolver.instance.resolveDownloadUrl(
+    final sources = await DownloadUrlResolver.instance.resolveDownloadSources(
       url,
+      availableMirrorUrl: mirrorUrl,
     );
+    final resolvedUrl = sources.first;
     final filename = await DownloadUrlResolver.instance.resolveDownloadFilename(
       resolvedUrl,
       modTitle,
@@ -163,6 +166,7 @@ class OverlayBridge {
     final chain = await BackgroundInstallService.instance
         .startDownloadAndInstall(
           url: resolvedUrl,
+          fallbackUrls: sources.skip(1).toList(growable: false),
           modName: modName,
           identity: identity,
           fileName: filename,

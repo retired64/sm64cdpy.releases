@@ -324,6 +324,8 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
       switch (code) {
         'conflict' => l10n.gameModsConflict,
         'invalid' => l10n.gameModsBlocked,
+        'header' => l10n.gameModsHeader,
+        'active_header' => l10n.gameModsActiveHeader,
         'size' => l10n.gameModsSize,
         'installing' => l10n.gameModsInstalling,
         'mismatch' => l10n.gameModsMismatch,
@@ -386,6 +388,8 @@ class _GameModActivationPanelState extends ConsumerState<GameModActivationPanel>
       'unselected' => l10n.gameModsSelectHint,
       'conflict' => l10n.gameModsConflict,
       'invalid' => l10n.gameModsBlocked,
+      'header' => l10n.gameModsHeader,
+      'active_header' => l10n.gameModsActiveHeader,
       'size' => l10n.gameModsSize,
       'installing' => l10n.gameModsInstalling,
       'mismatch' => l10n.gameModsMismatch,
@@ -1047,7 +1051,11 @@ class _GameModCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   !mod.selectable
-                      ? l10n.gameModsBlocked
+                      ? switch (mod.blockedReason) {
+                          'conflict' => l10n.gameModsConflict,
+                          'active_header' => l10n.gameModsActiveHeader,
+                          _ => l10n.gameModsHeader,
+                        }
                       : mod.enabled
                       ? l10n.gameModsEnabled
                       : l10n.gameModsDisabled,

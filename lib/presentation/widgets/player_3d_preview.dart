@@ -86,12 +86,16 @@ class Player3DPreview extends StatefulWidget {
     required this.profile,
     required this.loadingLabel,
     required this.unavailableLabel,
+    this.surfaceSize,
     super.key,
   });
 
   final PlayerProfile profile;
   final String loadingLabel;
   final String unavailableLabel;
+
+  /// Expanded viewport dimensions, independent of the scroll offset.
+  final Size? surfaceSize;
 
   @override
   State<Player3DPreview> createState() => _Player3DPreviewState();
@@ -154,14 +158,17 @@ class _Player3DPreviewState extends State<Player3DPreview>
     return Stack(
       fit: StackFit.expand,
       children: [
-        AndroidView(
-          viewType: 'mods.sm64cdpy/player3d',
-          creationParams: _profile,
-          creationParamsCodec: const StandardMessageCodec(),
-          onPlatformViewCreated: _created,
-          gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-            Factory<OneSequenceGestureRecognizer>(_Player3DDragRecognizer.new),
-          },
+        Player3DSurface(
+          size: widget.surfaceSize,
+          child: AndroidView(
+            viewType: 'mods.sm64cdpy/player3d',
+            creationParams: _profile,
+            creationParamsCodec: const StandardMessageCodec(),
+            onPlatformViewCreated: _created,
+            gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+              Factory<OneSequenceGestureRecognizer>(_Player3DDragRecognizer.new),
+            },
+          ),
         ),
         if (_status != Player3DStatus.ready)
           ColoredBox(
@@ -184,6 +191,33 @@ class _Player3DPreviewState extends State<Player3DPreview>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+/// Keeps the platform view backing surface fixed while its card contracts.
+/// Flutter scales the existing surface uniformly, including gesture coordinates.
+class Player3DSurface extends StatelessWidget {
+  const Player3DSurface({required this.size, required this.child, super.key});
+
+  final Size? size;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final surface = size;
+    if (surface == null ||
+        !surface.width.isFinite ||
+        !surface.height.isFinite ||
+        surface.width <= 0 ||
+        surface.height <= 0) {
+      return child;
+    }
+    return ClipRect(
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: SizedBox.fromSize(size: surface, child: child),
+      ),
+    );
+  }
 }
 
 class _Message extends StatelessWidget {

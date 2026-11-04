@@ -5,6 +5,7 @@ no constituyen el backlog vigente; contrastarlos con la arquitectura y el códig
 
 | Material | Uso |
 |---|---|
+| [Auditoría de permisos e instalación rápida (2026-10-28)](PERMISSIONS_ACCESS_AUDIT_2026-10-28.md) | Rama r2-phase6-flutter-fallback; accesos especiales y verificación pendiente del APK instalado |
 | [Auditoría anterior](revision-app.md) | Hallazgos de la línea 1.7, algunos ya resueltos |
 | [Checklist anterior del overlay](floating-check-list.md) | Plan original, no estado actual |
 | [Análisis 1.7](plans/analisis-app-to-1.7.md) | Investigación histórica |

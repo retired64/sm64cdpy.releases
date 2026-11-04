@@ -269,6 +269,10 @@
   "settingsAutoInstall": "Installa dopo il download",
   "settingsAutoInstallOn": "I download verranno installati automaticamente nella cartella di gioco configurata",
   "settingsAutoInstallOff": "Verrà chiesta conferma dopo ogni download",
+  "settingsDownloadSource": "Preferisci il mirror di download R2",
+  "settingsDownloadSourceOriginalFirst": "Prima la fonte originale · R2 viene usato automaticamente in caso di errore",
+  "settingsDownloadSourceMirrorFirst": "Prima il mirror R2 · la fonte originale resta disponibile come riserva",
+  "settingsDownloadSourceSaveFailed": "Impossibile salvare la fonte di download preferita. Riprova.",
   "autoInstallPromptTitle": "Installare le mod dopo il download?",
   "autoInstallPromptBody": "Attiva l’installazione automatica per collocare le mod scaricate nella cartella di gioco configurata. Puoi cambiare questa scelta nelle impostazioni.",
   "autoInstallPromptEnable": "Attiva",
@@ -888,5 +892,7 @@
   "detailArtifactApiDescription": "Componenti opzionali che usano l’API della mod; non è la mod principale.",
   "detailArtifactTexturesDescription": "Risorse grafiche opzionali per questa mod.",
   "detailArtifactVoicesDescription": "Pacchetto di voci opzionale; installa prima la mod principale.",
-  "detailArtifactOptionalDescription": "File complementare opzionale. Controlla la descrizione prima di installarlo."
+  "detailArtifactOptionalDescription": "File complementare opzionale. Controlla la descrizione prima di installarlo.",
+  "gameModsHeader": "Impossibile leggere lo script principale di questa mod. Controlla l’accesso alla cartella e aggiorna.",
+  "gameModsActiveHeader": "Impossibile verificare la compatibilità: lo script di una mod attiva è illeggibile. Controlla l’accesso o disattiva quella mod."
 }

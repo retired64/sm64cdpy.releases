@@ -1,5 +1,13 @@
 # Task Checklist Manager — SM64CDPY v1.7.0
 
+## Biblioteca: activación coherente con el juego — 2026-10-29
+
+Lectura de encabezados largos por truncado como CoopDX, sin bloqueo global por
+mods desactivados ilegibles. Motivos concretos de bloqueo y recálculo de switches
+hermanos tras guardar. Regresiones añadidas; generación l10n, análisis, tests y
+compilación pendientes por ausencia local de Flutter/Dart y Gradle wrapper.
+Prueba física pendiente. Detalles en `docs/GAME_MOD_ACTIVATION.md`.
+
 > Incremental stabilization and pre-release plan for `1.7.0+18`.
 
 | Field | Value |
@@ -1213,3 +1221,53 @@ git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
 - [x] Documentar límites de capas y decisiones en REPOSITORY_LAYOUT.md.
 - [x] Mantener contratos de runtime, catálogos, manifiestos y workflows.
 - [ ] Revisión funcional en dispositivo: no ejecutada en esta tarea documental.
+
+
+## Jugador articulado JavaScript/WebGL — 2026-11-03
+
+- [x] Trabajar en `r2-phase6-flutter-fallback` sin cambiar versión ni guardado del perfil.
+- [x] Conservar parser Android y portar jerarquía/nodos/materiales del launcher.
+- [x] Extraer y validar tres clips compartidos; interpolar rotación y traslación corporal.
+- [x] Mantener pose fija como salida si no hay clips válidos y respetar movimiento reducido.
+- [x] Versionar caches, habilitar IndexedDB local y descartar respuestas atrasadas.
+- [x] Probar los cinco rigs con ELF/ROM privados y comprobar pies de Mario.
+- [x] Añadir regresiones CPU y compuerta Node 22 a ambos workflows Android.
+- [ ] Ejecutar build completo Flutter/Gradle en CI; no disponible en este Termux.
+- [ ] Validar en teléfono shaders, animación, gestos, paletas, lifecycle y permisos.
+
+
+### Seguimiento de arranque del visor — 2026-11-03
+
+- [x] Confirmar en APK bf4d54e la ausencia de los dos módulos vendor de Three.js.
+- [x] Declarar subcarpeta vendor explícitamente en pubspec (assets no recursivos).
+- [x] Comprobar declaraciones Flutter y grafo ESM local en las regresiones CPU.
+- [x] Validar módulos reales y bytes dentro de cada APK antes de subir artifacts.
+- [x] Reportar fallo de imports antes de bridge-ready y retirar watchdog al terminar/cerrar.
+- [x] Probar APK sintético completo, módulo omitido, archivo obsoleto y bootstrap fallido.
+- [ ] Completar nueva build de Actions y confirmar personajes en teléfono.
+
+
+### Jugador: parpadeo al desplazar lentamente — 2026-11-03
+
+- [x] Mantener dimensiones intrínsecas del AndroidView durante la contracción.
+- [x] Escalar uniformemente sin cambiar perfil ni gestos de navegación.
+- [x] Evitar resize repetitivo por diferencias floor/round con DPR fraccionario.
+- [x] Repintar inmediatamente tras resize real, respetando visibilidad/teardown.
+- [x] Ejecutar 20 pruebas JavaScript, incluida extracción real privada.
+- [x] Añadir regresiones Flutter de contracción y cambio de ventana.
+- [ ] Ejecutar Dart format, Flutter analyze y pruebas de widgets en CI.
+- [ ] Confirmar scroll lento, rotación y segundo plano en teléfono.
+
+## Preparación 1.9.2+30 — 2026-11-03
+
+- [x] Confirmar última release pública v1.9.1 y ausencia de v1.9.2.
+- [x] Integrar r2-phase6-flutter-fallback sobre main sin conflictos.
+- [x] Alinear pubspec, manifiesto EN/ES/PT-BR, notas, README e índices.
+- [x] Mantener firma, paquete, mínimo Android y nombres de APK; códigos ABI 301/302/303.
+- [x] Validar manifiesto y notas: 19 pruebas Python, 19 JS y 1 JS privada omitida; enlaces y espacios correctos.
+- [ ] Compilar/generar l10n/analizar/ejecutar Flutter y Kotlin en Testing sobre el merge final.
+- [ ] Confirmar matriz física de descargas, overlay, activación y Jugador.
+- [ ] Confirmar publishedAt y publicar v1.9.2 solo con autorización.
+
+La referencia CI de la rama fuente no sustituye las comprobaciones del merge.
+Registro: [Preparación 1.9.2](releases/RELEASE_1.9.2.md).

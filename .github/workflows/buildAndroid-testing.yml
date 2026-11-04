@@ -36,6 +36,14 @@ jobs:
       - name: Checkout repositorio
         uses: actions/checkout@v4
 
+      - name: Set up Node for the local Player WebGL regressions
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test local Player model and animation engine
+        run: node --test test/player3d/*.test.mjs
+
       # ── 2. Java 17 ───────────────────────────────────────────────────────
       - name: Configurar Java 17
         uses: actions/setup-java@v4
@@ -173,6 +181,9 @@ jobs:
           else
             flutter build apk --release --target-platform=android-arm64 --split-per-abi
           fi
+
+      - name: Verify packaged Player HTML and WebGL module graph
+        run: python3 scripts/verify_player3d_assets.py build/app/outputs/flutter-apk/app-*-release.apk
 
       # Flutter installs the wrapper and prepares local.properties during build.
       # Reuse release compilation, and gate artifact upload/publication on tests.

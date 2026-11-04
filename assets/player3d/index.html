@@ -13,6 +13,40 @@
   </head>
   <body>
     <main id="stage" aria-live="polite"></main>
+    <!-- This runs before ESM imports: a missing dependency must not leave the
+         Flutter loading projection alive forever without a bridge-ready event. -->
+    <script>
+      (() => {
+        let stopped = false;
+        let timer = 0;
+        const fail = detail => {
+          if (stopped) return;
+          clearTimeout(timer);
+          try { Player3DBridge.postState(JSON.stringify({state: "error", detail})); } catch (_) {}
+        };
+        const arm = () => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fail("player3d_startup_timeout"), 30000);
+        };
+        window.player3dStartup = {
+          note(state) {
+            if (state === "ready" || state === "error") clearTimeout(timer);
+            else if (state === "bridge-ready" || state === "loading") arm();
+          },
+        };
+        window.addEventListener("error", event => {
+          fail(event.message || "player3d_module_load_failed");
+        }, true);
+        window.addEventListener("unhandledrejection", event => {
+          fail(event.reason?.message || "player3d_unhandled_rejection");
+        });
+        window.addEventListener("pagehide", () => {
+          stopped = true;
+          clearTimeout(timer);
+        }, {once: true});
+        arm();
+      })();
+    </script>
     <script type="module" src="./app.js"></script>
   </body>
 </html>

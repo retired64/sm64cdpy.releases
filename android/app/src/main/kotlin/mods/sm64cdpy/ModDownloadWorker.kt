@@ -23,6 +23,7 @@ class ModDownloadWorker(
 
     companion object {
         const val KEY_URL = "url"
+        const val KEY_FALLBACK_URLS = "fallbackUrls"
         const val KEY_MOD_NAME = "modName"
         const val KEY_DISPLAY_TITLE = "displayTitle"
         const val KEY_FILE_NAME = "fileName"
@@ -30,6 +31,7 @@ class ModDownloadWorker(
         const val DOWNLOAD_CHANNEL_ID = "mod_download_channel"
         const val PROGRESS = "progress"
         const val OUTPUT_ZIP_PATH = "zipPath"
+        const val OUTPUT_SOURCE = "downloadSource"
 
         /** Tras esta cantidad de reintentos de WorkManager, dejamos de reintentar. */
         private const val MAX_RETRY_ATTEMPTS = 5
@@ -52,7 +54,7 @@ class ModDownloadWorker(
         id.hashCode() and 0x7FFFFFFF
     }
 
-    /** Errores de servidor que NO tiene sentido reintentar (4xx: URL rota, mod eliminado, etc.). */
+    /** Errores permanentes del cliente; 408 y 429 permanecen transitorios. */
     private class PermanentDownloadError(message: String) : IOException(message)
 
     override suspend fun doWork(): Result {
@@ -65,6 +67,15 @@ class ModDownloadWorker(
         }
         inputData.getString(KEY_INSTALL_DESTINATION)
         val url = inputData.getString(KEY_URL) ?: return Result.failure()
+        val sources = buildList {
+            add(url)
+            inputData.getStringArray(KEY_FALLBACK_URLS)
+                .orEmpty()
+                .filter { it.startsWith("https://") && it != url }
+                .distinct()
+                .take(1)
+                .forEach(::add)
+        }
         val modName = inputData.getString(KEY_DISPLAY_TITLE)
             ?: inputData.getString(KEY_MOD_NAME)
             ?: return Result.failure()
@@ -88,7 +99,30 @@ class ModDownloadWorker(
                 buildForegroundInfo(notificationId, buildNotification(modName, 0, true))
             )
 
-            downloadFile(url, outputFile, modName)
+            var lastError: Exception? = null
+            var hadTransientError = false
+            var usedSource: String? = null
+            var usedSourceIndex = -1
+            for ((sourceIndex, source) in sources.withIndex()) {
+                try {
+                    downloadFile(source, outputFile, modName)
+                    validateDownloadedFile(outputFile, fileName)
+                    usedSource = source
+                    usedSourceIndex = sourceIndex
+                    break
+                } catch (error: Exception) {
+                    lastError = error
+                    if (error !is PermanentDownloadError) hadTransientError = true
+                    outputFile.delete()
+                    if (isStopped) throw error
+                }
+            }
+            if (usedSource == null) {
+                if (hadTransientError) {
+                    throw IOException("All download sources failed", lastError)
+                }
+                throw lastError ?: IOException("No download source was available")
+            }
 
             if (isStopped) {
                 outputFile.delete()
@@ -103,14 +137,11 @@ class ModDownloadWorker(
             )
 
             return Result.success(
-                workDataOf(OUTPUT_ZIP_PATH to outputFile.absolutePath)
+                workDataOf(
+                    OUTPUT_ZIP_PATH to outputFile.absolutePath,
+                    OUTPUT_SOURCE to if (usedSourceIndex == 0) "origin" else "mirror"
+                )
             )
-        } catch (e: PermanentDownloadError) {
-            // 4xx / URL inválida: reintentar no va a arreglar nada, y dejar
-            // el work en retry infinito solo gasta batería y datos del usuario.
-            outputFile.delete()
-            outputFile.parentFile?.delete()
-            return Result.failure(workDataOf("error" to (e.message ?: "Download failed")))
         } catch (e: Exception) {
             outputFile.delete()
             outputFile.parentFile?.delete()
@@ -119,10 +150,16 @@ class ModDownloadWorker(
             // Reintentos con techo: sin esto, un error transitorio persistente
             // (servidor caído, DNS fallando) reintenta indefinidamente en
             // background. runAttemptCount es 0-indexed la primera vez.
-            return if (runAttemptCount + 1 >= MAX_RETRY_ATTEMPTS) {
+            val allSourcesPermanent = e is PermanentDownloadError
+            return if (allSourcesPermanent || runAttemptCount + 1 >= MAX_RETRY_ATTEMPTS) {
+                val message = if (allSourcesPermanent) {
+                    "Download failed: ${e.message}"
+                } else {
+                    "Download failed after $MAX_RETRY_ATTEMPTS attempts: ${e.message}"
+                }
                 Result.failure(
                     workDataOf(
-                        "error" to "Download failed after $MAX_RETRY_ATTEMPTS attempts: ${e.message}"
+                        "error" to message
                     )
                 )
             } else {
@@ -161,8 +198,9 @@ class ModDownloadWorker(
             connection = httpConn
 
             val responseCode = httpConn.responseCode
-            if (responseCode in 400..499) {
+            if (responseCode in 400..499 && responseCode != 408 && responseCode != 429) {
                 // 404/403/410, etc: el asset no existe o no es accesible.
+                // 408 y 429 sí pueden recuperarse y conservan el retry acotado.
                 // Reintentar no cambia el resultado — falla permanente.
                 throw PermanentDownloadError("Server returned HTTP $responseCode for $urlStr")
             }
@@ -218,6 +256,34 @@ class ModDownloadWorker(
             inputStream?.close()
             outputStream?.close()
             connection?.disconnect()
+        }
+    }
+
+    /** Cheap format check so an HTML/error page can fall through to R2. */
+    private fun validateDownloadedFile(file: File, fileName: String) {
+        if (!file.isFile || file.length() <= 0L) {
+            throw PermanentDownloadError("The server returned an empty file")
+        }
+        val extension = fileName.substringAfterLast('.', "").lowercase()
+        val header = file.inputStream().use { stream ->
+            ByteArray(8).also { buffer -> stream.read(buffer) }
+        }
+        val valid = when (extension) {
+            "zip" -> header[0] == 0x50.toByte() && header[1] == 0x4B.toByte()
+            "7z" -> header.sliceArray(0..5).contentEquals(
+                byteArrayOf(0x37, 0x7A, 0xBC.toByte(), 0xAF.toByte(), 0x27, 0x1C)
+            )
+            "rar" -> header.sliceArray(0..3).contentEquals(
+                byteArrayOf(0x52, 0x61, 0x72, 0x21)
+            )
+            "lua", "luac" -> {
+                val prefix = header.toString(Charsets.US_ASCII).trimStart().lowercase()
+                !prefix.startsWith("<html") && !prefix.startsWith("<!doctyp")
+            }
+            else -> true
+        }
+        if (!valid) {
+            throw PermanentDownloadError("The server returned invalid .$extension content")
         }
     }
 

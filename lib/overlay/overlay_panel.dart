@@ -160,6 +160,8 @@ class _OverlayPanelState extends ConsumerState<OverlayPanel>
     FloatyOverlay.shareData({
       'type': 'download_mod',
       'url': option.url,
+      if (option.availableMirrorUrl != null)
+        'mirrorUrl': option.availableMirrorUrl,
       'modTitle': title,
       'versionLabel': option.versionLabel,
       'operationName': operationName,

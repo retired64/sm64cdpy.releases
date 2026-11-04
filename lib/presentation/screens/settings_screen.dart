@@ -19,6 +19,8 @@ import '../../widgets/update_dialog.dart';
 
 import '../providers/mod_providers.dart';
 import '../providers/auto_install_provider.dart';
+import '../providers/download_source_preference_provider.dart';
+import '../../services/download_source_preference_service.dart';
 import '../widgets/app_navigation_scope.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/app_snackbar.dart';
@@ -59,6 +61,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
               _ReloadDatabaseTile(),
+              const _DownloadSourceToggle(),
               _SettingsTile(
                 icon: Icons.delete_outline_rounded,
                 title: l10n.settingsClearFavourites,
@@ -409,6 +412,7 @@ class _RetroSectionKicker extends StatelessWidget {
 
 class _RetroSwitch extends StatelessWidget {
   const _RetroSwitch({
+    super.key,
     required this.retro,
     required this.value,
     required this.onChanged,
@@ -496,6 +500,56 @@ class _AutoInstallToggle extends ConsumerWidget {
         retro: retro,
         value: autoInstall,
         onChanged: preference.isSaving ? null : toggle,
+      ),
+    );
+  }
+}
+
+class _DownloadSourceToggle extends ConsumerWidget {
+  const _DownloadSourceToggle();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final retro = RetroTheme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final state = ref.watch(downloadSourcePreferenceProvider);
+    final preference = state.value ?? DownloadSourcePreference.originalFirst;
+    final mirrorFirst = preference == DownloadSourcePreference.mirrorFirst;
+    final saving = state.isLoading;
+
+    Future<void> toggle(bool value) async {
+      final next = value
+          ? DownloadSourcePreference.mirrorFirst
+          : DownloadSourcePreference.originalFirst;
+      final saved = await ref
+          .read(downloadSourcePreferenceProvider.notifier)
+          .setPreference(next);
+      if (!saved && context.mounted) {
+        AppSnackbar.error(
+          context,
+          message: l10n.settingsDownloadSourceSaveFailed,
+        );
+      }
+    }
+
+    return _RetroTileShell(
+      retro: retro,
+      onTap: saving ? null : () => toggle(!mirrorFirst),
+      accentColor: mirrorFirst ? retro.accent : null,
+      leading: _RetroIconBox(
+        retro: retro,
+        icon: Icons.cloud_sync_outlined,
+        accentColor: mirrorFirst ? retro.accent : null,
+      ),
+      title: l10n.settingsDownloadSource,
+      subtitle: mirrorFirst
+          ? l10n.settingsDownloadSourceMirrorFirst
+          : l10n.settingsDownloadSourceOriginalFirst,
+      trailing: _RetroSwitch(
+        key: const ValueKey('download-source-preference-switch'),
+        retro: retro,
+        value: mirrorFirst,
+        onChanged: saving ? null : toggle,
       ),
     );
   }

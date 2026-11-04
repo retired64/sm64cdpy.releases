@@ -20,14 +20,16 @@ internal object Player3DSource {
         val info = context.packageManager.getApplicationInfo(GAME_PACKAGE, 0)
         val stamp = (listOf(info.sourceDir) + info.splitSourceDirs?.toList().orEmpty())
             .joinToString("|") { path -> "$path:${File(path).length()}:${File(path).lastModified()}" }
-        val game = File(directory, "game-${stamp.hashCode().toUInt().toString(16)}.so")
+        val stampDigest = MessageDigest.getInstance("SHA-256").digest(stamp.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it.toInt() and 255) }
+        val game = File(directory, "game-$stampDigest.so")
         if (!game.isFile || game.length() !in 1..MAX_LIBRARY_BYTES) {
             directory.listFiles { file -> file.name.startsWith("game-") }?.forEach(File::delete)
             copyGameLibrary(info.sourceDir, info.splitSourceDirs?.toList().orEmpty(), game)
         }
         val rom = File(directory, "baserom.us.z64")
         if (!validRom(rom)) copyRom(context, rom)
-        return Inputs(game, rom, "android-v1-${game.nameWithoutExtension}")
+        return Inputs(game, rom, "android-rig-v4-${MarioRomDecoder.ROM_MD5}-${game.nameWithoutExtension}")
     }
 
     private fun copyGameLibrary(base: String, splits: List<String>, output: File) {

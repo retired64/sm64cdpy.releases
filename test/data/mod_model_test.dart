@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sm64cdpy/data/datasource/remote_json_datasource.dart';
 import 'package:sm64cdpy/data/models/mod_model.dart';
+import 'package:sm64cdpy/domain/entities/mod_entity.dart';
 import 'package:sm64cdpy/domain/entities/mod_version_resolver.dart';
 
 void main() {
@@ -54,6 +55,10 @@ void main() {
         'sha256': 'sha256:test',
         'version_consistency': 'match',
         'verification_status': 'metadata_only',
+        'mirror_url': 'https://mods-cdn.sm64cdpy.org/mods/42/100/900/v2.zip',
+        'mirror_status': 'available',
+        'mirror_priority': 'fallback',
+        'mirror_size_bytes': 2048,
       },
     ],
   };
@@ -112,6 +117,42 @@ void main() {
     expect(artifact.requiresPrimary, isFalse);
     expect(artifact.sizeBytes, 2048);
     expect(artifact.versionConsistency, 'match');
+    expect(artifact.hasAvailableMirror, isTrue);
+    expect(
+      artifact.mirrorUrl,
+      'https://mods-cdn.sm64cdpy.org/mods/42/100/900/v2.zip',
+    );
+  });
+
+  test('old and incomplete mirror metadata stays compatible', () {
+    final old = ModModel.fromJson('old', <String, dynamic>{
+      'name': 'Old',
+      'versions': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'version_id': '1',
+          'resolved': true,
+          'files': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'file_id': '1',
+              'filename': 'old.zip',
+              'download_url': 'https://example.test/old.zip',
+            },
+          ],
+        },
+      ],
+    }).toEntity().versions.single.files.single;
+    expect(old.hasAvailableMirror, isFalse);
+
+    final unavailable = ModFileEntity(
+      id: '2',
+      filename: 'mod.zip',
+      downloadUrl: 'https://example.test/mod.zip',
+      mirrorUrl: 'https://mods-cdn.sm64cdpy.org/mod.zip',
+      mirrorStatus: 'unavailable',
+      mirrorPriority: 'fallback',
+      mirrorSizeBytes: 100,
+    );
+    expect(unavailable.hasAvailableMirror, isFalse);
   });
 
   test('description translations are optional and keep the English source', () {

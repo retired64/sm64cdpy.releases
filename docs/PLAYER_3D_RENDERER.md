@@ -75,7 +75,7 @@ no es una segunda fuente de verdad para Jugador.
 | Perfil | claves `coop_player_*` en `user/sm64config.txt` |
 | Entradas locales | `libmain.so` del juego y `baserom.us.z64` autorizada |
 
-El renderer ofrece drag horizontal, inercia, giro automático, actualización de
+El renderer ofrece drag horizontal, inercia, reposo articulado, actualización de
 colores por uniformes y liberación explícita del contexto WebGL. Android extrae
 `lib/<ABI>/libmain.so` desde `com.maniscat2.sm64coopdx` y combina ese binario con
 `baserom.us.z64` sin publicar copias en el almacenamiento del usuario.
@@ -104,10 +104,10 @@ fecha de los APK base/split. La ROM debe tener el tamaño y MD5 ya aceptados por
 `MarioRomDecoder`; se consideran como máximo ocho `.z64` de la raíz SAF y se
 prioriza `baserom.us.z64`.
 
-El WebView no tiene acceso a archivos ni `content://`, no usa DOM storage, no
+El WebView no tiene acceso a archivos ni `content://`, habilita almacenamiento del origen local para IndexedDB, no
 acepta contenido mixto y bloquea recursos/navegación fuera del host virtual
-`player3d.local`. Solo expone seis recursos locales auditados: HTML, adaptador,
-dos bundles y los dos binarios efímeros. Los streams binarios no se insertan en
+`player3d.local`. Solo expone once recursos locales auditados: HTML, siete módulos JavaScript,
+la identidad de origen y los dos binarios efímeros. Los streams binarios no se insertan en
 JavaScript ni se escriben en el árbol visible del usuario.
 
 Al primer render se analiza el binario y la ROM una sola vez por PlatformView.
@@ -158,16 +158,17 @@ fuente de verdad; el canvas nunca persiste estado del juego.
   comienza a tamaño completo y se contrae hasta 158 px, alineado a la derecha,
   para seguir mostrando cambios de paleta mientras se editan controles inferiores.
   La transición no clona ni vuelve a crear el PlatformView.
-- GPU Android Adreno/Mali/PowerVR entra en una clasificación móvil conservadora;
-  los equipos débiles renderizan a escala 0.7 y el pixel ratio se limita a 1.5.
+- El render se limita a 30 FPS y pixel ratio 1.5; contextos cuyo límite de textura
+  es de 4096 o menor usan escala 0.7, calculada una vez al crear el visor.
+  Esto es un presupuesto conservador, no un benchmark de GPU.
 - Los cambios de paleta no muestran una pantalla global de carga.
 - El overlay de carga pertenece solo al rectángulo del preview.
 - Un error de juego ausente, permiso, ROM o WebGL deja el editor disponible y
   muestra el mensaje localizado de vista previa no disponible.
 - El estado nativo se puede consultar con `getState`, evitando perder un error
   emitido antes de que Flutter conecte su handler.
-- La vista respeta el renderer original: giro por drag, inercia, auto-rotación y
-  adaptación de FPS/pixel ratio.
+- La vista respeta el renderer original: giro por drag, inercia y
+  adaptación de FPS/pixel ratio. El reposo articula el personaje; no lo hace girar solo.
 
 ## Archivos responsables
 
@@ -217,3 +218,162 @@ completó APK arm64 y pruebas nativas con los retratos incluidos en el código y
 pubspec. El fallo de 39342619343 era una descarga NDK inválida; no se revirtió
 la integración de iconos ni se modificó el spinner. Artifact publicado por CI:
 `cdpy-f10f833-TESTING`. Sigue pendiente revisión en teléfono.
+
+
+## Reposo articulado JavaScript/WebGL — 2026-11-03
+
+Integración en `r2-phase6-flutter-fallback`, adaptada de `launcher-coopdx`.
+Se conserva Flutter para el editor y Android para el origen autorizado y WebView;
+el render y la animación siguen siendo JavaScript/WebGL, sin nuevo motor nativo.
+No cambian paquete, versión, permisos SAF ni escritura de `sm64config.txt`.
+
+### Contrato de modelo y animación
+
+- `player3d-index.js`: GameParser ELF/AArch64 recuperado del bundle anterior,
+  aislado de su bootstrap de aplicación. Conserva relocaciones y lectura ROM;
+  la descompresión MIO0 valida tamaño, límites y referencias hacia atrás.
+- `player3d-model.js`: GeoLayout/Fast3D produce esquema v4 con nodos
+  `{parent, local, joint}` y grupos de geometría en espacio local con `node`.
+  La jerarquía sigue OPEN/CLOSE_NODE y conserva las ramas elegidas del modelo.
+  Los lotes incluyen la identidad del nodo para no fusionar partes articuladas.
+- `player3d-clips.js`: lee la tabla USA `0x4EC000`, clips `0xC3/0xC4/0xC5`
+  (izquierda, derecha, centro), 20 articulaciones y 30 FPS. Exporta esquema v2
+  con rotaciones y traslación en int16 little-endian/base64. Las entradas ROM
+  son big-endian. Límites de fotogramas, canales y buffers se validan.
+- `player3d-renderer.js`: árbol Object3D, interpolación quaternion por el camino
+  corto y transición de 100 ms entre clips. La traslación del primer joint se
+  mezcla junto con la rotación: omitirla hace que los pies parezcan saltar.
+  `createIdleMotion` comparte el algoritmo real con las pruebas CPU sin GPU.
+- La preferencia WebView `prefers-reduced-motion` fija el primer fotograma;
+  ausencia/corrupción de clips conserva la pose de referencia. El editor sigue
+  disponible si falla la vista. No se añaden mensajes visibles sin localizar:
+  Flutter conserva sus estados y textos existentes.
+
+### Fuentes de verdad, concurrencia y caché
+
+ROM validada y APK instalado son las fuentes del modelo; el perfil confirmado
+sigue viniendo de `sm64config.txt`. El render solo proyecta el borrador Flutter.
+No se comparte estado con el engine del overlay ni se toca WorkManager.
+
+`Player3DSource` usa SHA-256 del sello de APK base/splits para el nombre privado
+de biblioteca. La identidad incorpora el MD5 de la ROM USA admitida y el
+esquema articulado. IndexedDB usa `player3d-rig-v4-clips-v2`, elimina entradas
+incompatibles y valida modelos/clips al leer; no reutiliza geometría plana v2.
+La ROM admitida tiene digest fijo; otra ROM no se considera compatible por usar
+el mismo nombre de archivo. Los clips se comparten entre los cinco personajes,
+los modelos en memoria se limitan a dos y todo es regenerable.
+
+Solo hay una carga/extracción activa por vista. Las peticiones sucesivas se
+agrupan conservando la última, con generación comprobada después de cada espera.
+Cambios solo de paleta actualizan uniformes sin reconstruir el modelo. Los
+fotogramas WebP se capturan después de terminar la transición de color, con
+identidad y generación verificadas, para no etiquetar una paleta intermedia
+como si fuera la definitiva. Fallos/cuota de IndexedDB no bloquean el visor.
+
+`bridgeReady` y entrega de perfil se actualizan en el hilo UI Android.
+`IntersectionObserver` y `visibilitychange` detienen el loop fuera de vista o
+con documento oculto; al reanudar se reinicia el reloj para evitar saltos de tiempo.
+`pagehide` invalida peticiones, cancela temporizador/RAF de snapshot, libera el
+renderer y cierra IndexedDB. Los contextos perdidos después de cambiar la paleta
+siguen produciendo error y liberación del visor actual, sin falso `ready`.
+Las escrituras opcionales de snapshots y el cierre de cache capturan sus errores;
+los eventos públicos conservan `bridge-ready/loading/preview/ready/error`.
+
+### Validación reproducible
+
+Con Node 22 o superior, sin descargar ROM ni APK:
+
+```sh
+node --test test/player3d/*.test.mjs
+```
+
+Las pruebas normales generan datos sintéticos: clips, límites, signo/endian,
+jerarquía, rotaciones, interpolación, movimiento reducido, fallos, actualizaciones
+obsoletas, cierre y lista de recursos Android. Los dos workflows Android ejecutan
+esta suite antes de preparar Flutter. No reemplaza Flutter/Gradle ni pruebas GPU.
+
+Prueba adicional con insumos privados existentes (nunca se suben como fixtures):
+
+```sh
+PLAYER3D_GAME=/path/to/libmain.so PLAYER3D_ROM=/path/to/baserom.us.z64 \
+  node --test test/player3d/real-inputs.test.mjs
+```
+
+Ejecutada localmente con ELF Android y ROM USA: cinco modelos con 21 nodos,
+60 ángulos de referencia y tres clips de 30 fotogramas. Se verifican 300 pasos
+por personaje con matrices finitas y la compensación de pies de Mario: excursión
+sin traslación mayor de 4 unidades y con ella menor de 1.5 por clip.
+La geometría de referencia coincide con la extracción plana anterior dentro de
+0.001 unidades en los cinco modelos; la comparación se hizo localmente sin
+incorporar material derivado al repositorio.
+
+Pendiente en APK/dispositivo: aspecto de los cinco personajes, texturas y shaders
+Adreno/Mali, fluidez/batería, texto ampliado y preview contraído, desplazamiento,
+20 cambios de modelo, paletas, Aplicar, background/foreground, rotación, permisos
+revocados y WebView sin almacenamiento disponible. Este entorno carece de
+Flutter/Dart y del script `android/gradlew`; no se declara un APK compilado aquí.
+
+Validación local de esta integración: 16 pruebas JavaScript aprobadas, incluida
+la prueba con insumos privados; 16 pruebas Python de scripts aprobadas; Kotlin
+modificado compilado contra API Android y stubs mínimos Flutter/proyecto. Esta
+última comprobación solo cubre sintaxis/tipos, no la integración Gradle real.
+`git diff --check` correcto. Flutter analyze y Gradle completos no disponibles.
+
+
+## Corrección de empaquetado y arranque — 2026-11-03
+
+La primera build `bf4d54e` pasó compilación y pruebas CPU, pero su APK no contenía
+`assets/flutter_assets/assets/player3d/vendor/three.core.js` ni `three.module.js`.
+Se confirmó abriendo el APK descargado: la declaración `assets/player3d/` en
+pubspec **no incluye subdirectorios recursivamente**. El grafo ESM fallaba antes
+de ejecutar `app.js` y emitir `bridge-ready`, dejando la proyección Flutter en
+loading. No era tiempo normal de extracción ni descarga de personajes.
+
+Se declara `assets/player3d/vendor/` explícitamente. La prueba de recursos ahora
+verifica también la declaración Flutter de cada dependencia, no solo su presencia
+en disco y la lista permitida Android. `scripts/verify_player3d_assets.py` recorre
+el grafo real desde HTML y comprueba presencia y bytes de los módulos dentro de
+cada APK; ambos workflows lo ejecutan antes de subir artifacts/publicar.
+
+HTML instala un manejador antes del módulo principal: errores de carga/rechazos
+se reportan por el bridge existente como `error` con detalle técnico. Un límite
+de arranque de 30 segundos evita loading permanente si nunca llega un resultado.
+`ready/error/pagehide` retiran el temporizador; no se introducen estados nuevos
+ni mensajes visibles sin localizar. La pantalla Flutter conserva sus textos de
+vista previa no disponible. No cambia el perfil, sus caches de configuración,
+el overlay ni WorkManager.
+
+Regresiones: 19 pruebas Python aprobadas y 19 pruebas JS aprobadas, incluida
+la adicional con insumos privados. El verificador rechaza el APK
+`bf4d54e` precisamente por los dos módulos faltantes. Pendiente verificar el APK
+corregido de Actions y el render real en teléfono. No se modifican claves,
+versión, shaders ni datos de los personajes en esta corrección.
+
+
+## Superficie estable durante el scroll — 2026-11-03
+
+La tarjeta conserva su contracción y posición originales. Su `Player3DPreview`
+recibe `surfaceSize` calculado desde el tamaño expandido de la ventana, nunca
+el desplazamiento. `Player3DSurface` mantiene el AndroidView con ese tamaño y
+`FittedBox(BoxFit.contain)` transforma uniformemente su composición y gestos.
+Los avisos de carga/error conservan su tamaño Flutter habitual. Cambiar el tamaño
+de la ventana sí actualiza el tamaño intrínseco; no se recrea la vista por scroll.
+
+En JavaScript, `createResizeController` compara ancho/alto CSS y DPR lógicos,
+no dimensiones redondeadas del buffer: Three.js usa floor y comparar con round
+provocaba reasignación continua a DPR fraccionario. ResizeObserver y resize
+repintan inmediatamente tras cambiar el buffer, antes del siguiente frame
+limitado a 30 FPS. Se conservan las pausas por visibilidad y su limpieza.
+
+El estado de perfil sigue perteneciendo a Flutter y el renderer consume su
+proyección mediante el bridge existente. El único cache nuevo son las últimas
+dimensiones del renderer; se actualizan tras un resize real y desaparecen con
+esa instancia. No cambia la extracción, IndexedDB, permisos ni protocolo Kotlin.
+La implementación hermana Android nativa usa el mismo controlador de resize.
+
+Validación: 20 pruebas Node pasan, incluida la regresión de 1000 frames con
+CSS impar/DPR 1.5 y extracción con entradas privadas de los cinco personajes.
+Se añaden pruebas Flutter de 101 pasos de contracción, escalado uniforme y
+cambio de ventana. Flutter/Dart no están instalados en este entorno: format,
+analyze y widget tests quedan pendientes para CI, además de prueba física de
+scroll muy lento, giro horizontal, rotación y regreso desde segundo plano.

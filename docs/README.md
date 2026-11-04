@@ -1,7 +1,7 @@
 # Documentación de SM64CDPY
 
-Este directorio es el punto de entrada técnico del proyecto. `1.9.1+29` es la
-candidata actual en `main`; `1.9.0+28` es la versión publicada anterior. Otros
+Este directorio es el punto de entrada técnico del proyecto. `1.9.2+30` es la
+candidata actual en `main`; `1.9.1+29` es la última versión publicada. Otros
 documentos conservan su fecha y alcance de revisión explícitos.
 
 | Documento | Propósito | Estado |
@@ -13,7 +13,8 @@ documentos conservan su fecha y alcance de revisión explícitos.
 | [Renderizador 3D de Jugador](PLAYER_3D_RENDERER.md) | Arquitectura, recursos locales, ciclo de vida y límites de la vista previa | Implementado; ampliar matriz física de GPU/WebView |
 | [Preparación de release 1.8.7](releases/RELEASE_1.8.7.md) | Minish Cap, Mario Kart 64, acentos de Retro Manga y datos de distribución | Referencia histórica de la candidata |
 | [Preparación de release 1.8.8](releases/RELEASE_1.8.8.md) | Overhaul visual, rendimiento e instalación directa opcional | Candidata anterior; referencia histórica |
-| [Preparación de release 1.9.1](releases/RELEASE_1.9.1.md) | Navegación fluida con historial de destinos y centro de permisos con recorrido guiado | Integrada en `main`; Testing y publicación pendientes |
+| [Preparación de release 1.9.2](releases/RELEASE_1.9.2.md) | Merge R2, catálogo enriquecido, activación y Jugador articulado | Candidata local en `main`; testing final y publicación pendientes |
+| [Preparación de release 1.9.1](releases/RELEASE_1.9.1.md) | Navegación fluida con historial de destinos y centro de permisos con recorrido guiado | Publicada como v1.9.1; referencia histórica |
 | [Preparación de release 1.9.0](releases/RELEASE_1.9.0.md) | Play, guía, preparador de ROM, Manga Deluxe, cachés, idiomas FR/IT y descripciones localizadas | Publicada; referencia histórica |
 | [Preparación de release 1.8.6](releases/RELEASE_1.8.6.md) | Versión/build, distribución, evidencia y puerta de publicación | Preparada en rama; pendiente merge y workflow final |
 | [Rendimiento visual 1.8.6](PERFORMANCE_MINIMAL_1.8.6.md) | Tema Minimalista opcional, drawer, navegación, detalle y eliminación de SVG | Implementado; pendiente perfil físico |
@@ -26,7 +27,7 @@ documentos conservan su fecha y alcance de revisión explícitos.
 | [Estado del proyecto](PROJECT_STATUS.md) | Funciones, riesgos y próximos pasos | Vigente |
 | [Task Checklist v1.7.0](SM64CDPY-v1.7.0-TASK-CHECKLIST.md) | Registro del plan de estabilización de la línea 1.7 | Referencia histórica |
 | [Roadmap de Biblioteca e historial](INSTALLED-LIBRARY-ROADMAP.md) | Plan aislado para recibos, Hive, verificación SAF, overlay, descubrimiento y mantenimiento | Fases 0–8 completas; Fase 9 implementada y pendiente de validación física |
-| [Roadmap de desinstalación segura](SAFE-UNINSTALL-v1.9.0-ROADMAP.md) | Manifiesto de propiedad, Worker SAF y experiencia de desinstalación | Planificado; no incluido en 1.9.0 ni en la candidata 1.9.1 |
+| [Roadmap de desinstalación segura](SAFE-UNINSTALL-v1.9.0-ROADMAP.md) | Manifiesto de propiedad, Worker SAF y experiencia de desinstalación | Planificado; no incluido en 1.9.0 ni en la candidata 1.9.2 |
 | [Biblioteca — investigación y contratos](INSTALLED-LIBRARY-PHASE-0.md) | Auditoría de catálogos/instalador, identidad canónica, recibo v1 y fixtures legales | Vigente para la rama `historial-hive` |
 | [Checklist de propiedad intelectual y contenido](IP-CONTENT-RISK-CHECKLIST.md) | Evaluación preventiva, procedencia, permisos, retiradas y decisiones para app/web | Planificación; requiere criterio y revisión jurídica |
 | [CI/CD](CI_CD.md) | Workflows, secretos y publicación | Vigente |
@@ -50,7 +51,7 @@ documentos conservan su fecha y alcance de revisión explícitos.
 
 Cuando cambien versión mínima, dependencias, workers, canales de plataforma, persistencia, overlay o workflows, actualiza el documento correspondiente y la fecha de revisión del archivo. Las ideas y auditorías puntuales no deben presentarse como arquitectura vigente: deben añadirse al índice del archivo.
 
-Última revisión: **2026-10-26**.
+Última revisión: **2026-11-03**.
 
 - [Activación de mods desde Biblioteca](GAME_MOD_ACTIVATION.md): contrato del juego, SAF, edición verificada, recuperación y pruebas.
 

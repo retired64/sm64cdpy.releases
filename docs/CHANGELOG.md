@@ -1,6 +1,31 @@
 # Changelog
 
-## Unreleased — Repository maintenance
+## 1.9.2 — Candidate: resilient downloads and animated Player
+
+### Downloads and enriched catalog
+
+- Integrate optional Cloudflare R2 fallback across main app, manual downloads and overlay; Settings can prefer the mirror while preserving the other valid source as fallback.
+- Preserve optional mirror/artifact metadata, older catalog compatibility and stable installation identity when a download changes source.
+- Retain enriched catalog handling and refresh the bundled catalog.
+
+### Animated Player WebGL preview
+
+- Prevent slow-scroll preview buffer churn: retain a fixed expanded AndroidView surface, scale it uniformly inside the contracting card, and repaint WebGL immediately after real size changes. Add fractional-DPR and Flutter layout regressions.
+
+- Fix the first animated-preview APK: explicitly bundle the nested Three.js assets, verify the actual packaged module graph before artifact upload, and report module startup failures instead of leaving an endless loading indicator.
+
+- Reconstruct articulated rigs for all five built-in characters and play the ROM-derived three-clip idle cycle, including body translation and smooth transitions.
+- Keep the existing local Android WebView and profile editor; invalid optional animation falls back to the reference pose.
+- Isolate the Android game parser from the old application bundle, version derived caches, coalesce rapid profile changes and clean up animation/snapshot work on teardown.
+- Add CPU animation, lifecycle and resource-graph regressions to both Android workflows. Source-branch CI completed successfully; the merged 1.9.2 candidate needs its own build and physical acceptance. Local private-input results remain historical evidence, not a newly executed check.
+
+### Game mod activation
+
+- Match CoopDX header truncation instead of rejecting long descriptions; unreadable disabled mods no longer block other mods.
+- Explain unreadable scripts separately from active incompatibilities and refresh sibling switches after confirmed writes.
+- Add native and Flutter regression coverage. Flutter/Dart and the Gradle wrapper are unavailable in the local Termux checkout; source-branch CI passed, while the merged candidate still needs its own build and device validation.
+
+### Repository maintenance
 
 - Restore the standard MIT license text and move project clarifications into a separate disclaimer without additional licensing conditions.
 

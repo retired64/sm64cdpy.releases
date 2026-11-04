@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'download_source_preference_service.dart';
+
 const _kValidExtensions = {'.zip', '.lua', '.luac', '.rar', '.7z'};
 
 final _mediaFirePageRe = RegExp(
@@ -168,6 +170,33 @@ class DownloadUrlResolver {
 
   final _filenameCache = <String, String>{};
   final _urlCache = <String, String>{};
+
+  /// Produces the bounded source order used by both Flutter and WorkManager.
+  /// The catalogue origin always remains first. An R2 URL is accepted only
+  /// when the model already validated its metadata as available fallback.
+  Future<List<String>> resolveDownloadSources(
+    String originalUrl, {
+    String? availableMirrorUrl,
+    DownloadSourcePreference? preference,
+  }) async {
+    final primary = await resolveDownloadUrl(originalUrl);
+    final mirror = availableMirrorUrl?.trim() ?? '';
+    final parsed = Uri.tryParse(mirror);
+    final hasMirror =
+        mirror.isNotEmpty &&
+        parsed != null &&
+        parsed.scheme == 'https' &&
+        parsed.host.isNotEmpty &&
+        mirror != primary;
+    if (!hasMirror) return List.unmodifiable(<String>[primary]);
+
+    final effectivePreference =
+        preference ?? await DownloadSourcePreferenceService.read();
+    final sources = effectivePreference == DownloadSourcePreference.mirrorFirst
+        ? <String>[mirror, primary]
+        : <String>[primary, mirror];
+    return List.unmodifiable(sources);
+  }
 
   /// Resuelve una URL "de página" (no descargable directamente) a la URL
   /// real del asset binario que debe entregarse al downloader nativo.

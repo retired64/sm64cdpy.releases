@@ -1,7 +1,51 @@
 # Estado y próximos pasos
 
-Revisado para la candidata `1.9.1+29` en `main` el 2026-10-25. La
-`1.9.0+28` es la release publicada anterior.
+## Candidata 1.9.2+30 — merge R2 y Jugador
+
+Fusionada la rama `r2-phase6-flutter-fallback` (f616663) sobre `main`
+(07fc041), sin conflictos de Git. Incluye fuente preferida de descarga con
+fallback, catálogo enriquecido, activación Lua coherente y visor articulado de
+los cinco personajes con corrección de scroll lento y verificación de assets.
+
+Última release pública comprobada: v1.9.1. Nueva candidata: 1.9.2+30, códigos
+ABI 301/302/303, sin actualización forzada. Notas canónicas EN/ES/PT-BR y alcance
+en [RELEASE_1.9.2](releases/RELEASE_1.9.2.md). No hay tag ni publicación nueva.
+
+La rama de origen tiene CI exitoso en [Testing #41750366552](https://github.com/retired64/sm64cdpy.releases/actions/runs/41750366552).
+No equivale a validar el merge final. Ver registro local de esta preparación y
+pendientes en el documento de release; las observaciones de secciones anteriores
+conservan su contexto histórico.
+
+## Jugador articulado WebGL — 2026-11-03
+
+Corrección del parpadeo al desplazar lentamente: superficie AndroidView estable
+derivada de la ventana, escalado uniforme y redimensionado WebGL sin bucle de
+redondeo ni espera al siguiente frame. Pasan 20 pruebas JavaScript, incluida
+extracción privada de los cinco personajes. Añadidas pruebas Flutter de
+contracción/redimensionado; ejecutarlas en CI y confirmar GPU en teléfono.
+
+Seguimiento: el APK `bf4d54e` compiló, pero omitió los módulos Three.js anidados.
+Causa confirmada inspeccionando el APK; corregida la declaración de pubspec y
+añadida compuerta que verifica el grafo real dentro del APK. También se reportan
+fallos previos a `bridge-ready` y se limita la espera de arranque. Nueva build y
+prueba física pendientes; ver corrección en PLAYER_3D_RENDERER.md.
+
+Integrado desde `r2-phase6-flutter-fallback` en la candidata `main` 1.9.2: jerarquía y reposo real para los cinco
+personajes, caches versionadas y respuestas obsoletas descartadas. Pruebas CPU
+sintéticas y con ROM/ELF privados ejecutadas; CI Flutter/Gradle y GPU en teléfono
+pendientes. Contrato, reproducción de pruebas y límites en
+[PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md#reposo-articulado-javascriptwebgl--2026-11-03).
+
+## Biblioteca: activación coherente con el juego — 2026-10-29
+
+Lectura de encabezados largos por truncado como CoopDX, sin bloqueo global por
+mods desactivados ilegibles. Motivos concretos de bloqueo y recálculo de switches
+hermanos tras guardar. Regresiones añadidas; generación l10n, análisis, tests y
+compilación pendientes por ausencia local de Flutter/Dart y Gradle wrapper.
+Prueba física pendiente. Detalles en `docs/GAME_MOD_ACTIVATION.md`.
+
+Revisado para la candidata `1.9.2+30` en `main` el 2026-11-03. La
+`1.9.1+29` es la última release publicada.
 
 ## Manga Deluxe — 2026-10-22
 
@@ -100,6 +144,11 @@ Código preparado; CI y validación física pendientes por SDK local no disponib
 - Resolución en tiempo de descarga para páginas estables de MediaFire,
   GameBanana y archivos de Google Drive; las carpetas Drive no resolubles se
   presentan como enlace de origen sin afirmar que fueron instaladas.
+- Catálogo compatible con mirror Cloudflare R2 opcional. El origen conserva
+  prioridad y WorkManager usa R2 automáticamente ante errores de red, timeout,
+  `4xx`, `429`, `5xx` o contenido inválido, dentro de la misma operación. El
+  detalle y el segundo engine del overlay comparten la política; catálogos
+  antiguos continúan funcionando sin cambios.
 - Pantalla Jugador para editar nombre, modelo Mario/Luigi/Toad/Waluigi/Wario y
   ocho grupos RGB de `user/sm64config.txt`. Android comparte bloqueo, respaldo,
   revisión y verificación con la activación de mods; Riverpod conserva un
@@ -431,6 +480,13 @@ MP3 breve conectado a Featured/Browse en los dos temas Manga. Audio incluye
 interruptor y volumen propios guardados en Hive, preview al soltar y reset
 Deluxe. Reutiliza SoundPool; no altera el volumen Android ni el motor Play.
 Pruebas preparadas, ejecución de Flutter/Kotlin y validación física pendientes.
+
+## Preferencia de fuente de descarga — 2026-10-28
+
+Ajustes permite priorizar la fuente original o el mirror R2. SharedPreferences
+es la autoridad compartida; el resolver central aplica el orden a la app, el
+overlay, la descarga manual y WorkManager, conservando siempre la otra fuente
+como fallback. Los artefactos sin mirror continúan usando su origen.
 
 
 ## Localización FR/IT y autor de Touch Controls — 2026-10-24

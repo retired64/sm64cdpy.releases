@@ -1,12 +1,27 @@
 # GitHub Actions y releases
 
-Revisado para 1.9.1 el 2026-10-25.
+Revisado para la candidata 1.9.2+30 el 2026-11-03.
 
 > **Fuente canónica:** la aplicación ya no incluye una pantalla de changelog ni
 > muestra el cuerpo del GitHub Release. Cada lanzamiento tiene un manifiesto
 > localizado en `release-manifests/v<version>.json`. GitHub Releases, Discord y
 > el sitio Astro consumen ese mismo documento; Flutter solo conserva la
 > detección OTA y de actualización forzada.
+
+## Regresiones del visor local — 2026-11-03
+
+Ambos workflows preparan Node 22 y ejecutan `node --test test/player3d/*.test.mjs`
+antes del SDK Flutter. Son pruebas CPU de extracción, animación, lifecycle y
+recursos locales; no prueban WebGL/GPU ni sustituyen análisis Flutter o Gradle.
+El caso con archivos privados se omite en CI: nunca se descargan ni publican
+ROM, modelos, texturas o APK del juego como fixtures. Para ejecutarlo localmente,
+ver [PLAYER_3D_RENDERER.md](PLAYER_3D_RENDERER.md).
+
+Ambos workflows verifican también el resultado del empaquetado con
+`python3 scripts/verify_player3d_assets.py build/app/outputs/flutter-apk/app-*-release.apk`.
+La compuerta exige HTML y todos los módulos ESM locales con los bytes del checkout
+antes de subir el artifact. Detecta omisiones de subdirectorios Flutter aunque
+compilación, análisis y pruebas CPU hayan pasado.
 
 ## Workflows actuales
 
@@ -99,10 +114,10 @@ runner no crea commits. El artifact `flutter-source-sync` permite revisar e
 incorporar el parche de generación/formato cuando el entorno local no dispone
 del SDK completo.
 
-Para probar 1.9.1 después del merge, seleccionar `main` en el workflow manual de testing.
+Para probar 1.9.2 después del merge, seleccionar `main` en el workflow manual de testing.
 Continúan siendo necesarios los secretos de firma existentes. No usar el
 workflow de publicación para obtener una prueba. La candidata actual se
-describe en [releases/RELEASE_1.9.1.md](releases/RELEASE_1.9.1.md).
+describe en [releases/RELEASE_1.9.2.md](releases/RELEASE_1.9.2.md).
 Ver [flujo y validación de temas](CUSTOM_THEMES.md).
 
 ## Release oficial 1.8.3+22
@@ -116,7 +131,7 @@ APKs firmados sin crear tags, releases, avisos Discord o dispatch al sitio.
 El valor por defecto/push permanece en arm64. La publicación oficial sigue
 requiriendo autorización y merge previo a main; las prereleases conservan su
 flujo manual autorizado. La candidata de esta preparación es
-[1.9.1](releases/RELEASE_1.9.1.md); 1.9.0 ya está publicada.
+[1.9.2](releases/RELEASE_1.9.2.md); 1.9.1 ya está publicada.
 
 ## Activación de mods — release 1.8.3
 
@@ -164,3 +179,15 @@ Validación: [Testing 39344333533](https://github.com/retired64/sm64cdpy.release
 del NDK, las ocho pruebas Python, análisis, 253 pruebas Flutter, APK arm64
 y pruebas nativas para f10f833. El workflow de Release comparte exactamente
 el preparador; no se ejecutó una publicación ni se creó un tag.
+
+## Preparación 1.9.2+30
+
+`pubspec.yaml` y `release-manifests/v1.9.2.json` son coherentes: build 30 y
+versionCodes por ABI 301/302/303. Ambos workflows resuelven la versión desde
+pubspec; no se hardcodea 1.9.2 en YAML. Los APK mantienen sus nombres y firma.
+El timestamp del manifiesto es provisional y debe confirmarse antes de publicar.
+
+La rama fuente f616663 pasó [Testing #41750366552](https://github.com/retired64/sm64cdpy.releases/actions/runs/41750366552).
+Ese resultado corresponde al SHA fuente, no al merge/versionado final. Ejecutar
+Testing sobre el nuevo main después de subirlo; este trabajo no ejecuta ni autoriza
+la publicación. Flutter/Dart y android/gradlew no están disponibles localmente.

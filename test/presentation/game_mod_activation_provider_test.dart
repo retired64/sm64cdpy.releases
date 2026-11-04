@@ -140,6 +140,34 @@ void main() {
       );
     },
   );
+  test('confirmed selection recalculates and caches sibling conflicts', () async {
+    await container.read(gameModActivationProvider.future);
+    gateway.current = const GameModSnapshot(
+      status: 'ready',
+      mods: [
+        GameModEntry(
+          name: 'Bowser',
+          title: 'Bowser',
+          enabled: true,
+          selectable: true,
+        ),
+        GameModEntry(
+          name: 'Other',
+          title: 'Other',
+          enabled: false,
+          selectable: false,
+          blockedReason: 'conflict',
+        ),
+      ],
+    );
+    await container.read(gameModActivationProvider.notifier).perform(
+      'setGameModActivation', {'name': 'Bowser', 'enabled': true},
+    );
+    final mods = container.read(gameModActivationProvider).requireValue.mods;
+    expect(mods.first.enabled, isTrue);
+    expect(mods.last.selectable, isFalse);
+    expect(gateway.cached!.mods.last.blockedReason, 'conflict');
+  });
   test(
     'write failure preserves confirmed state and releases lock for retry',
     () async {

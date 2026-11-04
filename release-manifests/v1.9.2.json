@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "version": "1.9.2",
+  "build": 30,
+  "publishedAt": "2026-11-03T00:00:00-08:00",
+  "forceUpdate": false,
+  "locales": {
+    "en": {
+      "title": "More resilient downloads and animated Player previews",
+      "summary": "Version 1.9.2 integrates the R2 fallback branch into main: optional mirror-first downloads, enriched catalog support, game-aligned Library activation and articulated previews for all five Player characters.",
+      "highlights": [
+        "Choose the preferred download source in Settings while keeping the other valid source as fallback.",
+        "Read optional mirror metadata and enriched catalog fields without requiring them in older catalogs.",
+        "Handle long Lua headers like the game and explain unreadable scripts separately from active incompatibilities.",
+        "Preview all five Player characters with locally derived idle animations and a stable surface during slow scrolling."
+      ],
+      "sections": [
+        {
+          "heading": "Downloads and catalog",
+          "items": [
+            "A valid Cloudflare R2 mirror can recover an unavailable or invalid original download. The mirror-first setting reverses the order without removing the original fallback.",
+            "Main app, manual downloads and overlay share source resolution; switching source preserves operation identity and the background installation chain.",
+            "Catalog readers retain optional artifact metadata and older catalog compatibility. Selecting a source does not change which artifact is installed."
+          ]
+        },
+        {
+          "heading": "Library activation",
+          "items": [
+            "Long Lua descriptions follow the game header truncation behavior instead of making an otherwise readable mod invalid.",
+            "Unreadable disabled scripts no longer block unrelated selections; active incompatibilities retain their checks.",
+            "After a confirmed write, sibling switches refresh from the actual selection. Activation still configures the next game launch."
+          ]
+        },
+        {
+          "heading": "Animated Player",
+          "items": [
+            "The local WebView/Three.js preview reconstructs articulated rigs for all five characters and plays idle clips derived from the user ROM. Optional invalid animation falls back to the reference pose.",
+            "A stable AndroidView surface and uniform scaling prevent repeated buffer resizing during slow vertical scrolling.",
+            "Both build workflows test the local JavaScript engine and verify the actual nested module graph inside each APK before artifact upload. No ROM or extracted character assets are bundled."
+          ]
+        },
+        {
+          "heading": "Release preparation",
+          "items": [
+            "Candidate version 1.9.2+30 keeps the existing package, signing configuration, Android minimum and ABI-specific APK names. It does not force an update.",
+            "The final merged candidate still needs its own testing build and device checks for downloads, activation, preview gestures and lifecycle. Successful tests on the source branch are not proof of a newly built release APK.",
+            "The manifest timestamp is provisional until publication. Creating this candidate does not publish a tag, GitHub Release, Discord announcement or website update."
+          ]
+        }
+      ]
+    },
+    "es": {
+      "title": "Descargas más resistentes y Jugador animado",
+      "summary": "La versión 1.9.2 integra la rama de fallback R2 en main: prioridad opcional del mirror, soporte del catálogo enriquecido, activación de Biblioteca coherente con el juego y vistas articuladas de los cinco personajes de Jugador.",
+      "highlights": [
+        "Elige la fuente de descarga preferida en Ajustes, conservando la otra fuente válida como respaldo.",
+        "Lee metadata opcional de mirror y campos enriquecidos sin exigirlos a catálogos antiguos.",
+        "Interpreta encabezados Lua largos como el juego y distingue scripts ilegibles de incompatibilidades activas.",
+        "Previsualiza los cinco personajes con reposo derivado localmente de la ROM y superficie estable durante el scroll lento."
+      ],
+      "sections": [
+        {
+          "heading": "Descargas y catálogo",
+          "items": [
+            "Un mirror Cloudflare R2 válido puede recuperar una descarga original no disponible o con contenido inválido. Preferir mirror invierte el orden sin eliminar el origen como respaldo.",
+            "La app, la descarga manual y el overlay comparten la resolución de fuentes; cambiar de fuente conserva la identidad de operación y la cadena de instalación en segundo plano.",
+            "El lector conserva metadata opcional de artefactos y compatibilidad con catálogos anteriores. Elegir una fuente no cambia el artefacto que se instala."
+          ]
+        },
+        {
+          "heading": "Activación desde Biblioteca",
+          "items": [
+            "Las descripciones Lua largas siguen el truncado de encabezados del juego en lugar de invalidar un mod que sí puede leerse.",
+            "Los scripts desactivados ilegibles ya no bloquean selecciones ajenas; se mantienen las comprobaciones de incompatibilidades activas.",
+            "Tras confirmar una escritura, los interruptores hermanos se actualizan desde la selección real. La activación sigue configurando el próximo inicio del juego."
+          ]
+        },
+        {
+          "heading": "Jugador animado",
+          "items": [
+            "El visor local WebView/Three.js reconstruye la jerarquía articulada de los cinco personajes y reproduce reposo derivado de la ROM del usuario. Una animación opcional inválida vuelve a la pose de referencia.",
+            "La superficie AndroidView estable y el escalado uniforme evitan redimensionar repetidamente el buffer durante el desplazamiento vertical lento.",
+            "Ambos workflows prueban el motor JavaScript local y verifican el grafo de módulos anidados dentro de cada APK antes de subir artifacts. No se incluyen ROM ni recursos de personajes extraídos."
+          ]
+        },
+        {
+          "heading": "Preparación del lanzamiento",
+          "items": [
+            "La candidata 1.9.2+30 mantiene paquete, configuración de firma, Android mínimo y nombres de APK por ABI. No obliga a actualizar.",
+            "El estado fusionado aún necesita su propia build de testing y comprobaciones físicas de descargas, activación, gestos del visor y ciclo de vida. El éxito de la rama de origen no demuestra un APK nuevo de release.",
+            "La fecha del manifiesto es provisional hasta publicar. Preparar esta candidata no publica tag, GitHub Release, anuncio Discord ni actualización del sitio."
+          ]
+        }
+      ]
+    },
+    "pt-BR": {
+      "title": "Downloads mais resistentes e Jogador animado",
+      "summary": "A versão 1.9.2 integra a branch de fallback R2 na main: prioridade opcional do mirror, suporte ao catálogo enriquecido, ativação da Biblioteca alinhada ao jogo e prévias articuladas dos cinco personagens do Jogador.",
+      "highlights": [
+        "Escolha a fonte de download preferida nas Configurações, mantendo a outra fonte válida como alternativa.",
+        "Leia metadados opcionais de mirror e campos enriquecidos sem exigi-los de catálogos antigos.",
+        "Interprete cabeçalhos Lua longos como o jogo e diferencie scripts ilegíveis de incompatibilidades ativas.",
+        "Visualize os cinco personagens com animações de repouso derivadas localmente da ROM e superfície estável durante a rolagem lenta."
+      ],
+      "sections": [
+        {
+          "heading": "Downloads e catálogo",
+          "items": [
+            "Um mirror Cloudflare R2 válido pode recuperar um download original indisponível ou com conteúdo inválido. Preferir mirror inverte a ordem sem remover a origem como alternativa.",
+            "App, download manual e overlay compartilham a resolução de fontes; a troca preserva a identidade da operação e a cadeia de instalação em segundo plano.",
+            "O leitor preserva metadados opcionais de artefatos e compatibilidade com catálogos anteriores. Escolher uma fonte não altera o artefato instalado."
+          ]
+        },
+        {
+          "heading": "Ativação pela Biblioteca",
+          "items": [
+            "Descrições Lua longas seguem o truncamento de cabeçalhos do jogo em vez de invalidar um mod que pode ser lido.",
+            "Scripts desativados ilegíveis não bloqueiam outras seleções; as verificações de incompatibilidades ativas são mantidas.",
+            "Após confirmar uma gravação, os interruptores relacionados são atualizados pela seleção real. A ativação continua configurando o próximo início do jogo."
+          ]
+        },
+        {
+          "heading": "Jogador animado",
+          "items": [
+            "O visor local WebView/Three.js reconstrói a hierarquia articulada dos cinco personagens e reproduz repouso derivado da ROM do usuário. Uma animação opcional inválida retorna à pose de referência.",
+            "A superfície AndroidView estável e a escala uniforme evitam redimensionar repetidamente o buffer durante a rolagem vertical lenta.",
+            "Ambos os workflows testam o motor JavaScript local e verificam o grafo de módulos aninhados dentro de cada APK antes de enviar artifacts. Nenhuma ROM ou recurso extraído de personagem é incluído."
+          ]
+        },
+        {
+          "heading": "Preparação do lançamento",
+          "items": [
+            "A candidata 1.9.2+30 mantém pacote, configuração de assinatura, Android mínimo e nomes de APK por ABI. Não força atualização.",
+            "O estado integrado ainda precisa de sua própria build de testing e testes físicos de downloads, ativação, gestos do visor e ciclo de vida. O sucesso da branch de origem não comprova um novo APK de release.",
+            "A data do manifesto é provisória até a publicação. Preparar esta candidata não publica tag, GitHub Release, aviso Discord ou atualização do site."
+          ]
+        }
+      ]
+    }
+  }
+}

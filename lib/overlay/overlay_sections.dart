@@ -71,6 +71,9 @@ class OverlayModItem {
               .map(
                 (file) => OverlayDownloadOption(
                   url: file.file.downloadUrl,
+                  availableMirrorUrl: file.file.hasAvailableMirror
+                      ? file.file.mirrorUrl
+                      : null,
                   filename: file.file.filename,
                   fileKey: file.operationFileKey,
                   versionLabel: latest.version.version,
@@ -161,6 +164,7 @@ class OverlayDownloadOption {
     required this.versionLabel,
     this.versionId = '',
     this.legacyFileKeys = const <String>[],
+    this.availableMirrorUrl,
   });
 
   factory OverlayDownloadOption.primary(String url, String versionLabel) =>
@@ -179,6 +183,7 @@ class OverlayDownloadOption {
   final String versionLabel;
   final String versionId;
   final List<String> legacyFileKeys;
+  final String? availableMirrorUrl;
 }
 
 final overlaySectionProvider =

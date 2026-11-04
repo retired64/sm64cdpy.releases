@@ -949,6 +949,21 @@ class AppLocalizationsIt extends AppLocalizations {
       'Verrà chiesta conferma dopo ogni download';
 
   @override
+  String get settingsDownloadSource => 'Preferisci il mirror di download R2';
+
+  @override
+  String get settingsDownloadSourceOriginalFirst =>
+      'Prima la fonte originale · R2 viene usato automaticamente in caso di errore';
+
+  @override
+  String get settingsDownloadSourceMirrorFirst =>
+      'Prima il mirror R2 · la fonte originale resta disponibile come riserva';
+
+  @override
+  String get settingsDownloadSourceSaveFailed =>
+      'Impossibile salvare la fonte di download preferita. Riprova.';
+
+  @override
   String get autoInstallPromptTitle => 'Installare le mod dopo il download?';
 
   @override

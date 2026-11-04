@@ -1146,6 +1146,22 @@
   "@settingsAutoInstallOff": {
     "description": "Settings screen message when auto-install is off"
   },
+  "settingsDownloadSource": "Prefer R2 download mirror",
+  "@settingsDownloadSource": {
+    "description": "Settings switch that changes the preferred mod download source"
+  },
+  "settingsDownloadSourceOriginalFirst": "Original source first · R2 is used automatically if it fails",
+  "@settingsDownloadSourceOriginalFirst": {
+    "description": "Download source setting summary when origin is preferred"
+  },
+  "settingsDownloadSourceMirrorFirst": "R2 mirror first · the original source remains available as fallback",
+  "@settingsDownloadSourceMirrorFirst": {
+    "description": "Download source setting summary when R2 is preferred"
+  },
+  "settingsDownloadSourceSaveFailed": "Could not save the preferred download source. Try again.",
+  "@settingsDownloadSourceSaveFailed": {
+    "description": "Error shown when the download source preference cannot be saved"
+  },
   "autoInstallPromptTitle": "Install mods after downloading?",
   "@autoInstallPromptTitle": {
     "description": "One-time auto-install choice banner title"
@@ -2249,5 +2265,7 @@
   "detailArtifactApiDescription": "Optional add-ons that use this mod's API; not the main mod.",
   "detailArtifactTexturesDescription": "Optional visual resources for this mod.",
   "detailArtifactVoicesDescription": "Optional additional voice pack; install the main mod first.",
-  "detailArtifactOptionalDescription": "Optional companion file. Check the mod description before installing."
+  "detailArtifactOptionalDescription": "Optional companion file. Check the mod description before installing.",
+  "gameModsHeader": "Cannot read this mod’s main script. Check folder access and refresh.",
+  "gameModsActiveHeader": "Cannot check compatibility with an enabled mod because its script is unreadable. Check folder access or disable that mod."
 }
