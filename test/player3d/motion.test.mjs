@@ -26,3 +26,16 @@ test('invalid or unavailable clips keep the reference pose without throwing',()=
  const {motion,object}=rig(false,true);assert.equal(motion.hasClips,false);
  motion.advance(0.1);assert.deepEqual(object.matrix.elements,new Matrix4().elements);
 });
+
+test('fractional DPR and odd CSS sizes do not continuously clear the drawing buffer',async()=>{
+ const {createResizeController}=await import('../../assets/player3d/player3d-renderer.js');
+ let ratio=1,resizes=0,projections=0;const canvas={width:0,height:0};
+ const renderer={setPixelRatio(value){ratio=value;},setSize(w,h){resizes++;canvas.width=Math.floor(w*ratio);canvas.height=Math.floor(h*ratio);}};
+ const camera={aspect:0,updateProjectionMatrix(){projections++;}};
+ const resize=createResizeController(renderer,camera);
+ assert.equal(resize(101,103,1.5),true);assert.equal(canvas.width,151);
+ for(let frame=0;frame<1000;frame++)assert.equal(resize(101,103,1.5),false);
+ assert.equal(resizes,1);assert.equal(projections,1);
+ assert.equal(resize(103,107,1.5),true);assert.equal(resizes,2);
+ assert.equal(resize(0,0,1.5),false);assert.equal(resize(103,107,NaN),false);
+});

@@ -384,6 +384,20 @@ export function createIdleMotion(model, animated, baseMatrices, jointCount, clip
   };
 }
 
+export function createResizeController(renderer, camera) {
+  let previousWidth = 0, previousHeight = 0, previousRatio = 0;
+  return (width, height, ratio) => {
+    if (![width, height, ratio].every(Number.isFinite) || width <= 0 || height <= 0 || ratio <= 0) return false;
+    if (width === previousWidth && height === previousHeight && ratio === previousRatio) return false;
+    if (ratio !== previousRatio) renderer.setPixelRatio(ratio);
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    previousWidth = width; previousHeight = height; previousRatio = ratio;
+    return true;
+  };
+}
+
 export function marioPreview(model, colors, options = {}) {
   if (!model || !Array.isArray(model.groups) || !model.groups.length) {
     throw new Error("model_empty");
@@ -574,19 +588,18 @@ export function marioPreview(model, colors, options = {}) {
 
   const gl = renderer.getContext();
   const renderScale = gl.getParameter(gl.MAX_TEXTURE_SIZE) <= 4096 ? 0.7 : 1;
+  const updateSize = createResizeController(renderer, camera);
   function resize() {
     const width = canvas.clientWidth || stage.clientWidth;
     const heightPx = canvas.clientHeight || stage.clientHeight;
-    if (!width || !heightPx) return;
-    // Preserve the mobile viewer's conservative rendering budget.
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const scale = renderScale;
-    if (canvas.width !== Math.round(width * dpr * scale) || canvas.height !== Math.round(heightPx * dpr * scale)) {
-      renderer.setPixelRatio(dpr * scale);
-      renderer.setSize(width, heightPx, false);
-      camera.aspect = width / heightPx;
-      camera.updateProjectionMatrix();
-    }
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5) * renderScale;
+    return updateSize(width, heightPx, dpr);
+  }
+  function resizeAndRender() {
+    if (disposed || !enabled || !visible || document.hidden) return;
+    // Resizing clears WebGL. Repaint synchronously, not a throttled frame later.
+    if (resize()) renderer.render(scene, camera);
+    start();
   }
 
   function frame(now) {
@@ -694,10 +707,10 @@ export function marioPreview(model, colors, options = {}) {
   const visibility = () => syncActive();
   document.addEventListener("visibilitychange", visibility);
   const resizeObserver = "ResizeObserver" in window
-    ? new ResizeObserver(() => { resize(); if (enabled && visible && !document.hidden) start(); })
+    ? new ResizeObserver(resizeAndRender)
     : { observe() {}, disconnect() {} };
   resizeObserver.observe(canvas);
-  window.addEventListener("resize", resize);
+  window.addEventListener("resize", resizeAndRender);
 
   function applyColors(colors, animate) {
     const targets = materials.map((item) => ({
@@ -743,7 +756,7 @@ export function marioPreview(model, colors, options = {}) {
     observer.disconnect?.();
     resizeObserver.disconnect?.();
     document.removeEventListener("visibilitychange", visibility);
-    window.removeEventListener("resize", resize);
+    window.removeEventListener("resize", resizeAndRender);
     for (const geometry of geometries) geometry.dispose();
     for (const item of materials) item.material.dispose();
     for (const texture of textureFor.cache.values()) texture.dispose();

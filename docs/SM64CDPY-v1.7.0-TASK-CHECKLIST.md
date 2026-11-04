@@ -1245,3 +1245,15 @@ git diff --check validado, Flutter/Kotlin pendientes en CI por falta de SDK.
 - [x] Reportar fallo de imports antes de bridge-ready y retirar watchdog al terminar/cerrar.
 - [x] Probar APK sintético completo, módulo omitido, archivo obsoleto y bootstrap fallido.
 - [ ] Completar nueva build de Actions y confirmar personajes en teléfono.
+
+
+### Jugador: parpadeo al desplazar lentamente — 2026-11-03
+
+- [x] Mantener dimensiones intrínsecas del AndroidView durante la contracción.
+- [x] Escalar uniformemente sin cambiar perfil ni gestos de navegación.
+- [x] Evitar resize repetitivo por diferencias floor/round con DPR fraccionario.
+- [x] Repintar inmediatamente tras resize real, respetando visibilidad/teardown.
+- [x] Ejecutar 20 pruebas JavaScript, incluida extracción real privada.
+- [x] Añadir regresiones Flutter de contracción y cambio de ventana.
+- [ ] Ejecutar Dart format, Flutter analyze y pruebas de widgets en CI.
+- [ ] Confirmar scroll lento, rotación y segundo plano en teléfono.

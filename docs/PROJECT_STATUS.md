@@ -2,6 +2,12 @@
 
 ## Jugador articulado WebGL — 2026-11-03
 
+Corrección del parpadeo al desplazar lentamente: superficie AndroidView estable
+derivada de la ventana, escalado uniforme y redimensionado WebGL sin bucle de
+redondeo ni espera al siguiente frame. Pasan 20 pruebas JavaScript, incluida
+extracción privada de los cinco personajes. Añadidas pruebas Flutter de
+contracción/redimensionado; ejecutarlas en CI y confirmar GPU en teléfono.
+
 Seguimiento: el APK `bf4d54e` compiló, pero omitió los módulos Three.js anidados.
 Causa confirmada inspeccionando el APK; corregida la declaración de pubspec y
 añadida compuerta que verifica el grafo real dentro del APK. También se reportan

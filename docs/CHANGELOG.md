@@ -2,6 +2,8 @@
 
 ## Unreleased — Animated Player WebGL preview
 
+- Prevent slow-scroll preview buffer churn: retain a fixed expanded AndroidView surface, scale it uniformly inside the contracting card, and repaint WebGL immediately after real size changes. Add fractional-DPR and Flutter layout regressions.
+
 - Fix the first animated-preview APK: explicitly bundle the nested Three.js assets, verify the actual packaged module graph before artifact upload, and report module startup failures instead of leaving an endless loading indicator.
 
 - Reconstruct articulated rigs for all five built-in characters and play the ROM-derived three-clip idle cycle, including body translation and smooth transitions.

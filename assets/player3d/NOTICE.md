@@ -25,6 +25,6 @@ Tests generate synthetic input; optional private-input checks never publish asse
 - `player3d-index.js`: `38a3e8392ecb1c726a932a81a31a49e0b4dd764bee94d1bcdcd10e605f3d0945`
 - `player3d-model.js`: `e5e9e53e2ddf7b9658b9fdb74de320354c77846b4dd3919f101497f4d8e8af6d`
 - `player3d-clips.js`: `3fd01e4141ed18f1b09be0fd9b12dbd3ee32d015f9280671b77d52cbb02c269e`
-- `player3d-renderer.js`: `a2a2adc7424ea24a940e68f2fd620e35e457bfc3b823a60d0df545ca7a4e6fc6`
+- `player3d-renderer.js`: `5ba38b1e06bfaa98a6e034d7dc89ff654c759614298f08e8deb7357f72ad8556`
 - `vendor/three.module.js`: `9052042d676cb0fdc1ddfefe193053f34b7ac0513a616fdac4535d49987812ea`
 - `vendor/three.core.js`: `859ed43eacd3cd9295c14a568365911793f5e1647916f735c60720dc8fb9a86f`

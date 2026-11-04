@@ -446,7 +446,12 @@ class _Unavailable extends StatelessWidget {
 }
 
 class _PlayerPreview extends StatelessWidget {
-  const _PlayerPreview({required this.profile, required this.compact});
+  const _PlayerPreview({
+    required this.profile,
+    required this.compact,
+    required this.surfaceSize,
+  });
+  final Size surfaceSize;
   final PlayerProfile profile;
   final bool compact;
   @override
@@ -466,6 +471,7 @@ class _PlayerPreview extends StatelessWidget {
             Padding(
               padding: EdgeInsets.fromLTRB(8, 4, 8, compact ? 28 : 42),
               child: Player3DPreview(
+                surfaceSize: surfaceSize,
                 profile: profile,
                 loadingLabel: l10n.player3DLoading,
                 unavailableLabel: l10n.player3DUnavailable,
@@ -532,7 +538,11 @@ class _PlayerPreviewHeader extends SliverPersistentHeaderDelegate {
             width: width,
             height: height,
             child: RepaintBoundary(
-              child: _PlayerPreview(profile: profile, compact: progress > 0.55),
+              child: _PlayerPreview(
+                profile: profile,
+                compact: progress > 0.55,
+                surfaceSize: Size(expandedWidth - 16, 264),
+              ),
             ),
           ),
         ],

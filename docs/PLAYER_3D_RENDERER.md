@@ -348,3 +348,32 @@ la adicional con insumos privados. El verificador rechaza el APK
 `bf4d54e` precisamente por los dos módulos faltantes. Pendiente verificar el APK
 corregido de Actions y el render real en teléfono. No se modifican claves,
 versión, shaders ni datos de los personajes en esta corrección.
+
+
+## Superficie estable durante el scroll — 2026-11-03
+
+La tarjeta conserva su contracción y posición originales. Su `Player3DPreview`
+recibe `surfaceSize` calculado desde el tamaño expandido de la ventana, nunca
+el desplazamiento. `Player3DSurface` mantiene el AndroidView con ese tamaño y
+`FittedBox(BoxFit.contain)` transforma uniformemente su composición y gestos.
+Los avisos de carga/error conservan su tamaño Flutter habitual. Cambiar el tamaño
+de la ventana sí actualiza el tamaño intrínseco; no se recrea la vista por scroll.
+
+En JavaScript, `createResizeController` compara ancho/alto CSS y DPR lógicos,
+no dimensiones redondeadas del buffer: Three.js usa floor y comparar con round
+provocaba reasignación continua a DPR fraccionario. ResizeObserver y resize
+repintan inmediatamente tras cambiar el buffer, antes del siguiente frame
+limitado a 30 FPS. Se conservan las pausas por visibilidad y su limpieza.
+
+El estado de perfil sigue perteneciendo a Flutter y el renderer consume su
+proyección mediante el bridge existente. El único cache nuevo son las últimas
+dimensiones del renderer; se actualizan tras un resize real y desaparecen con
+esa instancia. No cambia la extracción, IndexedDB, permisos ni protocolo Kotlin.
+La implementación hermana Android nativa usa el mismo controlador de resize.
+
+Validación: 20 pruebas Node pasan, incluida la regresión de 1000 frames con
+CSS impar/DPR 1.5 y extracción con entradas privadas de los cinco personajes.
+Se añaden pruebas Flutter de 101 pasos de contracción, escalado uniforme y
+cambio de ventana. Flutter/Dart no están instalados en este entorno: format,
+analyze y widget tests quedan pendientes para CI, además de prueba física de
+scroll muy lento, giro horizontal, rotación y regreso desde segundo plano.
