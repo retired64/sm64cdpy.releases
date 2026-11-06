@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "catalog_schema_version": 2,
+  "catalog_id": "sha256:0b2f99c34340359110a88409705a129c7d03760b86b30d1922bc653b4993f7af",
+  "catalog_sha256": "sha256:228c552b0347e1bdc3576411fc8251463305ac5e9d8e257024a875f49f7f6286",
+  "catalog_bytes": 7836417,
+  "mod_count": 1316,
+  "artifact_count": 2629,
+  "translation_locales": [
+    "es"
+  ],
+  "translation_engine": "argos-translate-2",
+  "translation_failures": 0,
+  "generated_at": "2026-11-06T03:25:52.104902+00:00",
+  "source_revision": "58224e335d0adc80e9904a38fa8a7dacd628bd75"
+}
